@@ -153,7 +153,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
         usingCubeFact =
             (factCube == null
               || factCube.getFact() == null
-              || factCube.getFact().equals(
+              || Utils.equalsQuery(factCube.getFact(),
                   rolapHierarchy.getRelation()));
 
         // re-alias names if necessary

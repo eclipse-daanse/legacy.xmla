@@ -3369,11 +3369,24 @@ class SchemaTest {
                         .withForeignKey("store_id")
                         .build();
 
-                DimensionConnectorMappingImpl d2 = DimensionConnectorMappingImpl.builder()
+                HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                        .builder()
+                        .withName("Store")
+                        .withHasAll(true)
+                        .withAllMemberName("All Stores")
+                        .withPrimaryKey("store_id")
+                        .withQuery(TableQueryMappingImpl.builder().withName("store_ragged").build())
+                        .withLevels(List.of(FoodmartMappingSupplier.LEVEL_STORE_COUNTRY, FoodmartMappingSupplier.LEVEL_STORE_STATE_UNIQUE_MEMBERS_TRUE, FoodmartMappingSupplier.LEVEL_STORE_CYTY,
+                        		FoodmartMappingSupplier.LEVEL_STORE_NAME_WITHOUT_TABLE))
+                        .build();
+
+                DimensionConnectorMappingImpl d2 = DimensionConnectorMappingImpl
+                        .builder()
                         .withOverrideDimensionName("Store2")
-                        //.caption("Second Store")
-                        .withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_STORE_WITH_QUERY_STORE))
                         .withForeignKey("product_id")
+                        .withDimension(StandardDimensionMappingImpl.builder()
+                        	.withName("Store2")
+                        	.withHierarchies(List.of(hierarchy)).build())
                         .build();
 
                 PhysicalCubeMappingImpl c = PhysicalCubeMappingImpl
@@ -9533,6 +9546,7 @@ class SchemaTest {
                 @Override
                 protected List<CubeMapping> schemaCubes(SchemaMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
+                    result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                     result.add(VirtualCubeMappingImpl.builder()
                         .withName("Foo")
                         .withDefaultMeasure((MemberMappingImpl) look(FoodmartMappingSupplier.MEASURE_STORE_SALES))
@@ -9546,8 +9560,7 @@ class SchemaTest {
                         .withReferencedMeasures(List.of(
                         		look(FoodmartMappingSupplier.MEASURE_STORE_SALES)
                         ))
-                        .build());
-                    result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
+                        .build());                    
                     return result;
                 }
             }

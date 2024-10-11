@@ -39,6 +39,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.TimeDimensionMappingImpl;
 
 
 public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
@@ -241,7 +242,7 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
                         	DimensionConnectorMappingImpl.builder()
                         		.withOverrideDimensionName("TimeExtra")
                                 .withForeignKey("time_id")
-                                .withDimension(StandardDimensionMappingImpl.builder()
+                                .withDimension(TimeDimensionMappingImpl.builder()
                                 	.withName("TimeExtra")
                                 	.withHierarchies(List.of(
                                     HierarchyMappingImpl.builder()
