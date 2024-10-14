@@ -1735,7 +1735,7 @@ protected void assertQuerySql(Connection connection,
                                   .withAccess(AccessCube.ALL)
                                   .withHierarchyGrants(List.of(
                                 	 AccessHierarchyGrantMappingImpl.builder()
-                                          .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.HIERARCHY_PRODUCT1))
+                                          .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.HIERARCHY_PRODUCT))
                                           .withRollupPolicyType(RollupPolicyType.PARTIAL)
                                           .withAccess(AccessHierarchy.CUSTOM)
                                           .withMemberGrants(List.of(

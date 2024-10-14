@@ -638,7 +638,7 @@ public class SchemaModifiers {
                     	look(FoodmartMappingSupplier.MEASURE_CUSTOMER_COUNT)
                     ))
             	.build());
-            
+
             result.add(VirtualCubeMappingImpl.builder()
                     .withName("Warehouse and Sales3")
                     .withDefaultMeasure((MeasureMappingImpl) look(FoodmartMappingSupplier.MEASURE_STORE_INVOICE))
@@ -651,9 +651,9 @@ public class SchemaModifiers {
                     		.withPhysicalCube((PhysicalCubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
                     		.withOverrideDimensionName("Gender")
                     		.build(),
-                        DimensionConnectorMappingImpl.builder()                    		
+                        DimensionConnectorMappingImpl.builder()
                     		.withOverrideDimensionName("Store")
-                    		.build(),                    		
+                    		.build(),
                        	DimensionConnectorMappingImpl.builder()
                     		.withOverrideDimensionName("Product")
                     		.build(),
@@ -1175,7 +1175,7 @@ public class SchemaModifiers {
                             .withFormula("[Measures].[Profit] / [Measures].[Units Shipped]")
                             .build()
                     ))
-                    .build());            
+                    .build());
             return result;
         }
     }
@@ -5151,7 +5151,7 @@ public class SchemaModifiers {
     	private static final MeasureMappingImpl m = MeasureMappingImpl.builder()
     	        .withName("Unit Sales")
     	        .withColumn("unit_sales")
-    	        .withAggregatorType(MeasureAggregatorType.SUM)    	        
+    	        .withAggregatorType(MeasureAggregatorType.SUM)
     	        .build();
 
         public BasicQueryTestModifier17(CatalogMapping catalog) {
@@ -5324,7 +5324,7 @@ public class SchemaModifiers {
     	private static final MeasureMappingImpl m = MeasureMappingImpl.builder()
     	        .withName("Unit Sales")
     	        .withColumn("unit_sales")
-    	        .withAggregatorType(MeasureAggregatorType.AVG)    	        
+    	        .withAggregatorType(MeasureAggregatorType.AVG)
     	        .build();
 
         public BasicQueryTestModifier18(CatalogMapping catalog) {
@@ -5454,7 +5454,7 @@ public class SchemaModifiers {
     	private static final MeasureMappingImpl m = MeasureMappingImpl.builder()
     	        .withName("Unit Sales")
     	        .withColumn("unit_sales")
-    	        .withAggregatorType(MeasureAggregatorType.AVG)    	        
+    	        .withAggregatorType(MeasureAggregatorType.AVG)
     	        .build();
 
         public BasicQueryTestModifier19(CatalogMapping catalog) {
@@ -6583,7 +6583,7 @@ public class SchemaModifiers {
                     .build());
                 result.add(CalculatedMemberMappingImpl.builder()
                     .withName("~Missing")
-                    .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.HIERARCHY_PRODUCT1))
+                    .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.HIERARCHY_PRODUCT))
                     //.withDimension("Product")
                     .withFormula("100")
                     .build());
@@ -8443,7 +8443,7 @@ public class SchemaModifiers {
                 								.withName("NuStore City")
                 								.withColumn("store_city")
                                                 .withUniqueMembers(false)
-                                                .build(),                                            
+                                                .build(),
                     					LevelMappingImpl.builder()
                 								.withName("NuStore Name")
                 								.withColumn("store_name")
@@ -9204,7 +9204,7 @@ public class SchemaModifiers {
                                         ))
                                         .build(),
                                     AccessHierarchyGrantMappingImpl.builder()
-                                        .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.HIERARCHY_PRODUCT1))
+                                        .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.HIERARCHY_PRODUCT))
                                         .withAccess(AccessHierarchy.CUSTOM)
                                         .withRollupPolicyType(RollupPolicyType.PARTIAL)
                                         .withMemberGrants(List.of(
@@ -13905,7 +13905,7 @@ public class SchemaModifiers {
                                     .withAccess(AccessCube.ALL)
                                     .withHierarchyGrants(List.of(
                                     	AccessHierarchyGrantMappingImpl.builder()
-                                        	.withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.HIERARCHY_PRODUCT1))
+                                        	.withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.HIERARCHY_PRODUCT))
                                             .withAccess(AccessHierarchy.CUSTOM)
                                             .withMemberGrants(List.of(
                                             		AccessMemberGrantMappingImpl.builder()
@@ -14401,7 +14401,7 @@ public class SchemaModifiers {
 	    ))
         .build();
 
-        
+
         public AccessControlTestModifier12(CatalogMapping catalog, Result result) {
             super(catalog);
             this.result = result;
@@ -14450,10 +14450,10 @@ public class SchemaModifiers {
 
         }
 
-        
+
         @Override
         protected List<CubeMapping> schemaCubes(SchemaMapping Schema) {
-            List<CubeMapping> result = new ArrayList<>();            
+            List<CubeMapping> result = new ArrayList<>();
             result.add(cube);
             return result;
         }
@@ -14525,9 +14525,9 @@ public class SchemaModifiers {
                             .build()
                     ))
                     .build();
-                
+
                 res.add(r);
-                
+
                 roleUsages.add(r);
             }
             res.add(AccessRoleMappingImpl.builder()
@@ -14680,7 +14680,7 @@ public class SchemaModifiers {
                                         .withHierarchyGrants(List.of(
                                         	AccessHierarchyGrantMappingImpl.builder()
                                                 .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.customersHierarchy))
-                                                .withAccess(AccessHierarchy.CUSTOM)                                                
+                                                .withAccess(AccessHierarchy.CUSTOM)
                                                 .withMemberGrants(List.of(
                                                 	AccessMemberGrantMappingImpl.builder()
                                                         .withMember("[Customers].[USA].[XX]")
