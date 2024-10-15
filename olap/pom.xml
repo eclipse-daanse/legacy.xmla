@@ -20,10 +20,7 @@
   <artifactId>org.eclipse.daanse.olap</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>operation</module>
-    <module>api</module>
     <module>rolap</module>
-    <module>calc</module>
     <module>xmla</module>
     <module>filecatalog</module>
     <module>udf</module>

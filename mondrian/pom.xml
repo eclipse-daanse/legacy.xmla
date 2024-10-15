@@ -26,11 +26,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.olap.operation.api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.daanse</groupId>
 			<artifactId>org.eclipse.daanse.olap.rolap.api</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
@@ -97,12 +92,7 @@
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.olap.api</artifactId>
-			<version>${revision}</version>
-			<scope>compile</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
 			<artifactId>org.eclipse.daanse.db.statistics.api</artifactId>
