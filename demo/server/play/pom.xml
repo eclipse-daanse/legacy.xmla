@@ -85,19 +85,19 @@
 
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.ws.runtime.httpwhiteboard</artifactId>
+			<artifactId>org.eclipse.daanse.jakarta.xml.ws.runtime.httpwhiteboard</artifactId>
 			<version>${revision}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.ws.runtime.registrar</artifactId>
+			<artifactId>org.eclipse.daanse.jakarta.xml.ws.runtime.registrar</artifactId>
 			<version>${revision}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.ws.handler</artifactId>
+			<artifactId>org.eclipse.daanse.jakarta.xml.ws.handler</artifactId>
 			<version>${revision}</version>
 			<scope>runtime</scope>
 		</dependency>
