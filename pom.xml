@@ -962,7 +962,6 @@
     <module>org.eclipse.daanse.repackage.rhino.engine</module>
     <module>function</module>
     <module>db</module>
-    <module>mdx</module>
     <module>tooling</module>
     <module>mondrian</module>
     <module>olap</module>
