@@ -2527,7 +2527,7 @@ class TestAggregationManager extends BatchTestCase {
                                                     		.withQuery(TableQueryMappingImpl.builder().withName("product_class").build())
                                                     		.build())
                                                     .build()
-                                                )
+                                                )                                            
                                             .withLevels(List.of(
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Family")
@@ -2563,7 +2563,7 @@ class TestAggregationManager extends BatchTestCase {
                                                     .withName("Product Name")
                                                     .withTable("product")
                                                     .withColumn("product_name")
-                                                    .withUniqueMembers(false)
+                                                    .withUniqueMembers(true)
                                                     .build(),
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Id")

@@ -10746,7 +10746,7 @@ public class SchemaModifiers {
                                                     .withAllMemberName("All Gender")
                                                     .withPrimaryKey("customer_id")
                                                     .withQuery(TableQueryMappingImpl.builder()
-                                                			.withName("sales_fact_1997").build())
+                                                			.withName("customer").build())
                                                     .withLevels(List.of(
                                                         LevelMappingImpl.builder()
                                                             .withName("Gender")
@@ -11859,23 +11859,17 @@ public class SchemaModifiers {
                         .withAggregationMeasures(List.of(
                         		AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Store Cost]")
-                                .withColumn("unit_sales")
-                                .build()
-                        ))
-                        .withAggregationLevels(List.of(
-                        		AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Year]")
                                 .withColumn("store_cost")
                                 .build(),
-                        		AggregationLevelMappingImpl.builder()
+                        		AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Store Sales]")
                                 .withColumn("store_sales")
                                 .build(),
-                        		AggregationLevelMappingImpl.builder()
+                        		AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Unit Sales]")
                                 .withColumn("unit_sales")
                                 .build()
-                        		))
+                        ))
                         .build())
     			)
     			.build();

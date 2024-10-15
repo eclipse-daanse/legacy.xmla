@@ -2891,7 +2891,7 @@ class NonEmptyTest extends BatchTestCase {
                       LevelMappingImpl.builder()
                           .withName("address2")
                           .withColumn("wa_address2")
-                          .withUniqueMembers(true)
+                          .withUniqueMembers(false)
                           .build(),
                       LevelMappingImpl.builder()
                           .withName("fax")
@@ -5835,7 +5835,7 @@ class NonEmptyTest extends BatchTestCase {
               .withFormula("1")
               .build();
 
-              
+
               PhysicalCubeMappingImpl salesCube = PhysicalCubeMappingImpl.builder()
               .withName("Sales")
               .withDefaultMeasure(m)
@@ -5852,13 +5852,13 @@ class NonEmptyTest extends BatchTestCase {
               .build();
               mgSales.setPhysicalCube(salesCube);
               cm.setPhysicalCube(salesCube);
-        	  
+
               return List.of(SchemaMappingImpl.builder()
             		  .withName("FoodMart")
                       .withCubes(List.of(
                     		  salesCube,
                               VirtualCubeMappingImpl.builder()
-                                  //.withDefaultMeasure("dummyMeasure") //TODO                                  
+                                  //.withDefaultMeasure("dummyMeasure") //TODO
                                   .withName("virtual")
                                   .withDimensionConnectors(List.of(
                                 		  DimensionConnectorMappingImpl.builder()
