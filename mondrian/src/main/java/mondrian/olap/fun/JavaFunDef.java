@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Syntax;
@@ -39,7 +40,6 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.FunctionMetaDataR;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 
 import mondrian.calc.impl.GenericCalc;
 import mondrian.olap.Util;

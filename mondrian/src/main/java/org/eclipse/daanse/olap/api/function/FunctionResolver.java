@@ -33,9 +33,9 @@ package org.eclipse.daanse.olap.api.function;
 
 import java.util.List;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.query.component.Expression;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 
 /**
  * A {@link FunctionResolver} converts a function name, invocation type, and set

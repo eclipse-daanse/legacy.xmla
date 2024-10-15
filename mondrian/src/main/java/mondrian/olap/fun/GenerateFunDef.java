@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Validator;
@@ -36,7 +37,6 @@ import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
-import org.eclipse.daanse.olap.operation.api.FunctionOperationAtom;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.TupleCollections;

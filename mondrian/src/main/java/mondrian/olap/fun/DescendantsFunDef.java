@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -34,8 +36,6 @@ import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
-import org.eclipse.daanse.olap.operation.api.FunctionOperationAtom;
-import org.eclipse.daanse.olap.operation.api.PlainPropertyOperationAtom;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.UnaryTupleList;

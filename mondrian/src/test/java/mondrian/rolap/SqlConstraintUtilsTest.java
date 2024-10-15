@@ -32,6 +32,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
@@ -48,8 +50,6 @@ import org.eclipse.daanse.olap.api.query.component.QueryAxis;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
-import org.eclipse.daanse.olap.operation.api.FunctionOperationAtom;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.Mockito;

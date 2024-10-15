@@ -9,6 +9,8 @@
 
 package mondrian.olap.fun;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
@@ -20,8 +22,6 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
-import org.eclipse.daanse.olap.operation.api.FunctionOperationAtom;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 
 import mondrian.calc.impl.ValueCalc;
 

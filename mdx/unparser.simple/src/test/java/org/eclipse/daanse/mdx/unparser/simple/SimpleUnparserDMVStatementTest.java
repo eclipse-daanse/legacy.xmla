@@ -19,12 +19,12 @@ import java.util.List;
 
 import org.eclipse.daanse.mdx.model.api.DMVStatement;
 import org.eclipse.daanse.mdx.model.api.expression.ObjectIdentifier;
+import org.eclipse.daanse.mdx.model.api.expression.operation.InfixOperationAtom;
 import org.eclipse.daanse.mdx.model.record.DMVStatementR;
 import org.eclipse.daanse.mdx.model.record.expression.CallExpressionR;
 import org.eclipse.daanse.mdx.model.record.expression.CompoundIdR;
 import org.eclipse.daanse.mdx.model.record.expression.NameObjectIdentifierR;
 import org.eclipse.daanse.mdx.model.record.expression.StringLiteralR;
-import org.eclipse.daanse.olap.operation.api.InfixOperationAtom;
 import org.junit.jupiter.api.Test;
 
 class SimpleUnparserDMVStatementTest {

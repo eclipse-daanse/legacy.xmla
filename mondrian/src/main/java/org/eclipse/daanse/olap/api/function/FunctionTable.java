@@ -33,7 +33,7 @@ package org.eclipse.daanse.olap.api.function;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 
 /**
  * List of all MDX functions.

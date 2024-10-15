@@ -14,6 +14,7 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Syntax;
@@ -35,7 +36,6 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.FunctionMetaDataR;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 import org.eclipse.daanse.olap.udf.impl.BooleanScalarUserDefinedFunctionCalcImpl;
 
 import mondrian.calc.impl.AbstractListCalc;

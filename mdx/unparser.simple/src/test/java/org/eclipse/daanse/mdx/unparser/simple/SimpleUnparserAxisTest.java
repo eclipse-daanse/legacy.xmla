@@ -24,6 +24,8 @@ import org.eclipse.daanse.mdx.model.api.SelectStatement;
 import org.eclipse.daanse.mdx.model.api.expression.NameObjectIdentifier;
 import org.eclipse.daanse.mdx.model.api.expression.ObjectIdentifier;
 import org.eclipse.daanse.mdx.model.api.expression.ObjectIdentifier.Quoting;
+import org.eclipse.daanse.mdx.model.api.expression.operation.BracesOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.mdx.model.api.select.SelectQueryAxesClause;
 import org.eclipse.daanse.mdx.model.api.select.SelectQueryAxisClause;
 import org.eclipse.daanse.mdx.model.api.select.SelectQueryClause;
@@ -40,8 +42,6 @@ import org.eclipse.daanse.mdx.model.record.select.AxisR;
 import org.eclipse.daanse.mdx.model.record.select.SelectQueryAxesClauseR;
 import org.eclipse.daanse.mdx.model.record.select.SelectQueryAxisClauseR;
 import org.eclipse.daanse.mdx.model.record.select.SelectSubcubeClauseNameR;
-import org.eclipse.daanse.olap.operation.api.BracesOperationAtom;
-import org.eclipse.daanse.olap.operation.api.PlainPropertyOperationAtom;
 import org.junit.jupiter.api.Test;
 
 class SimpleUnparserAxisTest {

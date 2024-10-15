@@ -21,13 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.function.FunctionTable;
 import org.eclipse.daanse.olap.function.resolver.ParametersCheckingFunctionDefinitionResolver;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
-import org.eclipse.daanse.olap.operation.api.PlainPropertyOperationAtom;
 
 /**
  * Abstract implementation of {@link FunctionTable}.

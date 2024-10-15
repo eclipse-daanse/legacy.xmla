@@ -14,11 +14,11 @@
 package org.eclipse.daanse.mdx.parser.cccx;
 
 import org.eclipse.daanse.mdx.model.api.expression.MdxExpression;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.mdx.parser.cccx.tree.BaseNode;
 import org.eclipse.daanse.mdx.parser.cccx.tree.CompoundId;
 import org.eclipse.daanse.mdx.parser.cccx.tree.NameObjectIdentifier;
 import org.eclipse.daanse.mdx.parser.cccx.tree.PrimaryExpression;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 
 import java.util.List;
 

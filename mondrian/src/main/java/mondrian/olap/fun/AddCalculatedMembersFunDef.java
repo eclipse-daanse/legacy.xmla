@@ -14,6 +14,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.SchemaReader;
@@ -32,8 +34,6 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.resolver.ParametersCheckingFunctionDefinitionResolver;
-import org.eclipse.daanse.olap.operation.api.FunctionOperationAtom;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.UnaryTupleList;

@@ -15,7 +15,7 @@ package org.eclipse.daanse.mdx.model.api.expression;
 
 import java.util.List;
 
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 
 public non-sealed interface CallExpression extends MdxExpression {
 

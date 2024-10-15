@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.eclipse.daanse.mdx.model.api.expression.CallExpression;
 import org.eclipse.daanse.mdx.model.api.expression.MdxExpression;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 
 public record CallExpressionR(OperationAtom operationAtom, List<MdxExpression> expressions) implements CallExpression {
 

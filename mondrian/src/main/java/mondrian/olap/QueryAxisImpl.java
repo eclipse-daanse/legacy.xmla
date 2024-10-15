@@ -14,6 +14,10 @@ package mondrian.olap;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.BracesOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.ParenthesesOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.olap.api.SubtotalVisibility;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -29,10 +33,6 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
-import org.eclipse.daanse.olap.operation.api.BracesOperationAtom;
-import org.eclipse.daanse.olap.operation.api.FunctionOperationAtom;
-import org.eclipse.daanse.olap.operation.api.ParenthesesOperationAtom;
-import org.eclipse.daanse.olap.operation.api.PlainPropertyOperationAtom;
 
 import mondrian.mdx.HierarchyExpressionImpl;
 import mondrian.mdx.LevelExpressionImpl;

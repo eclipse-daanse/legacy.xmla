@@ -22,6 +22,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.BracesOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
@@ -46,9 +49,6 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedVoidCalc;
 import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.resolver.NoExpressionRequiredFunctionResolver;
-import org.eclipse.daanse.olap.operation.api.BracesOperationAtom;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
-import org.eclipse.daanse.olap.operation.api.PlainPropertyOperationAtom;
 import org.eclipse.daanse.olap.query.base.Expressions;
 
 import mondrian.calc.impl.AbstractIterCalc;

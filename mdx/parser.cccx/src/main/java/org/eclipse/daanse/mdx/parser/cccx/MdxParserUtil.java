@@ -17,8 +17,8 @@ import org.eclipse.daanse.mdx.model.api.expression.CompoundId;
 import org.eclipse.daanse.mdx.model.api.expression.MdxExpression;
 import org.eclipse.daanse.mdx.model.api.expression.NameObjectIdentifier;
 import org.eclipse.daanse.mdx.model.api.expression.ObjectIdentifier;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.mdx.parser.cccx.tree.Expression;
-import org.eclipse.daanse.olap.operation.api.PlainPropertyOperationAtom;
 
 import java.util.ArrayList;
 import java.util.List;

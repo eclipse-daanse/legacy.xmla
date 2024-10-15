@@ -18,11 +18,11 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
-import org.eclipse.daanse.olap.operation.api.FunctionOperationAtom;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

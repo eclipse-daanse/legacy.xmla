@@ -21,14 +21,14 @@ import org.eclipse.daanse.mdx.model.api.expression.CompoundId;
 import org.eclipse.daanse.mdx.model.api.expression.MdxExpression;
 import org.eclipse.daanse.mdx.model.api.expression.NameObjectIdentifier;
 import org.eclipse.daanse.mdx.model.api.expression.ObjectIdentifier;
+import org.eclipse.daanse.mdx.model.api.expression.operation.AmpersandQuotedPropertyOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.MethodOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.QuotedPropertyOperationAtom;
 import org.eclipse.daanse.mdx.model.record.expression.CallExpressionR;
 import org.eclipse.daanse.mdx.model.record.expression.CompoundIdR;
-import org.eclipse.daanse.olap.operation.api.AmpersandQuotedPropertyOperationAtom;
-import org.eclipse.daanse.olap.operation.api.FunctionOperationAtom;
-import org.eclipse.daanse.olap.operation.api.MethodOperationAtom;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
-import org.eclipse.daanse.olap.operation.api.PlainPropertyOperationAtom;
-import org.eclipse.daanse.olap.operation.api.QuotedPropertyOperationAtom;
 
 public class MdxParserUtil {
 	private MdxParserUtil() {

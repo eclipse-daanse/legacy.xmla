@@ -18,14 +18,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 
 import org.eclipse.daanse.mdx.model.api.expression.ObjectIdentifier;
+import org.eclipse.daanse.mdx.model.api.expression.operation.BracesOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.mdx.model.api.select.SelectQueryAxisClause;
 import org.eclipse.daanse.mdx.model.record.expression.CallExpressionR;
 import org.eclipse.daanse.mdx.model.record.expression.CompoundIdR;
 import org.eclipse.daanse.mdx.model.record.expression.NameObjectIdentifierR;
 import org.eclipse.daanse.mdx.model.record.select.AxisR;
 import org.eclipse.daanse.mdx.model.record.select.SelectQueryAxisClauseR;
-import org.eclipse.daanse.olap.operation.api.BracesOperationAtom;
-import org.eclipse.daanse.olap.operation.api.PlainPropertyOperationAtom;
 import org.junit.jupiter.api.Test;
 
 class SimpleUnparserSelectQueryAxisClauseTest {

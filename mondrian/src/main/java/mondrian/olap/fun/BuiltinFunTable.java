@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.EmptyOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.SchemaReader;
@@ -52,10 +56,6 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCal
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
 import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.FunctionMetaDataR;
-import org.eclipse.daanse.olap.operation.api.EmptyOperationAtom;
-import org.eclipse.daanse.olap.operation.api.FunctionOperationAtom;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
-import org.eclipse.daanse.olap.operation.api.PlainPropertyOperationAtom;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.GenericCalc;

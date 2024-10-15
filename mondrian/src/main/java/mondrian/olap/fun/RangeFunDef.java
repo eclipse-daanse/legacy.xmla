@@ -11,6 +11,8 @@
 
 package mondrian.olap.fun;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.InfixOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -23,8 +25,6 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc;
 import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.FunctionMetaDataR;
-import org.eclipse.daanse.olap.operation.api.InfixOperationAtom;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.TupleCollections;

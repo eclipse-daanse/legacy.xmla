@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.BracesOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Syntax;
 import org.eclipse.daanse.olap.api.Validator;
@@ -41,7 +42,6 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.operation.api.BracesOperationAtom;
 
 import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.Util;

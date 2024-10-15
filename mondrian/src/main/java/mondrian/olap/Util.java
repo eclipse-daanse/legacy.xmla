@@ -86,6 +86,9 @@ import mondrian.olap.exceptions.MdxCantFindMemberException;
 import mondrian.olap.exceptions.MdxChildObjectNotFoundException;
 import mondrian.olap.exceptions.MemberNotFoundException;
 import mondrian.olap.exceptions.UdfClassWrongInterfaceException;
+
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.Parameter;
@@ -128,8 +131,6 @@ import org.eclipse.daanse.olap.impl.IdentifierParser;
 import org.eclipse.daanse.olap.impl.IdentifierSegment;
 import org.eclipse.daanse.olap.impl.KeySegment;
 import org.eclipse.daanse.olap.impl.NameSegment;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
-import org.eclipse.daanse.olap.operation.api.PlainPropertyOperationAtom;
 import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

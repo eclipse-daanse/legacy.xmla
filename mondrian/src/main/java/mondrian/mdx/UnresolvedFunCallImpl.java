@@ -11,6 +11,7 @@ package mondrian.mdx;
 
 import java.io.PrintWriter;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
@@ -21,7 +22,6 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.FunctionPrinter;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 import org.eclipse.daanse.olap.query.base.Expressions;
 import org.eclipse.daanse.olap.query.component.expression.AbstractExpression;
 

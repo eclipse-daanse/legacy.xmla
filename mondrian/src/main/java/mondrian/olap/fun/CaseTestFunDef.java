@@ -12,6 +12,8 @@ package mondrian.olap.fun;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.CaseOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
@@ -27,8 +29,6 @@ import org.eclipse.daanse.olap.calc.base.constant.ConstantCalcs;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedBooleanCalc;
 import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.FunctionMetaDataR;
-import org.eclipse.daanse.olap.operation.api.CaseOperationAtom;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 import org.eclipse.daanse.olap.query.base.Expressions;
 
 import mondrian.calc.impl.GenericCalc;

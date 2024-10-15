@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import mondrian.olap.exceptions.MdxMemberExpIsSetException;
+
+import org.eclipse.daanse.mdx.model.api.expression.operation.PrefixOperationAtom;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.Segment;
@@ -41,7 +43,6 @@ import org.eclipse.daanse.olap.api.query.component.MemberProperty;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.operation.api.PrefixOperationAtom;
 
 import mondrian.mdx.MdxVisitorImpl;
 import mondrian.olap.type.DecimalType;

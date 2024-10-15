@@ -31,6 +31,7 @@ package org.eclipse.daanse.olap.api;
 
 import java.util.List;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.function.FunctionTable;
@@ -41,7 +42,6 @@ import org.eclipse.daanse.olap.api.query.component.ParameterExpression;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 
 /**
  * Provides context necessary to resolve identifiers to objects, function

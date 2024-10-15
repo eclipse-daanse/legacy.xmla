@@ -4,6 +4,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.InternalOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -17,8 +19,6 @@ import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.FunctionMetaDataR;
-import org.eclipse.daanse.olap.operation.api.InternalOperationAtom;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 
 import mondrian.calc.impl.GenericCalc;
 import mondrian.calc.impl.UnaryTupleList;

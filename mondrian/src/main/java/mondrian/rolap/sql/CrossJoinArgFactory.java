@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.BracesOperationAtom;
 import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
@@ -40,7 +41,6 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
-import org.eclipse.daanse.olap.operation.api.BracesOperationAtom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -14,9 +14,9 @@
 
 package org.eclipse.daanse.olap.function;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 
 public record FunctionMetaDataR(OperationAtom operationAtom, String description, String signature,
 		DataType returnCategory, DataType[] parameterDataTypes) implements FunctionMetaData {

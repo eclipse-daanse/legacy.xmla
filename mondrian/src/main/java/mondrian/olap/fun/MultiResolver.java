@@ -13,6 +13,7 @@ package mondrian.olap.fun;
 
 import java.util.List;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
@@ -20,7 +21,6 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.function.FunctionMetaDataR;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 import org.eclipse.daanse.olap.query.base.Expressions;
 
 import mondrian.olap.Util;

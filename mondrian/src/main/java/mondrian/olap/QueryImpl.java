@@ -30,6 +30,11 @@ import java.util.Set;
 import mondrian.olap.exceptions.MdxAxisShowSubtotalsNotSupportedException;
 import mondrian.olap.exceptions.ParameterIsNotModifiableException;
 import mondrian.olap.exceptions.UnknownParameterException;
+
+import org.eclipse.daanse.mdx.model.api.expression.operation.BracesOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.InfixOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
@@ -82,10 +87,6 @@ import org.eclipse.daanse.olap.calc.api.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
 import org.eclipse.daanse.olap.impl.IdentifierParser;
 import org.eclipse.daanse.olap.impl.IdentifierSegment;
-import org.eclipse.daanse.olap.operation.api.BracesOperationAtom;
-import org.eclipse.daanse.olap.operation.api.FunctionOperationAtom;
-import org.eclipse.daanse.olap.operation.api.InfixOperationAtom;
-import org.eclipse.daanse.olap.operation.api.PlainPropertyOperationAtom;
 
 import mondrian.mdx.HierarchyExpressionImpl;
 import mondrian.mdx.LevelExpressionImpl;

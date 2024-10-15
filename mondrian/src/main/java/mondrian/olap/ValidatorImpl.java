@@ -20,6 +20,9 @@ import java.util.Map;
 
 import mondrian.olap.exceptions.MdxMemberExpIsSetException;
 import mondrian.olap.exceptions.UnknownParameterException;
+
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.ParenthesesOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.SchemaReader;
@@ -36,8 +39,6 @@ import org.eclipse.daanse.olap.api.query.component.QueryAxis;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.FunctionPrinter;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
-import org.eclipse.daanse.olap.operation.api.ParenthesesOperationAtom;
 import org.eclipse.daanse.olap.query.base.Expressions;
 
 import mondrian.mdx.ResolvedFunCallImpl;

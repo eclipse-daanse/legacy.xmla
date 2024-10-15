@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import org.eclipse.daanse.mdx.model.api.expression.NameObjectIdentifier;
 import org.eclipse.daanse.mdx.model.api.expression.ObjectIdentifier;
+import org.eclipse.daanse.mdx.model.api.expression.operation.BracesOperationAtom;
 import org.eclipse.daanse.mdx.model.api.select.SelectSubcubeClause;
 import org.eclipse.daanse.mdx.model.api.select.SelectSubcubeClauseStatement;
 import org.eclipse.daanse.mdx.model.record.expression.CallExpressionR;
@@ -30,7 +31,6 @@ import org.eclipse.daanse.mdx.model.record.select.SelectQueryAxesClauseR;
 import org.eclipse.daanse.mdx.model.record.select.SelectQueryAxisClauseR;
 import org.eclipse.daanse.mdx.model.record.select.SelectSubcubeClauseNameR;
 import org.eclipse.daanse.mdx.model.record.select.SelectSubcubeClauseStatementR;
-import org.eclipse.daanse.olap.operation.api.BracesOperationAtom;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
@@ -47,8 +49,6 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.resolver.NoExpressionRequiredFunctionResolver;
-import org.eclipse.daanse.olap.operation.api.FunctionOperationAtom;
-import org.eclipse.daanse.olap.operation.api.OperationAtom;
 import org.eclipse.daanse.olap.query.base.Expressions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

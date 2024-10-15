@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import mondrian.olap.MondrianException;
+
+import org.eclipse.daanse.mdx.model.api.expression.operation.CastOperationAtom;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.Syntax;
@@ -64,7 +66,6 @@ import org.eclipse.daanse.olap.calc.base.type.level.UnknownToLevelCalc;
 import org.eclipse.daanse.olap.calc.base.type.member.UnknownToMemberCalc;
 import org.eclipse.daanse.olap.calc.base.type.string.UnknownToStringCalc;
 import org.eclipse.daanse.olap.calc.base.util.DimensionUtil;
-import org.eclipse.daanse.olap.operation.api.CastOperationAtom;
 
 import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.SymbolLiteralImpl;

@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.Segment;
@@ -60,7 +61,6 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingCalc;
 import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
-import org.eclipse.daanse.olap.operation.api.PlainPropertyOperationAtom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
