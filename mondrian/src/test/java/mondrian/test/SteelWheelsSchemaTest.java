@@ -1253,9 +1253,10 @@ class SteelWheelsSchemaTest {
         //}
 
         withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier7::new);
+        Connection connection = context.getConnection();
+        Schema schema = connection.getSchema();
 
-        Schema schema = context.getConnection().getSchema();
-
+        
         // get roles
         Role minimal = schema.lookupRole("CUBE_SALES_MINIMAL");
         Role market_800 = RoleImpl.union(
@@ -1285,7 +1286,7 @@ class SteelWheelsSchemaTest {
             + "from [SteelWheelsSales]";
 
         // [Markets].[Territory].Members would get cached after role filter..
-        Connection connection = context.getConnection();
+        
         connection.setRole(market_800);
         assertQueryReturns(connection,
             nonEmptyMembersQuery,
@@ -1299,7 +1300,7 @@ class SteelWheelsSchemaTest {
             + "Row #0: 3,411\n"
             + "Row #0: 337,018\n");
         // ..and prevent EMEA from appearing in the results
-        connection = context.getConnection();
+        //connection = context.getConnection();
         connection.setRole(market_800_850);
         assertQueryReturns(connection,
             nonEmptyMembersQuery,

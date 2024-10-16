@@ -3256,7 +3256,7 @@ class SchemaTest {
                 DimensionConnectorMappingImpl d1 = DimensionConnectorMappingImpl.builder()
                         .withOverrideDimensionName("Store")
                         .withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_STORE_WITH_QUERY_STORE))
-                        .withLevel((LevelMappingImpl) look(FoodmartMappingSupplier.LEVEL_STORE_STATE_UNIQUE_MEMBERS_TRUE))
+                        .withLevel(FoodmartMappingSupplier.LEVEL_STORE_STATE_UNIQUE_MEMBERS_TRUE)
                         .withForeignKey("state_province")
                         .build();
 
@@ -9560,7 +9560,7 @@ class SchemaTest {
                         .withReferencedMeasures(List.of(
                         		look(FoodmartMappingSupplier.MEASURE_STORE_SALES)
                         ))
-                        .build());                    
+                        .build());
                     return result;
                 }
             }

@@ -7690,13 +7690,12 @@ public class SchemaModifiers {
             List<DimensionConnectorMapping> result = new ArrayList<>();
             result.addAll(super.cubeDimensionConnectors(cube));
             if ("Sales".equals(cube.getName())) {
-            	//Optional<MappingCubeDimension> o = result.stream().filter(d -> d instanceof PrivateDimensionR).findFirst();
-            	//int i = 0;
-            	//if (o.isPresent()) {
-            	//    i = result.indexOf(o.get());
-                //}
-                //result.add(i, PrivateDimensionRBuilder.builder()
-            	result.add(DimensionConnectorMappingImpl.builder()
+            	Optional<DimensionConnectorMapping> o = result.stream().filter(d -> "Promotion Media".equals(d.getOverrideDimensionName())).findFirst();
+            	int i = 0;
+            	if (o.isPresent()) {
+            	    i = result.indexOf(o.get());
+                }
+            	result.add(i, DimensionConnectorMappingImpl.builder()
             		.withOverrideDimensionName("Store2")
             		.withForeignKey("store_id")
             		.withDimension(
@@ -7721,7 +7720,7 @@ public class SchemaModifiers {
             		        .build()
             		)
                     .build());
-            }
+            }            
             return result;
         }
 
