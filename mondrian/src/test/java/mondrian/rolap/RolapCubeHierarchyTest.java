@@ -247,8 +247,8 @@ class RolapCubeHierarchyTest {
     Hierarchy rolapHierarchy_hierarchy = null;
     String rolapHierarchy_uniqueName = "TheDimUniqueName";
     Level[] rolapHierarchy_levels = new Level[]{};
-    QueryMapping rolapHierarchy_relation = mock(TableQueryMapping.class);
-
+    TableQueryMapping rolapHierarchy_relation = mock(TableQueryMapping.class);
+    doReturn("TableName").when(rolapHierarchy_relation).getName();
     String subName = null;
 
     int ordinal = 0;

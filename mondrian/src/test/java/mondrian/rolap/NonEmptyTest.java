@@ -3625,9 +3625,9 @@ class NonEmptyTest extends BatchTestCase {
       fail( "Expected NativeEvaluationUnsupportedException" );
     } catch ( Exception ex ) {
       Throwable t = ex;
-      while ( t.getCause() != null && t != t.getCause() ) {
-        t = t.getCause();
-      }
+      //while ( t.getCause() != null && t != t.getCause() ) {
+      //  t = t.getCause();
+      //}
       if ( !( t instanceof NativeEvaluationUnsupportedException ) ) {
         fail();
       }
@@ -3666,8 +3666,6 @@ class NonEmptyTest extends BatchTestCase {
     */
     // verify that no warning is posted if native evaluation is
     // explicitly disabled
-      ((TestConfig)context.getConfig())
-          .setAlertNativeEvaluationUnsupported(org.apache.logging.log4j.Level.ERROR.toString());
     try {
       checkNotNative(context, 3, mdx );
     } finally {

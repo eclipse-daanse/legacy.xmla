@@ -12050,68 +12050,7 @@ public class SchemaModifiers {
 
          */
 
-    	private static final TableQueryMappingImpl t1 = TableQueryMappingImpl.builder()
-    			.withName("sales_fact_1997")
-    			.withAggregationTables(List.of(
-    				AggregationNameMappingImpl.builder()
-                        .withName("agg_c_special_sales_fact_1997")
-                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn("FACT_COUNT").build())
-                        .withAggregationIgnoreColumns(List.of(
-                        	AggregationColumnNameMappingImpl.builder()
-                                .withColumn("foo")
-                                .build(),
-                            AggregationColumnNameMappingImpl.builder()
-                                .withColumn("bar")
-                                .build(),
-                            AggregationColumnNameMappingImpl.builder()
-                                .withColumn("PRODUCT_ID")
-                                .build(),
-                            AggregationColumnNameMappingImpl.builder()
-                                .withColumn("CUSTOMER_ID")
-                                .build(),
-                            AggregationColumnNameMappingImpl.builder()
-                                .withColumn("PROMOTION_ID")
-                                .build()
-                        ))
-                        .withAggregationForeignKeys(List.of(
-                        		AggregationForeignKeyMappingImpl.builder()
-                                .withFactColumn("store_id")
-                                .withAggregationColumn("STORE_ID")
-                                .build()
-                        ))
-                        .withAggregationMeasures(List.of(
-                        	AggregationMeasureMappingImpl.builder()
-                                .withName("[Measures].[Unit Sales]")
-                                .withColumn("UNIT_SALES_SUM")
-                                .build(),
-                            AggregationMeasureMappingImpl.builder()
-                                .withName("[Measures].[Store Cost]")
-                                .withColumn("STORE_COST_SUM")
-                                .build(),
-                            AggregationMeasureMappingImpl.builder()
-                                .withName("[Measures].[Store Sales]")
-                                .withColumn("STORE_SALES_SUM")
-                                .build()
-                        ))
-                        .withAggregationLevels(List.of(
-                        	AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Year]")
-                                .withColumn("TIME_YEAR")
-                                .build(),
-                            AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Quarter]")
-                                .withColumn("TIME_QUARTER")
-                                .build(),
-                            AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Month]")
-                                .withColumn("TIME_MONTH")
-                                .build()
-                        )).build()
-    			))
-    			.build();
-
-
-    	private static final TableQueryMappingImpl t2 = TableQueryMappingImpl.builder()
+    	private static final TableQueryMappingImpl t = TableQueryMappingImpl.builder()
     			.withName("sales_fact_1997")
     			.withAggregationTables(List.of(
     				AggregationNameMappingImpl.builder()
@@ -12324,7 +12263,7 @@ public class SchemaModifiers {
         	PhysicalCubeMappingImpl cubeSales1 = PhysicalCubeMappingImpl.builder()
         	        .withName("Sales1")
         	        .withDefaultMeasure(mUnitSalesSales1)
-        	        .withQuery(t1)
+        	        .withQuery(t)
         	        .withDimensionConnectors(List.of(
         	        	DimensionConnectorMappingImpl.builder()
         	        		.withOverrideDimensionName("Store")
@@ -12344,7 +12283,7 @@ public class SchemaModifiers {
         	PhysicalCubeMappingImpl cubeSales2 = PhysicalCubeMappingImpl.builder()
         	        .withName("Sales2")
         	        .withDefaultMeasure(mUnitSalesSales2)
-        	        .withQuery(t2)
+        	        .withQuery(t)
         	        .withDimensionConnectors(List.of(
         	        	DimensionConnectorMappingImpl.builder()
         	        		.withOverrideDimensionName("Store")
@@ -12357,7 +12296,7 @@ public class SchemaModifiers {
         	        		.withDimension(timeDimension)
         	        		.build()
         	        ))
-        	        .withMeasureGroups(List.of(mgSales1))
+        	        .withMeasureGroups(List.of(mgSales2))
         	        .build();
         	mgSales2.setPhysicalCube(cubeSales2);
 

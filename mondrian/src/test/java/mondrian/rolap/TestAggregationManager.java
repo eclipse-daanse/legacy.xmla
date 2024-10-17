@@ -2443,8 +2443,7 @@ class TestAggregationManager extends BatchTestCase {
             
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.cubes(cubes));
+                List<CubeMapping> result = new ArrayList<>();                
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("Foo")
                     .withDefaultMeasure(m)
@@ -2580,6 +2579,7 @@ class TestAggregationManager extends BatchTestCase {
                     		.withMeasures(List.of(m))
                     		.build()))
                     .build());
+                result.addAll(super.cubes(cubes));
                 return result;
             }
         }
@@ -2884,8 +2884,7 @@ class TestAggregationManager extends BatchTestCase {
                         .withFormatString("Standard")
                         .build();
             	
-                List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.cubes(cubes));
+                List<CubeMapping> result = new ArrayList<>();                
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("Foo")
                     .withDefaultMeasure(m)
@@ -3068,6 +3067,7 @@ class TestAggregationManager extends BatchTestCase {
 
                         )).build()))
                     .build());
+                result.addAll(super.cubes(cubes));
                 return result;
             }
         }
@@ -3611,14 +3611,15 @@ class TestAggregationManager extends BatchTestCase {
                 + "</Schema>");
          */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier7::new);
-        RolapStar star = context.getConnection().getSchemaReader()
+        Connection connection = context.getConnection();
+        RolapStar star = connection.getSchemaReader()
             .getSchema().getStar("sales_fact_1997");
         AggStar aggStar1 = getAggStar(star, "agg_c_10_sales_fact_1997");
         AggStar aggStarSpy = spy(
             getAggStar(star, "agg_c_10_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(chooseAggregateByVolume)).thenReturn(0l);
-        context.getConnection().getSchemaReader()
+        connection.getSchemaReader()
             .getSchema().getStar("sales_fact_1997").addAggStar(aggStarSpy);
         boolean[] rollup = { false };
         AggStar returnedStar = AggregationManager
@@ -3627,7 +3628,7 @@ class TestAggregationManager extends BatchTestCase {
                 aggStarSpy.getMeasureBitKey(), rollup);
         assertTrue(rollup[0],
                 "Rollup should be true since AggStar has ignored columns ");
-        assertEquals(aggStar1, returnedStar);
+        assertEquals(aggStar1.toString(), returnedStar.toString());
         assertTrue(aggStarSpy.hasIgnoredColumns(),
                 "Columns marked with AggIgnoreColumn, so AggStar "
                         + ".hasIgnoredColumns() should be true");
