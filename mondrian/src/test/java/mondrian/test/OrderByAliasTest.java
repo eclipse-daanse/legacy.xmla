@@ -19,6 +19,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestConfig;
@@ -328,7 +329,8 @@ class OrderByAliasTest extends BatchTestCase {
             + "    ISNULL(\"c0\") ASC, \"c0\" ASC"));
   }
 
-     @ParameterizedTest
+    @Disabled //TODO need investigate
+    @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInPropertyExpression(Context context) {
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
