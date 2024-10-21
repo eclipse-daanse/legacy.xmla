@@ -50,6 +50,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.ParameterMappingImpl;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -1251,7 +1252,7 @@ class ParameterTest {
             public TestSchemaPropModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            
+
             @Override
             protected List<? extends ParameterMapping> schemaParameters(SchemaMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
@@ -1261,7 +1262,7 @@ class ParameterTest {
                     .withType(DataType.STRING)
                     .withDefaultValue("'foo bar'")
                     .build());
-                return result;            	
+                return result;
             }
         }
         /*
@@ -1307,9 +1308,9 @@ class ParameterTest {
                         .withName("foo")
                         .withType(DataType.NUMERIC)
                         .withDefaultValue("3")
-                        .build());                
+                        .build());
 
-                return result;            	
+                return result;
             }
         }
         /*
@@ -1332,6 +1333,7 @@ class ParameterTest {
         RolapSchemaPool.instance().clear();
     }
 
+    @Disabled //we not able set bad type. type is enum. this test will delete in future
     @ParameterizedTest
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
@@ -1341,7 +1343,7 @@ class ParameterTest {
             public TestSchemaPropIllegalTypeFailsModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            
+
             @Override
             protected List<? extends ParameterMapping> schemaParameters(SchemaMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
@@ -1351,7 +1353,7 @@ class ParameterTest {
                     .withType(DataType.NUMERIC)
                     .withDefaultValue("1")
                     .build());
-                return result;            	
+                return result;
             }
         }
         /*
@@ -1381,7 +1383,7 @@ class ParameterTest {
             public TestSchemaPropInvalidDefaultExpFailsModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            
+
             @Override
             protected List<? extends ParameterMapping> schemaParameters(SchemaMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
@@ -1391,7 +1393,7 @@ class ParameterTest {
                     .withType(DataType.NUMERIC)
                     .withDefaultValue("[Product].DefaultMember.Children(2)")
                     .build());
-                return result;            	
+                return result;
             }
         }
         /*
@@ -1423,7 +1425,7 @@ class ParameterTest {
             public TestSchemaPropContextModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            
+
             @Override
             protected List<? extends ParameterMapping> schemaParameters(SchemaMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
@@ -1433,7 +1435,7 @@ class ParameterTest {
                     //.withType(DataType.NUMERIC) TODO "Member"
                     .withDefaultValue("[Customers].DefaultMember.Children.Item(2)")
                     .build());
-                return result;            	
+                return result;
             }
         }
         /*

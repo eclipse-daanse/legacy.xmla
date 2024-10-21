@@ -727,14 +727,14 @@ public class RolapHierarchy extends HierarchyBase {
      *    joins
      */
     void addToFromInverse(SqlQuery query, SQLExpressionMapping expression) {
-        if (relation == null) {
+        if (getRelation() == null) {
             throw Util.newError(
                 new StringBuilder("cannot add hierarchy ").append(getUniqueName())
                     .append(" to query: it does not have a <Table>, <View> or <Join>").toString());
         }
         final boolean failIfExists = false;
         QueryMapping subRelation = relation;
-        if (relation instanceof JoinQueryMapping &&  expression != null) {
+        if (getRelation() instanceof JoinQueryMapping &&  expression != null) {
                 subRelation =
                     relationSubsetInverse(relation, getTableAlias(expression));
         }

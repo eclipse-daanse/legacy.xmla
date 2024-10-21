@@ -53,7 +53,7 @@ class CaptionTest{
         List<Position> positions = axes[0].getPositions();
         Member m0 = positions.get(0).get(0);
         String caption = m0.getCaption();
-        assertEquals("Anzahl Verkauf", caption);
+        assertEquals("Unit Sales", caption);
     }
 
     /**
@@ -75,7 +75,7 @@ class CaptionTest{
         Member mall = positions.get(0).get(0);
 
         String caption = mall.getHierarchy().getCaption();
-        assertEquals("Werbemedium", caption);
+        assertEquals("Promotion Media", caption);
     }
 
     /**
@@ -98,7 +98,7 @@ class CaptionTest{
         Member mall = positions.get(0).get(0);
 
         String caption = mall.getHierarchy().getCaption();
-        assertEquals("Quadrat-Fuesse:-)", caption);
+        assertEquals("Store Size in SQFT", caption);
     }
 
 

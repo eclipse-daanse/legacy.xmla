@@ -14,7 +14,6 @@ package mondrian.rolap;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLMapping;
 import org.junit.jupiter.api.Test;
@@ -57,6 +57,7 @@ class SqlTupleReaderTest {
     RolapColumn expression =  mock(mondrian.rolap.RolapColumn.class);
     RolapCubeLevel levelIter = mock( RolapCubeLevel.class, Answers.RETURNS_MOCKS );
     RolapProperty rolapProperty = mock( TestPublicRolapProperty.class, Answers.RETURNS_MOCKS );
+    QueryMapping queryMapping = mock( QueryMapping.class, Answers.RETURNS_MOCKS );
     String propertyName = "property_1";
     Dialect dialect = mock( Dialect.class );
     when(dialect.getDialectName()).thenReturn( "generic" );
@@ -77,6 +78,7 @@ class SqlTupleReaderTest {
     when( levelIter.getOrdinalExp() ).thenReturn( expression );
     when( levelIter.getParentExp() ).thenReturn( null );
     RolapHierarchy hierarchy = mock( RolapHierarchy.class, Answers.RETURNS_MOCKS );
+    when( hierarchy.getRelation() ).thenReturn( queryMapping );
     when( targetLevel.getHierarchy() ).thenReturn( hierarchy );
     when( hierarchy.getLevels() ).thenReturn( new RolapLevel[] { levelIter } );
     SqlTupleReader.WhichSelect whichSelect = SqlTupleReader.WhichSelect.LAST;
