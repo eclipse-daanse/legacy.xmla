@@ -46,6 +46,9 @@ import org.eclipse.daanse.db.dialect.api.Datatype;
 import org.eclipse.daanse.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.rdb.structure.pojo.InlineTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
@@ -314,21 +317,19 @@ public class RolapStar {
         String possibleName)
     {
         if (rel instanceof TableQueryMapping tbl) {
-        	String aliasOrName = tbl.getAlias() == null ? tbl.getName() : tbl.getAlias();
+        	String aliasOrName = tbl.getAlias() == null ? tbl.getTable().getName() : tbl.getAlias();
         	return TableQueryMappingImpl.builder()
         	.withAlias(possibleName)
-        	.withName(tbl.getName())
-        	.withSchema(tbl.getSchema())
+        	.withTable((PhysicalTableImpl) tbl.getTable())
         	.withOptimizationHints(tableQueryOptimizationHints(tbl.getOptimizationHints()))
         	.withSqlWhereExpression(sql(tbl.getSqlWhereExpression(), possibleName, aliasOrName))
         	.build();
         } else if (rel instanceof SqlSelectQueryMapping view) {
-            return SqlSelectQueryMappingImpl.builder().withAlias(possibleName).withSql(PojoUtil.getSqls(view.getSQL())).build();
+            return SqlSelectQueryMappingImpl.builder().withAlias(possibleName).withSql((SqlViewImpl) view.getSql()).build();
         } else if (rel instanceof InlineTableQueryMapping inlineTable) {
             return InlineTableQueryMappingImpl.builder()
             		.withAlias(possibleName)
-            		.withColumnDefinitions(PojoUtil.getColumnDefinitions(inlineTable.getColumnDefinitions()))
-            		.withRows(PojoUtil.getRows(inlineTable.getRows()))
+            		.withTable((InlineTableImpl) inlineTable.getTable())
             		.build();
         } else {
             throw new UnsupportedOperationException();
@@ -1460,7 +1461,15 @@ public class RolapStar {
          */
         public String getTableName() {
             if (relation instanceof TableQueryMapping t) {
-                return t.getName();
+                return t.getTable().getName();
+            } else {
+                return null;
+            }
+        }
+
+        public org.eclipse.daanse.rdb.structure.api.model.Table getTable() {
+            if (relation instanceof TableQueryMapping t) {
+                return t.getTable();
             } else {
                 return null;
             }
@@ -1840,7 +1849,7 @@ public class RolapStar {
         }
 
         public boolean equalsTableName(String tableName) {
-            return (this.relation instanceof TableQueryMapping mt && mt.getName().equals(tableName));
+            return (this.relation instanceof TableQueryMapping mt && mt.getTable().getName().equals(tableName));
         }
 
         /**

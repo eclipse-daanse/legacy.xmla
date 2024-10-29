@@ -45,6 +45,10 @@ import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
+import org.eclipse.daanse.rdb.structure.api.model.Row;
+import org.eclipse.daanse.rdb.structure.api.model.RowValue;
+import org.eclipse.daanse.rdb.structure.pojo.SqlStatementImpl;
+import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableRowCellMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableRowMappingMapping;
@@ -536,21 +540,21 @@ public class RolapUtil {
         final Dialect dialect)
     {
                 
-        final int columnCount = inlineTable.getColumnDefinitions().size();
+        final int columnCount = inlineTable.getTable().getColumns().size();
         List<String> columnNames = new ArrayList<>();
         List<String> columnTypes = new ArrayList<>();
         for (int i = 0; i < columnCount; i++) {
-            columnNames.add(inlineTable.getColumnDefinitions().get(i).getName());
-            columnTypes.add(inlineTable.getColumnDefinitions().get(i).getDataType().getValue());
+            columnNames.add(inlineTable.getTable().getColumns().get(i).getName());
+            columnTypes.add(inlineTable.getTable().getColumns().get(i).getType());
         }
         List<String[]> valueList = new ArrayList<>();
-        for (InlineTableRowMappingMapping row : inlineTable.getRows()) {
+        for (Row row : inlineTable.getTable().getRows()) {
             String[] values = new String[columnCount];
-            for (InlineTableRowCellMapping value : row.getCells()) {
-                final int columnOrdinal = columnNames.indexOf(value.getColumnName());
+            for (RowValue value : row.getRowValues()) {
+                final int columnOrdinal = columnNames.indexOf(value.getColumn().getName());
                 if (columnOrdinal < 0) {
                     throw Util.newError(
-                        new StringBuilder("Unknown column '").append(value.getColumnName()).append("'").toString());
+                        new StringBuilder("Unknown column '").append(value.getColumn().getName()).append("'").toString());
                 }
                 values[columnOrdinal] = value.getValue();
             }
@@ -558,12 +562,16 @@ public class RolapUtil {
         }
         SqlSelectQueryMappingImpl view = SqlSelectQueryMappingImpl.builder()
         		.withAlias(getAlias(inlineTable))
-        		.withSql(List.of(
-        				SQLMappingImpl.builder()
-        				.withDialects(List.of("generic"))
-        				.withStatement(dialect.generateInline(columnNames, columnTypes, valueList).toString())
-        				.build()))
-        		.build();        
+        		.withSql(SqlViewImpl.builder()
+        				//TODO
+        				.withSqlStatements(List.of(
+        					SqlStatementImpl.builder()
+        					.withDialects(List.of("generic"))
+        					.withSql(dialect.generateInline(columnNames, columnTypes, valueList).toString())
+        					.build()
+        				))
+        				.build())
+        		.build();
         return view;
     }
 

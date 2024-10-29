@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
@@ -54,7 +55,7 @@ public class RolapStatisticsCache {
         }
         if (relation instanceof TableQueryMapping table) {
             return getTableCardinality(
-                null, table.getSchema(), table.getName());
+                null, table.getTable());
         } else {
             final SqlQuery sqlQuery = star.getSqlQuery();
             sqlQuery.addSelect("*", null);
@@ -65,10 +66,10 @@ public class RolapStatisticsCache {
 
     private long getTableCardinality(
         String catalog,
-        String schema,
-        String table)
+        Table table)
     {
-        final List<String> key = Arrays.asList(catalog, schema, table);
+    	String schema = table.getSchema() != null ? table.getSchema().getName() : null;
+        final List<String> key = Arrays.asList(catalog, schema, table.getName());
         long rowCount = -1;
         if (tableMap.containsKey(key)) {
             rowCount = tableMap.get(key);
@@ -87,7 +88,7 @@ public class RolapStatisticsCache {
                     star.getContext(),
                     catalog,
                     schema,
-                    table,
+                    table.getName(),
                     execution);
                 if (rowCount >= 0) {
                     break;
@@ -142,8 +143,7 @@ public class RolapStatisticsCache {
         {
             return getColumnCardinality(
                 null,
-                table.getSchema(),
-                table.getName(),
+                table.getTable(),
                 column.getName());
         } else {
             final SqlQuery sqlQuery = star.getSqlQuery();
@@ -156,11 +156,11 @@ public class RolapStatisticsCache {
 
     private long getColumnCardinality(
         String catalog,
-        String schema,
-        String table,
+        Table table,
         String column)
     {
-        final List<String> key = Arrays.asList(catalog, schema, table, column);
+    	String schema = table.getSchema() != null ? table.getSchema().getName() : null;
+        final List<String> key = Arrays.asList(catalog, schema, table.getName(), column);
         long rowCount = -1;
         if (columnMap.containsKey(key)) {
             rowCount = columnMap.get(key);
@@ -179,7 +179,7 @@ public class RolapStatisticsCache {
                     star.getContext(),
                     catalog,
                     schema,
-                    table,
+                    table.getName(),
                     column,
                     execution);
                 if (rowCount >= 0) {

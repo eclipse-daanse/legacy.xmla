@@ -281,7 +281,7 @@ public class ExplicitRules {
             RelationalQueryMapping relation = table.getRelation();
 
             if (relation instanceof TableQueryMapping mtable) {
-                schema = mtable.getSchema();
+                schema = mtable.getTable().getName();
             }
             return schema;
         }

@@ -15,11 +15,14 @@ package mondrian.rolap.aggmatcher;
 
 import java.util.List;
 
+import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
+import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationTableMappingImpl;
@@ -42,42 +45,42 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
             .withHierarchies(List.of(
             	HierarchyMappingImpl.builder()
                     .withHasAll(true)
-                    .withPrimaryKey("store_id")
-                    .withQuery(TableQueryMappingImpl.builder().withName("store").build())
+                    .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
+                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
                     .withLevels(List.of(
                     	LevelMappingImpl.builder()
                             .withName("Store Country")
-                            .withColumn("store_country")
+                            .withColumn(FoodmartMappingSupplier.STORE_COUNTRY_COLUMN_IN_STORE)
                             .withUniqueMembers(true)
                             .build(),
                         LevelMappingImpl.builder()
                             .withName("Store State")
-                            .withColumn("store_state")
+                            .withColumn(FoodmartMappingSupplier.STORE_STATE_COLUMN_IN_STORE)
                             .withUniqueMembers(true)
                             .build(),
                         LevelMappingImpl.builder()
                             .withName("Store City")
-                            .withColumn("store_city")
+                            .withColumn(FoodmartMappingSupplier.STORE_CITY_COLUMN_IN_STORE)
                             .withUniqueMembers(false)
                             .build(),
                         LevelMappingImpl.builder()
                             .withName("Store Name")
-                            .withColumn("store_name")
+                            .withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                             .withUniqueMembers(true)                            
                             .withMemberProperties(List.of(
-                            	MemberPropertyMappingImpl.builder().withName("Store Type").withColumn("store_type").build(),
-                            	MemberPropertyMappingImpl.builder().withName("Store Manager").withColumn("store_manager").build(),
-                            	MemberPropertyMappingImpl.builder().withName("Store Sqft").withColumn("store_sqft")
+                                MemberPropertyMappingImpl.builder().withName("Store Type").withColumn(FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE).build(),
+                                MemberPropertyMappingImpl.builder().withName("Store Manager").withColumn(FoodmartMappingSupplier.STORE_MANAGER_COLUMN_IN_STORE).build(),
+                                MemberPropertyMappingImpl.builder().withName("Store Sqft").withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
                                     .withDataType(DataType.NUMERIC).build(),
-                                MemberPropertyMappingImpl.builder().withName("Grocery Sqft").withColumn("grocery_sqft")
-                                	.withDataType(DataType.NUMERIC).build(),
-                                MemberPropertyMappingImpl.builder().withName("Frozen Sqft").withColumn("frozen_sqft")
-                                	.withDataType(DataType.NUMERIC).build(),
-                                MemberPropertyMappingImpl.builder().withName("Meat Sqft").withColumn("meat_sqft")
-                                	.withDataType(DataType.NUMERIC).build(),
-                                MemberPropertyMappingImpl.builder().withName("Has coffee bar").withColumn("coffee_bar")
-                                	.withDataType(DataType.BOOLEAN).build(),
-                                MemberPropertyMappingImpl.builder().withName("Street address").withColumn("store_street_address")
+                                MemberPropertyMappingImpl.builder().withName("Grocery Sqft").withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE)
+                                    .withDataType(DataType.NUMERIC).build(),
+                                MemberPropertyMappingImpl.builder().withName("Frozen Sqft").withColumn(FoodmartMappingSupplier.FROZEN_SQFT_COLUMN_IN_STORE)
+                                    .withDataType(DataType.NUMERIC).build(),
+                                MemberPropertyMappingImpl.builder().withName("Meat Sqft").withColumn(FoodmartMappingSupplier.MEAT_SQFT_COLUMN_IN_STORE)
+                                    .withDataType(DataType.NUMERIC).build(),
+                                MemberPropertyMappingImpl.builder().withName("Has coffee bar").withColumn(FoodmartMappingSupplier.COFFEE_BAR_COLUMN_IN_STORE)
+                                    .withDataType(DataType.BOOLEAN).build(),
+                                MemberPropertyMappingImpl.builder().withName("Street address").withColumn(FoodmartMappingSupplier.STREET_ADDRESS_COLUMN_IN_STORE)
                                 .withDataType(DataType.STRING).build()
                                 ))
                             .build()
@@ -85,31 +88,61 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                     .build()
             ))
 			.build();
-	
+
+    public static final ColumnImpl TIME_ID_COLUMN_IN_TIME_CSV = ColumnImpl.builder().withName("time_id").withType("INTEGER").build();
+    public static final ColumnImpl THE_YEAR_COLUMN_IN_TIME_CSV = ColumnImpl.builder().withName("the_year").withType("SMALLINT").build();
+    public static final ColumnImpl MONTH_OF_YEAR_COLUMN_IN_TIME_CSV = ColumnImpl.builder().withName("month_of_year").withType("SMALLINT").build();
+    public static final ColumnImpl QUARTER_COLUMN_IN_TIME_CSV = ColumnImpl.builder().withName("quarter").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+    public static final ColumnImpl DAY_OF_MONTH_COLUMN_TIME_CSV = ColumnImpl.builder().withName("day_of_month").withType("SMALLINT").build();
+    public static final ColumnImpl WEEK_OF_YEAR_COLUMN_IN_TIME_CSV = ColumnImpl.builder().withName("week_of_year").withType("INTEGER").build();
+    public static final PhysicalTableImpl TIME_CSV_TABLE = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("time_csv")
+            .withColumns(List.of(
+                    TIME_ID_COLUMN_IN_TIME_CSV,
+                    THE_YEAR_COLUMN_IN_TIME_CSV,
+                    MONTH_OF_YEAR_COLUMN_IN_TIME_CSV,
+                    QUARTER_COLUMN_IN_TIME_CSV,
+                    WEEK_OF_YEAR_COLUMN_IN_TIME_CSV,
+                    DAY_OF_MONTH_COLUMN_TIME_CSV
+                    ))).build();
+    
+    public static final ColumnImpl TIME_ID_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("time_id").withType("INTEGER").build();
+    public static final ColumnImpl STORE_ID_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
+    public static final ColumnImpl UNIT_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("unit_sales").withType("INTEGER").build();
+    public static final ColumnImpl STORE_COST_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("store_cost").withType("INTEGER").build();
+    public static final ColumnImpl STORE_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("store_sales").withType("INTEGER").build();
+    public static final PhysicalTableImpl FACT_CSV_2016_TABLE = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("fact_csv_2016")
+            .withColumns(List.of(
+                    TIME_ID_COLUMN_IN_FACT_CSV_2016,
+                    STORE_ID_COLUMN_IN_FACT_CSV_2016,
+                    UNIT_SALES_COLUMN_IN_FACT_CSV_2016,
+                    STORE_COST_COLUMN_IN_FACT_CSV_2016,
+                    STORE_SALES_COLUMN_IN_FACT_CSV_2016
+                    ))).build();
+    
 	private static DimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
-            .withName("Time")            
+            .withName("Time")
             .withHierarchies(List.of(
                 HierarchyMappingImpl.builder()
                     .withHasAll(false)
-                    .withPrimaryKey("time_id")
-                    .withQuery(TableQueryMappingImpl.builder().withName("time_csv").build())
+                    .withPrimaryKey(TIME_ID_COLUMN_IN_TIME_CSV)
+                    .withQuery(TableQueryMappingImpl.builder().withTable(TIME_CSV_TABLE).build())
                     .withLevels(List.of(
                         LevelMappingImpl.builder()
                             .withName("Year")
-                            .withColumn("the_year")
+                            .withColumn(THE_YEAR_COLUMN_IN_TIME_CSV)
                             .withType(DataType.NUMERIC)
                             .withUniqueMembers(true)
                             .withLevelType(LevelType.TIME_YEARS)
                             .build(),
                         LevelMappingImpl.builder()
                             .withName("Quarter")
-                            .withColumn("quarter")
+                            .withColumn(QUARTER_COLUMN_IN_TIME_CSV)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.TIME_QUARTERS)
                             .build(),
                         LevelMappingImpl.builder()
                             .withName("Month")
-                            .withColumn("month_of_year")
+                            .withColumn(MONTH_OF_YEAR_COLUMN_IN_TIME_CSV)
                             .withUniqueMembers(false)
                             .withType(DataType.NUMERIC)
                             .withLevelType(LevelType.TIME_MONTHS)
@@ -119,26 +152,26 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                 HierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withName("Weekly")
-                    .withPrimaryKey("time_id")
-                    .withQuery(TableQueryMappingImpl.builder().withName("time_csv").build())
+                    .withPrimaryKey(TIME_ID_COLUMN_IN_TIME_CSV)
+                    .withQuery(TableQueryMappingImpl.builder().withTable(TIME_CSV_TABLE).build())
                     .withLevels(List.of(
                         LevelMappingImpl.builder()
                             .withName("Year")
-                            .withColumn("the_year")
+                            .withColumn(THE_YEAR_COLUMN_IN_TIME_CSV)
                             .withType(DataType.NUMERIC)
                             .withUniqueMembers(true)
                             .withLevelType(LevelType.TIME_YEARS)
                             .build(),
                         LevelMappingImpl.builder()
                             .withName("Week")
-                            .withColumn("week_of_year")
+                            .withColumn(WEEK_OF_YEAR_COLUMN_IN_TIME_CSV)
                             .withType(DataType.NUMERIC)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.TIME_WEEKS)
                             .build(),
                         LevelMappingImpl.builder()
                             .withName("Day")
-                            .withColumn("day_of_month")
+                            .withColumn(DAY_OF_MONTH_COLUMN_TIME_CSV)
                             .withType(DataType.NUMERIC)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.TIME_DAYS)
@@ -150,7 +183,7 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
 	
 	private static MeasureMappingImpl unitSales = MeasureMappingImpl.builder()
 			.withName("Unit Sales")
-			.withColumn("unit_sales")
+			.withColumn(UNIT_SALES_COLUMN_IN_FACT_CSV_2016)
 			.withAggregatorType(MeasureAggregatorType.AVG)
 			.withFormatString("Standard")
 			.build();
@@ -225,32 +258,27 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
             	PhysicalCubeMappingImpl.builder()
                     .withName("Sales")
                     .withDefaultMeasure(unitSales)
-                    .withQuery(TableQueryMappingImpl.builder().withName("fact_csv_2016").withAggregationExcludes(getAggExcludes()).withAggregationTables(getAggTables()).build())
+                    .withQuery(TableQueryMappingImpl.builder().withTable(FACT_CSV_2016_TABLE).withAggregationExcludes(getAggExcludes()).withAggregationTables(getAggTables()).build())
                     .withDimensionConnectors(List.of(
-                    		DimensionConnectorMappingImpl.builder().withDimension(timeDimension).withOverrideDimensionName("Time").withForeignKey("time_id").build(),
-                    		DimensionConnectorMappingImpl.builder().withDimension(storeDimension).withOverrideDimensionName("Store").withForeignKey("store_id").build()
+                    		DimensionConnectorMappingImpl.builder().withDimension(timeDimension).withOverrideDimensionName("Time").withForeignKey(TIME_ID_COLUMN_IN_FACT_CSV_2016).build(),
+                    		DimensionConnectorMappingImpl.builder().withDimension(storeDimension).withOverrideDimensionName("Store").withForeignKey(STORE_ID_COLUMN_IN_FACT_CSV_2016).build()
                     		))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                        MeasureMappingImpl.builder()
-                            .withName("Unit Sales")
-                            .withColumn("unit_sales")
-                            .withAggregatorType(MeasureAggregatorType.AVG)
-                            .withFormatString("Standard")
-                            .build(),
+                    	unitSales,
                         MeasureMappingImpl.builder()
                             .withName("Store Cost")
-                            .withColumn("store_cost")
+                            .withColumn(STORE_COST_COLUMN_IN_FACT_CSV_2016)
                             .withAggregatorType(MeasureAggregatorType.AVG)
                             .withFormatString("#,###.00")
                             .build(),
                         MeasureMappingImpl.builder()
                             .withName("Store Sales")
-                            .withColumn("store_sales")
+                            .withColumn(STORE_SALES_COLUMN_IN_FACT_CSV_2016)
                             .withAggregatorType(MeasureAggregatorType.AVG)
                             .withFormatString("#,###.00")
-                            .build()                    		
+                            .build()
                     		))
-                    .build()                    
+                    .build()
                     )).build()
                     )).build();
 

@@ -18,6 +18,7 @@ import static mondrian.rolap.util.JoinUtil.right;
 
 import java.util.Objects;
 
+import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
@@ -38,7 +39,7 @@ public class RelationUtil {
             return tableName.equals(inlineTable.getAlias()) ? (RelationalQueryMapping) relationOrJoin : null;
         }
         if (relationOrJoin instanceof TableQueryMapping table) {
-            if (tableName.equals(table.getName())) {
+            if (tableName.equals(table.getTable().getName())) {
                 return (RelationalQueryMapping) relationOrJoin;
             } else {
                     return null; //old version of code had wrong condition with equals
@@ -65,7 +66,7 @@ public class RelationUtil {
 
     public static String getAlias(RelationalQueryMapping relation) {
         if (relation instanceof TableQueryMapping table) {
-            return (table.getAlias() != null) ? table.getAlias() : table.getName();
+            return (table.getAlias() != null) ? table.getAlias() : table.getTable().getName();
         }
         else {
             return relation.getAlias();
@@ -79,21 +80,23 @@ public class RelationUtil {
                     return false;
                 }
                 if (
-                    view.getSQL() == null || that.getSQL() == null
-                    || view.getSQL().size() != that.getSQL().size()) {
+                    view.getSql() == null || that.getSql() == null
+                    || view.getSql().getSqlStatements() == null || that.getSql().getSqlStatements() == null
+                    || view.getSql().getSqlStatements().size() != that.getSql().getSqlStatements().size()) {
                     return false;
                 }
-                for (int i = 0; i < view.getSQL().size(); i++) {
-                    if (!Objects.equals(view.getSQL().get(i).getStatement(), that.getSQL().get(i).getStatement()))
+                for (int i = 0; i < view.getSql().getSqlStatements().size(); i++) {
+                    if (view.getSql().getSqlStatements().get(i).getSql() == null || that.getSql().getSqlStatements().get(i).getSql() == null || 
+                    		!Objects.equals(view.getSql().getSqlStatements().get(i).getSql(), that.getSql().getSqlStatements().get(i).getSql()))
                     {
                         return false;
                     }
-                    if (view.getSQL().get(i).getDialects() == null || that.getSQL().get(i).getDialects() == null
-                        || view.getSQL().get(i).getDialects().size() != that.getSQL().get(i).getDialects().size()) {
+                    if (view.getSql().getSqlStatements().get(i).getDialects() == null || that.getSql().getSqlStatements().get(i).getDialects() == null
+                        || view.getSql().getSqlStatements().get(i).getDialects().size() != that.getSql().getSqlStatements().get(i).getDialects().size()) {
                         return false;
                     }
-                    for (int j = 0; j< view.getSQL().get(i).getDialects().size(); j++) {
-                        if (!view.getSQL().get(i).getDialects().get(j).equals(that.getSQL().get(i).getDialects().get(j))) {
+                    for (int j = 0; j< view.getSql().getSqlStatements().get(i).getDialects().size(); j++) {
+                        if (!view.getSql().getSqlStatements().get(i).getDialects().get(j).equals(that.getSql().getSqlStatements().get(i).getDialects().get(j))) {
                             return false;
                         }
                     }
@@ -106,9 +109,10 @@ public class RelationUtil {
         }
         if (relation instanceof TableQueryMapping table) {
             if (o instanceof TableQueryMapping that) {
-                return table.getName().equals(that.getName()) &&
+                return table.getTable() != null &&  that.getTable() != null && 
+                	table.getTable().getName().equals(that.getTable().getName()) &&
                     Objects.equals(relation.getAlias(), that.getAlias()) &&
-                    Objects.equals(table.getSchema(), that.getSchema());
+                    Objects.equals(table.getTable().getSchema(), that.getTable().getSchema());
             } else {
                 return false;
             }
@@ -136,9 +140,9 @@ public class RelationUtil {
 
     private static Object toString(RelationalQueryMapping relation) {
         if (relation instanceof TableQueryMapping table) {
-            return (table.getSchema() == null) ?
-                table.getName() :
-                new StringBuilder(table.getSchema()).append(".").append(table.getName()).toString();
+            return (table.getTable().getSchema() == null || table.getTable().getSchema().getName() == null) ?
+                table.getTable().getName() :
+                new StringBuilder(table.getTable().getSchema().getName()).append(".").append(table.getTable().getName()).toString();
         }
         if (relation instanceof JoinQueryMapping join) {
             return new StringBuilder("(").append(left(join)).append(") join (").append(right(join)).append(") on ")

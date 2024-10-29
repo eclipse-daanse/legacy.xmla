@@ -16,6 +16,7 @@ package mondrian.rolap.util;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.daanse.rdb.structure.api.model.SqlStatement;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLMapping;
 
 import mondrian.rolap.sql.SqlQuery;
@@ -25,6 +26,16 @@ public class SQLUtil {
      * Converts an array of SQL to a
      * {@link mondrian.rolap.sql.SqlQuery.CodeSet} object.
      */
+    public static SqlQuery.CodeSet toCodeSetSqlStatement(List<? extends SqlStatement> sqls) {
+        SqlQuery.CodeSet codeSet = new SqlQuery.CodeSet();
+        for (SqlStatement sql : sqls) {
+            for (String dialect : sql.getDialects()) {
+                codeSet.put(dialect, sql.getSql());
+            }
+        }
+        return codeSet;
+    }
+
     public static SqlQuery.CodeSet toCodeSet(List<? extends SQLMapping> sqls) {
         SqlQuery.CodeSet codeSet = new SqlQuery.CodeSet();
         for (SQLMapping sql : sqls) {

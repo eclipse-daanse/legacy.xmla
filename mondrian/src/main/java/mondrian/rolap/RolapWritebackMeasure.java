@@ -11,15 +11,16 @@
 package mondrian.rolap;
 
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.rdb.structure.api.model.Column;
 
 public class RolapWritebackMeasure  extends RolapWritebackColumn{
     private final Member measure;
 
     public RolapWritebackMeasure(
             Member measure,
-            String columnName
+            Column column
     ) {
-        super(columnName);
+        super(column);
         this.measure = measure;
     }
 

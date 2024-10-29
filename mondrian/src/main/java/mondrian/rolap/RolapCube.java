@@ -648,7 +648,7 @@ public class RolapCube extends CubeBase {
                     cubeMapping.getName(), measureMapping.getName());
             }
             measureExp = new mondrian.rolap.RolapColumn(
-                getAlias(getFact()), measureMapping.getColumn());
+                getAlias(getFact()), measureMapping.getColumn().getName());
         } else if (measureMapping.getMeasureExpression() != null) {
             measureExp = measureMapping.getMeasureExpression();
         } else if (measureMapping.getAggregatorType().equals(MeasureAggregatorType.COUNT)) {
@@ -2158,7 +2158,7 @@ public class RolapCube extends CubeBase {
                     // jhyde: check is disabled until we handle <View> correctly
                     if (false
                         && !starInner.getFactTable().containsColumn(
-                            hierarchyUsage.getForeignKey()))
+                            hierarchyUsage.getForeignKey().getName()))
                     {
                         throw  new MondrianException(MessageFormat.format(
                             hierarchyInvalidForeignKey,
@@ -2172,7 +2172,7 @@ public class RolapCube extends CubeBase {
                     mondrian.rolap.RolapColumn column =
                         new mondrian.rolap.RolapColumn(
                             table.getAlias(),
-                            hierarchyUsage.getForeignKey());
+                            hierarchyUsage.getForeignKey().getName());
                     // parameters:
                     //   left column
                     //   right column
@@ -2325,7 +2325,7 @@ public class RolapCube extends CubeBase {
     {
         if (relation instanceof TableQueryMapping table) {
             buf.append(indent);
-            buf.append(table.getName());
+            buf.append(table.getTable().getName());
             if (table.getAlias() != null) {
                 buf.append('(');
                 buf.append(table.getAlias());
@@ -2401,7 +2401,7 @@ public class RolapCube extends CubeBase {
         {
             RelNode relNode;
             if (table instanceof TableQueryMapping t) {
-                relNode = map.get(t.getName());
+                relNode = map.get(t.getTable().getName());
                 if (relNode != null) {
                     return relNode;
                 }
@@ -2691,7 +2691,7 @@ public class RolapCube extends CubeBase {
             if ((table.getAlias() != null) && table.getAlias().equals(tableName)) {
                 return null;
             } else {
-                return table.getName().equals(tableName) ? null : table;
+                return table.getTable().getName().equals(tableName) ? null : table;
             }
 
         } else if (relation instanceof JoinQueryMapping join) {

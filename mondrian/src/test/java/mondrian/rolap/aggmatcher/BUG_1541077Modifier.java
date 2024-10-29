@@ -16,6 +16,8 @@ package mondrian.rolap.aggmatcher;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
@@ -80,11 +82,36 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
      */
 
     protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+    	//## ColumnNames: prod_id,store_id,amount
+    	//## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2)
+        ColumnImpl store_id_cheques = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
+        ColumnImpl prod_id_cheques = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
+        ColumnImpl amount_cheques = ColumnImpl.builder().withName("amount").withType("DECIMAL").withTypeQualifiers(List.of("10", "2")).build();
+        PhysicalTableImpl cheques = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("cheques")
+                .withColumns(List.of(
+                        store_id_cheques, prod_id_cheques
+                        ))).build();
+        //## ColumnNames: store_id,value
+        //## ColumnTypes: INTEGER,DECIMAL(10,2)
+        ColumnImpl store_id_store_x = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
+        ColumnImpl value_store_x = ColumnImpl.builder().withName("store_id").withType("DECIMAL").withTypeQualifiers(List.of("10", "2")).build();
+        PhysicalTableImpl store_x = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("store_x")
+                .withColumns(List.of(
+                        store_id_store_x, value_store_x
+                        ))).build();
+        //## ColumnNames: prod_id,name
+        //## ColumnTypes: INTEGER,VARCHAR(30)
+        ColumnImpl prod_id_product_x = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
+        ColumnImpl name_product_x = ColumnImpl.builder().withName("name").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        PhysicalTableImpl product_x = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("product_x")
+                .withColumns(List.of(
+                        prod_id_product_x, name_product_x
+                        ))).build();
         List<CubeMapping> result = new ArrayList<>();
         result.addAll(super.schemaCubes(schema));
         result.add(PhysicalCubeMappingImpl.builder()
             .withName("Cheques")
-            .withQuery(TableQueryMappingImpl.builder().withName("cheques")
+            .withQuery(TableQueryMappingImpl.builder().withTable(cheques)
             		.withAggregationTables(List.of(
                             AggregationNameMappingImpl.builder()
                             .withName("agg_lp_xxx_cheques")
@@ -109,18 +136,18 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
             .withDimensionConnectors(List.of(
             	DimensionConnectorMappingImpl.builder()
             		.withOverrideDimensionName("StoreX")
-                    .withForeignKey("store_id")
+                    .withForeignKey(store_id_cheques)
                     .withDimension(StandardDimensionMappingImpl.builder()
                     	.withName("StoreX")
                     	.withHierarchies(List.of(
                         HierarchyMappingImpl.builder()
                             .withHasAll(true)
-                            .withPrimaryKey("store_id")
-                            .withQuery(TableQueryMappingImpl.builder().withName("store_x").build())
+                            .withPrimaryKey(store_id_store_x)
+                            .withQuery(TableQueryMappingImpl.builder().withTable(store_x).build())
                             .withLevels(List.of(
                                 LevelMappingImpl.builder()
                                     .withName("Store Value")
-                                    .withColumn("value")
+                                    .withColumn(value_store_x)
                                     .withUniqueMembers(true)
                                     .build()
                             ))
@@ -129,18 +156,18 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
                     .build(),
                 DimensionConnectorMappingImpl.builder()
                     .withOverrideDimensionName("ProductX")
-                    .withForeignKey("prod_id")
+                    .withForeignKey(prod_id_cheques)
                     .withDimension(StandardDimensionMappingImpl.builder()
                         .withName("ProductX")
                         .withHierarchies(List.of(
                         HierarchyMappingImpl.builder()
                             .withHasAll(true)
-                            .withPrimaryKey("prod_id")
-                            .withQuery(TableQueryMappingImpl.builder().withName("product_x").build())
+                            .withPrimaryKey(prod_id_product_x)
+                            .withQuery(TableQueryMappingImpl.builder().withTable(product_x).build())
                             .withLevels(List.of(
                                 LevelMappingImpl.builder()
                                     .withName("Store Name")
-                                    .withColumn("name")
+                                    .withColumn(name_product_x)
                                     .withUniqueMembers(true)
                                     .build()
                             ))
@@ -151,25 +178,25 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
             .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
                 MeasureMappingImpl.builder()
                     .withName("Sales Count")
-                    .withColumn("prod_id")
+                    .withColumn(prod_id_cheques)
                     .withAggregatorType(MeasureAggregatorType.COUNT)
                     .withFormatString("#,###")
                     .build(),
                 MeasureMappingImpl.builder()
                     .withName("Store Count")
-                    .withColumn("store_id")
+                    .withColumn(store_id_cheques)
                     .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
                     .withFormatString("#,###")
                     .build(),
                 MeasureMappingImpl.builder()
                     .withName("Total Amount")
-                    .withColumn("amount")
+                    .withColumn(amount_cheques)
                     .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build(),
                 MeasureMappingImpl.builder()
                     .withName("Avg Amount")
-                    .withColumn("amount")
+                    .withColumn(amount_cheques)
                     .withAggregatorType(MeasureAggregatorType.AVG)
                     .withFormatString("00.0")
                     .build()

@@ -30,7 +30,7 @@ public class LevelUtil {
         if (level.getKeyExpression() != null) {
             return level.getKeyExpression();
         } else if (level.getColumn() != null) {
-            return new RolapColumn(level.getTable(), level.getColumn());
+            return new RolapColumn(level.getTable().getName(), level.getColumn().getName());
         } else {
             return null;
         }
@@ -40,7 +40,7 @@ public class LevelUtil {
         if (level.getNameExpression() != null) {
             return level.getNameExpression();
         } else if (level.getNameColumn() != null && !Objects.equals(level.getNameColumn(), level.getColumn())) {
-            return new RolapColumn(level.getTable(), level.getNameColumn());
+            return new RolapColumn(level.getTable().getName(), level.getNameColumn().getName());
         } else {
             return null;
         }
@@ -50,7 +50,7 @@ public class LevelUtil {
         if (level.getCaptionExpression() != null) {
             return level.getCaptionExpression();
         } else if (level.getCaptionColumn() != null) {
-            return new RolapColumn(level.getTable(), level.getCaptionColumn());
+            return new RolapColumn(level.getTable().getName(), level.getCaptionColumn().getName());
         } else {
             return null;
         }
@@ -60,7 +60,7 @@ public class LevelUtil {
         if (level.getOrdinalExpression() != null) {
             return level.getOrdinalExpression();
         } else if (level.getOrdinalColumn() != null) {
-            return new RolapColumn(level.getTable(), level.getOrdinalColumn());
+            return new RolapColumn(level.getTable().getName(), level.getOrdinalColumn().getName());
         } else {
             return null;
         }
@@ -70,13 +70,13 @@ public class LevelUtil {
         if (level.getParentExpression() != null) {
             return level.getParentExpression();
         } else if (level.getParentColumn() != null) {
-            return new RolapColumn(level.getTable(), level.getParentColumn());
+            return new RolapColumn(level.getTable().getName(), level.getParentColumn().getName());
         } else {
             return null;
         }
     }
 
     public static SQLExpressionMapping getPropertyExp(LevelMapping level, int i) {
-        return new RolapColumn(level.getTable(), level.getMemberProperties().get(i).getColumn());
+        return new RolapColumn(level.getTable().getName(), level.getMemberProperties().get(i).getColumn().getName());
     }
 }

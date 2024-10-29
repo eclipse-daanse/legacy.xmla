@@ -7,15 +7,27 @@ import static mondrian.rolap.util.JoinUtil.right;
 
 import java.util.List;
 
+import org.eclipse.daanse.rdb.structure.api.model.Column;
+import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
+import org.eclipse.daanse.rdb.structure.api.model.InlineTable;
+import org.eclipse.daanse.rdb.structure.api.model.Row;
+import org.eclipse.daanse.rdb.structure.api.model.RowValue;
+import org.eclipse.daanse.rdb.structure.api.model.SqlStatement;
+import org.eclipse.daanse.rdb.structure.api.model.SqlView;
+import org.eclipse.daanse.rdb.structure.api.model.Table;
+import org.eclipse.daanse.rdb.structure.pojo.InlineTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.RowImpl;
+import org.eclipse.daanse.rdb.structure.pojo.RowValueImpl;
+import org.eclipse.daanse.rdb.structure.pojo.SqlStatementImpl;
+import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl;
+import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationExcludeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationNameMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationPatternMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationTableMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.InlineTableColumnDefinitionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.InlineTableRowCellMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.InlineTableRowMappingMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLMapping;
@@ -26,10 +38,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationPatternMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationTableMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.InlineTableColumnDefinitionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.InlineTableRowCellMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.InlineTableRowMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.QueryMappingImpl;
@@ -45,24 +54,48 @@ public class PojoUtil {
         // constructor
     }
 
-	public static List<SQLMappingImpl> getSqls(List<? extends SQLMapping> sqls) {
-		if (sqls != null) {
-			sqls.stream().map(s -> getSql(s)).toList();
-		}
-		return List.of();
-	}
-
-	private static SQLMappingImpl getSql(SQLMapping s) {
+	public static SqlView getSql(SqlView s) {
 		if (s != null) {
-			return SQLMappingImpl.builder()
-					.withDialects(s.getDialects())
-					.withStatement(s.getStatement())
+			return ((Builder) SqlViewImpl.builder()
+					.withsSchema(getDatabaseSchema(s.getSchema()))
+					.withColumns(getColumns(s.getColumns()))
+					.withName(s.getName()))
+					.withSqlStatements(getSqlStatements(s.getSqlStatements()))
 					.build();
 		}
 		return null;
 	}
 
-    /**
+    private static SQLMappingImpl getSql(SQLMapping s) {
+        if (s != null) {
+            return SQLMappingImpl.builder()
+                .withDialects(s.getDialects())
+                .withStatement(s.getStatement())
+                .build();
+        }
+        return null;
+    }
+
+    private static List<SqlStatementImpl> getSqlStatements(List<? extends SqlStatement> sqlStatements) {
+   		if (sqlStatements != null) {
+   			sqlStatements.stream().map(s -> getSqlStatement(s)).toList();
+   		}
+   		return List.of();
+	}
+
+    public static SqlStatementImpl getSqlStatement(SqlStatement s) {
+    	List<String> dialects = getDialects(s.getDialects());
+    	return SqlStatementImpl.builder().withDialects(dialects).withSql(s.getSql()).build();
+    }
+
+	private static List<String> getDialects(List<String> dialects) {
+		if (dialects != null) {
+			dialects.stream().map(String::new).toList();
+		}
+		return List.of();
+	}
+
+	/**
      * Copies a {@link QueryMapping}.
      *
      * @param relation A table or a join
@@ -78,8 +111,7 @@ public class PojoUtil {
 
             return TableQueryMappingImpl.builder()
             		.withAlias(table.getAlias())
-            		.withName(table.getName())
-            		.withSchema(table.getSchema())
+            		.withTable(getTable(table.getTable()))
             		.withSqlWhereExpression(sqlMappingImpl)
             		.withAggregationExcludes(aggregationExcludes)
             		.withOptimizationHints(optimizationHints)
@@ -89,8 +121,7 @@ public class PojoUtil {
         } else if (relation instanceof InlineTableQueryMapping table) {
             return InlineTableQueryMappingImpl.builder()
             		.withAlias(table.getAlias())
-            		.withColumnDefinitions(getColumnDefinitions(table.getColumnDefinitions()))
-            		.withRows(getRows(table.getRows()))
+            		.withTable(getInlineTable(table.getTable()))
             		.build();
 
         } else if (relation instanceof JoinQueryMapping join) {
@@ -105,14 +136,17 @@ public class PojoUtil {
         }
     }
 
-
-    public static List<InlineTableColumnDefinitionMappingImpl> getColumnDefinitions(
-			List<? extends InlineTableColumnDefinitionMapping> columnDefinitions) {
-    	if (columnDefinitions != null) {
-    		return columnDefinitions.stream().map(cd -> InlineTableColumnDefinitionMappingImpl.builder()
-    				.withName(cd.getName()).withType(cd.getDataType()).build()).toList();
-    	}
-		return List.of();
+	public static InlineTableImpl getInlineTable(InlineTable table) {
+    	List<Row> rows = getRows(table.getRows());
+    	List<org.eclipse.daanse.rdb.structure.pojo.ColumnImpl> columns = getColumns(table.getColumns());
+    	org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl schema = getDatabaseSchema(table.getSchema());
+    	InlineTableImpl inlineTable = InlineTableImpl.builder().build();
+        inlineTable.setName(table.getName());
+        inlineTable.setColumns(columns);
+        inlineTable.setSchema(schema);
+        inlineTable.setDescription(table.getDescription());
+        inlineTable.setRows(rows);
+    	return inlineTable;
 	}
 
 	private static List<AggregationTableMappingImpl> getAggregationTables(
@@ -124,7 +158,6 @@ public class PojoUtil {
 	}
 
 	private static AggregationTableMappingImpl getAggregationTable(AggregationTableMapping a) {
-		//TODO
 		if (a instanceof AggregationNameMapping anm) {
 			return AggregationNameMappingImpl.builder()
 					.withApproxRowCount(anm.getApproxRowCount())
@@ -178,18 +211,31 @@ public class PojoUtil {
     	return List.of();
 	}
 
-	private static List<InlineTableRowCellMappingImpl> getCells(List<? extends InlineTableRowCellMapping> cells) {
-		if (cells != null) {
-			return cells.stream().map(c -> InlineTableRowCellMappingImpl.builder().withValue(c.getValue()).withColumnName(c.getColumnName()).build()).toList();
-		}
-		return List.of();
-	}
-
-	public static List<InlineTableRowMappingImpl> getRows(List<? extends InlineTableRowMappingMapping> rows) {
+	public static List<Row> getRows(List<? extends Row> rows) {
     	if (rows != null) {
-    		return rows.stream().map(r -> InlineTableRowMappingImpl.builder().withCells(getCells(r.getCells())).build()).toList();
+    		return rows.stream().map(r -> ((Row)(RowImpl.builder().withRowValues(getRowValues(r.getRowValues())).build()))).toList();
     	}
     	return List.of();
 	}
 
+	private static List<? extends RowValue> getRowValues(List<? extends RowValue> list) {
+		if (list != null) {
+			return list.stream().map(c -> RowValueImpl.builder().withValue(c.getValue()).withColumn(c.getColumn()).build()).toList();
+		}
+		return List.of();	}
+
+	private static org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl getDatabaseSchema(DatabaseSchema schema) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private static List<org.eclipse.daanse.rdb.structure.pojo.ColumnImpl> getColumns(List<? extends Column> columns) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private static PhysicalTableImpl getTable(Table table) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

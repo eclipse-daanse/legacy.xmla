@@ -383,8 +383,8 @@ public class SqlQuery {
                 ? RelationUtil.getAlias(table)
                 : alias;
             return addFromTable(
-                table.getSchema(),
-                table.getName(),
+                table.getTable().getSchema().getName(),
+                table.getTable().getName(),
                 tableAlias,
                 table.getSqlWhereExpression() == null ? null : table.getSqlWhereExpression().getStatement(),
                 getHintMap(table),

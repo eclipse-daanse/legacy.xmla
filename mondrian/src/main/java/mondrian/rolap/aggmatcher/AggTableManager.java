@@ -19,6 +19,12 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.ConnectionProps;
+import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
+import org.eclipse.daanse.rdb.structure.api.model.Table;
+import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
+import org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
@@ -226,7 +232,8 @@ public class AggTableManager {
                     // are measure or foreign key columns
 
                     bindToStar(dbFactTable, star, msgRecorder);
-                    String schemaInner = dbFactTable.table.getSchema();
+                    DatabaseSchema schemaInner = 
+                    		dbFactTable.table.getTable().getSchema() != null ? dbFactTable.table.getTable().getSchema() : null;
 
                     // Now look at all tables in the database and per table,
                     // first see if it is a match for an aggregate table for
@@ -235,6 +242,8 @@ public class AggTableManager {
 
                     for (JdbcSchema.Table dbTable : db.getTables()) {
                         String name = dbTable.getName();
+                        List<ColumnImpl> columns =  dbTable.getColumns().stream().map(c -> ColumnImpl.builder().withName(c.getName()).withType(c.getTypeName()).build()).toList();
+                        PhysicalTableImpl t = ((Builder) PhysicalTableImpl.builder().withName(name).withColumns(columns).withsSchema((DatabaseSchemaImpl) schemaInner)).build();
 
                         // Do the catalog schema aggregate excludes, exclude
                         // this table name.
@@ -280,7 +289,7 @@ public class AggTableManager {
                         if (makeAggStar) {
                             dbTable.setTableUsageType(
                                 JdbcSchema.TableUsageType.AGG);
-                            dbTable.table = TableQueryMappingImpl.builder().withSchema(schemaInner).withName(name).build();
+                            dbTable.table = TableQueryMappingImpl.builder().withTable(t).build();
                             AggStar aggStar = AggStar.makeAggStar(
                                 star,
                                 dbTable,
@@ -357,15 +366,18 @@ public class AggTableManager {
 
             QueryMapping relation =
                 star.getFactTable().getRelation();
-            String schemaInner = null;
+            DatabaseSchema schemaInner = null;
             List<TableQueryOptimizationHintMappingImpl> tableHints = null;
             if (relation instanceof TableQueryMapping table) {
-                schemaInner = table.getSchema();
+                schemaInner = table.getTable().getSchema();
                 tableHints = PojoUtil.getOptimizationHints(table.getOptimizationHints());
             }
             String tableName = dbFactTable.getName();
+            List<ColumnImpl> columns =  dbFactTable.getColumns().stream().map(c -> ColumnImpl.builder().withName(c.getName()).withType(c.getTypeName()).build()).toList();
+            PhysicalTableImpl t = ((Builder) PhysicalTableImpl.builder().withName(tableName).withColumns(columns).withsSchema((DatabaseSchemaImpl) schemaInner)).build();
+
             String alias = null;
-            dbFactTable.table = TableQueryMappingImpl.builder().withSchema(schemaInner).withName(tableName).withAlias(alias).withOptimizationHints(tableHints).build();
+            dbFactTable.table = TableQueryMappingImpl.builder().withTable(t).withAlias(alias).withOptimizationHints(tableHints).build();
 
             for (JdbcSchema.Table.Column factColumn
                 : dbFactTable.getColumns())

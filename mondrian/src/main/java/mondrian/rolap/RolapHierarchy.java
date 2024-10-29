@@ -917,7 +917,7 @@ public class RolapHierarchy extends HierarchyBase {
         RolapStar.Table targetTable)
     {
         if (relation instanceof TableQueryMapping table) {
-            if (table.getName().equals(targetTable.getTableName())) {
+            if (table.getTable().equals(targetTable.getTable())) {
                 return relation;
             } else {
                 // Not the same table if table names are different
@@ -1230,8 +1230,8 @@ public class RolapHierarchy extends HierarchyBase {
         peerHier.allLevelName = getAllLevelName();
         peerHier.sharedHierarchyName = getSharedHierarchyName();
         JoinQueryMappingImpl join = JoinQueryMappingImpl.builder()
-        		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(clos.getParentColumn()).withQuery(PojoUtil.copy(clos.getTable())).build())
-        		.withRight(JoinedQueryElementMappingImpl.builder().withKey(clos.getChildColumn()).withQuery(PojoUtil.copy(relation)).build())
+        		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(clos.getParentColumn().getName()).withQuery(PojoUtil.copy(clos.getTable())).build())
+        		.withRight(JoinedQueryElementMappingImpl.builder().withKey(clos.getChildColumn().getName()).withQuery(PojoUtil.copy(relation)).build())
         		.build();
         peerHier.relation = join;
 
@@ -1242,7 +1242,7 @@ public class RolapHierarchy extends HierarchyBase {
         int index = peerHier.levels.length;
         int flags = src.getFlags() &~ RolapLevel.FLAG_UNIQUE;
         SQLExpressionMapping keyExp =
-            new RolapColumn(clos.getTable().getName(), clos.getParentColumn());
+            new RolapColumn(clos.getTable().getTable().getName(), clos.getParentColumn().getName());
 
         RolapLevel level =
             new RolapLevel(
@@ -1266,7 +1266,7 @@ public class RolapHierarchy extends HierarchyBase {
         // indirect report of every employee (which is more than the number
         // of employees).
         flags = src.getFlags() | RolapLevel.FLAG_UNIQUE;
-        keyExp = new RolapColumn(clos.getTable().getName(), clos.getChildColumn());
+        keyExp = new RolapColumn(clos.getTable().getTable().getName(), clos.getChildColumn().getName());
         RolapLevel sublevel = new RolapLevel(
             peerHier,
             "Item",

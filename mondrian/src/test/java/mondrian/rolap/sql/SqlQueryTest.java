@@ -718,22 +718,22 @@ class SqlQueryTest  extends BatchTestCase {
                 result.addAll(super.cubes(cubes));
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("Sales 3")
-                    .withQuery(TableQueryMappingImpl.builder().withName("sales_fact_1997").build())
+                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                     .withDimensionConnectors(List.of(
                     	DimensionConnectorMappingImpl.builder()
                     		.withOverrideDimensionName("StoreEmpSalary")
-                            .withForeignKey("store_id")
+                            .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
                             .withDimension(StandardDimensionMappingImpl.builder()
                             	.withName("StoreEmpSalary")
                             	.withHierarchies(List.of(
                                 HierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withAllMemberName("All Salary")
-                                    .withPrimaryKey("store_id")
-                                    .withQuery(TableQueryMappingImpl.builder().withName("employee").build())
+                                    .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_EMPLOYEE)
+                                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
-                                            .withName("Salary").withColumn("salary")
+                                            .withName("Salary").withColumn(FoodmartMappingSupplier.SALARY_COLUMN_IN_EMPLOYEE)
                                             .withType(DataType.NUMERIC).withUniqueMembers(true)
                                             .withApproxRowCount("10000000")
                                             .withCaptionExpression(
@@ -752,7 +752,7 @@ class SqlQueryTest  extends BatchTestCase {
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
                             MeasureMappingImpl.builder()
                             .withName("Store Cost")
-                            .withColumn("store_cost")
+                            .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
                             .withAggregatorType(MeasureAggregatorType.SUM)
                             .build()
                     )).build()))
@@ -863,22 +863,22 @@ class SqlQueryTest  extends BatchTestCase {
                 result.addAll(super.cubes(cubes));
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("ApproxTest")
-                    .withQuery(TableQueryMappingImpl.builder().withName("sales_fact_1997").build())
+                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                     .withDimensionConnectors(List.of(
                     	DimensionConnectorMappingImpl.builder()
                     		.withOverrideDimensionName("Gender")
-                            .withForeignKey("customer_id")
+                            .withForeignKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
                             .withDimension(StandardDimensionMappingImpl.builder()
                             		.withName("Gender")
                             		.withHierarchies(List.of(
                             			HierarchyMappingImpl.builder()
                             			.withHasAll(true)
                             			.withAllMemberName("All Gender")
-                            			.withPrimaryKey("customer_id")
-                            			.withQuery(TableQueryMappingImpl.builder().withName("customer").build())
+                            			.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
+                            			.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
                             			.withLevels(List.of(
                             				LevelMappingImpl.builder()
-                                            .withName("Gender").withColumn("gender")
+                                            .withName("Gender").withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
                                             .withType(DataType.NUMERIC).withUniqueMembers(true)
                                             .withApproxRowCount("2")
                                             .build()
@@ -890,7 +890,7 @@ class SqlQueryTest  extends BatchTestCase {
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
                         MeasureMappingImpl.builder()
                             .withName("Unit Sales")
-                            .withColumn("unit_sales")
+                            .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                             .withAggregatorType(MeasureAggregatorType.SUM)
                             .build()
                     )).build()))

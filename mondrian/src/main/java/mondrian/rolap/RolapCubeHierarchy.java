@@ -163,7 +163,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
             currentRelation =
                 this.cubeDimension.getCube().getStar().getUniqueRelation(
                     rolapHierarchy.getRelation(),
-                    usage.getForeignKey(),
+                    usage.getForeignKey().getName(),
                     ((mondrian.rolap.RolapColumn)usage.getJoinExp()).getName(),
                     RelationUtil.getAlias(usage.getJoinTable()));
         } else {

@@ -3,6 +3,7 @@ package mondrian.rolap;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.daanse.rdb.structure.api.model.Column;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;

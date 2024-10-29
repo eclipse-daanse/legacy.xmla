@@ -24,6 +24,8 @@ import java.util.Objects;
 import org.eclipse.daanse.emf.model.rolapmapping.InlineTableQuery;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
+import org.eclipse.daanse.rdb.structure.api.model.Column;
+import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
@@ -110,7 +112,7 @@ public class HierarchyUsage {
      * The foreign key by which this {@link Hierarchy} is joined to
      * the {@link #fact} table.
      */
-    private final String foreignKey;
+    private final Column foreignKey;
 
     /**
      * not NULL for DimensionUsage
@@ -316,7 +318,7 @@ public class HierarchyUsage {
     public String getName() {
         return this.name;
     }
-    public String getForeignKey() {
+    public Column getForeignKey() {
         return this.foreignKey;
     }
     public String getSource() {
@@ -358,7 +360,7 @@ public class HierarchyUsage {
                 && this.hierarchyName.equals(other.hierarchyName)
                 && Util.equalName(this.name, other.name)
                 && Util.equalName(this.source, other.source)
-                && Util.equalName(this.foreignKey, other.foreignKey);
+                && Objects.equals(this.foreignKey, other.foreignKey);
         } else {
             return false;
         }
@@ -433,7 +435,7 @@ public class HierarchyUsage {
             this.joinExp =
                 new mondrian.rolap.RolapColumn(
                     getAlias(this.joinTable),
-                    hierarchy.getHierarchyMapping().getPrimaryKey());
+                    hierarchy.getHierarchyMapping().getPrimaryKey().getName());
         } else {
             // 3. If neither of the above, the join is assumed to be to key of
             //    the last level.
@@ -469,16 +471,16 @@ public class HierarchyUsage {
      * Chooses the table with which to join a hierarchy to the fact table.
      *
      * @param hierarchy Hierarchy to be joined
-     * @param tableName Alias of the table; may be omitted if the hierarchy
+     * @param tab Alias of the table; may be omitted if the hierarchy
      *   has only one table
      * @return A table, never null
      */
     private RelationalQueryMapping findJoinTable(
         RolapHierarchy hierarchy,
-        String tableName)
+        Table tab)
     {
         final RelationalQueryMapping table;
-        if (tableName == null) {
+        if (tab == null) {
             table = hierarchy.getUniqueTable();
             if (table == null) {
                 throw new MondrianException(MessageFormat.format(
@@ -486,15 +488,39 @@ public class HierarchyUsage {
                         hierarchy.getUniqueName()));
             }
         } else {
-            table = find(hierarchy.getRelation(), tableName);
+            table = find(hierarchy.getRelation(), tab.getName());
             if (table == null) {
                 // todo: i18n msg
                 throw Util.newError(
-                    new StringBuilder("no table '").append(tableName)
+                    new StringBuilder("no table '").append(tab)
                     .append("' found in hierarchy ").append(hierarchy.getUniqueName()).toString());
             }
         }
         return table;
     }
+
+    private RelationalQueryMapping findJoinTable(
+            RolapHierarchy hierarchy,
+            String tableName)
+        {
+            final RelationalQueryMapping table;
+            if (tableName == null) {
+                table = hierarchy.getUniqueTable();
+                if (table == null) {
+                    throw new MondrianException(MessageFormat.format(
+                        mustSpecifyPrimaryKeyTableForHierarchy,
+                            hierarchy.getUniqueName()));
+                }
+            } else {
+                table = find(hierarchy.getRelation(), tableName);
+                if (table == null) {
+                    // todo: i18n msg
+                    throw Util.newError(
+                        new StringBuilder("no table '").append(tableName)
+                        .append("' found in hierarchy ").append(hierarchy.getUniqueName()).toString());
+                }
+            }
+            return table;
+        }
 
 }

@@ -13,7 +13,7 @@
  */
 package mondrian.rolap.util;
 
-import static mondrian.rolap.util.SQLUtil.toCodeSet;
+import static mondrian.rolap.util.SQLUtil.toCodeSetSqlStatement;
 
 import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
 
@@ -21,7 +21,7 @@ import mondrian.rolap.sql.SqlQuery;
 
 public class ViewUtil {
     public static SqlQuery.CodeSet getCodeSet(SqlSelectQueryMapping view) {
-        return toCodeSet(view.getSQL());
+        return toCodeSetSqlStatement(view.getSql().getSqlStatements());
     }
 
 }

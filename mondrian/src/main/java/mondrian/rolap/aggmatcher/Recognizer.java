@@ -42,6 +42,7 @@ import mondrian.rolap.RolapLevel;
 import mondrian.rolap.RolapSchema;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.Utils;
+import mondrian.rolap.aggmatcher.AggStar.Table.Column;
 import mondrian.rolap.sql.SqlQuery;
 
 /**
@@ -542,7 +543,7 @@ public abstract class Recognizer {
                         // Search through the notSeenForeignKeys list
                         // making sure that this HierarchyUsage's
                         // foreign key is not in the list.
-                        String foreignKey = hierarchyUsage.getForeignKey();
+                    	org.eclipse.daanse.rdb.structure.api.model.Column foreignKey = hierarchyUsage.getForeignKey();
                         boolean b = foreignKey == null
                             || inNotSeenForeignKeys(
                             foreignKey,
@@ -564,11 +565,11 @@ public abstract class Recognizer {
      * foreign keys.
      */
     boolean inNotSeenForeignKeys(
-        String foreignKey,
+    	org.eclipse.daanse.rdb.structure.api.model.Column foreignKey,
         List<JdbcSchema.Table.Column.Usage> notSeenForeignKeys
     ) {
         for (JdbcSchema.Table.Column.Usage usage : notSeenForeignKeys) {
-            if (usage.getColumn().getName().equals(foreignKey)) {
+            if (usage.getColumn().getName().equals(foreignKey != null ? foreignKey.getName() : null)) {
                 return true;
             }
         }

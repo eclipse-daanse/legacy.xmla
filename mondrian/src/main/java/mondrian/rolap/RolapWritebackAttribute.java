@@ -11,15 +11,16 @@
 package mondrian.rolap;
 
 import org.eclipse.daanse.olap.api.element.Dimension;
+import org.eclipse.daanse.rdb.structure.api.model.Column;
 
 public class RolapWritebackAttribute extends RolapWritebackColumn{
     private final Dimension dimension;
 
     public RolapWritebackAttribute(
             Dimension dimension,
-            String columnName
+            Column column
     ) {
-        super(columnName);
+        super(column);
         this.dimension = dimension;
     }
 

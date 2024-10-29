@@ -33,23 +33,24 @@ public class Utils {
 
     public static boolean equalsQuery(QueryMapping relation, QueryMapping q2) {
         if (relation instanceof TableQueryMapping t1 && q2 instanceof TableQueryMapping t2) {
-            return t1.getName() != null && t1.getName().equals(t2.getName()) &&
+            return t1.getTable() != null && t2.getTable() != null &&  t1.getTable().getName().equals(t2.getTable().getName()) &&
                 Objects.equals(t1.getAlias(), t2.getAlias()) &&
-                Objects.equals(t1.getSchema(), t2.getSchema());
+                Objects.equals(t1.getTable().getSchema(), t2.getTable().getSchema());
         }
         if (relation instanceof SqlSelectQueryMapping s1 && q2 instanceof SqlSelectQueryMapping s2) {
             if (!Objects.equals(s1.getAlias(), s2.getAlias())) {
                 return false;
             }
-            if (s1.getSQL() == null || s2.getSQL() == null ||
-                s1.getSQL().size() != s2.getSQL().size()) {
+            if (s1.getSql() == null || s2.getSql() == null ||
+            	s1.getSql().getSqlStatements() == null || s2.getSql().getSqlStatements() == null ||
+                s1.getSql().getSqlStatements().size() != s2.getSql().getSqlStatements().size()) {
                 return false;
             }
-            for (int i = 0; i < s1.getSQL().size(); i++) {
-                String statement1 = s1.getSQL().get(i).getStatement();
-                String statement2 = s2.getSQL().get(i).getStatement();
-                List<String> dialects1 = s1.getSQL().get(i).getDialects();
-                List<String> dialects2 = s2.getSQL().get(i).getDialects();
+            for (int i = 0; i < s1.getSql().getSqlStatements().size(); i++) {
+                String statement1 = s1.getSql().getSqlStatements().get(i).getSql();
+                String statement2 = s2.getSql().getSqlStatements().get(i).getSql();
+                List<String> dialects1 = s1.getSql().getSqlStatements().get(i).getDialects();
+                List<String> dialects2 = s2.getSql().getSqlStatements().get(i).getDialects();
 
                 if (!Objects.equals(statement1, statement2)) {
                     return false;
