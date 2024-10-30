@@ -20,14 +20,9 @@ import static org.opencube.junit5.TestUtil.withSchema;
 import java.util.List;
 import java.util.function.Function;
 
-import org.eclipse.daanse.emf.model.rolapmapping.impl.AggregationColumnNameImpl;
-import org.eclipse.daanse.emf.model.rolapmapping.impl.AggregationTableImpl;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.rolap.mapping.api.model.AggregationExcludeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.AggregationTableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;

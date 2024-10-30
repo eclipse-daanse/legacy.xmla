@@ -12,7 +12,6 @@ package mondrian.rolap.aggmatcher;
 
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Collections.EMPTY_MAP;
-
 import static mondrian.rolap.util.RelationUtil.getAlias;
 
 import java.io.PrintWriter;
@@ -28,7 +27,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import org.eclipse.daanse.emf.model.rolapmapping.AggregationLevelProperty;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.SchemaReader;
@@ -45,19 +43,17 @@ import org.eclipse.daanse.rolap.mapping.api.model.AggregationMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationNameMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationPatternMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationTableMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
-import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelPropertyMappingImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Property;
+import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.recorder.MessageRecorder;
 import mondrian.rolap.RolapAggregator;

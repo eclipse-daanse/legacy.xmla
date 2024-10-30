@@ -18,21 +18,16 @@ import static mondrian.rolap.util.RelationUtil.find;
 import static mondrian.rolap.util.RelationUtil.getAlias;
 
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.daanse.emf.model.rolapmapping.InlineTableQuery;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.rdb.structure.api.model.Column;
 import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
