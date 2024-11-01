@@ -3318,7 +3318,7 @@ class SchemaTest {
                         .withOverrideDimensionName("Store")
                         .withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_STORE_WITH_QUERY_STORE))
                         .withLevel(FoodmartMappingSupplier.LEVEL_STORE_STATE_UNIQUE_MEMBERS_TRUE)
-                        .withForeignKey(FoodmartMappingSupplier.STATE_PROVINCE_COLUMN_INCUSTOMER)
+                        .withForeignKey(FoodmartMappingSupplier.STATE_PROVINCE_COLUMN_IN_CUSTOMER)
                         .build();
 
                 PhysicalCubeMappingImpl c = PhysicalCubeMappingImpl

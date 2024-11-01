@@ -89,7 +89,7 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
         ColumnImpl amount_cheques = ColumnImpl.builder().withName("amount").withType("DECIMAL").withTypeQualifiers(List.of("10", "2")).build();
         PhysicalTableImpl cheques = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("cheques")
                 .withColumns(List.of(
-                        store_id_cheques, prod_id_cheques
+                        store_id_cheques, prod_id_cheques, amount_cheques
                         ))).build();
         //## ColumnNames: store_id,value
         //## ColumnTypes: INTEGER,DECIMAL(10,2)

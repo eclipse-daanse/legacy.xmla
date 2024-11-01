@@ -222,7 +222,6 @@ class ScenarioTest {
     /**
      * Tests setting cells by the "equal allocation" allocation policy.
      */
-    @Disabled //disabled by reason wrong Scenario with InlineTabl foo
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testEqualAllocation(Context context) throws SQLException {
