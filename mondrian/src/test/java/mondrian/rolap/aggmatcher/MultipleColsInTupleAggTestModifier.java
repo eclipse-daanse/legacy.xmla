@@ -16,6 +16,9 @@ package mondrian.rolap.aggmatcher;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
@@ -99,11 +102,54 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
 
     @Override
     protected List<? extends CubeMapping> schemaCubes(SchemaMapping schemaMappingOriginal) {
+        //## ColumnNames: prod_id,store_id,amount
+        //## ColumnTypes: INTEGER,INTEGER,INTEGER
+        ColumnImpl prodIdFact = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
+        ColumnImpl storeIdFact = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
+        ColumnImpl amountFact = ColumnImpl.builder().withName("amount").withType("INTEGER").build();
+        PhysicalTableImpl fact = ((Builder) PhysicalTableImpl.builder().withName("fact")
+                .withColumns(List.of(prodIdFact, storeIdFact, amountFact))).build();
+        //## TableName: store_csv
+        //## ColumnNames: store_id,value
+        //## ColumnTypes: INTEGER,INTEGER
+        ColumnImpl storeIdStoreCsv = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
+        ColumnImpl valueStoreCsv = ColumnImpl.builder().withName("value").withType("INTEGER").build();
+        PhysicalTableImpl storeCsv = ((Builder) PhysicalTableImpl.builder().withName("store_csv")
+                .withColumns(List.of(storeIdStoreCsv, valueStoreCsv))).build();
+        //## TableName: product_csv
+        //## ColumnNames: prod_id,prod_cat,name1,color
+        //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30),VARCHAR(30)
+        ColumnImpl prodIdProductCsv = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
+        ColumnImpl prodCatProductCsv = ColumnImpl.builder().withName("prod_cat").withType("INTEGER").build();
+        ColumnImpl name1ProductCsv = ColumnImpl.builder().withName("name1").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl colorProductCsv = ColumnImpl.builder().withName("color").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        PhysicalTableImpl productCsv = ((Builder) PhysicalTableImpl.builder().withName("product_csv")
+                .withColumns(List.of(prodIdProductCsv, prodCatProductCsv))).build();
+        //## TableName: cat
+        //## ColumnNames: cat,name3,ord,cap
+        //## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30)
+        ColumnImpl catCat = ColumnImpl.builder().withName("cat").withType("INTEGER").build();
+        ColumnImpl name3Cat = ColumnImpl.builder().withName("name3").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl ordCat = ColumnImpl.builder().withName("ord").withType("INTEGER").build();
+        ColumnImpl capCat = ColumnImpl.builder().withName("cap").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        PhysicalTableImpl cat = ((Builder) PhysicalTableImpl.builder().withName("cat")
+                .withColumns(List.of(catCat, name3Cat, ordCat, capCat))).build();
+        //## TableName: product_cat
+        //## ColumnNames: prod_cat,cat,name2,ord,cap
+        //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30),INTEGER,VARCHAR(30)
+        ColumnImpl prodCatProductCat = ColumnImpl.builder().withName("prod_cat").withType("INTEGER").build();
+        ColumnImpl catProductCat = ColumnImpl.builder().withName("cat").withType("INTEGER").build();
+        ColumnImpl name2ProductCat = ColumnImpl.builder().withName("name2").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl ordProductCat = ColumnImpl.builder().withName("ord").withType("INTEGER").build();
+        ColumnImpl capProductCat = ColumnImpl.builder().withName("cap").withType("INTEGER").build();
+        PhysicalTableImpl productCat = ((Builder) PhysicalTableImpl.builder().withName("product_cat")
+                .withColumns(List.of(catCat, name3Cat, ordCat, capCat))).build();
+        
         List<CubeMapping> result = new ArrayList<>();
         result.addAll(super.schemaCubes(schemaMappingOriginal));
         result.add(PhysicalCubeMappingImpl.builder()
             .withName("Fact")
-            .withQuery(TableQueryMappingImpl.builder().withName("fact").withAggregationTables(
+            .withQuery(TableQueryMappingImpl.builder().withTable(fact).withAggregationTables(
                 List.of(
                     AggregationNameMappingImpl.builder()
                         .withName("test_lp_xxx_fact")
@@ -151,17 +197,17 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
             .withDimensionConnectors(List.of(
                 DimensionConnectorMappingImpl.builder()
                 	.withOverrideDimensionName("Store")
-                    .withForeignKey("store_id")
+                    .withForeignKey(storeIdFact)
                     .withDimension(StandardDimensionMappingImpl.builder()
                         .withName("Store")
                         .withHierarchies(List.of(
                         HierarchyMappingImpl.builder()
                             .withHasAll(true)
-                            .withPrimaryKey("store_id")
-                            .withQuery(TableQueryMappingImpl.builder().withName("store_csv").build())
+                            .withPrimaryKey(storeIdStoreCsv)
+                            .withQuery(TableQueryMappingImpl.builder().withTable(storeCsv).build())
                             .withLevels(List.of(
                                 LevelMappingImpl.builder()
-                                    .withColumn("value")
+                                    .withColumn(valueStoreCsv)
                                     .withName("Store Value")
                                     .withUniqueMembers(true)
                                     .build()
@@ -172,25 +218,25 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
                     .build(),
                 DimensionConnectorMappingImpl.builder()
                 	.withOverrideDimensionName("Product")
-                    .withForeignKey("prod_id")
+                    .withForeignKey(prodIdFact)
                     .withDimension(StandardDimensionMappingImpl.builder()
                         .withName("Product")
                         .withHierarchies(List.of(
                         HierarchyMappingImpl.builder()
                             .withHasAll(true)
-                            .withPrimaryKey("prod_id")
-                            .withPrimaryKeyTable("product_csv")
+                            .withPrimaryKey(prodIdProductCsv)
+                            .withPrimaryKeyTable(productCsv)
                             .withQuery(JoinQueryMappingImpl.builder()
-                            		.withLeft(JoinedQueryElementMappingImpl.builder().withKey("prod_cat")
-                            				.withQuery(TableQueryMappingImpl.builder().withName("product_csv").build())
+                            		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(prodCatProductCsv)
+                            				.withQuery(TableQueryMappingImpl.builder().withTable(productCsv).build())
                             				.build())
-                            		.withRight(JoinedQueryElementMappingImpl.builder().withAlias("product_cat").withKey("prod_cat")
+                            		.withRight(JoinedQueryElementMappingImpl.builder().withAlias("product_cat").withKey(prodCatProductCat)
                                             .withQuery(JoinQueryMappingImpl.builder()
-                                            		.withLeft(JoinedQueryElementMappingImpl.builder().withKey("cat")
-                                            				.withQuery(TableQueryMappingImpl.builder().withName("product_cat").build())
+                                            		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(catProductCat)
+                                            				.withQuery(TableQueryMappingImpl.builder().withTable(productCat).build())
                                             				.build())
-                                            		.withRight(JoinedQueryElementMappingImpl.builder().withKey("cat")
-                                            				.withQuery(TableQueryMappingImpl.builder().withName("cat").build())
+                                            		.withRight(JoinedQueryElementMappingImpl.builder().withKey(catCat)
+                                            				.withQuery(TableQueryMappingImpl.builder().withTable(cat).build())
                                             				.build())
                                             		.build())
                             				.build())
@@ -198,32 +244,32 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
                             .withLevels(List.of(
                                 LevelMappingImpl.builder()
                                     .withName("Category")
-                                    .withTable("cat")
-                                    .withColumn("cat")
-                                    .withOrdinalColumn("ord")
-                                    .withCaptionColumn("cap")
-                                    .withNameColumn("name3")
+                                    .withTable(cat)
+                                    .withColumn(catCat)
+                                    .withOrdinalColumn(ordCat)
+                                    .withCaptionColumn(capCat)
+                                    .withNameColumn(name3Cat)
                                     .withUniqueMembers(false)
                                     .withType(DataType.NUMERIC)
                                     .build(),
                                 LevelMappingImpl.builder()
                                     .withName("Product Category")
-                                    .withTable("product_cat")
-                                    .withColumn("name2")
-                                    .withOrdinalColumn("ord")
-                                    .withCaptionColumn("cap")
+                                    .withTable(productCat)
+                                    .withColumn(name2ProductCat)
+                                    .withOrdinalColumn(ordProductCat)
+                                    .withCaptionColumn(capProductCat)
                                     .withUniqueMembers(false)
                                     .build(),
                                 LevelMappingImpl.builder()
                                     .withName("Product Name")
-                                    .withTable("product_csv")
-                                    .withColumn("name1")
+                                    .withTable(productCsv)
+                                    .withColumn(name1ProductCsv)
                                     .withUniqueMembers(true)
                                     .withMemberProperties(List.of(
                                     	MemberPropertyMappingImpl.builder()
                                         .withName("Product Color")
                                         //.table("product_csv")
-                                        .withColumn("color")
+                                        .withColumn(colorProductCsv)
                                         .build()
                                     ))
                                     .build()
@@ -236,7 +282,7 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
             .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
                 MeasureMappingImpl.builder()
                     .withName("Total")
-                    .withColumn("amount")
+                    .withColumn(amountFact)
                     .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build()

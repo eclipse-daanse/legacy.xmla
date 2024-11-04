@@ -15,6 +15,9 @@ package mondrian.rolap.aggmatcher;
 
 import java.util.List;
 
+import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
@@ -96,6 +99,38 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
 
     @Override
     protected SchemaMapping schema(SchemaMapping schemaMappingOriginal) {
+    	//## TableName: DIM_SPECIES
+    	//## ColumnNames: FAMILY_ID,GENUS_ID,SPECIES_ID,SPECIES_NAME
+    	//## ColumnTypes: INTEGER,INTEGER,INTEGER,VARCHAR(30)
+    	ColumnImpl familyIdDimSpecies = ColumnImpl.builder().withName("FAMILY_ID").withType("INTEGER").build();
+    	ColumnImpl genisIdDimSpecies = ColumnImpl.builder().withName("GENUS_ID").withType("INTEGER").build();
+    	ColumnImpl speciesIdDimSpecies = ColumnImpl.builder().withName("SPECIES_ID").withType("INTEGER").build();
+    	ColumnImpl speciesNameDimSpecies = ColumnImpl.builder().withName("SPECIES_NAME").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        PhysicalTableImpl dimSpecies = ((Builder) PhysicalTableImpl.builder().withName("DIM_SPECIES")
+                .withColumns(List.of(familyIdDimSpecies, genisIdDimSpecies, speciesIdDimSpecies, speciesNameDimSpecies))).build();
+        //## TableName: DIM_FAMILY
+        //## ColumnNames: FAMILY_ID,FAMILY_NAME
+        //## ColumnTypes: INTEGER,VARCHAR(30)
+        ColumnImpl familyIdDimFamily = ColumnImpl.builder().withName("FAMILY_ID").withType("INTEGER").build();
+        ColumnImpl familyNameDimFamily = ColumnImpl.builder().withName("FAMILY_NAME").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        PhysicalTableImpl dimFamily = ((Builder) PhysicalTableImpl.builder().withName("DIM_FAMILY")
+                .withColumns(List.of(familyIdDimFamily, familyNameDimFamily))).build();
+        //## TableName: DIM_GENUS
+        //## ColumnNames: FAMILY_ID,GENUS_ID,GENUS_NAME
+        //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30)
+        ColumnImpl familyIdDimGenus = ColumnImpl.builder().withName("FAMILY_ID").withType("INTEGER").build();
+        ColumnImpl genusIdDimGenus = ColumnImpl.builder().withName("GENUS_ID").withType("INTEGER").build();
+        ColumnImpl genusNameDimGenus = ColumnImpl.builder().withName("GENUS_ID").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        PhysicalTableImpl dimGenus = ((Builder) PhysicalTableImpl.builder().withName("DIM_GENUS")
+                .withColumns(List.of(familyIdDimGenus, genusIdDimGenus, genusNameDimGenus))).build();
+        //## TableName: species_mart
+        //## ColumnNames: SPECIES_ID,POPULATION
+        //## ColumnTypes: INTEGER,INTEGER
+        ColumnImpl speciesIdSpeciesMart = ColumnImpl.builder().withName("SPECIES_ID").withType("INTEGER").build();
+        ColumnImpl populationSpeciesMart = ColumnImpl.builder().withName("POPULATION").withType("INTEGER").build();
+        PhysicalTableImpl speciesMart = ((Builder) PhysicalTableImpl.builder().withName("species_mart")
+                .withColumns(List.of(speciesIdSpeciesMart, populationSpeciesMart))).build();
+        
     	HierarchyMappingImpl animalsHierarchy;
         StandardDimensionMappingImpl animal = StandardDimensionMappingImpl.builder()
         .withName("Animal")
@@ -104,19 +139,19 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
                 .withName("Animals")
                 .withHasAll(true)
                 .withAllMemberName("All Animals")
-                .withPrimaryKey("SPECIES_ID")
-                .withPrimaryKeyTable("DIM_SPECIES")
+                .withPrimaryKey(speciesIdDimSpecies)
+                .withPrimaryKeyTable(dimSpecies)
                 .withQuery(JoinQueryMappingImpl.builder()
-                		.withLeft(JoinedQueryElementMappingImpl.builder().withKey("GENUS_ID")
-                				.withQuery(TableQueryMappingImpl.builder().withName("DIM_SPECIES").build())
+                		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(genisIdDimSpecies)
+                				.withQuery(TableQueryMappingImpl.builder().withTable(dimSpecies).build())
                 				.build())
-                		.withRight(JoinedQueryElementMappingImpl.builder().withAlias("DIM_GENUS").withKey("GENUS_ID")
+                		.withRight(JoinedQueryElementMappingImpl.builder().withAlias("DIM_GENUS").withKey(genusIdDimGenus)
                                 .withQuery(JoinQueryMappingImpl.builder()
-                                		.withLeft(JoinedQueryElementMappingImpl.builder().withKey("FAMILY_ID")
-                                				.withQuery(TableQueryMappingImpl.builder().withName("DIM_GENUS").build())
+                                		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(familyIdDimGenus)
+                                				.withQuery(TableQueryMappingImpl.builder().withTable(dimGenus).build())
                                 				.build())
-                                		.withRight(JoinedQueryElementMappingImpl.builder().withKey("FAMILY_ID")
-                                				.withQuery(TableQueryMappingImpl.builder().withName("DIM_FAMILY").build())
+                                		.withRight(JoinedQueryElementMappingImpl.builder().withKey(familyIdDimFamily)
+                                				.withQuery(TableQueryMappingImpl.builder().withTable(dimFamily).build())
                                 				.build())
                                 		.build())
 
@@ -126,27 +161,27 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
                 .withLevels(List.of(
                     LevelMappingImpl.builder()
                         .withName("Family")
-                        .withTable("DIM_FAMILY")
-                        .withColumn("FAMILY_ID")
-                        .withNameColumn("FAMILY_NAME")
+                        .withTable(dimFamily)
+                        .withColumn(familyIdDimFamily)
+                        .withNameColumn(familyNameDimFamily)
                         .withUniqueMembers(true)
                         .withType(DataType.NUMERIC)
                         .withApproxRowCount("2")
                         .build(),
                     LevelMappingImpl.builder()
                         .withName("Genus")
-                        .withTable("DIM_GENUS")
-                        .withColumn("GENUS_ID")
-                        .withNameColumn("GENUS_NAME")
+                        .withTable(dimGenus)
+                        .withColumn(genusIdDimGenus)
+                        .withNameColumn(genusNameDimGenus)
                         .withUniqueMembers(true)
                         .withType(DataType.NUMERIC)
                         .withApproxRowCount("4")
                         .build(),
                     LevelMappingImpl.builder()
                         .withName("Species")
-                        .withTable("DIM_SPECIES")
-                        .withColumn("SPECIES_ID")
-                        .withNameColumn("SPECIES_NAME")
+                        .withTable(dimSpecies)
+                        .withColumn(speciesIdDimSpecies)
+                        .withNameColumn(speciesNameDimSpecies)
                         .withUniqueMembers(true)
                         .withType(DataType.NUMERIC)
                         .withApproxRowCount("8")
@@ -158,7 +193,7 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
 
         MeasureMappingImpl populationMeasure = MeasureMappingImpl.builder()
         .withName("Population")
-        .withColumn("POPULATION")
+        .withColumn(populationSpeciesMart)
         .withAggregatorType(MeasureAggregatorType.SUM)
         .build();
         PhysicalCubeMappingImpl testCube;
@@ -169,7 +204,7 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
         	testCube = PhysicalCubeMappingImpl.builder()
                 .withName("Test")
                 .withDefaultMeasure(populationMeasure)
-                .withQuery(TableQueryMappingImpl.builder().withName("species_mart").withAggregationTables(
+                .withQuery(TableQueryMappingImpl.builder().withTable(speciesMart).withAggregationTables(
                     List.of(
                         AggregationNameMappingImpl.builder()
                             .withName("AGG_SPECIES_MART")
@@ -195,7 +230,7 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
                     DimensionConnectorMappingImpl.builder()
                         .withOverrideDimensionName("Animal")
                         .withDimension(animal)
-                        .withForeignKey("SPECIES_ID")
+                        .withForeignKey(speciesIdSpeciesMart)
                         .build()
                 ))
                 .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(populationMeasure)).build()))

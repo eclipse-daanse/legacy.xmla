@@ -36,9 +36,12 @@ import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
+import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
@@ -1322,8 +1325,8 @@ class TestAggregationManager extends BatchTestCase {
                 .withHierarchies(List.of(
                     HierarchyMappingImpl.builder()
                         .withHasAll(true)
-                        .withPrimaryKey("store_id")
-                        .withQuery(TableQueryMappingImpl.builder().withName("store").build())
+                        .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
+                        .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
                         .withLevels(List.of(
                             LevelMappingImpl.builder()
                                 .withName("Store Country")
@@ -1373,8 +1376,8 @@ class TestAggregationManager extends BatchTestCase {
                 .withHierarchies(List.of(
                     HierarchyMappingImpl.builder()
                         .withHasAll(true)
-                        .withPrimaryKey("store_id")
-                        .withQuery(TableQueryMappingImpl.builder().withName("store_ragged").build())
+                        .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE_RAGGED)
+                        .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_RAGGED_TABLE).build())
                         .withLevels(List.of(
                             LevelMappingImpl.builder()
                                 .withName("Store Country")
@@ -1409,14 +1412,14 @@ class TestAggregationManager extends BatchTestCase {
             	
             	MeasureMappingImpl sales1UnitSales = MeasureMappingImpl.builder()
                 .withName("Unit Sales")
-                .withColumn("unit_sales")
+                .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                 .withAggregatorType(MeasureAggregatorType.SUM)
                 .withFormatString("Standard")
                 .build();
             	
             	MeasureMappingImpl sales2UnitSales = MeasureMappingImpl.builder()
             		.withName("Unit Sales")
-                    .withColumn("unit_sales")
+                    .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                     .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("Standard")
                     .build();
@@ -1428,19 +1431,19 @@ class TestAggregationManager extends BatchTestCase {
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("Sales1")
                     .withDefaultMeasure(sales1UnitSales)
-                    .withQuery(TableQueryMappingImpl.builder().withName("sales_fact_1997").build())
+                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                     .withDimensionConnectors(List.of(
                     	DimensionConnectorMappingImpl.builder()
                     		.withOverrideDimensionName("Store1")
                     		.withDimension(store1Dimension)
-                            .withForeignKey("store_id")
+                            .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
                             .build()
                     ))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
                     	sales1UnitSales,
                         MeasureMappingImpl.builder()
                         .withName("Store Sales")
-                        .withColumn("store_sales")
+                        .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
                         .withAggregatorType(MeasureAggregatorType.SUM)
                         .withFormatString("Standard")
                         .build()
@@ -1450,16 +1453,16 @@ class TestAggregationManager extends BatchTestCase {
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("Sales2")
                     .withDefaultMeasure(sales2UnitSales)
-                    .withQuery(TableQueryMappingImpl.builder().withName("sales_fact_1997").build())
+                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                     .withDimensionConnectors(List.of(
                         DimensionConnectorMappingImpl.builder()
                         	.withOverrideDimensionName("Store2")
                         	.withDimension(store2Dimension)
-                            .withForeignKey("store_id")
+                            .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
                             .build()
                     ))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                    		sales2UnitSales)).build()                        
+                    		sales2UnitSales)).build()
                     ))
                     .build());
                 return result;
@@ -1639,64 +1642,64 @@ class TestAggregationManager extends BatchTestCase {
                 result.addAll(super.cubes(cubes));
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("Sales_Prod_Ord")
-                    .withQuery(TableQueryMappingImpl.builder().withName("sales_fact_1997").build())
+                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                     .withDimensionConnectors(List.of(
                         DimensionConnectorMappingImpl.builder()
                         	.withOverrideDimensionName("Product")
-                            .withForeignKey("product_id")
+                            .withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
                             .withDimension(StandardDimensionMappingImpl.builder()
                             	.withName("Product")
                             	.withHierarchies(List.of(
                                 HierarchyMappingImpl.builder()
                                     .withHasAll(true)
-                                    .withPrimaryKey("product_id")
-                                    .withPrimaryKeyTable("product")
+                                    .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
+                                    .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                     .withQuery(JoinQueryMappingImpl.builder()
                                     		.withLeft(JoinedQueryElementMappingImpl.builder()
-                                    				.withKey("product_class_id")
-                                    				.withQuery(TableQueryMappingImpl.builder().withName("product").build())
+                                    				.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
+                                    				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_TABLE).build())
                                     				.build())
                                     		.withRight(JoinedQueryElementMappingImpl.builder()
-                                    				.withKey("product_class_id")
-                                    				.withQuery(TableQueryMappingImpl.builder().withName("product_class").build())
+                                    				.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
+                                    				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE).build())
                                     				.build())
                                     		.build())
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Product Family")
-                                            .withTable("product_class")
-                                            .withColumn("product_family")
+                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(true)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Department")
-                                            .withTable("product_class")
-                                            .withColumn("product_department")
+                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Category")
-                                            .withTable("product_class")
-                                            .withCaptionColumn("product_family")
-                                            .withColumn("product_category")
+                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
+                                            .withCaptionColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
+                                            .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Subcategory")
-                                            .withTable("product_class")
-                                            .withColumn("product_subcategory")
+                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Brand Name")
-                                            .withTable("product")
-                                            .withColumn("brand_name")
+                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Name")
-                                            .withTable("product")
-                                            .withColumn("product_name")
+                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                                             .withUniqueMembers(true)
                                             .build()
                                         ))
@@ -1705,18 +1708,18 @@ class TestAggregationManager extends BatchTestCase {
                             .build(),
                         DimensionConnectorMappingImpl.builder()
                         	.withOverrideDimensionName("Gender")
-                            .withForeignKey("customer_id")
+                            .withForeignKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
                             .withDimension(StandardDimensionMappingImpl.builder()
                             	.withName("Gender")
                             	.withHierarchies(List.of(
                                 HierarchyMappingImpl.builder()
                                     .withHasAll(false)
-                                    .withPrimaryKey("customer_id")
-                                    .withQuery(TableQueryMappingImpl.builder().withName("customer").build())
+                                    .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
+                                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Gender")
-                                            .withColumn("gender")
+                                            .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
                                             .withUniqueMembers(true)
                                             .build()
                                     ))
@@ -1728,17 +1731,17 @@ class TestAggregationManager extends BatchTestCase {
                     		.withMeasures(List.of(
                                 MeasureMappingImpl.builder()
                                     .withName("Unit Sales")
-                                    .withColumn("unit_sales")
+                                    .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                                     .withAggregatorType(MeasureAggregatorType.SUM)
                                     .withFormatString("Standard")
                                     .withVisible(false)
                                     .build(),
                                 MeasureMappingImpl.builder()
                                     .withName("Store Cost")
-                                    .withColumn("store_cost")
+                                    .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
                                     .withAggregatorType(MeasureAggregatorType.SUM)
                                     .withFormatString("#,###.00")
-                                    .build()                    				
+                                    .build()
                     		))
                     		.build()))
                     .build());
@@ -2430,7 +2433,7 @@ class TestAggregationManager extends BatchTestCase {
 
         	private static final MeasureMappingImpl m = MeasureMappingImpl.builder()
             .withName("Unit Sales")
-            .withColumn("unit_sales")
+            .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
             .withAggregatorType(MeasureAggregatorType.SUM)
             .withFormatString("Standard")
             .withVisible(false)
@@ -2443,12 +2446,12 @@ class TestAggregationManager extends BatchTestCase {
             
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                List<CubeMapping> result = new ArrayList<>();                
+                List<CubeMapping> result = new ArrayList<>();
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("Foo")
                     .withDefaultMeasure(m)
                     .withQuery(TableQueryMappingImpl.builder()
-                    		.withName("sales_fact_1997")
+                    		.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
                     		.withAggregationExcludes(List.of(
                     			AggregationExcludeMappingImpl.builder()
                                     .withName("agg_g_ms_pcat_sales_fact_1997")
@@ -2497,77 +2500,77 @@ class TestAggregationManager extends BatchTestCase {
                                             .withCollapsed(false)
                                             .build()
                                     ))
-                                    .build()                    				
+                                    .build()
                     				))
                     		.build())
                     .withDimensionConnectors(List.of(
                     		DimensionConnectorMappingImpl
                     		.builder()
                     		.withOverrideDimensionName("Product")
-                    		.withForeignKey("product_id")
+                    		.withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
                     		.withDimension(
                     				StandardDimensionMappingImpl.builder()
                                     .withName("Product")
                                     .withHierarchies(List.of(
                                         HierarchyMappingImpl.builder()
                                             .withHasAll(true)
-                                            .withPrimaryKey("product_id")
-                                            .withPrimaryKeyTable("product")
+                                            .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
+                                            .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                             .withQuery(
                                                     JoinQueryMappingImpl.builder()
                                                     .withLeft(
                                                     	JoinedQueryElementMappingImpl.builder()
-                                                    		.withKey("product_class_id")
-                                                    		.withQuery(TableQueryMappingImpl.builder().withName("product").build())
+                                                    		.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
+                                                    		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_TABLE).build())
                                                     		.build())
                                                     .withRight(
                                                     	JoinedQueryElementMappingImpl.builder()
-                                                    		.withKey("product_class_id")
-                                                    		.withQuery(TableQueryMappingImpl.builder().withName("product_class").build())
+                                                    		.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
+                                                    		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE).build())
                                                     		.build())
                                                     .build()
                                                 )                                            
                                             .withLevels(List.of(
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Family")
-                                                    .withTable("product_class")
-                                                    .withColumn("product_family")
+                                                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
+                                                    .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                                                     .withUniqueMembers(true)
                                                     .build(),
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Department")
-                                                    .withTable("product_class")
-                                                    .withColumn("product_department")
+                                                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
+                                                    .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                                                     .withUniqueMembers(false)
                                                     .build(),
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Category")
-                                                    .withTable("product_class")
-                                                    .withColumn("product_category")
+                                                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
+                                                    .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                                     .withUniqueMembers(false)
                                                     .build(),
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Subcategory")
-                                                    .withTable("product_class")
-                                                    .withColumn("product_subcategory")
+                                                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
+                                                    .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                                     .withUniqueMembers(false)
                                                     .build(),
                                                 LevelMappingImpl.builder()
                                                     .withName("Brand Name")
-                                                    .withTable("product")
-                                                    .withColumn("brand_name")
+                                                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
+                                                    .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                                                     .withUniqueMembers(false)
                                                     .build(),
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Name")
-                                                    .withTable("product")
-                                                    .withColumn("product_name")
+                                                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
+                                                    .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                                                     .withUniqueMembers(true)
                                                     .build(),
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Id")
-                                                    .withTable("product")
-                                                    .withColumn("product_id")
+                                                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
+                                                    .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                                     .withUniqueMembers(true)
                                                     .build()
                                             ))
@@ -2879,17 +2882,24 @@ class TestAggregationManager extends BatchTestCase {
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
             	MeasureMappingImpl m = MeasureMappingImpl.builder()
                         .withName("Unit Sales")
-                        .withColumn("unit_sales")
+                        .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                         .withAggregatorType(MeasureAggregatorType.SUM)
                         .withFormatString("Standard")
                         .build();
-            	
-                List<CubeMapping> result = new ArrayList<>();                
+                ColumnImpl salesRegion = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+                ColumnImpl salesCity = ColumnImpl.builder().withName("sales_city").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+                ColumnImpl salesDistrictId = ColumnImpl.builder().withName("sales_district_id").withType("INTEGER").build();
+                ColumnImpl regionId = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
+                PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
+                        .withColumns(List.of(
+                                salesRegion, salesCity, salesDistrictId, regionId
+                                ))).build();
+                List<CubeMapping> result = new ArrayList<>();
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("Foo")
                     .withDefaultMeasure(m)
                     .withQuery(TableQueryMappingImpl.builder()
-                    	.withName("sales_fact_1997")
+                    	.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
                     	.withAggregationExcludes(List.of(	
                     		AggregationExcludeMappingImpl.builder()
                             .withName("agg_g_ms_pcat_sales_fact_1997")
@@ -2945,68 +2955,68 @@ class TestAggregationManager extends BatchTestCase {
                     .withDimensionConnectors(List.of(
                     	DimensionConnectorMappingImpl.builder()
                     		.withOverrideDimensionName("Product")
-                            .withForeignKey("product_id")
-                            .withDimension(StandardDimensionMappingImpl.builder()                            		                            		
+                            .withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
+                            .withDimension(StandardDimensionMappingImpl.builder()
                             	.withHierarchies(List.of(
                                 HierarchyMappingImpl.builder()
                                     .withHasAll(true)
-                                    .withPrimaryKey("product_id")
-                                    .withPrimaryKeyTable("product")
+                                    .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
+                                    .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                     .withQuery(
                                             JoinQueryMappingImpl.builder()
                                             .withLeft(
                                             	JoinedQueryElementMappingImpl.builder()
-                                            		.withKey("product_class_id")
-                                            		.withQuery(TableQueryMappingImpl.builder().withName("product").build())
+                                            		.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
+                                            		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_TABLE).build())
                                             		.build())
                                             .withRight(
                                             	JoinedQueryElementMappingImpl.builder()
-                                            		.withKey("product_class_id")
-                                            		.withQuery(TableQueryMappingImpl.builder().withName("product_class").build())
+                                            		.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
+                                            		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE).build())
                                             		.build())
                                             .build()
                                     )
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Product Family")
-                                            .withTable("product_class")
-                                            .withColumn("product_family")
+                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(true)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Department")
-                                            .withTable("product_class")
-                                            .withColumn("product_department")
+                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Category")
-                                            .withTable("product_class")
-                                            .withColumn("product_category")
+                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Subcategory")
-                                            .withTable("product_class")
-                                            .withColumn("product_subcategory")
+                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Brand Name")
-                                            .withTable("product")
-                                            .withColumn("brand_name")
+                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Name")
-                                            .withTable("product")
-                                            .withColumn("product_name")
+                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                                             .withUniqueMembers(true)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Id")
-                                            .withTable("product")
-                                            .withColumn("product_id")
+                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                             .withUniqueMembers(true)
                                             .build()
                                     ))
@@ -3015,39 +3025,39 @@ class TestAggregationManager extends BatchTestCase {
                             .build(),
                         DimensionConnectorMappingImpl.builder()
                         	.withOverrideDimensionName("Store")
-                            .withForeignKey("store_id")
+                            .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
                             .withDimension(StandardDimensionMappingImpl.builder()
                             		.withName("Store")
                                 	.withHierarchies(List.of(
                                     HierarchyMappingImpl.builder()
                                     .withHasAll(true)
-                                    .withPrimaryKey("store_id")
-                                    .withPrimaryKeyTable("store")
+                                    .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
+                                    .withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
                                     .withQuery(
                                             JoinQueryMappingImpl.builder()
                                             .withLeft(
                                             	JoinedQueryElementMappingImpl.builder()
-                                            		.withKey("region_id")
-                                            		.withQuery(TableQueryMappingImpl.builder().withName("store").build())
+                                            		.withKey(FoodmartMappingSupplier.REGION_ID_COLUMN_IN_STORE)
+                                            		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
                                             		.build())
                                             .withRight(
                                             	JoinedQueryElementMappingImpl.builder()
-                                            		.withKey("region_id")
-                                            		.withQuery(TableQueryMappingImpl.builder().withName("region").build())
+                                            		.withKey(regionId)
+                                            		.withQuery(TableQueryMappingImpl.builder().withTable(region).build())
                                             		.build())
                                             .build()
                                     )
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Store Region")
-                                            .withTable("region")
-                                            .withColumn("sales_city")
+                                            .withTable(region)
+                                            .withColumn(salesCity)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Store Id")
-                                            .withTable("store")
-                                            .withColumn("store_id")
+                                            .withTable(FoodmartMappingSupplier.STORE_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                                             .withUniqueMembers(true)
                                             .build()
                                     ))
@@ -3060,7 +3070,7 @@ class TestAggregationManager extends BatchTestCase {
                 	    .withMeasures(List.of(
                 	    	MeasureMappingImpl.builder()
                             	.withName("Unit Sales")
-                                .withColumn("unit_sales")
+                                .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                                 .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("Standard")
                                 .build()

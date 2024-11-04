@@ -318,17 +318,17 @@ class NativeFilterMatchingTest extends BatchTestCase {
 
         	private static final HierarchyMappingImpl h = HierarchyMappingImpl.builder()
             .withHasAll(true)
-            .withPrimaryKey("store_id")
-            .withQuery(TableQueryMappingImpl.builder().withName("store").build())
+            .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
+            .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
             .withLevels(List.of(
                 LevelMappingImpl.builder()
                     .withName("Store Country")
-                    .withColumn("store_country")
+                    .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                     .withUniqueMembers(true)
                     .build(),
                 LevelMappingImpl.builder()
                     .withName("Store State")
-                    .withColumn("store_state")
+                    .withColumn(FoodmartMappingSupplier.STORE_STATE_COLUMN_IN_STORE)
                     .withUniqueMembers(true)
                     .build()
             ))
@@ -342,16 +342,16 @@ class NativeFilterMatchingTest extends BatchTestCase {
 
         	private static final PhysicalCubeMappingImpl cube = PhysicalCubeMappingImpl.builder()
             .withName("TinySales")
-            .withQuery(TableQueryMappingImpl.builder().withName("sales_fact_1997").build())
+            .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
             .withDimensionConnectors(List.of(
             		DimensionConnectorMappingImpl.builder()
             		.withOverrideDimensionName("Product")
-            		.withForeignKey("product_id")
+            		.withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
             		.withDimension(FoodmartMappingSupplier.DIMENSION_PRODUCT)
             		.build(),
             		DimensionConnectorMappingImpl.builder()
             		.withOverrideDimensionName("Store2")
-            		.withForeignKey("store_id")
+            		.withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
             		.withDimension(dimensionStore2)
             		.build()
             		))
@@ -360,7 +360,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
             		.withMeasures(List.of(
                             MeasureMappingImpl.builder()
                             .withName("Unit Sales")
-                            .withColumn("unit_sales")
+                            .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                             .withAggregatorType(MeasureAggregatorType.SUM)
                             .withFormatString("Standard")
                             .build()

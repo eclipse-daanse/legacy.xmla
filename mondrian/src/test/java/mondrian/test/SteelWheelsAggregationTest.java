@@ -28,6 +28,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
+import org.eclipse.daanse.rolap.mapping.instance.complex.steelwheels.SteelwheelsSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessDimensionGrantMappingImpl;
@@ -89,7 +90,7 @@ class SteelWheelsAggregationTest {
     private static final LevelMappingImpl nameLevel = LevelMappingImpl.builder()
     .withName("Name")
     .withVisible(true)
-    .withColumn("CONTACTLASTNAME")
+    .withColumn(SteelwheelsSupplier.CONTACTLASTNAME_COLUMN_IN_CUSTOMER_W_TER)
     .withType(DataType.STRING)
     .withUniqueMembers(false)
     .withLevelType(LevelType.REGULAR)
@@ -100,7 +101,7 @@ class SteelWheelsAggregationTest {
     private static final LevelMappingImpl addressLevel = LevelMappingImpl.builder()
     .withName("Address")
     .withVisible(true)
-    .withColumn("ADDRESSLINE1")
+    .withColumn(SteelwheelsSupplier.ADDRESSLINE1_COLUMN_IN_CUSTOMER_W_TER)
     .withType(DataType.STRING)
     .withUniqueMembers(false)
     .withLevelType(LevelType.REGULAR)
@@ -112,9 +113,9 @@ class SteelWheelsAggregationTest {
     .withName("Customers Hierarchy")
     .withVisible(true)
     .withHasAll(true)
-    .withPrimaryKey("CUSTOMERNUMBER")
+    .withPrimaryKey(SteelwheelsSupplier.CUSTOMERNAME_COLUMN_IN_CUSTOMER_W_TER)
     //.withCaption("Customer Hierarchy")
-    .withQuery(TableQueryMappingImpl.builder().withName("customer_w_ter").build())
+    .withQuery(TableQueryMappingImpl.builder().withTable(SteelwheelsSupplier.CUSTOMER_W_TER_TABLE).build())
     .withLevels(List.of(
     	addressLevel,
         nameLevel
@@ -132,25 +133,25 @@ class SteelWheelsAggregationTest {
     .withVisible(true)
     .withCache(true)
     .withEnabled(true)
-    .withQuery(TableQueryMappingImpl.builder().withName("orderfact").build())
+    .withQuery(TableQueryMappingImpl.builder().withTable(SteelwheelsSupplier.ORDER_FACT_TABLE).build())
     .withDimensionConnectors(List.of(
     	DimensionConnectorMappingImpl.builder()
     		.withDimension(customersDimension)
     		.withOverrideDimensionName("Customer_DimUsage")
             .withVisible(true)
-            .withForeignKey("CUSTOMERNUMBER")
+            .withForeignKey(SteelwheelsSupplier.CUSTOMERNUMBER_COLUMN_IN_ORDER_FACT)
             .build()
     ))
     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
            MeasureMappingImpl.builder()
             .withName("Price Each")
-            .withColumn("PRICEEACH")
+            .withColumn(SteelwheelsSupplier.PRICEEACH_COLUMN_IN_ORDER_FACT)
             .withAggregatorType(MeasureAggregatorType.SUM)
             .withVisible(true)
             .build(),
         MeasureMappingImpl.builder()
             .withName("Total Price")
-            .withColumn("TOTALPRICE")
+            .withColumn(SteelwheelsSupplier.TOTALPRICE_COLUMN_IN_ORDER_FACT)
             .withAggregatorType(MeasureAggregatorType.SUM)
             .withVisible(true)
             .build()

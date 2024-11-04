@@ -16,6 +16,9 @@ package mondrian.rolap.aggmatcher;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
@@ -71,38 +74,64 @@ public class Checkin_7641Modifier  extends PojoMappingModifier {
 
     @Override
     protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        //## ColumnNames: cust_loc_id,prod_id,first,request_value,shipped_value
+        //## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2),DECIMAL(10,2),DECIMAL(10,2)
+        ColumnImpl custLocIdCheckin7641 = ColumnImpl.builder().withName("cust_loc_id").withType("INTEGER").build();
+        ColumnImpl prodIdCheckin7641 = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
+        ColumnImpl firstCheckin7641 = ColumnImpl.builder().withName("first").withType("NUMERIC").withTypeQualifiers(List.of("10", "2")).build();
+        ColumnImpl requestValueCheckin7641 = ColumnImpl.builder().withName("request_value").withType("NUMERIC").withTypeQualifiers(List.of("10", "2")).build();
+        ColumnImpl shippedValueCheckin7641 = ColumnImpl.builder().withName("request_value").withType("NUMERIC").withTypeQualifiers(List.of("10", "2")).build();
+        PhysicalTableImpl checkin7641 = ((Builder) PhysicalTableImpl.builder().withName("checkin7641")
+                .withColumns(List.of(custLocIdCheckin7641, prodIdCheckin7641, firstCheckin7641, requestValueCheckin7641, shippedValueCheckin7641))).build();
+        //## ColumnNames: cust_loc_id,state_cd,city_nm,zip_cd
+        //## ColumnTypes: INTEGER,VARCHAR(20),VARCHAR(20),VARCHAR(20)
+        ColumnImpl custLocIdGeography7641 = ColumnImpl.builder().withName("cust_loc_id").withType("INTEGER").build();
+        ColumnImpl stateCdGeography7641 = ColumnImpl.builder().withName("state_cd").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+        ColumnImpl cityNmGeography7641 = ColumnImpl.builder().withName("city_nm").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+        ColumnImpl zipCdGeography7641 = ColumnImpl.builder().withName("zip_cd").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+        PhysicalTableImpl geography7641 = ((Builder) PhysicalTableImpl.builder().withName("checkin7641")
+                .withColumns(List.of(custLocIdCheckin7641, stateCdGeography7641, cityNmGeography7641, zipCdGeography7641))).build();
+        //## ColumnNames: prod_id,class,brand,item
+        //## ColumnTypes: INTEGER,VARCHAR(30),VARCHAR(30),VARCHAR(30)
+        ColumnImpl prodIdProd7611 = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
+        ColumnImpl classProd7611 = ColumnImpl.builder().withName("class").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl brandProd7611 = ColumnImpl.builder().withName("brand").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl itemProd7611 = ColumnImpl.builder().withName("item").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        PhysicalTableImpl prod7611 = ((Builder) PhysicalTableImpl.builder().withName("prod7611")
+                .withColumns(List.of(classProd7611, brandProd7611, itemProd7611))).build();
+        
         List<CubeMapping> result = new ArrayList<>();
         result.addAll(super.schemaCubes(schema));
         result.add(PhysicalCubeMappingImpl.builder()
             .withName("ImplicitMember")
-            .withQuery(TableQueryMappingImpl.builder().withName("checkin7641").build())
+            .withQuery(TableQueryMappingImpl.builder().withTable(checkin7641).build())
             .withDimensionConnectors(List.of(
                 DimensionConnectorMappingImpl.builder()
                 	.withOverrideDimensionName("Geography")
-                    .withForeignKey("cust_loc_id")
+                    .withForeignKey(custLocIdCheckin7641)
                     .withDimension(StandardDimensionMappingImpl.builder()
                     	.withName("Geography")
                     	.withHierarchies(List.of(
                         HierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withAllMemberName("All Regions")
-                            .withPrimaryKey("cust_loc_id")
-                            .withQuery(TableQueryMappingImpl.builder().withName("geography7641").build())
+                            .withPrimaryKey(custLocIdGeography7641)
+                            .withQuery(TableQueryMappingImpl.builder().withTable(geography7641).build())
                             .withLevels(List.of(
                                 LevelMappingImpl.builder()
-                                    .withColumn("state_cd")
+                                    .withColumn(stateCdGeography7641)
                                     .withName("State")
                                     .withType(DataType.STRING)
                                     .withUniqueMembers(true)
                                     .build(),
                                 LevelMappingImpl.builder()
-                                    .withColumn("city_nm")
+                                    .withColumn(cityNmGeography7641)
                                     .withName("City")
                                     .withType(DataType.STRING)
                                     .withUniqueMembers(true)
                                     .build(),
                                 LevelMappingImpl.builder()
-                                    .withColumn("zip_cd")
+                                    .withColumn(zipCdGeography7641)
                                     .withName("Zip Code")
                                     .withType(DataType.STRING)
                                     .withUniqueMembers(true)
@@ -113,30 +142,30 @@ public class Checkin_7641Modifier  extends PojoMappingModifier {
                     .build(),
                 DimensionConnectorMappingImpl.builder()
                     .withOverrideDimensionName("Product")
-                    .withForeignKey("prod_id")
+                    .withForeignKey(prodIdCheckin7641)
                     .withDimension(StandardDimensionMappingImpl.builder()
                         .withName("Product")
                         .withHierarchies(List.of(
                         HierarchyMappingImpl.builder()
                             .withHasAll(false)
                             .withDefaultMember("Class2")
-                            .withPrimaryKey("prod_id")
-                            .withQuery(TableQueryMappingImpl.builder().withName("prod7611").build())
+                            .withPrimaryKey(prodIdProd7611)
+                            .withQuery(TableQueryMappingImpl.builder().withTable(prod7611).build())
                             .withLevels(List.of(
                                 LevelMappingImpl.builder()
-                                    .withColumn("class")
+                                    .withColumn(classProd7611)
                                     .withName("Class")
                                     .withType(DataType.STRING)
                                     .withUniqueMembers(true)
                                     .build(),
                                 LevelMappingImpl.builder()
-                                    .withColumn("brand")
+                                    .withColumn(brandProd7611)
                                     .withName("Brand")
                                     .withType(DataType.STRING)
                                     .withUniqueMembers(true)
                                     .build(),
                                 LevelMappingImpl.builder()
-                                    .withColumn("item")
+                                    .withColumn(itemProd7611)
                                     .withName("Item")
                                     .withType(DataType.STRING)
                                     .withUniqueMembers(true)
@@ -150,19 +179,19 @@ public class Checkin_7641Modifier  extends PojoMappingModifier {
             .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
                 MeasureMappingImpl.builder()
                     .withName("First Measure")
-                    .withColumn("first")
+                    .withColumn(firstCheckin7641)
                     .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build(),
                 MeasureMappingImpl.builder()
                     .withName("Requested Value")
-                    .withColumn("request_value")
+                    .withColumn(requestValueCheckin7641)
                     .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build(),
                 MeasureMappingImpl.builder()
                     .withName("Shipped Value")
-                    .withColumn("shipped_value")
+                    .withColumn(shippedValueCheckin7641)
                     .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build()

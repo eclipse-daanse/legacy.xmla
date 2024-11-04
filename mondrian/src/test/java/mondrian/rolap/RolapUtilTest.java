@@ -19,6 +19,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
@@ -41,7 +43,7 @@ class RolapUtilTest {
     try {
       //fact = SchemaUtil.parse(getFactTableWithSQLFilter(), TableQueryMappingImpl.class);
       fact = TableQueryMappingImpl.builder()
-    		  .withName("getFactTable()")
+    		  .withTable(((Builder) PhysicalTableImpl.builder().withName("getFactTable())")).build())
     		  .withAlias("TableAlias")
     		  .withSqlWhereExpression(SQLMappingImpl.builder()
     				  .withDialects(List.of("mysql"))
@@ -63,7 +65,7 @@ class RolapUtilTest {
   void testMakeRolapStarKey_ByFactTableName() throws Exception {
     //fact = SchemaUtil.parse(getFactTableWithSQLFilter(), TableQueryMappingImpl.class);
     fact = TableQueryMappingImpl.builder()
-    		  .withName("getFactTable()")
+    		.withTable(((Builder) PhysicalTableImpl.builder().withName("getFactTable())")).build())
     		  .withAlias("TableAlias")
     		  .withSqlWhereExpression(SQLMappingImpl.builder()
     				  .withDialects(List.of("mysql"))
@@ -80,7 +82,7 @@ class RolapUtilTest {
   void testMakeRolapStarKey_FactTableWithSQLFilter() throws Exception {
     //fact = SchemaUtil.parse(getFactTableWithSQLFilter(), TableQueryMappingImpl.class);
     fact = TableQueryMappingImpl.builder()
-  		  .withName("getFactTable()")
+          .withTable(((Builder) PhysicalTableImpl.builder().withName("getFactTable())")).build())
   		  .withAlias("TableAlias")
   		  .withSqlWhereExpression(SQLMappingImpl.builder()
   				  .withDialects(List.of("mysql"))
@@ -100,7 +102,7 @@ class RolapUtilTest {
       throws Exception {
     //fact = SchemaUtil.parse(getFactTableWithEmptySQLFilter(), TableQueryMappingImpl.class);
     fact = TableQueryMappingImpl.builder()
-  		  .withName("getFactTable()")
+          .withTable(((Builder) PhysicalTableImpl.builder().withName("getFactTable())")).build())
   		  .withAlias("TableAlias")
   		  .withSqlWhereExpression(SQLMappingImpl.builder()
   				  .withDialects(List.of("mysql"))
@@ -118,7 +120,7 @@ class RolapUtilTest {
       throws Exception {
     //fact = SchemaUtil.parse(getFactTableWithoutSQLFilter(), TableQueryMappingImpl.class);
     fact = TableQueryMappingImpl.builder()
-    		  .withName("getFactTable()")
+              .withTable(((Builder) PhysicalTableImpl.builder().withName("getFactTable())")).build())
     		  .withAlias("TableAlias")
     		  .build();
     List<String> polapStarKey = RolapUtil.makeRolapStarKey(fact);

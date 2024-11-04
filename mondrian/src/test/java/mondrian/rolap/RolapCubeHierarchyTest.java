@@ -22,6 +22,7 @@ import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.core.BasicContextConfig;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
@@ -248,7 +249,9 @@ class RolapCubeHierarchyTest {
     String rolapHierarchy_uniqueName = "TheDimUniqueName";
     Level[] rolapHierarchy_levels = new Level[]{};
     TableQueryMapping rolapHierarchy_relation = mock(TableQueryMapping.class);
-    doReturn("TableName").when(rolapHierarchy_relation).getName();
+    PhysicalTableImpl table = mock(PhysicalTableImpl.class);
+    doReturn("TableName").when(table).getName();
+    doReturn(table).when(rolapHierarchy_relation).getTable();
     String subName = null;
 
     int ordinal = 0;

@@ -38,6 +38,8 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCubeGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessHierarchyGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
@@ -277,7 +279,7 @@ class RolapSchemaTest {
         throws Exception {
       //Create the test fact
       RelationalQueryMapping fact = TableQueryMappingImpl.builder()
-      		  .withName("getFactTable()")
+      		  .withTable(((Builder) PhysicalTableImpl.builder().withName("getFactTable())")).build())
       		  .withAlias("TableAlias")
       		  .withSqlWhereExpression(SQLMappingImpl.builder()
       				  .withDialects(List.of("mysql"))
@@ -310,7 +312,7 @@ class RolapSchemaTest {
     void testGetStarFromRegistryByStarKey() throws Exception {
       //Create the test fact
       RelationalQueryMapping fact = TableQueryMappingImpl.builder()
-    		  .withName("getFactTable()")
+    		  .withTable(((Builder) PhysicalTableImpl.builder().withName("getFactTable())")).build())
     		  .withAlias("TableAlias")
     		  .withSqlWhereExpression(SQLMappingImpl.builder()
     				  .withDialects(List.of("mysql"))
@@ -332,7 +334,7 @@ class RolapSchemaTest {
     void testGetStarFromRegistryByFactTableName() throws Exception {
       //Create the test fact
       RelationalQueryMapping fact = TableQueryMappingImpl.builder()
-    		  .withName("getFactTable()")
+    		  .withTable(((Builder) PhysicalTableImpl.builder().withName("getFactTable())")).build())
     		  .withAlias("TableAlias")
     		  .build();
 

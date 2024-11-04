@@ -17,10 +17,15 @@ package mondrian.test.clearview;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
+import org.eclipse.daanse.rdb.structure.pojo.InlineTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.RowImpl;
+import org.eclipse.daanse.rdb.structure.pojo.RowValueImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -59,44 +64,36 @@ public class HangerDimensionTestModifiers {
          */
 
         protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
+            ColumnImpl hangerKey = ColumnImpl.builder().withName("HANGER_KEY").withType("NUMERIC").build();
+            InlineTableImpl t = InlineTableImpl.builder()
+            .withColumns(List.of(hangerKey))
+            .withRows(List.of(
+                   RowImpl.builder().withRowValues(List.of(
+                        RowValueImpl.builder().withColumn(hangerKey).withValue("1").build())).build()
+            ))
+            .build();
+
             List<DimensionConnectorMapping> result = new ArrayList<>();
             result.addAll(super.cubeDimensionConnectors(cube)
                 .stream().filter(d -> !"Le System-Trend Hanger".equals(d.getOverrideDimensionName())).toList());
             if (cube.getName().equals("Sales"))
             result.add(DimensionConnectorMappingImpl.builder()
             	.withOverrideDimensionName("Le System-Trend Hanger")
-                .withForeignKey("store_id")
+                .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
                 .withDimension(
                 	StandardDimensionMappingImpl.builder()
                 		.withName("Le System-Trend Hanger")
                 		.withHierarchies(List.of(
                 			HierarchyMappingImpl.builder()
             				.withHasAll(true)
-            				.withPrimaryKey("HANGER_KEY")
+            				.withPrimaryKey(hangerKey)
             				.withQuery(InlineTableQueryMappingImpl.builder()
                 					.withAlias("LE_SYSTEM_TREND_HANGER")
-                					.withColumnDefinitions(List.of(
-                						InlineTableColumnDefinitionMappingImpl.builder()
-                                            .withName("HANGER_KEY")
-                                            .withType(DataType.NUMERIC)
-                                            .build()
-                					))
-                					.withRows(List.of(
-                						InlineTableRowMappingImpl.builder()
-                						.withCells(List.of(
-                							InlineTableRowCellMappingImpl.builder()
-                								.withColumnName("HANGER_KEY")
-                								.withValue("1")
-                                                .build()
-                                        ))
-                                        .build()
-                					))
-            						.build()
-            				)
+                					.withTable(t).build())
                             .withLevels(List.of(
                                     LevelMappingImpl.builder()
                                         .withName("Hanger Level")
-                                        .withColumn("HANGER_KEY")
+                                        .withColumn(hangerKey)
                                         .withUniqueMembers(true)
                                         .build()
                             ))

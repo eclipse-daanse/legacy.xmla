@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
+import org.eclipse.daanse.rdb.structure.pojo.InlineTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.RowImpl;
+import org.eclipse.daanse.rdb.structure.pojo.RowValueImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
@@ -65,71 +69,50 @@ class InlineTableTest {
             }
             
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
+                ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("INTEGER").build();
+                ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                InlineTableImpl t = InlineTableImpl.builder()
+                .withColumns(List.of(promoId, promoName))
+                .withRows(List.of(
+                       RowImpl.builder().withRowValues(List.of(
+                            RowValueImpl.builder().withColumn(promoId).withValue("0").build(),
+                            RowValueImpl.builder().withColumn(promoName).withValue("Promo0").build())).build(),
+                       RowImpl.builder().withRowValues(List.of(
+                               RowValueImpl.builder().withColumn(promoId).withValue("1").build(),
+                               RowValueImpl.builder().withColumn(promoName).withValue("Promo1").build())).build()
+                ))
+                .build();
+
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.cubes(cubes));
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName(cubeName)
-                    .withQuery(TableQueryMappingImpl.builder().withName("sales_fact_1997").build())
+                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                     .withDimensionConnectors(List.of(
                     	DimensionConnectorMappingImpl.builder()
-                    		.withOverrideDimensionName("Time")                            
-                            .withForeignKey("time_id")
+                    		.withOverrideDimensionName("Time")
+                            .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
                             .withDimension(FoodmartMappingSupplier.DIMENSION_TIME)
                             .build(),
                         DimensionConnectorMappingImpl.builder()
                         	.withOverrideDimensionName("Alternative Promotion")
-                        	.withForeignKey("promotion_id")
+                        	.withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
                         	.withDimension(
                         		StandardDimensionMappingImpl.builder()
-                        			.withName("Alternative Promotion")                            
+                        			.withName("Alternative Promotion")
                         			.withHierarchies(List.of(
                         				HierarchyMappingImpl.builder()
                         					.withHasAll(true)
-                        					.withPrimaryKey("promo_id")
+                        					.withPrimaryKey(promoId)
                         					.withQuery(InlineTableQueryMappingImpl.builder()
                         							.withAlias("alt_promotion")
-                        							.withColumnDefinitions(List.of(
-                        								InlineTableColumnDefinitionMappingImpl.builder()
-                        									.withName("promo_id")
-                        									.withType(DataType.NUMERIC)
-                        									.build(),
-                        								InlineTableColumnDefinitionMappingImpl.builder()
-                        									.withName("promo_name")
-                        									.withType(DataType.STRING)
-                        									.build()
-                        							))
-                        							.withRows(List.of(
-                        								InlineTableRowMappingImpl.builder()
-                        									.withCells(List.of(
-                        										InlineTableRowCellMappingImpl.builder()
-                        										.withColumnName("promo_id")
-                        										.withValue("0")
-                        										.build(),
-                        										InlineTableRowCellMappingImpl.builder()
-                        										.withColumnName("promo_name")
-                        										.withValue("Promo0")
-                        										.build()
-                        									))
-                        									.build(),
-                        								InlineTableRowMappingImpl.builder()
-                        									.withCells(List.of(
-                        										InlineTableRowCellMappingImpl.builder()
-                        										.withColumnName("promo_id")
-                        										.withValue("1")
-                        										.build(),
-                        										InlineTableRowCellMappingImpl.builder()
-                        										.withColumnName("promo_name")
-                        										.withValue("Promo1")
-                        										.build()
-                        									))
-                        									.build()
-                        							))
+                        							.withTable(t)
                         							.build()
                         					)
                         					.withLevels(List.of(
                         						LevelMappingImpl.builder()
-                        							.withName("Alternative Promotion").withColumn("promo_id")
-                        							.withNameColumn("promo_name")
+                        							.withName("Alternative Promotion").withColumn(promoId)
+                        							.withNameColumn(promoName)
                         							.withUniqueMembers(true)
                         							.build()
                         					))
@@ -143,17 +126,17 @@ class InlineTableTest {
                     	.withMeasures(List.of(
                             MeasureMappingImpl.builder()
                                 .withName("Unit Sales")
-                                .withColumn("unit_sales")
+                                .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                                 .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("Standard")
                                 .withVisible(true)
                                 .build(),
                             MeasureMappingImpl.builder()
                                 .withName("Store Sales")
-                                .withColumn("store_sales")
-                                .withAggregatorType(MeasureAggregatorType.SUM)                                
+                                .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
+                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#,###.00")
-                                .build()                    			
+                                .build()
                     	))
                     	.build()
                     ))
@@ -224,57 +207,36 @@ class InlineTableTest {
             public TestInlineTableInSharedDimModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-                        
+            
+            private static final ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("INTEGER").build();
+            private static final ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+            private static final InlineTableImpl t = InlineTableImpl.builder()
+            .withColumns(List.of(promoId, promoName))
+            .withRows(List.of(
+                   RowImpl.builder().withRowValues(List.of(
+                        RowValueImpl.builder().withColumn(promoId).withValue("0").build(),
+                        RowValueImpl.builder().withColumn(promoName).withValue("First promo").build())).build(),
+                   RowImpl.builder().withRowValues(List.of(
+                           RowValueImpl.builder().withColumn(promoId).withValue("1").build(),
+                           RowValueImpl.builder().withColumn(promoName).withValue("Second promo").build())).build()
+            ))
+            .build();
+            
             private static final StandardDimensionMappingImpl d = StandardDimensionMappingImpl.builder()
                     .withName("Shared Alternative Promotion")
                     .withHierarchies(List.of(
                         HierarchyMappingImpl.builder()
                             .withHasAll(true)
-                            .withPrimaryKey("promo_id")
-                            .withQuery(InlineTableQueryMappingImpl.builder()                            		
+                            .withPrimaryKey(promoId)
+                            .withQuery(InlineTableQueryMappingImpl.builder()
                                 .withAlias("alt_promotion")
-                                .withColumnDefinitions(List.of(
-                                	InlineTableColumnDefinitionMappingImpl.builder()
-                                        .withName("promo_id")
-                                        .withType(DataType.NUMERIC)
-                                        .build(),
-                                    InlineTableColumnDefinitionMappingImpl.builder()
-                                        .withName("promo_name")
-                                        .withType(DataType.STRING)
-                                        .build()
-                                    ))
-                                .withRows(List.of(
-                                	InlineTableRowMappingImpl.builder()
-                                		.withCells(List.of(
-                                			InlineTableRowCellMappingImpl.builder()                                			
-                                                .withColumnName("promo_id")
-                                                .withValue("0")
-                                                .build(),
-                                            InlineTableRowCellMappingImpl.builder()
-                                                .withColumnName("promo_name")
-                                                .withValue("First promo")
-                                                .build()
-                                        ))
-                                        .build(),
-                                    InlineTableRowMappingImpl.builder()
-                                    	.withCells(List.of(
-                                        	InlineTableRowCellMappingImpl.builder()
-                                        		.withColumnName("promo_id")
-                                        		.withValue("1")
-                                                .build(),
-                                            InlineTableRowCellMappingImpl.builder()
-                                            	.withColumnName("promo_name")
-                                            	.withValue("Second promo")
-                                                .build()
-                                        ))
-                                        .build()
-                                ))
+                                .withTable(t)
                                 .build())
                             .withLevels(List.of(
                                 LevelMappingImpl.builder()
                                     .withName("Alternative Promotion")
-                                    .withColumn("promo_id")
-                                    .withNameColumn("promo_name")
+                                    .withColumn(promoId)
+                                    .withNameColumn(promoName)
                                     .withUniqueMembers(true)
                                     .build()
                             ))
@@ -286,17 +248,17 @@ class InlineTableTest {
                 result.addAll(super.cubes(cubes));
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName(cubeName)
-                    .withQuery(TableQueryMappingImpl.builder().withName("sales_fact_1997").build())
+                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                     .withDimensionConnectors(List.of(
                     	DimensionConnectorMappingImpl.builder()
                     		.withOverrideDimensionName("Time")
-                    		.withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_TIME))                            
-                            .withForeignKey("time_id")
+                    		.withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_TIME))
+                            .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
                             .build(),
                         DimensionConnectorMappingImpl.builder()
                             .withOverrideDimensionName("Shared Alternative Promotion")
                             .withDimension(d)
-                            .withForeignKey("promotion_id")
+                            .withForeignKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_SALES_FACT_1997)
                             .build()
                     ))
                     .withMeasureGroups(List.of(
@@ -304,17 +266,17 @@ class InlineTableTest {
                     	.withMeasures(List.of(
                             MeasureMappingImpl.builder()
                                 .withName("Unit Sales")
-                                .withColumn("unit_sales")
-                                .withAggregatorType(MeasureAggregatorType.SUM)                                
+                                .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
+                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("Standard")
                                 .withVisible(false)
                                 .build(),
                             MeasureMappingImpl.builder()
                                 .withName("Store Sales")
-                                .withColumn("store_sales")
+                                .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
                                 .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#,###.00")
-                                .build()                    			
+                                .build()
                     	))
                     	.build()	
                         ))
@@ -398,114 +360,82 @@ class InlineTableTest {
             }
             
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                List<CubeMapping> result = new ArrayList<>();
+                ColumnImpl nationName = ColumnImpl.builder().withName("nation_name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                ColumnImpl nationShortcode = ColumnImpl.builder().withName("nation_shortcode").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                InlineTableImpl t = InlineTableImpl.builder()
+                .withColumns(List.of(nationName, nationShortcode))
+                .withRows(List.of(
+                       RowImpl.builder().withRowValues(List.of(
+                            RowValueImpl.builder().withColumn(nationName).withValue("USA").build(),
+                            RowValueImpl.builder().withColumn(nationShortcode).withValue("US").build())).build(),
+                       RowImpl.builder().withRowValues(List.of(
+                               RowValueImpl.builder().withColumn(nationName).withValue("Mexico").build(),
+                               RowValueImpl.builder().withColumn(nationShortcode).withValue("MX").build())).build(),
+                       RowImpl.builder().withRowValues(List.of(
+                               RowValueImpl.builder().withColumn(nationName).withValue("Canada").build(),
+                               RowValueImpl.builder().withColumn(nationShortcode).withValue("CA").build())).build()
+                ))
+                .build();
+            	List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.cubes(cubes));
                 JoinQueryMappingImpl j = JoinQueryMappingImpl.builder()
                 		.withLeft(JoinedQueryElementMappingImpl.builder()
-                				.withKey("store_country")
-                				.withQuery(TableQueryMappingImpl.builder().withName("store").build())
+                				.withKey(FoodmartMappingSupplier.STORE_COUNTRY_COLUMN_IN_STORE)
+                				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
                 				.build())
                 		.withRight(JoinedQueryElementMappingImpl.builder()
-                				.withKey("nation_name")
+                				.withKey(nationName)
                 				.withQuery(InlineTableQueryMappingImpl.builder()
-                                        .withAlias("nation")
-                                        .withColumnDefinitions(List.of(
-                                        	InlineTableColumnDefinitionMappingImpl.builder()
-                                        		.withName("nation_name")
-                                                .withType(DataType.STRING)
-                                                .build(),
-                                            InlineTableColumnDefinitionMappingImpl.builder()
-                                                .withName("nation_shortcode")
-                                                .withType(DataType.STRING)
-                                                .build()
-                                        ))
-                                        .withRows(List.of(
-                                            InlineTableRowMappingImpl.builder()
-                                            	.withCells(List.of(
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                    	.withColumnName("nation_name")
-                                                        .withValue("USA")
-                                                        .build(),
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                        .withColumnName("nation_shortcode")
-                                                        .withValue("US")
-                                                        .build()
-                                                ))
-                                                .build(),
-                                            InlineTableRowMappingImpl.builder()
-                                            	.withCells(List.of(
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                        .withColumnName("nation_name")
-                                                        .withValue("Mexico")
-                                                        .build(),
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                        .withColumnName("nation_shortcode")
-                                                        .withValue("MX")
-                                                        .build()
-                                                ))
-                                                .build(),
-                                            InlineTableRowMappingImpl.builder()
-                                            	.withCells(List.of(
-                                            		InlineTableRowCellMappingImpl.builder()
-                                                        .withColumnName("nation_name")
-                                                        .withValue("Canada")
-                                                        .build(),
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                        .withColumnName("nation_shortcode")
-                                                        .withValue("CA")
-                                                        .build()
-                                                ))
-                                                .build()
-
-                                        )).build())
-                				.build())
+                                .withAlias("nation")
+                                .withTable(t) 
+                				.build()).build())
                 		.build();
                 
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName(cubeName)
-                    .withQuery(TableQueryMappingImpl.builder().withName("sales_fact_1997").build())
+                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                     .withDimensionConnectors(List.of(
                     	DimensionConnectorMappingImpl.builder()
                     		.withOverrideDimensionName("Time")
                     		.withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_TIME))
-                            .withForeignKey("time_id")
+                            .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
                             .build(),
                       	DimensionConnectorMappingImpl.builder()
-                    		.withOverrideDimensionName("Store")                    		
-                            .withForeignKey("store_id")
+                    		.withOverrideDimensionName("Store")
+                            .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
                             .withDimension(                            
                             	StandardDimensionMappingImpl.builder()
                             		.withName("Store")
                             		.withHierarchies(List.of(
                             			HierarchyMappingImpl.builder()
                             				.withHasAll(true)
-                            				.withPrimaryKeyTable("store")
-                            				.withPrimaryKey("store_id")
+                            				.withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
+                            				.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
                             				.withQuery(j)
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Store Country")
-                                            .withTable("nation")
-                                            .withColumn("nation_name")
-                                            .withNameColumn("nation_shortcode")
+                                            .withTable(t)
+                                            .withColumn(nationName)
+                                            .withNameColumn(nationShortcode)
                                             .withUniqueMembers(true)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Store State")
-                                            .withTable("store")
-                                            .withColumn("store_state")
+                                            .withTable(FoodmartMappingSupplier.STORE_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                                             .withUniqueMembers(true)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Store City")
-                                            .withTable("store")
-                                            .withColumn("store_city")
+                                            .withTable(FoodmartMappingSupplier.STORE_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.STORE_CITY_COLUMN_IN_STORE)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Store Name")
-                                            .withTable("store")
-                                            .withColumn("store_name")
+                                            .withTable(FoodmartMappingSupplier.STORE_TABLE)
+                                            .withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                                             .withUniqueMembers(true)
                                             .build()
                                         ))
@@ -519,22 +449,22 @@ class InlineTableTest {
                     		.withMeasures(List.of(
                                 MeasureMappingImpl.builder()
                                     .withName("Unit Sales")
-                                    .withColumn("unit_sales")
+                                    .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                                     .withAggregatorType(MeasureAggregatorType.SUM)
                                     .withFormatString("Standard")
                                     .withVisible(false)
                                     .build(),
                                 MeasureMappingImpl.builder()
                                     .withName("Store Sales")
-                                    .withColumn("store_sales")
+                                    .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
                                     .withAggregatorType(MeasureAggregatorType.SUM)
                                     .withFormatString("#,###.00")
-                                    .build()                    				
+                                    .build()
                     				))
                     		.build()
                     		))
                     .build());
-                return result;            	
+                return result;
             }
             
         }
@@ -615,134 +545,78 @@ class InlineTableTest {
             
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
+                ColumnImpl nationName = ColumnImpl.builder().withName("nation_name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                ColumnImpl nationShortcode = ColumnImpl.builder().withName("nation_shortcode").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                InlineTableImpl t = InlineTableImpl.builder()
+                .withColumns(List.of(nationName, nationShortcode))
+                .withRows(List.of(
+                       RowImpl.builder().withRowValues(List.of(
+                            RowValueImpl.builder().withColumn(nationName).withValue("USA").build(),
+                            RowValueImpl.builder().withColumn(nationShortcode).withValue("US").build())).build(),
+                       RowImpl.builder().withRowValues(List.of(
+                               RowValueImpl.builder().withColumn(nationName).withValue("Mexico").build(),
+                               RowValueImpl.builder().withColumn(nationShortcode).withValue("MX").build())).build(),
+                       RowImpl.builder().withRowValues(List.of(
+                               RowValueImpl.builder().withColumn(nationName).withValue("Canada").build(),
+                               RowValueImpl.builder().withColumn(nationShortcode).withValue("CA").build())).build()
+                ))
+                .build();
+                ColumnImpl id = ColumnImpl.builder().withName("id").withType("NUMERIC").build();
+                ColumnImpl date = ColumnImpl.builder().withName("date").withType("DATE").build();
+                InlineTableImpl tt = InlineTableImpl.builder()
+                .withColumns(List.of(id, date))
+                .withRows(List.of(
+                       RowImpl.builder().withRowValues(List.of(
+                            RowValueImpl.builder().withColumn(id).withValue("1").build(),
+                            RowValueImpl.builder().withColumn(date).withValue("2008-04-29").build())).build(),
+                       RowImpl.builder().withRowValues(List.of(
+                               RowValueImpl.builder().withColumn(id).withValue("2").build(),
+                               RowValueImpl.builder().withColumn(date).withValue("2007-01-20").build())).build()
+                ))
+                .build();
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.cubes(cubes));
-
                 JoinQueryMappingImpl j = JoinQueryMappingImpl.builder()
                 		.withLeft(JoinedQueryElementMappingImpl.builder()
-                				.withKey("store_country")
-                				.withQuery(TableQueryMappingImpl.builder().withName("store").build())
+                				.withKey(FoodmartMappingSupplier.STORE_COUNTRY_COLUMN_IN_STORE)
+                				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
                 				.build())
                 		.withRight(JoinedQueryElementMappingImpl.builder()
-                				.withKey("nation_name")
+                				.withKey(nationName)
                 				.withQuery(InlineTableQueryMappingImpl.builder()
                                         .withAlias("nation")
-                                        .withColumnDefinitions(List.of(
-                                        	InlineTableColumnDefinitionMappingImpl.builder()
-                                        		.withName("nation_name")
-                                                .withType(DataType.STRING)
-                                                .build(),
-                                            InlineTableColumnDefinitionMappingImpl.builder()
-                                                .withName("nation_shortcode")
-                                                .withType(DataType.STRING)
-                                                .build()
-                                        ))
-                                        .withRows(List.of(
-                                            InlineTableRowMappingImpl.builder()
-                                            	.withCells(List.of(
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                    	.withColumnName("nation_name")
-                                                        .withValue("USA")
-                                                        .build(),
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                        .withColumnName("nation_shortcode")
-                                                        .withValue("US")
-                                                        .build()
-                                                ))
-                                                .build(),
-                                            InlineTableRowMappingImpl.builder()
-                                            	.withCells(List.of(
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                        .withColumnName("nation_name")
-                                                        .withValue("Mexico")
-                                                        .build(),
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                        .withColumnName("nation_shortcode")
-                                                        .withValue("MX")
-                                                        .build()
-                                                ))
-                                                .build(),
-                                            InlineTableRowMappingImpl.builder()
-                                            	.withCells(List.of(
-                                            		InlineTableRowCellMappingImpl.builder()
-                                                        .withColumnName("nation_name")
-                                                        .withValue("Canada")
-                                                        .build(),
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                        .withColumnName("nation_shortcode")
-                                                        .withValue("CA")
-                                                        .build()
-                                                ))
-                                                .build()
-
-                                        )).build())
-                				.build())
+                                        .withTable(t)
+                				.build()).build())
                 		.build();
                 
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName(cubeName)
-                    .withQuery(TableQueryMappingImpl.builder().withName("sales_fact_1997").build())
+                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                     .withDimensionConnectors(List.of(
                     	DimensionConnectorMappingImpl.builder()
                     		.withOverrideDimensionName("Time")
                     		.withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_TIME))
-                            .withForeignKey("time_id")
+                            .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
                             .build(),
                         DimensionConnectorMappingImpl.builder()
                         	.withOverrideDimensionName("Alternative Promotion")
-                        	.withForeignKey("promotion_id")
+                        	.withForeignKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_SALES_FACT_1997)
                         	.withDimension(StandardDimensionMappingImpl.builder()
                             .withName("Alternative Promotion")
                             .withHierarchies(List.of(
                                 HierarchyMappingImpl.builder()
                                     .withHasAll(true)
-                                    .withPrimaryKey("id")
+                                    .withPrimaryKey(id)
                                     .withQuery(InlineTableQueryMappingImpl.builder()
                                         .withAlias("inline_promo")
-                                        .withColumnDefinitions(List.of(
-                                            InlineTableColumnDefinitionMappingImpl.builder()
-                                            	.withName("id")
-                                                .withType(DataType.NUMERIC)
-                                                .build(),
-                                            InlineTableColumnDefinitionMappingImpl.builder()
-                                                .withName("date")
-                                                .withType(DataType.DATE)
-                                                .build()
-                                        ))
-                                        .withRows(List.of(
-                                        	InlineTableRowMappingImpl.builder()
-                                        		.withCells(List.of(
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                    	.withColumnName("id")
-                                                        .withValue("1")
-                                                        .build(),
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                    	.withColumnName("date")
-                                                        .withValue("2008-04-29")
-                                                        .build()
-                                                ))
-                                                .build(),
-                                            InlineTableRowMappingImpl.builder()
-                                                .withCells(List.of(
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                        .withColumnName("id")
-                                                        .withValue("2")
-                                                        .build(),
-                                                    InlineTableRowCellMappingImpl.builder()
-                                                        .withColumnName("date")
-                                                        .withValue("2007-01-20")
-                                                        .build()
-                                                ))
-                                                .build()
-
-                                        ))
+                                        .withTable(tt)
                                         .build()
                                     )
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Alternative Promotion")
-                                            .withColumn("id")
-                                            .withNameColumn("date")
+                                            .withColumn(id)
+                                            .withNameColumn(date)
                                             .withUniqueMembers(true)
                                             .build()
                                     ))
@@ -756,14 +630,14 @@ class InlineTableTest {
                 		   .withMeasures(List.of(
                                MeasureMappingImpl.builder()
                                    .withName("Unit Sales")
-                                   .withColumn("unit_sales")
+                                   .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                                    .withAggregatorType(MeasureAggregatorType.SUM)
                                    .withFormatString("Standard")
                                    .withVisible(false)
                                    .build(),
                                MeasureMappingImpl.builder()
                                    .withName("Store Sales")
-                                   .withColumn("store_sales")
+                                   .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
                                    .withAggregatorType(MeasureAggregatorType.SUM)
                                    .withFormatString("#,###.00")
                                    .build()

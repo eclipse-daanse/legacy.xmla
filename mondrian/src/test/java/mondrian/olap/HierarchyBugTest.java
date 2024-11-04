@@ -39,6 +39,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
+import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
@@ -328,31 +329,31 @@ TestUtil.flushSchemaCache(conn);
         	   result.addAll(super.cubeDimensionConnectors(cube));
         	   if ("Sales".equals(cube.getName())) {
         		   result.add(DimensionConnectorMappingImpl.builder()
-        				   .withForeignKey("time_id")
+        				   .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
         				   .withOverrideDimensionName("Date")
         				   .withDimension(TimeDimensionMappingImpl.builder()
         						   .withName("Date")
         						   .withHierarchies(List.of(HierarchyMappingImpl.builder()
         	                                .withHasAll(false)
-        	                                .withPrimaryKey("time_id")
-        	                                .withQuery(TableQueryMappingImpl.builder().withName("time_by_day").build())
+        	                                .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
+        	                                .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
         	                                .withLevels(List.of(
         	                                    LevelMappingImpl.builder()
         	                                        .withName("Year")
-        	                                        .withColumn("the_year")
+        	                                        .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
         	                                        .withType(DataType.NUMERIC)
         	                                        .withUniqueMembers(true)
         	                                        .withLevelType(LevelType.TIME_YEARS)
         	                                        .build(),
         	                                    LevelMappingImpl.builder()
         	                                        .withName("Quarter")
-        	                                        .withColumn("quarter")
+        	                                        .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY)
         	                                        .withUniqueMembers(false)
         	                                        .withLevelType(LevelType.TIME_QUARTERS)
         	                                        .build(),
         	                                    LevelMappingImpl.builder()
         	                                        .withName("Month")
-        	                                        .withColumn("month_of_year")
+        	                                        .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
         	                                        .withUniqueMembers(false)
         	                                        .withType(DataType.NUMERIC)
         	                                        .withLevelType(LevelType.TIME_MONTHS)
@@ -430,33 +431,33 @@ TestUtil.flushSchemaCache(conn);
                 	DimensionConnectorMappingImpl dimension = DimensionConnectorMappingImpl
                         .builder()
                         .withOverrideDimensionName("Date")
-                        .withForeignKey("time_id")
+                        .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
                         .withDimension(TimeDimensionMappingImpl.builder()
                                 .withName("Date")
                                 .withHierarchies(List.of(
                                     HierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withName("Weekly")
-                                        .withPrimaryKey("time_id")
-                                        .withQuery(TableQueryMappingImpl.builder().withName("time_by_day").build())                                        
+                                        .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
+                                        .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())                                        
                                         .withLevels(List.of(
                                             LevelMappingImpl.builder()
                                                 .withName("Year")
-                                                .withColumn("the_year")                                                
+                                                .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
                                                 .withType(DataType.NUMERIC)
                                                 .withUniqueMembers(true)
                                                 .withLevelType(LevelType.TIME_YEARS)
                                                 .build(),
                                             LevelMappingImpl.builder()
                                             	.withName("Week")
-                                                .withColumn("week_of_year")
+                                                .withColumn(FoodmartMappingSupplier.WEEK_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                                                 .withType(DataType.NUMERIC)
                                                 .withUniqueMembers(false)
                                                 .withLevelType(LevelType.TIME_WEEKS)
                                                 .build(),
                                             LevelMappingImpl.builder()
                                                 .withName("Day")
-                                                .withColumn("day_of_month")
+                                                .withColumn(FoodmartMappingSupplier.DAY_OF_MONTH_COLUMN_TIME_BY_DAY)
                                                 .withUniqueMembers(false)
                                                 .withType(DataType.NUMERIC)
                                                 .withLevelType(LevelType.TIME_DAYS)

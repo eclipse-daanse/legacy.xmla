@@ -1014,10 +1014,10 @@ class FastBatchingCellReaderTest extends BatchTestCase{
               result.addAll(super.cubes(cubes));
               result.add(PhysicalCubeMappingImpl.builder()
                   .withName("Warehouse2")
-                  .withQuery(TableQueryMappingImpl.builder().withName("warehouse").build())
+                  .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
                   .withDimensionConnectors(List.of(
                        DimensionConnectorMappingImpl.builder()
-                       	.withForeignKey("stores_id")
+                       	.withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_WAREHOUSE)
                        	.withOverrideDimensionName("Store Type")
                        	.withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_STORE_TYPE_WITH_QUERY_STORE))
                        	.build()
@@ -1081,7 +1081,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                   .build(),
                                   MeasureMappingImpl.builder()
                                   .withName("Store Count")
-                                  .withColumn("stores_id")
+                                  .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_WAREHOUSE)
                                   .withAggregatorType(MeasureAggregatorType.COUNT)
                                   .withFormatString("#,###")
                                   .build()
@@ -1532,7 +1532,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
 
       	private static MeasureMappingImpl m = MeasureMappingImpl.builder()
                 .withName("Store Count")
-                .withColumn("store_id")
+                .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
                 .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
                 .build();
 
@@ -1549,20 +1549,20 @@ class FastBatchingCellReaderTest extends BatchTestCase{
               result.add(PhysicalCubeMappingImpl.builder()
                   .withName("2CountDistincts")
                   .withDefaultMeasure(m)
-                  .withQuery(TableQueryMappingImpl.builder().withName("sales_fact_1997").build())
+                  .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                   .withDimensionConnectors(List.of(
                   	DimensionConnectorMappingImpl.builder()
-                  		.withForeignKey("time_id")
+                  		.withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
                   		.withOverrideDimensionName("Time")
                   		.withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_TIME))
                   		.build(),
                       DimensionConnectorMappingImpl.builder()
-                  		.withForeignKey("store_id")
+                  		.withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
                   		.withOverrideDimensionName("Store")
                   		.withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_STORE_WITH_QUERY_STORE))
                   		.build(),
                        DimensionConnectorMappingImpl.builder()
-                       	.withForeignKey("product_id")
+                       	.withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
                        	.withOverrideDimensionName("Product")
                        	.withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_PRODUCT))
                        	.build()
@@ -1572,12 +1572,12 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                   				  m,
                                   MeasureMappingImpl.builder()
                                   .withName("Customer Count")
-                                  .withColumn("customer_id")
+                                  .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
                                   .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
                                   .build(),
                                   MeasureMappingImpl.builder()
                                   .withName("Unit Sales")
-                                  .withColumn("unit_sales")
+                                  .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                                   .withAggregatorType(MeasureAggregatorType.SUM)
                                   .build()
                   				))

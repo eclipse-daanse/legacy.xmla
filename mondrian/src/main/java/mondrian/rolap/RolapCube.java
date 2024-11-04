@@ -73,10 +73,10 @@ import org.eclipse.daanse.olap.function.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.impl.IdentifierNode;
 import org.eclipse.daanse.olap.impl.IdentifierSegment;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
+import org.eclipse.daanse.rdb.structure.api.model.Column;
 import org.eclipse.daanse.rolap.mapping.api.model.ActionMappingMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberPropertyMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
@@ -2624,7 +2624,7 @@ public class RolapCube extends CubeBase {
             if (rightDepth > leftDepth) {
                 // switch
                 String leftAlias = getLeftAlias(join);
-                String leftKey = join.getLeft().getKey();;
+                Column leftKey = join.getLeft().getKey();;
                 QueryMappingImpl left = copy(left(join));
                 QueryMappingImpl right = copy(right(join));
                 join.getLeft().setAlias(getRightAlias(join));

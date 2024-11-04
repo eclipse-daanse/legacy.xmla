@@ -20,6 +20,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
+import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -370,9 +371,9 @@ class CachedExistsTest{
                 result.addAll(super.schemaCubes(schema));
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("Alternate Sales")
-                    .withQuery(TableQueryMappingImpl.builder().withName("sales_fact_1997").build())
+                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                     .withDimensionConnectors(List.of(DimensionConnectorMappingImpl.builder()
-                    		.withForeignKey("time_id")
+                    		.withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
                     		.withOverrideDimensionName("Time")
                     		.withDimension(TimeDimensionMappingImpl.builder()
                     				.withName("Time")
@@ -380,12 +381,12 @@ class CachedExistsTest{
                     					HierarchyMappingImpl.builder()
                                             .withName("Time")
                                             .withHasAll(true)
-                                            .withPrimaryKey("time_id")
-                                            .withQuery(TableQueryMappingImpl.builder().withName("time_by_day").build())
+                                            .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
+                                            .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
                                             .withLevels(List.of(
                                                 LevelMappingImpl.builder()
                                                     .withName("Year")
-                                                    .withColumn("the_year")
+                                                    .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
                                                     .withType(DataType.NUMERIC)
                                                     .withUniqueMembers(true)
                                                     .withLevelType(LevelType.TIME_YEARS)
@@ -395,12 +396,12 @@ class CachedExistsTest{
                     					HierarchyMappingImpl.builder()
                                             .withName("Weekly")
                                             .withHasAll(true)
-                                            .withPrimaryKey("time_id")
-                                            .withQuery(TableQueryMappingImpl.builder().withName("time_by_day").build())
+                                            .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
+                                            .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
                                             .withLevels(List.of(
                                                 LevelMappingImpl.builder()
                                                     .withName("Year")
-                                                    .withColumn("the_year")
+                                                    .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
                                                     .withType(DataType.NUMERIC)
                                                     .withUniqueMembers(true)
                                                     .withLevelType(LevelType.TIME_YEARS)
@@ -410,12 +411,12 @@ class CachedExistsTest{
                     					HierarchyMappingImpl.builder()
                                             .withName("Weekly2")
                                             .withHasAll(true)
-                                            .withPrimaryKey("time_id")
-                                            .withQuery(TableQueryMappingImpl.builder().withName("time_by_day").build())
+                                            .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
+                                            .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
                                             .withLevels(List.of(
                                                 LevelMappingImpl.builder()
                                                     .withName("Year")
-                                                    .withColumn("the_year")
+                                                    .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
                                                     .withType(DataType.NUMERIC)
                                                     .withUniqueMembers(true)
                                                     .withLevelType(LevelType.TIME_YEARS)
@@ -429,7 +430,7 @@ class CachedExistsTest{
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
                             MeasureMappingImpl.builder()
                             .withName("Unit Sales")
-                            .withColumn("unit_sales")
+                            .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                             .withAggregatorType(MeasureAggregatorType.SUM)
                             .withFormatString("Standard")
                             .build()

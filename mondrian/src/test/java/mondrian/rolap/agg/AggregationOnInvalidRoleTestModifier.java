@@ -16,6 +16,9 @@ package mondrian.rolap.agg;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
@@ -78,10 +81,33 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
         + "</Cube>";
      */
 
+    //## ColumnNames: customer_id,customer_name
+    //## ColumnTypes: INTEGER,VARCHAR(45):null
+    private static ColumnImpl customerIdMondrian2225Customer = ColumnImpl.builder().withName("customer_id").withType("INTEGER").build();
+    private static ColumnImpl customerNameMondrian2225Customer = ColumnImpl.builder().withName("customer_name").withType("VARCHAR").withTypeQualifiers(List.of("45")).build();
+    private static PhysicalTableImpl mondrian2225Customer = ((Builder) PhysicalTableImpl.builder().withName("mondrian2225_customer")
+            .withColumns(List.of(customerIdMondrian2225Customer, customerNameMondrian2225Customer))).build();
+
+    //## ColumnNames: product_ID,customer_id,fact
+    //## ColumnTypes: INTEGER,INTEGER,INTEGER
+    private static ColumnImpl productIdMondrian2225Fact = ColumnImpl.builder().withName("product_ID").withType("INTEGER").build();
+    private static ColumnImpl customerIdMondrian2225Fact = ColumnImpl.builder().withName("customer_id").withType("INTEGER").build();
+    private static ColumnImpl factMondrian2225Fact = ColumnImpl.builder().withName("fact").withType("INTEGER").build();
+    private static PhysicalTableImpl mondrian2225Fact = ((Builder) PhysicalTableImpl.builder().withName("mondrian2225_fact")
+            .withColumns(List.of(productIdMondrian2225Fact, customerIdMondrian2225Fact, factMondrian2225Fact))).build();
+
+    //## TableName: mondrian2225_dim
+    //## ColumnNames: product_id,product_code,product_sub_code
+    //## ColumnTypes: INTEGER,VARCHAR(45):null,VARCHAR(45):null
+    private static ColumnImpl productIdMondrian2225Dim = ColumnImpl.builder().withName("product_id").withType("INTEGER").build();
+    private static ColumnImpl productCodeMondrian2225Dim = ColumnImpl.builder().withName("product_code").withType("VARCHAR").withTypeQualifiers(List.of("45")).build();    
+    private static PhysicalTableImpl mondrian2225Dim = ((Builder) PhysicalTableImpl.builder().withName("mondrian2225_dim")
+            .withColumns(List.of(productIdMondrian2225Fact, customerIdMondrian2225Fact, factMondrian2225Fact))).build();
+
     private static LevelMappingImpl firstNameLevel = LevelMappingImpl.builder()
             .withName("First Name")
             .withVisible(true)
-            .withColumn("customer_name").withType(DataType.STRING)
+            .withColumn(customerNameMondrian2225Customer).withType(DataType.STRING)
             .withUniqueMembers(false)
             .withLevelType(LevelType.REGULAR)
             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -91,8 +117,8 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
             .withName("Customer")
             .withVisible(true)
             .withHasAll(true)
-            .withPrimaryKey("customer_id")
-            .withQuery(TableQueryMappingImpl.builder().withName("mondrian2225_customer").build())
+            .withPrimaryKey(customerIdMondrian2225Customer)
+            .withQuery(TableQueryMappingImpl.builder().withTable(mondrian2225Customer).build())
             .withLevels(List.of(
             	firstNameLevel
             ))
@@ -103,7 +129,7 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
     .withVisible(true)
     .withCache(true)
     .withEnabled(true)
-    .withQuery(TableQueryMappingImpl.builder().withName("mondrian2225_fact").withAggregationTables(List.of(
+    .withQuery(TableQueryMappingImpl.builder().withTable(mondrian2225Fact).withAggregationTables(List.of(
         AggregationNameMappingImpl.builder()
             .withName("mondrian2225_agg")
             .withIgnorecase(true)
@@ -129,7 +155,7 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
     .withDimensionConnectors(List.of(
     	DimensionConnectorMappingImpl.builder()
             .withVisible(true)
-            .withForeignKey("customer_id")
+            .withForeignKey(customerIdMondrian2225Fact)
             .withOverrideDimensionName("Customer")
             .withDimension(StandardDimensionMappingImpl.builder()
             	.withName("Customer")
@@ -139,7 +165,7 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
             .build(),
         DimensionConnectorMappingImpl.builder()
             .withVisible(true)
-            .withForeignKey("product_ID")
+            .withForeignKey(productIdMondrian2225Fact)
             .withOverrideDimensionName("Product Code")
             .withDimension(StandardDimensionMappingImpl.builder()
             	.withName("Product Code")
@@ -148,13 +174,13 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
                     .withName("Product Code")
                     .withVisible(true)
                     .withHasAll(true)
-                    .withPrimaryKey("product_id")
-                    .withQuery(TableQueryMappingImpl.builder().withName("mondrian2225_dim").build())
+                    .withPrimaryKey(productIdMondrian2225Dim)
+                    .withQuery(TableQueryMappingImpl.builder().withTable(mondrian2225Dim).build())
                     .withLevels(List.of(
                         LevelMappingImpl.builder()
                             .withName("Code")
                             .withVisible(true)
-                            .withColumn("product_code")
+                            .withColumn(productCodeMondrian2225Dim)
                             .withType(DataType.STRING)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.REGULAR)
@@ -168,7 +194,7 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
         MeasureMappingImpl.builder()
             .withName("Measure")
-            .withColumn("fact")
+            .withColumn(factMondrian2225Fact)
             .withAggregatorType(MeasureAggregatorType.SUM)
             .withVisible(true)
             .build()

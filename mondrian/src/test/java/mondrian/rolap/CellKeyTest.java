@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
+import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -390,7 +391,7 @@ class CellKeyTest  {
 
         	private static MeasureMappingImpl m = MeasureMappingImpl.builder()
             .withName("Unit Sales")
-            .withColumn("unit_sales")
+            .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
             .withAggregatorType(MeasureAggregatorType.SUM)
             .withFormatString("Standard")
             .build();
@@ -406,10 +407,10 @@ class CellKeyTest  {
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("SalesTest")
                     .withDefaultMeasure(m)
-                    .withQuery(TableQueryMappingImpl.builder().withName("sales_fact_1997").build())
+                    .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                     .withDimensionConnectors(List.of(
                     	DimensionConnectorMappingImpl.builder()
-                    		.withForeignKey("customer_id")
+                    		.withForeignKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
                     		.withOverrideDimensionName("City")
                     		.withDimension(
                     			StandardDimensionMappingImpl.builder()
@@ -417,12 +418,12 @@ class CellKeyTest  {
                     				.withHierarchies(List.of(
                                             HierarchyMappingImpl.builder()
                                             .withHasAll(true)
-                                            .withPrimaryKey("customer_id")
-                                            .withQuery(TableQueryMappingImpl.builder().withName("customer").build())
+                                            .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
+                                            .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
                                             .withLevels(List.of(
                                                 LevelMappingImpl.builder()
                                                     .withName("city")
-                                                    .withColumn("city")
+                                                    .withColumn(FoodmartMappingSupplier.CITY_COLUMN_IN_CUSTOMER)
                                                     .withUniqueMembers(true)
                                                     .build()
                                             )).build()
@@ -430,7 +431,7 @@ class CellKeyTest  {
                     				.build())
                     		.build(),
                         DimensionConnectorMappingImpl.builder()
-                    		.withForeignKey("customer_id")
+                    		.withForeignKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
                     		.withOverrideDimensionName("Gender")
                     		.withDimension(
                     			StandardDimensionMappingImpl.builder()
@@ -438,12 +439,12 @@ class CellKeyTest  {
                     				.withHierarchies(List.of(
                                             HierarchyMappingImpl.builder()
                                             .withHasAll(true)
-                                            .withPrimaryKey("customer_id")
-                                            .withQuery(TableQueryMappingImpl.builder().withName("customer").build())
+                                            .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
+                                            .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
                                             .withLevels(List.of(
                                                 LevelMappingImpl.builder()
                                                     .withName("gender")
-                                                    .withColumn("gender")
+                                                    .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
                                                     .withUniqueMembers(true)
                                                     .build()
                                             )).build()
@@ -451,7 +452,7 @@ class CellKeyTest  {
                     				.build())
                     		.build(),
                          DimensionConnectorMappingImpl.builder()
-                         	.withForeignKey("customer_id")
+                         	.withForeignKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
                          	.withOverrideDimensionName("Address2")
                          	.withDimension(
                          		StandardDimensionMappingImpl.builder()
@@ -459,12 +460,12 @@ class CellKeyTest  {
                          			.withHierarchies(List.of(
                          					HierarchyMappingImpl.builder()
                          					.withHasAll(true)
-                         					.withPrimaryKey("customer_id")
-                         					.withQuery(TableQueryMappingImpl.builder().withName("customer").build())
+                         					.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
+                         					.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
                          					.withLevels(List.of(
                          						LevelMappingImpl.builder()
                          							.withName("addr")
-                         							.withColumn("address2")
+                         							.withColumn(FoodmartMappingSupplier.ADDRESS2_COLUMN_IN_CUSTOMER)
                          							.withUniqueMembers(true)
                          							.build()
                                         )).build()

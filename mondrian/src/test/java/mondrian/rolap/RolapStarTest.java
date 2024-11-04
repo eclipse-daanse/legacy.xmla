@@ -17,6 +17,9 @@ import static org.mockito.Mockito.when;
 
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
@@ -80,9 +83,9 @@ class RolapStarTest {
     void testCloneRelationWithFilteredTable(Context context) {
       RolapStarForTests rs = getStar(context.getConnection(), "sales");
       TableQueryMappingImpl original = TableQueryMappingImpl.builder()
-    		  .withName("TestTable")
+    		  .withTable(((Builder) PhysicalTableImpl.builder().withName("TestTable")
+    				  .withsSchema(DatabaseSchemaImpl.builder().withName("Sechema").build())).build())
     		  .withAlias("Alias")
-    		  .withSchema("Sechema")
     		  .withSqlWhereExpression(SQLMappingImpl.builder()
     				  .withStatement("Alias.clicked = 'true'")
     				  .withDialects(List.of("generic"))
@@ -95,7 +98,7 @@ class RolapStarTest {
           "NewAlias");
 
       assertEquals("NewAlias", RelationUtil.getAlias(cloned));
-      assertEquals("TestTable", cloned.getName());
+      assertEquals("TestTable", cloned.getTable().getName());
       assertNotNull(cloned.getSqlWhereExpression());
       assertEquals("NewAlias.clicked = 'true'", cloned.getSqlWhereExpression().getStatement());
   }

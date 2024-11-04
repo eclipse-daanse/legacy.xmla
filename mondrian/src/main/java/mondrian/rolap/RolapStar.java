@@ -437,8 +437,8 @@ public class RolapStar {
                     RelationUtil.getAlias(((RelationalQueryMapping) left)));
                 right =
                     getUniqueRelation(
-                        parent, right(join), join.getLeft().getKey(),
-                        join.getRight().getKey(), getRightAlias(join));
+                        parent, right(join), join.getLeft().getKey() != null ? join.getLeft().getKey().getName() : null,
+                        join.getRight().getKey() != null ? join.getRight().getKey().getName() : null, getRightAlias(join));
             } else if (getRightAlias(join).equals(joinKeyTable)) {
                 // right side must equal
                 right =
@@ -449,8 +449,8 @@ public class RolapStar {
                     RelationUtil.getAlias(((RelationalQueryMapping) right)));
                 left =
                     getUniqueRelation(
-                        parent, left(join), join.getRight().getKey(),
-                        join.getLeft().getKey(), getLeftAlias(join));
+                        parent, left(join), join.getRight().getKey() != null ? join.getRight().getKey().getName() : null,
+                        join.getLeft().getKey() != null ? join.getLeft().getKey().getName() : null, getLeftAlias(join));
             } else {
                 throw new MondrianException(
                     "failed to match primary key table to join tables");
@@ -1783,8 +1783,8 @@ public class RolapStar {
                     }
                 }
                 joinCondition = new RolapStar.Condition(
-                    new mondrian.rolap.RolapColumn(leftAlias, join.getLeft().getKey()),
-                    new mondrian.rolap.RolapColumn(rightAlias, join.getRight().getKey()));
+                    new mondrian.rolap.RolapColumn(leftAlias, join.getLeft().getKey() != null ? join.getLeft().getKey().getName() : null),
+                    new mondrian.rolap.RolapColumn(rightAlias, join.getRight().getKey() != null ? join.getRight().getKey().getName() : null));
                 return leftTable.addJoin(
                     cube, right(join), joinCondition);
 

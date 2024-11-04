@@ -14,6 +14,7 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -56,9 +57,9 @@ class AggregationOverAggTableTest extends AggTableTestCase {
         prepareContext(context);
         ExplicitRecognizerTest.setupMultiColDimCube(context,
             List.of(),
-            "the_year",
-            "quarter",
-            "month_of_year", null, null, null,
+            FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null, null, null,
             List.of());
 
         String query =

@@ -19,8 +19,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rdb.structure.api.model.Column;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MemberPropertyMapping;
+import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationForeignKeyMappingImpl;
@@ -108,9 +110,9 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                         ))
                         .build()
                     ),
-            "the_year",
-            "quarter",
-            "month_of_year", "the_month", "month_of_year", null,
+            FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY, FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null,
             List.of());
 
         String query =
@@ -224,9 +226,9 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 ))
                 .build()
             ),
-            "the_year",
-            "quarter",
-            "month_of_year", "the_month", "month_of_year", null,
+            FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY, FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null,
             List.of());
 
 
@@ -350,9 +352,9 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 ))
                 .build()
             ),
-            "the_year",
-            "quarter",
-            "the_month", null,  "month_of_year", null,
+            FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY, null,  FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null,
             List.of());
 
         String query =
@@ -433,9 +435,9 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 ))
                 .build()
             ),
-            "the_year",
-            "quarter",
-            "the_month",  "month_of_year", null, null,
+            FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY,  FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null, null,
             List.of());
 
         String query =
@@ -523,12 +525,12 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 ))
                 .build()
             ),
-            "the_year",
-            "quarter",
-            "the_month", null, null,  "month_of_year",
+            FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY, null, null,  FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY,
             List.of(MemberPropertyMappingImpl.builder()
                 .withName("aProperty")
-                .withColumn("fiscal_period")
+                .withColumn(FoodmartMappingSupplier.FISCAL_PERIOD_COLUMN_IN_TIME_BY_DAY)
                 .build()));
 
         String query =
@@ -630,9 +632,10 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                         ))
                         .build()
                 ),
-            "the_year",
-            "quarter",
-            "month_of_year", "the_month", "month_of_year", null,
+            FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null,
             List.of());
 
         String query =
@@ -770,9 +773,10 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
                 ))
                 .build()),
-            "the_year",
-            "quarter",
-            "month_of_year", "the_month", "month_of_year", null,
+            FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, 
+            FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY, FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null,
             List.of(), "Customer Count");
 
         // Query brings in Year and Store Name, omitting Gender.
@@ -897,9 +901,11 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 ))
                 .build()
             ),
-            "the_year",
-            "quarter",
-            "month_of_year", "the_month", "month_of_year", null,
+            FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null,
             List.of(), "Customer Count");
 
         String query =
@@ -937,16 +943,16 @@ class ExplicitRecognizerTest extends AggTableTestCase {
     }
 
     public static void setupMultiColDimCube(
-        Context context, List<AggregationTableMappingImpl> aggTables, String yearCols, String qtrCols, String monthCols,
-        String monthCaptionCol, String monthOrdinalCol, String monthNameCol, List<MemberPropertyMappingImpl> monthProp)
+        Context context, List<AggregationTableMappingImpl> aggTables, Column yearCols, Column qtrCols, Column monthCols,
+        Column monthCaptionCol, Column monthOrdinalCol, Column monthNameCol, List<MemberPropertyMappingImpl> monthProp)
     {
         setupMultiColDimCube(context,
             aggTables, yearCols, qtrCols, monthCols, monthCaptionCol, monthOrdinalCol, monthNameCol, monthProp, "Unit Sales");
     }
 
     public static void setupMultiColDimCube(
-        Context context, List<AggregationTableMappingImpl> aggTables, String yearCol, String qtrCol, String monthCol,
-        String monthCaptionCol, String monthOrdinalCol, String monthNameCol,
+        Context context, List<AggregationTableMappingImpl> aggTables, Column yearCol, Column qtrCol, Column monthCol,
+        Column monthCaptionCol, Column monthOrdinalCol, Column monthNameCol,
         List<MemberPropertyMappingImpl> monthProp, String defaultMeasure)
     {
         class ExplicitRecognizerTestModifierInner extends ExplicitRecognizerTestModifier {
@@ -961,17 +967,17 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             }
 
             @Override
-            protected String getMonthOrdinalCol() {
+            protected Column getMonthOrdinalCol() {
                 return monthOrdinalCol;
             }
 
             @Override
-            protected String getMonthNameCol() {
+            protected Column getMonthNameCol() {
                 return monthNameCol;
             }
 
             @Override
-            protected String getMonthCaptionCol() {
+            protected Column getMonthCaptionCol() {
                 return monthCaptionCol;
             }
 
@@ -992,17 +998,17 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             }
 
             @Override
-            protected String getQuarterCol() {
+            protected Column getQuarterCol() {
                 return qtrCol;
             }
 
             @Override
-            protected String getMonthCol() {
+            protected Column getMonthCol() {
                 return monthCol;
             }
 
             @Override
-            protected String getYearCol() {
+            protected Column getYearCol() {
                 return yearCol;
             }
         }

@@ -670,22 +670,22 @@ class FilterTest extends BatchTestCase {
               		.withHierarchies(List.of(
               			HierarchyMappingImpl.builder()
               			.withHasAll(true)
-              			.withPrimaryKey("warehouse_id")
-              			.withQuery(TableQueryMappingImpl.builder().withName("warehouse").build())
+              			.withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
+              			.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
               			.withLevels(List.of(
               				LevelMappingImpl.builder()
               				.withName("fax")
-              				.withColumn("warehouse_fax")
+              				.withColumn(FoodmartMappingSupplier.WAREHOUSE_FAX_COLUMN_IN_WAREHOUSE)
               				.withUniqueMembers(true)
               				.build(),
               				LevelMappingImpl.builder()
               				.withName("address1")
-              				.withColumn("wa_address1")
+              				.withColumn(FoodmartMappingSupplier.WA_ADDRESS1_COLUMN_IN_WAREHOUSE)
               				.withUniqueMembers(false)
               				.build(),
               				LevelMappingImpl.builder()
               				.withName("name")
-              				.withColumn("warehouse_name")
+              				.withColumn(FoodmartMappingSupplier.WAREHOUSE_NAME_COLUMN_IN_WAREHOUSE)
               				.withUniqueMembers(false)
               				.build()
               			))
@@ -695,17 +695,17 @@ class FilterTest extends BatchTestCase {
               result.addAll(super.cubes(cubes));
               result.add(PhysicalCubeMappingImpl.builder()
                   .withName("Warehouse2")
-                  .withQuery(TableQueryMappingImpl.builder().withName("inventory_fact_1997").build())
+                  .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.INVENTORY_FACKT_1997_TABLE).build())
                   .withDimensionConnectors(List.of(
                       DimensionConnectorMappingImpl.builder()
                       	  .withOverrideDimensionName("Product")
                       	  .withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_PRODUCT))
-                          .withForeignKey("product_id")
+                          .withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_INVENTORY_FACKT_1997)
                           .build(),
                       DimensionConnectorMappingImpl.builder()
                       	  .withOverrideDimensionName("Warehouse2")
                           .withDimension(warehouse2)
-                          .withForeignKey("warehouse_id")
+                          .withForeignKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_INVENTORY_FACKT_1997)
                           .build(),
                       DimensionConnectorMappingImpl.builder()
                       	  .withOverrideDimensionName("Warehouse2")
@@ -714,25 +714,25 @@ class FilterTest extends BatchTestCase {
                       		  .withHierarchies(List.of(
                               HierarchyMappingImpl.builder()
                                   .withHasAll(true)
-                                  .withPrimaryKey("warehouse_id")
-                                  .withQuery(TableQueryMappingImpl.builder().withName("warehouse").build())
+                                  .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
+                                  .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
                       			  .withLevels(List.of(
                         				LevelMappingImpl.builder()
                         				.withName("fax")
-                        				.withColumn("warehouse_fax")
+                        				.withColumn(FoodmartMappingSupplier.WAREHOUSE_FAX_COLUMN_IN_WAREHOUSE)
                         				.withUniqueMembers(true)
                         				.build(),
                         				LevelMappingImpl.builder()
                         				.withName("address1")
-                        				.withColumn("wa_address1")
+                        				.withColumn(FoodmartMappingSupplier.WA_ADDRESS1_COLUMN_IN_WAREHOUSE)
                         				.withUniqueMembers(false)
                         				.build(),
                         				LevelMappingImpl.builder()
                         				.withName("name")
-                        				.withColumn("warehouse_name")
+                        				.withColumn(FoodmartMappingSupplier.WAREHOUSE_NAME_COLUMN_IN_WAREHOUSE)
                         				.withUniqueMembers(false)
                         				.build()
-                        			))                                  
+                        			))
                                   .build()
                           )).build())
                           .build()
@@ -740,12 +740,12 @@ class FilterTest extends BatchTestCase {
                   .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
                       MeasureMappingImpl.builder()
                           .withName("Warehouse Cost")
-                          .withColumn("warehouse_cost")
+                          .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
                           .withAggregatorType(MeasureAggregatorType.SUM)
                           .build(),
                       MeasureMappingImpl.builder()
                           .withName("Warehouse Sales")
-                          .withColumn("warehouse_sales")
+                          .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
                           .withAggregatorType(MeasureAggregatorType.SUM)
                           .build()
                 		  
@@ -875,22 +875,22 @@ class FilterTest extends BatchTestCase {
                 		.withHierarchies(List.of(
                 			HierarchyMappingImpl.builder()
                 			.withHasAll(true)
-                			.withPrimaryKey("warehouse_id")
-                			.withQuery(TableQueryMappingImpl.builder().withName("warehouse").build())
+                			.withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
+                			.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
                 			.withLevels(List.of(
                 				LevelMappingImpl.builder()
                 				.withName("fax")
-                				.withColumn("warehouse_fax")
+                				.withColumn(FoodmartMappingSupplier.WAREHOUSE_FAX_COLUMN_IN_WAREHOUSE)
                 				.withUniqueMembers(true)
                 				.build(),
                 				LevelMappingImpl.builder()
                 				.withName("address1")
-                				.withColumn("wa_address1")
+                				.withColumn(FoodmartMappingSupplier.WA_ADDRESS1_COLUMN_IN_WAREHOUSE)
                 				.withUniqueMembers(false)
                 				.build(),
                 				LevelMappingImpl.builder()
                 				.withName("name")
-                				.withColumn("warehouse_name")
+                				.withColumn(FoodmartMappingSupplier.WAREHOUSE_NAME_COLUMN_IN_WAREHOUSE)
                 				.withUniqueMembers(false)
                 				.build()
                 			))
@@ -902,17 +902,17 @@ class FilterTest extends BatchTestCase {
               result.addAll(super.cubes(cubes));
               result.add(PhysicalCubeMappingImpl.builder()
                   .withName("Warehouse2")
-                  .withQuery(TableQueryMappingImpl.builder().withName("inventory_fact_1997").build())
+                  .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.INVENTORY_FACKT_1997_TABLE).build())
                   .withDimensionConnectors(List.of(
                       DimensionConnectorMappingImpl.builder()
                       	  .withOverrideDimensionName("Product")
                       	  .withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_PRODUCT))
-                          .withForeignKey("product_id")
+                          .withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_INVENTORY_FACKT_1997)
                           .build(),
                       DimensionConnectorMappingImpl.builder()
                       	  .withOverrideDimensionName("Warehouse2")
                           .withDimension(warehouse2)
-                          .withForeignKey("warehouse_id")
+                          .withForeignKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_INVENTORY_FACKT_1997)
                           .build(),
                       DimensionConnectorMappingImpl.builder()
                       	  .withOverrideDimensionName("Warehouse2")
@@ -921,44 +921,44 @@ class FilterTest extends BatchTestCase {
                       		  .withHierarchies(List.of(
                               HierarchyMappingImpl.builder()
                                   .withHasAll(true)
-                                  .withPrimaryKey("warehouse_id")
-                                  .withQuery(TableQueryMappingImpl.builder().withName("warehouse").build())
+                                  .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
+                                  .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
                       			  .withLevels(List.of(
                         				LevelMappingImpl.builder()
                         				.withName("fax")
-                        				.withColumn("warehouse_fax")
+                        				.withColumn(FoodmartMappingSupplier.WAREHOUSE_FAX_COLUMN_IN_WAREHOUSE)
                         				.withUniqueMembers(true)
                         				.build(),
                         				LevelMappingImpl.builder()
                         				.withName("address1")
-                        				.withColumn("wa_address1")
+                        				.withColumn(FoodmartMappingSupplier.WA_ADDRESS1_COLUMN_IN_WAREHOUSE)
                         				.withUniqueMembers(false)
                         				.build(),
                         				LevelMappingImpl.builder()
                         				.withName("name")
-                        				.withColumn("warehouse_name")
+                        				.withColumn(FoodmartMappingSupplier.WAREHOUSE_NAME_COLUMN_IN_WAREHOUSE)
                         				.withUniqueMembers(false)
                         				.build()
-                        			))                                  
+                        			))
                                   .build()
                           )).build())
-                          .build()                                                    
+                          .build()
                   ))
                   .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
                           MeasureMappingImpl.builder()
                               .withName("Warehouse Cost")
-                              .withColumn("warehouse_cost")
+                              .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
                               .withAggregatorType(MeasureAggregatorType.SUM)
                               .build(),
                           MeasureMappingImpl.builder()
                               .withName("Warehouse Sales")
-                              .withColumn("warehouse_sales")
+                              .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
                               .withAggregatorType(MeasureAggregatorType.SUM)
                               .build()
                     		  
                   )).build()))
                   .build());
-              return result;        	  
+              return result;
           }
       }
     /*

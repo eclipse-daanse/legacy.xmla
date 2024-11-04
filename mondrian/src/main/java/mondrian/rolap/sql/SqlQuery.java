@@ -29,6 +29,7 @@ import java.util.Set;
 import org.eclipse.daanse.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rdb.structure.api.model.Column;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
@@ -407,10 +408,10 @@ public class SqlQuery {
     private boolean addJoin(
         QueryMapping left,
         String leftAlias,
-        String leftKey,
+        Column leftKey,
         QueryMapping right,
         String rightAlias,
-        String rightKey,
+        Column rightKey,
         boolean failIfExists)
     {
         boolean addLeft = addFrom(left, leftAlias, failIfExists);
@@ -420,13 +421,13 @@ public class SqlQuery {
         if (added) {
             buf.setLength(0);
 
-            dialect.quoteIdentifier(buf, leftAlias, leftKey);
+            dialect.quoteIdentifier(buf, leftAlias, leftKey != null ? leftKey.getName() : null);
             buf.append(" = ");
-            dialect.quoteIdentifier(buf, rightAlias, rightKey);
+            dialect.quoteIdentifier(buf, rightAlias, rightKey != null ? rightKey.getName() : null);
             final String condition = buf.toString();
             if (dialect.allowsJoinOn()) {
                 from.addOn(
-                    leftAlias, leftKey, rightAlias, rightKey,
+                    leftAlias, leftKey != null ? leftKey.getName() : null, rightAlias, rightKey != null ? rightKey.getName() : null,
                     condition);
             } else {
                 addWhere(condition);
@@ -769,9 +770,9 @@ public class SqlQuery {
     private void flatten(
         List<RelInfo> relations,
         QueryMapping root,
-        String leftKey,
+        Column leftKey,
         String leftAlias,
-        String rightKey,
+        Column rightKey,
         String rightAlias)
     {
         if (root instanceof JoinQueryMapping join) {
@@ -1031,16 +1032,16 @@ public class SqlQuery {
 
     private static class RelInfo {
         final RelationalQueryMapping relation;
-        final String leftKey;
+        final Column leftKey;
         final String leftAlias;
-        final String rightKey;
+        final Column rightKey;
         final String rightAlias;
 
         public RelInfo(
             RelationalQueryMapping relation,
-            String leftKey,
+            Column leftKey,
             String leftAlias,
-            String rightKey,
+            Column rightKey,
             String rightAlias)
         {
             this.relation = relation;
