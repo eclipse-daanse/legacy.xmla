@@ -15,6 +15,8 @@ import org.eclipse.daanse.rdb.structure.api.model.RowValue;
 import org.eclipse.daanse.rdb.structure.api.model.SqlStatement;
 import org.eclipse.daanse.rdb.structure.api.model.SqlView;
 import org.eclipse.daanse.rdb.structure.api.model.Table;
+import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
+import org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl;
 import org.eclipse.daanse.rdb.structure.pojo.InlineTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.RowImpl;
@@ -111,7 +113,7 @@ public class PojoUtil {
 
             return TableQueryMappingImpl.builder()
             		.withAlias(table.getAlias())
-            		.withTable(getTable(table.getTable()))
+            		.withTable(getPhysicalTable(table.getTable()))
             		.withSqlWhereExpression(sqlMappingImpl)
             		.withAggregationExcludes(aggregationExcludes)
             		.withOptimizationHints(optimizationHints)
@@ -225,17 +227,45 @@ public class PojoUtil {
 		return List.of();	}
 
 	private static org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl getDatabaseSchema(DatabaseSchema schema) {
-		// TODO Auto-generated method stub
-		return null;
+        if (schema != null) {
+            return DatabaseSchemaImpl.builder().withName(schema.getName()).build();
+        }
+        return null;
 	}
 
 	private static List<org.eclipse.daanse.rdb.structure.pojo.ColumnImpl> getColumns(List<? extends Column> columns) {
-		// TODO Auto-generated method stub
-		return null;
+		if (columns != null) {
+            return columns.stream().map(c -> getColumn(c)).toList();
+        }
+        return List.of();
 	}
 
-	private static PhysicalTableImpl getTable(Table table) {
-		// TODO Auto-generated method stub
-		return null;
+	private static org.eclipse.daanse.rdb.structure.pojo.ColumnImpl getColumn(Column column) {
+        if (column != null) {
+            String name = column.getName();
+            String type = column.getType();
+            List<String> typeQualifiers = column.getTypeQualifiers();
+            String description = column.getDescription();
+            ColumnImpl c = ColumnImpl.builder().withName(name).withType(type).withTypeQualifiers(typeQualifiers).build();
+            c.setDescription(description);
+            return c;
+        }
+        return null;
+	}
+	
+	private static PhysicalTableImpl getPhysicalTable(Table table) {
+		if (table != null) {
+            String name = table.getName();
+            List<org.eclipse.daanse.rdb.structure.pojo.ColumnImpl> columns = getColumns(table.getColumns());
+            org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl schema = getDatabaseSchema(table.getSchema());
+            String description = table.getDescription();
+            PhysicalTableImpl t = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder()
+                    .withName(name).withColumns(columns).withsSchema(schema).withsDdescription(description)).build();
+            if (t.getColumns() != null) {
+                t.getColumns().forEach(c -> c.setTable(table));
+            }
+            return t;
+        }
+        return null;
 	}
 }

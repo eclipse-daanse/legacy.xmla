@@ -30,6 +30,7 @@ import org.eclipse.daanse.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rdb.structure.api.model.Column;
+import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
@@ -384,7 +385,7 @@ public class SqlQuery {
                 ? RelationUtil.getAlias(table)
                 : alias;
             return addFromTable(
-                table.getTable().getSchema().getName(),
+                getSchemaName(table.getTable().getSchema()),
                 table.getTable().getName(),
                 tableAlias,
                 table.getSqlWhereExpression() == null ? null : table.getSqlWhereExpression().getStatement(),
@@ -405,7 +406,14 @@ public class SqlQuery {
         }
     }
 
-    private boolean addJoin(
+    private String getSchemaName(DatabaseSchema schema) {
+        if (schema != null) {
+            return schema.getName();
+        }
+        return null;
+	}
+
+	private boolean addJoin(
         QueryMapping left,
         String leftAlias,
         Column leftKey,
