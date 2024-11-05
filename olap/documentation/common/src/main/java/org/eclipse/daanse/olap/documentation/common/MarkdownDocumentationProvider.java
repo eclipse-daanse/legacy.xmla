@@ -95,7 +95,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     @Reference
     DatabaseService databaseService;
-    
+
     @Reference
     StatisticsProvider statisticsProvider;
 
@@ -213,13 +213,13 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         try {
             QueryMapping relation = c.getQuery();
             if (relation instanceof TableQueryMapping mt) {
-                TableReference tableReference = new TableReferenceR(mt.getName());
+                TableReference tableReference = new TableReferenceR(mt.getTable().getName());
                 return statisticsProvider.getTableCardinality(
                     context.getConnection().getDataSource(),
                     tableReference);
             }
             if (relation instanceof InlineTableQueryMapping it) {
-                result = it.getRows() == null ? 0l : it.getRows().size();
+                result = it.getTable().getRows() == null ? 0l : it.getTable().getRows().size();
             }
             if (relation instanceof SqlSelectQueryMapping mv) {
                 //TODO
@@ -250,7 +250,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     }
 
     private int getLevelsCount1(SchemaMapping schema, DimensionConnectorMapping d) {
-        int res = 0;        
+        int res = 0;
             if (d.getDimension()!= null &&  d.getDimension().getHierarchies() != null) {
                 for (HierarchyMapping h : d.getDimension().getHierarchies()) {
                     if (h.getLevels() != null) {
@@ -273,14 +273,14 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     private List<String> schemaTablesConnections(Context context, List<String> missedTableNames) {
         List<String> result = new ArrayList<>();
-        context.getCatalogMapping().getSchemas().forEach(schema -> {            
+        context.getCatalogMapping().getSchemas().forEach(schema -> {
             result.addAll(schema.getCubes().stream().flatMap(c -> cubeTablesConnections(schema, c, missedTableNames).stream()).toList());
         });
         return result;
     }
 
     private List<String> cubeTablesConnections(SchemaMapping schema, CubeMapping cube, List<String> missedTableNames) {
-    	
+
         List<String> result = new ArrayList<>();
         if (cube instanceof PhysicalCubeMapping c) {
         Optional<String> optionalFactTable = getFactTableName(c.getQuery());
@@ -339,8 +339,8 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         int dimensionIndex
     ) {
         List<String> result = new ArrayList<>();
-        
-        result.addAll(hierarchyConnections(cubeName, dc.getDimension(), dc.getForeignKey(), cubeIndex, dimensionIndex));
+
+        result.addAll(hierarchyConnections(cubeName, dc.getDimension(), getColumnName(dc.getForeignKey()), cubeIndex, dimensionIndex));
         /*
         if (d instanceof MappingVirtualCubeDimension vcd) {
             String cubeN = vcd.cubeName();
@@ -377,10 +377,10 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         int i = 0;
         String dName = new StringBuilder("d").append(cubeIndex).append(dimensionIndex).toString();
         for (HierarchyMapping h : hList) {
-            result.add(connection1(cubeName, dName, foreignKey, h.getPrimaryKey()));
+            result.add(connection1(cubeName, dName, foreignKey, h.getPrimaryKey() != null ? h.getPrimaryKey().getName() : null));
             for (LevelMapping l : h.getLevels()) {
-                result.add(connection1(dName, new StringBuilder("h").append(cubeIndex).append(dimensionIndex).append(i).toString(), h.getPrimaryKey(),
-                    l.getColumn()));
+                result.add(connection1(dName, new StringBuilder("h").append(cubeIndex).append(dimensionIndex).append(i).toString(), getColumnName(h.getPrimaryKey()),
+                    getColumnName(l.getColumn())));
             }
             i++;
         }
@@ -402,7 +402,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     private List<String> dimensionTablesConnections(SchemaMapping schema, DimensionConnectorMapping d, String fact,
                                                     List<String> missedTableNames) {
 
-        return hierarchiesTablesConnections(schema, d.getDimension().getHierarchies(), fact, d.getForeignKey(), missedTableNames);
+        return hierarchiesTablesConnections(schema, d.getDimension().getHierarchies(), fact, getColumnName(d.getForeignKey()), missedTableNames);
 
     }
 
@@ -427,7 +427,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         List<String> missedTableNames
     ) {
         List<String> result = new ArrayList<>();
-        String primaryKeyTable = h.getPrimaryKeyTable();
+        String primaryKeyTable = getTableName(h.getPrimaryKeyTable());
         if (primaryKeyTable == null) {
             Optional<String> optionalTable = getFactTableName(h.getQuery());
             if (optionalTable.isPresent()) {
@@ -438,14 +438,22 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
             if (fact != null && !fact.equals(primaryKeyTable)) {
                 String flag1 = missedTableNames.contains(fact) ? NEGATIVE_FLAG : POSITIVE_FLAG;
                 String flag2 = missedTableNames.contains(primaryKeyTable) ? NEGATIVE_FLAG : POSITIVE_FLAG;
-                result.add(connection(fact, primaryKeyTable, flag1, flag2, foreignKey, h.getPrimaryKey()));
+                result.add(connection(fact, primaryKeyTable, flag1, flag2, foreignKey, getColumnName(h.getPrimaryKey())));
             }
         }
         result.addAll(getFactTableConnections(h.getQuery(), missedTableNames));
         return result;
     }
 
-    private void writeVerifyer(FileWriter writer, Context context) {
+    private String getColumnName(org.eclipse.daanse.rdb.structure.api.model.Column column) {
+		if (column != null) {
+			return column.getName();
+		}
+		return null;
+	}
+
+
+	private void writeVerifyer(FileWriter writer, Context context) {
         context.getCatalogMapping().getSchemas().forEach(schema -> {
             writeSchemaVerifyer(writer, schema, context);
         });
@@ -456,7 +464,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         try {
             List<VerificationResult> verifyResult = new ArrayList<>();
             for (Verifyer verifyer : verifyers) {
-            	//TODO 
+            	//TODO
                 //verifyResult.addAll(verifyer.verify(schema, context.getDataSource()));
             }
             if (!verifyResult.isEmpty()) {
@@ -534,7 +542,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     }
 
     private void writeSchemas(FileWriter writer, Context context) {
-        context.getCatalogMapping().getSchemas().forEach(schema -> {            
+        context.getCatalogMapping().getSchemas().forEach(schema -> {
             writeSchema(writer, schema);
         });
     }
@@ -808,9 +816,9 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                     String description = EMPTY_STRING;
 					String cube = EMPTY_STRING;
 					Optional<CubeMapping> oCubeSource = lookupCube(schema, mm);
-					if (oCubeSource.isPresent()) {					     
+					if (oCubeSource.isPresent()) {
 					    cube = oCubeSource.get().getName() != null ? oCubeSource.get().getName() : EMPTY_STRING;
-					} 
+					}
 					String measureName = prepare(mm.getName());
 					writer.write("M ");
 					writer.write(cube);
@@ -859,7 +867,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                     writer.write(" \"");
                     writer.write(description);
                     writer.write("\"");
-                    writer.write(ENTER);                	
+                    writer.write(ENTER);
                 }
                 if (virtualCube.getKpis() != null) {
                 	for (KpiMapping kpi : virtualCube.getKpis()) {
@@ -923,8 +931,8 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     private void writeVirtualCubeDimensionPartDiagram(FileWriter writer, SchemaMapping schema, VirtualCubeMapping cube, int cubeIndex) {
         int i = 0;
-        for (DimensionConnectorMapping d : cube.getDimensionConnectors()) {            
-            writeDimensionPartDiagram(writer, schema, d, cubeIndex, i);            
+        for (DimensionConnectorMapping d : cube.getDimensionConnectors()) {
+            writeDimensionPartDiagram(writer, schema, d, cubeIndex, i);
             i++;
         }
     }
@@ -1067,7 +1075,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         try {
             String name = level.getName();
             String description = level.getDescription();
-            String columns = level.getColumn();
+            String columns = getColumnName(level.getColumn());
             writer.write("###### Level \"");
             writer.write(name);
             writer.write("\" :");
@@ -1093,7 +1101,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     private Optional<String> getFactTableName(QueryMapping relation) {
         if (relation instanceof TableQueryMapping mt) {
-            return Optional.of(mt.getName());
+            return Optional.of(getTableName(mt.getTable()));
         }
         if (relation instanceof InlineTableQueryMapping it) {
             return Optional.ofNullable(it.getAlias());
@@ -1109,7 +1117,15 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         return Optional.empty();
     }
 
-    private List<String> getFactTableConnections(QueryMapping relation, List<String> missedTableNames) {
+    private String getTableName(org.eclipse.daanse.rdb.structure.api.model.Table table) {
+    	if (table != null) {
+    		return table.getName();
+    	}
+		return null;
+	}
+
+
+	private List<String> getFactTableConnections(QueryMapping relation, List<String> missedTableNames) {
         if (relation instanceof TableQueryMapping mt) {
             return List.of();
         }
@@ -1127,7 +1143,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                 String t2 = getFirstTable(mj.getRight().getQuery());
                 String flag2  = missedTableNames.contains(t2) ? NEGATIVE_FLAG : POSITIVE_FLAG;
                 if (t1 != null && !t1.equals(t2)) {
-                    res.add(connection(t1, t2, flag1, flag2, mj.getLeft().getKey(), mj.getRight().getKey()));
+                    res.add(connection(t1, t2, flag1, flag2, getColumnName(mj.getLeft().getKey()), getColumnName(mj.getRight().getKey())));
                 }
                 res.addAll(getFactTableConnections(mj.getRight().getQuery(), missedTableNames));
                 return res;
@@ -1150,7 +1166,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     private String getFirstTable(QueryMapping relation) {
         if (relation instanceof TableQueryMapping mt) {
-            return mt.getName();
+            return getTableName(mt.getTable());
         }
         if (relation instanceof JoinQueryMapping mj) {
             if (mj.getLeft() != null && mj.getLeft().getQuery() != null) {
@@ -1162,16 +1178,16 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     private String getTable(QueryMapping relation) {
         if (relation instanceof TableQueryMapping mt) {
-            return mt.getName();
+            return getTableName(mt.getTable());
         }
         if (relation instanceof InlineTableQueryMapping it) {
             //TODO
         }
         if (relation instanceof SqlSelectQueryMapping mv) {
             StringBuilder sb = new StringBuilder();
-            if (mv.getSQL() != null) {
-            	mv.getSQL().stream().filter(s -> s.getDialects().stream().anyMatch(d -> "generic".equals(d)))
-                    .findFirst().ifPresent(s -> sb.append(s.getStatement()));
+            if (mv.getSql() != null && mv.getSql().getSqlStatements() != null) {
+            	mv.getSql().getSqlStatements().stream().filter(s -> s.getDialects().stream().anyMatch(d -> "generic".equals(d)))
+                    .findFirst().ifPresent(s -> sb.append(s.getSql()));
             }
             return sb.toString();
         }
@@ -1345,9 +1361,9 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 						if (measureGroupMapping.getMeasures() != null) {
 							Optional<? extends MeasureMapping> oMeasure = measureGroupMapping.getMeasures().stream().filter(m -> m.equals(mappingMeasure)).findAny();
 							if (oMeasure.isPresent()) {
-								return Optional.of(pc); 
+								return Optional.of(pc);
 							}
-						}						
+						}
 					}
 				}
 				}
