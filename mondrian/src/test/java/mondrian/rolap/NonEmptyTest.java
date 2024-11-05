@@ -847,7 +847,7 @@ class NonEmptyTest extends BatchTestCase {
                 						  HierarchyMappingImpl.builder()
                 						  	.withHasAll(true)
                 						  	.withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
-                						  	.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.POSITION_TABLE).build())
+                						  	.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PROMOTION_TABLE).build())
                 						  	.withLevels(List.of(
                 						  		LevelMappingImpl.builder()
                 						  			.withName("Promotion Name")

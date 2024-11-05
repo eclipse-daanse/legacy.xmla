@@ -89,7 +89,7 @@ public class Checkin_7641Modifier  extends PojoMappingModifier {
         ColumnImpl stateCdGeography7641 = ColumnImpl.builder().withName("state_cd").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
         ColumnImpl cityNmGeography7641 = ColumnImpl.builder().withName("city_nm").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
         ColumnImpl zipCdGeography7641 = ColumnImpl.builder().withName("zip_cd").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
-        PhysicalTableImpl geography7641 = ((Builder) PhysicalTableImpl.builder().withName("checkin7641")
+        PhysicalTableImpl geography7641 = ((Builder) PhysicalTableImpl.builder().withName("geography7641")
                 .withColumns(List.of(custLocIdCheckin7641, stateCdGeography7641, cityNmGeography7641, zipCdGeography7641))).build();
         //## ColumnNames: prod_id,class,brand,item
         //## ColumnTypes: INTEGER,VARCHAR(30),VARCHAR(30),VARCHAR(30)
