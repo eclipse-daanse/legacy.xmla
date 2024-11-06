@@ -987,7 +987,7 @@ class AggregationOnDistinctCountMeasuresTest {
               .withHierarchies(List.of(
                   HierarchyMappingImpl.builder()
                       .withHasAll(true)
-                      .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_FAX_COLUMN_IN_WAREHOUSE)
+                      .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
                       .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
                       .withLevels(List.of(
                          LevelMappingImpl.builder()
@@ -1825,7 +1825,7 @@ class AggregationOnDistinctCountMeasuresTest {
                       	look(FoodmartMappingSupplier.MEASURE_CUSTOMER_COUNT)
                       ))
               	.build());
-              
+
               result.add(VirtualCubeMappingImpl.builder()
                       .withName("Warehouse and Sales3")
                       .withDefaultMeasure((MeasureMappingImpl) look(FoodmartMappingSupplier.MEASURE_STORE_INVOICE))
@@ -1838,9 +1838,9 @@ class AggregationOnDistinctCountMeasuresTest {
                       		.withPhysicalCube((PhysicalCubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
                       		.withOverrideDimensionName("Gender")
                       		.build(),
-                          DimensionConnectorMappingImpl.builder()                    		
+                          DimensionConnectorMappingImpl.builder()
                       		.withOverrideDimensionName("Store")
-                      		.build(),                    		
+                      		.build(),
                          	DimensionConnectorMappingImpl.builder()
                       		.withOverrideDimensionName("Product")
                       		.build(),
@@ -2157,7 +2157,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
         	  MeasureMappingImpl unitSales = MeasureMappingImpl.builder()
               .withName("Unit Sales")
-              .withColumn(FoodmartMappingSupplier.UNITS_ORDERED_COLUMN_IN_INVENTORY_FACKT_1997)
+              .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
               .withAggregatorType(MeasureAggregatorType.SUM)
               .withFormatString("Standard")
               .build();

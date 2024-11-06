@@ -1682,7 +1682,7 @@ public class SchemaModifiers {
                     DimensionConnectorMappingImpl.builder()
                 		.withOverrideDimensionName("Store Type")
                 		.withDimension(FoodmartMappingSupplier.DIMENSION_STORE_TYPE_WITH_QUERY_STORE)
-                        //.withForeignKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_SALARY) //TODO WAREHOUSE_ID_COLUMN_IN_SALARY is absent in Salary  
+                        .withForeignKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE) //TODO WAREHOUSE_ID_COLUMN_IN_SALARY is absent in Salary
                         .build()
                 ))
                 .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
@@ -3879,7 +3879,7 @@ public class SchemaModifiers {
                 .withAlias("gender2")
                 .withSql(
                         ((Builder) SqlViewImpl.builder()
-                            .withColumns(List.of(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER, 
+                            .withColumns(List.of(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER,
                                          FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)))
                             .withSqlStatements(List.of(
                                 SqlStatementImpl.builder().withDialects(List.of("generic")).withSql("SELECT * FROM customer").build(),
@@ -4050,10 +4050,10 @@ public class SchemaModifiers {
             if ("Sales".equals(cube.getName())) {
             	SqlViewImpl t = ((Builder) SqlViewImpl.builder()
                         .withColumns(List.of(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT,
-                                     FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS, 
-                                     FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS, 
-                                     FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS, 
-                                     FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT, 
+                                     FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS,
+                                     FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS,
+                                     FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS,
+                                     FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT,
                                      FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)))
                         .withSqlStatements(List.of(
                             SqlStatementImpl.builder().withDialects(List.of("db2")).withSql(
@@ -4085,7 +4085,7 @@ public class SchemaModifiers {
                                             + "`product_class`.`product_subcategory` \n" + "FROM `product`, `product_class`\n"
                                             + "WHERE `product`.`product_class_id` = `product_class`.`product_class_id`\n"
                             ).build()
-                        )).build(); 
+                        )).build();
                 SqlSelectQueryMappingImpl v = SqlSelectQueryMappingImpl.builder()
                         .withAlias("productView")
                         .withSql(t).build();
@@ -5046,7 +5046,7 @@ public class SchemaModifiers {
                                 	DimensionConnectorMappingImpl.builder()
                                 	.withOverrideDimensionName("Warehouse")
                                 	.withDimension(warehouseDimension)
-                                	.withForeignKey(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
+                                	.withForeignKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_INVENTORY_FACKT_1997)
                                 	.build()
                              ))
                             .withMeasureGroups(List.of(
@@ -7701,7 +7701,7 @@ public class SchemaModifiers {
             		        .build()
             		)
                     .build());
-            }            
+            }
             return result;
         }
 
@@ -8969,7 +8969,7 @@ public class SchemaModifiers {
             .withAlias("alt_promotion")
             .withTable(itt)
             .build();
-            
+
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("Sales_inline")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -12500,7 +12500,7 @@ public class SchemaModifiers {
                            	.withHierarchies(List.of(
                            		HierarchyMappingImpl.builder()
                                		.withHasAll(true)
-                               		//.withPrimaryKey("customer_id") //TODO customer_id absent in store table 
+                               		//.withPrimaryKey("customer_id") //TODO customer_id absent in store table
                                		.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                                		.withLevels(List.of(
                                			LevelMappingImpl.builder()
@@ -19786,6 +19786,12 @@ public class SchemaModifiers {
 
         @Override
         protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        	ColumnImpl ordernumber = ColumnImpl.builder().withName("ORDERNUMBER").withType("INTEGER").build();
+        	ColumnImpl orderdate = ColumnImpl.builder().withName("ORDERDATE").withType("TIMESTAMP").build();
+            PhysicalTableImpl orders = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("orders")
+                    .withColumns(List.of(
+                            ordernumber, orderdate
+                    ))).build();
         	return List.of(SchemaMappingImpl.builder()
                     .withName("FooBar")
                     .withCubes(List.of(
@@ -19802,19 +19808,18 @@ public class SchemaModifiers {
                                             HierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withAllMemberName("All Orders")
-                                                .withPrimaryKey(SteelwheelsSupplier.CUSTOMERNUMBER_COLUMN_IN_ORDER_FACT)
-                                                //.withQuery(TableQueryMappingImpl.builder().withTable("orders").build()) //TODO orders is absent 
-                                                .withQuery(TableQueryMappingImpl.builder().withTable(SteelwheelsSupplier.ORDER_FACT_TABLE).build())
+                                                .withPrimaryKey(ordernumber)
+                                                .withQuery(TableQueryMappingImpl.builder().withTable(orders).build())
                                                 .withLevels(List.of(
                                                 	LevelMappingImpl.builder()
                                                         .withName("Order")
-                                                        .withColumn(SteelwheelsSupplier.CUSTOMERNUMBER_COLUMN_IN_ORDER_FACT)
+                                                        .withColumn(ordernumber)
                                                         .withType(DataType.INTEGER)
                                                         .withUniqueMembers(true)
                                                         .withMemberProperties(List.of(
                                                         	MemberPropertyMappingImpl.builder()
                                                                 .withName("OrderDate")
-                                                                .withColumn(SteelwheelsSupplier.ORDERDATE_COLUMN_IN_ORDER_FACT)
+                                                                .withColumn(orderdate)
                                                                 .withDataType(DataType.TIMESTAMP)
                                                                 .build()
                                                         ))
@@ -21098,7 +21103,7 @@ public class SchemaModifiers {
             .build();
 
         	ColumnImpl unitSalesSalesFact1998 = ColumnImpl.builder().withName("unit_sales").withType("INTEGER").build();
-        	ColumnImpl customerIdSalesFact1998 = ColumnImpl.builder().withName("customer_id").withType("unit_sales").build();
+        	ColumnImpl customerIdSalesFact1998 = ColumnImpl.builder().withName("customer_id").withType("INTEGER").build();
             PhysicalTableImpl salesFact1998 = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("sales_fact_1998")
                     .withColumns(List.of(
                             unitSalesSalesFact1998, customerIdSalesFact1998

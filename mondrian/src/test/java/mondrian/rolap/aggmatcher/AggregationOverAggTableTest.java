@@ -57,7 +57,7 @@ class AggregationOverAggTableTest extends AggTableTestCase {
         prepareContext(context);
         ExplicitRecognizerTest.setupMultiColDimCube(context,
             List.of(),
-            FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY,
+            FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null, null, null,
             List.of());

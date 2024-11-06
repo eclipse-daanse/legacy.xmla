@@ -1523,6 +1523,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                             LevelMappingImpl.builder()
                                                 .withName("Department Description")
                                                 .withUniqueMembers(true)
+                                                .withColumn(FoodmartMappingSupplier.DEPARTMENT_ID_COLUMN_IN_DEPARTMENT)
                                                 .build()
                                         ))
                                         .build()

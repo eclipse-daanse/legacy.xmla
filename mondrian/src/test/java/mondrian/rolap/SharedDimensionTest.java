@@ -340,6 +340,7 @@ class SharedDimensionTest  {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    //NOTE: issue with alias
     void testA(Context context) {
         // Schema has two cubes sharing a dimension.
         // Query from the first cube.
@@ -350,6 +351,7 @@ class SharedDimensionTest  {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    //NOTE: issue with alias
     void testB(Context context) {
         // Schema has two cubes sharing a dimension.
         // Query from the second cube.
@@ -360,6 +362,7 @@ class SharedDimensionTest  {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    //NOTE: issue with alias
     void testVirtualCube(Context context) {
         // Schema has two cubes sharing a dimension, and a virtual cube built
         // over these two cubes.
@@ -382,6 +385,7 @@ class SharedDimensionTest  {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    //NOTE: issue with alias
     void testNECJMemberList(Context context) {
         // Schema has two cubes sharing a dimension.
         // Query from the second cube.
@@ -394,6 +398,7 @@ class SharedDimensionTest  {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    //NOTE: issue with alias
     void testNECJMultiLevelMemberList(Context context) {
         // Schema has two cubes sharing a dimension.
         // Query from the first cube.

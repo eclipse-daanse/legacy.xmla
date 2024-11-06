@@ -45,7 +45,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -5749,7 +5748,7 @@ class NonEmptyTest extends BatchTestCase {
                   .withLevels(List.of(
                       LevelMappingImpl.builder()
                           .withName("Store Country")
-                          .withColumn(FoodmartMappingSupplier.STORE_CITY_COLUMN_IN_STORE)
+                          .withColumn(FoodmartMappingSupplier.STORE_COUNTRY_COLUMN_IN_STORE)
                           .withUniqueMembers(true)
                           .build(),
                       LevelMappingImpl.builder()

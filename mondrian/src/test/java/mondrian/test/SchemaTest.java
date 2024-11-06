@@ -1541,7 +1541,7 @@ class SchemaTest {
                     .withName("City")
                     .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withColumn(FoodmartMappingSupplier.CITY_COLUMN_IN_CUSTOMER)
-                    .withUniqueMembers(true)
+                    .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l24 = LevelMappingImpl
                     .builder()
@@ -1797,8 +1797,8 @@ class SchemaTest {
                     .withName("Store Country")
                     .withTable(FoodmartMappingSupplier.STORE_TABLE)
                     .withColumn(FoodmartMappingSupplier.STORE_COUNTRY_COLUMN_IN_STORE)
-                    .withUniqueMembers(true)
                     .build();
+
                 LevelMappingImpl l22 = LevelMappingImpl
                     .builder()
                     .withName("Store Region")
@@ -2231,6 +2231,9 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    //NOTE : test have issue with alias and Level. we have hierarchy with inner join .
+    //Left join have alias with "customer_region" . Level of  hierarchy use table (reference) without alias with table name "region".
+    //After that we have exception that "region" not exist (we should use alias as name of table in sql).
     void testDimensionsShareJoinTableOneAlias(Context context) {
         class TestDimensionsShareJoinTableOneAliasModifier extends PojoMappingModifier {
             public TestDimensionsShareJoinTableOneAliasModifier(CatalogMapping catalog) {
@@ -2447,6 +2450,9 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    //NOTE : test have issue with alias and Level. we have hierarchy with inner join .
+    //Left join have alias with "store_region" . Level of  hierarchy use table (reference) without alias with table name "region".
+    //After that we have exception that "region" not exist (we should use alias as name of table in sql).
     void testDimensionsShareJoinTableTwoAliases(Context context) {
         class TestDimensionsShareJoinTableTwoAliasesModifier extends PojoMappingModifier {
             public TestDimensionsShareJoinTableTwoAliasesModifier(CatalogMapping catalog) {
@@ -6076,7 +6082,7 @@ class SchemaTest {
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
                 SqlSelectQueryMappingImpl v1 = SqlSelectQueryMappingImpl.builder()
-                    .withAlias("gender2")
+                    .withAlias("customer")
                     .withSql(
                             ((Builder) SqlViewImpl.builder()
                             .withColumns(List.of(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)))
@@ -6717,9 +6723,9 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnImpl id = ColumnImpl.builder().withName("id").withType("INTEGER").build();
-                    ColumnImpl bin = ColumnImpl.builder().withName("bin").withType("INTEGER").build();
-                    ColumnImpl name = ColumnImpl.builder().withName("name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                    ColumnImpl id = ColumnImpl.builder().withName("id").withType("Integer").build();
+                    ColumnImpl bin = ColumnImpl.builder().withName("bin").withType("Integer").build();
+                    ColumnImpl name = ColumnImpl.builder().withName("name").withType("String").withTypeQualifiers(List.of("20")).build();
                     InlineTableImpl t = InlineTableImpl.builder()
                     .withColumns(List.of(id, bin, name))
                     .withRows(List.of(
@@ -6862,9 +6868,9 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnImpl id = ColumnImpl.builder().withName("id").withType("INTEGER").build();
-                    ColumnImpl bigNum = ColumnImpl.builder().withName("big_num").withType("INTEGER").build();
-                    ColumnImpl name = ColumnImpl.builder().withName("name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                    ColumnImpl id = ColumnImpl.builder().withName("id").withType("Integer").build();
+                    ColumnImpl bigNum = ColumnImpl.builder().withName("big_num").withType("Integer").build();
+                    ColumnImpl name = ColumnImpl.builder().withName("name").withType("String").withTypeQualifiers(List.of("20")).build();
                     InlineTableImpl t = InlineTableImpl.builder()
                     .withColumns(List.of(id, bigNum, name))
                     .withRows(List.of(
@@ -9741,7 +9747,13 @@ class SchemaTest {
                                         .build()
                             		))
                             	.build())
-                            .build()
+                            .build(),
+                            DimensionConnectorMappingImpl.builder()
+                            	.withOverrideDimensionName("Bar")
+                                .withDimension(FoodmartMappingSupplier.DIMENSION_TIME)
+                                .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
+                                .withVisible(this.value)
+                                .build()
                         ))
                         .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
@@ -11826,7 +11838,7 @@ class SchemaTest {
                 HierarchyMapping h = super.hierarchy(hierarchy);
                 if (h != null && h.isHasAll()
                     && "All Gender".equals(h.getAllMemberName())
-                    && "customer_id".equals(h.getPrimaryKey())) {
+                    && "customer_id".equals(h.getPrimaryKey().getName())) {
                 	((HierarchyMappingImpl)h).setName("地域");
                 }
                 return h;

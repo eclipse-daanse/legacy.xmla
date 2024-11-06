@@ -66,7 +66,7 @@ public class RelationUtil {
 
     public static String getAlias(RelationalQueryMapping relation) {
         if (relation instanceof TableQueryMapping table) {
-            return (table.getAlias() != null) ? table.getAlias() : table.getTable().getName();
+            return (table.getAlias() != null) ? table.getAlias() : table.getTable() != null ? table.getTable().getName() : null;
         }
         else {
             return relation.getAlias();

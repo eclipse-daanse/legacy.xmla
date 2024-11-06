@@ -487,7 +487,7 @@ public class HierarchyUsage {
             if (table == null) {
                 // todo: i18n msg
                 throw Util.newError(
-                    new StringBuilder("no table '").append(tab)
+                    new StringBuilder("no table '").append(tab.getName())
                     .append("' found in hierarchy ").append(hierarchy.getUniqueName()).toString());
             }
         }
