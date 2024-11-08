@@ -69,8 +69,8 @@ class InlineTableTest {
             }
             
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("INTEGER").build();
-                ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("Numeric").build();
+                ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("String").withTypeQualifiers(List.of("20")).build();
                 InlineTableImpl t = InlineTableImpl.builder()
                 .withColumns(List.of(promoId, promoName))
                 .withRows(List.of(
@@ -96,7 +96,7 @@ class InlineTableTest {
                             .build(),
                         DimensionConnectorMappingImpl.builder()
                         	.withOverrideDimensionName("Alternative Promotion")
-                        	.withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
+                        	.withForeignKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_SALES_FACT_1997)
                         	.withDimension(
                         		StandardDimensionMappingImpl.builder()
                         			.withName("Alternative Promotion")
@@ -208,8 +208,8 @@ class InlineTableTest {
                 super(catalog);
             }
             
-            private static final ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("INTEGER").build();
-            private static final ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+            private static final ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("Integer").build();
+            private static final ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("String").withTypeQualifiers(List.of("20")).build();
             private static final InlineTableImpl t = InlineTableImpl.builder()
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
@@ -360,9 +360,10 @@ class InlineTableTest {
             }
             
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                ColumnImpl nationName = ColumnImpl.builder().withName("nation_name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
-                ColumnImpl nationShortcode = ColumnImpl.builder().withName("nation_shortcode").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                ColumnImpl nationName = ColumnImpl.builder().withName("nation_name").withType("String").withTypeQualifiers(List.of("20")).build();
+                ColumnImpl nationShortcode = ColumnImpl.builder().withName("nation_shortcode").withType("String").withTypeQualifiers(List.of("20")).build();
                 InlineTableImpl t = InlineTableImpl.builder()
+                .withName("nation")
                 .withColumns(List.of(nationName, nationShortcode))
                 .withRows(List.of(
                        RowImpl.builder().withRowValues(List.of(
@@ -545,8 +546,8 @@ class InlineTableTest {
             
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                ColumnImpl nationName = ColumnImpl.builder().withName("nation_name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
-                ColumnImpl nationShortcode = ColumnImpl.builder().withName("nation_shortcode").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                ColumnImpl nationName = ColumnImpl.builder().withName("nation_name").withType("String").withTypeQualifiers(List.of("20")).build();
+                ColumnImpl nationShortcode = ColumnImpl.builder().withName("nation_shortcode").withType("String").withTypeQualifiers(List.of("20")).build();
                 InlineTableImpl t = InlineTableImpl.builder()
                 .withColumns(List.of(nationName, nationShortcode))
                 .withRows(List.of(
@@ -561,8 +562,8 @@ class InlineTableTest {
                                RowValueImpl.builder().withColumn(nationShortcode).withValue("CA").build())).build()
                 ))
                 .build();
-                ColumnImpl id = ColumnImpl.builder().withName("id").withType("NUMERIC").build();
-                ColumnImpl date = ColumnImpl.builder().withName("date").withType("DATE").build();
+                ColumnImpl id = ColumnImpl.builder().withName("id").withType("Numeric").build();
+                ColumnImpl date = ColumnImpl.builder().withName("date").withType("Date").build();
                 InlineTableImpl tt = InlineTableImpl.builder()
                 .withColumns(List.of(id, date))
                 .withRows(List.of(

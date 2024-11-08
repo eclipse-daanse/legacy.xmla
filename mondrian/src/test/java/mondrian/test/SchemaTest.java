@@ -1613,7 +1613,7 @@ class SchemaTest {
                 DimensionConnectorMappingImpl dimension1 = DimensionConnectorMappingImpl
                     .builder()
                     .withOverrideDimensionName("Store")
-                    .withForeignKey(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
+                    .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
                     .withDimension(StandardDimensionMappingImpl.builder()
                     	.withName("Store")
                     	.withHierarchies(List.of(h11, h12)).build())
@@ -1874,7 +1874,7 @@ class SchemaTest {
                 DimensionConnectorMappingImpl dimension1 = DimensionConnectorMappingImpl
                     .builder()
                     .withOverrideDimensionName("Store")
-                    .withForeignKey(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
+                    .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
                     .withDimension(StandardDimensionMappingImpl.builder()
                     	.withName("Store")
                     	.withHierarchies(List.of(h11, h12)).build())
@@ -2694,7 +2694,7 @@ class SchemaTest {
             	LevelMappingImpl l11 = LevelMappingImpl
                         .builder()
                         .withName("Store Country")
-                        .withColumn(FoodmartMappingSupplier.STORE_CITY_COLUMN_IN_STORE)
+                        .withColumn(FoodmartMappingSupplier.STORE_COUNTRY_COLUMN_IN_STORE)
                         .withUniqueMembers(true)
                         .build();
             	LevelMappingImpl l12 = LevelMappingImpl
@@ -2707,7 +2707,7 @@ class SchemaTest {
             	HierarchyMappingImpl h1 = HierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
-                        .withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
+                        //.withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).withAlias("storea").build())
                         .withLevels(List.of(l11, l12))
@@ -7618,7 +7618,7 @@ class SchemaTest {
                                 .withLevels(List.of(
                                     LevelMappingImpl.builder()
                                         .withName("Year")
-                                        .withColumn(FoodmartMappingSupplier.THE_DATE_COLUMN_IN_TIME_BY_DAY)
+                                        .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
                                         .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
                                         .withUniqueMembers(true)
                                         .withLevelType(LevelType.TIME_YEARS)

@@ -6388,7 +6388,7 @@ public class SchemaModifiers {
                                                         .withName("Product Family")
                                                         .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                         .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
-                                                        //.uniqueMembers(false)
+                                                        .withUniqueMembers(false)
                                                         .build()
                                             ))
                                             .build()))
@@ -8954,8 +8954,8 @@ public class SchemaModifiers {
         protected List<? extends CubeMapping> schemaCubes(SchemaMapping catalogOriginal) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(catalogOriginal));
-            ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("NUMERIC").build();
-            ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("VARCHAR").build();
+            ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("Numeric").build();
+            ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("String").build();
             InlineTableImpl itt = InlineTableImpl.builder()
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
@@ -13131,8 +13131,8 @@ public class SchemaModifiers {
         protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
-            ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("NUMERIC").build();
-            ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("VARCHAR").build();
+            ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("Numeric").build();
+            ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("String").build();
             InlineTableImpl itt = InlineTableImpl.builder()
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(

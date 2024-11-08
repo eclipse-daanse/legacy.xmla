@@ -113,7 +113,7 @@ class SteelWheelsAggregationTest {
     .withName("Customers Hierarchy")
     .withVisible(true)
     .withHasAll(true)
-    .withPrimaryKey(SteelwheelsSupplier.CUSTOMERNAME_COLUMN_IN_CUSTOMER_W_TER)
+    .withPrimaryKey(SteelwheelsSupplier.CUSTOMERNUMBER_COLUMN_IN_CUSTOMER_W_TER)
     //.withCaption("Customer Hierarchy")
     .withQuery(TableQueryMappingImpl.builder().withTable(SteelwheelsSupplier.CUSTOMER_W_TER_TABLE).build())
     .withLevels(List.of(
