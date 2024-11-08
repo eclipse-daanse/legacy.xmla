@@ -1,0 +1,32 @@
+
+
+Export-Package: \
+	!org.testcontainers.shaded*,\
+	org.testcontainers*
+	
+-includeresource: \
+    @testcontainers-1.20.2.jar,\
+    @duct-tape-1.0.8.jar
+    
+-privatepackage: \
+	org.rnorth.ducttape*,\
+	com.fasterxml.jackson.annotation*,\
+	org.junit.rules*,\
+	org.junit.runners*,\
+	org.hamcrest*,\
+	org.apache.commons.compress
+
+Import-Package: \
+    !android.os.*,\
+    !com.github.dockerjava.zerodep.*,\
+    !com.google.appengine.*,\
+    !com.google.apphosting.*,\
+    !com.google.cloud.*,\
+    !io.r2dbc.*,\
+    !javax.annotation.*, \
+    !org.conscrypt, \
+    !org.testcontainers.r2dbc.*, \
+    !org.junit*,\
+    !sun.nio.ch*,\
+    com.github.dockerjava.zerodep,\
+    *

@@ -8,8 +8,7 @@
 	<artifactId>org.eclipse.daanse.repackage.dockerjava</artifactId>
 
 	<properties>
-		<docker-java.version>3.2.12</docker-java.version>
-		<httpclient5.version>5.1.3</httpclient5.version>
+		<docker-java.version>3.4.0</docker-java.version>
 	</properties>
 
 	<dependencies>

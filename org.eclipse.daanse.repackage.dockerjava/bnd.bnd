@@ -2,31 +2,25 @@ Export-Package: \
 	com.github.dockerjava.api*,\
 	com.github.dockerjava.core*,\
 	com.github.dockerjava.transport*,\
-	!com.github.dockerjava.zerodep.shaded*,\
-	com.github.dockerjava.zerodep*
+	com.github.dockerjava.zerodep*,\
+	com.github.dockerjava.httpclient5
 	
+-includeresource: \
+    @docker-java-api-3.4.0.jar, \
+    @docker-java-transport-zerodep-3.4.0.jar, \
+    @docker-java-transport-3.4.0.jar
 
+    
 -privatepackage: \
-	org.apache.*,\
-	*
-
+	com.fasterxml.jackson.databind*,\
+	com.fasterxml.jackson.core*,\
+	com.fasterxml.jackson.annotation*,\
+	org.apache.commons.lang3*,\
+	com.google.common.collect*,\
+	com.google.common.base*
+	
 	
 Import-Package: \
+	org.slf4j*,\
 	com.sun*,\
-	javax.net*,\
-	org.testcontainers.*,\
-	com.github.dockerjava.api*,\
-	com.github.dockerjava.core*,\
-	com.github.dockerjava.transport*,\
-	com.github.dockerjava.zerodep
-
-
-
-#	!com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http2*,\
-#	!org.brotli.dec*,\
-#	!com.github.dockerjava.jaxrs*,\
-#	!com.github.luben.zstd*,\
-#	!com.google.appengine.api*,\
-#	!com.google.apphosting.api*,\
-#	!org.brotli.dec
-#	*
+	javax.net*
