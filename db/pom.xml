@@ -22,8 +22,8 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>dialect</module>
+    <module>jdbc</module>
 		<module>statistics</module>
-		<module>datasource</module>
 	</modules>
 
 
