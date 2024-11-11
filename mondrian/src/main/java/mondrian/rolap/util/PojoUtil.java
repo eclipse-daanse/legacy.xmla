@@ -240,6 +240,7 @@ public class PojoUtil {
         return List.of();
 	}
 
+	// TODO: migrate to org.eclipse.daanse.rdb.structure.pojo.util.Converter
 	private static org.eclipse.daanse.rdb.structure.pojo.ColumnImpl getColumn(Column column) {
         if (column != null) {
             String name = column.getName();
@@ -262,7 +263,7 @@ public class PojoUtil {
         }
         return null;
 	}
-	
+	// TODO: migrate to org.eclipse.daanse.rdb.structure.pojo.util.Converter
 	private static PhysicalTableImpl getPhysicalTable(Table table) {
 		if (table != null) {
             String name = table.getName();

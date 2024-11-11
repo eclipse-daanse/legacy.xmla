@@ -12,10 +12,7 @@ package mondrian.rolap.aggmatcher;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.ref.SoftReference;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
+import java.sql.JDBCType;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.MessageFormat;
@@ -31,17 +28,18 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import javax.sql.DataSource;
-
-import mondrian.olap.MondrianException;
 import org.eclipse.daanse.db.dialect.api.Datatype;
-import org.eclipse.daanse.olap.api.ConnectionProps;
+import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
+import org.eclipse.daanse.rdb.structure.api.model.PhysicalTable;
+import org.eclipse.daanse.rdb.structure.api.model.SystemTable;
+import org.eclipse.daanse.rdb.structure.api.model.ViewTable;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import mondrian.olap.MondrianException;
 import mondrian.rolap.RolapAggregator;
 import mondrian.rolap.RolapLevel;
 import mondrian.rolap.RolapStar;
@@ -76,140 +74,6 @@ public class JdbcSchema {
     public Logger getLogger() {
         return LOGGER;
     }
-
-    public interface Factory {
-        JdbcSchema makeDB(DataSource dataSource);
-        void clearDB(JdbcSchema db);
-        void removeDB(JdbcSchema db);
-    }
-
-    private static final Map<DataSource, SoftReference<JdbcSchema>> dbMap =
-        new HashMap<>();
-
-    /**
-     * How often between sweeping through the dbMap looking for nulls.
-     */
-    private static final int SWEEP_COUNT = 10;
-    private static int sweepDBCount = 0;
-
-    public static class StdFactory implements Factory {
-        StdFactory() {
-        }
-        @Override
-		public JdbcSchema makeDB(DataSource dataSource) {
-            return new JdbcSchema(dataSource);
-        }
-        @Override
-		public void clearDB(JdbcSchema db) {
-            // NoOp
-        }
-        @Override
-		public void removeDB(JdbcSchema db) {
-            // NoOp
-        }
-    }
-
-    private static Factory factory;
-
-    private static synchronized void makeFactory() {
-        if (factory != null) {
-            return;
-        }
-
-            factory = new StdFactory();
-
-    }
-
-    /**
-     * Creates or retrieves an instance of the JdbcSchema for the given
-     * DataSource.
-     *
-     * @param dataSource DataSource
-     * @return instance of the JdbcSchema for the given DataSource
-     */
-    public static synchronized JdbcSchema makeDB(DataSource dataSource) {
-        makeFactory();
-
-        JdbcSchema db = null;
-        SoftReference<JdbcSchema> ref = dbMap.get(dataSource);
-        if (ref != null) {
-            db = ref.get();
-        }
-        if (db == null) {
-            db = factory.makeDB(dataSource);
-            dbMap.put(dataSource, new SoftReference<>(db));
-        }
-
-        sweepDB();
-
-        return db;
-    }
-
-    /**
-     * Clears information in a JdbcSchema associated with a DataSource.
-     *
-     * @param dataSource DataSource
-     */
-    public static synchronized void clearDB(DataSource dataSource) {
-        makeFactory();
-
-        SoftReference<JdbcSchema> ref = dbMap.get(dataSource);
-        if (ref != null) {
-            JdbcSchema db = ref.get();
-            if (db != null) {
-                factory.clearDB(db);
-                db.clear();
-            } else {
-                dbMap.remove(dataSource);
-            }
-        }
-        sweepDB();
-    }
-
-    /**
-     * Removes a JdbcSchema associated with a DataSource.
-     *
-     * @param dataSource DataSource
-     */
-    public static synchronized void removeDB(DataSource dataSource) {
-        makeFactory();
-
-        SoftReference<JdbcSchema> ref = dbMap.remove(dataSource);
-        if (ref != null) {
-            JdbcSchema db = ref.get();
-            if (db != null) {
-                factory.removeDB(db);
-                db.remove();
-            }
-        }
-        sweepDB();
-    }
-
-    /**
-     * Every SWEEP_COUNT calls to this method, go through all elements of
-     * the dbMap removing all that either have null values (null SoftReference)
-     * or those with SoftReference with null content.
-     */
-    private static void sweepDB() {
-        if (sweepDBCount++ > SWEEP_COUNT) {
-            Iterator<SoftReference<JdbcSchema>> it = dbMap.values().iterator();
-            while (it.hasNext()) {
-                SoftReference<JdbcSchema> ref = it.next();
-                if ((ref == null) || (ref.get() == null)) {
-                    try {
-                        it.remove();
-                    } catch (Exception ex) {
-                        // Should not happen, but might still like to
-                        // know that something's funky.
-                        LOGGER.warn("",ex);
-                    }
-                }
-            }
-            // reset
-            sweepDBCount = 0;
-        }
-    }
-
 
     //
     // Types of column usages.
@@ -532,7 +396,7 @@ public class JdbcSchema {
             private final Set<UsageType> usageTypes =
             		EnumSet.noneOf(UsageType.class);
 
-            private Column(final String name) {
+            public Column(final String name) {
                 this.name = name;
                 this.column =
                     new mondrian.rolap.RolapColumn(
@@ -826,6 +690,7 @@ public class JdbcSchema {
             }
         }
 
+        
         /** Name of table. */
         private final String name;
 
@@ -851,16 +716,34 @@ public class JdbcSchema {
         // mondriandef stuff
         public TableQueryMapping table;
 
-        private boolean allColumnsLoaded;
-
-        private Table(final String name, String tableType) {
+        private Table(final String name, String tableType, List<? extends org.eclipse.daanse.rdb.structure.api.model.Column> list) {
             this.name = name;
             this.tableUsageType = TableUsageType.UNKNOWN;
             this.tableType = tableType;
-        }
 
-        public void load() throws SQLException {
-            loadColumns();
+			for (org.eclipse.daanse.rdb.structure.api.model.Column rdbColumn : list) {
+
+				String nameInner = rdbColumn.getName();
+				int type = JDBCType.valueOf(rdbColumn.getType()).getVendorTypeNumber();
+				String typeName = rdbColumn.getType();
+				Integer columnSize = rdbColumn.getColumnSize();
+				Integer decimalDigits = rdbColumn.getDecimalDigits();
+				int numPrecRadix = rdbColumn.getNumPrecRadix();
+				int charOctetLength = rdbColumn.getCharOctetLength();
+				boolean isNullable = Boolean.TRUE == rdbColumn.getNullable();
+
+				Column column = new Column(nameInner);
+				column.setType(type);
+				column.setTypeName(typeName);
+				column.setColumnSize(columnSize);
+				column.setDecimalDigits(decimalDigits);
+				column.setNumPrecRadix(numPrecRadix);
+				column.setCharOctetLength(charOctetLength);
+				column.setIsNullable(isNullable);
+
+				columnMap.put(column.getName(), column);
+				totalColumnSize += column.getColumnSize();
+			}
         }
 
         /**
@@ -1034,70 +917,7 @@ public class JdbcSchema {
             pw.println("]");
         }
 
-        /**
-         * Returns all of the columnIter associated with a table and creates
-         * Column objects with the column's name, type, type name and column
-         * size.
-         *
-         * @throws SQLException
-         */
-        private void loadColumns() throws SQLException {
-            if (! allColumnsLoaded) {
-                Connection conn = getDataSource().getConnection();
-                try {
-                    DatabaseMetaData dmd = conn.getMetaData();
 
-                    String schemaInner = JdbcSchema.this.getSchemaName();
-                    String catalogInner = JdbcSchema.this.getCatalogName();
-                    String tableName = getName();
-                    String columnNamePattern = "%";
-
-                    ResultSet rs = null;
-                    try {
-                        Map<String, Column> map = getColumnMap();
-                        rs = dmd.getColumns(
-                            catalogInner,
-                            schemaInner,
-                            tableName,
-                            columnNamePattern);
-                        while (rs.next()) {
-                            String nameInner = rs.getString(4);
-                            int type = rs.getInt(5);
-                            String typeName = rs.getString(6);
-                            int columnSize = getSafeInt(rs, 7);
-                            int decimalDigits = getSafeInt(rs, 9);
-                            int numPrecRadix = rs.getInt(10);
-                            int charOctetLength = rs.getInt(16);
-                            String isNullable = rs.getString(18);
-
-                            Column column = new Column(nameInner);
-                            column.setType(type);
-                            column.setTypeName(typeName);
-                            column.setColumnSize(columnSize);
-                            column.setDecimalDigits(decimalDigits);
-                            column.setNumPrecRadix(numPrecRadix);
-                            column.setCharOctetLength(charOctetLength);
-                            column.setIsNullable(!"NO".equals(isNullable));
-
-                            map.put(nameInner, column);
-                            totalColumnSize += column.getColumnSize();
-                        }
-                    } finally {
-                        if (rs != null) {
-                            rs.close();
-                        }
-                    }
-                } finally {
-                    try {
-                        conn.close();
-                    } catch (SQLException e) {
-                        // ignore
-                    }
-                }
-
-                allColumnsLoaded = true;
-            }
-        }
 
         public Map<String, Column> getColumnMap() {
             if (columnMap == null) {
@@ -1107,10 +927,7 @@ public class JdbcSchema {
         }
     }
 
-    private DataSource dataSource;
-    private String schema;
-    private String catalog;
-    private boolean allTablesLoaded;
+    private DatabaseSchema databaseSchema;
 
     /**
      * Tables by name. We use a sorted map so {@link #getTables()}'s output
@@ -1119,78 +936,12 @@ public class JdbcSchema {
     private final SortedMap<String, Table> tables =
         new TreeMap<>();
 
-    public JdbcSchema(final DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+	public JdbcSchema(final DatabaseSchema databaseSchema) {
+		this.databaseSchema = databaseSchema;
+		loadTables();
+	}
 
-    /**
-     * This forces the tables to be loaded.
-     * @param connectInfo Mondrian connection properties
-     * @throws SQLException
-     */
-    public void load(ConnectionProps connectionProps) throws SQLException {
-        loadTables(connectionProps);
-    }
 
-    protected synchronized void clear() {
-        // keep the DataSource, clear/reset everything else
-        allTablesLoaded = false;
-        schema = null;
-        catalog = null;
-        tables.clear();
-    }
-
-    protected void remove() {
-        // set ALL instance variables to null
-        clear();
-        dataSource = null;
-    }
-
-    /**
-     * Used for testing allowing one to load tables and their columnIter
-     * from more than one datasource
-     */
-    void resetAllTablesLoaded() {
-        allTablesLoaded = false;
-    }
-
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
-    protected void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    /**
-     * Sets the database's schema name.
-     *
-     * @param schema Schema name
-     */
-    public void setSchemaName(final String schema) {
-        this.schema = schema;
-    }
-
-    /**
-     * Returns the database's schema name.
-     */
-    public String getSchemaName() {
-        return schema;
-    }
-
-    /**
-     * Sets the database's catalog name.
-     */
-    public void setCatalogName(final String catalog) {
-        this.catalog = catalog;
-    }
-
-    /**
-     * Returns the database's catalog name.
-     */
-    public String getCatalogName() {
-        return catalog;
-    }
 
     /**
      * Returns the database's tables. The collection is sorted by table name.
@@ -1240,137 +991,25 @@ public class JdbcSchema {
     }
 
     /**
-     * Some columns in JDBC can return null on certain primitive type methods.
-     * This is unfortunate, as it forces us to dance around the issue like so.
-     * Will check wasNull(). Returns 0 if the value was null.
-     */
-    private static int getSafeInt(ResultSet rs, int columnIndex)
-        throws SQLException
-    {
-        try {
-            return rs.getInt(columnIndex);
-        } catch (Exception e) {
-            if (rs.wasNull()) {
-                return 0;
-            }
-            throw new SQLException(e);
-        }
-    }
-
-    /**
      * Gets all of the tables (and views) in the database.
-     * If called a second time, this method is a no-op.
-     * @param connectInfo The Mondrian connection properties
-     * @throws SQLException
      */
-    protected void loadTables(ConnectionProps connectionProps) throws SQLException {
-        if (allTablesLoaded) {
-            return;
-        }
-        Connection conn = null;
-        try {
-            conn = getDataSource().getConnection();
-            final DatabaseMetaData databaseMetaData = conn.getMetaData();
+	protected void loadTables() {
 
-            final String scanSchemaProp =connectionProps.aggregateScanSchema().orElse(getSchemaName());
+		for (org.eclipse.daanse.rdb.structure.api.model.Table rdbTable : databaseSchema.getTables()) {
+			if (rdbTable instanceof PhysicalTable || rdbTable instanceof ViewTable || rdbTable instanceof SystemTable) {
+				
+			Table table = new Table(rdbTable.getName(), rdbTable.getClass().getSimpleName(),rdbTable.getColumns());
+				getLogger().debug("Adding table {}", rdbTable.getName());
+				tables.put(table.getName(), table);
+			}
+		}
+	}
+	
 
-            final String scanCatalogProp =connectionProps.aggregateScanCatalog().orElse(getCatalogName());
 
-
-            String[] tableTypes = { "TABLE", "VIEW" };
-            if (databaseMetaData.getDatabaseProductName().toUpperCase().indexOf(
-                    "VERTICA") >= 0)
-            {
-                for (String tableType : tableTypes) {
-                    loadTablesOfType(
-                        databaseMetaData,
-                        new String[]{tableType},
-                        scanSchemaProp,
-                        scanCatalogProp);
-                }
-            } else {
-                loadTablesOfType(
-                    databaseMetaData,
-                    tableTypes,
-                    scanSchemaProp,
-                    scanCatalogProp);
-            }
-            allTablesLoaded = true;
-        } finally {
-            if (conn != null) {
-                conn.close();
-            }
-        }
-    }
-
-    /**
-     * Loads definition of tables of a given set of table types ("TABLE", "VIEW"
-     * etc.)
-     * @param databaseMetaData The databaseMetaData for the database connection
-     *                         to search for the list of tables
-     * @param tableTypes The table types to load.  ("TABLE", "VIEW", etc.)
-     * @param scanCatalogProp The name of the database catalog to load the
-     *                        list of tables from.  Null will load from every
-     *                        catalog.
-     * @param scanSchemaProp  The name of the database schema to load the
-     *                        list of tables from.  Null will load from every
-     *                        schema.
-     */
-    private void loadTablesOfType(
-        DatabaseMetaData databaseMetaData,
-        String[] tableTypes,
-        String scanSchemaProp,
-        String scanCatalogProp)
-        throws SQLException
-    {
-        final String tableName = "%";
-        ResultSet rs = null;
-        try {
-            String msg = new StringBuilder("Getting list of tables from catalog ")
-                .append(scanCatalogProp).append(" schema ")
-                .append(scanSchemaProp).append(" table ").append(tableName).toString();
-            getLogger().debug(msg);
-            rs = databaseMetaData.getTables(
-                scanCatalogProp,
-                scanSchemaProp,
-                tableName,
-                tableTypes);
-            if (rs == null) {
-                getLogger().debug("ERROR: rs == null");
-                return;
-            }
-            while (rs.next()) {
-                addTable(rs);
-            }
-        } finally {
-            if (rs != null) {
-                rs.close();
-            }
-        }
-    }
-
-    /**
-     * Makes a Table from an ResultSet: the table's name is the ResultSet third
-     * entry.
-     *
-     * @param rs Result set
-     * @throws SQLException
-     */
-    protected void addTable(final ResultSet rs) throws SQLException {
-        String name = rs.getString(3);
-        String tableType = rs.getString(4);
-        Table table = new Table(name, tableType);
-        getLogger().debug("Adding table {}", name);
-
-        tables.put(table.getName(), table);
-    }
 
     protected SortedMap<String, Table> getTablesMap() {
         return tables;
     }
 
-    public static synchronized void clearAllDBs() {
-        factory = null;
-        makeFactory();
-    }
 }
