@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.daanse.olap.api.result.Olap4jUtil;
+import org.eclipse.daanse.xmla.api.XmlaConstant;
 
 /**
  * Implementation of {@link org.olap4j.metadata.XmlaConstant.Dictionary}.

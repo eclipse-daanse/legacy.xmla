@@ -39,7 +39,6 @@ import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.result.Property;
-import org.eclipse.daanse.olap.impl.XmlaConstants;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberPropertyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -53,6 +52,10 @@ import org.eclipse.daanse.rolap.mapping.api.model.MeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
+import org.eclipse.daanse.xmla.api.VarType;
+import org.eclipse.daanse.xmla.api.XmlaConstant;
+import org.eclipse.daanse.xmla.api.XmlaConstants;
+import org.eclipse.daanse.xmla.api.XmlaConstants.DBType;
 import org.eclipse.daanse.xmla.api.common.enums.ColumnOlapTypeEnum;
 import org.eclipse.daanse.xmla.api.common.enums.CubeSourceEnum;
 import org.eclipse.daanse.xmla.api.common.enums.CubeTypeEnum;
@@ -120,7 +123,6 @@ import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapAggregator;
 import mondrian.rolap.RolapStoredMeasure;
-import mondrian.xmla.VarType;
 
 public class Utils {
 
@@ -147,7 +149,7 @@ public class Utils {
 
         List<? extends SchemaMapping> schemas =
             getDatabaseMappingSchemaProviderWithFilter(context.getCatalogMapping(), oTableSchema);
-        return schemas.stream().map(schema -> {            
+        return schemas.stream().map(schema -> {
             return getDbSchemaColumnsResponseRow(context.getName(), schema, oTableName, oColumnName, oColumnOlapType
                 );
         }).flatMap(Collection::stream).toList();
@@ -172,21 +174,21 @@ public class Utils {
         PhysicalCubeMapping cube,
         Optional<String> oTableName,
         Optional<String> oColumnName,
-        Optional<ColumnOlapTypeEnum> oColumnOlapType        
+        Optional<ColumnOlapTypeEnum> oColumnOlapType
     ) {
         int ordinalPosition = 1;
         List<DbSchemaColumnsResponseRow> result = new ArrayList<>();
         if (!oTableName.isPresent() || (oTableName.isPresent() && oTableName.get().equals(cube.getName()))) {
             final boolean emitInvisibleMembers = true; //TODO
-            for (DimensionConnectorMapping dimensionConnector : cube.getDimensionConnectors()) {               
+            for (DimensionConnectorMapping dimensionConnector : cube.getDimensionConnectors()) {
                     populateDimensionForDbSchemaColumns(
                         catalogName,
                         schemaName,
                         cube, dimensionConnector.getDimension(),
-                        ordinalPosition, result);                
+                        ordinalPosition, result);
             }
             for (MeasureGroupMapping measureGroup : cube.getMeasureGroups()) {
-            	for (MeasureMapping measure : measureGroup.getMeasures()) { 
+            	for (MeasureMapping measure : measureGroup.getMeasures()) {
                 Boolean visible = true;
                 Optional<? extends CalculatedMemberPropertyMapping> oP = measure.getCalculatedMemberProperties()
                     .stream()
@@ -235,7 +237,7 @@ public class Utils {
                     Optional.empty(),
                     Optional.empty()
                 ));
-            	}    
+            	}
             }
         }
 
@@ -364,7 +366,7 @@ public class Utils {
         String catalogName,
         SchemaMapping schema,
         String schemaOwner
-    ) {        
+    ) {
         return new DbSchemaSchemataResponseRowR(
             catalogName,
             schema.getName(),
@@ -455,7 +457,7 @@ public class Utils {
                     buf.append(v.getPrittyName());
                 }
 
-                VarType varType = VarType.forCategory(returnCategory);
+                VarType varType = VarType.forCategory(returnCategory.getName());
                 result.add(
                     new MdSchemaFunctionsResponseRowR(
                         Optional.ofNullable(fm.operationAtom().name()),
@@ -2464,7 +2466,7 @@ oHierarchyName)
             final MeasureAggregatorEnum measureAggregator = getAggregator(m);
 
             // DATA_TYPE DBType best guess is string
-            XmlaConstants.DBType dbType = XmlaConstants.DBType.WSTR;
+            DBType dbType = XmlaConstants.DBType.WSTR;
             String datatype = (String)
                 m.getPropertyValue(Property.StandardCellProperty.DATATYPE.getName());
             if (datatype != null) {

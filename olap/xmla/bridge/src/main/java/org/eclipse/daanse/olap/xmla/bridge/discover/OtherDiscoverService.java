@@ -30,6 +30,8 @@ import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.xmla.bridge.ContextGroupXmlaServiceConfig;
 import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
+import org.eclipse.daanse.xmla.api.PropertyDefinition;
+import org.eclipse.daanse.xmla.api.XmlaConstants;
 import org.eclipse.daanse.xmla.api.annotation.Enumerator;
 import org.eclipse.daanse.xmla.api.annotation.Operation;
 import org.eclipse.daanse.xmla.api.common.enums.AccessEnum;
@@ -82,9 +84,6 @@ import org.eclipse.daanse.xmla.model.record.discover.discover.xmlmetadata.Discov
 import org.eclipse.daanse.xmla.model.record.xmla.RestrictionR;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.xmla.PropertyDefinition;
-import mondrian.xmla.XmlaConstants;
 
 public class OtherDiscoverService {
 

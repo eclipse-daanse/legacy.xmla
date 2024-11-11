@@ -17,7 +17,6 @@ import mondrian.olap.MondrianException;
 import mondrian.olap.UpdateImpl;
 import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapCube;
-import mondrian.xmla.XmlaException;
 import org.eclipse.daanse.db.dialect.api.Datatype;
 import org.eclipse.daanse.mdx.model.api.select.Allocation;
 import org.eclipse.daanse.olap.action.api.ActionService;
@@ -51,6 +50,7 @@ import org.eclipse.daanse.olap.xmla.bridge.discover.OtherDiscoverService;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;
+import org.eclipse.daanse.xmla.api.XmlaException;
 import org.eclipse.daanse.xmla.api.common.properties.Content;
 import org.eclipse.daanse.xmla.api.common.properties.Format;
 import org.eclipse.daanse.xmla.api.common.properties.OperationNames;
@@ -161,11 +161,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static mondrian.xmla.XmlaConstants.CLIENT_FAULT_FC;
-import static mondrian.xmla.XmlaConstants.HSB_DRILL_THROUGH_SQL_CODE;
-import static mondrian.xmla.XmlaConstants.HSB_DRILL_THROUGH_SQL_FAULT_FS;
-import static mondrian.xmla.XmlaConstants.SERVER_FAULT_FC;
-import static mondrian.xmla.XmlaConstants.USM_DOM_PARSE_FAULT_FS;
+import static org.eclipse.daanse.xmla.api.XmlaConstants.CLIENT_FAULT_FC;
+import static org.eclipse.daanse.xmla.api.XmlaConstants.HSB_DRILL_THROUGH_SQL_CODE;
+import static org.eclipse.daanse.xmla.api.XmlaConstants.HSB_DRILL_THROUGH_SQL_FAULT_FS;
+import static org.eclipse.daanse.xmla.api.XmlaConstants.SERVER_FAULT_FC;
+import static org.eclipse.daanse.xmla.api.XmlaConstants.USM_DOM_PARSE_FAULT_FS;
 
 public class OlapExecuteService implements ExecuteService {
 

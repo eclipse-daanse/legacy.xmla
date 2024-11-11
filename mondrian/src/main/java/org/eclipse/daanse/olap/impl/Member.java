@@ -17,6 +17,8 @@
 */
 package org.eclipse.daanse.olap.impl;
 
+import org.eclipse.daanse.xmla.api.XmlaConstant;
+
 /**
  * <code>Member</code> is a data value in an OLAP Dimension.
  *

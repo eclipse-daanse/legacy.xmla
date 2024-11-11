@@ -13,9 +13,9 @@
  */
 package org.eclipse.daanse.olap.xmla.bridge.execute;
 
-import static mondrian.xmla.XmlaConstants.HSB_BAD_PROPERTIES_LIST_CODE;
-import static mondrian.xmla.XmlaConstants.HSB_BAD_PROPERTIES_LIST_FAULT_FS;
-import static mondrian.xmla.XmlaConstants.SERVER_FAULT_FC;
+import static org.eclipse.daanse.xmla.api.XmlaConstants.HSB_BAD_PROPERTIES_LIST_CODE;
+import static org.eclipse.daanse.xmla.api.XmlaConstants.HSB_BAD_PROPERTIES_LIST_FAULT_FS;
+import static org.eclipse.daanse.xmla.api.XmlaConstants.SERVER_FAULT_FC;
 import static org.eclipse.daanse.xmla.api.common.properties.XsdType.XSD_DECIMAL;
 import static org.eclipse.daanse.xmla.api.common.properties.XsdType.XSD_DOUBLE;
 import static org.eclipse.daanse.xmla.api.common.properties.XsdType.XSD_INTEGER;
@@ -54,6 +54,9 @@ import org.eclipse.daanse.olap.api.result.Datatype;
 import org.eclipse.daanse.olap.api.result.IMondrianOlap4jProperty;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Property;
+import org.eclipse.daanse.xmla.api.RowsetDefinitionType;
+import org.eclipse.daanse.xmla.api.XmlaException;
+import org.eclipse.daanse.xmla.api.XmlaUtil;
 import org.eclipse.daanse.xmla.api.common.enums.ItemTypeEnum;
 import org.eclipse.daanse.xmla.api.execute.statement.StatementResponse;
 import org.eclipse.daanse.xmla.api.mddataset.Axis;
@@ -97,9 +100,6 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.xmla.RowsetDefinitionType;
-import mondrian.xmla.XmlaException;
-import mondrian.xmla.XmlaUtil;
 
 public class Convertor {
 
