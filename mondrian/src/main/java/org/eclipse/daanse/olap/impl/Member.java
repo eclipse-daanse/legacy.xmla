@@ -17,8 +17,6 @@
 */
 package org.eclipse.daanse.olap.impl;
 
-import org.eclipse.daanse.xmla.api.XmlaConstant;
-
 /**
  * <code>Member</code> is a data value in an OLAP Dimension.
  *
@@ -37,7 +35,7 @@ public interface Member extends MetadataElement {
      *
      * @see org.olap4j.OlapDatabaseMetaData#getMembers
      */
-    public enum TreeOp implements XmlaConstant {
+    public enum TreeOp {
         /**
          * Tree operation which returns only the immediate children.
          */
@@ -83,19 +81,6 @@ public interface Member extends MetadataElement {
 
         private final int xmlaOrdinal;
         private String description;
-
-        private static final Dictionary<TreeOp> DICTIONARY =
-            DictionaryImpl.forClass(TreeOp.class);
-
-        /**
-         * Per {@link org.olap4j.metadata.XmlaConstant}, returns a dictionary
-         * of all values of this enumeration.
-         *
-         * @return Dictionary of all values
-         */
-        public static Dictionary<TreeOp> getDictionary() {
-            return DICTIONARY;
-        }
 
         private TreeOp(int xmlaOrdinal, String description) {
             this.xmlaOrdinal = xmlaOrdinal;

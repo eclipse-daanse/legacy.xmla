@@ -44,7 +44,7 @@ public interface Property {
      * In this case, {@link Property#getType} will return the {@link Set}
      * {{@link #MEMBER}, {@link #BLOB}}.
      */
-    enum TypeFlag implements XmlaConstant {
+    enum TypeFlag {
         /**
          * Identifies a property of a member. This property can be used in the
          * DIMENSION PROPERTIES clause of the SELECT statement.
@@ -76,8 +76,8 @@ public interface Property {
         public static final Set<Property.TypeFlag> MEMBER_TYPE_FLAG =
             Collections.unmodifiableSet(
             		EnumSet.of(Property.TypeFlag.MEMBER));
-        private static final DictionaryImpl<Property.TypeFlag> DICTIONARY =
-            DictionaryImpl.forClass(Property.TypeFlag.class);
+
+
 
         private TypeFlag(int xmlaOrdinal) {
             this.xmlaOrdinal = xmlaOrdinal;
@@ -95,15 +95,6 @@ public interface Property {
             return xmlaOrdinal;
         }
 
-        /**
-         * Per {@link XmlaConstant}, returns a dictionary
-         * of all values of this enumeration.
-         *
-         * @return Dictionary of all values
-         */
-        public static Dictionary<Property.TypeFlag> getDictionary() {
-            return DICTIONARY;
-        }
     }
 
 
