@@ -67,10 +67,10 @@ class InlineTableTest {
             public TestInlineTableModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            
+
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("Numeric").build();
-                ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("String").withTypeQualifiers(List.of("20")).build();
+                ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("String").withCharOctetLength(20).build();
                 InlineTableImpl t = InlineTableImpl.builder()
                 .withColumns(List.of(promoId, promoName))
                 .withRows(List.of(
@@ -144,7 +144,7 @@ class InlineTableTest {
                 return result;
             }
         }
-            
+
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -207,9 +207,9 @@ class InlineTableTest {
             public TestInlineTableInSharedDimModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            
+
             private static final ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("Integer").build();
-            private static final ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("String").withTypeQualifiers(List.of("20")).build();
+            private static final ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("String").withCharOctetLength(20).build();
             private static final InlineTableImpl t = InlineTableImpl.builder()
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
@@ -221,7 +221,7 @@ class InlineTableTest {
                            RowValueImpl.builder().withColumn(promoName).withValue("Second promo").build())).build()
             ))
             .build();
-            
+
             private static final StandardDimensionMappingImpl d = StandardDimensionMappingImpl.builder()
                     .withName("Shared Alternative Promotion")
                     .withHierarchies(List.of(
@@ -278,12 +278,12 @@ class InlineTableTest {
                                 .withFormatString("#,###.00")
                                 .build()
                     	))
-                    	.build()	
+                    	.build()
                         ))
                     .build());
                 return result;
             }
-            
+
             }
 
        /*
@@ -358,10 +358,10 @@ class InlineTableTest {
             public TestInlineTableSnowflakeModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            
+
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                ColumnImpl nationName = ColumnImpl.builder().withName("nation_name").withType("String").withTypeQualifiers(List.of("20")).build();
-                ColumnImpl nationShortcode = ColumnImpl.builder().withName("nation_shortcode").withType("String").withTypeQualifiers(List.of("20")).build();
+                ColumnImpl nationName = ColumnImpl.builder().withName("nation_name").withType("String").withCharOctetLength(20).build();
+                ColumnImpl nationShortcode = ColumnImpl.builder().withName("nation_shortcode").withType("String").withCharOctetLength(20).build();
                 InlineTableImpl t = InlineTableImpl.builder()
                 .withName("nation")
                 .withColumns(List.of(nationName, nationShortcode))
@@ -388,10 +388,10 @@ class InlineTableTest {
                 				.withKey(nationName)
                 				.withQuery(InlineTableQueryMappingImpl.builder()
                                 .withAlias("nation")
-                                .withTable(t) 
+                                .withTable(t)
                 				.build()).build())
                 		.build();
-                
+
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName(cubeName)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -404,7 +404,7 @@ class InlineTableTest {
                       	DimensionConnectorMappingImpl.builder()
                     		.withOverrideDimensionName("Store")
                             .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
-                            .withDimension(                            
+                            .withDimension(
                             	StandardDimensionMappingImpl.builder()
                             		.withName("Store")
                             		.withHierarchies(List.of(
@@ -467,7 +467,7 @@ class InlineTableTest {
                     .build());
                 return result;
             }
-            
+
         }
 
         /*
@@ -543,11 +543,11 @@ class InlineTableTest {
             public TestInlineTableDateModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            
+
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                ColumnImpl nationName = ColumnImpl.builder().withName("nation_name").withType("String").withTypeQualifiers(List.of("20")).build();
-                ColumnImpl nationShortcode = ColumnImpl.builder().withName("nation_shortcode").withType("String").withTypeQualifiers(List.of("20")).build();
+                ColumnImpl nationName = ColumnImpl.builder().withName("nation_name").withType("String").withCharOctetLength(20).build();
+                ColumnImpl nationShortcode = ColumnImpl.builder().withName("nation_shortcode").withType("String").withCharOctetLength(20).build();
                 InlineTableImpl t = InlineTableImpl.builder()
                 .withColumns(List.of(nationName, nationShortcode))
                 .withRows(List.of(
@@ -589,7 +589,7 @@ class InlineTableTest {
                                         .withTable(t)
                 				.build()).build())
                 		.build();
-                
+
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName(cubeName)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -647,7 +647,7 @@ class InlineTableTest {
                 	))
                     .build());
                 return result;
-            	
+
             }
         }
         /*

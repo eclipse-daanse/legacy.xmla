@@ -244,9 +244,19 @@ public class PojoUtil {
         if (column != null) {
             String name = column.getName();
             String type = column.getType();
-            List<String> typeQualifiers = column.getTypeQualifiers();
+            Integer columnSize = column.getColumnSize();
+            Integer decimalDigits = column.getDecimalDigits();
+            Integer numPrecRadix = column.getNumPrecRadix();
+            Integer charOctetLength = column.getCharOctetLength();
+            Boolean nullable = column.getNullable();
             String description = column.getDescription();
-            ColumnImpl c = ColumnImpl.builder().withName(name).withType(type).withTypeQualifiers(typeQualifiers).build();
+            ColumnImpl c = ColumnImpl.builder().withName(name).withType(type)
+                    .withColumnSize(columnSize)
+                    .withDecimalDigits(decimalDigits)
+                    .withNumPrecRadix(numPrecRadix)
+                    .withCharOctetLength(charOctetLength)
+                    .withNullable(nullable)
+                    .build();
             c.setDescription(description);
             return c;
         }

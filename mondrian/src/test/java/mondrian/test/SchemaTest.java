@@ -1460,7 +1460,7 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
                 ColumnImpl sales_district_id = ColumnImpl.builder().withName("sales_district_id").withType("INTEGER").build();
                 ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
                 PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
@@ -1731,7 +1731,7 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
                 ColumnImpl sales_district_id = ColumnImpl.builder().withName("sales_district_id").withType("INTEGER").build();
                 ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
                 PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
@@ -2026,7 +2026,7 @@ class SchemaTest {
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
                 ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
                 PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
@@ -2244,7 +2244,7 @@ class SchemaTest {
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
                 ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
                 PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
@@ -2463,7 +2463,7 @@ class SchemaTest {
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
                 ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
                 PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
@@ -2678,7 +2678,7 @@ class SchemaTest {
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
                 ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
                 PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
@@ -6725,7 +6725,7 @@ class SchemaTest {
                 if ("Sales".equals(cube.getName())) {
                     ColumnImpl id = ColumnImpl.builder().withName("id").withType("Integer").build();
                     ColumnImpl bin = ColumnImpl.builder().withName("bin").withType("Integer").build();
-                    ColumnImpl name = ColumnImpl.builder().withName("name").withType("String").withTypeQualifiers(List.of("20")).build();
+                    ColumnImpl name = ColumnImpl.builder().withName("name").withType("String").withCharOctetLength(20).build();
                     InlineTableImpl t = InlineTableImpl.builder()
                     .withColumns(List.of(id, bin, name))
                     .withRows(List.of(
@@ -6870,7 +6870,7 @@ class SchemaTest {
                 if ("Sales".equals(cube.getName())) {
                     ColumnImpl id = ColumnImpl.builder().withName("id").withType("Integer").build();
                     ColumnImpl bigNum = ColumnImpl.builder().withName("big_num").withType("Integer").build();
-                    ColumnImpl name = ColumnImpl.builder().withName("name").withType("String").withTypeQualifiers(List.of("20")).build();
+                    ColumnImpl name = ColumnImpl.builder().withName("name").withType("String").withCharOctetLength(20).build();
                     InlineTableImpl t = InlineTableImpl.builder()
                     .withColumns(List.of(id, bigNum, name))
                     .withRows(List.of(
@@ -6985,7 +6985,7 @@ class SchemaTest {
                 if ("Sales".equals(cube.getName())) {
                     ColumnImpl id = ColumnImpl.builder().withName("id").withType("INTEGER").build();
                     ColumnImpl bigNum = ColumnImpl.builder().withName("big_num").withType("INTEGER").build();
-                    ColumnImpl name = ColumnImpl.builder().withName("name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                    ColumnImpl name = ColumnImpl.builder().withName("name").withType("VARCHAR").withCharOctetLength(20).build();
                     InlineTableImpl t = InlineTableImpl.builder()
                     .withColumns(List.of(id, bigNum, name))
                     .withRows(List.of(
@@ -7594,7 +7594,7 @@ class SchemaTest {
             @Override
             protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
                 ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
                 ColumnImpl sales_district_id = ColumnImpl.builder().withName("sales_district_id").withType("INTEGER").build();
                 PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
                         .withColumns(List.of(
@@ -10427,8 +10427,8 @@ class SchemaTest {
             protected List<CubeMapping> schemaCubes(SchemaMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
-                ColumnImpl sales_city = ColumnImpl.builder().withName("sales_city").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                ColumnImpl sales_city = ColumnImpl.builder().withName("sales_city").withType("VARCHAR").withCharOctetLength(30).build();
                 ColumnImpl sales_district_id = ColumnImpl.builder().withName("sales_district_id").withType("INTEGER").build();
                 PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
                         .withColumns(List.of(
@@ -11127,11 +11127,11 @@ class SchemaTest {
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
                     ColumnImpl lvl1Id = ColumnImpl.builder().withName("lvl_1_id").withType("INTEGER").build();
-                    ColumnImpl lvl1Name = ColumnImpl.builder().withName("lvl_1_name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                    ColumnImpl lvl1Name = ColumnImpl.builder().withName("lvl_1_name").withType("VARCHAR").withCharOctetLength(20).build();
                     ColumnImpl lvl2Id = ColumnImpl.builder().withName("lvl_2_id").withType("INTEGER").build();
-                    ColumnImpl lvl2Name = ColumnImpl.builder().withName("lvl_2_name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                    ColumnImpl lvl2Name = ColumnImpl.builder().withName("lvl_2_name").withType("VARCHAR").withCharOctetLength(20).build();
                     ColumnImpl lvl3Id = ColumnImpl.builder().withName("lvl_3_id").withType("INTEGER").build();
-                    ColumnImpl lvl3Name = ColumnImpl.builder().withName("lvl_3_name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+                    ColumnImpl lvl3Name = ColumnImpl.builder().withName("lvl_3_name").withType("VARCHAR").withCharOctetLength(20).build();
                     InlineTableImpl t = InlineTableImpl.builder()
                     .withColumns(List.of(lvl1Id, lvl1Name, lvl2Id, lvl2Name, lvl3Id, lvl3Name))
                     .withRows(List.of(

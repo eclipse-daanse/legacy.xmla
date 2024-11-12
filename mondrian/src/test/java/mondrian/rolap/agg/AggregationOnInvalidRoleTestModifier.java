@@ -84,7 +84,7 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
     //## ColumnNames: customer_id,customer_name
     //## ColumnTypes: INTEGER,VARCHAR(45):null
     private static ColumnImpl customerIdMondrian2225Customer = ColumnImpl.builder().withName("customer_id").withType("INTEGER").build();
-    private static ColumnImpl customerNameMondrian2225Customer = ColumnImpl.builder().withName("customer_name").withType("VARCHAR").withTypeQualifiers(List.of("45")).build();
+    private static ColumnImpl customerNameMondrian2225Customer = ColumnImpl.builder().withName("customer_name").withType("VARCHAR").withColumnSize(45).build();
     private static PhysicalTableImpl mondrian2225Customer = ((Builder) PhysicalTableImpl.builder().withName("mondrian2225_customer")
             .withColumns(List.of(customerIdMondrian2225Customer, customerNameMondrian2225Customer))).build();
 
@@ -100,7 +100,7 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
     //## ColumnNames: product_id,product_code,product_sub_code
     //## ColumnTypes: INTEGER,VARCHAR(45):null,VARCHAR(45):null
     private static ColumnImpl productIdMondrian2225Dim = ColumnImpl.builder().withName("product_id").withType("INTEGER").build();
-    private static ColumnImpl productCodeMondrian2225Dim = ColumnImpl.builder().withName("product_code").withType("VARCHAR").withTypeQualifiers(List.of("45")).build();    
+    private static ColumnImpl productCodeMondrian2225Dim = ColumnImpl.builder().withName("product_code").withType("VARCHAR").withColumnSize(45).build();
     private static PhysicalTableImpl mondrian2225Dim = ((Builder) PhysicalTableImpl.builder().withName("mondrian2225_dim")
             .withColumns(List.of(productIdMondrian2225Fact, customerIdMondrian2225Fact, factMondrian2225Fact))).build();
 

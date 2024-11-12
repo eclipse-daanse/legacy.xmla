@@ -66,7 +66,7 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                         LevelMappingImpl.builder()
                             .withName("Store Name")
                             .withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
-                            .withUniqueMembers(true)                            
+                            .withUniqueMembers(true)
                             .withMemberProperties(List.of(
                                 MemberPropertyMappingImpl.builder().withName("Store Type").withColumn(FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE).build(),
                                 MemberPropertyMappingImpl.builder().withName("Store Manager").withColumn(FoodmartMappingSupplier.STORE_MANAGER_COLUMN_IN_STORE).build(),
@@ -92,7 +92,7 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
     public static final ColumnImpl TIME_ID_COLUMN_IN_TIME_CSV = ColumnImpl.builder().withName("time_id").withType("INTEGER").build();
     public static final ColumnImpl THE_YEAR_COLUMN_IN_TIME_CSV = ColumnImpl.builder().withName("the_year").withType("SMALLINT").build();
     public static final ColumnImpl MONTH_OF_YEAR_COLUMN_IN_TIME_CSV = ColumnImpl.builder().withName("month_of_year").withType("SMALLINT").build();
-    public static final ColumnImpl QUARTER_COLUMN_IN_TIME_CSV = ColumnImpl.builder().withName("quarter").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+    public static final ColumnImpl QUARTER_COLUMN_IN_TIME_CSV = ColumnImpl.builder().withName("quarter").withType("VARCHAR").withCharOctetLength(30).build();
     public static final ColumnImpl DAY_OF_MONTH_COLUMN_TIME_CSV = ColumnImpl.builder().withName("day_of_month").withType("SMALLINT").build();
     public static final ColumnImpl WEEK_OF_YEAR_COLUMN_IN_TIME_CSV = ColumnImpl.builder().withName("week_of_year").withType("INTEGER").build();
     public static final PhysicalTableImpl TIME_CSV_TABLE = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("time_csv")
@@ -104,7 +104,7 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                     WEEK_OF_YEAR_COLUMN_IN_TIME_CSV,
                     DAY_OF_MONTH_COLUMN_TIME_CSV
                     ))).build();
-    
+
     public static final ColumnImpl TIME_ID_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("time_id").withType("INTEGER").build();
     public static final ColumnImpl STORE_ID_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
     public static final ColumnImpl UNIT_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("unit_sales").withType("INTEGER").build();
@@ -118,7 +118,7 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                     STORE_COST_COLUMN_IN_FACT_CSV_2016,
                     STORE_SALES_COLUMN_IN_FACT_CSV_2016
                     ))).build();
-    
+
 	private static DimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
             .withName("Time")
             .withHierarchies(List.of(
@@ -180,7 +180,7 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                     .build()
             ))
             .build();
-	
+
 	private static MeasureMappingImpl unitSales = MeasureMappingImpl.builder()
 			.withName("Unit Sales")
 			.withColumn(UNIT_SALES_COLUMN_IN_FACT_CSV_2016)

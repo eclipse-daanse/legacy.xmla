@@ -105,14 +105,14 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
     	ColumnImpl familyIdDimSpecies = ColumnImpl.builder().withName("FAMILY_ID").withType("INTEGER").build();
     	ColumnImpl genisIdDimSpecies = ColumnImpl.builder().withName("GENUS_ID").withType("INTEGER").build();
     	ColumnImpl speciesIdDimSpecies = ColumnImpl.builder().withName("SPECIES_ID").withType("INTEGER").build();
-    	ColumnImpl speciesNameDimSpecies = ColumnImpl.builder().withName("SPECIES_NAME").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+    	ColumnImpl speciesNameDimSpecies = ColumnImpl.builder().withName("SPECIES_NAME").withType("VARCHAR").withCharOctetLength(30).build();
         PhysicalTableImpl dimSpecies = ((Builder) PhysicalTableImpl.builder().withName("DIM_SPECIES")
                 .withColumns(List.of(familyIdDimSpecies, genisIdDimSpecies, speciesIdDimSpecies, speciesNameDimSpecies))).build();
         //## TableName: DIM_FAMILY
         //## ColumnNames: FAMILY_ID,FAMILY_NAME
         //## ColumnTypes: INTEGER,VARCHAR(30)
         ColumnImpl familyIdDimFamily = ColumnImpl.builder().withName("FAMILY_ID").withType("INTEGER").build();
-        ColumnImpl familyNameDimFamily = ColumnImpl.builder().withName("FAMILY_NAME").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl familyNameDimFamily = ColumnImpl.builder().withName("FAMILY_NAME").withType("VARCHAR").withCharOctetLength(30).build();
         PhysicalTableImpl dimFamily = ((Builder) PhysicalTableImpl.builder().withName("DIM_FAMILY")
                 .withColumns(List.of(familyIdDimFamily, familyNameDimFamily))).build();
         //## TableName: DIM_GENUS
@@ -120,7 +120,7 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
         //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30)
         ColumnImpl familyIdDimGenus = ColumnImpl.builder().withName("FAMILY_ID").withType("INTEGER").build();
         ColumnImpl genusIdDimGenus = ColumnImpl.builder().withName("GENUS_ID").withType("INTEGER").build();
-        ColumnImpl genusNameDimGenus = ColumnImpl.builder().withName("GENUS_ID").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl genusNameDimGenus = ColumnImpl.builder().withName("GENUS_ID").withType("VARCHAR").withCharOctetLength(30).build();
         PhysicalTableImpl dimGenus = ((Builder) PhysicalTableImpl.builder().withName("DIM_GENUS")
                 .withColumns(List.of(familyIdDimGenus, genusIdDimGenus, genusNameDimGenus))).build();
         //## TableName: species_mart
@@ -130,7 +130,7 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
         ColumnImpl populationSpeciesMart = ColumnImpl.builder().withName("POPULATION").withType("INTEGER").build();
         PhysicalTableImpl speciesMart = ((Builder) PhysicalTableImpl.builder().withName("species_mart")
                 .withColumns(List.of(speciesIdSpeciesMart, populationSpeciesMart))).build();
-        
+
     	HierarchyMappingImpl animalsHierarchy;
         StandardDimensionMappingImpl animal = StandardDimensionMappingImpl.builder()
         .withName("Animal")

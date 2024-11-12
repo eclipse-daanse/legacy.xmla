@@ -78,28 +78,28 @@ public class Checkin_7641Modifier  extends PojoMappingModifier {
         //## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2),DECIMAL(10,2),DECIMAL(10,2)
         ColumnImpl custLocIdCheckin7641 = ColumnImpl.builder().withName("cust_loc_id").withType("INTEGER").build();
         ColumnImpl prodIdCheckin7641 = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
-        ColumnImpl firstCheckin7641 = ColumnImpl.builder().withName("first").withType("NUMERIC").withTypeQualifiers(List.of("10", "2")).build();
-        ColumnImpl requestValueCheckin7641 = ColumnImpl.builder().withName("request_value").withType("NUMERIC").withTypeQualifiers(List.of("10", "2")).build();
-        ColumnImpl shippedValueCheckin7641 = ColumnImpl.builder().withName("request_value").withType("NUMERIC").withTypeQualifiers(List.of("10", "2")).build();
+        ColumnImpl firstCheckin7641 = ColumnImpl.builder().withName("first").withType("NUMERIC").withColumnSize(10).withDecimalDigits(2).build();
+        ColumnImpl requestValueCheckin7641 = ColumnImpl.builder().withName("request_value").withType("NUMERIC").withColumnSize(10).withDecimalDigits(2).build();
+        ColumnImpl shippedValueCheckin7641 = ColumnImpl.builder().withName("request_value").withType("NUMERIC").withColumnSize(10).withDecimalDigits(2).build();
         PhysicalTableImpl checkin7641 = ((Builder) PhysicalTableImpl.builder().withName("checkin7641")
                 .withColumns(List.of(custLocIdCheckin7641, prodIdCheckin7641, firstCheckin7641, requestValueCheckin7641, shippedValueCheckin7641))).build();
         //## ColumnNames: cust_loc_id,state_cd,city_nm,zip_cd
         //## ColumnTypes: INTEGER,VARCHAR(20),VARCHAR(20),VARCHAR(20)
         ColumnImpl custLocIdGeography7641 = ColumnImpl.builder().withName("cust_loc_id").withType("INTEGER").build();
-        ColumnImpl stateCdGeography7641 = ColumnImpl.builder().withName("state_cd").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
-        ColumnImpl cityNmGeography7641 = ColumnImpl.builder().withName("city_nm").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
-        ColumnImpl zipCdGeography7641 = ColumnImpl.builder().withName("zip_cd").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+        ColumnImpl stateCdGeography7641 = ColumnImpl.builder().withName("state_cd").withType("VARCHAR").withCharOctetLength(20).build();
+        ColumnImpl cityNmGeography7641 = ColumnImpl.builder().withName("city_nm").withType("VARCHAR").withCharOctetLength(20).build();
+        ColumnImpl zipCdGeography7641 = ColumnImpl.builder().withName("zip_cd").withType("VARCHAR").withCharOctetLength(20).build();
         PhysicalTableImpl geography7641 = ((Builder) PhysicalTableImpl.builder().withName("geography7641")
                 .withColumns(List.of(custLocIdCheckin7641, stateCdGeography7641, cityNmGeography7641, zipCdGeography7641))).build();
         //## ColumnNames: prod_id,class,brand,item
         //## ColumnTypes: INTEGER,VARCHAR(30),VARCHAR(30),VARCHAR(30)
         ColumnImpl prodIdProd7611 = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
-        ColumnImpl classProd7611 = ColumnImpl.builder().withName("class").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
-        ColumnImpl brandProd7611 = ColumnImpl.builder().withName("brand").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
-        ColumnImpl itemProd7611 = ColumnImpl.builder().withName("item").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl classProd7611 = ColumnImpl.builder().withName("class").withType("VARCHAR").withCharOctetLength(30).build();
+        ColumnImpl brandProd7611 = ColumnImpl.builder().withName("brand").withType("VARCHAR").withCharOctetLength(30).build();
+        ColumnImpl itemProd7611 = ColumnImpl.builder().withName("item").withType("VARCHAR").withCharOctetLength(30).build();
         PhysicalTableImpl prod7611 = ((Builder) PhysicalTableImpl.builder().withName("prod7611")
                 .withColumns(List.of(classProd7611, brandProd7611, itemProd7611))).build();
-        
+
         List<CubeMapping> result = new ArrayList<>();
         result.addAll(super.schemaCubes(schema));
         result.add(PhysicalCubeMappingImpl.builder()

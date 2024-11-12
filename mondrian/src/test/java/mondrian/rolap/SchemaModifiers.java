@@ -12720,7 +12720,7 @@ public class SchemaModifiers {
 
          */
     	private static final ColumnImpl storeIdX = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
-    	private static final ColumnImpl valueX = ColumnImpl.builder().withName("value").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+    	private static final ColumnImpl valueX = ColumnImpl.builder().withName("value").withType("VARCHAR").withCharOctetLength(30).build();
     	//## ColumnNames: store_id,value
     	//## ColumnTypes: INTEGER,VARCHAR(30)
     	private static final PhysicalTableImpl  storeX = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("store_y")
@@ -12746,7 +12746,7 @@ public class SchemaModifiers {
         .build();
 
     	private static final ColumnImpl storeIdY = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
-    	private static final ColumnImpl valueY = ColumnImpl.builder().withName("value").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+    	private static final ColumnImpl valueY = ColumnImpl.builder().withName("value").withType("VARCHAR").withCharOctetLength(30).build();
     	//## ColumnNames: store_id,value
     	//## ColumnTypes: INTEGER,VARCHAR(30)
     	private static final PhysicalTableImpl  storeY = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("store_y")
@@ -12779,7 +12779,7 @@ public class SchemaModifiers {
         protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog) {
             ColumnImpl store_id_cheques = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
             ColumnImpl prod_id_cheques = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
-            ColumnImpl amount_cheques = ColumnImpl.builder().withName("amount").withType("DECIMAL").withTypeQualifiers(List.of("10", "2")).build();
+            ColumnImpl amount_cheques = ColumnImpl.builder().withName("amount").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
             PhysicalTableImpl cheques = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("cheques")
                     .withColumns(List.of(
                             store_id_cheques, prod_id_cheques, amount_cheques

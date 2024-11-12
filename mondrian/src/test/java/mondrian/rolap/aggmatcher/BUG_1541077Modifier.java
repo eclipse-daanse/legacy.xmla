@@ -86,7 +86,7 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
     	//## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2)
         ColumnImpl store_id_cheques = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
         ColumnImpl prod_id_cheques = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
-        ColumnImpl amount_cheques = ColumnImpl.builder().withName("amount").withType("DECIMAL").withTypeQualifiers(List.of("10", "2")).build();
+        ColumnImpl amount_cheques = ColumnImpl.builder().withName("amount").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
         PhysicalTableImpl cheques = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("cheques")
                 .withColumns(List.of(
                         store_id_cheques, prod_id_cheques, amount_cheques
@@ -94,7 +94,7 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
         //## ColumnNames: store_id,value
         //## ColumnTypes: INTEGER,DECIMAL(10,2)
         ColumnImpl store_id_store_x = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
-        ColumnImpl value_store_x = ColumnImpl.builder().withName("store_id").withType("DECIMAL").withTypeQualifiers(List.of("10", "2")).build();
+        ColumnImpl value_store_x = ColumnImpl.builder().withName("store_id").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
         PhysicalTableImpl store_x = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("store_x")
                 .withColumns(List.of(
                         store_id_store_x, value_store_x
@@ -102,7 +102,7 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
         //## ColumnNames: prod_id,name
         //## ColumnTypes: INTEGER,VARCHAR(30)
         ColumnImpl prod_id_product_x = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
-        ColumnImpl name_product_x = ColumnImpl.builder().withName("name").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl name_product_x = ColumnImpl.builder().withName("name").withType("VARCHAR").withCharOctetLength(30).build();
         PhysicalTableImpl product_x = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("product_x")
                 .withColumns(List.of(
                         prod_id_product_x, name_product_x

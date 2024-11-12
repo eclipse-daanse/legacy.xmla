@@ -196,7 +196,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
         //## ColumnNames: line_id,line_name
         //## ColumnTypes: INTEGER,VARCHAR(30)
         ColumnImpl lineIdLine = ColumnImpl.builder().withName("line_id").withType("INTEGER").build();
-        ColumnImpl lineNameLine = ColumnImpl.builder().withName("line_name").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl lineNameLine = ColumnImpl.builder().withName("line_name").withType("VARCHAR").withCharOctetLength(30).build();
         PhysicalTableImpl line = ((Builder) PhysicalTableImpl.builder().withName("line")
                 .withColumns(List.of(lineIdLine))).build();
         //## TableName: line_tenant
@@ -210,7 +210,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
         //## ColumnNames: tenant_id,tenant_name
         //## ColumnTypes: INTEGER,VARCHAR(30)
         ColumnImpl tenantIdTenant = ColumnImpl.builder().withName("tenant_id").withType("INTEGER").build();
-        ColumnImpl tenantNameTenant = ColumnImpl.builder().withName("tenant_name").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl tenantNameTenant = ColumnImpl.builder().withName("tenant_name").withType("VARCHAR").withCharOctetLength(30).build();
         PhysicalTableImpl tenant = ((Builder) PhysicalTableImpl.builder().withName("tenant")
                 .withColumns(List.of(lineIdLineTenant, tenantIdLineTenant))).build();
         //## TableName: line_line_class
@@ -224,7 +224,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
         //## ColumnNames: distributor_id,distributor_name
         //## ColumnTypes: INTEGER,VARCHAR(30)
         ColumnImpl distributorIdDistributor = ColumnImpl.builder().withName("distributor_id").withType("INTEGER").build();
-        ColumnImpl distributorNameDistributor = ColumnImpl.builder().withName("distributor_name").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl distributorNameDistributor = ColumnImpl.builder().withName("distributor_name").withType("VARCHAR").withCharOctetLength(30).build();
         PhysicalTableImpl distributor = ((Builder) PhysicalTableImpl.builder().withName("distributor")
                 .withColumns(List.of(distributorIdDistributor, distributorNameDistributor))).build();
         //## TableName: line_class_distributor
@@ -238,14 +238,14 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
         //## ColumnNames: line_class_id,line_class_name
         //## ColumnTypes: INTEGER,VARCHAR(30)
         ColumnImpl lineClassIdLineClass = ColumnImpl.builder().withName("line_class_id").withType("INTEGER").build();
-        ColumnImpl lineClassNameLineClass = ColumnImpl.builder().withName("line_class_name").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl lineClassNameLineClass = ColumnImpl.builder().withName("line_class_name").withType("VARCHAR").withCharOctetLength(30).build();
         PhysicalTableImpl lineClass = ((Builder) PhysicalTableImpl.builder().withName("line_class")
                 .withColumns(List.of(lineClassIdLineClass, lineClassNameLineClass))).build();
         //## TableName: network
         //## ColumnNames: network_id,network_name
         //## ColumnTypes: INTEGER,VARCHAR(30)
         ColumnImpl networkIdNetwork = ColumnImpl.builder().withName("network_id").withType("INTEGER").build();
-        ColumnImpl networkNameNetwork = ColumnImpl.builder().withName("network_name").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl networkNameNetwork = ColumnImpl.builder().withName("network_name").withType("VARCHAR").withCharOctetLength(30).build();
         PhysicalTableImpl network = ((Builder) PhysicalTableImpl.builder().withName("network")
                 .withColumns(List.of(networkIdNetwork, networkNameNetwork))).build();
         //## TableName: line_class_network

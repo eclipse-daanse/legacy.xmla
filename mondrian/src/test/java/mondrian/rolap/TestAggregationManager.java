@@ -1318,7 +1318,7 @@ class TestAggregationManager extends BatchTestCase {
             public TestKeyExpressionCardinalityCacheModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            
+
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
             	StandardDimensionMappingImpl store1Dimension = StandardDimensionMappingImpl.builder()
                 .withName("Store1")
@@ -1409,14 +1409,14 @@ class TestAggregationManager extends BatchTestCase {
                                 .build()
                         ))
                         .build();
-            	
+
             	MeasureMappingImpl sales1UnitSales = MeasureMappingImpl.builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                 .withAggregatorType(MeasureAggregatorType.SUM)
                 .withFormatString("Standard")
                 .build();
-            	
+
             	MeasureMappingImpl sales2UnitSales = MeasureMappingImpl.builder()
             		.withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
@@ -1424,7 +1424,7 @@ class TestAggregationManager extends BatchTestCase {
                     .withFormatString("Standard")
                     .build();
 
-            	
+
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.cubes(cubes));
 
@@ -1449,7 +1449,7 @@ class TestAggregationManager extends BatchTestCase {
                         .build()
                     )).build()))
                     .build());
-                
+
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("Sales2")
                     .withDefaultMeasure(sales2UnitSales)
@@ -1466,8 +1466,8 @@ class TestAggregationManager extends BatchTestCase {
                     ))
                     .build());
                 return result;
-            	
-            }            
+
+            }
         }
         /*
         String baseSchema = TestUtil.getRawSchema(context);
@@ -1635,7 +1635,7 @@ class TestAggregationManager extends BatchTestCase {
             public TestOrdinalExprAggTuplesAndChildrenModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            
+
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
@@ -2439,11 +2439,11 @@ class TestAggregationManager extends BatchTestCase {
             .withVisible(false)
             .build();
 
-            
+
             public TestNonCollapsedAggregateModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            
+
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
@@ -2464,7 +2464,7 @@ class TestAggregationManager extends BatchTestCase {
                                     .build(),
                                 AggregationExcludeMappingImpl.builder()
                                     .withName("agg_ll_01_sales_fact_1997")
-                                    .build()	
+                                    .build()
                     		))
                     		.withAggregationTables(List.of(
                     				AggregationNameMappingImpl.builder()
@@ -2529,7 +2529,7 @@ class TestAggregationManager extends BatchTestCase {
                                                     		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE).build())
                                                     		.build())
                                                     .build()
-                                                )                                            
+                                                )
                                             .withLevels(List.of(
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Family")
@@ -2886,8 +2886,8 @@ class TestAggregationManager extends BatchTestCase {
                         .withAggregatorType(MeasureAggregatorType.SUM)
                         .withFormatString("Standard")
                         .build();
-                ColumnImpl salesRegion = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
-                ColumnImpl salesCity = ColumnImpl.builder().withName("sales_city").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+                ColumnImpl salesRegion = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                ColumnImpl salesCity = ColumnImpl.builder().withName("sales_city").withType("VARCHAR").withCharOctetLength(30).build();
                 ColumnImpl salesDistrictId = ColumnImpl.builder().withName("sales_district_id").withType("INTEGER").build();
                 ColumnImpl regionId = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
                 PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
@@ -2900,7 +2900,7 @@ class TestAggregationManager extends BatchTestCase {
                     .withDefaultMeasure(m)
                     .withQuery(TableQueryMappingImpl.builder()
                     	.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
-                    	.withAggregationExcludes(List.of(	
+                    	.withAggregationExcludes(List.of(
                     		AggregationExcludeMappingImpl.builder()
                             .withName("agg_g_ms_pcat_sales_fact_1997")
                             .build(),

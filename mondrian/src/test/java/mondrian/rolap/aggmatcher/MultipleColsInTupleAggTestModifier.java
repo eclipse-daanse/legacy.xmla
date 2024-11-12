@@ -121,17 +121,17 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
         //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30),VARCHAR(30)
         ColumnImpl prodIdProductCsv = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
         ColumnImpl prodCatProductCsv = ColumnImpl.builder().withName("prod_cat").withType("INTEGER").build();
-        ColumnImpl name1ProductCsv = ColumnImpl.builder().withName("name1").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
-        ColumnImpl colorProductCsv = ColumnImpl.builder().withName("color").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl name1ProductCsv = ColumnImpl.builder().withName("name1").withType("VARCHAR").withCharOctetLength(30).build();
+        ColumnImpl colorProductCsv = ColumnImpl.builder().withName("color").withType("VARCHAR").withCharOctetLength(30).build();
         PhysicalTableImpl productCsv = ((Builder) PhysicalTableImpl.builder().withName("product_csv")
                 .withColumns(List.of(prodIdProductCsv, prodCatProductCsv))).build();
         //## TableName: cat
         //## ColumnNames: cat,name3,ord,cap
         //## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30)
         ColumnImpl catCat = ColumnImpl.builder().withName("cat").withType("INTEGER").build();
-        ColumnImpl name3Cat = ColumnImpl.builder().withName("name3").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl name3Cat = ColumnImpl.builder().withName("name3").withType("VARCHAR").withCharOctetLength(30).build();
         ColumnImpl ordCat = ColumnImpl.builder().withName("ord").withType("INTEGER").build();
-        ColumnImpl capCat = ColumnImpl.builder().withName("cap").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl capCat = ColumnImpl.builder().withName("cap").withType("VARCHAR").withCharOctetLength(30).build();
         PhysicalTableImpl cat = ((Builder) PhysicalTableImpl.builder().withName("cat")
                 .withColumns(List.of(catCat, name3Cat, ordCat, capCat))).build();
         //## TableName: product_cat
@@ -139,7 +139,7 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
         //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30),INTEGER,VARCHAR(30)
         ColumnImpl prodCatProductCat = ColumnImpl.builder().withName("prod_cat").withType("INTEGER").build();
         ColumnImpl catProductCat = ColumnImpl.builder().withName("cat").withType("INTEGER").build();
-        ColumnImpl name2ProductCat = ColumnImpl.builder().withName("name2").withType("VARCHAR").withTypeQualifiers(List.of("30")).build();
+        ColumnImpl name2ProductCat = ColumnImpl.builder().withName("name2").withType("VARCHAR").withCharOctetLength(30).build();
         ColumnImpl ordProductCat = ColumnImpl.builder().withName("ord").withType("INTEGER").build();
         ColumnImpl capProductCat = ColumnImpl.builder().withName("cap").withType("INTEGER").build();
         PhysicalTableImpl productCat = ((Builder) PhysicalTableImpl.builder().withName("product_cat")

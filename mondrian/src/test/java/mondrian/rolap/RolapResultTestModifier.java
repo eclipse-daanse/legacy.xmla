@@ -124,7 +124,7 @@ public class RolapResultTestModifier extends PojoMappingModifier {
             + "</Cube>";
 
      */
-    
+
     @Override
     protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
     	//## TableName: FT1
@@ -132,28 +132,28 @@ public class RolapResultTestModifier extends PojoMappingModifier {
     	//## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2)
         ColumnImpl d1IdFt1 = ColumnImpl.builder().withName("d1_id").withType("INTEGER").build();
         ColumnImpl d2IdFt1 = ColumnImpl.builder().withName("d2_id").withType("INTEGER").build();
-        ColumnImpl valueFt1 = ColumnImpl.builder().withName("value").withType("NUMERIC").withTypeQualifiers(List.of("10", "2")).build();
+        ColumnImpl valueFt1 = ColumnImpl.builder().withName("value").withType("NUMERIC").withColumnSize(10).withDecimalDigits(2).build();
         PhysicalTableImpl ft1 = ((Builder) PhysicalTableImpl.builder().withName("FT1")
                 .withColumns(List.of(d1IdFt1, d2IdFt1, valueFt1))).build();
         //## ColumnNames: d1_id,d2_id,value,vextra
         //## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2),DECIMAL(10,2):null
         ColumnImpl d1IdFt2 = ColumnImpl.builder().withName("d1_id").withType("INTEGER").build();
         ColumnImpl d2IdFt2 = ColumnImpl.builder().withName("d2_id").withType("INTEGER").build();
-        ColumnImpl valueFt2 = ColumnImpl.builder().withName("value").withType("NUMERIC").withTypeQualifiers(List.of("10", "2")).build();
-        ColumnImpl vextraFt2 = ColumnImpl.builder().withName("vextra").withType("NUMERIC").withTypeQualifiers(List.of("10", "2")).build();
+        ColumnImpl valueFt2 = ColumnImpl.builder().withName("value").withType("NUMERIC").withColumnSize(10).withDecimalDigits(2).build();
+        ColumnImpl vextraFt2 = ColumnImpl.builder().withName("vextra").withType("NUMERIC").withColumnSize(10).withDecimalDigits(2).build();
         PhysicalTableImpl ft2 = ((Builder) PhysicalTableImpl.builder().withName("FT2")
                 .withColumns(List.of(d1IdFt2, d2IdFt2, valueFt2))).build();
-        
+
         //## ColumnNames: d1_id,name
         //## ColumnTypes: INTEGER,VARCHAR(20)
         ColumnImpl d1IdD1 = ColumnImpl.builder().withName("d1_id").withType("INTEGER").build();
-        ColumnImpl nameD1 = ColumnImpl.builder().withName("name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+        ColumnImpl nameD1 = ColumnImpl.builder().withName("name").withType("VARCHAR").withCharOctetLength(20).build();
         PhysicalTableImpl d1 = ((Builder) PhysicalTableImpl.builder().withName("D1")
                 .withColumns(List.of(d1IdD1, nameD1))).build();
         //## ColumnNames: d2_id,name
         //## ColumnTypes: INTEGER,VARCHAR(20)
         ColumnImpl d2IdD2 = ColumnImpl.builder().withName("d2_id").withType("INTEGER").build();
-        ColumnImpl nameD2 = ColumnImpl.builder().withName("name").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+        ColumnImpl nameD2 = ColumnImpl.builder().withName("name").withType("VARCHAR").withCharOctetLength(20).build();
         PhysicalTableImpl d2 = ((Builder) PhysicalTableImpl.builder().withName("D2")
                 .withColumns(List.of(d2IdD2, nameD2))).build();
 

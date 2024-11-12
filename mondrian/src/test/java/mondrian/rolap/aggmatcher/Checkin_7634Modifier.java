@@ -75,18 +75,18 @@ public class Checkin_7634Modifier extends PojoMappingModifier {
     protected List<? extends CubeMapping> schemaCubes(SchemaMapping schemaMappingOriginal) {
         List<CubeMapping> result = new ArrayList<>();
         ColumnImpl cust_loc_id_geography7631 = ColumnImpl.builder().withName("cust_loc_id").withType("INTEGER").build();
-        ColumnImpl state_cd = ColumnImpl.builder().withName("state_cd").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
-        ColumnImpl city_nm = ColumnImpl.builder().withName("city_nm").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
-        ColumnImpl zip_cd = ColumnImpl.builder().withName("zip_cd").withType("VARCHAR").withTypeQualifiers(List.of("20")).build();
+        ColumnImpl state_cd = ColumnImpl.builder().withName("state_cd").withType("VARCHAR").withCharOctetLength(20).build();
+        ColumnImpl city_nm = ColumnImpl.builder().withName("city_nm").withType("VARCHAR").withCharOctetLength(20).build();
+        ColumnImpl zip_cd = ColumnImpl.builder().withName("zip_cd").withType("VARCHAR").withCharOctetLength(20).build();
         PhysicalTableImpl geography7631 = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("geography7631")
                 .withColumns(List.of(
                         cust_loc_id_geography7631, state_cd, city_nm, zip_cd
                         ))).build();
         ColumnImpl cust_loc_id_table7634 = ColumnImpl.builder().withName("cust_loc_id").withType("INTEGER").build();
         ColumnImpl prod_id_table7634 = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
-        ColumnImpl first_table7634 = ColumnImpl.builder().withName("first").withType("DECIMAL").withTypeQualifiers(List.of("10", "2")).build();
-        ColumnImpl request_value_table7634 = ColumnImpl.builder().withName("request_value").withType("DECIMAL").withTypeQualifiers(List.of("10", "2")).build();
-        ColumnImpl shipped_value_table7634 = ColumnImpl.builder().withName("shipped_value").withType("DECIMAL").withTypeQualifiers(List.of("10", "2")).build();
+        ColumnImpl first_table7634 = ColumnImpl.builder().withName("first").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
+        ColumnImpl request_value_table7634 = ColumnImpl.builder().withName("request_value").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
+        ColumnImpl shipped_value_table7634 = ColumnImpl.builder().withName("shipped_value").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
         PhysicalTableImpl table7634 = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("table7634")
                 .withColumns(List.of(
                         cust_loc_id_table7634, prod_id_table7634, first_table7634, request_value_table7634, shipped_value_table7634
@@ -99,7 +99,7 @@ public class Checkin_7634Modifier extends PojoMappingModifier {
                 .withColumns(List.of(
                 		prod_id_prod7631, class_prod7631, brand_prod7631, item_prod7631
                         ))).build();
-        
+
         result.addAll(super.schemaCubes(schemaMappingOriginal));
         result.add(PhysicalCubeMappingImpl.builder()
             .withName("Checkin_7634")
