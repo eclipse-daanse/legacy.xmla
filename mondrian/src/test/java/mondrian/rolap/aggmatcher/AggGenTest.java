@@ -16,12 +16,15 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -80,9 +83,10 @@ class AggGenTest {
         try {
             sqlConnection = dataSource.getConnection();
             DatabaseMetaData dbmeta = sqlConnection.getMetaData();
-            JdbcSchema jdbcSchema = JdbcSchema.makeDB(dataSource);
-            final String catalogName = jdbcSchema.getCatalogName();
-            final String schemaName = jdbcSchema.getSchemaName();
+            CatalogMapping catalogMapping = context.getCatalogMapping();
+            List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
+            DatabaseSchema databaseSchema = schemas.getFirst();
+            
 
             String log = writer.toString();
             Pattern p = Pattern.compile(
@@ -94,7 +98,7 @@ class AggGenTest {
             while (m.find()) {
                 ResultSet rs =
                     dbmeta.getColumns(
-                        catalogName, schemaName, m.group(1), m.group(2));
+                    		catalogMapping.getName(), databaseSchema.getName(), m.group(1), m.group(2));
                 assertTrue(!rs.next());
             }
         } finally {

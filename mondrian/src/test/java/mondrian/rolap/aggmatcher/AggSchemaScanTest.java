@@ -23,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextArgumentsProvider;
@@ -54,13 +56,16 @@ class AggSchemaScanTest {
     try {
       sqlConnection = dataSource.getConnection();
 
+      CatalogMapping catalogMapping = context.getCatalogMapping();
+      List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
+      DatabaseSchema databaseSchema = schemas.getFirst();
+      
+      //RolapConnectionPropsR rc =  new RolapConnectionPropsR(List.of(), false, Locale.getDefault(), 0l, TimeUnit.SECONDS, Optional.of("bogus"),Optional.of("bogus"));
+      JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
+      //jdbcSchema.resetAllTablesLoaded();
+      //jdbcSchema.getTablesMap().clear();
 
-      RolapConnectionPropsR rc=  new RolapConnectionPropsR(List.of(), false, Locale.getDefault(), 0l, TimeUnit.SECONDS, Optional.of("bogus"),Optional.of("bogus"));
-      JdbcSchema jdbcSchema = JdbcSchema.makeDB(dataSource);
-      jdbcSchema.resetAllTablesLoaded();
-      jdbcSchema.getTablesMap().clear();
-
-      jdbcSchema.loadTables( rc );
+      //jdbcSchema.loadTables( rc );
       assertEquals( 0, jdbcSchema.getTablesMap().size() );
     } finally {
       if (sqlConnection != null) {
@@ -140,13 +145,10 @@ class AggSchemaScanTest {
         System.out.println( "Cannot find foodmart schema or catalog in database.  Cannot run test." );
         return;
       }
-      JdbcSchema jdbcSchema = JdbcSchema.makeDB(dataSource);
-      // Have to clear the table list because creating the connection loads this
-      jdbcSchema.resetAllTablesLoaded();
-      jdbcSchema.getTablesMap().clear();
-      RolapConnectionPropsR rc=  new RolapConnectionPropsR(List.of(), false, Locale.getDefault(), 0l, TimeUnit.SECONDS, Optional.ofNullable(propSchema),Optional.ofNullable(propCatalog));
-
-      jdbcSchema.loadTables( rc );
+      CatalogMapping catalogMapping = context.getCatalogMapping();
+      List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
+      DatabaseSchema databaseSchema = schemas.getFirst();
+      JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
       //The foodmart schema has 37 tables.
       assertEquals( 37, jdbcSchema.getTablesMap().size() );
     } finally {
