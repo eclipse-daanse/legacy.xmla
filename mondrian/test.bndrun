@@ -27,7 +27,8 @@
 	bnd.identity;id='org.eclipse.daanse.repackage.rhino.engine',\
 	bnd.identity;id='org.eclipse.daanse.db.dialect.db.mysql',\
 	bnd.identity;id='org.apache.aries.spifly.dynamic.framework.extension',\
-	bnd.identity;id='org.eclipse.daanse.db.dialect.db.h2'
+	bnd.identity;id='org.eclipse.daanse.db.dialect.db.h2',\
+	bnd.identity;id='com.github.ben-manes.caffeine'
 
 # -runbundles is calculated by the bnd-resolver-maven-plugin
 

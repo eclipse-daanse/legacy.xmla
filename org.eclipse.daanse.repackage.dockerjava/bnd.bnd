@@ -17,9 +17,8 @@ Export-Package: \
 	com.fasterxml.jackson.annotation*,\
 	org.apache.commons.lang3*,\
 	com.google.common.collect*,\
-	com.google.common.base*
-	
-	
+	com.google.common*
+
 Import-Package: \
 	org.slf4j*,\
 	com.sun*,\
