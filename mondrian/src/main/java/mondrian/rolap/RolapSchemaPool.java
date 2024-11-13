@@ -18,14 +18,13 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ConnectionProps;
+import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.olap.Util;
-import mondrian.rolap.aggmatcher.JdbcSchema;
 import mondrian.util.ByteString;
 import mondrian.util.ExpiringReference;
 
@@ -270,7 +269,6 @@ public class RolapSchemaPool {
         for (RolapSchema schema : schemas) {
             schema.finalCleanUp();
         }
-        JdbcSchema.clearAllDBs();
     }
 
     /**

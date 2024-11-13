@@ -71,7 +71,6 @@ import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
-import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.impl.IdentifierSegment;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCubeGrantMapping;
@@ -262,7 +261,7 @@ public class RolapSchema implements Schema {
         context.removeStatement(
             internalConnection.getInternalStatement());
 
-        this.aggTableManager = new AggTableManager(this);
+        this.aggTableManager = new AggTableManager(this,context);
         this.nativeRegistry = new RolapNativeRegistry(context.getConfig().enableNativeFilter(),
             context.getConfig().enableNativeCrossJoin(), context.getConfig().enableNativeTopCount());
 
@@ -297,16 +296,7 @@ public class RolapSchema implements Schema {
         }
     }
 
-    /**
-     * Clears the cache of JDBC tables for the aggs.
-     */
-    protected void flushJdbcSchema() {
-        // Cleanup the agg table manager's caches.
-        if (aggTableManager != null) {
-            aggTableManager.finalCleanUp();
-            aggTableManager = null;
-        }
-    }
+  
 
     /**
      * Performs a sweep of the JDBC tables caches and the segment data.
@@ -316,19 +306,6 @@ public class RolapSchema implements Schema {
         // Cleanup the segment data.
         flushSegments();
 
-        // Cleanup the agg JDBC cache
-        flushJdbcSchema();
-    }
-
-    @Override
-	protected void finalize() throws Throwable {
-        try {
-            super.finalize();
-            // Only clear the JDBC cache to prevent leaks.
-            flushJdbcSchema();
-        } catch (Throwable t) {
-            LOGGER.info(finalizerErrorRolapSchema, t);
-        }
     }
 
     @Override

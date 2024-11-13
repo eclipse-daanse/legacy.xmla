@@ -12,7 +12,6 @@ package mondrian.rolap.aggmatcher;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,14 +20,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.olap.Util;
-import mondrian.rolap.RolapColumn;
 import mondrian.rolap.RolapAggregator;
-import mondrian.rolap.RolapConnectionPropsR;
+import mondrian.rolap.RolapColumn;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.sql.SqlQuery;
 
@@ -171,13 +171,8 @@ public class AggGen {
      * create lost create and insert commands.
      */
     private void init() {
-        JdbcSchema db = JdbcSchema.makeDB(star.getDataSource());
-        try {
-            db.load(new RolapConnectionPropsR());
-        } catch (SQLException ex) {
-            getLogger().error("",ex);
-            return;
-        }
+    DatabaseSchema dbschema=	star.getContext().getCatalogMapping().getDbschemas().getFirst();
+        JdbcSchema db =   new JdbcSchema(dbschema);
 
         JdbcSchema.Table factTable = getTable(db, getFactTableName());
         if (factTable == null) {
@@ -186,12 +181,6 @@ public class AggGen {
                 .append(getFactTableName())
                 .append("\"").toString();
             getLogger().warn(msg);
-            return;
-        }
-        try {
-            factTable.load();
-        } catch (SQLException ex) {
-            getLogger().error("",ex);
             return;
         }
 
@@ -382,12 +371,6 @@ public class AggGen {
             getLogger().warn(msg);
             return false;
         }
-        try {
-            jt.load();
-        } catch (SQLException ex) {
-            getLogger().error("",ex);
-            return false;
-        }
 
         List<JdbcSchema.Table.Column.Usage> list = collapsedColumnUsages.computeIfAbsent(rt, k -> new ArrayList<JdbcSchema.Table.Column.Usage>());
 
@@ -467,20 +450,6 @@ public class AggGen {
                 .append("\", could not get jdbc schema table ")
                 .append(FOR_ROLAP_STAR_TABLE_WITH_ALIAS).append(rt.getAlias()).append("\"").toString();
             getLogger().warn(msg);
-            return false;
-        }
-        try {
-            jt.load();
-        } catch (SQLException ex) {
-            getLogger().error("",ex);
-            return false;
-        }
-
-        // CG guarantee the columns has been loaded before looking up them
-        try {
-            jt.load();
-        } catch (SQLException sqle) {
-            getLogger().error("",sqle);
             return false;
         }
 

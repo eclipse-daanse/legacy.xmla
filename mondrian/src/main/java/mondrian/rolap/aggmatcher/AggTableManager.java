@@ -15,12 +15,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import javax.sql.DataSource;
+import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.ConnectionProps;
+import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
-import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
@@ -63,6 +62,7 @@ public class AggTableManager {
         LoggerFactory.getLogger(AggTableManager.class);
 
     private final RolapSchema schema;
+    private final Context context;
     private final static String aggLoadingError = "Error while loading/reloading aggregates.";
     private final static String aggLoadingExceededErrorCount =
         "Too many errors, ''{0,number}'', while loading/reloading aggregates.";
@@ -70,23 +70,10 @@ public class AggTableManager {
     private final static String unknownFactTableColumn =
         "Context ''{0}'': For Fact table ''{1}'', the column ''{2}'' is neither a measure or foreign key\".";
 
-    public AggTableManager(final RolapSchema schema) {
+
+    public AggTableManager(final RolapSchema schema, Context context) {
         this.schema = schema;
-    }
-
-    /**
-     * This should ONLY be called if the AggTableManager is no longer going
-     * to be used. In fact, it should only be called indirectly by its
-     * associated RolapSchema object.
-     */
-    public void finalCleanUp() {
-        removeJdbcSchema();
-
-        if (getLogger().isDebugEnabled()) {
-            getLogger().debug(
-                "AggTableManager.finalCleanUp: schema={}",
-                    schema.getName());
-        }
+		this.context = context;
     }
 
     /**
@@ -151,22 +138,6 @@ public class AggTableManager {
         }
     }
 
-    private JdbcSchema getJdbcSchema() {
-        DataSource dataSource = schema.getInternalConnection().getDataSource();
-
-        // This actually just does a lookup or simple constructor invocation,
-        // its not expected to fail
-        return JdbcSchema.makeDB(dataSource);
-    }
-
-    /**
-     * Remove the possibly already loaded snapshot of what is in the database.
-     */
-    private void removeJdbcSchema() {
-        DataSource dataSource = schema.getInternalConnection().getDataSource();
-        JdbcSchema.removeDB(dataSource);
-    }
-
     private String getFactTableName(RolapStar star) {
         String factTableName = star.getFactTable().getTableName();
         return
@@ -193,20 +164,31 @@ public class AggTableManager {
         ListRecorder msgRecorder = new ListRecorder();
         try {
             DefaultRules rules = DefaultRules.getInstance(
-                schema.getInternalConnection().getContext().getConfig().aggregateRuleTag(),
-                schema.getInternalConnection().getContext().getConfig().aggregateRules());
-            JdbcSchema db = getJdbcSchema();
+            		context.getConfig().aggregateRuleTag(),
+            		context.getConfig().aggregateRules());
+            
+//            connectionProps.aggregateScanCatalog();
+            Optional<String> oAaggregateScanSchema=    connectionProps.aggregateScanSchema();
+ 
+			List<? extends DatabaseSchema> schemas = context.getCatalogMapping()
+					.getDbschemas();
+
+			DatabaseSchema databaseSchema = schemas.getFirst();
+			if (oAaggregateScanSchema.isPresent()) {
+				String aaggregateScanSchema = oAaggregateScanSchema.get();
+
+				for (DatabaseSchema dbs : schemas) {
+					if (dbs.getName().equals(aaggregateScanSchema)) {
+						databaseSchema = dbs;
+						break;
+					}
+				}
+			}
+            JdbcSchema db = new JdbcSchema(databaseSchema);
             // if we don't synchronize this on the db object,
             // we may end up getting a Concurrency exception due to
             // calls to other instances of AggTableManager.finalCleanUp()
             synchronized (db) {
-                // fix for MONDRIAN-496
-                // flush any existing usages of the jdbc schema, so we
-                // don't accidentally use another star's metadata
-                db.flushUsages();
-
-                // loads tables, not their columns
-                db.load(connectionProps);
 
                 for (RolapStar star : getStars()) {
                     // This removes any AggStars from any previous invocation of
@@ -264,8 +246,6 @@ public class AggTableManager {
                         int approxRowCount = Integer.MIN_VALUE;
                         // Is it handled by the ExplicitRules
                         if (tableDef != null) {
-                            // load columns
-                            dbTable.load();
                             makeAggStar = tableDef.columnsOK(
                                 star,
                                 dbFactTable,
@@ -275,10 +255,8 @@ public class AggTableManager {
                         }
                         // Is it handled by the DefaultRules
                         if (! makeAggStar
-                            && schema.getInternalConnection().getContext().getConfig().readAggregates()
+                            && context.getConfig().readAggregates()
                             && rules.matchesTableName(factTableName, name)) {
-                            // load columns
-                            dbTable.load();
                             makeAggStar = rules.columnsOK(
                                 star,
                                 dbFactTable,
@@ -294,7 +272,7 @@ public class AggTableManager {
                                 star,
                                 dbTable,
                                 approxRowCount);
-                            if (aggStar.getSize(schema.getInternalConnection().getContext().getConfig().chooseAggregateByVolume()) > 0) {
+                            if (aggStar.getSize(context.getConfig().chooseAggregateByVolume()) > 0) {
                                 star.addAggStar(aggStar);
                             } else {
                                 String msg = MessageFormat.format(aggTableZeroSize,
@@ -359,8 +337,6 @@ public class AggTableManager {
     {
         msgRecorder.pushContextName("AggTableManager.bindToStar");
         try {
-            // load columns
-            dbFactTable.load();
 
             dbFactTable.setTableUsageType(JdbcSchema.TableUsageType.FACT);
 
