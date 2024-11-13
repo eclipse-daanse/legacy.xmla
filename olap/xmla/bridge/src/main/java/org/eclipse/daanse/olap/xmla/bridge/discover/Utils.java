@@ -21,9 +21,9 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.eclipse.daanse.emf.model.rolapmapping.PhysicalCube;
 import org.eclipse.daanse.mdx.model.api.expression.operation.EmptyOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.InternalOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.ParenthesesOperationAtom;
@@ -39,6 +39,7 @@ import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.result.Property;
+import org.eclipse.daanse.olap.api.result.Property.TypeFlag;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberPropertyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -53,7 +54,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
 import org.eclipse.daanse.xmla.api.VarType;
-import org.eclipse.daanse.xmla.api.XmlaConstant;
 import org.eclipse.daanse.xmla.api.XmlaConstants;
 import org.eclipse.daanse.xmla.api.XmlaConstants.DBType;
 import org.eclipse.daanse.xmla.api.common.enums.ColumnOlapTypeEnum;
@@ -2095,10 +2095,7 @@ oHierarchyName)
         List<MdSchemaPropertiesResponseRow> result = new ArrayList<>();
         for (Property.StandardCellProperty property
             : Property.StandardCellProperty.values()) {
-
-            int type = Property.TypeFlag.getDictionary()
-                .toMask(
-                    property.getType());
+            int type = toMask(property.getType());
             int dataType = property.getDatatype().xmlaOrdinal();
 
             result.add(new MdSchemaPropertiesResponseRowR(
@@ -2130,6 +2127,15 @@ oHierarchyName)
             ));
         }
         return result;
+    }
+
+    static int toMask(Set<TypeFlag> set)
+    {
+        int mask = 0;
+        for (TypeFlag e : set) {
+            mask |= e.xmlaOrdinal();
+        }
+        return mask;
     }
 
     static List<MdSchemaPropertiesResponseRow> getMdSchemaPropertiesResponseRow(
