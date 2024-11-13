@@ -726,10 +726,10 @@ public class JdbcSchema {
 				String nameInner = rdbColumn.getName();
 				int type = JDBCType.valueOf(rdbColumn.getType()).getVendorTypeNumber();
 				String typeName = rdbColumn.getType();
-				Integer columnSize = rdbColumn.getColumnSize();
-				Integer decimalDigits = rdbColumn.getDecimalDigits();
-				int numPrecRadix = rdbColumn.getNumPrecRadix();
-				int charOctetLength = rdbColumn.getCharOctetLength();
+				Integer columnSize = rdbColumn.getColumnSize() == null ? 0 : rdbColumn.getColumnSize();
+				Integer decimalDigits = rdbColumn.getDecimalDigits() == null ? 0 : rdbColumn.getDecimalDigits();
+				int numPrecRadix = rdbColumn.getNumPrecRadix() == null ? 0 : rdbColumn.getNumPrecRadix();
+				int charOctetLength = rdbColumn.getCharOctetLength() == null ? 0 : rdbColumn.getCharOctetLength();
 				boolean isNullable = Boolean.TRUE == rdbColumn.getNullable();
 
 				Column column = new Column(nameInner);
@@ -741,7 +741,7 @@ public class JdbcSchema {
 				column.setCharOctetLength(charOctetLength);
 				column.setIsNullable(isNullable);
 
-				columnMap.put(column.getName(), column);
+				getColumnMap().put(column.getName(), column);
 				totalColumnSize += column.getColumnSize();
 			}
         }
