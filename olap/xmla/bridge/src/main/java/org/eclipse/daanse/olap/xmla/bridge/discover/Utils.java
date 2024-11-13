@@ -130,7 +130,10 @@ import mondrian.rolap.RolapStoredMeasure;
 
 public class Utils {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
+    private static final String SCHEMA = "SCHEMA";
+	private static final String SYSTEM_TABLE = "SYSTEM TABLE";
+	private static final String TABLE = "TABLE";
+	protected static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
     private Utils() {
         // constructor
@@ -578,9 +581,10 @@ public class Utils {
         Optional<String> oTableType
     ) {
         List<Schema> schemas = context.getConnection().getSchemas();
+        List<? extends DatabaseSchema> dbSchemas = context.getCatalogMapping().getDbschemas();
         if (schemas != null) {
             return getSchemasWithFilter(schemas, oTableSchema).stream()
-                .map(s -> getDbSchemaTablesResponseRow(context.getName(), s, oTableName, oTableType))
+                .map(s -> getDbSchemaTablesResponseRow(context.getName(), s, dbSchemas, oTableName, oTableType))
                 .flatMap(Collection::stream).toList();
         }
         return List.of();
@@ -589,12 +593,13 @@ public class Utils {
     private static List<DbSchemaTablesResponseRow> getDbSchemaTablesResponseRow(
         String catalogName,
         Schema schema,
+        List<? extends DatabaseSchema> dbSchemas,
         Optional<String> oTableName,
         Optional<String> oTableType
     ) {
         List<Cube> cubes = schema.getCubes() == null ? List.of() : Arrays.asList(schema.getCubes());
         return Utils.getCubesWithFilter(cubes, oTableName).stream()
-            .map(c -> getDbSchemaTablesResponseRow(catalogName, schema.getName(), c, oTableType))
+            .map(c -> getDbSchemaTablesResponseRow(catalogName, schema.getName(), c, dbSchemas, oTableType))
             .flatMap(Collection::stream).toList();
     }
 
@@ -602,6 +607,7 @@ public class Utils {
         String catalogName,
         String schemaName,
         Cube cube,
+        List<? extends DatabaseSchema> dbSchemas,
         Optional<String> oTableType
     ) {
         List<DbSchemaTablesResponseRow> result = new ArrayList<>();
@@ -612,12 +618,12 @@ public class Utils {
                     new StringBuilder(catalogName).append(" - ")
                         .append(cube.getName()).append(" Cube").toString();
             }
-            if (isTableType(oTableType, "TABLE")) {
+            if (isTableType(oTableType, TABLE)) {
                 result.add(new DbSchemaTablesResponseRowR(
                     Optional.of(catalogName),
                     Optional.of(schemaName),
                     Optional.of(cube.getName()),
-                    Optional.of("TABLE"),
+                    Optional.of(TABLE),
                     Optional.empty(),
                     Optional.of(desc),
                     Optional.empty(),
@@ -625,7 +631,7 @@ public class Utils {
                     Optional.empty()
                 ));
             }
-            if (isTableType(oTableType, "SYSTEM TABLE")) {
+            if (isTableType(oTableType, SYSTEM_TABLE)) {
                 for (Dimension dimension : cube.getDimensions()) {
                     populateDimensionForDbSchemaTables(
                         catalogName,
@@ -636,12 +642,47 @@ public class Utils {
                     );
                 }
             }
+            if (isTableType(oTableType, SCHEMA)) {
+                populateDbSchemasForDbSchemaTables(
+                        catalogName,
+                        schemaName,
+                        dbSchemas,
+                        result
+                    );
+            }
         }
         return result;
 
     }
 
-    private static void populateDimensionForDbSchemaTables(
+    private static void populateDbSchemasForDbSchemaTables(String catalogName, String schemaName,
+        List<? extends DatabaseSchema> dbSchemas, List<DbSchemaTablesResponseRow> result) {
+        if (dbSchemas != null) {
+            for (DatabaseSchema dbSchema
+                    : dbSchemas) {
+                List<? extends Table> tables = dbSchema.getTables();
+                if (tables != null) {
+                    for (Table table : tables) {
+                        if (table instanceof PhysicalTable || table instanceof SystemTable) {
+                            String tableName = table.getName();
+                            result.add(new  DbSchemaTablesResponseRowR(
+                            Optional.of(catalogName),
+                            Optional.of(dbSchema.getName()),
+                            Optional.of(tableName),
+                            Optional.of(SCHEMA),
+                            Optional.empty(),
+                            Optional.ofNullable(table.getDescription()),
+                            Optional.empty(),
+                            Optional.empty(),
+                            Optional.empty()));
+                        }
+                    }
+                }
+           }
+        }
+	}
+
+	private static void populateDimensionForDbSchemaTables(
         String catalogName,
         String schemaName,
         Cube cube,
@@ -692,7 +733,7 @@ public class Utils {
                     Optional.of(catalogName),
                     Optional.of(schemaName),
                     Optional.of(tableName),
-                    Optional.of("SYSTEM TABLE"),
+                    Optional.of(SYSTEM_TABLE),
                     Optional.empty(),
                     Optional.of(desc),
                     Optional.empty(),
