@@ -63,7 +63,7 @@ class AggSchemaScanTest {
       //RolapConnectionPropsR rc =  new RolapConnectionPropsR(List.of(), false, Locale.getDefault(), 0l, TimeUnit.SECONDS, Optional.of("bogus"),Optional.of("bogus"));
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
       //jdbcSchema.resetAllTablesLoaded();
-      //jdbcSchema.getTablesMap().clear();
+      jdbcSchema.getTablesMap().clear();
 
       //jdbcSchema.loadTables( rc );
       assertEquals( 0, jdbcSchema.getTablesMap().size() );
@@ -149,8 +149,8 @@ class AggSchemaScanTest {
       List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
       DatabaseSchema databaseSchema = schemas.getFirst();
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
-      //The foodmart schema has 37 tables.
-      assertEquals( 37, jdbcSchema.getTablesMap().size() );
+      //The foodmart schema has 26 tables in module.
+      assertEquals( 26, jdbcSchema.getTablesMap().size() );
     } finally {
       if (sqlConnection != null) {
         try {

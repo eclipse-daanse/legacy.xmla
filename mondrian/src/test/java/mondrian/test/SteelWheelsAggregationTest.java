@@ -15,9 +15,7 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
@@ -183,6 +181,7 @@ class SteelWheelsAggregationTest {
     		            .withAccessRoles(roles)
     		            .build()
     			))
+    			.withDbschemas(List.of(SteelwheelsSupplier.DATABASE_SCHEMA))
     			.build();
     }
 

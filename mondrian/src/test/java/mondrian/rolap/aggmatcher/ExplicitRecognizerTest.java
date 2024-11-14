@@ -20,8 +20,11 @@ import java.util.stream.Stream;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rdb.structure.api.model.Column;
+import org.eclipse.daanse.rdb.structure.api.model.Table;
+import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.MemberPropertyMapping;
 import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
@@ -48,6 +51,61 @@ import mondrian.olap.SystemWideProperties;
 
 class ExplicitRecognizerTest extends AggTableTestCase {
 
+    //## TableName: exp_agg_test
+    //## ColumnNames:  testyear,testqtr,testmonthord,testmonthname,testmonthcap,testmonprop1,testmonprop2,gender,test_unit_sales,test_store_cost,fact_count
+    //## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),INTEGER,DECIMAL(10,4),INTEGER
+    ColumnImpl testyearExpAggTest = ColumnImpl.builder().withName("testyear").withType("INTEGER").build();
+    ColumnImpl testqtrExpAggTest = ColumnImpl.builder().withName("testqtr").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl testmonthordExpAggTest = ColumnImpl.builder().withName("testmonthord").withType("INTEGER").build();
+    ColumnImpl testmonthnameExpAggTest = ColumnImpl.builder().withName("testmonthname").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl testmonthcapExpAggTest = ColumnImpl.builder().withName("testmonthcap").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl testmonprop1ExpAggTest = ColumnImpl.builder().withName("testmonprop1").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl testmonprop2ExpAggTest = ColumnImpl.builder().withName("testmonprop2").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl genderExpAggTest = ColumnImpl.builder().withName("gender").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl testUnitSalesExpAggTest = ColumnImpl.builder().withName("test_unit_sales").withType("INTEGER").build();
+    ColumnImpl testStoreCostExpAggTest = ColumnImpl.builder().withName("test_store_cost").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).build();
+    ColumnImpl factCountExpAggTest = ColumnImpl.builder().withName("fact_count").withType("INTEGER").build();
+    PhysicalTableImpl expAggTest = ((Builder) PhysicalTableImpl.builder().withName("exp_agg_test")
+            .withColumns(List.of(
+                    testyearExpAggTest,
+                    testqtrExpAggTest,
+                    testmonthordExpAggTest,
+                    testmonthnameExpAggTest,
+                    testmonthcapExpAggTest,
+                    testmonprop1ExpAggTest,
+                    testmonprop2ExpAggTest,
+                    genderExpAggTest,
+                    testUnitSalesExpAggTest,
+                    testStoreCostExpAggTest,
+                    factCountExpAggTest
+            ))).build();
+
+    //## TableName:  exp_agg_test_distinct_count
+    //## ColumnNames:  fact_count,testyear,gender,store_name,store_country,store_st,store_cty,store_add,unit_s,cust_cnt
+    //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),INTEGER,INTEGER
+    ColumnImpl factCountExpAggTestDistinctCount = ColumnImpl.builder().withName("fact_count").withType("INTEGER").build();
+    ColumnImpl testyearExpAggTestDistinctCount = ColumnImpl.builder().withName("testyear").withType("INTEGER").build();
+    ColumnImpl genderExpAggTestDistinctCount = ColumnImpl.builder().withName("gender").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl storeNameExpAggTestDistinctCount = ColumnImpl.builder().withName("store_name").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl storeCountryExpAggTestDistinctCount = ColumnImpl.builder().withName("store_country").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl storeStExpAggTestDistinctCount = ColumnImpl.builder().withName("store_st").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl storeCtyExpAggTestDistinctCount = ColumnImpl.builder().withName("store_cty").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl storeAddExpAggTestDistinctCount = ColumnImpl.builder().withName("store_add").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl unitSExpAggTestDistinctCount = ColumnImpl.builder().withName("unit_s").withType("INTEGER").build();
+    ColumnImpl custCntExpAggTestDistinctCount = ColumnImpl.builder().withName("cust_cnt").withType("INTEGER").build();
+    PhysicalTableImpl expAggTestDistinctCount = ((Builder) PhysicalTableImpl.builder().withName("exp_agg_test_distinct_count")
+            .withColumns(List.of(
+                factCountExpAggTestDistinctCount,
+                testyearExpAggTestDistinctCount,
+                genderExpAggTestDistinctCount,
+                storeNameExpAggTestDistinctCount,
+                storeCountryExpAggTestDistinctCount,
+                storeStExpAggTestDistinctCount,
+                storeCtyExpAggTestDistinctCount,
+                storeAddExpAggTestDistinctCount,
+                unitSExpAggTestDistinctCount,
+                custCntExpAggTestDistinctCount
+            ))).build();
 	@BeforeAll
 	public static void beforeAll() {
 	      ContextArgumentsProvider.dockerWasChanged = true;
@@ -78,6 +136,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         ((TestConfig)context.getConfig()).setDisableCaching(true);
         prepareContext(context);
+
         setupMultiColDimCube(context,
                 List.of(AggregationNameMappingImpl.builder()
                         .withName("agg_g_ms_pcat_sales_fact_1997")
@@ -113,7 +172,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY, FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null,
-            List.of());
+            List.of(), List.of(expAggTest, expAggTestDistinctCount));
 
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
@@ -229,7 +288,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY, FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null,
-            List.of());
+            List.of(), List.of(expAggTest, expAggTestDistinctCount));
 
 
         String query =
@@ -355,7 +414,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY, null,  FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null,
-            List.of());
+            List.of(), List.of(expAggTest, expAggTestDistinctCount));
 
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
@@ -438,7 +497,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY,  FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null, null,
-            List.of());
+            List.of(), List.of(expAggTest, expAggTestDistinctCount));
 
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
@@ -531,7 +590,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             List.of(MemberPropertyMappingImpl.builder()
                 .withName("aProperty")
                 .withColumn(FoodmartMappingSupplier.FISCAL_PERIOD_COLUMN_IN_TIME_BY_DAY)
-                .build()));
+                .build()), List.of(expAggTest, expAggTestDistinctCount));
 
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
@@ -636,7 +695,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null,
-            List.of());
+            List.of(), List.of(expAggTest, expAggTestDistinctCount));
 
         String query =
             "with member measures.propVal as 'Store.CurrentMember.Properties(\"Street Address\")'"
@@ -777,7 +836,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, 
             FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY, FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null,
-            List.of(), "Customer Count");
+            List.of(), List.of(expAggTest, expAggTestDistinctCount), "Customer Count");
 
         // Query brings in Year and Store Name, omitting Gender.
         // It's okay to roll up the agg table in this case
@@ -906,7 +965,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null,
-            List.of(), "Customer Count");
+            List.of(), List.of(expAggTest, expAggTestDistinctCount), "Customer Count");
 
         String query =
             "select { measures.[Customer Count]} on columns, "
@@ -944,16 +1003,16 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
     public static void setupMultiColDimCube(
         Context context, List<AggregationTableMappingImpl> aggTables, Column yearCols, Column qtrCols, Column monthCols,
-        Column monthCaptionCol, Column monthOrdinalCol, Column monthNameCol, List<MemberPropertyMappingImpl> monthProp)
+        Column monthCaptionCol, Column monthOrdinalCol, Column monthNameCol, List<MemberPropertyMappingImpl> monthProp, List<Table> tables)
     {
         setupMultiColDimCube(context,
-            aggTables, yearCols, qtrCols, monthCols, monthCaptionCol, monthOrdinalCol, monthNameCol, monthProp, "Unit Sales");
+            aggTables, yearCols, qtrCols, monthCols, monthCaptionCol, monthOrdinalCol, monthNameCol, monthProp, tables, "Unit Sales");
     }
 
     public static void setupMultiColDimCube(
         Context context, List<AggregationTableMappingImpl> aggTables, Column yearCol, Column qtrCol, Column monthCol,
         Column monthCaptionCol, Column monthOrdinalCol, Column monthNameCol,
-        List<MemberPropertyMappingImpl> monthProp, String defaultMeasure)
+        List<MemberPropertyMappingImpl> monthProp, List<Table> tables, String defaultMeasure)
     {
         class ExplicitRecognizerTestModifierInner extends ExplicitRecognizerTestModifier {
 
@@ -1010,6 +1069,11 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             @Override
             protected Column getYearCol() {
                 return yearCol;
+            }
+
+            @Override
+            protected List<Table> getDdatabaseSchemaTables() {
+                return tables;
             }
         }
 

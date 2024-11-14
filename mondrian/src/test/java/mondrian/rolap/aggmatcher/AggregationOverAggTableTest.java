@@ -14,6 +14,9 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
+import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +33,26 @@ import mondrian.olap.SystemWideProperties;
  */
 class AggregationOverAggTableTest extends AggTableTestCase {
 
+	//## TableName:  agg_c_avg_sales_fact_1997
+	//## ColumnNames:  the_year,quarter,month_of_year,gender,unit_sales,fact_count
+	//## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30),INTEGER:NULL,INTEGER
+    ColumnImpl theYearAggCAvgSalesFact1997 = ColumnImpl.builder().withName("the_year").withType("INTEGER").build();
+    ColumnImpl quarterAggCAvgSalesFact1997 = ColumnImpl.builder().withName("quarter").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl monthOfYearAggCAvgSalesFact1997 = ColumnImpl.builder().withName("month_of_year").withType("INTEGER").build();
+    ColumnImpl genderAggCAvgSalesFact1997 = ColumnImpl.builder().withName("gender").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnImpl unitSalesAggCAvgSalesFact1997 = ColumnImpl.builder().withName("unit_sales").withType("INTEGER").withNullable(true).build();
+    ColumnImpl factCountAggCAvgSalesFact1997 = ColumnImpl.builder().withName("fact_count").withType("INTEGER").build();
+    PhysicalTableImpl aggCAvgSalesFact1997 = ((Builder) PhysicalTableImpl.builder().withName("agg_c_avg_sales_fact_1997")
+            .withColumns(List.of(
+                theYearAggCAvgSalesFact1997,
+                quarterAggCAvgSalesFact1997,
+                monthOfYearAggCAvgSalesFact1997,
+                genderAggCAvgSalesFact1997,
+                unitSalesAggCAvgSalesFact1997,
+                factCountAggCAvgSalesFact1997
+            ))).build();
+
+	
     @Override
     protected String getFileName() {
         return "aggregation-over-agg-table.csv";
@@ -60,7 +83,7 @@ class AggregationOverAggTableTest extends AggTableTestCase {
             FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null, null, null,
-            List.of());
+            List.of(), List.of(aggCAvgSalesFact1997));
 
         String query =
             "select {[Measures].[Avg Unit Sales]} on columns, "

@@ -13,9 +13,12 @@
  */
 package mondrian.rolap.aggmatcher;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.rdb.structure.api.model.Column;
+import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
+import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
@@ -145,6 +148,12 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
     .withFormatString("#,###")
     .build();
 
+    protected List<? extends Table> databaseSchemaTables(DatabaseSchema databaseSchema) {
+        List<Table> result = new ArrayList();
+        result.addAll(super.databaseSchemaTables(databaseSchema));
+        result.addAll(getDdatabaseSchemaTables());
+        return result;
+    }
 
     protected SchemaMapping schema(SchemaMapping schemaMappingOriginal) {
 
@@ -373,5 +382,9 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
 
     protected String getDefaultMeasure() {
         return null;
+    }
+    
+    protected List<Table> getDdatabaseSchemaTables() {
+        return List.of();
     }
 }

@@ -16,6 +16,8 @@ package mondrian.rolap.agg;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
+import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
@@ -103,6 +105,15 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
     private static ColumnImpl productCodeMondrian2225Dim = ColumnImpl.builder().withName("product_code").withType("VARCHAR").withColumnSize(45).build();
     private static PhysicalTableImpl mondrian2225Dim = ((Builder) PhysicalTableImpl.builder().withName("mondrian2225_dim")
             .withColumns(List.of(productIdMondrian2225Fact, customerIdMondrian2225Fact, factMondrian2225Fact))).build();
+
+    //## TableName: mondrian2225_agg
+    //## ColumnNames: dim_code,fact_measure,fact_count
+    //## ColumnTypes: VARCHAR(45):null,DECIMAL(10,2),INTEGER
+    private static ColumnImpl dimCodeMondrian2225Agg = ColumnImpl.builder().withName("dim_code").withType("VARCHAR").withColumnSize(45).withNullable(true).build();
+    private static ColumnImpl factMeasureMondrian2225Agg = ColumnImpl.builder().withName("fact_measure").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
+    private static ColumnImpl factCountMondrian2225Agg = ColumnImpl.builder().withName("fact_count").withType("INTEGER").build();
+    private static PhysicalTableImpl mondrian2225Agg = ((Builder) PhysicalTableImpl.builder().withName("mondrian2225_agg")
+            .withColumns(List.of(dimCodeMondrian2225Agg, factMeasureMondrian2225Agg, factCountMondrian2225Agg))).build();
 
     private static LevelMappingImpl firstNameLevel = LevelMappingImpl.builder()
             .withName("First Name")
@@ -210,6 +221,13 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
 
     }
 
+    @Override
+    protected List<? extends Table> databaseSchemaTables(DatabaseSchema databaseSchema) {
+        List<Table> result = new ArrayList();
+        result.addAll(super.databaseSchemaTables(databaseSchema));
+        result.addAll(List.of(mondrian2225Agg, mondrian2225Customer, mondrian2225Fact, mondrian2225Dim));
+        return result;
+    }
 
     /*
             + "<Role name=\"Test\">"
