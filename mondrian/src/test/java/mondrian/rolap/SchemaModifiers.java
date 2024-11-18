@@ -4643,32 +4643,32 @@ public class SchemaModifiers {
                                 		.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
                                 		.withAggregationTables(List.of(
                                 				AggregationNameMappingImpl.builder()
-                                				.withName("agg_c_special_sales_fact_1997")
+                                				.withName(FoodmartMappingSupplier.AGG_C_SPECIAL_SALES_FACT_1997)
                                                 .withAggregationFactCount(AggregationColumnNameMappingImpl.builder()
-                                                        .withColumn("FACT_COUNT")
+                                                        .withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                                         .build())
                                                     .withAggregationIgnoreColumns(List.of(
-                                                    	AggregationColumnNameMappingImpl.builder()
-                                                            .withColumn("foo")
-                                                            .build(),
-                                                        AggregationColumnNameMappingImpl.builder()
-                                                            .withColumn("bar")
-                                                            .build()
+                                                    	//AggregationColumnNameMappingImpl.builder()
+                                                        //    .withColumn("foo")
+                                                        //    .build(),
+                                                        //AggregationColumnNameMappingImpl.builder()
+                                                        //    .withColumn("bar")
+                                                        //    .build()
                                                     ))
                                                     .withAggregationMeasures(List.of(
                                                     	AggregationMeasureMappingImpl.builder()
                                                             .withName("[Measures].[Unit Sales]")
-                                                            .withColumn("UNIT_SALES_SUM")
+                                                            .withColumn(FoodmartMappingSupplier.UNIT_SALES_SUM_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                                             .build()
                                                     ))
                                                     .withAggregationLevels(List.of(
                                                         AggregationLevelMappingImpl.builder()
                                                             .withName("[Time].[Year]")
-                                                            .withColumn("TIME_YEAR")
+                                                            .withColumn(FoodmartMappingSupplier.TIME_YEAR_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                                             .build(),
                                                         AggregationLevelMappingImpl.builder()
                                                             .withName("[Time].[Quarter]")
-                                                            .withColumn("TIME_QUARTER")
+                                                            .withColumn(FoodmartMappingSupplier.TIME_QUARTER_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                                             .build()
                                                     ))
                                                     .build()
@@ -5157,23 +5157,23 @@ public class SchemaModifiers {
     			)
     			.withAggregationTables(List.of(
     				AggregationNameMappingImpl.builder()
-                        .withName("agg_c_10_sales_fact_1997")
-                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn("FACT_COUNT").build())
+                        .withName(FoodmartMappingSupplier.AGG_C_10_SALES_FACT_1997)
+                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_C_10_SALES_FACT_1997).build())
                         .withAggregationMeasures(List.of(
                         		AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Unit Sales]")
-                                .withColumn("UNIT_SALES")
+                                .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .withRollupType("AvgFromSum")
                                 .build()
                         ))
                         .withAggregationLevels(List.of(
                         		AggregationLevelMappingImpl.builder()
                                 .withName("[Time].[Year]")
-                                .withColumn("THE_YEAR")
+                                .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .build(),
                         		AggregationLevelMappingImpl.builder()
                                 .withName("[Time].[Quarter]")
-                                .withColumn("QUARTER")
+                                .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .build()
                         		))
                         .build())
@@ -5279,23 +5279,23 @@ public class SchemaModifiers {
     			)
     			.withAggregationTables(List.of(
     				AggregationNameMappingImpl.builder()
-                        .withName("agg_c_10_sales_fact_1997")
-                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn("FACT_COUNT").build())
+                        .withName(FoodmartMappingSupplier.AGG_C_10_SALES_FACT_1997)
+                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_C_10_SALES_FACT_1997).build())
                         .withAggregationMeasures(List.of(
                         		AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Unit Sales]")
-                                .withColumn("UNIT_SALES")
+                                .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .withRollupType("SumFromAvg")
                                 .build()
                         ))
                         .withAggregationLevels(List.of(
                         		AggregationLevelMappingImpl.builder()
                                 .withName("[Time].[Year]")
-                                .withColumn("THE_YEAR")
+                                .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .build(),
                         		AggregationLevelMappingImpl.builder()
                                 .withName("[Time].[Quarter]")
-                                .withColumn("QUARTER")
+                                .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .build()
                         		))
                         .build())
@@ -5410,22 +5410,22 @@ public class SchemaModifiers {
     			)
     			.withAggregationTables(List.of(
     				AggregationNameMappingImpl.builder()
-                        .withName("agg_c_10_sales_fact_1997")
-                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn("FACT_COUNT").build())
+                        .withName(FoodmartMappingSupplier.AGG_C_10_SALES_FACT_1997)
+                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_C_10_SALES_FACT_1997).build())
                         .withAggregationMeasures(List.of(
                         		AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Unit Sales]")
-                                .withColumn("UNIT_SALES")
+                                .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .build()
                         ))
                         .withAggregationLevels(List.of(
                         		AggregationLevelMappingImpl.builder()
                                 .withName("[Time].[Year]")
-                                .withColumn("THE_YEAR")
+                                .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .build(),
                         		AggregationLevelMappingImpl.builder()
                                 .withName("[Time].[Quarter]")
-                                .withColumn("QUARTER")
+                                .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .build()
                         		))
                         .build())
@@ -8082,19 +8082,19 @@ public class SchemaModifiers {
                             		.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
                             		.withAggregationTables(List.of(
                             			AggregationNameMappingImpl.builder()
-                            			.withName("agg_c_special_sales_fact_1997")
+                            			.withName(FoodmartMappingSupplier.AGG_C_SPECIAL_SALES_FACT_1997)
                             			.withAggregationFactCount(
-                            				AggregationColumnNameMappingImpl.builder().withColumn("FACT_COUNT").build()
+                            				AggregationColumnNameMappingImpl.builder().withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997).build()
                             			)
                                         .withAggregationMeasures(List.of(
                                                 AggregationMeasureMappingImpl.builder()
-                                                    .withColumn("UNIT_SALES_SUM")
+                                                    .withColumn(FoodmartMappingSupplier.UNIT_SALES_SUM_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                                     .withName("[Measures].[Unit Sales]")
                                                     .build()
                                             ))
                                         .withAggregationLevels(List.of(
                                         		AggregationLevelMappingImpl.builder()
-                                                    .withColumn("TIME_YEAR")
+                                                    .withColumn(FoodmartMappingSupplier.TIME_YEAR_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                                     .withName("[Time].[Year]")
                                                     .build()
                                             ))
@@ -10528,38 +10528,38 @@ public class SchemaModifiers {
     			)
     			.withAggregationTables(List.of(
     				AggregationNameMappingImpl.builder()
-                        .withName("agg_l_05_sales_fact_1997")
-                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn("fact_count").build())
+                        .withName(FoodmartMappingSupplier.AGG_L_05_SALES_FACT_1997)
+                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_L_05_SALES_FACT_1997).build())
                         .withAggregationIgnoreColumns(List.of(
                         	AggregationColumnNameMappingImpl.builder()
-                                .withColumn("customer_id")
+                                .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build(),
                             AggregationColumnNameMappingImpl.builder()
-                                .withColumn("store_id")
+                                .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build(),
                             AggregationColumnNameMappingImpl.builder()
-                                .withColumn("promotion_id")
+                                .withColumn(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build()
                         ))
                         .withAggregationForeignKeys(List.of(
                         		AggregationForeignKeyMappingImpl.builder()
-                                .withFactColumn("product_id")
-                                .withAggregationColumn("product_id")
+                                .withFactColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
+                                .withAggregationColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build()
                         		)
                         )
                         .withAggregationMeasures(List.of(
                         		AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Store Cost]")
-                                .withColumn("store_cost")
+                                .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build(),
                                 AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Store Sales]")
-                                .withColumn("store_sales")
+                                .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build(),
                                 AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Unit Sales]")
-                                .withColumn("unit_sales")
+                                .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build()
                         ))
                         .build()))
@@ -10767,29 +10767,29 @@ public class SchemaModifiers {
             	.withAggregationTables(
                     List.of(
                     		AggregationNameMappingImpl.builder()
-                            .withName("agg_g_ms_pcat_sales_fact_1997")
+                            .withName(FoodmartMappingSupplier.AGG_G_MS_PCAT_SALES_FACT_1997)
                             .withAggregationFactCount(
                             	AggregationColumnNameMappingImpl.builder()
-                                    .withColumn("FACT_COUNT")
+                                    .withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_G_MS_PCAT_SALES_FACT_1997)
                                     .build())
                             .withAggregationIgnoreColumns(List.of(
                             	AggregationColumnNameMappingImpl.builder()
-                                    .withColumn("Quarter")
+                                    .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_AGG_G_MS_PCAT_SALES_FACT_1997)
                                     .build(),
                                 AggregationColumnNameMappingImpl.builder()
-                                    .withColumn("MONTH_OF_YEAR")
+                                    .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_AGG_G_MS_PCAT_SALES_FACT_1997)
                                     .build()
                             		))
                             .withAggregationMeasures(List.of(
                             	AggregationMeasureMappingImpl.builder()
                                     .withName("[Measures].[Customer Count]")
-                                    .withColumn("customer_count")
+                                    .withColumn(FoodmartMappingSupplier.CUSTOMER_COUNT_COLUMN_IN_AGG_G_MS_PCAT_SALES_FACT_1997)
                                     .build()
                             ))
                             .withAggregationLevels(List.of(
                             		AggregationLevelMappingImpl.builder()
                                     .withName("[Time].[Year]")
-                                    .withColumn("the_year")
+                                    .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_G_MS_PCAT_SALES_FACT_1997)
                                     .build()
                             ))
                             .build()
@@ -11029,38 +11029,38 @@ public class SchemaModifiers {
         	.withAggregationTables(
                 List.of(
                 		AggregationNameMappingImpl.builder()
-                        .withName("agg_pl_01_sales_fact_1997")
+                        .withName(FoodmartMappingSupplier.AGG_PL_01_SALES_FACT_1997)
                         .withApproxRowCount("86000")
                         .withAggregationFactCount(
                         	AggregationColumnNameMappingImpl.builder()
-                                .withColumn("FACT_COUNT")
+                                .withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_PL_01_SALES_FACT_1997)
                                 .build())
                         .withAggregationForeignKeys(List.of(
                         	AggregationForeignKeyMappingImpl.builder()
-                                .withFactColumn("product_id")
-                                .withAggregationColumn("PRODUCT_ID")
+                                .withFactColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
+                                .withAggregationColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_AGG_PL_01_SALES_FACT_1997)
                                 .build(),
                             AggregationForeignKeyMappingImpl.builder()
-                                .withFactColumn("customer_id")
-                                .withAggregationColumn("CUSTOMER_ID")
+                                .withFactColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
+                                .withAggregationColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_AGG_PL_01_SALES_FACT_1997)
                                 .build(),
                             AggregationForeignKeyMappingImpl.builder()
-                                .withFactColumn("time_id")
-                                .withAggregationColumn("TIME_ID")
+                                .withFactColumn(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
+                                .withAggregationColumn(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_AGG_PL_01_SALES_FACT_1997)
                                 .build()
                         ))
                         .withAggregationMeasures(List.of(
                         	AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Unit Sales]")
-                                .withColumn("UNIT_SALES_SUM")
+                                .withColumn(FoodmartMappingSupplier.UNIT_SALES_SUM_COLUMN_IN_AGG_PL_01_SALES_FACT_1997)
                                 .build(),
                             AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Store Cost]")
-                                .withColumn("STORE_COST_SUM")
+                                .withColumn(FoodmartMappingSupplier.STORE_COST_SUM_COLUMN_IN_AGG_PL_01_SALES_FACT_1997)
                                 .build(),
                             AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Store Sales]")
-                                .withColumn("STORE_SALES_SUM")
+                                .withColumn(FoodmartMappingSupplier.STORE_SALES_SUM_COLUMN_IN_AGG_PL_01_SALES_FACT_1997)
                                 .build()
                         ))
                         .build()
@@ -11415,50 +11415,50 @@ public class SchemaModifiers {
     			)
     			.withAggregationTables(List.of(
     				AggregationNameMappingImpl.builder()
-                        .withName("agg_c_14_sales_fact_1997")
-                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn("fact_count").build())
+                        .withName(FoodmartMappingSupplier.AGG_C_14_SALES_FACT_1997)
+                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_C_14_SALES_FACT_1997).build())
                         .withAggregationIgnoreColumns(List.of(
                         	AggregationColumnNameMappingImpl.builder()
-                                .withColumn("product_id")
+                                .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build(),
                             AggregationColumnNameMappingImpl.builder()
-                                .withColumn("customer_id")
+                                .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build(),
                             AggregationColumnNameMappingImpl.builder()
-                                .withColumn("promotion_id")
+                                .withColumn(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build(),
                             AggregationColumnNameMappingImpl.builder()
-                                .withColumn("the_year")
+                                .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build(),
                             AggregationColumnNameMappingImpl.builder()
-                                .withColumn("quarter")
+                                .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build())
                         )
                         .withAggregationForeignKeys(List.of(
                         		AggregationForeignKeyMappingImpl.builder()
-                                .withFactColumn("store_id")
-                                .withAggregationColumn("store_id")
+                                .withFactColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
+                                .withAggregationColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build()
                         		)
                         )
                         .withAggregationMeasures(List.of(
                         		AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Unit Sales]")
-                                .withColumn("unit_sales")
+                                .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build(),
                                 AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Store Cost]")
-                                .withColumn("store_cost")
+                                .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build(),
                                 AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Store Sales]")
-                                .withColumn("store_sales")
+                                .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build()
                         ))
                         .withAggregationLevels(List.of(
                         		AggregationLevelMappingImpl.builder()
                                 .withName("[Time].[Month]")
-                                .withColumn("month_of_year")
+                                .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .withCollapsed(false)
                                 .build()
                         		))
@@ -11641,26 +11641,26 @@ public class SchemaModifiers {
     			)
     			.withAggregationTables(List.of(
     				AggregationNameMappingImpl.builder()
-                        .withName("agg_c_10_sales_fact_1997")
-                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn("FACT_COUNT").build())
+                        .withName(FoodmartMappingSupplier.AGG_C_10_SALES_FACT_1997)
+                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_C_14_SALES_FACT_1997).build())
                         .withAggregationIgnoreColumns(List.of(
                         	AggregationColumnNameMappingImpl.builder()
-                                .withColumn("Quarter")
+                                .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build(),
                             AggregationColumnNameMappingImpl.builder()
-                                .withColumn("MONTH_OF_YEAR")
+                                .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build()
                         ))
                         .withAggregationMeasures(List.of(
                         		AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Unit Sales]")
-                                .withColumn("unit_sales")
+                                .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build()
                         ))
                         .withAggregationLevels(List.of(
                         		AggregationLevelMappingImpl.builder()
                                 .withName("[Time].[Year]")
-                                .withColumn("the_year")
+                                .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build()
                         		))
                         .build()))
@@ -11787,37 +11787,37 @@ public class SchemaModifiers {
     			)
     			.withAggregationTables(List.of(
     				AggregationNameMappingImpl.builder()
-                        .withName("agg_l_05_sales_fact_1997")
-                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn("fact_count").build())
+                        .withName(FoodmartMappingSupplier.AGG_L_05_SALES_FACT_1997)
+                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_L_05_SALES_FACT_1997).build())
                         .withAggregationIgnoreColumns(List.of(
                         	AggregationColumnNameMappingImpl.builder()
-                                .withColumn("customer_id")
+                                .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build(),
                             AggregationColumnNameMappingImpl.builder()
-                                .withColumn("store_id")
+                                .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build(),
                                 AggregationColumnNameMappingImpl.builder()
-                                .withColumn("promotion_id")
+                                .withColumn(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build()
                         ))
                         .withAggregationForeignKeys(List.of(
                         		AggregationForeignKeyMappingImpl.builder()
-                                .withFactColumn("promotion_id")
-                                .withAggregationColumn("promotion_id")
+                                .withFactColumn(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_SALES_FACT_1997)
+                                .withAggregationColumn(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build()
                         ))
                         .withAggregationMeasures(List.of(
                         		AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Store Cost]")
-                                .withColumn("store_cost")
+                                .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build(),
                         		AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Store Sales]")
-                                .withColumn("store_sales")
+                                .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build(),
                         		AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Unit Sales]")
-                                .withColumn("unit_sales")
+                                .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                 .build()
                         ))
                         .build())
@@ -12000,62 +12000,64 @@ public class SchemaModifiers {
             + "</Schema>\n";
 
          */
-
+    	private static final ColumnImpl foo = ColumnImpl.builder().withName("foo").withType("INTEGER").build();
+    	private static final ColumnImpl bar = ColumnImpl.builder().withName("bar").withType("INTEGER").build();
+    	
     	private static final TableQueryMappingImpl t = TableQueryMappingImpl.builder()
     			.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
     			.withAggregationTables(List.of(
     				AggregationNameMappingImpl.builder()
-                        .withName("agg_c_special_sales_fact_1997")
-                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn("FACT_COUNT").build())
+                        .withName(FoodmartMappingSupplier.AGG_C_SPECIAL_SALES_FACT_1997)
+                        .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997).build())
                         .withAggregationIgnoreColumns(List.of(
                         	AggregationColumnNameMappingImpl.builder()
-                                .withColumn("foo")
+                                .withColumn(foo) //TODO foo column not exist
                                 .build(),
                             AggregationColumnNameMappingImpl.builder()
-                                .withColumn("bar")
+                                .withColumn(bar) //TODO bar column not exist
                                 .build(),
                             AggregationColumnNameMappingImpl.builder()
-                                .withColumn("PRODUCT_ID")
+                                .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                 .build(),
                             AggregationColumnNameMappingImpl.builder()
-                                .withColumn("CUSTOMER_ID")
+                                .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                 .build(),
                             AggregationColumnNameMappingImpl.builder()
-                                .withColumn("PROMOTION_ID")
+                                .withColumn(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                 .build()
                         ))
                         .withAggregationForeignKeys(List.of(
                         		AggregationForeignKeyMappingImpl.builder()
-                                .withFactColumn("store_id")
-                                .withAggregationColumn("STORE_ID")
+                                .withFactColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
+                                .withAggregationColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                 .build()
                         ))
                         .withAggregationMeasures(List.of(
                         	AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Unit Sales]")
-                                .withColumn("UNIT_SALES_SUM")
+                                .withColumn(FoodmartMappingSupplier.UNIT_SALES_SUM_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                 .build(),
                             AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Store Cost]")
-                                .withColumn("STORE_COST_SUM")
+                                .withColumn(FoodmartMappingSupplier.STORE_COST_SUM_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                 .build(),
                             AggregationMeasureMappingImpl.builder()
                                 .withName("[Measures].[Store Sales]")
-                                .withColumn("STORE_SALES_SUM")
+                                .withColumn(FoodmartMappingSupplier.STORE_SALES_SUM_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                 .build()
                         ))
                         .withAggregationLevels(List.of(
                         	AggregationLevelMappingImpl.builder()
                                 .withName("[Time].[Year]")
-                                .withColumn("TIME_YEAR")
+                                .withColumn(FoodmartMappingSupplier.TIME_YEAR_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                 .build(),
                             AggregationLevelMappingImpl.builder()
                                 .withName("[Time].[Quarter]")
-                                .withColumn("TIME_QUARTER")
+                                .withColumn(FoodmartMappingSupplier.TIME_QUARTER_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                 .build(),
                             AggregationLevelMappingImpl.builder()
                                 .withName("[Time].[Month]")
-                                .withColumn("TIME_MONTH")
+                                .withColumn(FoodmartMappingSupplier.TIME_MONTH_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                 .build()
                         )).build()
     			))
@@ -12784,6 +12786,17 @@ public class SchemaModifiers {
                     .withColumns(List.of(
                             store_id_cheques, prod_id_cheques, amount_cheques
                             ))).build();
+            //## TableName: agg_lp_595_cheques
+            //## ColumnNames: firstprefix_value,secondprefix_value,amount,FACT_COUNT
+            //## ColumnTypes: VARCHAR(30),VARCHAR(30),DECIMAL(10,2),INTEGER
+            ColumnImpl firstprefixValueAggLp595Cheques = ColumnImpl.builder().withName("firstprefix_value").withType("VARCHAR").withColumnSize(30).build();
+            ColumnImpl secondprefixValueAggLp595Cheques = ColumnImpl.builder().withName("secondprefix_value").withType("VARCHAR").withColumnSize(30).build();
+            ColumnImpl amountAggLp595Cheques = ColumnImpl.builder().withName("amount").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
+            ColumnImpl factCountAggLp595Cheques = ColumnImpl.builder().withName("FACT_COUNT").withType("INTEGER").build();
+            PhysicalTableImpl aggLp595Cheques = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("agg_lp_595_cheques")
+                    .withColumns(List.of(
+                            firstprefixValueAggLp595Cheques, secondprefixValueAggLp595Cheques, amountAggLp595Cheques
+                            ))).build();
 
             return List.of(SchemaMappingImpl.builder()
                     .withName("usagePrefixTest")
@@ -12794,20 +12807,22 @@ public class SchemaModifiers {
                             	TableQueryMappingImpl.builder().withTable(cheques)
                             		.withAggregationTables(List.of(
                             			AggregationNameMappingImpl.builder()
-                            				.withName("agg_lp_xxx_cheques")
+                            				//.withName("agg_lp_xxx_cheques") //TODO agg_lp_xxx_cheques not exist 
+                            				.withName(aggLp595Cheques)
                             				.withAggregationFactCount(AggregationColumnNameMappingImpl.builder()
-                            					.withColumn("FACT_COUNT")
+                            					.withColumn(factCountAggLp595Cheques)
                             					.build())
                             				.withAggregationMeasures(List.of(
                             					AggregationMeasureMappingImpl.builder()
                             					.withName("[Measures].[Amount]")
-                            					.withColumn("amount")
+                            					.withColumn(amountAggLp595Cheques)
                             					.build()
                             				))
                             				.withAggregationLevels(List.of(
                             					AggregationLevelMappingImpl.builder()
                             						.withName("[StoreX].[Store Value]")
-                            						.withColumn("value")
+                            						//.withColumn("value") //TODO "value" absent
+                            						.withColumn(firstprefixValueAggLp595Cheques)
                             						.build()
                             				))
                             				.build())).build()

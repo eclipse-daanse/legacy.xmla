@@ -42,7 +42,6 @@ import mondrian.rolap.RolapLevel;
 import mondrian.rolap.RolapSchema;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.Utils;
-import mondrian.rolap.aggmatcher.AggStar.Table.Column;
 import mondrian.rolap.sql.SqlQuery;
 
 /**
@@ -1040,7 +1039,7 @@ public abstract class Recognizer {
         try {
             if (expr instanceof RolapColumn column) {
                 return column.getName();
-            } 
+            }
             return null;
         } finally {
             msgRecorder.popContextName();

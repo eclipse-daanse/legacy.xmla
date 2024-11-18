@@ -142,21 +142,21 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
     .withEnabled(true)
     .withQuery(TableQueryMappingImpl.builder().withTable(mondrian2225Fact).withAggregationTables(List.of(
         AggregationNameMappingImpl.builder()
-            .withName("mondrian2225_agg")
+            .withName(mondrian2225Agg)
             .withIgnorecase(true)
             .withAggregationFactCount(AggregationColumnNameMappingImpl
                 .builder()
-                .withColumn("fact_count")
+                .withColumn(factCountMondrian2225Agg)
                 .build())
             .withAggregationMeasures(List.of(
             	AggregationMeasureMappingImpl.builder()
-                    .withColumn("fact_Measure")
+                    .withColumn(factMeasureMondrian2225Agg)
                     .withName("[Measures].[Measure]")
                     .build()
             ))
             .withAggregationLevels(List.of(
             	AggregationLevelMappingImpl.builder()
-                    .withColumn("dim_code")
+                    .withColumn(dimCodeMondrian2225Agg)
                     .withName("[Product Code].[Code]")
                     .withCollapsed(true)
                     .build()

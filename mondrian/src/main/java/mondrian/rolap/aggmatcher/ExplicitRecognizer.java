@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import org.eclipse.daanse.olap.api.NameSegment;
@@ -121,13 +122,13 @@ class ExplicitRecognizer extends Recognizer {
                     continue;
                 }
 
-                String aggColumnName = aggColumn.getName();
+                
 
                 for (ExplicitRules.TableDef.Measure measure
                     : getTableDef().getMeasures())
                 {
                     // Column name match is case insensitive
-                    if (measure.getColumnName().equalsIgnoreCase(aggColumnName))
+                    if (measure.getColumnName().getName().equals(aggColumn.getName()))
                     {
                         String name = measure.getName();
                         List<Segment> parts = Util.parseIdentifier(name);
@@ -162,19 +163,19 @@ class ExplicitRecognizer extends Recognizer {
 
                 if (factColumn.hasUsage(JdbcSchema.UsageType.FOREIGN_KEY)) {
                     // What we've got here is a measure based upon a foreign key
-                    String aggFK =
+                	org.eclipse.daanse.rdb.structure.api.model.Column aggFK =
                         getTableDef().getAggregateFK(factColumn.getName());
                     // OK, not a lost dimension
                     if (aggFK != null) {
                         JdbcSchema.Table.Column aggColumn =
-                            aggTable.getColumn(aggFK);
+                            aggTable.getColumn(aggFK.getName());
 
                         // Column name match is case insensitive
                         if (aggColumn == null) {
-                            aggColumn = aggTable.getColumn(aggFK.toLowerCase());
+                            aggColumn = aggTable.getColumn(aggFK.getName().toLowerCase());
                         }
                         if (aggColumn == null) {
-                            aggColumn = aggTable.getColumn(aggFK.toUpperCase());
+                            aggColumn = aggTable.getColumn(aggFK.getName().toUpperCase());
                         }
 
                         if (aggColumn != null) {
@@ -238,7 +239,7 @@ class ExplicitRecognizer extends Recognizer {
         final JdbcSchema.Table.Column.Usage factUsage)
     {
         JdbcSchema.Table.Column factColumn = factUsage.getColumn();
-        String aggFK = getTableDef().getAggregateFK(factColumn.getName());
+        org.eclipse.daanse.rdb.structure.api.model.Column aggFK = getTableDef().getAggregateFK(factColumn.getName());
 
         // OK, a lost dimension
         if (aggFK == null) {
@@ -252,8 +253,8 @@ class ExplicitRecognizer extends Recognizer {
                 continue;
             }
 
-            if (aggFK.equals(aggColumn.getName())) {
-                makeForeignKey(factUsage, aggColumn, aggFK);
+            if (aggFK.getName().equals(aggColumn.getName())) {
+                makeForeignKey(factUsage, aggColumn, aggFK.getName());
                 matchCount++;
             }
         }
@@ -296,7 +297,7 @@ class ExplicitRecognizer extends Recognizer {
                 if (tableDefLevelUniqueNameMap.containsKey(levelUniqueName)) {
                     ExplicitRules.TableDef.Level level =
                         tableDefLevelUniqueNameMap.get(levelUniqueName);
-                    if (aggTableColumnMap.containsKey(level.getColumnName())) {
+                    if (aggTableColumnMap.containsKey(level.getColumnName().getName())) {
                         levelMatches.add(
                             new Pair<>(
                                 rLevel, level));
@@ -322,10 +323,10 @@ class ExplicitRecognizer extends Recognizer {
                 ExplicitRules.TableDef.Level aggLevel = pair.right;
 
                 makeLevelColumnUsage(
-                    aggTableColumnMap.get(aggLevel.getColumnName()),
+                    aggTableColumnMap.get(aggLevel.getColumnName().getName()),
                     hierarchyUsage,
                     getColumnName(aggLevel.getRolapFieldName()),
-                    aggLevels.get(levelMatches.indexOf(pair)).getColumnName(),
+                    aggLevels.get(levelMatches.indexOf(pair)).getColumnName().getName(),
                     rolapLevel.getName(),
                     forceCollapse
                         ? true
@@ -342,19 +343,19 @@ class ExplicitRecognizer extends Recognizer {
     }
 
     private Column getColumn(
-        String columnName, Map<String, Column> aggTableColumnMap)
+    		org.eclipse.daanse.rdb.structure.api.model.Column columnName, Map<String, Column> aggTableColumnMap)
     {
         if (columnName == null) {
             return null;
         }
-        return aggTableColumnMap.get(columnName);
+        return aggTableColumnMap.get(columnName.getName());
     }
 
     private Map<String, Column> getProperties(
-        Map<String, String> properties, Map<String, Column> columnMap)
+        Map<String, org.eclipse.daanse.rdb.structure.api.model.Column> properties, Map<String, Column> columnMap)
     {
         Map<String, Column> map = new HashMap<>();
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
+        for (Map.Entry<String, org.eclipse.daanse.rdb.structure.api.model.Column> entry : properties.entrySet()) {
             map.put(entry.getKey(), getColumn(entry.getValue(), columnMap));
         }
         return Collections.unmodifiableMap(map);
@@ -490,11 +491,16 @@ class ExplicitRecognizer extends Recognizer {
 	protected String getFactCountColumnName
             (final JdbcSchema.Table.Column.Usage aggUsage) {
         String measureName = aggUsage.getColumn().getName();
-        Map<String, String> measuresFactCount = tableDef.getMeasuresFactCount();
-        String factCountColumnName = measuresFactCount.get(measureName);
-        if (Util.isEmpty(factCountColumnName)) {
+        Map<org.eclipse.daanse.rdb.structure.api.model.Column, org.eclipse.daanse.rdb.structure.api.model.Column> measuresFactCount = tableDef.getMeasuresFactCount();
+        Optional<Map.Entry<org.eclipse.daanse.rdb.structure.api.model.Column, org.eclipse.daanse.rdb.structure.api.model.Column>> op = measuresFactCount.entrySet()
+        		.stream().filter(e -> e.getKey().getName().equals(measureName)).findAny();         
+        String factCountColumnName;
+        if (op.isPresent() && Util.isEmpty(op.get().getValue().getName())) {
+        	factCountColumnName = op.get().getValue().getName();
+        } else {	
             factCountColumnName = getFactCountColumnName();
         }
+        
         return factCountColumnName;
     }
 }

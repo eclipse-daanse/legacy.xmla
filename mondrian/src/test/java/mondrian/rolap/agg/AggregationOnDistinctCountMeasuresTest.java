@@ -2185,38 +2185,38 @@ class AggregationOnDistinctCountMeasuresTest {
                                   ))
                                   .withAggregationTables(
                                   List.of(AggregationNameMappingImpl.builder()
-                                      .withName("agg_c_10_sales_fact_1997")
-                                      .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn("FACT_COUNT").build())
+                                      .withName(FoodmartMappingSupplier.AGG_C_10_SALES_FACT_1997)
+                                      .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_C_10_SALES_FACT_1997).build())
                                       .withAggregationMeasures(List.of(
                                     	  AggregationMeasureMappingImpl.builder()
                                               .withName("[Measures].[Store Sales]")
-                                              .withColumn("store_sales")
+                                              .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                               .build(),
                                           AggregationMeasureMappingImpl.builder()
                                               .withName("[Measures].[Store Cost]")
-                                              .withColumn("store_cost")
+                                              .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                               .build(),
                                           AggregationMeasureMappingImpl.builder()
                                               .withName("[Measures].[Unit Sales]")
-                                              .withColumn("unit_sales")
+                                              .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                               .build(),
                                           AggregationMeasureMappingImpl.builder()
                                               .withName("[Measures].[Customer Count]")
-                                              .withColumn("customer_count")
+                                              .withColumn(FoodmartMappingSupplier.CUSTOMER_COUNT_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                               .build()
                                       ))
                                       .withAggregationLevels(List.of(
                                           AggregationLevelMappingImpl.builder()
                                               .withName("[Time].[Year]")
-                                              .withColumn("the_year")
+                                              .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                               .build(),
                                           AggregationLevelMappingImpl.builder()
                                               .withName("[Time].[Quarter]")
-                                              .withColumn("quarter")
+                                              .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                               .build(),
                                           AggregationLevelMappingImpl.builder()
                                               .withName("[Time].[Month]")
-                                              .withColumn("month_of_year")
+                                              .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                               .build()
                                       ))
                                       .build())

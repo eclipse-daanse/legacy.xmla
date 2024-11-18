@@ -2468,35 +2468,35 @@ class TestAggregationManager extends BatchTestCase {
                     		))
                     		.withAggregationTables(List.of(
                     				AggregationNameMappingImpl.builder()
-                                    .withName("agg_l_05_sales_fact_1997")
-                                    .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn("fact_count").build())
+                                    .withName(FoodmartMappingSupplier.AGG_L_05_SALES_FACT_1997)
+                                    .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_L_05_SALES_FACT_1997).build())
                                     .withAggregationIgnoreColumns(List.of(
                                     	AggregationColumnNameMappingImpl.builder()
-                                           	.withColumn("customer_id")
+                                           	.withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                             .build(),
                                         AggregationColumnNameMappingImpl.builder()
-                                            .withColumn("store_id")
+                                            .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                             .build(),
                                         AggregationColumnNameMappingImpl.builder()
-                                            .withColumn("promotion_id")
+                                            .withColumn(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                             .build(),
                                         AggregationColumnNameMappingImpl.builder()
-                                    		.withColumn("store_sales")
+                                    		.withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                     		.build(),
                                     	AggregationColumnNameMappingImpl.builder()
-                                            .withColumn("store_cost")
+                                            .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                             .build()
                                     ))
                                     .withAggregationMeasures(List.of(
                                     		AggregationMeasureMappingImpl.builder()
                                             .withName("[Measures].[Unit Sales]")
-                                            .withColumn("unit_sales")
+                                            .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                             .build()
                                     ))
                                     .withAggregationLevels(List.of(
                                     	AggregationLevelMappingImpl.builder()
                                             .withName("[Product].[Product Id]")
-                                            .withColumn("product_id")
+                                            .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                             .withCollapsed(false)
                                             .build()
                                     ))
@@ -2916,37 +2916,37 @@ class TestAggregationManager extends BatchTestCase {
                     	))
                     	.withAggregationTables(List.of(
                     		AggregationNameMappingImpl.builder()
-                            .withName("agg_l_05_sales_fact_1997")
-                            .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn("fact_count").build())
+                            .withName(FoodmartMappingSupplier.AGG_L_05_SALES_FACT_1997)
+                            .withAggregationFactCount(AggregationColumnNameMappingImpl.builder().withColumn(FoodmartMappingSupplier.FACT_COUNT_COLUMN_IN_AGG_L_05_SALES_FACT_1997).build())
                             .withAggregationIgnoreColumns(List.of(
                             	AggregationColumnNameMappingImpl.builder()
-                                    .withColumn("customer_id")
+                                    .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                     .build(),
                                 AggregationColumnNameMappingImpl.builder()
-                                    .withColumn("promotion_id")
+                                    .withColumn(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                     .build(),
                                 AggregationColumnNameMappingImpl.builder()
-                                    .withColumn("store_sales")
+                                    .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                     .build(),
                                 AggregationColumnNameMappingImpl.builder()
-                                    .withColumn("store_cost")
+                                    .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                     .build()
                             ))
                             .withAggregationMeasures(List.of(
                             	AggregationMeasureMappingImpl.builder()
                                     .withName("[Measures].[Unit Sales]")
-                                    .withColumn("unit_sales")
+                                    .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                     .build()
                             ))
                             .withAggregationLevels(List.of(
                             	AggregationLevelMappingImpl.builder()
                                     .withName("[Product].[Product Id]")
-                                    .withColumn("product_id")
+                                    .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                     .withCollapsed(false)
                                     .build(),
                                 AggregationLevelMappingImpl.builder()
                                     .withName("[Store].[Store Id]")
-                                    .withColumn("store_id")
+                                    .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                     .withCollapsed(false)
                                     .build()
                             ))

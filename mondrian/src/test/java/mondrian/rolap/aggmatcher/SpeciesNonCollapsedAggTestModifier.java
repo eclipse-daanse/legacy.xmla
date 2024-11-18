@@ -227,20 +227,20 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
                 .withQuery(TableQueryMappingImpl.builder().withTable(speciesMart).withAggregationTables(
                     List.of(
                         AggregationNameMappingImpl.builder()
-                            .withName("AGG_SPECIES_MART")
+                            .withName(aggSpeciesMart)
                             .withAggregationFactCount(AggregationColumnNameMappingImpl.builder()
-                                .withColumn("FACT_COUNT")
+                                .withColumn(factCountAggSpeciesMart)
                                 .build())
                             .withAggregationMeasures(List.of(
                             	AggregationMeasureMappingImpl.builder()
                                     .withName("Measures.[Population]")
-                                    .withColumn("POPULATION")
+                                    .withColumn(populationAggSpeciesMart)
                                     .build()
                             ))
                             .withAggregationLevels(List.of(
                                 AggregationLevelMappingImpl.builder()
                                     .withName("[Animal.Animals].[Genus]")
-                                    .withColumn("GEN_ID")
+                                    .withColumn(genIdAggSpeciesMart)
                                     .withCollapsed(false)
                                     .build()
                             ))

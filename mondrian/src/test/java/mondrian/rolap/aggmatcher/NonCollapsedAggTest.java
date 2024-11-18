@@ -500,6 +500,33 @@ class NonCollapsedAggTest extends AggTableTestCase {
                 PhysicalTableImpl lineClassNetwork = ((Builder) PhysicalTableImpl.builder().withName("line_class_network")
                         .withColumns(List.of(lineClassIdLineClassNetwork, networkIdLineClassNetwork))).build();
 
+                //## TableName: agg_tenant
+                //## ColumnNames: tenant_id,unit_sales,fact_count
+                //## ColumnTypes: INTEGER,INTEGER,INTEGER
+                ColumnImpl tenantIdAggTenant = ColumnImpl.builder().withName("tenant_id").withType("INTEGER").build();
+                ColumnImpl unitSalesAggTenant = ColumnImpl.builder().withName("unit_sales").withType("INTEGER").build();
+                ColumnImpl factCountAggTenant = ColumnImpl.builder().withName("fact_count").withType("INTEGER").build();
+                PhysicalTableImpl aggTenant = ((Builder) PhysicalTableImpl.builder().withName("agg_tenant")
+                        .withColumns(List.of(tenantIdAggTenant, unitSalesAggTenant, factCountAggTenant))).build();
+                
+                //## TableName: agg_line_class
+                //## ColumnNames: line_class_id,unit_sales,fact_count
+                //## ColumnTypes: INTEGER,INTEGER,INTEGER
+                ColumnImpl lineClassIdAggLineClass = ColumnImpl.builder().withName("line_class_id").withType("INTEGER").build();
+                ColumnImpl unitSalesAggLineClass = ColumnImpl.builder().withName("unit_sales").withType("INTEGER").build();
+                ColumnImpl factCountAggLineClass = ColumnImpl.builder().withName("fact_count").withType("INTEGER").build();
+                PhysicalTableImpl aggLineClass = ((Builder) PhysicalTableImpl.builder().withName("agg_line_class")
+                        .withColumns(List.of(lineClassIdAggLineClass, unitSalesAggLineClass, factCountAggLineClass))).build();
+                
+                //## TableName: agg_10_foo_fact
+                //## ColumnNames: line_class_id,unit_sales,fact_count
+                //## ColumnTypes: INTEGER,INTEGER,INTEGER
+                ColumnImpl lineClassIdAgg10FooFact = ColumnImpl.builder().withName("line_class_id").withType("INTEGER").build();
+                ColumnImpl unitSalesAgg10FooFact = ColumnImpl.builder().withName("unit_sales").withType("INTEGER").build();
+                ColumnImpl factCountAgg10FooFact = ColumnImpl.builder().withName("fact_count").withType("INTEGER").build();
+                PhysicalTableImpl agg10FooFact = ((Builder) PhysicalTableImpl.builder().withName("agg_10_foo_fact")
+                        .withColumns(List.of(lineClassIdAgg10FooFact, unitSalesAgg10FooFact, factCountAgg10FooFact))).build();
+                
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(PhysicalCubeMappingImpl.builder()
@@ -507,53 +534,53 @@ class NonCollapsedAggTest extends AggTableTestCase {
                     .withQuery(TableQueryMappingImpl.builder().withTable(fooFact)
                     	.withAggregationTables(List.of(
                             AggregationNameMappingImpl.builder()
-                                .withName("agg_tenant")
+                                .withName(aggTenant)
                                 .withAggregationFactCount(AggregationColumnNameMappingImpl.builder()
-                                    .withColumn("fact_count")
+                                    .withColumn(factCountAggTenant)
                                     .build())
                                 .withAggregationMeasures(List.of(
                                     AggregationMeasureMappingImpl.builder()
-                                        .withName("[Measures].[Unit Sales]").withColumn("unit_sales")
+                                        .withName("[Measures].[Unit Sales]").withColumn(unitSalesAggTenant)
                                         .build()
                                 ))
                                 .withAggregationLevels(List.of(
                                     AggregationLevelMappingImpl.builder()
                                         .withName("[dimension].[tenant].[tenant]")
-                                        .withColumn("tenant_id").withCollapsed(false)
+                                        .withColumn(tenantIdAggTenant).withCollapsed(false)
                                         .build()
                                 ))
                                 .build(),
                             AggregationNameMappingImpl.builder()
-                                .withName("agg_line_class")
+                                .withName(aggLineClass)
                                 .withAggregationFactCount(AggregationColumnNameMappingImpl.builder()
-                                    .withColumn("fact_count")
+                                    .withColumn(factCountAggLineClass)
                                     .build())
                                 .withAggregationMeasures(List.of(
                                     AggregationMeasureMappingImpl.builder()
-                                        .withName("[Measures].[Unit Sales]").withColumn("unit_sales")
+                                        .withName("[Measures].[Unit Sales]").withColumn(unitSalesAggLineClass)
                                         .build()
                                 ))
                                 .withAggregationLevels(List.of(
                                 	AggregationLevelMappingImpl.builder()
                                         .withName("[dimension].[distributor].[line class]")
-                                        .withColumn("line_class_id").withCollapsed(false)
+                                        .withColumn(lineClassIdAggLineClass).withCollapsed(false)
                                         .build()
                                 ))
                                 .build(),
                             AggregationNameMappingImpl.builder()
-                                .withName("agg_line_class")
+                                .withName(aggLineClass)
                                 .withAggregationFactCount(AggregationColumnNameMappingImpl.builder()
-                                    .withColumn("fact_count")
+                                    .withColumn(factCountAggLineClass)
                                     .build())
                                 .withAggregationMeasures(List.of(
                                     AggregationMeasureMappingImpl.builder()
-                                        .withName("[Measures].[Unit Sales]").withColumn("unit_sales")
+                                        .withName("[Measures].[Unit Sales]").withColumn(unitSalesAggLineClass)
                                         .build()
                                 ))
                                 .withAggregationLevels(List.of(
                                     AggregationLevelMappingImpl.builder()
                                         .withName("[dimension].[network].[line class]")
-                                        .withColumn("line_class_id").withCollapsed(false)
+                                        .withColumn(lineClassIdAggLineClass).withCollapsed(false)
                                         .build()
                                 ))
                                 .build()

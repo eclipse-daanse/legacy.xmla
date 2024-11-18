@@ -107,6 +107,17 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
                 .withColumns(List.of(
                         prod_id_product_x, name_product_x
                         ))).build();
+        //## TableName: agg_lp_xxx_cheques
+        //## ColumnNames: store_id,amount_AVG,FACT_COUNT
+        //## ColumnTypes: INTEGER,DECIMAL(10,2),INTEGER
+        ColumnImpl storeId = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
+        ColumnImpl amountAvg = ColumnImpl.builder().withName("amount_AVG").withType("DECIMAL").withCharOctetLength(10).withDecimalDigits(2).build();
+        ColumnImpl factCount = ColumnImpl.builder().withName("FACT_COUNT").withType("INTEGER").build();
+        PhysicalTableImpl aggLpXxxCheques = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("agg_lp_xxx_cheques")
+                .withColumns(List.of(
+                		storeId, amountAvg, factCount  
+                        ))).build();
+        
         List<CubeMapping> result = new ArrayList<>();
         result.addAll(super.schemaCubes(schema));
         result.add(PhysicalCubeMappingImpl.builder()
@@ -114,20 +125,20 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
             .withQuery(TableQueryMappingImpl.builder().withTable(cheques)
             		.withAggregationTables(List.of(
                             AggregationNameMappingImpl.builder()
-                            .withName("agg_lp_xxx_cheques")
+                            .withName(aggLpXxxCheques)
                             .withAggregationFactCount(AggregationColumnNameMappingImpl.builder()
-                                .withColumn("FACT_COUNT")
+                                .withColumn(factCount)
                                 .build())
                             .withAggregationForeignKeys(List.of(
                             	AggregationForeignKeyMappingImpl.builder()
-                                    .withFactColumn("store_id")
-                                    .withAggregationColumn("store_id")
+                                    .withFactColumn(store_id_cheques)
+                                    .withAggregationColumn(storeId)
                                     .build()
                             ))
                             .withAggregationMeasures(List.of(
                                 AggregationMeasureMappingImpl.builder()
                                     .withName("[Measures].[Avg Amount]")
-                                    .withColumn("amount_AVG")
+                                    .withColumn(amountAvg)
                                     .build()
                             ))
                             .build()
