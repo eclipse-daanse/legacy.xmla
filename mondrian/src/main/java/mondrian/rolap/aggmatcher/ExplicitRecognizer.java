@@ -495,7 +495,7 @@ class ExplicitRecognizer extends Recognizer {
         Optional<Map.Entry<org.eclipse.daanse.rdb.structure.api.model.Column, org.eclipse.daanse.rdb.structure.api.model.Column>> op = measuresFactCount.entrySet()
         		.stream().filter(e -> e.getKey().getName().equals(measureName)).findAny();         
         String factCountColumnName;
-        if (op.isPresent() && Util.isEmpty(op.get().getValue().getName())) {
+        if (op.isPresent() && !Util.isEmpty(op.get().getValue().getName())) {
         	factCountColumnName = op.get().getValue().getName();
         } else {	
             factCountColumnName = getFactCountColumnName();

@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.eclipse.daanse.olap.api.DataType;
@@ -1178,7 +1179,7 @@ public class ExplicitRules {
                                 return true;
                             }
                         } else {
-                            if (ignoreName.equals(name)) {
+                            if (ignoreName.getName().equals(name)) {
                                 return true;
                             }
                         }
@@ -1209,7 +1210,7 @@ public class ExplicitRules {
                 public boolean matches(String name) {
                     HashSet<Column> measuresFactCountSet =
                             new HashSet<>(measuresFactCount.values());
-                    return measuresFactCountSet.contains(name);
+                    return measuresFactCountSet.stream().anyMatch(c -> name.equals(c.getName()));
                 }
             };
         }
@@ -1267,7 +1268,11 @@ public class ExplicitRules {
          * the base fact table's foreign key column or return null.
          */
         protected Column getAggregateFK(final String baseFK) {
-            return this.foreignKeyMap.get(baseFK);
+        	Optional<Map.Entry<Column, Column>> op = this.foreignKeyMap.entrySet().stream().filter(e -> baseFK.equals(e.getKey().getName())).findFirst();
+            if (op.isPresent()) {
+            	return op.get().getValue(); 
+            }
+            return null;
         }
 
         /**
@@ -1325,7 +1330,7 @@ public class ExplicitRules {
                     // Is the level foreign key name a duplicate
                     if (columnsToObjects.containsKey(level.getColumnName().getName())) {
                         Level l = (Level)
-                            columnsToObjects.get(level.getColumnName());
+                            columnsToObjects.get(level.getColumnName().getName());
                         msgRecorder.reportError(
                             MessageFormat.format(duplicateLevelColumnNames,
                                 msgRecorder.getContext(),
@@ -1352,9 +1357,9 @@ public class ExplicitRules {
                         namesToObjects.put(measure.getName(), measure);
                     }
 
-                    if (columnsToObjects.containsKey(measure.getColumnName())) {
+                    if (columnsToObjects.containsKey(measure.getColumnName().getName())) {
                         Object o =
-                            columnsToObjects.get(measure.getColumnName());
+                            columnsToObjects.get(measure.getColumnName().getName());
                         if (o instanceof Measure m) {
                             msgRecorder.reportError(
                                 MessageFormat.format(duplicateMeasureColumnNames,
@@ -1390,7 +1395,7 @@ public class ExplicitRules {
                 	Column baseFKName = e.getKey();
                 	Column aggFKName = e.getValue();
 
-                    if (namesToObjects.containsKey(baseFKName)) {
+                    if (namesToObjects.containsKey(baseFKName.getName())) {
                         msgRecorder.reportError(
                             MessageFormat.format(duplicateFactForeignKey,
                                 msgRecorder.getContext(),
@@ -1399,7 +1404,7 @@ public class ExplicitRules {
                     } else {
                         namesToObjects.put(baseFKName.getName(), aggFKName);
                     }
-                    if (columnsToObjects.containsKey(aggFKName)) {
+                    if (columnsToObjects.containsKey(aggFKName.getName())) {
                         msgRecorder.reportError(
                             MessageFormat.format(duplicateFactForeignKey,
                                 msgRecorder.getContext(),

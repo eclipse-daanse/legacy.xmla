@@ -124,7 +124,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                         .withFactColumn(AggMeasureFactCountTestModifier.STORE_COST_COLUMN_IN_FACT_CSV_2016)
                         .build(),
                    AggregationMeasureFactCountMappingImpl.builder()
-                        .withColumn(AggMeasureFactCountTestModifier.unitSalesAggC6FactCsv2016)
+                        .withColumn(AggMeasureFactCountTestModifier.unitSalesFactCountAggC6FactCsv2016)
                         .withFactColumn(AggMeasureFactCountTestModifier.UNIT_SALES_COLUMN_IN_FACT_CSV_2016)
                         .build()
                 ))

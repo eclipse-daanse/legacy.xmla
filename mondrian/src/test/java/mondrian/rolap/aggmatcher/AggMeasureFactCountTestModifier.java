@@ -109,18 +109,28 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                     DAY_OF_MONTH_COLUMN_TIME_CSV
                     ))).build();
 
+    //## TableName: fact_csv_2016
+    //## ColumnNames: product_id,time_id,customer_id,promotion_id,store_id,store_sales,store_cost,unit_sales
+    //## ColumnTypes: INTEGER,INTEGER,INTEGER,INTEGER,INTEGER,DECIMAL(10,4):null,DECIMAL(10,4):null,DECIMAL(10,4):null
+    public static final ColumnImpl PRODUCT_ID_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("product_id").withType("INTEGER").build();
     public static final ColumnImpl TIME_ID_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("time_id").withType("INTEGER").build();
+    public static final ColumnImpl CUSTOMER_ID_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("customer_id").withType("INTEGER").build();
+    public static final ColumnImpl PROMOTION_ID_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("promotion_id").withType("INTEGER").build();
     public static final ColumnImpl STORE_ID_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
-    public static final ColumnImpl UNIT_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("unit_sales").withType("INTEGER").build();
-    public static final ColumnImpl STORE_COST_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("store_cost").withType("INTEGER").build();
-    public static final ColumnImpl STORE_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("store_sales").withType("INTEGER").build();
+    public static final ColumnImpl STORE_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("store_sales").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnImpl STORE_COST_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("store_cost").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnImpl UNIT_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("unit_sales").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();    
     public static final PhysicalTableImpl FACT_CSV_2016_TABLE = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("fact_csv_2016")
             .withColumns(List.of(
+            		PRODUCT_ID_COLUMN_IN_FACT_CSV_2016,            		
                     TIME_ID_COLUMN_IN_FACT_CSV_2016,
+                    CUSTOMER_ID_COLUMN_IN_FACT_CSV_2016,
+                    PROMOTION_ID_COLUMN_IN_FACT_CSV_2016,
                     STORE_ID_COLUMN_IN_FACT_CSV_2016,
-                    UNIT_SALES_COLUMN_IN_FACT_CSV_2016,
+                    STORE_SALES_COLUMN_IN_FACT_CSV_2016,
                     STORE_COST_COLUMN_IN_FACT_CSV_2016,
-                    STORE_SALES_COLUMN_IN_FACT_CSV_2016
+                    UNIT_SALES_COLUMN_IN_FACT_CSV_2016
+                                        
                     ))).build();
 
     //## TableName: agg_c_6_fact_csv_2016
