@@ -128,7 +128,7 @@ class ExplicitRecognizer extends Recognizer {
                     : getTableDef().getMeasures())
                 {
                     // Column name match is case insensitive
-                    if (measure.getColumnName().getName().equals(aggColumn.getName()))
+                    if (measure.getColumn().getName().equals(aggColumn.getName()))
                     {
                         String name = measure.getName();
                         List<Segment> parts = Util.parseIdentifier(name);
@@ -297,7 +297,7 @@ class ExplicitRecognizer extends Recognizer {
                 if (tableDefLevelUniqueNameMap.containsKey(levelUniqueName)) {
                     ExplicitRules.TableDef.Level level =
                         tableDefLevelUniqueNameMap.get(levelUniqueName);
-                    if (aggTableColumnMap.containsKey(level.getColumnName().getName())) {
+                    if (aggTableColumnMap.containsKey(level.getColumn().getName())) {
                         levelMatches.add(
                             new Pair<>(
                                 rLevel, level));
@@ -323,10 +323,10 @@ class ExplicitRecognizer extends Recognizer {
                 ExplicitRules.TableDef.Level aggLevel = pair.right;
 
                 makeLevelColumnUsage(
-                    aggTableColumnMap.get(aggLevel.getColumnName().getName()),
+                    aggTableColumnMap.get(aggLevel.getColumn().getName()),
                     hierarchyUsage,
                     getColumnName(aggLevel.getRolapFieldName()),
-                    aggLevels.get(levelMatches.indexOf(pair)).getColumnName().getName(),
+                    aggLevels.get(levelMatches.indexOf(pair)).getColumn().getName(),
                     rolapLevel.getName(),
                     forceCollapse
                         ? true
