@@ -31,12 +31,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.eclipse.daanse.db.jdbc.util.impl.Column;
-import org.eclipse.daanse.db.jdbc.util.impl.DBStructure;
-import org.eclipse.daanse.db.jdbc.util.impl.Table;
 import org.eclipse.daanse.db.statistics.api.StatisticsProvider;
 import org.eclipse.daanse.jdbc.db.api.DatabaseService;
 import org.eclipse.daanse.jdbc.db.api.schema.ColumnDefinition;
+import org.eclipse.daanse.jdbc.db.api.schema.ColumnMetaData;
 import org.eclipse.daanse.jdbc.db.api.schema.SchemaReference;
 import org.eclipse.daanse.jdbc.db.api.schema.TableDefinition;
 import org.eclipse.daanse.jdbc.db.api.schema.TableReference;
@@ -47,6 +45,9 @@ import org.eclipse.daanse.olap.documentation.api.ConntextDocumentationProvider;
 import org.eclipse.daanse.olap.rolap.dbmapper.verifyer.api.Level;
 import org.eclipse.daanse.olap.rolap.dbmapper.verifyer.api.VerificationResult;
 import org.eclipse.daanse.olap.rolap.dbmapper.verifyer.api.Verifyer;
+import org.eclipse.daanse.rdb.structure.api.model.Column;
+import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
+import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
@@ -1101,7 +1102,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     private Optional<String> getFactTableName(QueryMapping relation) {
         if (relation instanceof TableQueryMapping mt) {
-            return Optional.of(getTableName(mt.getTable()));
+            return Optional.ofNullable(getTableName(mt.getTable()));
         }
         if (relation instanceof InlineTableQueryMapping it) {
             return Optional.ofNullable(it.getAlias());
@@ -1204,12 +1205,10 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     private void writeDatabaseInfo(FileWriter writer, Context context) {
         try (Connection connection = context.getDataSource().getConnection()) {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
-            List<DBStructure> dbStructureList = List.of();
-            //TODO
-            //List<DBStructure> dbStructureList = context.getCatalogMapping().getSchemas().stream().map(s -> Utils.getDBStructure(s)).toList();
+            List<? extends DatabaseSchema> dbschemas = context.getCatalogMapping().getDbschemas();
             SchemaReference schemaReference = new SchemaReferenceR(connection.getSchema());
             List<TableDefinition> tables = databaseService.getTableDefinitions(databaseMetaData, schemaReference);
-            writeTables(writer, context, tables, databaseMetaData, dbStructureList);
+            writeTables(writer, context, tables, databaseMetaData, dbschemas);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -1219,8 +1218,8 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         final FileWriter writer,
         final Context context,
         final List<TableDefinition> tables,
-        final DatabaseMetaData jdbcMetaDataService,
-        List<DBStructure> dbStructureList
+        final DatabaseMetaData databaseMetaData,
+        List<? extends DatabaseSchema> dbschemas
     ) {
         try {
             if (tables != null && !tables.isEmpty()) {
@@ -1234,10 +1233,10 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                     ---
                     erDiagram
                     """);
-                List<Table> missedTables = getMissedTablesFromDbStructureFromSchema(dbStructureList, tables);
+                List<? extends Table> missedTables = getMissedTablesFromDbStructureFromSchema(dbschemas, tables);
                 List<String> missedTableNames = new ArrayList<>();
-                missedTableNames.addAll(missedTables.stream().map(t -> t.tableName()).toList());
-                tables.forEach(t -> writeTablesDiagram(writer, t.table(), jdbcMetaDataService, dbStructureList, missedTableNames));
+                missedTableNames.addAll(missedTables.stream().map(t -> t.getName()).toList());
+                tables.forEach(t -> writeTablesDiagram(writer, t.table(), databaseMetaData, dbschemas, missedTableNames));
                 missedTables.forEach(t -> writeTablesDiagram(writer, t));
                 writer.write(ENTER);
                 List<String> tablesConnections = schemaTablesConnections(context, missedTableNames);
@@ -1257,8 +1256,8 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     private void writeTablesDiagram(FileWriter writer, Table table) {
         try {
-            List<Column> columnList = table.columns();
-            String name = table.tableName();
+            List<? extends Column> columnList = table.getColumns();
+            String name = table.getName();
             String tableFlag = NEGATIVE_FLAG;
             writer.write("\"");
             writer.write(name);
@@ -1267,13 +1266,15 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
             writer.write(ENTER);
             if (columnList != null) {
                 for (Column c : columnList) {
-                    String columnName = c.name();
-                    String type = c.type().getType().value;
+                    String columnName = c.getName();
+                    String type = c.getType();
                     String flag = NEGATIVE_FLAG;
                     writer.write(type);
                     writer.write(" ");
                     writer.write(columnName);
                     writer.write(" \"");
+                    writer.write(getNullable(c));
+                    writer.write(getSize(c));
                     writer.write(flag);
                     writer.write("\"");
                     writer.write(ENTER);
@@ -1286,11 +1287,11 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         }
     }
 
-    private void writeTablesDiagram(FileWriter writer, TableReference tableReference, DatabaseMetaData databaseMetaData, List<DBStructure> dbStructureList, List<String> missedTableNames) {
+    private void writeTablesDiagram(FileWriter writer, TableReference tableReference, DatabaseMetaData databaseMetaData, List<? extends DatabaseSchema> databaseSchemaList, List<String> missedTableNames) {
         try {
             List<ColumnDefinition> columnList = databaseService.getColumnDefinitions(databaseMetaData, tableReference);
             String name = tableReference.name();
-            List<Column> missedColumns = getMissedColumnsFromDbStructureFromSchema(dbStructureList, name, columnList);
+            List<? extends Column> missedColumns = getMissedColumnsFromDbStructureFromSchema(databaseSchemaList, name, columnList);
             String tableFlag = POSITIVE_FLAG;
             if (!missedColumns.isEmpty()) {
                 tableFlag = NEGATIVE_FLAG;
@@ -1312,18 +1313,22 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                     writer.write(" ");
                     writer.write(columnName);
                     writer.write(" \"");
+                    writer.write(getNullable(c.columnMetaData()));
+                    writer.write(getSize(c.columnMetaData()));
                     writer.write(flag);
                     writer.write("\"");
                     writer.write(ENTER);
                 }
                 for (Column c : missedColumns) {
-                    String columnName = c.name();
-                    String type = c.type().getType().value;
+                    String columnName = c.getName();
+                    String type = c.getType();
                     String flag = NEGATIVE_FLAG;
                     writer.write(type);
                     writer.write(" ");
                     writer.write(columnName);
                     writer.write(" \"");
+                    writer.write(getNullable(c));
+                    writer.write(getSize(c));                    
                     writer.write(flag);
                     writer.write("\"");
                     writer.write(ENTER);
@@ -1337,18 +1342,55 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         }
     }
 
-    private List<Column> getMissedColumnsFromDbStructureFromSchema(List<DBStructure> dbStructureList, String tableName, List<ColumnDefinition> columnList) {
-        List<Table> ts = dbStructureList.parallelStream().flatMap(d -> d.getTables().stream().filter(t -> tableName.equals(t.tableName()))).toList();
+    private String getSize(Column column) {    	
+    	if (column.getColumnSize() != null && column.getColumnSize() > 0) {    		
+    		StringBuilder r = new StringBuilder();
+    		r.append("(");
+    		r.append(column.getColumnSize());
+    		if (column.getDecimalDigits() != null && column.getDecimalDigits() > 0) {
+    			r.append(".").append(column.getDecimalDigits());    			
+    		}
+    		r.append(") ");
+    		return r.toString();
+    	}
+    	return "";
+	}
+
+    private String getSize(ColumnMetaData columnMetaData) {    	
+    	if (columnMetaData.columnSize().isPresent()) {    		
+    		StringBuilder r = new StringBuilder();
+    		r.append("(");
+    		r.append(columnMetaData.columnSize().getAsInt());
+    		if (columnMetaData.decimalDigits().isPresent()) {
+    			r.append(".").append(columnMetaData.decimalDigits().getAsInt());    			
+    		}
+    		r.append(") ");
+    		return r.toString();
+    	}
+    	return "";
+	}
+
+
+	private String getNullable(ColumnMetaData columnMetaData) {
+		return columnMetaData.nullable().isPresent() && columnMetaData.nullable().getAsInt() > 0 ? "is null " : "not null ";
+	}
+
+	private String getNullable(Column column) {
+		return column.getNullable() ? "is null " : "not null ";
+	}
+
+	private List<? extends Column> getMissedColumnsFromDbStructureFromSchema(List<? extends DatabaseSchema> databaseSchemaList, String tableName, List<ColumnDefinition> columnList) {
+        List<? extends Table> ts = databaseSchemaList.parallelStream().flatMap(d -> d.getTables().stream().filter(t -> tableName.equals(t.getName()))).toList();
         if (!ts.isEmpty()) {
-            List<Column> columns = ts.stream().flatMap(t -> t.columns().stream()).toList();
-            return columns.stream().filter(c -> columnList.stream().noneMatch(cd -> cd.column().name().equals(c.name()))).toList();
+            List<? extends Column> columns = ts.stream().flatMap(t -> t.getColumns().stream()).toList();
+            return columns.stream().filter(c -> columnList.stream().noneMatch(cd -> cd.column().name().equals(c.getName()))).toList();
         }
         return List.of();
     }
 
-    private List<Table> getMissedTablesFromDbStructureFromSchema(List<DBStructure> dbStructureList, List<TableDefinition> tables) {
-        return dbStructureList.parallelStream().flatMap(d -> d.getTables().stream())
-            .filter(t -> !tables.stream().anyMatch(td -> td.table().name().equals(t.tableName())))
+    private List<? extends Table> getMissedTablesFromDbStructureFromSchema(List<? extends DatabaseSchema> databaseSchemaList, List<TableDefinition> tables) {
+        return databaseSchemaList.parallelStream().flatMap(d -> d.getTables().stream())
+            .filter(t -> !tables.stream().anyMatch(td -> td.table().name().equals(t.getName())))
             .toList();
     }
 
