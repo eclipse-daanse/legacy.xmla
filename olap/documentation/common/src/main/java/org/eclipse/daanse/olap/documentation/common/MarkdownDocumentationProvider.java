@@ -42,12 +42,16 @@ import org.eclipse.daanse.jdbc.db.record.schema.SchemaReferenceR;
 import org.eclipse.daanse.jdbc.db.record.schema.TableReferenceR;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.documentation.api.ConntextDocumentationProvider;
-import org.eclipse.daanse.olap.rolap.dbmapper.verifyer.api.Level;
-import org.eclipse.daanse.olap.rolap.dbmapper.verifyer.api.VerificationResult;
-import org.eclipse.daanse.olap.rolap.dbmapper.verifyer.api.Verifyer;
+import org.eclipse.daanse.rolap.mapping.verifyer.api.Level;
+import org.eclipse.daanse.rolap.mapping.verifyer.api.VerificationResult;
+import org.eclipse.daanse.rolap.mapping.verifyer.api.Verifyer;
 import org.eclipse.daanse.rdb.structure.api.model.Column;
+import org.eclipse.daanse.rdb.structure.api.model.DatabaseCatalog;
 import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
 import org.eclipse.daanse.rdb.structure.api.model.Table;
+import org.eclipse.daanse.rdb.structure.check.CheckService;
+import org.eclipse.daanse.rdb.structure.pojo.DatabaseCatalogImpl;
+import org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
@@ -83,6 +87,7 @@ import org.osgi.util.converter.Converters;
 public class MarkdownDocumentationProvider extends AbstractContextDocumentationProvider {
 
     public static final String REF_NAME_VERIFIERS = "verifyer";
+    public static final String REF_NAME_CHECK_SERVICE = "checkService";
     public static final String EMPTY_STRING = "";
     public static final String NEGATIVE_FLAG = "❌";
     public static final String POSITIVE_FLAG = "✔";
@@ -92,6 +97,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     private static String ENTER = System.lineSeparator();
     private List<Verifyer> verifyers = new CopyOnWriteArrayList<>();
+    private List<CheckService> checkServices = new CopyOnWriteArrayList<>();
     private DocumentationProviderConfig config;
 
     @Reference
@@ -270,6 +276,15 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     public void unbindVerifiers(Verifyer verifyer) {
         verifyers.remove(verifyer);
+    }
+
+    @Reference(name = REF_NAME_CHECK_SERVICE, cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void bindCheckServices(CheckService checkService) {
+        checkServices.add(checkService);
+    }
+
+    public void unbindCheckServices(CheckService checkService) {
+        checkServices.remove(checkService);
     }
 
     private List<String> schemaTablesConnections(Context context, List<String> missedTableNames) {
@@ -463,19 +478,24 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     private void writeSchemaVerifyer(FileWriter writer, SchemaMapping schema, Context context) {
         try {
+        	List<? extends DatabaseSchema> dbschemas = context.getCatalogMapping().getDbschemas();
             List<VerificationResult> verifyResult = new ArrayList<>();
+            List<org.eclipse.daanse.rdb.structure.check.VerificationResult> dbVerifyResult = new ArrayList<>();
             for (Verifyer verifyer : verifyers) {
-            	//TODO
-                //verifyResult.addAll(verifyer.verify(schema, context.getDataSource()));
+                verifyResult.addAll(verifyer.verify(schema));
             }
-            if (!verifyResult.isEmpty()) {
+            for (CheckService checkService : checkServices) {
+                DatabaseCatalog databaseCatalog = DatabaseCatalogImpl.builder().withSchemas((List<DatabaseSchemaImpl>) dbschemas).build();
+                dbVerifyResult.addAll(checkService.verify(databaseCatalog, context.getDataSource()));
+            }
+            if (!verifyResult.isEmpty() || !dbVerifyResult.isEmpty()) {
                 writer.write("## Validation result for schema " + schema.getName());
                 writer.write(ENTER);
                 for (Level l : Level.values()) {
-                    Map<String, VerificationResult> map = getVerificationResultMap(verifyResult, l);
-                    Optional<VerificationResult> first = map.values().stream().findFirst();
-                    if (first.isPresent()) {
-                        String levelName = getColoredLevel(first.get().level());
+                    Map<String, VerificationResult> map = getVerificationResultMap(verifyResult, l.name());
+                    Map<String, org.eclipse.daanse.rdb.structure.check.VerificationResult> dbMap = getDBVerificationResultMap(dbVerifyResult, l.name());
+                    if (!map.values().isEmpty() || !dbMap.values().isEmpty()) {
+                        String levelName = getColoredLevel(l);
                         writer.write("## ");
                         writer.write(levelName);
                         writer.write(" : ");
@@ -489,6 +509,12 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                             .forEach(r -> {
                                 writeVerifyResult(writer, r);
                             });
+                        dbMap.values().stream()
+                        .sorted((r1, r2) -> r1.cause().compareTo(r2.cause()))
+                        .forEach(r -> {
+                            writeDbVerifyResult(writer, r);
+                        });
+
                     }
                 }
             }
@@ -513,10 +539,16 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     }
 
     private Map<String, VerificationResult> getVerificationResultMap
-        (List<VerificationResult> verifyResult, Level l) {
-        return verifyResult.stream().filter(r -> l.equals(r.level()))
+        (List<VerificationResult> verifyResult, String l) {
+        return verifyResult.stream().filter(r -> l.equals(r.level().name()))
             .collect(Collectors.toMap(VerificationResult::description, Function.identity(), (o1, o2) -> o1));
     }
+
+    private Map<String, org.eclipse.daanse.rdb.structure.check.VerificationResult> getDBVerificationResultMap
+        (List<org.eclipse.daanse.rdb.structure.check.VerificationResult> verifyResult, String l) {
+    return verifyResult.stream().filter(r -> l.equals(r.level().name()))
+        .collect(Collectors.toMap(org.eclipse.daanse.rdb.structure.check.VerificationResult::description, Function.identity(), (o1, o2) -> o1));
+}
 
     private void writeVerifyResult(FileWriter writer, VerificationResult r) {
         try {
@@ -525,7 +557,15 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    private void writeDbVerifyResult(FileWriter writer, org.eclipse.daanse.rdb.structure.check.VerificationResult r) {
+        try {
+            writer.write("|" + r.cause().name() + "|" + r.description() + "|");
+            writer.write(ENTER);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String getCatalogName(String path) {
@@ -620,7 +660,6 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     private void writeCubeList(FileWriter writer, List<? extends CubeMapping> cubes) {
         if (cubes != null && !cubes.isEmpty()) {
-            int i = 0;
             cubes.forEach(c -> writeCube(writer, c));
         }
     }

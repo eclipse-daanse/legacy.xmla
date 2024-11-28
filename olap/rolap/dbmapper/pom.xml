@@ -39,8 +39,6 @@
     <module>provider.sample.expressivenames.record</module>
     <module>provider.sample.minimal.xml</module>
     <module>provider.sample.minimal.record</module>
-    <module>verifyer.api</module>
-    <module>verifyer.basic</module>
     <module>dbcreator.api</module>
     <module>dbcreator.basic</module>
     <module>schemacreator.api</module>

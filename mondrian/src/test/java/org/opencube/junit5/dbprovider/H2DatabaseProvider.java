@@ -34,7 +34,7 @@ import org.h2.jdbcx.JdbcDataSource;
 import aQute.bnd.annotation.spi.ServiceProvider;
 import mondrian.rolap.RolapSchemaPool;
 
-@ServiceProvider(value = DatabaseProvider.class)
+//@ServiceProvider(value = DatabaseProvider.class)
 public class H2DatabaseProvider implements DatabaseProvider {
 
 //	private Path testDirPath;

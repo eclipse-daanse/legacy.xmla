@@ -18,7 +18,13 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.olap.rolap.dbmapper.verifyer.basic</artifactId>
+      <artifactId>org.eclipse.daanse.rolap.mapping.verifyer.basic</artifactId>
+      <version>${revision}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.rdb.structure.check</artifactId>
       <version>${revision}</version>
       <scope>compile</scope>
     </dependency>
