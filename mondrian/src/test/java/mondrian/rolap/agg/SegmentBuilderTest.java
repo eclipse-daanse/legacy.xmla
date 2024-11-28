@@ -39,6 +39,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -770,7 +771,7 @@ class SegmentBuilderTest {
 
     private void clearAggregationCache(Connection connection) {
     	SegmentCache segmentCache =
-    			connection.getContext().getAggregationManager()
+    			((AbstractBasicContext)connection.getContext()).getAggregationManager()
             .cacheMgr.compositeCache;
     	segmentCache.getSegmentHeaders().stream().forEach(it -> segmentCache.remove(it));
 	}
@@ -951,7 +952,7 @@ class SegmentBuilderTest {
         final Order order)
     {
         SegmentCache cache =
-                connection.getContext().getAggregationManager()
+                ((AbstractBasicContext)connection.getContext()).getAggregationManager()
             .cacheMgr.compositeCache;
 
         List<SegmentHeader> headers = cache.getSegmentHeaders();

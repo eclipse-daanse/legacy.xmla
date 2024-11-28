@@ -31,8 +31,6 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.core.BasicContextConfig;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 
-import mondrian.rolap.agg.AggregationManager;
-
 /**
  * The {@link Context} gives access to all resources and configurations that are needed
  * to calculate and Data Cubes
@@ -96,7 +94,7 @@ public interface Context {
 
 	ResultShepherd getResultShepherd();
 
-	AggregationManager getAggregationManager();
+//	AggregationManager getAggregationManager();
 
 	void addStatement(Statement statement);
 

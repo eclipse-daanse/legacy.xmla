@@ -130,7 +130,6 @@ public abstract class AbstractBasicContext implements Context {
 		return KEYWORD_LIST;
 	}
 
-	@Override
 	public AggregationManager getAggregationManager() {
 		if (shutdown) {
 			throw new MondrianException(SERVER_ALREADY_SHUTDOWN);

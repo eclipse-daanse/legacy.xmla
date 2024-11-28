@@ -35,6 +35,7 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
@@ -106,7 +107,8 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     connection.getCacheControl( null ).flushSchemaCache();
     final Statement statement = ((Connection) connection).getInternalStatement();
     e = new ExecutionImpl( statement, Optional.empty() );
-    aggMgr = e.getMondrianStatement().getMondrianConnection().getContext().getAggregationManager();
+    AbstractBasicContext abc = (AbstractBasicContext) e.getMondrianStatement().getMondrianConnection().getContext();
+    aggMgr = abc.getAggregationManager();
     locus = new LocusImpl( e, "FastBatchingCellReaderTest", null );
     LocusImpl.push( locus );
     salesCube = (RolapCube) connection.getSchemaReader().withLocus().getCubes()[0];
@@ -891,7 +893,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
 
     final List<Future<Map<Segment, SegmentWithData>>> segmentFutures =
         new ArrayList<>();
-    context.getAggregationManager().cacheMgr.execute(
+    
+    AbstractBasicContext abc = (AbstractBasicContext) context;
+    abc.getAggregationManager().cacheMgr.execute(
         new SegmentCacheManager.Command<Void>() {
           private final Locus locus = LocusImpl.peek();
 

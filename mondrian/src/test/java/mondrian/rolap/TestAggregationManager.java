@@ -36,6 +36,7 @@ import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -120,9 +121,9 @@ class TestAggregationManager extends BatchTestCase {
                 .getInternalStatement();
         execution = new ExecutionImpl(statement, Optional.empty());
         aggMgr =
-            execution.getMondrianStatement()
+            ((AbstractBasicContext)execution.getMondrianStatement()
                 .getMondrianConnection()
-                .getContext().getAggregationManager();
+                .getContext()).getAggregationManager();
         locus = new LocusImpl(execution, "TestAggregationManager", null);
         LocusImpl.push(locus);
     }

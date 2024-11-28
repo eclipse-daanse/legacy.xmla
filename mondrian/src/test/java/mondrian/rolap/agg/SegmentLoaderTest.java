@@ -37,6 +37,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -77,13 +78,13 @@ class SegmentLoaderTest extends BatchTestCase {
     private void prepareContext(Context context) {
         Connection connection = context.getConnection();
         cacheMgr =
-            ((Connection) connection)
-                .getContext().getAggregationManager().cacheMgr;
+            ((AbstractBasicContext) connection
+                .getContext()).getAggregationManager().cacheMgr;
         statement = ((Connection) connection).getInternalStatement();
         execution = new ExecutionImpl(statement, Optional.of(Duration.ofMillis(1000)));
         locus = new LocusImpl(execution, null, null);
-        cacheMgr = execution.getMondrianStatement().getMondrianConnection()
-            .getContext().getAggregationManager().cacheMgr;
+        cacheMgr = ((AbstractBasicContext)execution.getMondrianStatement().getMondrianConnection()
+            .getContext()).getAggregationManager().cacheMgr;
 
         LocusImpl.push(locus);
     }

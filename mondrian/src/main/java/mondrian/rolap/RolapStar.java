@@ -46,6 +46,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.rdb.structure.pojo.InlineTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl;
@@ -228,8 +229,8 @@ public class RolapStar {
     }
 
     private Object getCellFromExternalCache(CellRequest request, RolapConnection rolapConnection) {
-        final SegmentWithData segment =
-            LocusImpl.peek().getContext().getAggregationManager()
+    	AbstractBasicContext abc = (AbstractBasicContext) LocusImpl.peek().getContext();
+        final SegmentWithData segment = abc.getAggregationManager()
                 .getCacheMgr(rolapConnection).peek(request);
         if (segment == null) {
             return null;

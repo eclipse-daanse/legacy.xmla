@@ -65,6 +65,7 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.api.result.Scenario;
 import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -269,7 +270,8 @@ public SchemaReader getSchemaReader() {
 
   @Override
 public CacheControl getCacheControl( PrintWriter pw ) {
-    return context.getAggregationManager().getCacheControl( this, pw );
+	  AbstractBasicContext abc = (AbstractBasicContext) context;
+    return abc.getAggregationManager().getCacheControl( this, pw );
   }
 
   /**

@@ -20,6 +20,7 @@ import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -86,7 +87,7 @@ class SegmentCacheTest {
         cc.flush(cc.createMeasuresRegion(salesCube));
         Thread.sleep(1000);
 
-        connection.getContext()
+        ((AbstractBasicContext)connection.getContext())
             .getAggregationManager().cacheMgr.segmentCacheWorkers
             .add(testWorker);
 
@@ -113,7 +114,7 @@ class SegmentCacheTest {
 
         try {
             // Register our custom listener.
-            ((CompositeSegmentCache)connection.getContext()
+            ((CompositeSegmentCache)((AbstractBasicContext)connection.getContext())
                 .getAggregationManager().cacheMgr.compositeCache)
                 .addListener(listener);
             // Now execute a query and check the events
@@ -140,10 +141,10 @@ class SegmentCacheTest {
             assertEquals("FoodMart", deletedHeaders.get(0).schemaName);
             assertEquals("Unit Sales", deletedHeaders.get(0).measureName);
         } finally {
-            ((CompositeSegmentCache)connection.getContext()
+            ((CompositeSegmentCache)((AbstractBasicContext)connection.getContext())
             		.getAggregationManager().cacheMgr.compositeCache)
                 .removeListener(listener);
-           connection.getContext()
+            ((AbstractBasicContext)connection.getContext())
                 .getAggregationManager().cacheMgr.segmentCacheWorkers
                 .remove(testWorker);
         }

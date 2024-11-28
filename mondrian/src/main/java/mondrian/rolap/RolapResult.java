@@ -54,6 +54,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterator;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,8 +135,8 @@ public class RolapResult extends ResultBase {
         .getMondrianStatement().getMondrianConnection()
         .getContext().getConfig().compoundSlicerMemberSolveOrder();
     this.point = CellKey.Generator.newCellKey( axes.length );
-    final AggregationManager aggMgr =
-        execution.getMondrianStatement().getMondrianConnection().getContext().getAggregationManager();
+    AbstractBasicContext abc = (AbstractBasicContext) execution.getMondrianStatement().getMondrianConnection().getContext();
+    final AggregationManager aggMgr = abc.getAggregationManager();
     this.aggregatingReader = aggMgr.getCacheCellReader();
     final int expDeps = execution.getMondrianStatement().getMondrianConnection().getContext().getConfig().testExpDependencies();
     if ( expDeps > 0 ) {

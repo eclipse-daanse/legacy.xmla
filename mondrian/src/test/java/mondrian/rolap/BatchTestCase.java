@@ -41,6 +41,7 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.opencube.junit5.TestUtil;
@@ -213,11 +214,11 @@ public class BatchTestCase{
                 @Override
 				public GroupingSet execute() {
                     final RolapCube cube = getCube(connection, cubeName);
+                    AbstractBasicContext abc = (AbstractBasicContext) connection.getContext();
                     final BatchLoader fbcr =
                         new BatchLoader(
                             LocusImpl.peek(),
-                            connection.getContext()
-                                .getAggregationManager().cacheMgr,
+                            abc.getAggregationManager().cacheMgr,
                             cube.getStar().getSqlQueryDialect(),
                             cube);
                     BatchLoader.Batch batch =
@@ -324,10 +325,11 @@ public class BatchTestCase{
                 new ExecutionImpl(
                     ((Connection) connection).getInternalStatement(),
                     Optional.of(Duration.ofMillis(1000)));
-            final AggregationManager aggMgr =
-                execution.getMondrianStatement()
+            AbstractBasicContext abc = (AbstractBasicContext) execution.getMondrianStatement()
                     .getMondrianConnection()
-                    .getContext().getAggregationManager();
+                    .getContext();
+            final AggregationManager aggMgr =
+                abc.getAggregationManager();
             final Locus locus =
                 new LocusImpl(
                     execution,

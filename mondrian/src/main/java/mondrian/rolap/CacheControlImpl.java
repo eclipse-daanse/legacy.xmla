@@ -35,6 +35,7 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
 
 import mondrian.olap.IdImpl;
 import mondrian.olap.MondrianException;
@@ -560,9 +561,10 @@ public class CacheControlImpl implements CacheControl {
         for (RolapStar star : starList) {
             star.print(pw, "", false);
         }
+        
+		AbstractBasicContext abc = (AbstractBasicContext) connection.getContext();
         final SegmentCacheManager manager =
-            connection.getContext()
-                .getAggregationManager().getCacheMgr(this.connection);
+                  		abc.getAggregationManager().getCacheMgr(this.connection);
         LocusImpl.execute(
             connection,
             "CacheControlImpl.printCacheState",

@@ -53,6 +53,7 @@ import org.eclipse.daanse.olap.api.query.component.UnresolvedFunCall;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Position;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
 import org.slf4j.Logger;
 
@@ -192,8 +193,9 @@ public class RolapCell implements Cell {
         final Connection connection =
             result.getExecution().getMondrianStatement()
                 .getMondrianConnection();
+        AbstractBasicContext abc = (AbstractBasicContext) connection.getContext();
         final RolapAggregationManager aggMgr =
-            connection.getContext().getAggregationManager();
+            abc.getAggregationManager();
         return aggMgr.getDrillThroughSql(
             cellRequest,
             starPredicateSlicer,
@@ -223,8 +225,9 @@ public class RolapCell implements Cell {
         final Connection connection =
             result.getExecution().getMondrianStatement()
                 .getMondrianConnection();
+        AbstractBasicContext abc = (AbstractBasicContext)  connection.getContext();
         final RolapAggregationManager aggMgr =
-            connection.getContext().getAggregationManager();
+            abc.getAggregationManager();
         final String sql =
             aggMgr.getDrillThroughSql(
                 cellRequest,

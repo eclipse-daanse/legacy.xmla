@@ -45,6 +45,7 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -567,8 +568,10 @@ class MemberCacheControlTest {
         // Load cell data and check it is in cache
         executeQuery(conn,
             "select {[Measures].[Unit Sales]} on columns, {[Retail].[CA]} on rows from [Sales]");
+        
+        AbstractBasicContext abc = (AbstractBasicContext) conn.getContext();
         final AggregationManager aggMgr =
-            ( conn).getContext().getAggregationManager();
+          abc.getAggregationManager();
         assertEquals(
             Double.valueOf("74748"),
             aggMgr.getCellFromAllCaches(
@@ -725,8 +728,9 @@ class MemberCacheControlTest {
         // Load cell data and check it is in cache
         executeQuery(conn,
             "select {[Measures].[Unit Sales]} on columns, {[Retail].[CA].[Alameda]} on rows from [Sales]");
+        AbstractBasicContext abc = (AbstractBasicContext) conn.getContext();
         final AggregationManager aggMgr =
-            conn.getContext().getAggregationManager();
+            abc.getAggregationManager();
         assertEquals(
             Double.valueOf("2117"),
             aggMgr.getCellFromAllCaches(

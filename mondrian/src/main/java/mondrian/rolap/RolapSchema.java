@@ -72,6 +72,7 @@ import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.impl.IdentifierSegment;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCubeGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessDimensionGrantMapping;
@@ -1165,7 +1166,8 @@ System.out.println("RolapSchema.createMemberReader: CONTAINS NAME");
                 stars.put(rolapStarKey, star);
                 // let cache manager load pending segments
                 // from external cache if needed
-                internalConnection.getContext().getAggregationManager().getCacheMgr(internalConnection)
+                AbstractBasicContext abc = (AbstractBasicContext) internalConnection.getContext();
+                abc.getAggregationManager().getCacheMgr(internalConnection)
                     .loadCacheForStar(star);
             }
             return star;
