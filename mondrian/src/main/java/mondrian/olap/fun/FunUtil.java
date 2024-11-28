@@ -503,6 +503,7 @@ public class FunUtil extends Util {
     }
   }
 
+  @Deprecated
   public static OperationAtom decodeSyntacticTypeToOp( String flags,String name ) {
 	    char c = flags.charAt( 0 );
 	    switch ( c ) {
@@ -538,6 +539,7 @@ public class FunUtil extends Util {
    *              AbstractFunctionDefinition}.
    * @return An array {@link DataType} codes.
    */
+  @Deprecated
   public static DataType decodeReturnCategory( String flags ) {
     final DataType returnCategory = FunUtil.decodeCategory( flags, 1 );
     return returnCategory;
@@ -583,6 +585,7 @@ public class FunUtil extends Util {
    * @param offset 0-based offset of character within string
    * @return A {@link DataType}
    */
+  @Deprecated
   public static DataType decodeCategory( String flags, int offset ) {
     char c = flags.charAt( offset );
     switch ( c ) {
@@ -642,6 +645,7 @@ public class FunUtil extends Util {
    *              AbstractFunctionDefinition}.
    * @return An array {@link DataType} codes.
    */
+  @Deprecated
   public static DataType[] decodeParameterCategories( String flags ) {
 	  DataType[] parameterCategories = new DataType[ flags.length() - 2 ];
     for ( int i = 0; i < parameterCategories.length; i++ ) {
