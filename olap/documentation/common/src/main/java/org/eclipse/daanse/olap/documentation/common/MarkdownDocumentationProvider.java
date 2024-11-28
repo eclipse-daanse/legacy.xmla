@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -53,6 +54,11 @@ import org.eclipse.daanse.rdb.structure.check.CheckService;
 import org.eclipse.daanse.rdb.structure.pojo.DatabaseCatalogImpl;
 import org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.AggregationExcludeMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.AggregationForeignKeyMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.AggregationMeasureFactCountMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.AggregationNameMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.AggregationTableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
@@ -590,17 +596,17 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     private void writeCubeDiagram(FileWriter writer, Context context) {
         context.getCatalogMapping().getSchemas().forEach(schema -> {
-            writeSchemaDiagram(writer, schema);
+            writeSchemaDiagram(writer, schema, context);
         });
     }
 
-    private void writeSchemaDiagram(FileWriter writer, SchemaMapping schema) {
+    private void writeSchemaDiagram(FileWriter writer, SchemaMapping schema, Context context) {
         List<? extends CubeMapping> cubes =  schema.getCubes();
         int i = 0;
         if (cubes != null && !cubes.isEmpty()) {
             for (CubeMapping c : cubes) {
             	if (c instanceof PhysicalCubeMapping pc) {
-            		writePhysicalCubeDiagram(writer, schema, pc, i);
+            		writePhysicalCubeDiagram(writer, schema, pc, i, context);
             	}
             	if (c instanceof VirtualCubeMapping vc) {
             		writeVirtualCubeDiagram(writer, schema, vc, i);
@@ -718,7 +724,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         }
     }
 
-    private void writePhysicalCubeDiagram(FileWriter writer, SchemaMapping schema, PhysicalCubeMapping cube, int index) {
+    private void writePhysicalCubeDiagram(FileWriter writer, SchemaMapping schema, PhysicalCubeMapping cube, int index, Context context) {
         try {
             List<String> connections = cubeDimensionConnections(schema, cube, index);
             if (cube.getName() != null) {
@@ -813,10 +819,117 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                    writer.write(ENTER);
                    writer.write("---");
                    writer.write(ENTER);
+                   
+                   writeAggregationSection(writer, schema, cube, context);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void writeAggregationSection(FileWriter writer, SchemaMapping schema, PhysicalCubeMapping cube,
+        Context context) {
+    	Optional<TableQueryMapping> tableQuery = getFactTableQuery(cube);
+        if (!tableQuery.isPresent() && tableQuery.get().getAggregationTables() != null) {
+            try (Connection connection = context.getDataSource().getConnection()) {
+                List<? extends AggregationTableMapping> aggregationTables = tableQuery.get().getAggregationTables();
+                DatabaseMetaData databaseMetaData = connection.getMetaData();
+                List<? extends DatabaseSchema> dbschemas = context.getCatalogMapping().getDbschemas();
+                SchemaReference schemaReference = new SchemaReferenceR(connection.getSchema());
+                List<TableDefinition> tables = databaseService.getTableDefinitions(databaseMetaData, schemaReference);
+                
+                writeTables(writer, context, tables, databaseMetaData, dbschemas);
+                
+                writer.write("\" Aggregation section:");
+                writer.write(ENTER);
+                writer.write(ENTER);
+                writer.write("""
+                    ---
+                    ```mermaid
+                       erDiagram
+                       """);
+                Table factTable = tableQuery.get().getTable();
+                Optional<TableReference> oTableReference = tables.stream().filter(t -> (t.table() != null && t.table().name().equals(factTable.getName()))).map(t -> t.table()).findAny();
+                List<String> mt = new ArrayList<>();
+                List<String> tablesConnections = new ArrayList<>();
+                if (oTableReference.isPresent()) {
+                    writeTablesDiagram(writer, oTableReference.get(), databaseMetaData, dbschemas, mt);
+                } else {
+                    writeTablesDiagram(writer, factTable);
+                }
+                for (AggregationTableMapping aggregationTable : aggregationTables) {
+                    if(aggregationTable instanceof AggregationNameMapping aggregationName && aggregationName.getName() != null) {
+                        Table aggTable = aggregationName.getName();
+                        oTableReference = tables.stream().filter(t -> (t.table() != null && t.table().name().equals(factTable.getName()))).map(t -> t.table()).findAny();
+                        if (oTableReference.isPresent()) {
+                            writeTablesDiagram(writer, oTableReference.get(), databaseMetaData, dbschemas, mt);
+                        } else {
+                            writeTablesDiagram(writer, aggTable);
+                        }
+                        tablesConnections.addAll(aggregationConnections(aggregationName, mt));
+                    }
+                }
+                if (tableQuery.get().getAggregationExcludes() != null && !tableQuery.get().getAggregationExcludes().isEmpty()) {
+                    String tableFlag = NEGATIVE_FLAG;
+                    writer.write("\"");
+                    writer.write("excludes");
+                    writer.write(tableFlag);
+                    writer.write("\"{");
+                    writer.write(ENTER);
+                    for(AggregationExcludeMapping aggregationExclude : tableQuery.get().getAggregationExcludes()) {
+                        writer.write("x ");
+                        writer.write(aggregationExclude.getName());
+                        writer.write(ENTER);
+                    }
+                    writer.write("}");
+                    writer.write(ENTER);
+                }
+                for (String c : tablesConnections) {
+                    writer.write(c);
+                    writer.write(ENTER);
+                }
+                writer.write("""
+                    ```
+                    ---
+                    """);
+                
+            } catch (IOException | SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Collection<? extends String> aggregationConnections(AggregationNameMapping aggregationName, List<String> mt) {
+    	List<String> tablesConnections = new ArrayList<>();
+        if (aggregationName.getAggregationForeignKeys() != null) {
+            for (AggregationForeignKeyMapping aggregationForeignKey : aggregationName.getAggregationForeignKeys()) {
+                if(aggregationForeignKey.getFactColumn() != null && aggregationForeignKey.getFactColumn().getTable() != null 
+                        && aggregationForeignKey.getAggregationColumn() != null && aggregationForeignKey.getAggregationColumn().getTable() != null) {
+                    tablesConnections.add(
+                        connection1(aggregationForeignKey.getFactColumn().getTable().getName(), aggregationForeignKey.getAggregationColumn().getTable().getName(), 
+                                aggregationForeignKey.getFactColumn().getName(), aggregationForeignKey.getAggregationColumn().getName()));
+                }
+            }
+        }
+        if (aggregationName.getAggregationMeasureFactCounts() != null) {
+            for (AggregationMeasureFactCountMapping aggregationMeasureFactCount : aggregationName.getAggregationMeasureFactCounts()) {
+                if(aggregationMeasureFactCount.getFactColumn() != null && aggregationMeasureFactCount.getFactColumn().getTable() != null 
+                        && aggregationMeasureFactCount.getColumn() != null && aggregationMeasureFactCount.getColumn().getTable() != null) {
+                    tablesConnections.add(
+                        connection1(aggregationMeasureFactCount.getFactColumn().getTable().getName(), aggregationMeasureFactCount.getColumn().getTable().getName(), 
+                                aggregationMeasureFactCount.getFactColumn().getName(), aggregationMeasureFactCount.getColumn().getName()));
+                }
+            }
+        }
+        return tablesConnections;
+    }
+
+
+	private Optional<TableQueryMapping> getFactTableQuery(PhysicalCubeMapping cube) {
+        if (cube.getQuery() != null && cube.getQuery() instanceof TableQueryMapping tableQuery) {
+            return Optional.of(tableQuery);
+        }
+        return Optional.empty();
     }
 
     private void writeVirtualCubeDiagram(FileWriter writer, SchemaMapping schema, VirtualCubeMapping virtualCube, int index) {
@@ -1367,7 +1480,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                     writer.write(columnName);
                     writer.write(" \"");
                     writer.write(getNullable(c));
-                    writer.write(getSize(c));                    
+                    writer.write(getSize(c));
                     writer.write(flag);
                     writer.write("\"");
                     writer.write(ENTER);
@@ -1382,12 +1495,12 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     }
 
     private String getSize(Column column) {    	
-    	if (column.getColumnSize() != null && column.getColumnSize() > 0) {    		
+    	if (column.getColumnSize() != null && column.getColumnSize() > 0) {
     		StringBuilder r = new StringBuilder();
     		r.append("(");
     		r.append(column.getColumnSize());
     		if (column.getDecimalDigits() != null && column.getDecimalDigits() > 0) {
-    			r.append(".").append(column.getDecimalDigits());    			
+    			r.append(".").append(column.getDecimalDigits());
     		}
     		r.append(") ");
     		return r.toString();
