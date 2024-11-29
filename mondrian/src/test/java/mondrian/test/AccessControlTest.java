@@ -3240,7 +3240,7 @@ class AccessControlTest {
         TestUtil.executeQuery(
     		connection,
             " select from [Sales] where {[Measures].[Unit Sales]}");
-        
+
         ((TestContext)foodMartContext).setCatalogMappingSupplier(new FoodmartMappingSupplier());
         TestUtil.withSchema(foodMartContext, SchemaModifiers.AccessControlTestModifier27::new);
         props = new RolapConnectionPropsR(List.of("dev"), true, Locale.getDefault(), -1, TimeUnit.SECONDS, Optional.empty(), Optional.empty());
@@ -3352,7 +3352,7 @@ class AccessControlTest {
                     // rollup policies and different default members
                     // RolapNativeCrossjoin
                 	((TestContext)foodMartContext).setCatalogMappingSupplier(new FoodmartMappingSupplier());
-                    RolapSchemaPool.instance().clear();                                     
+                    RolapSchemaPool.instance().clear();
                     CatalogMapping catalogMapping = foodMartContext.getCatalogMapping();
                     ((TestContext)foodMartContext).setCatalogMappingSupplier(new SchemaModifiers.AccessControlTestModifier29(catalogMapping, hasAll, defaultMember, policy));
 

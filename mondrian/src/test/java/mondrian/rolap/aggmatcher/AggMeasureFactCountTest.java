@@ -326,13 +326,16 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 + "</AggName>\n";
         */
         // aggregation tables are used, but with general fact count column
+        // test uses aggregation column because right now we use reference to column. 
+        // previous we used column as string and mondriam used "fact_count" because "unit_SALES" != unit_sales "StOrE_cosT" != "store_cost" "STORE_SALES" != "store_sales"
+        // right now it un-possible because right now we use reference to column
         String aggSql = ""
                 + "select\n"
                 + "    `agg_c_6_fact_csv_2016`.`the_year` as `c0`,\n"
                 + "    `agg_c_6_fact_csv_2016`.`quarter` as `c1`,\n"
-                + "    sum(`agg_c_6_fact_csv_2016`.`unit_sales` * `agg_c_6_fact_csv_2016`.`fact_count`) / sum(`agg_c_6_fact_csv_2016`.`fact_count`) as `m0`,\n"
-                + "    sum(`agg_c_6_fact_csv_2016`.`store_cost` * `agg_c_6_fact_csv_2016`.`fact_count`) / sum(`agg_c_6_fact_csv_2016`.`fact_count`) as `m1`,\n"
-                + "    sum(`agg_c_6_fact_csv_2016`.`store_sales` * `agg_c_6_fact_csv_2016`.`fact_count`) / sum(`agg_c_6_fact_csv_2016`.`fact_count`) as `m2`\n"
+                + "    sum(`agg_c_6_fact_csv_2016`.`unit_sales` * `agg_c_6_fact_csv_2016`.`unit_sales_fact_count`) / sum(`agg_c_6_fact_csv_2016`.`unit_sales_fact_count`) as `m0`,\n"
+                + "    sum(`agg_c_6_fact_csv_2016`.`store_cost` * `agg_c_6_fact_csv_2016`.`store_cost_fact_count`) / sum(`agg_c_6_fact_csv_2016`.`store_cost_fact_count`) as `m1`,\n"
+                + "    sum(`agg_c_6_fact_csv_2016`.`store_sales` * `agg_c_6_fact_csv_2016`.`store_sales_fact_count`) / sum(`agg_c_6_fact_csv_2016`.`store_sales_fact_count`) as `m2`\n"
                 + "from\n"
                 + "    `agg_c_6_fact_csv_2016` as `agg_c_6_fact_csv_2016`\n"
                 + "where\n"

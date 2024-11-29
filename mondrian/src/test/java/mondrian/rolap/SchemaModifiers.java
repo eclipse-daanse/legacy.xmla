@@ -13844,7 +13844,7 @@ public class SchemaModifiers {
         @Override
         protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.schemaAccessRoles(schema).stream().filter(r -> !r.getName().equals("California manager")).toList());
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("California manager")
@@ -15903,7 +15903,7 @@ public class SchemaModifiers {
 
         protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.schemaAccessRoles(schema).stream().filter(r -> !r.getName().equals("California manager")).toList());
             result.add(
                 AccessRoleMappingImpl.builder()
                     .withName("California manager")
