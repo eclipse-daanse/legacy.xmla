@@ -658,7 +658,6 @@ public class BuiltinFunTable extends FunTableImpl {
         		 new AggregateChildrenFunbDef()
         );
 
-        builder.define(AvgFunDef.Resolver);
 
         builder.define(CorrelationFunDef.Resolver);
 

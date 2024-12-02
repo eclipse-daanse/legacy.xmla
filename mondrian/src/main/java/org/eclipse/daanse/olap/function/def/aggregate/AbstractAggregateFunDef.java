@@ -89,7 +89,7 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
      * @param evaluator current evaluation context
      * @return list of evaluated members or tuples
      */
-    protected static TupleList evaluateCurrentList(
+    public static TupleList evaluateCurrentList(
         TupleListCalc tupleListCalc,
         Evaluator evaluator)
     {

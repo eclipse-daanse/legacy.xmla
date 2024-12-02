@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.core.BasicContextConfig;
 import org.eclipse.daanse.olap.function.core.FunctionServiceImpl;
+import org.eclipse.daanse.olap.function.def.aggregate.avg.AvgResolver;
 import org.eclipse.daanse.olap.function.def.ancestor.AncestorResolver;
 import org.eclipse.daanse.olap.function.def.as.AsAliasResolver;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
@@ -57,6 +58,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 	    
 	    functionService.addResolver(new AsAliasResolver());
 	    functionService.addResolver(new AncestorResolver());
+	    functionService.addResolver(new AvgResolver());
 	}
 
 	@Override

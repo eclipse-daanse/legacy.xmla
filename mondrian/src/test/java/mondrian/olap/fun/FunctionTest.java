@@ -15,7 +15,6 @@ import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static mondrian.olap.Util.assertTrue;
 import static mondrian.olap.exceptions.CousinHierarchyMismatchException.cousinHierarchyMismatch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
@@ -102,7 +101,7 @@ import mondrian.util.Bug;
  *
  * @author gjohnson
  */
-class FunctionTest {//extends FoodMartTestCase {
+public class FunctionTest {//extends FoodMartTestCase {
 
   private static final Logger LOGGER = LoggerFactory.getLogger( FunctionTest.class );
   private static final int NUM_EXPECTED_FUNCTIONS = 239;
@@ -3470,16 +3469,6 @@ class FunctionTest {//extends FoodMartTestCase {
         + "Row #0: .00\n"
         + "Row #0: .00\n" );
   }
-
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testAvg(Context context) {
-    assertExprReturns(context.getConnection(),
-      "AVG({[Store].[All Stores].[USA].children},[Measures].[Store Sales])",
-      "188,412.71" );
-  }
-
-  // todo: testAvgWithNulls
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
@@ -10406,7 +10395,7 @@ mondrian.olap.fun.OrderFunDef$CurrentMemberCalc(type=SetType<MemberType<hierarch
    * Executes a scalar expression, and asserts that the result is as expected. For example, <code>assertExprReturns ("1
    * + 2", "3")</code> should succeed.
    */
-  void assertExprReturns(Connection connection, String expr, String expected ) {
+   void assertExprReturns(Connection connection, String expr, String expected ) {
     String actual = executeExpr(connection, expr);
     assertEquals( expected, actual );
   }
