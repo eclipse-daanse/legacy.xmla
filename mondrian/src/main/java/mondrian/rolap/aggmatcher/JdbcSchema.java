@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.daanse.db.dialect.api.Datatype;
+import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
 import org.eclipse.daanse.rdb.structure.api.model.PhysicalTable;
 import org.eclipse.daanse.rdb.structure.api.model.SystemTable;

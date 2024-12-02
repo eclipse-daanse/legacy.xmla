@@ -31,7 +31,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
-import org.eclipse.daanse.db.dialect.api.BestFitColumnType;
+import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEvent;

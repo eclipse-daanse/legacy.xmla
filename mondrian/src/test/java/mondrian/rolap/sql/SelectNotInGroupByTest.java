@@ -12,7 +12,7 @@ package mondrian.rolap.sql;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.withSchema;
 
-import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.api.AfterEach;

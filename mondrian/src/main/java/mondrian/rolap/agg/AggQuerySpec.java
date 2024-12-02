@@ -15,7 +15,7 @@ package mondrian.rolap.agg;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.daanse.db.dialect.api.BestFitColumnType;
+import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

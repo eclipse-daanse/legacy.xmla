@@ -17,7 +17,8 @@ import mondrian.olap.MondrianException;
 import mondrian.olap.UpdateImpl;
 import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapCube;
-import org.eclipse.daanse.db.dialect.api.Datatype;
+
+import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.mdx.model.api.select.Allocation;
 import org.eclipse.daanse.olap.action.api.ActionService;
 import org.eclipse.daanse.olap.api.CacheControl;

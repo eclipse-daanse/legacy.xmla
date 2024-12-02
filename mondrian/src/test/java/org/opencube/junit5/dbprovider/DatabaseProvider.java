@@ -23,7 +23,7 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 
 public interface DatabaseProvider extends Closeable {
 

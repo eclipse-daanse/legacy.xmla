@@ -17,7 +17,9 @@ import static org.mockito.Mockito.when;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 
-import org.eclipse.daanse.db.dialect.db.postgresql.PostgreSqlDialect;
+import org.eclipse.daanse.jdbc.db.dialect.db.postgresql.PostgreSqlDialect;
+import org.eclipse.daanse.jdbc.db.api.meta.DatabaseInfo;
+import org.eclipse.daanse.jdbc.db.api.meta.MetaInfo;
 import org.junit.jupiter.api.Test;
 
 import mondrian.olap.MondrianException;
@@ -57,7 +59,7 @@ class CodeSetTest {
     throws Exception
     {
     PostgreSqlDialect postgreSqlDialect = new PostgreSqlDialect(
-        mockConnection(
+        mockMetaInfo(
             POSTGRESQL_PRODUCT_NAME,
             POSTGRESQL_PRODUCT_VERSION));
     codeSet = new SqlQuery.CodeSet();
@@ -84,7 +86,7 @@ class CodeSetTest {
     throws Exception
     {
 	    PostgreSqlDialect postgreSqlDialect = new PostgreSqlDialect(
-        mockConnection(
+        mockMetaInfo(
             POSTGRESQL_PRODUCT_NAME,
             POSTGRESQL_PRODUCT_VERSION));
     codeSet = new SqlQuery.CodeSet();
@@ -113,7 +115,7 @@ class CodeSetTest {
       throws Exception
       {
 	    PostgreSqlDialect postgreSqlDialect = new PostgreSqlDialect(
-        mockConnection(
+        mockMetaInfo(
             POSTGRESQL_PRODUCT_NAME,
             POSTGRESQL_PRODUCT_VERSION));
     codeSet = new SqlQuery.CodeSet();
@@ -140,7 +142,7 @@ class CodeSetTest {
     throws Exception
     {
 	    PostgreSqlDialect postgreSqlDialect = new PostgreSqlDialect(
-        mockConnection(
+        mockMetaInfo(
             POSTGRESQL_PRODUCT_NAME,
             POSTGRESQL_PRODUCT_VERSION));
     codeSet = new SqlQuery.CodeSet();
@@ -166,7 +168,7 @@ class CodeSetTest {
     throws Exception
     {
 	    PostgreSqlDialect postgreSqlDialect = new PostgreSqlDialect(
-        mockConnection(
+        mockMetaInfo(
             POSTGRESQL_PRODUCT_NAME,
             POSTGRESQL_PRODUCT_VERSION));
     codeSet = new SqlQuery.CodeSet();
@@ -182,17 +184,17 @@ class CodeSetTest {
     }
   }
 
-  private Connection mockConnection(
+  private MetaInfo mockMetaInfo(
       String dbProductName, String dbProductVersion) throws Exception
       {
-    DatabaseMetaData dbMetaDataMock = mock(DatabaseMetaData.class);
-    when(dbMetaDataMock.getDatabaseProductName()).thenReturn(
+	MetaInfo metaInfoMock = mock(MetaInfo.class);
+	DatabaseInfo databaseInfo = mock(DatabaseInfo.class);
+	when(metaInfoMock.databaseInfo()).thenReturn(databaseInfo);
+    when(databaseInfo.databaseProductName()).thenReturn(
         dbProductName != null ? dbProductName : EMPTY_NAME);
-    when(dbMetaDataMock.getDatabaseProductVersion()).thenReturn(
+    when(databaseInfo.databaseProductVersion()).thenReturn(
         dbProductVersion != null ? dbProductVersion : EMPTY_NAME);
-    Connection conectionMock = mock(Connection.class);
-    when(conectionMock.getMetaData()).thenReturn(dbMetaDataMock);
-    return conectionMock;
+    return metaInfoMock;
   }
 
 }

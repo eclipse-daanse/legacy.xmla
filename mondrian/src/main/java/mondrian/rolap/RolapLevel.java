@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.eclipse.daanse.db.dialect.api.BestFitColumnType;
-import org.eclipse.daanse.db.dialect.api.Datatype;
+import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
+import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.SchemaReader;
@@ -369,7 +369,7 @@ public class RolapLevel extends LevelBase {
             mappingLevel.getParentChildLink(),
             createProperties(mappingLevel),
             (mappingLevel.isUniqueMembers() ? FLAG_UNIQUE : 0),
-            org.eclipse.daanse.db.dialect.api.Datatype.fromValue(mappingLevel.getDataType().getValue()),
+            org.eclipse.daanse.jdbc.db.dialect.api.Datatype.fromValue(mappingLevel.getDataType().getValue()),
             null,
             //toInternalType(mappingLevel.getDataType().getValue()),
             HideMemberCondition.fromValue(mappingLevel.getHideMemberIfType().getValue()),

@@ -25,7 +25,7 @@
 	bnd.identity;id='org.apache.felix.http.servlet-api',\
 	bnd.identity;id='org.apache.felix.webconsole',\
 	bnd.identity;id='org.apache.felix.webconsole.plugins.ds',\
-	bnd.identity;id='org.eclipse.daanse.db.dialect.db.h2',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.h2',\
 	bnd.identity;id='org.eclipse.daanse.db.statistics.metadata',\
 	bnd.identity;id='org.apache.felix.metatype',\
 	bnd.identity;id='org.eclipse.daanse.emondrian',\
@@ -37,7 +37,7 @@
 	bnd.identity;id='org.eclipse.daanse.xmla.server.jakarta.jws',\
 	bnd.identity;id='org.eclipse.daanse.xmla.server.jakarta.saaj',\
 	bnd.identity;id='org.eclipse.daanse.xmla.server.jakarta.xml.ws.provider.soapmessage',\
-	bnd.identity;id='org.eclipse.daanse.db.dialect.resolver.basic',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.resolver.basic',\
 	bnd.identity;id='org.eclipse.daanse.db.jdbc.dataloader.csvtoh2',\
 	bnd.identity;id='org.eclipse.daanse.olap.filecatalog',\
 	bnd.identity;id='org.eclipse.daanse.olap.rolap.dbmapper.provider.xml',\
@@ -85,10 +85,10 @@
 	org.apache.felix.scr;version='[2.2.10,2.2.11)',\
 	org.apache.felix.webconsole;version='[5.0.0,5.0.1)',\
 	org.apache.felix.webconsole.plugins.ds;version='[2.3.0,2.3.1)',\
-	org.eclipse.daanse.db.dialect.api;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.db.dialect.db.common;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.db.dialect.db.h2;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.db.dialect.resolver.basic;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.api;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.common;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.h2;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.resolver.basic;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.db.jdbc.dataloader.csvtoh2;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.db.jdbc.util;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.db.statistics.api;version='[0.0.1,0.0.2)',\

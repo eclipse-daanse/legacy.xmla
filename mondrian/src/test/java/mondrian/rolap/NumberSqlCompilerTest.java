@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
-import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

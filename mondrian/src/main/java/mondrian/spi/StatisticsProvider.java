@@ -9,7 +9,7 @@
 
 package mondrian.spi;
 
-import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 
 import mondrian.server.ExecutionImpl;

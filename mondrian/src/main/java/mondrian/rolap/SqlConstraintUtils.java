@@ -29,8 +29,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import org.eclipse.daanse.db.dialect.api.Datatype;
-import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.access.Access;

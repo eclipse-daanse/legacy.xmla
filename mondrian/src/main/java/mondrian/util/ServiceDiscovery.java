@@ -37,7 +37,7 @@ import mondrian.spi.UserDefinedFunction;
 @Deprecated()
 @ServiceConsumer(UserDefinedFunction.class)
 //@ServiceConsumer(ScriptEngineFactory.class)
-@ServiceConsumer(org.eclipse.daanse.db.dialect.api.DialectFactory.class)
+@ServiceConsumer(org.eclipse.daanse.jdbc.db.dialect.api.DialectFactory.class)
 public class ServiceDiscovery<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceDiscovery.class);

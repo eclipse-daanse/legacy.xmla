@@ -19,9 +19,7 @@
 package mondrian.enums;
 
 
-// To be removed
-
-import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 
 /**
  * Enumeration of common database types.

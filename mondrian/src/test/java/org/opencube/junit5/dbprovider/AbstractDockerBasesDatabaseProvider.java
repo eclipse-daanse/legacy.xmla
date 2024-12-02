@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;

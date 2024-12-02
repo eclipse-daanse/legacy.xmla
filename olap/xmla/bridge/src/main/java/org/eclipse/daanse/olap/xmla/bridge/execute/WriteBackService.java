@@ -26,8 +26,9 @@ import mondrian.rolap.RolapWritebackAttribute;
 import mondrian.rolap.RolapWritebackColumn;
 import mondrian.rolap.RolapWritebackMeasure;
 import mondrian.rolap.RolapWritebackTable;
-import org.eclipse.daanse.db.dialect.api.Datatype;
-import org.eclipse.daanse.db.dialect.api.Dialect;
+
+import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Level;

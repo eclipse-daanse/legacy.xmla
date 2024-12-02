@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.mdx.parser.ccc.MdxParserProviderImpl;
 import org.eclipse.daanse.olap.api.ConnectionProps;

@@ -10,7 +10,7 @@ package mondrian.rolap.sql;
 
 import java.util.List;
 
-import org.eclipse.daanse.db.dialect.api.Datatype;
+import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 

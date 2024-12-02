@@ -1,8 +1,8 @@
 package org.eclipse.daanse.db.jdbc.dataloader.ods;
 
 import org.eclipse.daanse.io.fs.watcher.api.FileSystemWatcherWhiteboardConstants;
-import org.eclipse.daanse.db.dialect.api.Dialect;
-import org.eclipse.daanse.db.dialect.api.DialectResolver;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.DialectResolver;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

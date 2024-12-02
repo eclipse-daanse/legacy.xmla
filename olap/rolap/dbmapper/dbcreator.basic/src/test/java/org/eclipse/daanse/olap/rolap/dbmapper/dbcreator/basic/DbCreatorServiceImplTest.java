@@ -13,13 +13,13 @@
  */
 package org.eclipse.daanse.olap.rolap.dbmapper.dbcreator.basic;
 
-import org.eclipse.daanse.db.dialect.api.Dialect;
-import org.eclipse.daanse.db.dialect.api.DialectResolver;
 import org.eclipse.daanse.db.jdbc.util.impl.Column;
 import org.eclipse.daanse.db.jdbc.util.impl.Constraint;
 import org.eclipse.daanse.db.jdbc.util.impl.DBStructure;
 import org.eclipse.daanse.db.jdbc.util.impl.SqlType;
 import org.eclipse.daanse.db.jdbc.util.impl.Type;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.DialectResolver;
 import org.eclipse.daanse.olap.rolap.dbmapper.dbcreator.api.DbCreatorService;
 import org.eclipse.daanse.olap.rolap.dbmapper.dbcreator.api.DbCreatorServiceFactory;
 import org.eclipse.daanse.olap.rolap.dbmapper.model.api.MappingInlineTableColumnDefinition;

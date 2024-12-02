@@ -13,7 +13,7 @@
  */
 package org.eclipse.daanse.db.jdbc.util.impl;
 
-import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 
 public enum Type {
 

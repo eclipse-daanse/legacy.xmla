@@ -27,8 +27,10 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.db.dialect.api.Dialect;
-import org.eclipse.daanse.db.dialect.db.mysql.MySqlDialect;
+import org.eclipse.daanse.jdbc.db.api.meta.MetaInfo;
+import org.eclipse.daanse.jdbc.db.core.DatabaseServiceImpl;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.db.mysql.MySqlDialect;
 
 import com.github.dockerjava.api.model.PortBinding;
 import com.mysql.cj.jdbc.MysqlDataSource;
@@ -89,8 +91,9 @@ public class MySqlDatabaseProvider extends AbstractDockerBasesDatabaseProvider i
 
 				Connection connection = dataSource.getConnection(MYSQL_USER, MYSQL_PASSWORD);
 				// wait until connection is possible
-
-				Dialect dialect = new MySqlDialect(connection);
+				DatabaseServiceImpl databaseServiceImpl = new DatabaseServiceImpl();
+				MetaInfo metaInfo = databaseServiceImpl.createMetaInfo(connection);
+				Dialect dialect = new MySqlDialect(metaInfo);
 				connection.close();
 				return new SimpleEntry<>(dataSource, dialect);
 

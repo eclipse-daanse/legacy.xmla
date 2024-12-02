@@ -15,7 +15,7 @@ import java.util.Map;
 import mondrian.olap.MondrianException;
 import mondrian.olap.exceptions.CastInvalidTypeException;
 
-import org.eclipse.daanse.db.dialect.api.Datatype;
+import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 
 import mondrian.olap.Property;

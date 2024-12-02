@@ -25,9 +25,11 @@
 	bnd.identity;id='org.glassfish.hk2.osgi-resource-locator',\
 	bnd.identity;id='com.sun.xml.bind.jaxb-impl',\
 	bnd.identity;id='org.eclipse.daanse.repackage.rhino.engine',\
-	bnd.identity;id='org.eclipse.daanse.db.dialect.db.mysql',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.api',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.core',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.mysql',\
 	bnd.identity;id='org.apache.aries.spifly.dynamic.framework.extension',\
-	bnd.identity;id='org.eclipse.daanse.db.dialect.db.h2',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.h2',\
 	bnd.identity;id='com.github.ben-manes.caffeine'
 
 # -runbundles is calculated by the bnd-resolver-maven-plugin
@@ -60,13 +62,16 @@
 	org.apache.logging.log4j.api;version='[2.22.1,2.22.2)',\
 	org.apache.servicemix.bundles.xerces;version='[2.12.2,2.12.3)',\
 	org.apache.servicemix.bundles.xmlresolver;version='[1.2.0,1.2.1)',\
-	org.eclipse.daanse.db.dialect.api;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.db.dialect.db.common;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.db.dialect.db.h2;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.db.dialect.db.mysql;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.db.dialect.db.postgresql;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.emondrian;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.emondrian-tests;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.api;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.core;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.api;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.common;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.h2;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.mysql;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.postgresql;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.record;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.mdx.model.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.mdx.model.record;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.mdx.parser.api;version='[0.0.1,0.0.2)',\
@@ -87,6 +92,7 @@
 	org.mockito.mockito-core;version='[4.9.0,4.9.1)',\
 	org.objenesis;version='[3.3.0,3.3.1)',\
 	org.opentest4j;version='[1.2.0,1.2.1)',\
+	org.osgi.service.cm;version='[1.6.1,1.6.2)',\
 	org.osgi.service.component;version='[1.5.1,1.5.2)',\
 	org.osgi.test.assertj.framework;version='[1.3.0,1.3.1)',\
 	org.osgi.test.common;version='[1.3.0,1.3.1)',\
@@ -98,7 +104,7 @@
 	org.xerial.sqlite-jdbc;version='[3.36.0,3.36.1)',\
 	slf4j.api;version='[2.0.9,2.0.10)'
 
--runproperties.tester: \
-	tester.names='org.eclipse.daanse.olap.function.def.dimension.DimensionFunctionsTest'
+#-runproperties.tester: \
+	#tester.names='org.eclipse.daanse.olap.function.def.dimension.DimensionFunctionsTest'
     #tester.names='mondrian.rolap.TestAggregationManager'
     #tester.names='mondrian.rolap.aggmatcher.AggMeasureFactCountTest'

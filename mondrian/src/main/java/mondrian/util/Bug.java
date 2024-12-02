@@ -8,7 +8,7 @@
 */
 package mondrian.util;
 
-import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.slf4j.LoggerFactory;
 
 /**

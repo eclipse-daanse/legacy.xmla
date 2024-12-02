@@ -19,7 +19,7 @@ import java.io.PrintWriter;
 import java.util.AbstractList;
 import java.util.List;
 
-import org.eclipse.daanse.db.dialect.api.BestFitColumnType;
+import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 
 import mondrian.olap.Util;
 import mondrian.rolap.BitKey;

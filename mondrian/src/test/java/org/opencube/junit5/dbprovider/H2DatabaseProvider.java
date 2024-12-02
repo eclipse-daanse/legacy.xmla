@@ -27,14 +27,16 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.db.dialect.api.Dialect;
-import org.eclipse.daanse.db.dialect.db.h2.H2Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.db.h2.H2Dialect;
+import org.eclipse.daanse.jdbc.db.api.meta.MetaInfo;
+import org.eclipse.daanse.jdbc.db.core.DatabaseServiceImpl;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.h2.jdbcx.JdbcDataSource;
 
 import aQute.bnd.annotation.spi.ServiceProvider;
 import mondrian.rolap.RolapSchemaPool;
 
-//@ServiceProvider(value = DatabaseProvider.class)
+@ServiceProvider(value = DatabaseProvider.class)
 public class H2DatabaseProvider implements DatabaseProvider {
 
 //	private Path testDirPath;
@@ -82,10 +84,11 @@ public class H2DatabaseProvider implements DatabaseProvider {
 		cpDataSource.setUrl(JDBC_SQLITE_MEMORY);
 		cpDataSource.setUser("sa");
 		cpDataSource.setPassword("sa");
-
 		try {
 			connection = cpDataSource.getConnection();
-			Dialect dialect = new H2Dialect(connection);
+			DatabaseServiceImpl databaseServiceImpl = new DatabaseServiceImpl();
+			MetaInfo metaInfo = databaseServiceImpl.createMetaInfo(connection);
+			Dialect dialect = new H2Dialect(metaInfo);
 
 			connection.close();
 			return new SimpleEntry<>(cpDataSource, dialect);

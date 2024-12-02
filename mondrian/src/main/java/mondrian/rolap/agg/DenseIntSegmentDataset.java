@@ -13,7 +13,7 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.SortedSet;
 
-import org.eclipse.daanse.db.dialect.api.BestFitColumnType;
+import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 
 import mondrian.olap.Util;
 import mondrian.rolap.CellKey;

@@ -29,8 +29,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Future;
 
-import org.eclipse.daanse.db.dialect.api.Datatype;
-import org.eclipse.daanse.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Locus;

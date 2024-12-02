@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
-import org.eclipse.daanse.db.dialect.api.BestFitColumnType;
+import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 
 import mondrian.rolap.CellKey;
 import mondrian.spi.SegmentBody;

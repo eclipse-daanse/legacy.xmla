@@ -18,7 +18,8 @@ import mondrian.rolap.RolapSchema;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.RolapStoredMeasure;
 import mondrian.rolap.RolapWritebackTable;
-import org.eclipse.daanse.db.dialect.api.Datatype;
+
+import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;

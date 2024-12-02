@@ -13,7 +13,7 @@ package org.eclipse.daanse.olap.api.rolap.agg;
 
 import java.util.List;
 
-import org.eclipse.daanse.db.dialect.api.Datatype;
+import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.calc.api.Calc;

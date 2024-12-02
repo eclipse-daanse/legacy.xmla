@@ -46,7 +46,8 @@ import mondrian.olap.exceptions.CreateIndexFailedException;
 import mondrian.olap.exceptions.CreateTableFailedException;
 import mondrian.olap.exceptions.InvalidInsertLineException;
 import mondrian.olap.exceptions.MissingArgException;
-import org.eclipse.daanse.db.dialect.api.Dialect;
+
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

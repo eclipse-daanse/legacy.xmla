@@ -109,7 +109,7 @@
 
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.db.dialect.db.h2</artifactId>
+			<artifactId>org.eclipse.daanse.jdbc.db.dialect.db.h2</artifactId>
 			<version>${revision}</version>
 			<scope>runtime</scope>
 		</dependency>
@@ -138,7 +138,7 @@
 
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.db.dialect.resolver.basic</artifactId>
+			<artifactId>org.eclipse.daanse.jdbc.db.dialect.resolver.basic</artifactId>
 			<version>${revision}</version>
 			<scope>runtime</scope>
 		</dependency>
