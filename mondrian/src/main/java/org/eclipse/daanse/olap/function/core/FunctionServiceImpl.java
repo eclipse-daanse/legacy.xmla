@@ -56,13 +56,11 @@ public class FunctionServiceImpl implements FunctionService {
 	private Set<String> propertyWords = synchronizedSet(new HashSet<>());
 
 	public FunctionServiceImpl() {
-
 		this(Map.of());
 	}
 
 	@Activate
 	public FunctionServiceImpl(Map<String, Object> configuration) {
-//		this.config = CONVERTER.convert(coniguration).to(Config.class);
 
 		GlobalFunTable	oldfunctiontable = GlobalFunTable.instance();
 		oldfunctiontable.init();
@@ -72,7 +70,6 @@ public class FunctionServiceImpl implements FunctionService {
 
 	@Deactivate
 	public void deactivate() {
-//		config = null;
 	}
 
 	@Override
