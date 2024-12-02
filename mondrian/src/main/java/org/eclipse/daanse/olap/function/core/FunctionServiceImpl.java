@@ -35,6 +35,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 import org.osgi.service.component.annotations.ServiceScope;
 
 import mondrian.olap.fun.FunTableImpl.FunctionAtomCompareKey;
@@ -74,7 +76,7 @@ public class FunctionServiceImpl implements FunctionService {
 	}
 
 	@Override
-	@Reference(service = FunctionResolver.class, cardinality = ReferenceCardinality.MULTIPLE)
+	@Reference(service = FunctionResolver.class, cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
 	public void addResolver(FunctionResolver resolver) {
 
 		addResolvers(List.of(resolver));
@@ -87,7 +89,6 @@ public class FunctionServiceImpl implements FunctionService {
 	}
 
 	@Override
-	@Reference(service = FunctionResolver.class, cardinality = ReferenceCardinality.MULTIPLE)
 	public void removeResolver(FunctionResolver resolver) {
 
 		this.resolvers.add(resolver);
