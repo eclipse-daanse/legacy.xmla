@@ -6,7 +6,7 @@
 //
 // Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
 */
-package mondrian.olap.fun;
+package org.eclipse.daanse.olap.function.def.aggregate;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -34,6 +34,8 @@ import mondrian.calc.impl.TupleCollections;
 import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.ResourceLimitExceededException;
 import mondrian.olap.SystemWideProperties;
+import mondrian.olap.fun.CacheFunDef;
+import mondrian.olap.fun.FunUtil;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapMember;
 import mondrian.rolap.RolapStoredMeasure;

@@ -21,8 +21,8 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 import org.eclipse.daanse.olap.calc.base.value.CurrentValueDoubleCalc;
+import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 
-import mondrian.olap.fun.AbstractAggregateFunDef;
 import mondrian.olap.fun.FunUtil;
 import mondrian.olap.fun.MultiResolver;
 import mondrian.olap.fun.ReflectiveMultiResolver;

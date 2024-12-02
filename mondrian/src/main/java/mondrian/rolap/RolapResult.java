@@ -54,6 +54,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterator;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
+import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +76,6 @@ import mondrian.olap.ResultBase;
 import mondrian.olap.ResultLimitExceededException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.olap.fun.AbstractAggregateFunDef;
 import mondrian.olap.fun.AggregateFunDef;
 import mondrian.olap.fun.MondrianEvaluationException;
 import mondrian.olap.fun.VisualTotalsFunDef.VisualTotalMember;

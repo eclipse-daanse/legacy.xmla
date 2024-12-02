@@ -43,7 +43,7 @@ import mondrian.olap.type.SetType;
  * @since 2005/8/14
  */
 public class CacheFunDef extends AbstractFunctionDefinition {
-    static final String NAME = "Cache";
+    public static final String NAME = "Cache";
     private static final String SIGNATURE_VALUE = "Cache(<<Exp>>)";
     private static final String DESCRIPTION =
         "Evaluates and returns its sole argument, applying statement-level caching";
