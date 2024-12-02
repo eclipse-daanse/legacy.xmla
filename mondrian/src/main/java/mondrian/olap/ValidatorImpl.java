@@ -38,7 +38,7 @@ import org.eclipse.daanse.olap.api.query.component.ParameterExpression;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.function.FunctionPrinter;
+import org.eclipse.daanse.olap.function.core.FunctionPrinter;
 import org.eclipse.daanse.olap.query.base.Expressions;
 
 import mondrian.mdx.ResolvedFunCallImpl;

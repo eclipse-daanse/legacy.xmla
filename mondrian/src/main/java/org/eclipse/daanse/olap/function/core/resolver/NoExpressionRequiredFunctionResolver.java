@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.resolver;
+package org.eclipse.daanse.olap.function.core.resolver;
 
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 

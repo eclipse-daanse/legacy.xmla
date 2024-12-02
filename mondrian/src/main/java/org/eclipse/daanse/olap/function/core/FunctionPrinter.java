@@ -28,7 +28,7 @@
  *   SmartCity Jena - initial adapt parts of Syntax.class
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function;
+package org.eclipse.daanse.olap.function.core;
 
 import java.io.PrintWriter;
 

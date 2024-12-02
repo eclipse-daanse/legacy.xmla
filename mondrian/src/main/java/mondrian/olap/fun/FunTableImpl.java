@@ -27,7 +27,7 @@ import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.function.FunctionTable;
-import org.eclipse.daanse.olap.function.resolver.ParametersCheckingFunctionDefinitionResolver;
+import org.eclipse.daanse.olap.function.core.resolver.ParametersCheckingFunctionDefinitionResolver;
 
 /**
  * Abstract implementation of {@link FunctionTable}.

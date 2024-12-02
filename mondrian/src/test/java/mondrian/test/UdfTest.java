@@ -813,7 +813,7 @@ public class UdfTest {
     /**
      * Tests that the inferred return type is correct for a UDF whose return
      * type is not the same as would be guessed by the default implementation
-     * of {@link org.eclipse.daanse.olap.function.AbstractFunctionDefinition#getResultType}, which simply
+     * of {@link org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition#getResultType}, which simply
      * guesses based on the type of the first argument.
      */
     @Disabled //TODO: UserDefinedFunction
