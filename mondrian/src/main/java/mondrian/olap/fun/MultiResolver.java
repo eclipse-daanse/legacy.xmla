@@ -95,7 +95,6 @@ outer:
 
 	@Override
 	public OperationAtom getFunctionAtom() {
-
 		return operationAtom;
 	}
     protected abstract FunctionDefinition createFunDef(Expression[] args, FunctionMetaData functionMetaData);

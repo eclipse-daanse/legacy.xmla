@@ -1210,7 +1210,7 @@ public class FunUtil extends Util {
    *                    determines the desired ancestor.
    * @return The ancestor member, or {@code null} if no such ancestor exists.
    */
-  static Member ancestor(
+  public static Member ancestor(
     Evaluator evaluator,
     Member member,
     int distance,

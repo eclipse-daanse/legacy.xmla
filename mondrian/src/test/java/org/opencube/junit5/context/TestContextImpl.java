@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.core.BasicContextConfig;
 import org.eclipse.daanse.olap.function.core.FunctionServiceImpl;
+import org.eclipse.daanse.olap.function.def.ancestor.AncestorResolver;
 import org.eclipse.daanse.olap.function.def.as.AsAliasResolver;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -55,6 +56,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 	    queryLimimitSemaphore=new Semaphore(testConfig.queryLimit());
 	    
 	    functionService.addResolver(new AsAliasResolver());
+	    functionService.addResolver(new AncestorResolver());
 	}
 
 	@Override

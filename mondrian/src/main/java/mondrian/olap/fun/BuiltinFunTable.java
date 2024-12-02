@@ -307,7 +307,6 @@ public class BuiltinFunTable extends FunTableImpl {
 
         //
         // MEMBER FUNCTIONS
-        builder.define(AncestorFunDef.Resolver);
         builder.define(AncestorsFunDef.Resolver);
 
 
