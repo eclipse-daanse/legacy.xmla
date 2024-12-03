@@ -42,6 +42,7 @@ org.eclipse.daanse.olap.calc.base.util,\
 org.eclipse.daanse.olap.calc.base.value,\
 org.eclipse.daanse.olap.core,\
 org.eclipse.daanse.olap.function,\
+org.eclipse.daanse.olap.function.def*,\
 org.eclipse.daanse.olap.function.resolver,\
 org.eclipse.daanse.olap.query.base,\
 org.eclipse.daanse.olap.udf.impl

@@ -377,71 +377,7 @@ public class FunctionTest {//extends FoodMartTestCase {
     TestUtil.assertExprDependsOn(context.getConnection(), "\"foobar\"", "{}" );
   }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDimensionHierarchy(Context context) {
-    TestUtil.assertExprReturns(context.getConnection(), "[Time].Dimension.Name", "Time" );
-  }
 
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testLevelDimension(Context context) {
-    TestUtil.assertExprReturns(context.getConnection(), "[Time].[Year].Dimension.UniqueName", "[Time]" );
-  }
-
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMemberDimension(Context context) {
-     TestUtil.assertExprReturns(context.getConnection(), "[Time].[1997].[Q2].Dimension.UniqueName", "[Time]" );
-  }
-
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDimensionsNumeric(Context context) {
-    TestUtil.assertExprDependsOn(context.getConnection(), "Dimensions(2).Name", "{}" );
-    TestUtil.assertMemberExprDependsOn(context.getConnection(),
-            "Dimensions(3).CurrentMember",
-      allHiers());
-    TestUtil.assertExprReturns(context.getConnection(), "Dimensions(2).Name", "Store Size in SQFT" );
-    // bug 1426134 -- Dimensions(0) throws 'Index '0' out of bounds'
-    TestUtil.assertExprReturns(context.getConnection(), "Dimensions(0).Name", "Measures" );
-    TestUtil.assertExprThrows(context.getConnection(), "Dimensions(-1).Name", "Index '-1' out of bounds" );
-    TestUtil.assertExprThrows(context.getConnection(), "Dimensions(100).Name", "Index '100' out of bounds" );
-    // Since Dimensions returns a Hierarchy, can apply CurrentMember.
-    assertAxisReturns(context.getConnection(),
-      "Dimensions(3).CurrentMember",
-      "[Store Type].[All Store Types]" );
-  }
-
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDimensionsString(Context context) {
-    TestUtil.assertExprDependsOn(context.getConnection(),
-      "Dimensions(\"foo\").UniqueName",
-      "{}" );
-    TestUtil.assertMemberExprDependsOn(context.getConnection(),
-      "Dimensions(\"foo\").CurrentMember", allHiers() );
-    TestUtil.assertExprReturns(context.getConnection(), "Dimensions(\"Store\").UniqueName", "[Store]" );
-    // Since Dimensions returns a Hierarchy, can apply Children.
-    assertAxisReturns(context.getConnection(),
-      "Dimensions(\"Store\").Children",
-      "[Store].[Canada]\n"
-        + "[Store].[Mexico]\n"
-        + "[Store].[USA]" );
-  }
-
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDimensionsDepends(Context context) {
-    final String expression =
-      "Crossjoin("
-        + "{Dimensions(\"Measures\").CurrentMember.Hierarchy.CurrentMember}, "
-        + "{Dimensions(\"Product\")})";
-    assertAxisReturns(context.getConnection(),
-      expression, "{[Measures].[Unit Sales], [Product].[All Products]}" );
-    TestUtil.assertSetExprDependsOn(context.getConnection(),
-      expression, allHiers() );
-  }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
@@ -14466,7 +14402,7 @@ Intel platforms):
    *
    * @return string containing all dimensions except those given
    */
-  String allHiersExcept( String... hiers ) {
+  static String allHiersExcept( String... hiers ) {
     for ( String hier : hiers ) {
       assert contains( AllHiers, hier ) : "unknown hierarchy " + hier;
     }
@@ -14484,7 +14420,7 @@ Intel platforms):
     return buf.toString();
   }
 
-  private boolean contains( String[] a, String s ) {
+  private static boolean contains( String[] a, String s ) {
     for ( String anA : a ) {
       if ( anA.equals( s ) ) {
         return true;
@@ -14493,7 +14429,7 @@ Intel platforms):
     return false;
   }
 
-  private String allHiers() {
+  public static String allHiers() {
     return allHiersExcept();
   }
 }

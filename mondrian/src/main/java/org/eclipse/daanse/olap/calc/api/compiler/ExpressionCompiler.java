@@ -103,7 +103,7 @@ public interface ExpressionCompiler {
      *
      * @return Compiled expression, or null if none can satisfy
      */
-    Calc<?> compileAs(
+    Calc compileAs(
             Expression exp,
             Type resultType,
             List<ResultStyle> preferredResultStyles);

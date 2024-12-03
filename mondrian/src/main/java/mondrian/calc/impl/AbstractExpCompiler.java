@@ -16,12 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import mondrian.olap.MondrianException;
-
 import org.eclipse.daanse.mdx.model.api.expression.operation.CastOperationAtom;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.Syntax;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -66,13 +63,14 @@ import org.eclipse.daanse.olap.calc.base.type.level.UnknownToLevelCalc;
 import org.eclipse.daanse.olap.calc.base.type.member.UnknownToMemberCalc;
 import org.eclipse.daanse.olap.calc.base.type.string.UnknownToStringCalc;
 import org.eclipse.daanse.olap.calc.base.util.DimensionUtil;
+import org.eclipse.daanse.olap.function.def.dimension.hierarchy.DimensionOfHierarchyCalc;
 
 import mondrian.mdx.UnresolvedFunCallImpl;
+import mondrian.olap.MondrianException;
 import mondrian.olap.SymbolLiteralImpl;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
 import mondrian.olap.fun.HierarchyCurrentMemberFunDef;
-import mondrian.olap.fun.HierarchyDimensionFunDef;
 import mondrian.olap.fun.LevelHierarchyFunDef;
 import mondrian.olap.fun.MemberHierarchyFunDef;
 import mondrian.olap.fun.MemberLevelFunDef;
@@ -279,12 +277,10 @@ public class AbstractExpCompiler implements ExpressionCompiler {
     @Override
     public DimensionCalc compileDimension(Expression exp) {
         final Type type = exp.getType();
-        if (type instanceof HierarchyType) {
-            final HierarchyCalc hierarchyCalc = compileHierarchy(exp);
-            return new HierarchyDimensionFunDef.DimensionCalcImpl(
-                    new DimensionType(type.getDimension()),
-                    hierarchyCalc);
-        }
+		if (type instanceof HierarchyType) {
+			final HierarchyCalc hierarchyCalc = compileHierarchy(exp);
+			return new DimensionOfHierarchyCalc(new DimensionType(type.getDimension()), hierarchyCalc);
+		}
         assert type instanceof DimensionType : type;
         Calc<?> calc=	compile(exp);
 
