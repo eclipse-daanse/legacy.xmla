@@ -121,10 +121,6 @@ public class BuiltinFunTable extends FunTableImpl {
         //
         // DIMENSION FUNCTIONS
 
-
-        // "<Member>.Dimension"
-        builder.define(MemberDimensionFunDef.INSTANCE);
-
         // "Dimensions(<Numeric Expression>)"
         builder.define(DimensionsNumericFunDef.INSTANCE);
 

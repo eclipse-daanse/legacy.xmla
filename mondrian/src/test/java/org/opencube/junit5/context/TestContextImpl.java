@@ -27,6 +27,7 @@ import org.eclipse.daanse.olap.function.def.as.AsAliasResolver;
 import org.eclipse.daanse.olap.function.def.dimension.dimension.DimensionOfDimensionResolver;
 import org.eclipse.daanse.olap.function.def.dimension.hierarchy.DimensionOfHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.dimension.level.DimensionOfLevelResolver;
+import org.eclipse.daanse.olap.function.def.dimension.member.DimensionOfMemberResolver;
 import org.eclipse.daanse.olap.function.def.empty.EmptyExpressionResolver;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -68,6 +69,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 	    functionService.addResolver(new DimensionOfHierarchyResolver());
 	    functionService.addResolver(new DimensionOfDimensionResolver());
 	    functionService.addResolver(new DimensionOfLevelResolver());
+	    functionService.addResolver(new DimensionOfMemberResolver());
 	    
 }
 
