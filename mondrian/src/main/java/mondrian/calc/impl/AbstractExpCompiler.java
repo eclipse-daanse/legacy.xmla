@@ -54,6 +54,7 @@ import org.eclipse.daanse.olap.calc.base.type.booleanx.DoubleToBooleanCalc;
 import org.eclipse.daanse.olap.calc.base.type.booleanx.IntgegerToBooleanCalc;
 import org.eclipse.daanse.olap.calc.base.type.booleanx.UnknownToBooleanCalc;
 import org.eclipse.daanse.olap.calc.base.type.datetime.UnknownToDateTimeCalc;
+import org.eclipse.daanse.olap.calc.base.type.dimension.DimensionOfHierarchyCalc;
 import org.eclipse.daanse.olap.calc.base.type.dimension.UnknownToDimensionCalc;
 import org.eclipse.daanse.olap.calc.base.type.doublex.IntegerToDoubleCalc;
 import org.eclipse.daanse.olap.calc.base.type.hierarchy.DimensionDefaultHierarchyCalc;
@@ -63,7 +64,6 @@ import org.eclipse.daanse.olap.calc.base.type.level.UnknownToLevelCalc;
 import org.eclipse.daanse.olap.calc.base.type.member.UnknownToMemberCalc;
 import org.eclipse.daanse.olap.calc.base.type.string.UnknownToStringCalc;
 import org.eclipse.daanse.olap.calc.base.util.DimensionUtil;
-import org.eclipse.daanse.olap.function.def.dimension.hierarchy.DimensionOfHierarchyCalc;
 
 import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.MondrianException;
