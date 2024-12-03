@@ -98,22 +98,6 @@ public class BuiltinFunTable extends FunTableImpl {
 	public void defineFunctions(FunctionTableCollector builder) {
         builder.defineReserved("NULL");
 
-        OperationAtom functionAtom = new EmptyOperationAtom();
-        FunctionMetaData functionMetaDataEmpty = new FunctionMetaDataR(functionAtom,
-        		"Dummy function representing the empty expression", "", DataType.EMPTY,
-    			new DataType[] { });
-
-
-		FunctionDefinition functionDefinitionEmpty = new AbstractFunctionDefinition(functionMetaDataEmpty) {
-
-			@Override
-			public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
-				return null;
-			}
-		};
-		// Empty expression
-		builder.define(functionDefinitionEmpty);
-
         // first char: p=Property, m=Method, i=Infix, P=Prefix
         // 2nd:
 

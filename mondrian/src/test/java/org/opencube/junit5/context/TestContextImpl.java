@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.function.core.FunctionServiceImpl;
 import org.eclipse.daanse.olap.function.def.aggregate.avg.AvgResolver;
 import org.eclipse.daanse.olap.function.def.ancestor.AncestorResolver;
 import org.eclipse.daanse.olap.function.def.as.AsAliasResolver;
+import org.eclipse.daanse.olap.function.def.empty.EmptyExpressionResolver;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 
@@ -59,7 +60,9 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 	    functionService.addResolver(new AsAliasResolver());
 	    functionService.addResolver(new AncestorResolver());
 	    functionService.addResolver(new AvgResolver());
-	}
+
+	    functionService.addResolver(new EmptyExpressionResolver());
+}
 
 	@Override
 	public void setDialect(Dialect dialect) {

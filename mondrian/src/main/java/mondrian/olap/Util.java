@@ -3910,7 +3910,7 @@ public class Util {
    * @param calc
    * @param timing
    */
-  public static void explain( ProfileHandler handler, String title, Calc calc, QueryTiming timing ) {
+  public static void explain( ProfileHandler handler, String title, Calc<?> calc, QueryTiming timing ) {
     if ( handler == null ) {
       return;
     }
