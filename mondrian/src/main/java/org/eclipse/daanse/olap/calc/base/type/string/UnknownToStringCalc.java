@@ -19,10 +19,10 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
 
-public class UnknownToStringCalc extends AbstractProfilingNestedStringCalc<Calc<?>> {
+public class UnknownToStringCalc extends AbstractProfilingNestedStringCalc {
 
 	public UnknownToStringCalc(Type type, Calc<?> calc) {
-		super(type, new Calc[] { calc });
+		super(type,  calc );
 	}
 
 	@Override

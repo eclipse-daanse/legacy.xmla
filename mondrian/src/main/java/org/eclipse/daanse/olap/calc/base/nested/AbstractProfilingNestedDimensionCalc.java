@@ -22,17 +22,13 @@ import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 
 import mondrian.olap.type.DimensionType;
 
+public abstract class AbstractProfilingNestedDimensionCalc extends AbstractProfilingNestedCalc<Dimension>
+		implements DimensionCalc {
 
-public abstract class AbstractProfilingNestedDimensionCalc<C   extends Calc<?>>
-extends AbstractProfilingNestedCalc<Dimension,C>
-implements DimensionCalc
-{
+	protected AbstractProfilingNestedDimensionCalc(Type type, Calc<?>... calcs) {
+		super(type, calcs);
 
-    protected AbstractProfilingNestedDimensionCalc(Type type, C[] calcs) {
-        super(type, calcs);
-        
-        requiresType(DimensionType.class);
-    }
-
+		requiresType(DimensionType.class);
+	}
 
 }

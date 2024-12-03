@@ -20,10 +20,10 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedBooleanCa
 
 import mondrian.olap.fun.FunUtil;
 
-public class UnknownToBooleanCalc extends AbstractProfilingNestedBooleanCalc<Calc<?>> {
+public class UnknownToBooleanCalc extends AbstractProfilingNestedBooleanCalc {
 
 	public UnknownToBooleanCalc(Type type, Calc<?> calc) {
-		super(type, new Calc<?>[] { calc });
+		super(type, calc);
 	}
 
 	@Override

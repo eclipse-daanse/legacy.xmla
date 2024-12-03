@@ -23,7 +23,7 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedBooleanCa
 
 import mondrian.olap.type.BooleanType;
 
-public class CaseTestBooleanCalc extends AbstractProfilingNestedBooleanCalc<Calc<?>> {
+public class CaseTestBooleanCalc extends AbstractProfilingNestedBooleanCalc {
 
 	private Map<BooleanCalc, Calc<?>> calcPairs;
 	final Calc<?> defaultCalc;

@@ -20,20 +20,20 @@ import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 
 /**
- * Abstract implementation of the {@link org.eclipse.daanse.olap.calc.api.StringCalc}
- * interface.
+ * Abstract implementation of the
+ * {@link org.eclipse.daanse.olap.calc.api.StringCalc} interface.
  * 
  * Handles nested child and profiling
  *
  */
-public abstract class AbstractProfilingNestedStringCalc<C  extends Calc<?>> extends AbstractProfilingNestedCalc<String,C>
+public abstract class AbstractProfilingNestedStringCalc extends AbstractProfilingNestedCalc<String>
 		implements StringCalc {
 	/**
 	 * {@inheritDoc}
 	 *
 	 */
-	protected AbstractProfilingNestedStringCalc(Type type, C[] calcs) {
-		super( type, calcs);
+	protected AbstractProfilingNestedStringCalc(Type type, Calc<?>... calcs) {
+		super(type, calcs);
 	}
 
 }

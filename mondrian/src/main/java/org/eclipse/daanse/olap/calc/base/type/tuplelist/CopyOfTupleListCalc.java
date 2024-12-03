@@ -19,15 +19,15 @@ import org.eclipse.daanse.olap.calc.api.TupleListCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleListCalc;
 
-public class CopyOfTupleListCalc extends AbstractProfilingNestedTupleListCalc<TupleListCalc> {
+public class CopyOfTupleListCalc extends AbstractProfilingNestedTupleListCalc {
 
 	public CopyOfTupleListCalc(TupleListCalc tupleListCalc) {
-		super(tupleListCalc.getType(), new TupleListCalc[] { tupleListCalc });
+		super(tupleListCalc.getType(), tupleListCalc);
 	}
 
 	@Override
 	public TupleList evaluate(Evaluator evaluator) {
-		final TupleList list = getFirstChildCalc().evaluate(evaluator);
+		final TupleList list = getChildCalc(0, TupleListCalc.class).evaluate(evaluator);
 		return list.copyList(-1);
 	}
 }

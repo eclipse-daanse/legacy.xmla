@@ -17,28 +17,27 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.LevelCalc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
 
 import mondrian.olap.fun.FunUtil;
 
-public class AncestorLevelCalc extends AbstractProfilingNestedMemberCalc<Calc<?>> {
-
-	private final LevelCalc levelCalc;
-	private final MemberCalc memberCalc;
+public class AncestorLevelCalc extends AbstractProfilingNestedMemberCalc {
 
 	public AncestorLevelCalc(Type type, MemberCalc memberCalc, LevelCalc levelCalc) {
-		super(type, new Calc<?>[] { memberCalc, levelCalc });
-		this.memberCalc = memberCalc;
-		this.levelCalc = levelCalc;
+		super(type, memberCalc, levelCalc);
+
 	}
 
 	@Override
 	public Member evaluate(Evaluator evaluator) {
+		final MemberCalc memberCalc = getChildCalc(0, MemberCalc.class);
+		final LevelCalc levelCalc = getChildCalc(1, LevelCalc.class);
+		
 		Level level = levelCalc.evaluate(evaluator);
 		Member member = memberCalc.evaluate(evaluator);
+		
 		int distance = member.getLevel().getDepth() - level.getDepth();
 		return FunUtil.ancestor(evaluator, member, distance, level);
 	}

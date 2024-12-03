@@ -9,15 +9,15 @@ import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 
 import mondrian.olap.type.SetType;
 
-public abstract class AbstractProfilingNestedTupleListCalc<C extends Calc<?>>
-		extends AbstractProfilingNestedCalc<TupleList, C> implements TupleListCalc {
+public abstract class AbstractProfilingNestedTupleListCalc extends AbstractProfilingNestedCalc<TupleList>
+		implements TupleListCalc {
 	private final boolean mutable;
 
-	protected AbstractProfilingNestedTupleListCalc(Type type, C[] calcs) {
-		this(type, calcs, true);
+	protected AbstractProfilingNestedTupleListCalc(Type type, Calc<?>... calcs) {
+		this(type, true, calcs);
 	}
 
-	protected AbstractProfilingNestedTupleListCalc(Type type, C[] calcs, boolean mutable) {
+	protected AbstractProfilingNestedTupleListCalc(Type type, boolean mutable, Calc<?>... calcs) {
 		super(type, calcs);
 		this.mutable = mutable;
 		requiresType(SetType.class);

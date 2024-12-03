@@ -28,7 +28,7 @@ import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
  * @since Sep 26, 2005
  */
 public abstract class GenericCalc
-extends AbstractProfilingNestedCalc<Object,Calc<?>>
+extends AbstractProfilingNestedCalc<Object>
 {
     /**
      * Creates a GenericCalc without specifying child calculated expressions.

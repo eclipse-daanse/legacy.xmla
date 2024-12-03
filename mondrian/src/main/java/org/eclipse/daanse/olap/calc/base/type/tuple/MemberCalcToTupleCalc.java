@@ -20,21 +20,19 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleCalc;
 
-public class MemberCalcToTupleCalc extends AbstractProfilingNestedTupleCalc<MemberCalc> {
-	private final MemberCalc memberCalc;
+public class MemberCalcToTupleCalc extends AbstractProfilingNestedTupleCalc {
 
 	public MemberCalcToTupleCalc(Type type, MemberCalc memberCalc) {
-		super(type, new MemberCalc[] { memberCalc });
-		this.memberCalc = memberCalc;
+		super(type, memberCalc);
 	}
 
 	@Override
 	public Member[] evaluate(Evaluator evaluator) {
-		final Member member = memberCalc.evaluate(evaluator);
+		final Member member = getChildCalc(0, MemberCalc.class).evaluate(evaluator);
 		if (member == null) {
 			return null;
 		} else {
-			return new Member[] { memberCalc.evaluate(evaluator) };
+			return new Member[] { member };
 		}
 	}
 }

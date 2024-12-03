@@ -649,7 +649,7 @@ public class AbstractExpCompiler implements ExpressionCompiler {
 
 
 
-	public class UnknownToDoubleCalc extends AbstractProfilingNestedDoubleCalc<Calc<?>> {
+	public class UnknownToDoubleCalc extends AbstractProfilingNestedDoubleCalc {
 
 		public UnknownToDoubleCalc(Type type, Calc<?> calc) {
 			super(type, new Calc[] { calc });

@@ -20,16 +20,16 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCal
 
 import mondrian.olap.fun.FunUtil;
 
-public class IntegerToDoubleCalc extends AbstractProfilingNestedDoubleCalc<IntegerCalc> {
+public class IntegerToDoubleCalc extends AbstractProfilingNestedDoubleCalc {
 
 	public IntegerToDoubleCalc(Type type, IntegerCalc integerCalc) {
-		super(type, new IntegerCalc[] { integerCalc });
+		super(type, integerCalc);
 	}
 
 	@Override
 	public Double evaluate(Evaluator evaluator) {
 
-		Integer i = getFirstChildCalc().evaluate(evaluator);
+		Integer i = getChildCalc(0, IntegerCalc.class).evaluate(evaluator);
 		if (i == null) {
 			return FunUtil.DOUBLE_NULL;
 			// null;

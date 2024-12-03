@@ -20,19 +20,19 @@ import org.eclipse.daanse.olap.calc.api.VoidCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 
 /**
- * Abstract implementation of the {@link org.eclipse.daanse.olap.calc.api.VoidCalc}
- * interface.
+ * Abstract implementation of the
+ * {@link org.eclipse.daanse.olap.calc.api.VoidCalc} interface.
  * 
  * Handles nested child and profiling
  *
  */
-public abstract class AbstractProfilingNestedVoidCalc<C extends Calc<?>> extends AbstractProfilingNestedCalc<Void, C>
+public abstract class AbstractProfilingNestedVoidCalc<C extends Calc<?>> extends AbstractProfilingNestedCalc<Void>
 		implements VoidCalc {
 	/**
 	 * {@inheritDoc}
 	 *
 	 */
-	protected AbstractProfilingNestedVoidCalc(Type type, C[] calcs) {
+	protected AbstractProfilingNestedVoidCalc(Type type, Calc<?>... calcs) {
 		super(type, calcs);
 	}
 

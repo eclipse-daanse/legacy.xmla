@@ -20,15 +20,15 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedBooleanCa
 
 import mondrian.olap.fun.FunUtil;
 
-public class DoubleToBooleanCalc extends AbstractProfilingNestedBooleanCalc<DoubleCalc> {
+public class DoubleToBooleanCalc extends AbstractProfilingNestedBooleanCalc {
 
 	public DoubleToBooleanCalc(Type type, DoubleCalc doubleCalc) {
-		super(type, new DoubleCalc[] { doubleCalc });
+		super(type, doubleCalc);
 	}
 
 	@Override
 	public Boolean evaluate(Evaluator evaluator) {
-		Double v0 = getFirstChildCalc().evaluate(evaluator);
+		Double v0 = getChildCalc(0, DoubleCalc.class).evaluate(evaluator);
 
 		if (Double.isNaN(v0) || v0 == FunUtil.DOUBLE_NULL) {
 			return FunUtil.BOOLEAN_NULL;

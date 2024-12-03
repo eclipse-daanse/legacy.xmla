@@ -10,16 +10,15 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleList
 
 import mondrian.calc.impl.TupleCollections;
 
-
-public class TupleIteratableToTupleListCalc extends AbstractProfilingNestedTupleListCalc<TupleIterableCalc> {
+public class TupleIteratableToTupleListCalc extends AbstractProfilingNestedTupleListCalc {
 
 	public TupleIteratableToTupleListCalc(TupleIterableCalc tupleIterableCalc) {
-		super(tupleIterableCalc.getType(), new TupleIterableCalc[] { tupleIterableCalc });
+		super(tupleIterableCalc.getType(), tupleIterableCalc);
 	}
 
 	@Override
 	public TupleList evaluate(Evaluator evaluator) {
-		final TupleIterable iterable = getFirstChildCalc().evaluate(evaluator);
+		final TupleIterable iterable = getChildCalc(0, TupleIterableCalc.class).evaluate(evaluator);
 
 		// If TupleIteratable is TupleList do not copy.
 		if (iterable instanceof TupleList tupleList) {

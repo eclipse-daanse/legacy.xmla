@@ -21,10 +21,10 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDateTimeCalc;
 
-public class UnknownToDateTimeCalc extends AbstractProfilingNestedDateTimeCalc<Calc<?>> {
+public class UnknownToDateTimeCalc extends AbstractProfilingNestedDateTimeCalc {
 
 	public UnknownToDateTimeCalc(Type type, Calc<?> calc) {
-		super(type, new Calc[] { calc });
+		super(type, calc);
 	}
 
 	@Override

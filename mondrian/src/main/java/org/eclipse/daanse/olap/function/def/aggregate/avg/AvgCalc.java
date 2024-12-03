@@ -25,15 +25,11 @@ import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 
 import mondrian.olap.fun.FunUtil;
 
-class AvgCalc extends AbstractProfilingNestedDoubleCalc<Calc<?>> {
-	private final TupleListCalc tupleListCalc;
-	private final Calc<?> calc;
+class AvgCalc extends AbstractProfilingNestedDoubleCalc {
 	private final String timingName;
 
 	public AvgCalc(Type type, TupleListCalc tupleListCalc, Calc<?> calc, String timingName) {
-		super(type, new Calc<?>[] { tupleListCalc, calc });
-		this.tupleListCalc = tupleListCalc;
-		this.calc = calc;
+		super(type, tupleListCalc, calc);
 		this.timingName = timingName;
 	}
 
@@ -42,6 +38,8 @@ class AvgCalc extends AbstractProfilingNestedDoubleCalc<Calc<?>> {
 		evaluator.getTiming().markStart(timingName);
 		final int savepoint = evaluator.savepoint();
 		try {
+			TupleListCalc tupleListCalc = getChildCalc(0, TupleListCalc.class);
+			Calc<?> calc = getChildCalc(1);
 			TupleList memberList = AbstractAggregateFunDef.evaluateCurrentList(tupleListCalc, evaluator);
 			evaluator.setNonEmpty(false);
 			return (Double) FunUtil.avg(evaluator, memberList, calc);

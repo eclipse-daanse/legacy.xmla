@@ -22,10 +22,10 @@ import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 
 import mondrian.olap.type.HierarchyType;
 
-public abstract class AbstractProfilingNestedHierarchyCalc<C extends Calc<?>>
-		extends AbstractProfilingNestedCalc<Hierarchy, C> implements HierarchyCalc {
+public abstract class AbstractProfilingNestedHierarchyCalc extends AbstractProfilingNestedCalc<Hierarchy>
+		implements HierarchyCalc {
 
-	protected AbstractProfilingNestedHierarchyCalc(Type type, C[] calcs) {
+	protected AbstractProfilingNestedHierarchyCalc(Type type, Calc<?>... calcs) {
 		super(type, calcs);
 		requiresType(HierarchyType.class);
 	}

@@ -24,10 +24,10 @@ import org.eclipse.daanse.olap.calc.api.profile.CalculationProfile;
 import org.eclipse.daanse.olap.calc.api.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 
-public abstract class AbstractProfilingNestedCalc<E, C extends Calc<?>> extends AbstractProfilingCalc<E>
+public abstract class AbstractProfilingNestedCalc<E> extends AbstractProfilingCalc<E>
 		implements Calc<E> {
 
-	private final C[] childCalcs;
+	private final Calc<?>[] childCalcs;
 
 	/**
 	 * {@inheritDoc}
@@ -38,7 +38,13 @@ public abstract class AbstractProfilingNestedCalc<E, C extends Calc<?>> extends 
 	 * 
 	 * @param calcs Child {@link Calc}s that are needed to calculate this.
 	 */
-	protected AbstractProfilingNestedCalc(Type type, C[] childCalcs) {
+//	protected AbstractProfilingNestedCalc(Type type, C[] childCalcs) {
+//		super(type);
+//		this.childCalcs = childCalcs;
+//
+//	}
+	
+	protected AbstractProfilingNestedCalc(Type type, Calc<?>... childCalcs) {
 		super(type);
 		this.childCalcs = childCalcs;
 
@@ -64,11 +70,19 @@ public abstract class AbstractProfilingNestedCalc<E, C extends Calc<?>> extends 
 		return iface.cast(this);
 	}
 
-	public C[] getChildCalcs() {
+	public Calc<?>[] getChildCalcs() {
 		return childCalcs;
 	}
 
-	protected C getFirstChildCalc() {
+	public Calc<?> getChildCalc(int i) {
+		return childCalcs[i];
+	}
+	
+	public <D extends Calc<?>> D getChildCalc(int i, Class<D> clazz) {
+		return clazz.cast(childCalcs[i]);
+	}
+	
+	protected Calc<?> getFirstChildCalc() {
 		return getChildCalcs()[0];
 	}
 

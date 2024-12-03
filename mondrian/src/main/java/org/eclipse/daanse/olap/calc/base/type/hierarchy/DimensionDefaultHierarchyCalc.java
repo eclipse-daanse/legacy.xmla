@@ -22,15 +22,15 @@ import org.eclipse.daanse.olap.calc.api.DimensionCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedHierarchyCalc;
 import org.eclipse.daanse.olap.calc.base.util.DimensionUtil;
 
-public class DimensionDefaultHierarchyCalc extends AbstractProfilingNestedHierarchyCalc<DimensionCalc> {
+public class DimensionDefaultHierarchyCalc extends AbstractProfilingNestedHierarchyCalc {
 
 	public DimensionDefaultHierarchyCalc(Type type, DimensionCalc dimensionCalc) {
-		super(type, new DimensionCalc[] { dimensionCalc });
+		super(type, dimensionCalc);
 	}
 
 	@Override
 	public Hierarchy evaluate(Evaluator evaluator) {
-		final DimensionCalc dimensionCalc = getFirstChildCalc();
+		final DimensionCalc dimensionCalc = getChildCalc(0, DimensionCalc.class);
 		final Dimension dimension = dimensionCalc.evaluate(evaluator);
 		final Hierarchy hierarchy = DimensionUtil.getDimensionDefaultHierarchyOrThrow(dimension);
 		return hierarchy;

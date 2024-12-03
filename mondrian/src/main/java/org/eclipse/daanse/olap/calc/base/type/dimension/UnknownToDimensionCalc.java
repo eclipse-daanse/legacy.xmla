@@ -20,10 +20,10 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDimensionCalc;
 
-public class UnknownToDimensionCalc extends AbstractProfilingNestedDimensionCalc<Calc<?>> {
+public class UnknownToDimensionCalc extends AbstractProfilingNestedDimensionCalc {
 
 	public UnknownToDimensionCalc(Type type, Calc<?> calc) {
-		super(type, new Calc<?>[] { calc });
+		super(type, calc);
 	}
 
 	@Override

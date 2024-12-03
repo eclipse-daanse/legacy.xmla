@@ -32,7 +32,7 @@ import mondrian.olap.type.SetType;
  * @since Oct 24, 2008
  */
 public abstract class AbstractIterCalc
-extends AbstractProfilingNestedCalc<Object,Calc<?>>
+extends AbstractProfilingNestedCalc<Object>
 implements TupleIteratorCalc
 {
     /**
@@ -43,7 +43,7 @@ implements TupleIteratorCalc
      * @param calcs List of child compiled expressions (for dependency
      *   analysis)
      */
-    protected AbstractIterCalc( Type type, Calc[] calcs) {
+    protected AbstractIterCalc( Type type, Calc<?>... calcs) {
         super(type, calcs);
     }
 

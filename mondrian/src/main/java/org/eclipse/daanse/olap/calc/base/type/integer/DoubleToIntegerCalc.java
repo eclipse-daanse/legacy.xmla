@@ -19,15 +19,15 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedIntegerCalc;
 
-public class DoubleToIntegerCalc extends AbstractProfilingNestedIntegerCalc<DoubleCalc> {
+public class DoubleToIntegerCalc extends AbstractProfilingNestedIntegerCalc {
 
 	public DoubleToIntegerCalc(Type type, DoubleCalc doubleCalc) {
-		super(type, new DoubleCalc[] { doubleCalc });
+		super(type, doubleCalc);
 	}
 
 	@Override
 	public Integer evaluate(Evaluator evaluator) {
-		Double d = getFirstChildCalc().evaluate(evaluator);
+		Double d = getChildCalc(0, DoubleCalc.class).evaluate(evaluator);
 		if (d == null) {
 			return null;
 		}

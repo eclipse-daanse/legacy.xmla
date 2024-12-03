@@ -20,10 +20,10 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleCalc;
 
-public class UnknownToTupleCalc extends AbstractProfilingNestedTupleCalc<Calc<?>> {
+public class UnknownToTupleCalc extends AbstractProfilingNestedTupleCalc {
 
 	public UnknownToTupleCalc(Type type, Calc<?> childCalc) {
-		super(type, new Calc<?>[] { childCalc });
+		super(type, childCalc);
 	}
 
 	@Override

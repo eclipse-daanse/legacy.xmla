@@ -29,7 +29,7 @@ import mondrian.olap.type.SetType;
  * @since Nov 7, 2008
  */
 public abstract class GenericIterCalc
-extends AbstractProfilingNestedCalc<Object,Calc<?>>
+extends AbstractProfilingNestedCalc<Object>
 implements TupleListCalc, TupleIteratorCalc
 {
     /**

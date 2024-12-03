@@ -22,10 +22,9 @@ import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 
 import mondrian.olap.type.LevelType;
 
-public abstract class AbstractProfilingNestedLevelCalc<C extends Calc<?>> extends AbstractProfilingNestedCalc<Level, C>
-		implements LevelCalc {
+public abstract class AbstractProfilingNestedLevelCalc extends AbstractProfilingNestedCalc<Level> implements LevelCalc {
 
-	protected AbstractProfilingNestedLevelCalc(Type type, C[] calcs) {
+	protected AbstractProfilingNestedLevelCalc(Type type, Calc<?>... calcs) {
 		super(type, calcs);
 		requiresType(LevelType.class);
 	}

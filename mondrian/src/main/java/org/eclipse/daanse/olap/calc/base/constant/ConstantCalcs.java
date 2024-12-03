@@ -21,14 +21,12 @@ public class ConstantCalcs {
 		} else if (type instanceof NumericType nt) {
 			return new ConstantIntegerCalc(nt, null);
 
-		}
-		else if (type instanceof BooleanType bt) {
-			return new ConstantBooleanCalc( BooleanType.INSTANCE,null);
+		} else if (type instanceof BooleanType bt) {
+			return new ConstantBooleanCalc(BooleanType.INSTANCE, null);
 
-		}else {
-			throw new RuntimeException(type.toString()+" --- "+type.getClass());
+		} else {
+			throw new RuntimeException(type.toString() + " --- " + type.getClass());
 		}
-			
 
 	}
 }

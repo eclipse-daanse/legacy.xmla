@@ -22,16 +22,12 @@ import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 
 import mondrian.olap.type.MemberType;
 
+public abstract class AbstractProfilingNestedMemberCalc extends AbstractProfilingNestedCalc<Member>
+		implements MemberCalc {
 
-public abstract class AbstractProfilingNestedMemberCalc< C extends Calc<?>>
-extends AbstractProfilingNestedCalc<Member,C>
-implements MemberCalc
-{
-
-    protected AbstractProfilingNestedMemberCalc(Type type, C[] calcs) {
-        super(type, calcs);
-        requiresType(MemberType.class);
-    }
-
+	protected AbstractProfilingNestedMemberCalc(Type type, Calc<?>... calcs) {
+		super(type, calcs);
+		requiresType(MemberType.class);
+	}
 
 }

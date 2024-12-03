@@ -10,10 +10,10 @@ import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 
 import mondrian.olap.type.SetType;
 
-public abstract class AbstractProfilingNestedTupleIterableCalc<C extends Calc<?>>
-		extends AbstractProfilingNestedCalc<TupleIterable, C> implements TupleIterableCalc {
+public abstract class AbstractProfilingNestedTupleIterableCalc extends AbstractProfilingNestedCalc<TupleIterable>
+		implements TupleIterableCalc {
 
-	protected AbstractProfilingNestedTupleIterableCalc(Type type, C[] calcs) {
+	protected AbstractProfilingNestedTupleIterableCalc(Type type, Calc<?>... calcs) {
 		super(type, calcs);
 	}
 

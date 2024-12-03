@@ -16,15 +16,11 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.DateTimeCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 
+public abstract class AbstractProfilingNestedDateTimeCalc extends AbstractProfilingNestedCalc<Date>
+		implements DateTimeCalc {
 
-public abstract class AbstractProfilingNestedDateTimeCalc<C   extends Calc<?>>
-extends AbstractProfilingNestedCalc<Date,C>
-implements DateTimeCalc
-{
+	protected AbstractProfilingNestedDateTimeCalc(Type type, Calc<?>... calcs) {
+		super(type, calcs);
+	}
 
-    protected AbstractProfilingNestedDateTimeCalc(Type type, C[] calcs) {
-        super(type, calcs);
-    }
-
- 
 }

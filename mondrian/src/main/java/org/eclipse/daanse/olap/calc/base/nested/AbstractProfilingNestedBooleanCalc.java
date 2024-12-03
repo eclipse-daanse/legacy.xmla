@@ -19,22 +19,20 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 
 /**
- * Abstract implementation of the {@link org.eclipse.daanse.olap.calc.api.BooleanCalc} interface.
+ * Abstract implementation of the
+ * {@link org.eclipse.daanse.olap.calc.api.BooleanCalc} interface.
  * 
  * Handles nested child and profiling
  *
  */
-public abstract class AbstractProfilingNestedBooleanCalc<C   extends Calc<?>>
-extends AbstractProfilingNestedCalc<Boolean,C>
-implements BooleanCalc
-{
-    /**
-     * {@inheritDoc} 
-     *
-     */
-    protected AbstractProfilingNestedBooleanCalc( Type type,C[] calcs) {
-        super(type, calcs);
-    }
-
+public abstract class AbstractProfilingNestedBooleanCalc extends AbstractProfilingNestedCalc<Boolean>
+		implements BooleanCalc {
+	/**
+	 * {@inheritDoc}
+	 *
+	 */
+	protected AbstractProfilingNestedBooleanCalc(Type type, Calc<?>... calcs) {
+		super(type, calcs);
+	}
 
 }

@@ -24,30 +24,29 @@ import mondrian.olap.fun.FunUtil;
 import mondrian.olap.type.NumericType;
 
 /**
- * Abstract implementation of the {@link org.eclipse.daanse.olap.calc.api.IntegerCalc} interface.
+ * Abstract implementation of the
+ * {@link org.eclipse.daanse.olap.calc.api.IntegerCalc} interface.
  * 
  * Handles nested child and profiling
  *
  */
-public abstract class AbstractProfilingNestedDoubleCalc<C  extends Calc<?>>
-extends AbstractProfilingNestedCalc<Double,C>
-implements DoubleCalc
-{
-    /**
-     * {@inheritDoc} 
-     *
-     */
-    protected AbstractProfilingNestedDoubleCalc(Type type, C[] calcs) {
-        super(type, calcs);
-        requiresType(NumericType.class);
-    }
+public abstract class AbstractProfilingNestedDoubleCalc extends AbstractProfilingNestedCalc<Double>
+		implements DoubleCalc {
+	/**
+	 * {@inheritDoc}
+	 *
+	 */
+	protected AbstractProfilingNestedDoubleCalc(Type type, Calc<?>... calcs) {
+		super(type, calcs);
+		requiresType(NumericType.class);
+	}
 
-    @Override
-    public Double evaluate(Evaluator evaluator) {
-        final Double d = evaluate(evaluator);
-        if (d == FunUtil.DOUBLE_NULL) {
-            return null;
-        }
-        return Double.valueOf(d);
-    }
+	@Override
+	public Double evaluate(Evaluator evaluator) {
+		final Double d = evaluate(evaluator);
+		if (d == FunUtil.DOUBLE_NULL) {
+			return null;
+		}
+		return Double.valueOf(d);
+	}
 }
