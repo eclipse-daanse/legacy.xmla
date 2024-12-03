@@ -26,16 +26,13 @@ package org.eclipse.daanse.olap.function.def.as;
 import org.eclipse.daanse.mdx.model.api.expression.operation.InfixOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
-import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
-import mondrian.calc.impl.AbstractIterCalc;
 import mondrian.olap.QueryImpl;
 
 /**
@@ -71,13 +68,7 @@ public class AsAliasFunDef extends AbstractFunctionDefinition {
 		// a member to a set, have been performed. Use the new expression.
 		scopedNamedSet.setExp(call.getArg(0));
 
-		return new AbstractIterCalc(call.getType(), new Calc[0]) {
-			@Override
-			public TupleIterable evaluateIterable(Evaluator evaluator) {
-				Evaluator.NamedSetEvaluator namedSetEvaluator = evaluator.getNamedSetEvaluator(scopedNamedSet, false);
-				return namedSetEvaluator.evaluateTupleIterable(evaluator);
-			}
-		};
+		return new AsAliasCalc(call.getType(), scopedNamedSet);
 	}
 
 }
