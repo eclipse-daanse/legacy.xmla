@@ -104,7 +104,7 @@ import mondrian.util.Bug;
 public class FunctionTest {//extends FoodMartTestCase {
 
   private static final Logger LOGGER = LoggerFactory.getLogger( FunctionTest.class );
-  private static final int NUM_EXPECTED_FUNCTIONS = 239;
+  private static final int NUM_EXPECTED_FUNCTIONS = 234;
 
   private static final String[] AllHiers = {
           "[Measures]",
@@ -5786,7 +5786,7 @@ public class FunctionTest {//extends FoodMartTestCase {
 mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
     org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Gender].[M]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
     mondrian.olap.fun.SetItemFunDef$5(type=MemberType<hierarchy=[Time]>, resultStyle=VALUE, callCount=0, callMillis=0)
-        mondrian.olap.fun.BuiltinFunTable$20$1(type=SetType<MemberType<hierarchy=[Time]>>, resultStyle=LIST, callCount=0, callMillis=0)
+        mondrian.olap.fun.BuiltinFunTable$19$1(type=SetType<MemberType<hierarchy=[Time]>>, resultStyle=LIST, callCount=0, callMillis=0)
             mondrian.olap.fun.HierarchyCurrentMemberFunDef$CurrentMemberFixedCalc(type=MemberType<hierarchy=[Time]>, resultStyle=VALUE, callCount=0, callMillis=0)
         org.eclipse.daanse.olap.calc.base.constant.ConstantIntegerCalc(type=DecimalType(0), resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
     org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Measures].[Unit Sales]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
@@ -8047,7 +8047,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
 		String expr = "order([Product].children, [Measures].[Unit Sales])";
 		String expected = """
 			  mondrian.olap.fun.OrderFunDef$CurrentMemberCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0, direction=ASC)
-         mondrian.olap.fun.BuiltinFunTable$20$1(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
+         mondrian.olap.fun.BuiltinFunTable$19$1(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
              mondrian.olap.fun.HierarchyCurrentMemberFunDef$CurrentMemberFixedCalc(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
          mondrian.calc.impl.MemberValueCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
              org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Measures].[Unit Sales]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
@@ -8063,11 +8063,11 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
 		String expr = "order([Product].children, ([Time].[1997], [Product].CurrentMember.Parent))";
 		String expected = """
 mondrian.olap.fun.OrderFunDef$CurrentMemberCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0, direction=ASC)
-    mondrian.olap.fun.BuiltinFunTable$20$1(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
+    mondrian.olap.fun.BuiltinFunTable$19$1(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
         mondrian.olap.fun.HierarchyCurrentMemberFunDef$CurrentMemberFixedCalc(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
     mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
         org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Time].[1997]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
-        mondrian.olap.fun.BuiltinFunTable$14$1(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
+        mondrian.olap.fun.BuiltinFunTable$13$1(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
             mondrian.olap.fun.HierarchyCurrentMemberFunDef$CurrentMemberFixedCalc(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
 				""";
 		// [Time].[1997] is constant, and is evaluated in a ContextCalc.
@@ -8083,10 +8083,10 @@ mondrian.olap.fun.OrderFunDef$CurrentMemberCalc(type=SetType<MemberType<hierarch
 		String expr = "order([Product].children, [Product].CurrentMember.Parent)";
 		String expected = """
 mondrian.olap.fun.OrderFunDef$CurrentMemberCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0, direction=ASC)
-    mondrian.olap.fun.BuiltinFunTable$20$1(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
+    mondrian.olap.fun.BuiltinFunTable$19$1(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
         mondrian.olap.fun.HierarchyCurrentMemberFunDef$CurrentMemberFixedCalc(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
     mondrian.calc.impl.MemberValueCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
-        mondrian.olap.fun.BuiltinFunTable$14$1(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
+        mondrian.olap.fun.BuiltinFunTable$13$1(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
             mondrian.olap.fun.HierarchyCurrentMemberFunDef$CurrentMemberFixedCalc(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
 						""";
 		assertAxisCompilesTo(connection, expr, expected);
@@ -8100,9 +8100,9 @@ mondrian.olap.fun.OrderFunDef$CurrentMemberCalc(type=SetType<MemberType<hierarch
 		String expected = """
 				mondrian.olap.fun.OrderFunDef$CurrentMemberCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0, direction=ASC)
         mondrian.olap.fun.FilterFunDef$ImmutableIterCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=ITERABLE, callCount=0, callMillis=0)
-            mondrian.olap.fun.BuiltinFunTable$20$1(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
+            mondrian.olap.fun.BuiltinFunTable$19$1(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
                 mondrian.olap.fun.HierarchyCurrentMemberFunDef$CurrentMemberFixedCalc(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
-            mondrian.olap.fun.BuiltinFunTable$60$1(type=BOOLEAN, resultStyle=VALUE, callCount=0, callMillis=0)
+            mondrian.olap.fun.BuiltinFunTable$59$1(type=BOOLEAN, resultStyle=VALUE, callCount=0, callMillis=0)
                 mondrian.calc.impl.AbstractExpCompiler$UnknownToDoubleCalc(type=NUMERIC, resultStyle=VALUE, callCount=0, callMillis=0)
                     mondrian.calc.impl.MemberValueCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
                         org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Measures].[Unit Sales]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)

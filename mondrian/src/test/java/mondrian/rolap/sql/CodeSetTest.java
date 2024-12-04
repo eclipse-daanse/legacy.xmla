@@ -13,12 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-
 import org.eclipse.daanse.jdbc.db.dialect.db.postgresql.PostgreSqlDialect;
 import org.eclipse.daanse.jdbc.db.api.meta.DatabaseInfo;
+import org.eclipse.daanse.jdbc.db.api.meta.IdentifierInfo;
 import org.eclipse.daanse.jdbc.db.api.meta.MetaInfo;
 import org.junit.jupiter.api.Test;
 
@@ -189,7 +186,9 @@ class CodeSetTest {
       {
 	MetaInfo metaInfoMock = mock(MetaInfo.class);
 	DatabaseInfo databaseInfo = mock(DatabaseInfo.class);
+	IdentifierInfo identifierInfo = mock(IdentifierInfo.class);
 	when(metaInfoMock.databaseInfo()).thenReturn(databaseInfo);
+	when(metaInfoMock.identifierInfo()).thenReturn(identifierInfo);
     when(databaseInfo.databaseProductName()).thenReturn(
         dbProductName != null ? dbProductName : EMPTY_NAME);
     when(databaseInfo.databaseProductVersion()).thenReturn(
