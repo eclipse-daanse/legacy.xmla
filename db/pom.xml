@@ -21,8 +21,7 @@
 	<artifactId>org.eclipse.daanse.db</artifactId>
 	<packaging>pom</packaging>
 	<modules>
-    <module>jdbc</module>
-		<module>statistics</module>
+        <module>jdbc</module>
 	</modules>
 
 

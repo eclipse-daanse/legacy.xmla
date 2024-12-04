@@ -113,12 +113,6 @@
 			<version>${revision}</version>
 			<scope>runtime</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.db.statistics.metadata</artifactId>
-			<version>${revision}</version>
-			<scope>runtime</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>

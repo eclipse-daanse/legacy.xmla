@@ -32,8 +32,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.eclipse.daanse.db.statistics.api.StatisticsProvider;
 import org.eclipse.daanse.jdbc.db.api.DatabaseService;
+import org.eclipse.daanse.jdbc.db.api.meta.IndexInfo;
+import org.eclipse.daanse.jdbc.db.api.meta.IndexInfoItem;
+import org.eclipse.daanse.jdbc.db.api.meta.MetaInfo;
 import org.eclipse.daanse.jdbc.db.api.schema.ColumnDefinition;
 import org.eclipse.daanse.jdbc.db.api.schema.ColumnMetaData;
 import org.eclipse.daanse.jdbc.db.api.schema.SchemaReference;
@@ -100,6 +102,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     public static final Converter CONVERTER = Converters.standardConverter();
     double MAX_ROW = 10000.00;
     double MAX_LEVEL = 20.00;
+    private static final long CARDINALITY_UNKNOWN = -1;
 
     private static String ENTER = System.lineSeparator();
     private List<Verifyer> verifyers = new CopyOnWriteArrayList<>();
@@ -108,9 +111,10 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     @Reference
     DatabaseService databaseService;
-
-    @Reference
-    StatisticsProvider statisticsProvider;
+    private MetaInfo metaInfo;
+    
+    //@Reference
+    //StatisticsProvider statisticsProvider;
 
     @Activate
     public void activate(Map<String, Object> configMap) {
@@ -127,7 +131,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     @Override
     public void createDocumentation(Context context, Path path) throws Exception {
-
+        metaInfo = databaseService.createMetaInfo(context.getConnection().getDataSource());
         File file = path.toFile();
 
         if (file.exists()) {
@@ -227,9 +231,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
             QueryMapping relation = c.getQuery();
             if (relation instanceof TableQueryMapping mt) {
                 TableReference tableReference = new TableReferenceR(mt.getTable().getName());
-                return statisticsProvider.getTableCardinality(
-                    context.getConnection().getDataSource(),
-                    tableReference);
+                return getTableCardinality(tableReference);
             }
             if (relation instanceof InlineTableQueryMapping it) {
                 result = it.getTable().getRows() == null ? 0l : it.getTable().getRows().size();
@@ -242,9 +244,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                 Optional<String> tableName = getFactTableName(mj);
                 if (tableName.isPresent()) {
                     TableReference tableReference = new TableReferenceR(tableName.get());
-                    return statisticsProvider.getTableCardinality(
-                        context.getConnection().getDataSource(),
-                        tableReference);
+                    return getTableCardinality(tableReference);
                 }
             }
         } catch (Exception throwables) {
@@ -254,7 +254,30 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         return result;
     }
 
-    private int getLevelsCount(SchemaMapping schema, CubeMapping c) {
+    private long getTableCardinality(TableReference tableReference) {
+        Optional<IndexInfo> oIndexInfo = metaInfo.indexInfos().stream().filter(i -> i.tableReference().name().equals(tableReference.name())).findAny();
+        long maxNonUnique = CARDINALITY_UNKNOWN;
+        if (oIndexInfo.isPresent()) {
+            if (oIndexInfo.get().indexInfoItems() != null) {
+                for (IndexInfoItem indexInfoItem : oIndexInfo.get().indexInfoItems()) {
+                    final int type = indexInfoItem.type();
+                    final int cardinality = indexInfoItem.cardinalityColumn();
+                    final boolean unique = !indexInfoItem.unique();
+                    if (type != DatabaseMetaData.tableIndexStatistic) {
+                        return cardinality;
+                    }
+                    if (!unique) {
+    	                maxNonUnique = Math.max(maxNonUnique, cardinality);
+    	            }
+                }
+                return maxNonUnique;
+            }
+        }
+        return maxNonUnique;
+	}
+
+
+	private int getLevelsCount(SchemaMapping schema, CubeMapping c) {
         int res = 0;
         for (DimensionConnectorMapping d : c.getDimensionConnectors()) {
             res = res + getLevelsCount1(schema, d);
