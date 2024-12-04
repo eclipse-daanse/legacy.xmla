@@ -25,16 +25,12 @@
  */
 package org.eclipse.daanse.olap.function.def.dimension;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.olap.fun.FunctionTest;
 
 public class DimensionFunctionsTest {
 
@@ -56,44 +52,5 @@ public class DimensionFunctionsTest {
 		TestUtil.assertExprReturns(context.getConnection(), "[Time].[1997].[Q2].Dimension.UniqueName", "[Time]");
 	}
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testDimensionsNumeric(Context context) {
-		TestUtil.assertExprDependsOn(context.getConnection(), "Dimensions(2).Name", "{}");
-		TestUtil.assertMemberExprDependsOn(context.getConnection(), "Dimensions(3).CurrentMember",
-				FunctionTest.allHiers());
-		TestUtil.assertExprReturns(context.getConnection(), "Dimensions(2).Name", "Store Size in SQFT");
-		// bug 1426134 -- Dimensions(0) throws 'Index '0' out of bounds'
-		TestUtil.assertExprReturns(context.getConnection(), "Dimensions(0).Name", "Measures");
-		TestUtil.assertExprThrows(context.getConnection(), "Dimensions(-1).Name", "Index '-1' out of bounds");
-		TestUtil.assertExprThrows(context.getConnection(), "Dimensions(100).Name", "Index '100' out of bounds");
-		// Since Dimensions returns a Hierarchy, can apply CurrentMember.
-		assertAxisReturns(context.getConnection(), "Dimensions(3).CurrentMember", "[Store Type].[All Store Types]");
-	}
-
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testDimensionsString(Context context) {
-		TestUtil.assertExprDependsOn(context.getConnection(), "Dimensions(\"foo\").UniqueName", "{}");
-		TestUtil.assertMemberExprDependsOn(context.getConnection(), "Dimensions(\"foo\").CurrentMember",
-				FunctionTest.allHiers());
-		TestUtil.assertExprReturns(context.getConnection(), "Dimensions(\"Store\").UniqueName", "[Store]");
-		// Since Dimensions returns a Hierarchy, can apply Children.
-		assertAxisReturns(context.getConnection(), "Dimensions(\"Store\").Children", """
-				[Store].[Canada]
-				[Store].[Mexico]
-				[Store].[USA]""");
-	}
-
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testDimensionsDepends(Context context) {
-		final String expression = """
-				Crossjoin(
-				{Dimensions("Measures").CurrentMember.Hierarchy.CurrentMember},
-				{Dimensions("Product")})""";
-		assertAxisReturns(context.getConnection(), expression, "{[Measures].[Unit Sales], [Product].[All Products]}");
-		TestUtil.assertSetExprDependsOn(context.getConnection(), expression, FunctionTest.allHiers());
-	}
 
 }

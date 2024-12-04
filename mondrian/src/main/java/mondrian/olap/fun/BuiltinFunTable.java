@@ -57,6 +57,7 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCal
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.dimension.hierarchy.DimensionOfHierarchyFunDef;
+import org.eclipse.daanse.olap.function.def.dimensions.numeric.DimensionsNumericFunDef;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.GenericCalc;
@@ -120,9 +121,6 @@ public class BuiltinFunTable extends FunTableImpl {
 
         //
         // DIMENSION FUNCTIONS
-
-        // "Dimensions(<Numeric Expression>)"
-        builder.define(DimensionsNumericFunDef.INSTANCE);
 
         // "Dimensions(<String Expression>)"
         builder.define(DimensionsStringFunDef.INSTANCE);
