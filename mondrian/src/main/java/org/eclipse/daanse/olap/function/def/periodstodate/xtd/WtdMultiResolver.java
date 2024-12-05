@@ -20,9 +20,12 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
+import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinitionMultiResolver;
+import org.osgi.service.component.annotations.Component;
 
+@Component(service = FunctionResolver.class)
 public class WtdMultiResolver extends AbstractFunctionDefinitionMultiResolver {
 
 	private static OperationAtom atom = new FunctionOperationAtom("Wtd");
