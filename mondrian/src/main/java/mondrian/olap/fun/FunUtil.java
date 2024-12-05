@@ -1096,7 +1096,7 @@ public class FunUtil extends Util {
     return retvals;
   }
 
-  static List<Member> periodsToDate(
+  public static List<Member> periodsToDate(
     Evaluator evaluator,
     Level level,
     Member member ) {

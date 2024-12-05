@@ -15,6 +15,7 @@ Export-Package: \
 	com.fasterxml.jackson.databind*,\
 	com.fasterxml.jackson.core*,\
 	com.fasterxml.jackson.annotation*,\
+	org.apache.commons.io*,\
 	org.apache.commons.lang3*,\
 	com.google.common.collect*,\
 	com.google.common*

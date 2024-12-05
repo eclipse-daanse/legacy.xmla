@@ -13,7 +13,7 @@
  */
 package org.eclipse.daanse.olap.api.query.component;
 
-public sealed interface Literal<R> extends QueryComponent permits NullLiteral, StringLiteral, NumericLiteral,SymbolLiteral{
+public sealed interface Literal<R> extends QueryComponent permits NullLiteral, StringLiteral, NumericLiteral, SymbolLiteral {
 
 	R getValue();
 

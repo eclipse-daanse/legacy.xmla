@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import org.eclipse.daanse.mdx.model.api.expression.operation.EmptyOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
@@ -56,8 +55,6 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCal
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
-import org.eclipse.daanse.olap.function.def.dimension.hierarchy.DimensionOfHierarchyFunDef;
-import org.eclipse.daanse.olap.function.def.dimensions.numeric.DimensionsNumericFunDef;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.GenericCalc;
@@ -1011,11 +1008,9 @@ public class BuiltinFunTable extends FunTableImpl {
             }
         });
 
-        builder.define(XtdFunDef.MtdResolver);
         builder.define(OrderFunDef.Resolver);
         builder.define(UnorderFunDef.Resolver);
         builder.define(PeriodsToDateFunDef.Resolver);
-        builder.define(XtdFunDef.QtdResolver);
 
         // StripCalculatedMembers(<Set>)
         builder.define(
@@ -1087,8 +1082,6 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(ToggleDrillStateFunDef.Resolver);
         builder.define(UnionFunDef.Resolver);
         builder.define(VisualTotalsFunDef.Resolver);
-        builder.define(XtdFunDef.WtdResolver);
-        builder.define(XtdFunDef.YtdResolver);
         builder.define(RangeFunDef.instance); // "<member> : <member>" operator
         builder.define(SetFunDef.Resolver); // "{ <member> [,...] }" operator
         builder.define(NativizeSetFunDef.Resolver);

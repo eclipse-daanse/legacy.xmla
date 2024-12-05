@@ -30,6 +30,10 @@ import org.eclipse.daanse.olap.function.def.dimension.level.DimensionOfLevelReso
 import org.eclipse.daanse.olap.function.def.dimension.member.DimensionOfMemberResolver;
 import org.eclipse.daanse.olap.function.def.dimensions.numeric.DimensionNumericResolver;
 import org.eclipse.daanse.olap.function.def.empty.EmptyExpressionResolver;
+import org.eclipse.daanse.olap.function.def.periodstodate.xtd.MtdMultiResolver;
+import org.eclipse.daanse.olap.function.def.periodstodate.xtd.QtdMultiResolver;
+import org.eclipse.daanse.olap.function.def.periodstodate.xtd.WtdMultiResolver;
+import org.eclipse.daanse.olap.function.def.periodstodate.xtd.YtdMultiResolver;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 
@@ -72,7 +76,12 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 	    functionService.addResolver(new DimensionOfLevelResolver());
 	    functionService.addResolver(new DimensionOfMemberResolver());
 	    functionService.addResolver(new DimensionNumericResolver());
-	    
+
+	    functionService.addResolver(new YtdMultiResolver());
+	    functionService.addResolver(new QtdMultiResolver());
+	    functionService.addResolver(new MtdMultiResolver());
+	    functionService.addResolver(new WtdMultiResolver());
+
 }
 
 	@Override

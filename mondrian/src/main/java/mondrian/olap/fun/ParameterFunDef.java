@@ -119,10 +119,10 @@ public class ParameterFunDef extends AbstractFunctionDefinition {
     }
 
     public static String getParameterName(Expression[] args) {
-        if (args[0] instanceof Literal
+        if (args[0] instanceof Literal firstArgAsLiteral //TODO: maybe StringLiteral Only One that has String ad DataType
             && args[0].getCategory() == DataType.STRING)
         {
-            return (String) ((Literal) args[0]).getValue();
+            return (String) firstArgAsLiteral.getValue();
         } else {
             throw Util.newInternal("Parameter name must be a string constant");
         }

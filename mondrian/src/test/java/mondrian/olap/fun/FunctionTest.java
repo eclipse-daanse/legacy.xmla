@@ -9993,147 +9993,6 @@ mondrian.olap.fun.OrderFunDef$CurrentMemberCalc(type=SetType<MemberType<hierarch
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testYtd(Context context) {
-    assertAxisReturns(context.getConnection(),
-      "Ytd()",
-      "[Time].[1997]" );
-    assertAxisReturns(context.getConnection(),
-      "Ytd([Time].[1997].[Q3])",
-      "[Time].[1997].[Q1]\n"
-        + "[Time].[1997].[Q2]\n"
-        + "[Time].[1997].[Q3]" );
-    assertAxisReturns(context.getConnection(),
-      "Ytd([Time].[1997].[Q2].[4])",
-      "[Time].[1997].[Q1].[1]\n"
-        + "[Time].[1997].[Q1].[2]\n"
-        + "[Time].[1997].[Q1].[3]\n"
-        + "[Time].[1997].[Q2].[4]" );
-    assertAxisThrows(context.getConnection(),
-      "Ytd([Store])",
-      "Argument to function 'Ytd' must belong to Time hierarchy" );
-    assertSetExprDependsOn(context.getConnection(),
-      "Ytd()",
-      "{[Time], " + TimeWeekly + "}" );
-    assertSetExprDependsOn(context.getConnection(),
-      "Ytd([Time].[1997].[Q2])",
-      "{}" );
-  }
-
-  /**
-   * Testcase for
-   * <a href="http://jira.pentaho.com/browse/MONDRIAN-458">
-   * bug MONDRIAN-458, "error deducing type of Ytd/Qtd/Mtd functions within Generate"</a>.
-   */
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testGeneratePlusXtd(Context context) {
-    assertAxisReturns(context.getConnection(),
-      "generate(\n"
-        + "  {[Time].[1997].[Q1].[2], [Time].[1997].[Q3].[7]},\n"
-        + " {Ytd( [Time].[Time].currentMember)})",
-      "[Time].[1997].[Q1].[1]\n"
-        + "[Time].[1997].[Q1].[2]\n"
-        + "[Time].[1997].[Q1].[3]\n"
-        + "[Time].[1997].[Q2].[4]\n"
-        + "[Time].[1997].[Q2].[5]\n"
-        + "[Time].[1997].[Q2].[6]\n"
-        + "[Time].[1997].[Q3].[7]" );
-    assertAxisReturns(context.getConnection(),
-      "generate(\n"
-        + "  {[Time].[1997].[Q1].[2], [Time].[1997].[Q3].[7]},\n"
-        + " {Ytd( [Time].[Time].currentMember)}, ALL)",
-      "[Time].[1997].[Q1].[1]\n"
-        + "[Time].[1997].[Q1].[2]\n"
-        + "[Time].[1997].[Q1].[1]\n"
-        + "[Time].[1997].[Q1].[2]\n"
-        + "[Time].[1997].[Q1].[3]\n"
-        + "[Time].[1997].[Q2].[4]\n"
-        + "[Time].[1997].[Q2].[5]\n"
-        + "[Time].[1997].[Q2].[6]\n"
-        + "[Time].[1997].[Q3].[7]" );
-    assertExprReturns(context.getConnection(),
-      "count(generate({[Time].[1997].[Q4].[11]},"
-        + " {Qtd( [Time].[Time].currentMember)}))",
-      2, 0 );
-    assertExprReturns(context.getConnection(),
-      "count(generate({[Time].[1997].[Q4].[11]},"
-        + " {Mtd( [Time].[Time].currentMember)}))",
-      1, 0 );
-  }
-
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testQtd(Context context) {
-    // zero args
-    assertQueryReturns(context.getConnection(),
-      "with member [Measures].[Foo] as ' SetToStr(Qtd()) '\n"
-        + "select {[Measures].[Foo]} on columns\n"
-        + "from [Sales]\n"
-        + "where [Time].[1997].[Q2].[5]",
-      "Axis #0:\n"
-        + "{[Time].[1997].[Q2].[5]}\n"
-        + "Axis #1:\n"
-        + "{[Measures].[Foo]}\n"
-        + "Row #0: {[Time].[1997].[Q2].[4], [Time].[1997].[Q2].[5]}\n" );
-
-    // one arg, a month
-    assertAxisReturns(context.getConnection(),
-      "Qtd([Time].[1997].[Q2].[5])",
-      "[Time].[1997].[Q2].[4]\n"
-        + "[Time].[1997].[Q2].[5]" );
-
-    // one arg, a quarter
-    assertAxisReturns(context.getConnection(),
-      "Qtd([Time].[1997].[Q2])",
-      "[Time].[1997].[Q2]" );
-
-    // one arg, a year
-    assertAxisReturns(context.getConnection(),
-      "Qtd([Time].[1997])",
-      "" );
-
-    assertAxisThrows(context.getConnection(),
-      "Qtd([Store])",
-      "Argument to function 'Qtd' must belong to Time hierarchy" );
-  }
-
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMtd(Context context) {
-    // zero args
-    assertQueryReturns(context.getConnection(),
-      "with member [Measures].[Foo] as ' SetToStr(Mtd()) '\n"
-        + "select {[Measures].[Foo]} on columns\n"
-        + "from [Sales]\n"
-        + "where [Time].[1997].[Q2].[5]",
-      "Axis #0:\n"
-        + "{[Time].[1997].[Q2].[5]}\n"
-        + "Axis #1:\n"
-        + "{[Measures].[Foo]}\n"
-        + "Row #0: {[Time].[1997].[Q2].[5]}\n" );
-
-    // one arg, a month
-    assertAxisReturns(context.getConnection(),
-      "Mtd([Time].[1997].[Q2].[5])",
-      "[Time].[1997].[Q2].[5]" );
-
-    // one arg, a quarter
-    assertAxisReturns(context.getConnection(),
-      "Mtd([Time].[1997].[Q2])",
-      "" );
-
-    // one arg, a year
-    assertAxisReturns(context.getConnection(),
-      "Mtd([Time].[1997])",
-      "" );
-
-    assertAxisThrows(context.getConnection(),
-      "Mtd([Store])",
-      "Argument to function 'Mtd' must belong to Time hierarchy" );
-  }
-
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testPeriodsToDate(Context context) {
     assertSetExprDependsOn(context.getConnection(), "PeriodsToDate()", "{[Time]}" );
     assertSetExprDependsOn(context.getConnection(),
@@ -10331,7 +10190,7 @@ mondrian.olap.fun.OrderFunDef$CurrentMemberCalc(type=SetType<MemberType<hierarch
    * Executes a scalar expression, and asserts that the result is as expected. For example, <code>assertExprReturns ("1
    * + 2", "3")</code> should succeed.
    */
-   void assertExprReturns(Connection connection, String expr, String expected ) {
+   public static void assertExprReturns(Connection connection, String expr, String expected ) {
     String actual = executeExpr(connection, expr);
     assertEquals( expected, actual );
   }
@@ -10343,7 +10202,7 @@ mondrian.olap.fun.OrderFunDef$CurrentMemberCalc(type=SetType<MemberType<hierarch
    * @param expected Expected value
    * @param delta    Maximum allowed deviation from expected value
    */
-  void assertExprReturns(Connection connection,
+ public static void assertExprReturns(Connection connection,
     String expr, double expected, double delta ) {
     Object value = executeExprRaw(connection, expr).getValue();
 
