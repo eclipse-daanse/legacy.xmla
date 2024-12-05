@@ -20,7 +20,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.InfixOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
@@ -47,6 +49,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinitionMultiResolver;
 import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFunctionResolver;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.query.base.Expressions;
@@ -1057,28 +1060,42 @@ public Calc compileCall( final ResolvedFunCall call, ExpressionCompiler compiler
 	}
   }
 
+	private static class StarCrossJoinResolver extends AbstractFunctionDefinitionMultiResolver {
 
-  private static class StarCrossJoinResolver extends MultiResolver {
-    public StarCrossJoinResolver() {
-      super( "*", "<Set1> * <Set2>", "Returns the cross product of two sets.", new String[] { "ixxx", "ixmx", "ixxm",
-        "ixmm" } );
-    }
+		static final OperationAtom atom = new InfixOperationAtom("*");
 
-    @Override
-	public FunctionDefinition resolve( Expression[] args, Validator validator, List<Conversion> conversions ) {
-      // This function only applies in contexts which require a set.
-      // Elsewhere, "*" is the multiplication operator.
-      // This means that [Measures].[Unit Sales] * [Gender].[M] is
-      // well-defined.
-      if ( validator.requiresExpression() ) {
-        return null;
-      }
-      return super.resolve( args, validator, conversions );
-    }
+		static final FunctionMetaData starCrossJoinSetSet = new FunctionMetaDataR(atom,
+				"Returns the cross product of two sets.", "<Set1> * <Set2>", DataType.SET,
+				new DataType[] { DataType.SET, DataType.SET });
 
-    @Override
-	protected FunctionDefinition createFunDef( Expression[] args, FunctionMetaData functionMetaData ) {
-      return new CrossJoinFunDef( functionMetaData );
-    }
-  }
+		static final FunctionMetaData starCrossJoinSetMember = new FunctionMetaDataR(atom,
+				"Returns the cross product of Set and Member.", "<Set> * <Member>", DataType.SET,
+				new DataType[] { DataType.SET, DataType.MEMBER });
+
+		static final FunctionMetaData starCrossJoinMemberSet = new FunctionMetaDataR(atom,
+				"Returns the cross product of Member and Set.", "<Member> * <Set>", DataType.SET,
+				new DataType[] { DataType.MEMBER, DataType.SET });
+
+		static final FunctionMetaData starCrossJoinMemberMember = new FunctionMetaDataR(atom,
+				"Returns the cross product of two Members.", "<Member> * <Set>", DataType.SET,
+				new DataType[] { DataType.MEMBER, DataType.MEMBER });
+
+		public StarCrossJoinResolver() {
+			super(List.of(new CrossJoinFunDef(starCrossJoinSetSet), new CrossJoinFunDef(starCrossJoinSetMember),
+					new CrossJoinFunDef(starCrossJoinMemberSet), new CrossJoinFunDef(starCrossJoinMemberMember)));
+		}
+
+		@Override
+		public FunctionDefinition resolve(Expression[] args, Validator validator, List<Conversion> conversions) {
+			// This function only applies in contexts which require a set.
+			// Elsewhere, "*" is the multiplication operator.
+			// This means that [Measures].[Unit Sales] * [Gender].[M] is
+			// well-defined.
+			if (validator.requiresExpression()) {
+				return null;
+			}
+			return super.resolve(args, validator, conversions);
+		}
+
+	}
 }
