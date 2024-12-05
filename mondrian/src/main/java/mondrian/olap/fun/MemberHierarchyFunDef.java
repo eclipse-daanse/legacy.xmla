@@ -9,15 +9,20 @@
 
 package mondrian.olap.fun;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedHierarchyCalc;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 /**
@@ -27,10 +32,16 @@ import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
  * @since Mar 23, 2006
  */
 public class MemberHierarchyFunDef extends AbstractFunctionDefinition {
+
+    static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Hierarchy");
+
+    static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns a member's hierarchy.",
+            "<MEMBER>.Hierarchy", DataType.HIERARCHY, new DataType[] { DataType.MEMBER });
+
     static final MemberHierarchyFunDef instance = new MemberHierarchyFunDef();
 
     private MemberHierarchyFunDef() {
-        super("Hierarchy", "Returns a member's hierarchy.", "phm");
+        super(functionMetaData);
     }
 
     @Override

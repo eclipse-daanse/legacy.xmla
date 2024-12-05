@@ -13,13 +13,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.calc.impl.AbstractListCalc;
@@ -34,13 +39,16 @@ import mondrian.calc.impl.AbstractListCalc;
  * @since Jun 10, 2007
 */
 class DistinctFunDef extends AbstractFunctionDefinition {
+
+	static OperationAtom functionAtom = new FunctionOperationAtom("Distinct");
+
+	static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Eliminates duplicate tuples from a set.",
+			"Distinct(<SET>)", DataType.SET, new DataType[] { DataType.SET });
+
     public static final DistinctFunDef instance = new DistinctFunDef();
 
     private DistinctFunDef() {
-        super(
-            "Distinct",
-            "Eliminates duplicate tuples from a set.",
-            "fxx");
+        super(functionMetaData);
     }
 
     @Override

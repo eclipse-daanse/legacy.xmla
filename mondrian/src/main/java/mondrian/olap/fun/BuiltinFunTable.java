@@ -18,8 +18,11 @@ import java.util.Locale;
 import java.util.Objects;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.InfixOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.MethodOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PrefixOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.SchemaReader;
@@ -132,11 +135,13 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(MemberLevelFunDef.instance);
 
         // "<Hierarchy>.Levels(<Numeric Expression>)"
+        OperationAtom methodOperationAtom = new MethodOperationAtom(LEVELS);
+
+        FunctionMetaData levelsFunctionMetaData = new FunctionMetaDataR(methodOperationAtom, "Returns the level whose position in a hierarchy is specified by a numeric expression.",
+                "<Hierarchy>.Levels(<NUMERIC>)", DataType.LEVEL, new DataType[] { DataType.HIERARCHY, DataType.NUMERIC });
+
         builder.define(
-            new AbstractFunctionDefinition(
-                LEVELS,
-                "Returns the level whose position in a hierarchy is specified by a numeric expression.",
-                "mlhn")
+            new AbstractFunctionDefinition(levelsFunctionMetaData)
         {
             @Override
 			public Type getResultType(Validator validator, Expression[] args) {
@@ -176,11 +181,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // "<Hierarchy>.Levels(<String Expression>)"
+        OperationAtom hierarchyMethodOperationAtom = new MethodOperationAtom(LEVELS);
+        FunctionMetaData hierarchyLevelsFunctionMetaData = new FunctionMetaDataR(hierarchyMethodOperationAtom, "Returns the level whose name is specified by a string expression.",
+                "<HIERARCHY>.Levels(<STRING>)", DataType.LEVEL, new DataType[] { DataType.HIERARCHY, DataType.STRING });
         builder.define(
-            new AbstractFunctionDefinition(
-                LEVELS,
-                "Returns the level whose name is specified by a string expression.",
-                "mlhS")
+            new AbstractFunctionDefinition(hierarchyLevelsFunctionMetaData)
         {
             @Override
 			public Type getResultType(Validator validator, Expression[] args) {
@@ -218,11 +223,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // "Levels(<String Expression>)"
+        OperationAtom functionOperationAtom = new FunctionOperationAtom(LEVELS);
+        FunctionMetaData levelsFunctionMetaData1 = new FunctionMetaDataR(functionOperationAtom, "Returns the level whose name is specified by a string expression.",
+                "Levels(<STRING>)", DataType.LEVEL, new DataType[] { DataType.STRING });
         builder.define(
-            new AbstractFunctionDefinition(
-                LEVELS,
-                "Returns the level whose name is specified by a string expression.",
-                "flS")
+            new AbstractFunctionDefinition(levelsFunctionMetaData1)
         {
             @Override
 			public Type getResultType(Validator validator, Expression[] args) {
@@ -319,11 +324,12 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(NamedSetCurrentOrdinalFunDef.instance);
 
         // "<Member>.DataMember"
+        OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("DataMember");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the system-generated data member that is associated with a nonleaf member of a dimension.",
+                "<MEMBER>.DataMember", DataType.MEMBER, new DataType[] { DataType.MEMBER });
+
         builder.define(
-            new AbstractFunctionDefinition(
-                "DataMember",
-                "Returns the system-generated data member that is associated with a nonleaf member of a dimension.",
-                "pmm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -345,7 +351,7 @@ public class BuiltinFunTable extends FunTableImpl {
         // documentation & backwards compatibility.
         OperationAtom functionAtomDefaultMember = new PlainPropertyOperationAtom("DefaultMember");
 
-		builder.define(new FunctionMetaDataR(functionAtomDefaultMember, "Returns the default member of a dimension.", "",
+		builder.define(new FunctionMetaDataR(functionAtomDefaultMember, "Returns the default member of a dimension.", "<DIMENSION>.DefaultMember",
 				 DataType.MEMBER, new DataType[] { DataType.DIMENSION }));
 
         // "<Hierarchy>.DefaultMember"
@@ -378,11 +384,12 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // "<Member>.FirstChild"
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("FirstChild");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the first child of a member.",
+                "<MEMBER>.FirstChild", DataType.MEMBER, new DataType[] { DataType.MEMBER });
+
         builder.define(
-            new AbstractFunctionDefinition(
-                "FirstChild",
-                "Returns the first child of a member.",
-                "pmm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -408,11 +415,12 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Member>.FirstSibling
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("FirstSibling");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the first child of the parent of a member.",
+                "<MEMBER>.FirstSibling", DataType.MEMBER, new DataType[] { DataType.MEMBER });
+
         builder.define(
-            new AbstractFunctionDefinition(
-                "FirstSibling",
-                "Returns the first child of the parent of a member.",
-                "pmm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -448,11 +456,12 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(LeadLagFunDef.LagResolver);
 
         // <Member>.LastChild
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("LastChild");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the last child of a member.",
+                "<MEMBER>.LastChild", DataType.MEMBER, new DataType[] { DataType.MEMBER });
+
         builder.define(
-            new AbstractFunctionDefinition(
-                "LastChild",
-                "Returns the last child of a member.",
-                "pmm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -478,11 +487,12 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Member>.LastSibling
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("LastSibling");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the last child of the parent of a member.",
+                "<MEMBER>.LastSibling", DataType.MEMBER, new DataType[] { DataType.MEMBER });
+
         builder.define(
-            new AbstractFunctionDefinition(
-                "LastSibling",
-                "Returns the last child of the parent of a member.",
-                "pmm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -518,11 +528,11 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(LeadLagFunDef.LeadResolver);
 
         // Members(<String Expression>)
+        functionOperationAtom = new FunctionOperationAtom(MEMBERS);
+        functionMetaData = new FunctionMetaDataR(functionOperationAtom, "Returns the last child of the parent of a member.",
+                "<STRING>Members(<STRING>)", DataType.MEMBER, new DataType[] { DataType.STRING });
         builder.define(
-            new AbstractFunctionDefinition(
-                MEMBERS,
-                "Returns the member whose name is specified by a string expression.",
-                "fmS")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -532,11 +542,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Member>.NextMember
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("NextMember");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the next member in the level that contains a specified member.",
+                "<MEMBER>.NextMember", DataType.MEMBER, new DataType[] { DataType.MEMBER });
         builder.define(
-            new AbstractFunctionDefinition(
-                "NextMember",
-                "Returns the next member in the level that contains a specified member.",
-                "pmm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -562,11 +572,11 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(ParallelPeriodFunDef.Resolver);
 
         // <Member>.Parent
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Parent");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the parent of a member.",
+                "<MEMBER>.Parent", DataType.MEMBER, new DataType[] { DataType.MEMBER });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Parent",
-                "Returns the parent of a member.",
-                "pmm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -593,11 +603,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Member>.PrevMember
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("PrevMember");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the previous member in the level that contains a specified member.",
+                "<MEMBER>.PrevMember", DataType.MEMBER, new DataType[] { DataType.MEMBER });
         builder.define(
-            new AbstractFunctionDefinition(
-                "PrevMember",
-                "Returns the previous member in the level that contains a specified member.",
-                "pmm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -634,11 +644,11 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(CountFunDef.Resolver);
 
         // <Set>.Count
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Count");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the number of tuples in a set including empty cells.",
+                "<SET>.Count", DataType.NUMERIC, new DataType[] { DataType.SET });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Count",
-                "Returns the number of tuples in a set including empty cells.",
-                "pnx")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -681,11 +691,11 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(PercentileFunDef.Resolver);
 
         // <Level>.Ordinal
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Ordinal");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the zero-based ordinal value associated with a level.",
+                "<LEVEL>.Ordinal", DataType.NUMERIC, new DataType[] { DataType.LEVEL });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Ordinal",
-                "Returns the zero-based ordinal value associated with a level.",
-                "pnl")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -713,13 +723,12 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(StdevPFunDef.StddevpResolver);
 
         builder.define(SumFunDef.Resolver);
-
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Value");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the value of a measure.",
+                "<MEMBER>.Value", DataType.NUMERIC, new DataType[] { DataType.MEMBER });
         // <Measure>.Value
         builder.define(
-            new AbstractFunctionDefinition(
-                "Value",
-                "Returns the value of a measure.",
-                "pnm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -767,11 +776,11 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(AddCalculatedMembersFunDef.resolver);
 
         // Ascendants(<Member>)
+        FunctionOperationAtom functionAtom = new FunctionOperationAtom("Ascendants");
+    	functionMetaData = new FunctionMetaDataR(functionAtom, "Returns the set of the ascendants of a specified member.",
+                "Ascendants(<MEMBER>)", DataType.SET, new DataType[] { DataType.MEMBER });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Ascendants",
-                "Returns the set of the ascendants of a specified member.",
-                "fxm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -808,11 +817,11 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(TopBottomPercentSumFunDef.TopSumResolver);
 
         // <Member>.Children
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Children");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the children of a member.",
+                "<MEMBER>.Children", DataType.SET, new DataType[] { DataType.MEMBER });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Children",
-                "Returns the children of a member.",
-                "pxm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -925,16 +934,16 @@ public class BuiltinFunTable extends FunTableImpl {
 
         // <Dimension>.Members is really just shorthand for <Hierarchy>.Members
     	 OperationAtom functionAtomMembers =new PlainPropertyOperationAtom(MEMBERS);
-		builder.define(	new FunctionMetaDataR(functionAtomMembers, "Returns the set of members in a dimension.", "",
+		builder.define(	new FunctionMetaDataR(functionAtomMembers, "Returns the set of members in a dimension.", "<DIMENSION>.Members",
 						DataType.SET, new DataType[] { DataType.DIMENSION }));
 
 
         // <Hierarchy>.Members
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom(MEMBERS);
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the set of members in a hierarchy.",
+                "<HIERARCHY>.Members", DataType.SET, new DataType[] { DataType.HIERARCHY });
         builder.define(
-            new AbstractFunctionDefinition(
-                MEMBERS,
-                "Returns the set of members in a hierarchy.",
-                "pxh")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -956,11 +965,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Hierarchy>.AllMembers
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("AllMembers");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns a set that contains all members, including calculated members, of the specified hierarchy.",
+                "<HIERARCHY>.AllMembers", DataType.SET, new DataType[] { DataType.HIERARCHY });
         builder.define(
-            new AbstractFunctionDefinition(
-                "AllMembers",
-                "Returns a set that contains all members, including calculated members, of the specified hierarchy.",
-                "pxh")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -985,11 +994,11 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(LevelMembersFunDef.INSTANCE);
 
         // <Level>.AllMembers
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("AllMembers");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns a set that contains all members, including calculated members, of the specified level.",
+                "<LEVEL>.AllMembers", DataType.SET, new DataType[] { DataType.LEVEL });
         builder.define(
-            new AbstractFunctionDefinition(
-                "AllMembers",
-                "Returns a set that contains all members, including calculated members, of the specified level.",
-                "pxl")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1013,11 +1022,11 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(PeriodsToDateFunDef.Resolver);
 
         // StripCalculatedMembers(<Set>)
+        functionAtom = new FunctionOperationAtom("StripCalculatedMembers");
+    	functionMetaData = new FunctionMetaDataR(functionAtom, "Removes calculated members from a set.",
+                "StripCalculatedMembers(<SET>)", DataType.SET, new DataType[] { DataType.SET });
         builder.define(
-            new AbstractFunctionDefinition(
-                "StripCalculatedMembers",
-                "Removes calculated members from a set.",
-                "fxx")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1036,11 +1045,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Member>.Siblings
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Siblings");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the siblings of a specified member, including the member itself.",
+                "<MEMBER>.Siblings", DataType.SET, new DataType[] { DataType.MEMBER });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Siblings",
-                "Returns the siblings of a specified member, including the member itself.",
-                "pxm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1093,11 +1102,11 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(FormatFunDef.Resolver);
 
         // <Dimension>.Caption
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Caption");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the caption of a dimension.",
+                "<DIMENSION>.Caption", DataType.STRING, new DataType[] { DataType.DIMENSION });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Caption",
-                "Returns the caption of a dimension.",
-                "pSd")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1117,11 +1126,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Hierarchy>.Caption
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Caption");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the caption of a hierarchy.",
+                "<HIERARCHY>.Caption", DataType.STRING, new DataType[] { DataType.HIERARCHY });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Caption",
-                "Returns the caption of a hierarchy.",
-                "pSh")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1141,11 +1150,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Level>.Caption
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Caption");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the caption of a level.",
+                "<LEVEL>.Caption", DataType.STRING, new DataType[] { DataType.LEVEL });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Caption",
-                "Returns the caption of a level.",
-                "pSl")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1163,11 +1172,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Member>.Caption
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Caption");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the caption of a member.",
+                "<MEMBER>.Caption", DataType.STRING, new DataType[] { DataType.MEMBER });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Caption",
-                "Returns the caption of a member.",
-                "pSm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1186,11 +1195,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Member>.Member_Caption
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Member_Caption");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the caption of a member.",
+                "<MEMBER>.Member_Caption", DataType.STRING, new DataType[] { DataType.MEMBER });
         builder.define(
-            new AbstractFunctionDefinition(
-                    "Member_Caption",
-                    "Returns the caption of a member.",
-                    "pSm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1209,11 +1218,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Dimension>.Name
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Name");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the name of a dimension.",
+                "<DIMENSION>.Name", DataType.STRING, new DataType[] { DataType.DIMENSION });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Name",
-                "Returns the name of a dimension.",
-                "pSd")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1233,11 +1242,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Hierarchy>.Name
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Name");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the name of a hierarchy.",
+                "<HIERARCHY>.Name", DataType.STRING, new DataType[] { DataType.HIERARCHY });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Name",
-                "Returns the name of a hierarchy.",
-                "pSh")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1257,11 +1266,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Level>.Name
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Name");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the name of a level.",
+                "<LEVEL>.Name", DataType.STRING, new DataType[] { DataType.LEVEL });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Name",
-                "Returns the name of a level.",
-                "pSl")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1279,11 +1288,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Member>.Name
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Name");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the name of a member.",
+                "<MEMBER>.Name", DataType.STRING, new DataType[] { DataType.MEMBER });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Name",
-                "Returns the name of a member.",
-                "pSm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1306,11 +1315,11 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(TupleToStrFunDef.instance);
 
         // <Dimension>.UniqueName
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("UniqueName");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the unique name of a dimension.",
+                "<DIMENSION>.UniqueName", DataType.STRING, new DataType[] { DataType.DIMENSION });
         builder.define(
-            new AbstractFunctionDefinition(
-                "UniqueName",
-                "Returns the unique name of a dimension.",
-                "pSd")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1330,11 +1339,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Hierarchy>.UniqueName
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("UniqueName");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the unique name of a hierarchy.",
+                "<HIERARCHY>.UniqueName", DataType.STRING, new DataType[] { DataType.HIERARCHY });
         builder.define(
-            new AbstractFunctionDefinition(
-                "UniqueName",
-                "Returns the unique name of a hierarchy.",
-                "pSh")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1354,11 +1363,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Level>.UniqueName
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("UniqueName");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the unique name of a level.",
+                "<LEVEL>.UniqueName", DataType.STRING, new DataType[] { DataType.LEVEL });
         builder.define(
-            new AbstractFunctionDefinition(
-                "UniqueName",
-                "Returns the unique name of a level.",
-                "pSl")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1376,11 +1385,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Member>.Level_Number
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Level_Number");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the level number of a member.",
+                "<MEMBER>.Level_Number", DataType.INTEGER, new DataType[] { DataType.MEMBER });
         builder.define(
-                new AbstractFunctionDefinition(
-                        "Level_Number",
-                        "Returns the level number of a member.",
-                        "pim")
+                new AbstractFunctionDefinition(functionMetaData)
                 {
                     @Override
 					public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1399,11 +1408,11 @@ public class BuiltinFunTable extends FunTableImpl {
                 });
 
         // <Member>.UniqueName
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("UniqueName");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the unique name of a member.",
+                "<MEMBER>.UniqueName", DataType.STRING, new DataType[] { DataType.MEMBER });
         builder.define(
-            new AbstractFunctionDefinition(
-                "UniqueName",
-                "Returns the unique name of a member.",
-                "pSm")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1422,11 +1431,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Member>.Unique_Name
+        plainPropertyOperationAtom = new PlainPropertyOperationAtom("Unique_Name");
+        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the unique name of a member.",
+                "<MEMBER>.Unique_Name", DataType.STRING, new DataType[] { DataType.MEMBER });
         builder.define(
-                new AbstractFunctionDefinition(
-                        "Unique_Name",
-                        "Returns the unique name of a member.",
-                        "pSm")
+                new AbstractFunctionDefinition(functionMetaData)
                 {
                     @Override
 					public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1448,19 +1457,21 @@ public class BuiltinFunTable extends FunTableImpl {
         // TUPLE FUNCTIONS
 
         // <Set>.Current
-        if (false)
-        builder.define(
-            new AbstractFunctionDefinition(
-                "Current",
-                "Returns the current tuple from a set during an iteration.",
-                "ptx")
-        {
-            @Override
-			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
+        if (false) {
+            plainPropertyOperationAtom = new PlainPropertyOperationAtom("Current");
+            functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the current tuple from a set during an iteration.",
+                    "<SET>.Current", DataType.TUPLE, new DataType[] { DataType.SET });
+            builder.define(
+                new AbstractFunctionDefinition(functionMetaData)
             {
-                throw new UnsupportedOperationException();
+                @Override
+                public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
+                {
+                    throw new UnsupportedOperationException();
+                }
             }
-        });
+           );
+        };
 
         builder.define(SetItemFunDef.intResolver);
         builder.define(SetItemFunDef.stringResolver);
@@ -1486,11 +1497,12 @@ public class BuiltinFunTable extends FunTableImpl {
         // OPERATORS
 
         // <Numeric Expression> + <Numeric Expression>
+        InfixOperationAtom infixOperationAtom = new InfixOperationAtom("+");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Adds two numbers.",
+                "<NUMERIC> + <NUMERIC>", DataType.NUMERIC, new DataType[] { DataType.NUMERIC, DataType.NUMERIC });
+
         builder.define(
-            new AbstractFunctionDefinition(
-                "+",
-                "Adds two numbers.",
-                "innn")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1522,11 +1534,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Numeric Expression> - <Numeric Expression>
+        infixOperationAtom = new InfixOperationAtom("-");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Subtracts two numbers.",
+                "<NUMERIC> - <NUMERIC>", DataType.NUMERIC, new DataType[] { DataType.NUMERIC, DataType.NUMERIC });
         builder.define(
-            new AbstractFunctionDefinition(
-                "-",
-                "Subtracts two numbers.",
-                "innn")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1557,11 +1569,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Numeric Expression> * <Numeric Expression>
+        infixOperationAtom = new InfixOperationAtom("*");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Multiplies two numbers.",
+                "<NUMERIC> * <NUMERIC>", DataType.NUMERIC, new DataType[] { DataType.NUMERIC, DataType.NUMERIC });
         builder.define(
-            new AbstractFunctionDefinition(
-                "*",
-                "Multiplies two numbers.",
-                "innn")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1586,11 +1598,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Numeric Expression> / <Numeric Expression>
+        infixOperationAtom = new InfixOperationAtom("/");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Divides two numbers.",
+                "<NUMERIC> / <NUMERIC>", DataType.NUMERIC, new DataType[] { DataType.NUMERIC, DataType.NUMERIC });
         builder.define(
-            new AbstractFunctionDefinition(
-                "/",
-                "Divides two numbers.",
-                "innn")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1651,11 +1663,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // - <Numeric Expression>
+        PrefixOperationAtom prefixOperationAtom = new PrefixOperationAtom("-");
+        functionMetaData = new FunctionMetaDataR(prefixOperationAtom, "Returns the negative of a number.",
+                "- <NUMERIC>", DataType.NUMERIC, new DataType[] { DataType.NUMERIC });
         builder.define(
-            new AbstractFunctionDefinition(
-                "-",
-                "Returns the negative of a number.",
-                "Pnn")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1697,11 +1709,11 @@ public class BuiltinFunTable extends FunTableImpl {
 //        });
 
         // <String Expression> || <String Expression>
+        infixOperationAtom = new InfixOperationAtom("||");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Concatenates two strings.",
+                "<STRING> || <STRING>", DataType.STRING, new DataType[] { DataType.STRING, DataType.STRING });
         builder.define(
-            new AbstractFunctionDefinition(
-                "||",
-                "Concatenates two strings.",
-                "iSSS")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1720,11 +1732,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Logical Expression> AND <Logical Expression>
+        infixOperationAtom = new InfixOperationAtom("AND");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns the conjunction of two conditions.",
+                "<LOGICAL> AND <LOGICAL>", DataType.LOGICAL, new DataType[] { DataType.LOGICAL, DataType.LOGICAL });
         builder.define(
-            new AbstractFunctionDefinition(
-                "AND",
-                "Returns the conjunction of two conditions.",
-                "ibbb")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1752,11 +1764,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Logical Expression> OR <Logical Expression>
+        infixOperationAtom = new InfixOperationAtom("OR");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns the disjunction of two conditions.",
+                "<LOGICAL> OR <LOGICAL>", DataType.LOGICAL, new DataType[] { DataType.LOGICAL, DataType.LOGICAL });
         builder.define(
-            new AbstractFunctionDefinition(
-                "OR",
-                "Returns the disjunction of two conditions.",
-                "ibbb")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1784,11 +1796,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Logical Expression> XOR <Logical Expression>
+        infixOperationAtom = new InfixOperationAtom("XOR");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether two conditions are mutually exclusive.",
+                "<LOGICAL> XOR <LOGICAL>", DataType.LOGICAL, new DataType[] { DataType.LOGICAL, DataType.LOGICAL });
         builder.define(
-            new AbstractFunctionDefinition(
-                "XOR",
-                "Returns whether two conditions are mutually exclusive.",
-                "ibbb")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1810,11 +1822,12 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // NOT <Logical Expression>
+        prefixOperationAtom = new PrefixOperationAtom("NOT");
+    	functionMetaData = new FunctionMetaDataR(prefixOperationAtom, "Returns the negation of a condition.",
+                "NOT <LOGICAL>", DataType.LOGICAL, new DataType[] { DataType.LOGICAL });
+
         builder.define(
-            new AbstractFunctionDefinition(
-                "NOT",
-                "Returns the negation of a condition.",
-                "Pbb")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1831,11 +1844,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <String Expression> = <String Expression>
+        infixOperationAtom = new InfixOperationAtom("=");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether two expressions are equal.",
+                "<STRING> = <STRING>", DataType.LOGICAL, new DataType[] { DataType.STRING, DataType.STRING });
         builder.define(
-            new AbstractFunctionDefinition(
-                "=",
-                "Returns whether two expressions are equal.",
-                "ibSS")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1858,11 +1871,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Numeric Expression> = <Numeric Expression>
+        infixOperationAtom = new InfixOperationAtom("=");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether two expressions are equal.",
+                "<NUMERIC> = <NUMERIC>", DataType.LOGICAL, new DataType[] { DataType.NUMERIC, DataType.NUMERIC });
         builder.define(
-            new AbstractFunctionDefinition(
-                "=",
-                "Returns whether two expressions are equal.",
-                "ibnn")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1889,11 +1902,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <String Expression> <> <String Expression>
+        infixOperationAtom = new InfixOperationAtom("<>");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether two expressions are not equal.",
+                "<STRING> <> <STRING>", DataType.LOGICAL, new DataType[] { DataType.STRING, DataType.STRING });
         builder.define(
-            new AbstractFunctionDefinition(
-                "<>",
-                "Returns whether two expressions are not equal.",
-                "ibSS")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1916,11 +1929,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Numeric Expression> <> <Numeric Expression>
+        infixOperationAtom = new InfixOperationAtom("<>");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether two expressions are not equal.",
+                "<NUMERIC> <> <NUMERIC>", DataType.LOGICAL, new DataType[] { DataType.NUMERIC, DataType.NUMERIC });
         builder.define(
-            new AbstractFunctionDefinition(
-                "<>",
-                "Returns whether two expressions are not equal.",
-                "ibnn")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1947,11 +1960,12 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Numeric Expression> < <Numeric Expression>
+        infixOperationAtom = new InfixOperationAtom("<");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether an expression is less than another.",
+                "<NUMERIC> < <NUMERIC>", DataType.LOGICAL, new DataType[] { DataType.NUMERIC, DataType.NUMERIC });
+
         builder.define(
-            new AbstractFunctionDefinition(
-                "<",
-                "Returns whether an expression is less than another.",
-                "ibnn")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -1978,11 +1992,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <String Expression> < <String Expression>
+        infixOperationAtom = new InfixOperationAtom("<");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether an expression is less than another.",
+                "<STRING> < <STRING>", DataType.LOGICAL, new DataType[] { DataType.STRING, DataType.STRING });
         builder.define(
-            new AbstractFunctionDefinition(
-                "<",
-                "Returns whether an expression is less than another.",
-                "ibSS")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -2005,11 +2019,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Numeric Expression> <= <Numeric Expression>
+        infixOperationAtom = new InfixOperationAtom("<=");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether an expression is less than or equal to another.",
+                "<NUMERIC> <= <NUMERIC>", DataType.LOGICAL, new DataType[] { DataType.NUMERIC, DataType.NUMERIC });
         builder.define(
-            new AbstractFunctionDefinition(
-                "<=",
-                "Returns whether an expression is less than or equal to another.",
-                "ibnn")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -2036,11 +2050,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <String Expression> <= <String Expression>
+        infixOperationAtom = new InfixOperationAtom("<=");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether an expression is less than or equal to another.",
+                "<STRING> <= <STRING>", DataType.LOGICAL, new DataType[] { DataType.STRING, DataType.STRING });
         builder.define(
-            new AbstractFunctionDefinition(
-                "<=",
-                "Returns whether an expression is less than or equal to another.",
-                "ibSS")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -2063,11 +2077,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Numeric Expression> > <Numeric Expression>
+        infixOperationAtom = new InfixOperationAtom(">");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether an expression is greater than another.",
+                "<NUMERIC> > <NUMERIC>", DataType.LOGICAL, new DataType[] { DataType.NUMERIC, DataType.NUMERIC });
         builder.define(
-            new AbstractFunctionDefinition(
-                ">",
-                "Returns whether an expression is greater than another.",
-                "ibnn")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -2094,11 +2108,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <String Expression> > <String Expression>
+        infixOperationAtom = new InfixOperationAtom(">");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether an expression is greater than another.",
+                "<STRING> > <STRING>", DataType.LOGICAL, new DataType[] { DataType.STRING, DataType.STRING });
         builder.define(
-            new AbstractFunctionDefinition(
-                ">",
-                "Returns whether an expression is greater than another.",
-                "ibSS")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -2121,11 +2135,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <Numeric Expression> >= <Numeric Expression>
+        infixOperationAtom = new InfixOperationAtom(">=");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether an expression is greater than or equal to another.",
+                "<NUMERIC> >= <NUMERIC>", DataType.LOGICAL, new DataType[] { DataType.NUMERIC, DataType.NUMERIC });
         builder.define(
-            new AbstractFunctionDefinition(
-                ">=",
-                "Returns whether an expression is greater than or equal to another.",
-                "ibnn")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -2152,11 +2166,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // <String Expression> >= <String Expression>
+        infixOperationAtom = new InfixOperationAtom(">=");
+    	functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether an expression is greater than or equal to another.",
+                "<STRING> >= <STRING>", DataType.LOGICAL, new DataType[] { DataType.STRING, DataType.STRING });
         builder.define(
-            new AbstractFunctionDefinition(
-                ">=",
-                "Returns whether an expression is greater than or equal to another.",
-                "ibSS")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -2191,11 +2205,11 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(CastFunDef.Resolver);
 
         // UCase(<String Expression>)
+        functionOperationAtom = new FunctionOperationAtom("UCase");
+    	functionMetaData = new FunctionMetaDataR(functionOperationAtom, "Returns a string that has been converted to uppercase",
+                "UCase(<STRING>)", DataType.STRING, new DataType[] { DataType.STRING });
         builder.define(
-            new AbstractFunctionDefinition(
-                "UCase",
-                "Returns a string that has been converted to uppercase",
-                "fSS")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
@@ -2219,11 +2233,11 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         // Len(<String Expression>)
+        functionOperationAtom = new FunctionOperationAtom("Len");
+    	functionMetaData = new FunctionMetaDataR(functionOperationAtom, "Returns the number of characters in a string",
+                "Len(<STRING>)", DataType.NUMERIC, new DataType[] { DataType.STRING });
         builder.define(
-            new AbstractFunctionDefinition(
-                "Len",
-                "Returns the number of characters in a string",
-                "fnS")
+            new AbstractFunctionDefinition(functionMetaData)
         {
             @Override
 			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)

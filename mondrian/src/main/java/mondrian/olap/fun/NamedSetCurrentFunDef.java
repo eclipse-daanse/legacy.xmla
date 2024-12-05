@@ -10,9 +10,14 @@
 package mondrian.olap.fun;
 
 import mondrian.olap.exceptions.NotANamedSetException;
+
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.NamedSetExpression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
@@ -20,6 +25,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleCalc;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 /**
@@ -30,14 +36,17 @@ import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
  * @since Oct 19, 2008
  */
 public class NamedSetCurrentFunDef extends AbstractFunctionDefinition {
+
+    static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Current");
+
+    static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the current member or tuple of a named set.",
+            "<SET>.Current", DataType.TUPLE, new DataType[] { DataType.SET });
+
     static final NamedSetCurrentFunDef instance =
         new NamedSetCurrentFunDef();
 
     private NamedSetCurrentFunDef() {
-        super(
-            "Current",
-            "Returns the current member or tuple of a named set.",
-            "ptx");
+        super(functionMetaData);
     }
 
     @Override

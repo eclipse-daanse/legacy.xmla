@@ -12,15 +12,22 @@ import java.util.Map;
 import java.util.Set;
 
 import mondrian.olap.exceptions.CurrentMemberWithCompoundSlicerException;
+
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,10 +45,15 @@ import mondrian.rolap.RolapHierarchy;
 public class HierarchyCurrentMemberFunDef extends AbstractFunctionDefinition {
   private static final Logger LOGGER = LoggerFactory.getLogger( HierarchyCurrentMemberFunDef.class );
 
-  static final HierarchyCurrentMemberFunDef instance = new HierarchyCurrentMemberFunDef();
+    static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("CurrentMember");
+
+    static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the current member along a hierarchy during an iteration.",
+            "<HIERARCHY>.CurrentMember", DataType.MEMBER, new DataType[] { DataType.HIERARCHY });
+
+    static final HierarchyCurrentMemberFunDef instance = new HierarchyCurrentMemberFunDef();
 
   private HierarchyCurrentMemberFunDef() {
-    super( "CurrentMember", "Returns the current member along a hierarchy during an iteration.", "pmh" );
+    super( functionMetaData );
   }
 
   @Override

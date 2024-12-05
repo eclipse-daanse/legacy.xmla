@@ -57,12 +57,6 @@ public abstract class AbstractFunctionDefinition implements FunctionDefinition {
 		return functionMetaData;
 	}
 
-	@Deprecated
-	public AbstractFunctionDefinition(String name, String description, String flags) {
-		this(new FunctionMetaDataR(FunUtil.decodeSyntacticTypeToOp(flags, name), description, null,
-				FunUtil.decodeReturnCategory(flags), FunUtil.decodeParameterCategories(flags)));
-	}
-
 	@Override
 	public Expression createCall(Validator validator, Expression[] args) {
 		DataType[] categories = functionMetaData.parameterDataTypes();

@@ -9,8 +9,12 @@
 
 package mondrian.olap.fun;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.Type;
@@ -21,6 +25,7 @@ import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedBooleanCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.calc.impl.GenericCalc;
@@ -45,12 +50,9 @@ public class IifFunDef extends AbstractFunctionDefinition {
      * @param description Description of the function
      * @param flags       Encoding of the syntactic, return, and parameter types
      */
-    protected IifFunDef(
-        String name,
-        String description,
-        String flags)
+    protected IifFunDef(FunctionMetaData functionMetaData)
     {
-        super(name, description, flags);
+        super(functionMetaData);
     }
 
     @Override
@@ -128,11 +130,12 @@ public class IifFunDef extends AbstractFunctionDefinition {
         }
     }
 
+	static OperationAtom STRING_INSTANCE_FUNCTION_ATOM = new FunctionOperationAtom("IIf");
+
+	static FunctionMetaData STRING_INSTANCE_FUNCTION_META_DATA = new FunctionMetaDataR(STRING_INSTANCE_FUNCTION_ATOM, "Returns one of two string values determined by a logical test.",
+            "IIf(<LOGICAL>, <STRING>, <STRING>)", DataType.STRING, new DataType[] { DataType.LOGICAL, DataType.STRING, DataType.STRING });
     // IIf(<Logical Expression>, <String Expression>, <String Expression>)
-    static final AbstractFunctionDefinition STRING_INSTANCE = new AbstractFunctionDefinition(
-        "IIf",
-        "Returns one of two string values determined by a logical test.",
-        "fSbSS")
+    static final AbstractFunctionDefinition STRING_INSTANCE = new AbstractFunctionDefinition(STRING_INSTANCE_FUNCTION_META_DATA)
     {
         @Override
 		public Calc compileCall( ResolvedFunCall call, ExpressionCompiler compiler) {
@@ -154,11 +157,11 @@ public class IifFunDef extends AbstractFunctionDefinition {
     };
 
     // IIf(<Logical Expression>, <Numeric Expression>, <Numeric Expression>)
+    static OperationAtom NUMERIC_INSTANCE_FUNCTION_ATOM = new FunctionOperationAtom("IIf");
+    static FunctionMetaData NUMERIC_INSTANCE_FUNCTION_META_DATA = new FunctionMetaDataR(NUMERIC_INSTANCE_FUNCTION_ATOM, "Returns one of two numeric values determined by a logical test.",
+            "IIf(<LOGICAL>, <NUMERIC>, <NUMERIC>)", DataType.NUMERIC, new DataType[] { DataType.LOGICAL, DataType.NUMERIC, DataType.NUMERIC });
     static final AbstractFunctionDefinition NUMERIC_INSTANCE =
-        new IifFunDef(
-            "IIf",
-            "Returns one of two numeric values determined by a logical test.",
-            "fnbnn")
+        new IifFunDef(NUMERIC_INSTANCE_FUNCTION_META_DATA)
         {
             @Override
 			public Calc compileCall( ResolvedFunCall call, ExpressionCompiler compiler)
@@ -185,11 +188,11 @@ public class IifFunDef extends AbstractFunctionDefinition {
         };
 
     // IIf(<Logical Expression>, <Tuple Expression>, <Tuple Expression>)
+    static OperationAtom TUPLE_INSTANCE_FUNCTION_ATOM = new FunctionOperationAtom("IIf");
+    static FunctionMetaData TUPLE_INSTANCE_FUNCTION_META_DATA = new FunctionMetaDataR(TUPLE_INSTANCE_FUNCTION_ATOM, "Returns one of two tuples determined by a logical test.",
+            "IIf(<LOGICAL>, <TUPLE>, <TUPLE>)", DataType.TUPLE, new DataType[] { DataType.LOGICAL, DataType.TUPLE, DataType.TUPLE });
     static final AbstractFunctionDefinition TUPLE_INSTANCE =
-        new IifFunDef(
-            "IIf",
-            "Returns one of two tuples determined by a logical test.",
-            "ftbtt")
+        new IifFunDef(TUPLE_INSTANCE_FUNCTION_META_DATA)
         {
             @Override
 			public Calc compileCall( ResolvedFunCall call, ExpressionCompiler compiler)
@@ -216,10 +219,12 @@ public class IifFunDef extends AbstractFunctionDefinition {
         };
 
     // IIf(<Logical Expression>, <Boolean Expression>, <Boolean Expression>)
-    static final AbstractFunctionDefinition BOOLEAN_INSTANCE = new AbstractFunctionDefinition(
-        "IIf",
-        "Returns boolean determined by a logical test.",
-        "fbbbb")
+    static final OperationAtom BOOLEAN_INSTANCE_FUNCTION_ATOM = new FunctionOperationAtom("IIf");
+
+    static final FunctionMetaData BOOLEAN_INSTANCE_FUNCTION_META_DATA = new FunctionMetaDataR(STRING_INSTANCE_FUNCTION_ATOM, "Returns boolean determined by a logical test.",
+                "IIf(<LOGICAL>, <LOGICAL>, <LOGICAL>)", DataType.LOGICAL, new DataType[] { DataType.LOGICAL, DataType.LOGICAL, DataType.LOGICAL });
+
+    static final AbstractFunctionDefinition BOOLEAN_INSTANCE = new AbstractFunctionDefinition(BOOLEAN_INSTANCE_FUNCTION_META_DATA)
     {
         @Override
 		public Calc compileCall( ResolvedFunCall call, ExpressionCompiler compiler) {
@@ -246,37 +251,38 @@ public class IifFunDef extends AbstractFunctionDefinition {
     };
 
     // IIf(<Logical Expression>, <Member Expression>, <Member Expression>)
+    static OperationAtom MEMBER_INSTANCE_FUNCTION_ATOM = new FunctionOperationAtom("IIf");
+    static FunctionMetaData MEMBER_INSTANCE_FUNCTION_META_DATA = new FunctionMetaDataR(MEMBER_INSTANCE_FUNCTION_ATOM, "Returns one of two member values determined by a logical test.",
+            "IIf(<LOGICAL>, <MEMBER>, <MEMBER>)", DataType.MEMBER, new DataType[] { DataType.LOGICAL, DataType.MEMBER, DataType.MEMBER });
     static final IifFunDef MEMBER_INSTANCE =
-        new IifFunDef(
-            "IIf",
-            "Returns one of two member values determined by a logical test.",
-            "fmbmm");
+        new IifFunDef(MEMBER_INSTANCE_FUNCTION_META_DATA);
 
     // IIf(<Logical Expression>, <Level Expression>, <Level Expression>)
+    static OperationAtom LEVEL_INSTANCE_FUNCTION_ATOM = new FunctionOperationAtom("IIf");
+    static FunctionMetaData LEVEL_INSTANCE_FUNCTION_META_DATA = new FunctionMetaDataR(LEVEL_INSTANCE_FUNCTION_ATOM, "Returns one of two level values determined by a logical test.",
+            "IIf(<LOGICAL>, <LEVEL>, <LEVEL>)", DataType.MEMBER, new DataType[] { DataType.LOGICAL, DataType.LEVEL, DataType.LEVEL });
     static final IifFunDef LEVEL_INSTANCE =
-        new IifFunDef(
-            "IIf",
-            "Returns one of two level values determined by a logical test.",
-            "flbll");
+        new IifFunDef(LEVEL_INSTANCE_FUNCTION_META_DATA);
 
     // IIf(<Logical Expression>, <Hierarchy Expression>, <Hierarchy Expression>)
+    static OperationAtom HIERARCHY_INSTANCE_FUNCTION_ATOM = new FunctionOperationAtom("IIf");
+    static FunctionMetaData HIERARCHY_INSTANCE_FUNCTION_META_DATA = new FunctionMetaDataR(HIERARCHY_INSTANCE_FUNCTION_ATOM, "Returns one of two hierarchy values determined by a logical test.",
+            "IIf(<LOGICAL>, <HIERARCHY>, <HIERARCHY>)", DataType.HIERARCHY, new DataType[] { DataType.LOGICAL, DataType.HIERARCHY, DataType.HIERARCHY });
     static final IifFunDef HIERARCHY_INSTANCE =
-        new IifFunDef(
-            "IIf",
-            "Returns one of two hierarchy values determined by a logical test.",
-            "fhbhh");
+        new IifFunDef(HIERARCHY_INSTANCE_FUNCTION_META_DATA);
 
     // IIf(<Logical Expression>, <Dimension Expression>, <Dimension Expression>)
+    static OperationAtom DIMENSION_INSTANCE_FUNCTION_ATOM = new FunctionOperationAtom("IIf");
+    static FunctionMetaData DIMENSION_INSTANCE_FUNCTION_META_DATA = new FunctionMetaDataR(DIMENSION_INSTANCE_FUNCTION_ATOM, "Returns one of two dimension values determined by a logical test.",
+            "IIf(<LOGICAL>, <DIMENSION>, <DIMENSION>)", DataType.DIMENSION, new DataType[] { DataType.LOGICAL, DataType.DIMENSION, DataType.DIMENSION });
     static final IifFunDef DIMENSION_INSTANCE =
-        new IifFunDef(
-            "IIf",
-            "Returns one of two dimension values determined by a logical test.",
-            "fdbdd");
+        new IifFunDef(DIMENSION_INSTANCE_FUNCTION_META_DATA);
 
     // IIf(<Logical Expression>, <Set Expression>, <Set Expression>)
+    static OperationAtom SET_INSTANCE_FUNCTION_ATOM = new FunctionOperationAtom("IIf");
+    static FunctionMetaData SET_INSTANCE_FUNCTION_META_DATA = new FunctionMetaDataR(SET_INSTANCE_FUNCTION_ATOM, "Returns one of two dimension values determined by a logical test.",
+            "IIf(<LOGICAL>, <SET>, <SET>)", DataType.SET, new DataType[] { DataType.LOGICAL, DataType.SET, DataType.SET });
     static final IifFunDef SET_INSTANCE =
         new IifFunDef(
-            "IIf",
-            "Returns one of two set values determined by a logical test.",
-            "fxbxx");
+        		SET_INSTANCE_FUNCTION_META_DATA);
 }

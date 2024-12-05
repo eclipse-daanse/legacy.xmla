@@ -9,9 +9,13 @@
 
 package mondrian.olap.fun;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.MethodOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.Type;
@@ -21,6 +25,7 @@ import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.TupleCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.type.MemberType;
@@ -38,13 +43,15 @@ import mondrian.olap.type.TupleType;
  * @since Mar 23, 2006
  */
 class TupleItemFunDef extends AbstractFunctionDefinition {
+    static OperationAtom functionAtom = new MethodOperationAtom("Item");
+
+    static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Returns a member from the tuple specified in <Tuple>. The member to be returned is specified by the zero-based position of the member in the set in <Index>.",
+	        "<TUPLE>.Item(<NUMERIC>)", DataType.MEMBER, new DataType[] { DataType.TUPLE, DataType.NUMERIC });
+
     static final TupleItemFunDef instance = new TupleItemFunDef();
 
     private TupleItemFunDef() {
-        super(
-            "Item",
-            "Returns a member from the tuple specified in <Tuple>. The member to be returned is specified by the zero-based position of the member in the set in <Index>.",
-            "mmtn");
+        super(functionMetaData);
     }
 
     @Override

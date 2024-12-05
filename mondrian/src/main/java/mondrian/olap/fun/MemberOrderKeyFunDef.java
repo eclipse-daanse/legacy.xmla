@@ -9,13 +9,18 @@
 
 package mondrian.olap.fun;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.fun.sort.OrderKey;
@@ -30,6 +35,12 @@ import mondrian.olap.fun.sort.OrderKey;
  * @since Nov 10, 2008
  */
 public final class MemberOrderKeyFunDef extends AbstractFunctionDefinition {
+
+    static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("OrderKey");
+
+    static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the member order key.",
+            "<MEMBER>.OrderKey", DataType.VALUE, new DataType[] { DataType.MEMBER });
+
   static final MemberOrderKeyFunDef instance =
     new MemberOrderKeyFunDef();
 
@@ -37,8 +48,7 @@ public final class MemberOrderKeyFunDef extends AbstractFunctionDefinition {
    * Creates the singleton MemberOrderKeyFunDef.
    */
   private MemberOrderKeyFunDef() {
-    super(
-      "OrderKey", "Returns the member order key.", "pvm" );
+    super(functionMetaData);
   }
 
   @Override

@@ -9,13 +9,18 @@
 
 package mondrian.olap.fun;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Level;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.LevelCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.calc.impl.AbstractListCalc;
@@ -27,10 +32,16 @@ import mondrian.calc.impl.AbstractListCalc;
  * @since Jan 17, 2009
  */
 public class LevelMembersFunDef extends AbstractFunctionDefinition {
+
+    static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Members");
+
+    static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the set of members in a level.",
+            "<LEVEL>.Members", DataType.SET, new DataType[] { DataType.LEVEL });
+
     public static final LevelMembersFunDef INSTANCE = new LevelMembersFunDef();
 
     private LevelMembersFunDef() {
-        super("Members", "Returns the set of members in a level.", "pxl");
+        super(functionMetaData);
     }
 
     @Override

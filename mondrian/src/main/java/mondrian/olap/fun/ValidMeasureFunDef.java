@@ -17,10 +17,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
@@ -28,6 +32,7 @@ import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.TupleCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.calc.impl.GenericCalc;
@@ -51,13 +56,16 @@ import mondrian.rolap.RolapVirtualCubeMeasure;
  */
 public class ValidMeasureFunDef extends AbstractFunctionDefinition
 {
+	static OperationAtom functionAtom = new FunctionOperationAtom("ValidMeasure");
+
+	static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Returns a valid measure in a virtual cube by forcing inapplicable dimensions to their top level.",
+            "ValidMeasure(<TUPLE>)", DataType.NUMERIC, new DataType[] { DataType.TUPLE });
+
     static final ValidMeasureFunDef instance = new ValidMeasureFunDef();
 
     private ValidMeasureFunDef() {
-        super(
-            "ValidMeasure",
-                "Returns a valid measure in a virtual cube by forcing inapplicable dimensions to their top level.",
-                "fnt");
+    	
+        super(functionMetaData);
     }
 
     @Override

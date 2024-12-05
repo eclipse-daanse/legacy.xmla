@@ -11,8 +11,12 @@ package mondrian.olap.fun;
 
 import java.util.List;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
@@ -21,6 +25,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 /**
@@ -30,10 +35,16 @@ import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
  * @since Aug 3, 2006
  */
 class SetToStrFunDef extends AbstractFunctionDefinition {
+
+    static OperationAtom functionAtom = new FunctionOperationAtom("SetToStr");
+
+    static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Constructs a string from a set.",
+            "SetToStr(<SET>)", DataType.STRING, new DataType[] { DataType.SET });
+
     public static final AbstractFunctionDefinition instance = new SetToStrFunDef();
 
     private SetToStrFunDef() {
-        super("SetToStr", "Constructs a string from a set.", "fSx");
+        super(functionMetaData);
     }
 
     @Override

@@ -37,6 +37,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
@@ -60,6 +62,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.CellProperty;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
@@ -69,6 +72,7 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.impl.IdentifierNode;
 import org.eclipse.daanse.olap.impl.IdentifierSegment;
@@ -3494,8 +3498,13 @@ public class RolapCube extends CubeBase {
      * @see mondrian.olap.type.TypeWrapperExp
      */
     static Expression createDummyExp(final Calc calc) {
+        OperationAtom functionAtom = new FunctionOperationAtom("dummy");
+
+        FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, null,
+                "dummy()", DataType.NUMERIC, new DataType[] { });
+
         return new ResolvedFunCallImpl(
-            new AbstractFunctionDefinition("dummy", null, "fn") {
+            new AbstractFunctionDefinition(functionMetaData) {
                 @Override
 				public Calc compileCall(
                     ResolvedFunCall call, ExpressionCompiler compiler)

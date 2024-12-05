@@ -12,12 +12,16 @@ package mondrian.olap.fun;
 
 import java.util.List;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.api.Calc;
@@ -29,6 +33,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.calc.impl.AbstractIterCalc;
@@ -55,13 +60,15 @@ class FilterFunDef extends AbstractFunctionDefinition {
     private static final String TIMING_NAME =
         FilterFunDef.class.getSimpleName();
 
+	static OperationAtom functionAtom = new FunctionOperationAtom("Filter");
+
+	static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Returns the set resulting from filtering a set based on a search condition.",
+			"Filter(<SET>, <LOGICAL>)", DataType.SET, new DataType[] { DataType.SET, DataType.LOGICAL });
+
     static final FilterFunDef instance = new FilterFunDef();
 
     private FilterFunDef() {
-        super(
-            "Filter",
-            "Returns the set resulting from filtering a set based on a search condition.",
-            "fxxb");
+        super(functionMetaData);
     }
 
     @Override

@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.InternalOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.MatchType;
@@ -47,6 +48,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
@@ -56,6 +58,7 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantCalcs;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.rolap.mapping.api.model.AnnotationMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
@@ -953,6 +956,10 @@ public class RolapHierarchy extends HierarchyBase {
      */
     MemberReader createMemberReader(Role role) {
         final Access access = role.getAccess(this);
+        final OperationAtom internalOperationAtom = new InternalOperationAtom("$x");
+        final FunctionMetaData functionMetaData = new FunctionMetaDataR(internalOperationAtom, "x",
+                "$x", DataType.NUMERIC, new DataType[] { });
+
         switch (access) {
         case NONE:
             role.getAccess(this); // todo: remove
@@ -1005,7 +1012,7 @@ public class RolapHierarchy extends HierarchyBase {
 
                 final Expression partialExp =
                     new ResolvedFunCallImpl(
-                        new AbstractFunctionDefinition("$x", "x", "In") {
+                        new AbstractFunctionDefinition(functionMetaData) {
                             @Override
 							public Calc compileCall(
 								ResolvedFunCall call,
@@ -1027,7 +1034,7 @@ public class RolapHierarchy extends HierarchyBase {
             case HIDDEN:
                 Expression hiddenExp =
                     new ResolvedFunCallImpl(
-                        new AbstractFunctionDefinition("$x", "x", "In") {
+                        new AbstractFunctionDefinition(functionMetaData) {
                             @Override
 							public Calc compileCall(
 									ResolvedFunCall call, ExpressionCompiler compiler)

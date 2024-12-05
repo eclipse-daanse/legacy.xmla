@@ -9,11 +9,14 @@
 
 package mondrian.olap.fun;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.Type;
@@ -21,6 +24,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedHierarchyCalc;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.Util;
@@ -37,13 +41,16 @@ import mondrian.olap.type.HierarchyType;
  * @since Jul 20, 2009
  */
 class DimensionsStringFunDef extends AbstractFunctionDefinition {
-    public static final AbstractFunctionDefinition INSTANCE = new DimensionsStringFunDef();
 
+    static OperationAtom functionAtom = new FunctionOperationAtom("Dimensions");
+
+    static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Returns the hierarchy whose name is specified by a string.",
+  	        "function(<STRING>)", DataType.HIERARCHY, new DataType[] { DataType.STRING });
+    
+    public static final AbstractFunctionDefinition INSTANCE = new DimensionsStringFunDef();
+    
     private DimensionsStringFunDef() {
-        super(
-            "Dimensions",
-            "Returns the hierarchy whose name is specified by a string.",
-            "fhS");
+        super(functionMetaData);
     }
 
     @Override

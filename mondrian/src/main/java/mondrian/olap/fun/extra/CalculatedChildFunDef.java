@@ -11,16 +11,21 @@ package mondrian.olap.fun.extra;
 
 import java.util.List;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.MethodOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 /**
@@ -34,14 +39,18 @@ import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
  * @since 2006/4/12
  */
 public class CalculatedChildFunDef extends AbstractFunctionDefinition {
+
+    static OperationAtom methodOperationAtom = new MethodOperationAtom("CalculatedChild");
+
+    static FunctionMetaData functionMetaData = new FunctionMetaDataR(methodOperationAtom, "Returns an existing calculated child member with name <String> from the specified <Member>.",
+	        "<MEMBER>.CalculatedChild(<STRING>)", DataType.MEMBER, new DataType[] { DataType.MEMBER, DataType.STRING });
+
     public static final CalculatedChildFunDef instance =
         new CalculatedChildFunDef();
 
     CalculatedChildFunDef() {
-        super(
-            "CalculatedChild",
-            "Returns an existing calculated child member with name <String> from the specified <Member>.",
-            "mmmS");
+        super(functionMetaData);
+
     }
 
     @Override

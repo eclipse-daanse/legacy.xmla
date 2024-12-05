@@ -10,6 +10,11 @@
 package mondrian.olap.fun;
 
 import mondrian.olap.exceptions.NotANamedSetException;
+
+import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -18,6 +23,7 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedIntegerCalc;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 /**
@@ -28,14 +34,17 @@ import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
  * @since Oct 19, 2008
  */
 public class NamedSetCurrentOrdinalFunDef extends AbstractFunctionDefinition {
+
+    static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("CurrentOrdinal");
+
+    static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the ordinal of the current iteration through a named set.",
+            "<SET>.CurrentMember", DataType.INTEGER, new DataType[] { DataType.SET });
+
     static final NamedSetCurrentOrdinalFunDef instance =
         new NamedSetCurrentOrdinalFunDef();
 
     private NamedSetCurrentOrdinalFunDef() {
-        super(
-            "CurrentOrdinal",
-            "Returns the ordinal of the current iteration through a named set.",
-            "pix");
+        super(functionMetaData);
     }
 
     @Override

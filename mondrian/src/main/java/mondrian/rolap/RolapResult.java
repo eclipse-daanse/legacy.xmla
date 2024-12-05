@@ -25,6 +25,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.InternalOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
@@ -36,6 +40,7 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.DimensionExpression;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.HierarchyExpression;
@@ -55,6 +60,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIterator;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -324,9 +330,14 @@ public class RolapResult extends ResultBase {
         final mondrian.olap.type.NumericType returnType =NumericType.INSTANCE;
         final Calc partialCalc =
                 new RolapHierarchy.LimitedRollupAggregateCalc(returnType, tupleListCalc);
+        
+        OperationAtom internalOperationAtom = new InternalOperationAtom("$x");
+
+        FunctionMetaData functionMetaData = new FunctionMetaDataR(internalOperationAtom, "x",
+                "$x", DataType.NUMERIC, new DataType[] { });
         Expression partialExp =
                 new ResolvedFunCallImpl(
-                        new org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition("$x", "x", "In") {
+                        new org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition(functionMetaData) {
                           @Override
 						public Calc compileCall(
                                   ResolvedFunCall call, org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler compiler)

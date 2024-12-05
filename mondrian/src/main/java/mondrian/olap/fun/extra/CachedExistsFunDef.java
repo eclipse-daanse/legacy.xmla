@@ -13,9 +13,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
@@ -24,6 +28,7 @@ import org.eclipse.daanse.olap.calc.api.TupleCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.calc.impl.AbstractListCalc;
@@ -44,14 +49,18 @@ import mondrian.olap.type.TupleType;
  *
  */
 public class CachedExistsFunDef extends AbstractFunctionDefinition {
-  public static final CachedExistsFunDef instance = new CachedExistsFunDef();
 
   private static final String TIMING_NAME = CachedExistsFunDef.class.getSimpleName();
 
+  static OperationAtom functionAtom = new FunctionOperationAtom("CachedExists");
+
+  static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Returns tuples from a non-dynamic <Set> that exists in the specified <Tuple>.  This function will build a query level cache named <String> based on the <Tuple> type.",
+	        "CachedExists(<SET>, <TUPLE>, <STRING>)", DataType.SET, new DataType[] { DataType.SET, DataType.TUPLE, DataType.STRING});
+
+  public static final CachedExistsFunDef instance = new CachedExistsFunDef();
+  
   CachedExistsFunDef() {
-    super( "CachedExists",
-        "Returns tuples from a non-dynamic <Set> that exists in the specified <Tuple>.  This function will build a query level cache named <String> based on the <Tuple> type.",
-        "fxxtS" );
+    super( functionMetaData );
   }
 
   @Override
