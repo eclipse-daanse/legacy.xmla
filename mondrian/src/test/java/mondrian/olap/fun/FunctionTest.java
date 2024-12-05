@@ -57,6 +57,7 @@ import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.function.core.FunctionPrinter;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
@@ -12036,7 +12037,6 @@ Intel platforms):
   @Test
   void testDumpFunctions() throws IOException {
     final List<FunctionMetaData> functionMetaDatas = new ArrayList<>(BuiltinFunTable.instance().getFunctionMetaDatas());
-    assertEquals( NUM_EXPECTED_FUNCTIONS, functionMetaDatas.size() );
 
     // Add some UDFs.
 //    functionMetaDatas.add(
@@ -12078,18 +12078,23 @@ Intel platforms):
       }
       pw.println();
       final String signature = funInfo.signature();
-      if ( signature != null ) {
 			pw.println("    <h1>Syntax</h1>");
 
+			String newSig=FunctionPrinter.getSignature(funInfo);
 			pw.print("    ");
-			printHtml(pw, signature);
+			printHtml(pw,"old: "+signature);
+			pw.print("    ");
+			printHtml(pw,"new: "+newSig);
+
 			pw.println();
-      }
+
       pw.println( "  </td>" );
       pw.println( "</tr>" );
     }
     pw.println( "</table>" );
     pw.close();
+    assertEquals( NUM_EXPECTED_FUNCTIONS, functionMetaDatas.size() );
+
   }
 
   @ParameterizedTest
