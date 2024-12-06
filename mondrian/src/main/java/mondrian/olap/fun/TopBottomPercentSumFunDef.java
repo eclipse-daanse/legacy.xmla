@@ -13,11 +13,15 @@ package mondrian.olap.fun;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
+import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
@@ -26,6 +30,8 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
+import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.resolver.ParametersCheckingFunctionDefinitionResolver;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.calc.impl.AbstractListCalc;
@@ -40,6 +46,42 @@ import mondrian.olap.fun.sort.Sorter;
  * @since Mar 23, 2006
  */
 class TopBottomPercentSumFunDef extends AbstractFunctionDefinition {
+
+  
+  static final OperationAtom atomTopPercent = new FunctionOperationAtom("TopPercent");
+  static final FunctionMetaData fmdTopPercent = new FunctionMetaDataR(atomTopPercent,
+		  "Sorts a set and returns the top N elements whose cumulative total is at least a specified percentage.",
+		  "TopPercent(<Set>, <Percentage>, <Numeric Expression>)", DataType.SET,
+		  new DataType[] { DataType.SET, DataType.NUMERIC, DataType.NUMERIC });
+  static final FunctionResolver TopPercentResolver = new ParametersCheckingFunctionDefinitionResolver(
+		  new TopBottomPercentSumFunDef(fmdTopPercent, true, true));
+  
+  static final OperationAtom atomBottomPercent = new FunctionOperationAtom("BottomPercent");
+  static final FunctionMetaData fmdBottomPercent = new FunctionMetaDataR(atomBottomPercent,
+		  "Sorts a set and returns the bottom N elements whose cumulative total is at least a specified percentage.",
+		  "BottomPercent(<Set>, <Percentage>, <Numeric Expression>)", DataType.SET,
+		  new DataType[] { DataType.SET, DataType.NUMERIC, DataType.NUMERIC });
+  static final FunctionResolver BottomPercentResolver = new ParametersCheckingFunctionDefinitionResolver(
+		  new TopBottomPercentSumFunDef(fmdBottomPercent, false, true));
+  
+  static final OperationAtom atomTopSum = new FunctionOperationAtom("TopSum");
+  static final FunctionMetaData fmdTopSum = new FunctionMetaDataR(atomTopSum,
+		  "Sorts a set and returns the top N elements whose cumulative total is at least a specified value.",
+		  "TopSum(<Set>, <Value>, <Numeric Expression>)", DataType.SET,
+		  new DataType[] { DataType.SET, DataType.NUMERIC, DataType.NUMERIC });
+  static final FunctionResolver TopSumResolver = new ParametersCheckingFunctionDefinitionResolver(
+		  new TopBottomPercentSumFunDef(fmdTopSum, true, false));
+  
+  static final OperationAtom atomBottomSum = new FunctionOperationAtom("BottomSum");
+  static final FunctionMetaData fmdBottomSum = new FunctionMetaDataR(atomBottomSum,
+		  "Sorts a set and returns the bottom N elements whose cumulative total is at least a specified value.",
+		  "BottomSum(<Set>, <Value>, <Numeric Expression>)", DataType.SET,
+		  new DataType[] { DataType.SET, DataType.NUMERIC, DataType.NUMERIC });
+  static final FunctionResolver BottomSumResolver = new ParametersCheckingFunctionDefinitionResolver(
+		  new TopBottomPercentSumFunDef(fmdBottomSum, false, false));
+
+  
+  
   /**
    * Whether to calculate top (as opposed to bottom).
    */
@@ -48,35 +90,7 @@ class TopBottomPercentSumFunDef extends AbstractFunctionDefinition {
    * Whether to calculate percent (as opposed to sum).
    */
   final boolean percent;
-
-  static final ResolverImpl TopPercentResolver =
-    new ResolverImpl(
-      "TopPercent",
-      "TopPercent(<Set>, <Percentage>, <Numeric Expression>)",
-      "Sorts a set and returns the top N elements whose cumulative total is at least a specified percentage.",
-      new String[] { "fxxnn" }, true, true );
-
-  static final ResolverImpl BottomPercentResolver =
-    new ResolverImpl(
-      "BottomPercent",
-      "BottomPercent(<Set>, <Percentage>, <Numeric Expression>)",
-      "Sorts a set and returns the bottom N elements whose cumulative total is at least a specified percentage.",
-      new String[] { "fxxnn" }, false, true );
-
-  static final ResolverImpl TopSumResolver =
-    new ResolverImpl(
-      "TopSum",
-      "TopSum(<Set>, <Value>, <Numeric Expression>)",
-      "Sorts a set and returns the top N elements whose cumulative total is at least a specified value.",
-      new String[] { "fxxnn" }, true, false );
-
-  static final ResolverImpl BottomSumResolver =
-    new ResolverImpl(
-      "BottomSum",
-      "BottomSum(<Set>, <Value>, <Numeric Expression>)",
-      "Sorts a set and returns the bottom N elements whose cumulative total is at least a specified value.",
-      new String[] { "fxxnn" }, false, false );
-
+  
   public TopBottomPercentSumFunDef(
     FunctionMetaData functionMetaData , boolean top, boolean percent ) {
     super( functionMetaData );
