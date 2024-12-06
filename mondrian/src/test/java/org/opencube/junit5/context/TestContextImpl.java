@@ -29,6 +29,9 @@ import org.eclipse.daanse.olap.function.def.dimension.hierarchy.DimensionOfHiera
 import org.eclipse.daanse.olap.function.def.dimension.level.DimensionOfLevelResolver;
 import org.eclipse.daanse.olap.function.def.dimension.member.DimensionOfMemberResolver;
 import org.eclipse.daanse.olap.function.def.dimensions.numeric.DimensionNumericResolver;
+import org.eclipse.daanse.olap.function.def.dimensions.string.DimensionsStringResolver;
+import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyResolver;
+import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.empty.EmptyExpressionResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.MtdMultiResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.QtdMultiResolver;
@@ -76,6 +79,10 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 	    functionService.addResolver(new DimensionOfLevelResolver());
 	    functionService.addResolver(new DimensionOfMemberResolver());
 	    functionService.addResolver(new DimensionNumericResolver());
+	    functionService.addResolver(new DimensionsStringResolver());
+	    functionService.addResolver(new DimensionsStringResolver());
+	    functionService.addResolver(new MemberHierarchyResolver());
+	    functionService.addResolver(new LevelHierarchyResolver());
 
 	    functionService.addResolver(new YtdMultiResolver());
 	    functionService.addResolver(new QtdMultiResolver());

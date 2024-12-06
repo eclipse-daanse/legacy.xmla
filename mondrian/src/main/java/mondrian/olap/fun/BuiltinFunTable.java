@@ -58,6 +58,7 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCal
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyFunDef;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.GenericCalc;
@@ -118,17 +119,6 @@ public class BuiltinFunTable extends FunTableImpl {
 //                throw new UnsupportedOperationException();
 //            }
 //        });
-
-        //
-        // DIMENSION FUNCTIONS
-
-        // "Dimensions(<String Expression>)"
-        builder.define(DimensionsStringFunDef.INSTANCE);
-
-        //
-        // HIERARCHY FUNCTIONS
-        builder.define(LevelHierarchyFunDef.instance);
-        builder.define(MemberHierarchyFunDef.instance);
 
         //
         // LEVEL FUNCTIONS

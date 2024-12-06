@@ -64,6 +64,9 @@ import org.eclipse.daanse.olap.calc.base.type.level.UnknownToLevelCalc;
 import org.eclipse.daanse.olap.calc.base.type.member.UnknownToMemberCalc;
 import org.eclipse.daanse.olap.calc.base.type.string.UnknownToStringCalc;
 import org.eclipse.daanse.olap.calc.base.util.DimensionUtil;
+import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHirarchyCalc;
+import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyFunDef;
+import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyCalc;
 
 import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.MondrianException;
@@ -71,8 +74,6 @@ import mondrian.olap.SymbolLiteralImpl;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
 import mondrian.olap.fun.HierarchyCurrentMemberFunDef;
-import mondrian.olap.fun.LevelHierarchyFunDef;
-import mondrian.olap.fun.MemberHierarchyFunDef;
 import mondrian.olap.fun.MemberLevelFunDef;
 import mondrian.olap.type.BooleanType;
 import mondrian.olap.type.DecimalType;
@@ -312,14 +313,14 @@ public class AbstractExpCompiler implements ExpressionCompiler {
         if (type instanceof MemberType) {
             // <Member> --> <Member>.Hierarchy
             final MemberCalc memberCalc = compileMember(exp);
-            return new MemberHierarchyFunDef.MemberHirarchyCalcImpl(
+            return new MemberHierarchyCalc(
             		HierarchyType.forType(type),
                     memberCalc);
         }
         if (type instanceof LevelType) {
             // <Level> --> <Level>.Hierarchy
             final LevelCalc levelCalc = compileLevel(exp);
-            return new LevelHierarchyFunDef.LevelHirarchyCalc(
+            return new LevelHirarchyCalc(
             		HierarchyType.forType(type),
                     levelCalc);
         }
