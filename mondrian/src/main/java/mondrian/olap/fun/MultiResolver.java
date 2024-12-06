@@ -25,7 +25,7 @@ import org.eclipse.daanse.olap.query.base.Expressions;
 
 import mondrian.olap.Util;
 
-
+@Deprecated
 public abstract class MultiResolver implements FunctionResolver {
     private final OperationAtom operationAtom;
     private final String signature;

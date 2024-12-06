@@ -28,6 +28,7 @@ import mondrian.olap.Util;
  * @author jhyde
  * @since Mar 23, 2006
  */
+@Deprecated
 public class ReflectiveMultiResolver extends MultiResolver {
     private final Constructor constructor;
     private final List<String> reservedWords;
