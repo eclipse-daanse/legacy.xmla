@@ -181,16 +181,6 @@ public class ResultStyleCompiler extends DelegatingExpCompiler {
             this.cnt = counter++;
         }
 
-        @Override
-		public boolean isWrapperFor(Class<?> iface) {
-            return iface.isInstance(this);
-        }
-
-        @Override
-		public <T> T unwrap(Class<T> iface) {
-            return iface.cast(this);
-        }
-
         /**
          * Returns whether this is a final evaluation; the one that
          * takes place after the while-loop in the RolapResult
