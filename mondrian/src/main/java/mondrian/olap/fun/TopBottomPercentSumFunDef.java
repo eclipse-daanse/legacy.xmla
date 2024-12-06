@@ -107,25 +107,6 @@ public Calc compileCall( ResolvedFunCall call, ExpressionCompiler compiler ) {
     return new CalcImpl( call, tupleListCalc, doubleCalc, calc );
   }
 
-  private static class ResolverImpl extends MultiResolver {
-    private final boolean top;
-    private final boolean percent;
-
-    public ResolverImpl(
-      final String name, final String signature,
-      final String description, final String[] signatures,
-      boolean top, boolean percent ) {
-      super( name, signature, description, signatures );
-      this.top = top;
-      this.percent = percent;
-    }
-
-    @Override
-	protected FunctionDefinition createFunDef( Expression[] args, FunctionMetaData functionMetaData  ) {
-      return new TopBottomPercentSumFunDef( functionMetaData, top, percent );
-    }
-  }
-
   private class CalcImpl extends AbstractListCalc {
     private final TupleListCalc tupleListCalc;
     private final DoubleCalc doubleCalc;
