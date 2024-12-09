@@ -19,31 +19,24 @@ import java.util.Objects;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.InfixOperationAtom;
-import org.eclipse.daanse.mdx.model.api.expression.operation.MethodOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.PrefixOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.SchemaReader;
-import org.eclipse.daanse.olap.api.Validator;
-import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
-import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
-import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.DimensionCalc;
 import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
-import org.eclipse.daanse.olap.calc.api.IntegerCalc;
 import org.eclipse.daanse.olap.calc.api.LevelCalc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
@@ -53,23 +46,20 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedBooleanCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedIntegerCalc;
-import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedLevelCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
-import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyFunDef;
+import org.eclipse.daanse.olap.function.def.aggregate.children.AggregateChildrenFunbDef;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.GenericCalc;
 import mondrian.calc.impl.UnaryTupleList;
-import mondrian.olap.Util;
 import mondrian.olap.fun.extra.CachedExistsFunDef;
 import mondrian.olap.fun.extra.CalculatedChildFunDef;
 import mondrian.olap.fun.extra.NthQuartileFunDef;
 import mondrian.olap.fun.vba.Excel;
 import mondrian.olap.fun.vba.Vba;
-import mondrian.olap.type.LevelType;
 import mondrian.olap.type.NullType;
 
 /**
@@ -120,148 +110,6 @@ public class BuiltinFunTable extends FunTableImpl {
 //            }
 //        });
 
-        //
-        // LEVEL FUNCTIONS
-        builder.define(MemberLevelFunDef.instance);
-
-        // "<Hierarchy>.Levels(<Numeric Expression>)"
-        OperationAtom methodOperationAtom = new MethodOperationAtom(LEVELS);
-
-        FunctionMetaData levelsFunctionMetaData = new FunctionMetaDataR(methodOperationAtom, "Returns the level whose position in a hierarchy is specified by a numeric expression.",
-                "<Hierarchy>.Levels(<NUMERIC>)", DataType.LEVEL, new DataType[] { DataType.HIERARCHY, DataType.NUMERIC });
-
-        builder.define(
-            new AbstractFunctionDefinition(levelsFunctionMetaData)
-        {
-            @Override
-			public Type getResultType(Validator validator, Expression[] args) {
-                final Type argType = args[0].getType();
-                return LevelType.forType(argType);
-            }
-
-            @Override
-			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
-            {
-                final HierarchyCalc hierarchyCalc =
-                        compiler.compileHierarchy(call.getArg(0));
-                final IntegerCalc ordinalCalc =
-                        compiler.compileInteger(call.getArg(1));
-                return new AbstractProfilingNestedLevelCalc(
-                    call.getType(), new Calc[] {hierarchyCalc, ordinalCalc})
-                {
-                    @Override
-					public Level evaluate(Evaluator evaluator) {
-                        Hierarchy hierarchy =
-                                hierarchyCalc.evaluate(evaluator);
-                        Integer ordinal = ordinalCalc.evaluate(evaluator);
-                        return nthLevel(hierarchy, ordinal);
-                    }
-                };
-            }
-
-            Level nthLevel(Hierarchy hierarchy, int n) {
-                Level[] levels = hierarchy.getLevels();
-
-                if (n >= levels.length || n < 0) {
-                    throw FunUtil.newEvalException(
-                        this.getFunctionMetaData(), new StringBuilder("Index '").append(n).append("' out of bounds").toString());
-                }
-                return levels[n];
-            }
-        });
-
-        // "<Hierarchy>.Levels(<String Expression>)"
-        OperationAtom hierarchyMethodOperationAtom = new MethodOperationAtom(LEVELS);
-        FunctionMetaData hierarchyLevelsFunctionMetaData = new FunctionMetaDataR(hierarchyMethodOperationAtom, "Returns the level whose name is specified by a string expression.",
-                "<HIERARCHY>.Levels(<STRING>)", DataType.LEVEL, new DataType[] { DataType.HIERARCHY, DataType.STRING });
-        builder.define(
-            new AbstractFunctionDefinition(hierarchyLevelsFunctionMetaData)
-        {
-            @Override
-			public Type getResultType(Validator validator, Expression[] args) {
-                final Type argType = args[0].getType();
-                return LevelType.forType(argType);
-            }
-
-            @Override
-			public Calc compileCall(
-                final ResolvedFunCall call, ExpressionCompiler compiler)
-            {
-                final HierarchyCalc hierarchyCalc =
-                    compiler.compileHierarchy(call.getArg(0));
-                final StringCalc nameCalc =
-                    compiler.compileString(call.getArg(1));
-                return new AbstractProfilingNestedLevelCalc(
-                    call.getType(), new Calc[] {hierarchyCalc, nameCalc}) {
-                    @Override
-					public Level evaluate(Evaluator evaluator) {
-                        Hierarchy hierarchy =
-                            hierarchyCalc.evaluate(evaluator);
-                        String name = nameCalc.evaluate(evaluator);
-                        for (Level level : hierarchy.getLevels()) {
-                            if (level.getName().equals(name)) {
-                                return level;
-                            }
-                        }
-                        throw FunUtil.newEvalException(
-                            call.getFunDef().getFunctionMetaData(),
-                            new StringBuilder("Level '").append(name).append("' not found in hierarchy '")
-                                .append(hierarchy).append("'").toString());
-                    }
-                };
-            }
-        });
-
-        // "Levels(<String Expression>)"
-        OperationAtom functionOperationAtom = new FunctionOperationAtom(LEVELS);
-        FunctionMetaData levelsFunctionMetaData1 = new FunctionMetaDataR(functionOperationAtom, "Returns the level whose name is specified by a string expression.",
-                "Levels(<STRING>)", DataType.LEVEL, new DataType[] { DataType.STRING });
-        builder.define(
-            new AbstractFunctionDefinition(levelsFunctionMetaData1)
-        {
-            @Override
-			public Type getResultType(Validator validator, Expression[] args) {
-                final Type argType = args[0].getType();
-                return LevelType.forType(argType);
-            }
-            @Override
-			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
-            {
-                final StringCalc stringCalc =
-                        compiler.compileString(call.getArg(0));
-                return new AbstractProfilingNestedLevelCalc(call.getType(), new Calc[] {stringCalc}) {
-                    @Override
-					public Level evaluate(Evaluator evaluator) {
-                        String levelName =
-                                stringCalc.evaluate(evaluator);
-                        return findLevel(evaluator, levelName);
-                    }
-                };
-            }
-
-            Level findLevel(Evaluator evaluator, String s) {
-                Cube cube = evaluator.getCube();
-                OlapElement o =
-                    (s.startsWith("["))
-                    ? evaluator.getSchemaReader().lookupCompound(
-                        cube,
-                        Util.parseIdentifier(s),
-                        false,
-                        DataType.LEVEL)
-                    // lookupCompound barfs if "s" doesn't have matching
-                    // brackets, so don't even try
-                    : null;
-
-                if (o instanceof Level level) {
-                    return level;
-                } else if (o == null) {
-                    throw FunUtil.newEvalException(this.getFunctionMetaData(), new StringBuilder("Level '").append(s).append("' not found").toString());
-                } else {
-                    throw FunUtil.newEvalException(
-                        this.getFunctionMetaData(), new StringBuilder("Levels('").append(s).append("') found ").append(o).toString());
-                }
-            }
-        });
 
         //
         // LOGICAL FUNCTIONS
@@ -274,48 +122,11 @@ public class BuiltinFunTable extends FunTableImpl {
         // MEMBER FUNCTIONS
         builder.define(AncestorsFunDef.Resolver);
 
-
-        OperationAtom functionAtomCousin = new FunctionOperationAtom("Cousin");
-        FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtomCousin,
-        		"Returns the member with the same relative position under <ancestor member> as the member specified.", "<Member> Cousin(<Member>, <Ancestor Member>)",  DataType.MEMBER,
-    			new DataType[] { DataType.MEMBER,DataType.MEMBER});
-
-
-
-        builder.define(
-            new AbstractFunctionDefinition(functionMetaData)
-        {
-            @Override
-			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
-            {
-                final MemberCalc memberCalc =
-                        compiler.compileMember(call.getArg(0));
-                final MemberCalc ancestorMemberCalc =
-                        compiler.compileMember(call.getArg(1));
-                return new AbstractProfilingNestedMemberCalc(
-                    call.getType(), new Calc[] {memberCalc, ancestorMemberCalc})
-                {
-                    @Override
-					public Member evaluate(Evaluator evaluator) {
-                        Member member = memberCalc.evaluate(evaluator);
-                        Member ancestorMember =
-                            ancestorMemberCalc.evaluate(evaluator);
-                        return FunUtil.cousin(
-                            evaluator.getSchemaReader(),
-                            member,
-                            ancestorMember);
-                    }
-                };
-            }
-        });
-
-        builder.define(HierarchyCurrentMemberFunDef.instance);
-        builder.define(NamedSetCurrentFunDef.instance);
         builder.define(NamedSetCurrentOrdinalFunDef.instance);
 
         // "<Member>.DataMember"
         OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("DataMember");
-        functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the system-generated data member that is associated with a nonleaf member of a dimension.",
+        FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the system-generated data member that is associated with a nonleaf member of a dimension.",
                 "<MEMBER>.DataMember", DataType.MEMBER, new DataType[] { DataType.MEMBER });
 
         builder.define(
@@ -518,7 +329,7 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(LeadLagFunDef.LeadResolver);
 
         // Members(<String Expression>)
-        functionOperationAtom = new FunctionOperationAtom(MEMBERS);
+        FunctionOperationAtom functionOperationAtom = new FunctionOperationAtom(MEMBERS);
         functionMetaData = new FunctionMetaDataR(functionOperationAtom, "Returns the last child of the parent of a member.",
                 "<STRING>Members(<STRING>)", DataType.MEMBER, new DataType[] { DataType.STRING });
         builder.define(
@@ -703,8 +514,6 @@ public class BuiltinFunTable extends FunTableImpl {
         });
 
         builder.define(RankFunDef.Resolver);
-
-        builder.define(CacheFunDef.Resolver);
 
         builder.define(StdevFunDef.StdevResolver);
         builder.define(StdevFunDef.StddevResolver);
@@ -1474,8 +1283,6 @@ public class BuiltinFunTable extends FunTableImpl {
         //
         // GENERIC VALUE FUNCTIONS
         builder.define(CoalesceEmptyFunDef.Resolver);
-        builder.define(CaseTestFunDef.Resolver);
-        builder.define(CaseMatchFunDef.Resolver);
         builder.define(PropertiesFunDef.Resolver);
 
         //

@@ -18,7 +18,7 @@ import org.eclipse.daanse.olap.function.core.resolver.ParametersCheckingFunction
 import org.osgi.service.component.annotations.Component;
 
 @Component(service = FunctionResolver.class)
-public class MemberHierarchyResolver  extends ParametersCheckingFunctionDefinitionResolver {
+public class MemberHierarchyResolver extends ParametersCheckingFunctionDefinitionResolver {
 
     public MemberHierarchyResolver() {
         super(new MemberHierarchyFunDef());

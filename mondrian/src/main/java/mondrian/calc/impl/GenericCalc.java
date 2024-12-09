@@ -47,7 +47,7 @@ extends AbstractProfilingNestedCalc<Object>
      * @param exp Source expression
      * @param calcs Child compiled expressions
      */
-    protected GenericCalc( Type type, Calc[] calcs) {
+    protected GenericCalc( Type type, Calc<?>... calcs) {
         super(type, calcs);
     }
 
