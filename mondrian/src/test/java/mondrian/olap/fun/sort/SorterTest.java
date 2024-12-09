@@ -36,6 +36,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.core.BasicContextConfig;
+import org.eclipse.daanse.olap.function.def.member.MemberOrderKeyCalc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -45,7 +46,6 @@ import org.mockito.MockitoAnnotations;
 
 import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.QueryImpl;
-import mondrian.olap.fun.MemberOrderKeyFunDef;
 import mondrian.rolap.RolapConnection;
 import mondrian.server.ExecutionImpl;
 
@@ -195,8 +195,8 @@ class SorterTest{
   private void setupSortKeyMocks( boolean isOrderKeyCalc, Sorter.SorterFlag flag1, Sorter.SorterFlag flag2 ) {
     when( sortKeySpec1.getDirection() ).thenReturn( flag1 );
     when( sortKeySpec2.getDirection() ).thenReturn( flag2 );
-    when( calc1.isWrapperFor( MemberOrderKeyFunDef.CalcImpl.class ) ).thenReturn( isOrderKeyCalc );
-    when( calc2.isWrapperFor( MemberOrderKeyFunDef.CalcImpl.class ) ).thenReturn( isOrderKeyCalc );
+    when( calc1.isWrapperFor( MemberOrderKeyCalc.class ) ).thenReturn( isOrderKeyCalc );
+    when( calc2.isWrapperFor( MemberOrderKeyCalc.class ) ).thenReturn( isOrderKeyCalc );
     when( calc1.evaluate( evaluator ) ).thenReturn( 1 );
     when( calc2.evaluate( evaluator ) ).thenReturn( 2 );
     when( calc1.dependsOn( hierarchy1 ) ).thenReturn( true );

@@ -32,6 +32,7 @@ import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc;
 
 import mondrian.olap.Util;
 import mondrian.olap.type.MemberType;
@@ -108,7 +109,7 @@ class OpeningClosingPeriodFunDef extends AbstractFunctionDefinition {
                 ((RolapCube) compiler.getEvaluator().getCube())
                     .getTimeHierarchy(getFunctionMetaData().operationAtom().name());
             memberCalc =
-                new HierarchyCurrentMemberFunDef.CurrentMemberFixedCalc(
+                new HierarchyCurrentMemberFixedCalc(
                         MemberType.forHierarchy(defaultTimeHierarchy),
                     defaultTimeHierarchy);
             levelCalc = null;
@@ -119,7 +120,7 @@ class OpeningClosingPeriodFunDef extends AbstractFunctionDefinition {
                     .getTimeHierarchy(getFunctionMetaData().operationAtom().name());
             levelCalc = compiler.compileLevel(call.getArg(0));
             memberCalc =
-                new HierarchyCurrentMemberFunDef.CurrentMemberFixedCalc(
+                new HierarchyCurrentMemberFixedCalc(
 
                         MemberType.forHierarchy(defaultTimeHierarchy),
                     defaultTimeHierarchy);

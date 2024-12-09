@@ -61,6 +61,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFunDef;
 import org.eclipse.daanse.olap.impl.IdentifierParser.Builder;
 
 import mondrian.calc.impl.UnaryTupleList;
@@ -341,7 +342,7 @@ public class FunUtil extends Util {
    * @param memberList Member list
    * @return List of non-calculated members
    */
-  static TupleList removeCalculatedMembers( TupleList memberList ) {
+  public static TupleList removeCalculatedMembers( TupleList memberList ) {
     if ( memberList.getArity() == 1 ) {
       return new UnaryTupleList(
         FunUtil.removeCalculatedMembers(
@@ -1154,7 +1155,7 @@ public class FunUtil extends Util {
    * @return The child of {@code ancestorMember} in the same position under {@code ancestorMember} as {@code member} is
    * under its parent.
    */
-  static Member cousin(
+  public static Member cousin(
     SchemaReader schemaReader,
     Member member,
     Member ancestorMember ) {
@@ -1545,7 +1546,7 @@ public class FunUtil extends Util {
     return sr.getLevelMembers( level, includeCalcMembers );
   }
 
-  static TupleList levelMembers(
+  public static TupleList levelMembers(
     final Level level,
     final Evaluator evaluator,
     final boolean includeCalcMembers ) {
@@ -1560,7 +1561,7 @@ public class FunUtil extends Util {
     return Sorter.hierarchizeTupleList( tupleList, false );
   }
 
-  static TupleList hierarchyMembers(
+  public static TupleList hierarchyMembers(
     Hierarchy hierarchy,
     Evaluator evaluator,
     final boolean includeCalcMembers ) {
