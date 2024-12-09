@@ -11,24 +11,27 @@
 *   SmartCity Jena - initial
 *   Stefan Bischof (bipolis.org) - initial
 */
-package org.eclipse.daanse.olap.function.def.hierarchy.member;
+package org.eclipse.daanse.olap.function.def.member;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
-import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedHierarchyCalc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
 
-public class MemberHierarchyCalc extends AbstractProfilingNestedHierarchyCalc {
+import mondrian.olap.fun.FunUtil;
 
-    public MemberHierarchyCalc(Type type, MemberCalc memberCalc) {
-        super(type, memberCalc);
+public class CousinCalc extends AbstractProfilingNestedMemberCalc {
+
+    protected CousinCalc(Type type, final MemberCalc memberCalc, final MemberCalc ancestorMemberCalc) {
+        super(type, memberCalc, ancestorMemberCalc);
     }
 
     @Override
-    public Hierarchy evaluate(Evaluator evaluator) {
+    public Member evaluate(Evaluator evaluator) {
         Member member = getChildCalc(0, MemberCalc.class).evaluate(evaluator);
-        return member.getHierarchy();
+        Member ancestorMember = getChildCalc(1, MemberCalc.class).evaluate(evaluator);
+        return FunUtil.cousin(evaluator.getSchemaReader(), member, ancestorMember);
     }
+
 }
