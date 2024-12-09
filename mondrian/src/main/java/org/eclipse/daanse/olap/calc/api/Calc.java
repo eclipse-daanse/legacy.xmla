@@ -5,13 +5,13 @@
  * You must accept the terms of that agreement to use this software.
  *
  * Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
- * 
+ *
  * For more information please visit the Project: Hitachi Vantara - Mondrian
- * 
+ *
  * ---- All changes after Fork in 2023 ------------------------
- * 
+ *
  * Project: Eclipse daanse
- * 
+ *
  * Copyright (c) 2023 Contributors to the Eclipse Foundation.
  *
  * This program and the accompanying materials are made
@@ -123,9 +123,5 @@ public interface Calc<E> {
      * @see ExpressionCompiler#compileList(org.eclipse.daanse.olap.api.query.component.Expression, boolean)
      */
     ResultStyle getResultStyle();
-
-    boolean isWrapperFor(java.lang.Class<?> iface);
-
-    <X> X unwrap(java.lang.Class<X> iface);
 
 }

@@ -62,7 +62,7 @@ public class ResultStyleCompiler extends DelegatingExpCompiler {
         Validator validator,
         List<ResultStyle> resultStyles)
     {
-    	
+
     	return null;
 //        // pop and then push class name
 //        Object context = ExpressionCompiler.Factory.getFactory().removeContext();
@@ -179,16 +179,6 @@ public class ResultStyleCompiler extends DelegatingExpCompiler {
             this.onlyMutableList = onlyMutableList;
             this.lineNumber = -1;
             this.cnt = counter++;
-        }
-
-        @Override
-		public boolean isWrapperFor(Class<?> iface) {
-            return iface.isInstance(this);
-        }
-
-        @Override
-		public <T> T unwrap(Class<T> iface) {
-            return iface.cast(this);
         }
 
         /**

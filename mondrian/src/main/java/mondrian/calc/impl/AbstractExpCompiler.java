@@ -65,16 +65,16 @@ import org.eclipse.daanse.olap.calc.base.type.member.UnknownToMemberCalc;
 import org.eclipse.daanse.olap.calc.base.type.string.UnknownToStringCalc;
 import org.eclipse.daanse.olap.calc.base.util.DimensionUtil;
 import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHirarchyCalc;
-import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyFunDef;
+import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberCalc;
+import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyCalc;
+import org.eclipse.daanse.olap.function.def.level.member.MemberLevelCalc;
 
 import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.MondrianException;
 import mondrian.olap.SymbolLiteralImpl;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
-import mondrian.olap.fun.HierarchyCurrentMemberFunDef;
-import mondrian.olap.fun.MemberLevelFunDef;
 import mondrian.olap.type.BooleanType;
 import mondrian.olap.type.DecimalType;
 import mondrian.olap.type.DimensionType;
@@ -246,11 +246,11 @@ public class AbstractExpCompiler implements ExpressionCompiler {
     {
         final Hierarchy hierarchy = hierarchyCalc.getType().getHierarchy();
         if (hierarchy != null) {
-            return new HierarchyCurrentMemberFunDef.CurrentMemberFixedCalc(
+            return new HierarchyCurrentMemberFixedCalc(
                     TypeUtil.toMemberType(hierarchyCalc.getType()),
                     hierarchy);
         }
-        return new HierarchyCurrentMemberFunDef.CurrentMemberCalc(
+        return new HierarchyCurrentMemberCalc(
                 TypeUtil.toMemberType(hierarchyCalc.getType()),
                 hierarchyCalc);
     }
@@ -261,7 +261,7 @@ public class AbstractExpCompiler implements ExpressionCompiler {
         if (type instanceof MemberType) {
             // <Member> --> <Member>.Level
             final MemberCalc memberCalc = compileMember(exp);
-            return new MemberLevelFunDef.MemberLevelCalcImpl(
+            return new MemberLevelCalc(
                     LevelType.forType(type),
                     memberCalc);
         }

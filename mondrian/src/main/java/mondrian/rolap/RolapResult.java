@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.InternalOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
@@ -62,6 +61,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
+import org.eclipse.daanse.olap.function.def.aggregate.AggregateCalc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +83,6 @@ import mondrian.olap.ResultBase;
 import mondrian.olap.ResultLimitExceededException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.olap.fun.AggregateFunDef;
 import mondrian.olap.fun.MondrianEvaluationException;
 import mondrian.olap.fun.VisualTotalsFunDef.VisualTotalMember;
 import mondrian.olap.fun.sort.Sorter;
@@ -474,7 +473,7 @@ public class RolapResult extends ResultBase {
         internalSlicerEvaluator = this.evaluator;
         if ( tupleList.size() > 1 ) {
           tupleList = removeUnaryMembersFromTupleList( tupleList, evaluator );
-          tupleList = AggregateFunDef.AggregateCalc.optimizeTupleList( evaluator, tupleList, false );
+          tupleList = AggregateCalc.optimizeTupleList( evaluator, tupleList, false );
           evaluator.setSlicerTuples( tupleList );
 
           final Calc valueCalc = new ValueCalc( ScalarType.INSTANCE ) ;
@@ -494,7 +493,7 @@ public class RolapResult extends ResultBase {
                     evaluator.setContext( member );
                   }
                 }
-                return AggregateFunDef.AggregateCalc.aggregate( valueCalc, evaluator, list );
+                return AggregateCalc.aggregate( valueCalc, evaluator, list );
               } finally {
                 evaluator.getTiming().markEnd( "EvalForSlicer" );
               }

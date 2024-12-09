@@ -34,6 +34,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
+import org.eclipse.daanse.olap.function.def.member.memberorderkey.MemberOrderKeyCalc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,6 @@ import mondrian.calc.impl.DelegatingTupleList;
 import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.olap.fun.MemberOrderKeyFunDef;
 import mondrian.olap.type.ScalarType;
 import mondrian.rolap.RolapHierarchy;
 import mondrian.rolap.RolapUtil;
@@ -428,8 +428,7 @@ public class Sorter {
   static Comparator<List<Member>> applySortSpecToComparator( Evaluator evaluator, int arity, Comparator<List<Member>> chain,
                                          SortKeySpec key ) {
     boolean brk = key.getDirection().brk;
-    boolean orderByKey =
-      key.getKey().isWrapperFor( MemberOrderKeyFunDef.CalcImpl.class );
+	boolean orderByKey = key.getKey() instanceof MemberOrderKeyCalc;
     boolean direction = key.getDirection().descending;
     if ( brk ) {
     	Comparator<List<Member>> comp =

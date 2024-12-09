@@ -61,6 +61,8 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.function.def.cache.CacheFunDef;
+import org.eclipse.daanse.olap.function.def.set.level.LevelMembersFunDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -255,29 +257,6 @@ public class NativizeSetFunDef extends AbstractFunctionDefinition {
 		public ResultStyle getResultStyle() {
             return parent.getResultStyle();
         }
-
-        /**
-         * {@inheritDoc}
-         *
-         * Default implementation just does 'instanceof TargetClass'. Subtypes
-         * that are wrappers should override.
-         */
-        @Override
-		public boolean isWrapperFor(Class<?> iface) {
-            return iface.isInstance(this);
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * Default implementation just casts to TargetClass.
-         * Subtypes that are wrappers should override.
-         */
-        @Override
-		public <T> T unwrap(Class<T> iface) {
-            return iface.cast(this);
-        }
-
 
     }
 

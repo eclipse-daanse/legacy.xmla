@@ -40,6 +40,7 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
+import org.eclipse.daanse.olap.function.def.aggregate.AggregateCalc;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
@@ -94,7 +95,6 @@ import mondrian.olap.IdImpl;
 import mondrian.olap.ResultBase;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.olap.fun.AggregateFunDef;
 import mondrian.olap.fun.CrossJoinFunDef;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.SchemaModifiers;
@@ -1676,7 +1676,7 @@ class AggregationOnDistinctCountMeasuresTest {
             storeMembersUsaAndCanada(false, salesCubeSchemaReader, salesCube);
         TupleList memberList = mutableCrossJoin(genderMembers, storeMembers);
         Map<Member, Integer>[] memberCounterMap =
-            AggregateFunDef.AggregateCalc.membersVersusOccurencesInTuple(
+            AggregateCalc.membersVersusOccurencesInTuple(
                 memberList);
 
         assertTrue(
@@ -1716,7 +1716,7 @@ class AggregationOnDistinctCountMeasuresTest {
         memberList.addTuple(femaleChild, mexicoMember);
 
         Map<Member, Integer>[] memberCounterMap =
-            AggregateFunDef.AggregateCalc.membersVersusOccurencesInTuple(
+            AggregateCalc.membersVersusOccurencesInTuple(
                 memberList);
 
         assertFalse(
@@ -2022,7 +2022,7 @@ class AggregationOnDistinctCountMeasuresTest {
             new LocusImpl.Action<TupleList>() {
                 @Override
 				public TupleList execute() {
-                    return AggregateFunDef.AggregateCalc.optimizeChildren(
+                    return AggregateCalc.optimizeChildren(
                         memberList, schemaReader, salesCube);
                 }
             }

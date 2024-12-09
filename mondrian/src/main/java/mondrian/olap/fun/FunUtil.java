@@ -61,6 +61,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFunDef;
 import org.eclipse.daanse.olap.impl.IdentifierParser.Builder;
 
 import mondrian.calc.impl.UnaryTupleList;
@@ -219,7 +220,7 @@ public class FunUtil extends Util {
    * Returns the ordinal of a literal argument. If the argument does not belong to the supplied enumeration, returns
    * -1.
    */
-  static <E extends Enum<E>> E getLiteralArg(
+  public static <E extends Enum<E>> E getLiteralArg(
     ResolvedFunCall call,
     int i,
     E defaultValue,
@@ -341,7 +342,7 @@ public class FunUtil extends Util {
    * @param memberList Member list
    * @return List of non-calculated members
    */
-  static TupleList removeCalculatedMembers( TupleList memberList ) {
+  public static TupleList removeCalculatedMembers( TupleList memberList ) {
     if ( memberList.getArity() == 1 ) {
       return new UnaryTupleList(
         FunUtil.removeCalculatedMembers(
@@ -654,7 +655,7 @@ public class FunUtil extends Util {
     return parameterCategories;
   }
 
-  static double percentile(
+  public static double percentile(
     Evaluator evaluator,
     TupleList members,
     Calc exp,
@@ -827,7 +828,7 @@ public class FunUtil extends Util {
     }
   }
 
-  static double correlation(
+  public static double correlation(
     Evaluator evaluator,
     TupleList memberList,
     Calc exp1,
@@ -844,7 +845,7 @@ public class FunUtil extends Util {
         * ( (Number) var2 ).doubleValue() );
   }
 
-  static Object covariance(
+  public static Object covariance(
     Evaluator evaluator,
     TupleList members,
     Calc exp1,
@@ -1055,7 +1056,7 @@ public class FunUtil extends Util {
    * non-equal number (if one is plotting x,y values it helps to have the same number and know where a potential gap is
    * the data is.
    */
-  static SetWrapper[] evaluateSet(
+  public static SetWrapper[] evaluateSet(
     Evaluator evaluator,
     TupleList list,
     DoubleCalc[] calcs ) {
@@ -1125,7 +1126,7 @@ public class FunUtil extends Util {
     return members;
   }
 
-  static List<Member> memberRange(
+  public static List<Member> memberRange(
     Evaluator evaluator,
     Member startMember,
     Member endMember ) {
@@ -1154,7 +1155,7 @@ public class FunUtil extends Util {
    * @return The child of {@code ancestorMember} in the same position under {@code ancestorMember} as {@code member} is
    * under its parent.
    */
-  static Member cousin(
+  public static Member cousin(
     SchemaReader schemaReader,
     Member member,
     Member ancestorMember ) {
@@ -1453,7 +1454,7 @@ public class FunUtil extends Util {
     return category == DataType.MEMBER || category == DataType.SET;
   }
 
-  static void appendTuple( StringBuilder buf, Member[] members ) {
+  public static void appendTuple( StringBuilder buf, Member[] members ) {
     buf.append( "(" );
     for ( int j = 0; j < members.length; j++ ) {
       if ( j > 0 ) {
@@ -1472,7 +1473,7 @@ public class FunUtil extends Util {
    * <code>([Gender].[M], [Store].[USA]) IS ([Store].[USA],
    * [Gender].[M])</code> returns {@code true}.
    */
-  static boolean equalTuple( Member[] members0, Member[] members1 ) {
+  public static boolean equalTuple( Member[] members0, Member[] members1 ) {
     final int count = members0.length;
     if ( count != members1.length ) {
       return false;
@@ -1545,7 +1546,7 @@ public class FunUtil extends Util {
     return sr.getLevelMembers( level, includeCalcMembers );
   }
 
-  static TupleList levelMembers(
+  public static TupleList levelMembers(
     final Level level,
     final Evaluator evaluator,
     final boolean includeCalcMembers ) {
@@ -1560,7 +1561,7 @@ public class FunUtil extends Util {
     return Sorter.hierarchizeTupleList( tupleList, false );
   }
 
-  static TupleList hierarchyMembers(
+  public static TupleList hierarchyMembers(
     Hierarchy hierarchy,
     Evaluator evaluator,
     final boolean includeCalcMembers ) {
@@ -1597,7 +1598,7 @@ public class FunUtil extends Util {
   }
 
 
-  static TupleList parseTupleList(
+  public static TupleList parseTupleList(
     Evaluator evaluator,
     String string,
     List<Hierarchy> hierarchies ) {
@@ -1661,7 +1662,7 @@ public class FunUtil extends Util {
     return members;
   }
 
-  static List<Member> parseMemberList(
+  public static List<Member> parseMemberList(
     Evaluator evaluator,
     String string,
     Hierarchy hierarchy ) {
@@ -1692,7 +1693,7 @@ public class FunUtil extends Util {
     return IdentifierParser.parseMember( builder, string, i );
   }
 
-  static Member parseMember(
+  public static Member parseMember(
     Evaluator evaluator, String string, Hierarchy hierarchy ) {
     Member[] members = { null };
     FunUtil.parseMember( evaluator, string, 0, members, hierarchy );
@@ -1747,7 +1748,7 @@ public class FunUtil extends Util {
    * rightTuple, false otherwise. If there is no explicit corresponding member from either right or left, then the
    * default member is used.
    */
-  static boolean existsInTuple(
+  public static boolean existsInTuple(
     final List<Member> leftTuple, final List<Member> rightTuple,
     final List<Hierarchy> leftHierarchies,
     final List<Hierarchy> rightHierarchies,
@@ -1811,8 +1812,8 @@ public class FunUtil extends Util {
   // ~ Inner classes ---------------------------------------------------------
 
 
-  static class SetWrapper {
-    List v = new ArrayList();
+  public static class SetWrapper {
+    public List v = new ArrayList();
     public int errorCount = 0;
     public int nullCount = 0;
 

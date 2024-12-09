@@ -19,6 +19,7 @@ import static java.util.stream.IntStream.range;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -36,6 +37,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.core.BasicContextConfig;
+import org.eclipse.daanse.olap.function.def.member.memberorderkey.MemberOrderKeyCalc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -45,7 +47,6 @@ import org.mockito.MockitoAnnotations;
 
 import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.QueryImpl;
-import mondrian.olap.fun.MemberOrderKeyFunDef;
 import mondrian.rolap.RolapConnection;
 import mondrian.server.ExecutionImpl;
 
@@ -65,15 +66,15 @@ class SorterTest{
   @Mock Calc calc1;
   @Mock Calc calc2;
   @Mock Comparator comparatorChain;
-  @Mock Connection connection; 
+  @Mock Connection connection;
   @Mock Context context;
   @Mock BasicContextConfig config;
   @Mock RolapConnection rolapConnection;
   @Captor ArgumentCaptor<Comparator<?>> comparatorCaptor;
- 
 
-  
-  
+
+
+
 
 
   @BeforeEach
@@ -87,11 +88,11 @@ class SorterTest{
     when( query.getStatement() ).thenReturn( statement );
     when( statement.getCurrentExecution() ).thenReturn( execution );
     when(execution.getMondrianStatement()).thenReturn( statement );
-    when( statement.getMondrianConnection() ).thenReturn( rolapConnection );      
+    when( statement.getMondrianConnection() ).thenReturn( rolapConnection );
     when( rolapConnection.getContext()).thenReturn( context );
     when( context.getConfig()).thenReturn( config );
     when( config.checkCancelOrTimeoutInterval()).thenReturn( 1000 );
-   
+
   }
 
   // tuple sort paths:
@@ -113,7 +114,7 @@ class SorterTest{
     Comparator tc1= comparatorCaptor.getAllValues().get(1);
     assertThat(tc1.reversed()).isInstanceOf(TupleExpMemoComparator.BreakTupleComparator.class );
 
-    
+
 //    verify( comparatorChain ).addComparator( any( TupleExpMemoComparator.BreakTupleComparator.class ), eq( false ) );
 //    verify( comparatorChain ).addComparator( any( TupleExpMemoComparator.BreakTupleComparator.class ), eq( true ) );
   }
@@ -125,26 +126,30 @@ class SorterTest{
     Sorter.applySortSpecToComparator( evaluator, 2, comparatorChain, sortKeySpec2 );
     verify( comparatorChain , times( 2 )).thenComparing( comparatorCaptor.capture());
 
-    
+
     Comparator tc0= comparatorCaptor.getAllValues().get(0);
     assertThat(tc0).isInstanceOf(TupleExpMemoComparator.BreakTupleComparator.class );
     Comparator tc1= comparatorCaptor.getAllValues().get(1);
     assertThat(tc1.reversed()).isInstanceOf(TupleExpMemoComparator.BreakTupleComparator.class );
 
-    
+
 //    verify( comparatorChain ).addComparator( any( TupleExpMemoComparator.BreakTupleComparator.class ), eq( false ) );
 //    verify( comparatorChain ).addComparator( any( TupleExpMemoComparator.BreakTupleComparator.class ), eq( true ) );
   }
 
   @Test
   void testComparatorSelectionNotBreakingOrderByKey() {
-    setupSortKeyMocks( true, Sorter.SorterFlag.ASC, Sorter.SorterFlag.DESC );
+    calc1 = mock(MemberOrderKeyCalc.class);
+    calc2 = mock(MemberOrderKeyCalc.class);
+    when( sortKeySpec1.getKey() ).thenReturn( calc1 );
+    when( sortKeySpec2.getKey() ).thenReturn( calc2 );
+    setupSortKeyMocks(Sorter.SorterFlag.ASC, Sorter.SorterFlag.DESC );
     Sorter.applySortSpecToComparator( evaluator, 2, comparatorChain, sortKeySpec1 );
     Sorter.applySortSpecToComparator( evaluator, 2, comparatorChain, sortKeySpec2 );
     verify( comparatorChain , times( 2 )).thenComparing( comparatorCaptor.capture());
 
-    
-    
+
+
     Comparator tc0= comparatorCaptor.getAllValues().get(0);
     assertThat(tc0).isInstanceOf(HierarchicalTupleKeyComparator.class );
     Comparator tc1= comparatorCaptor.getAllValues().get(1);
@@ -160,8 +165,8 @@ class SorterTest{
     Sorter.applySortSpecToComparator( evaluator, 2, comparatorChain, sortKeySpec1 );
     Sorter.applySortSpecToComparator( evaluator, 2, comparatorChain, sortKeySpec2 );
     verify( comparatorChain, times( 2 ) ).thenComparing( comparatorCaptor.capture() );
-    
-    
+
+
 //    verify( comparatorChain, times( 2 ) ).addComparator( comparatorCaptor.capture(), eq( false ) );
     assertTrue( comparatorCaptor.getAllValues().get( 0 ) instanceof HierarchicalTupleComparator );
     assertTrue( comparatorCaptor.getAllValues().get( 1 ) instanceof HierarchicalTupleComparator );
@@ -195,8 +200,8 @@ class SorterTest{
   private void setupSortKeyMocks( boolean isOrderKeyCalc, Sorter.SorterFlag flag1, Sorter.SorterFlag flag2 ) {
     when( sortKeySpec1.getDirection() ).thenReturn( flag1 );
     when( sortKeySpec2.getDirection() ).thenReturn( flag2 );
-    when( calc1.isWrapperFor( MemberOrderKeyFunDef.CalcImpl.class ) ).thenReturn( isOrderKeyCalc );
-    when( calc2.isWrapperFor( MemberOrderKeyFunDef.CalcImpl.class ) ).thenReturn( isOrderKeyCalc );
+//    when( calc1.isWrapperFor( MemberOrderKeyFunDef.CalcImpl.class ) ).thenReturn( isOrderKeyCalc );
+//    when( calc2.isWrapperFor( MemberOrderKeyFunDef.CalcImpl.class ) ).thenReturn( isOrderKeyCalc );
     when( calc1.evaluate( evaluator ) ).thenReturn( 1 );
     when( calc2.evaluate( evaluator ) ).thenReturn( 2 );
     when( calc1.dependsOn( hierarchy1 ) ).thenReturn( true );
@@ -204,6 +209,15 @@ class SorterTest{
     when( member1.getHierarchy() ).thenReturn( hierarchy1 );
     when( member2.getHierarchy() ).thenReturn( hierarchy2 );
   }
+
+  private void setupSortKeyMocks( Sorter.SorterFlag flag1, Sorter.SorterFlag flag2 ) {
+      when( sortKeySpec1.getDirection() ).thenReturn( flag1 );
+      when( sortKeySpec2.getDirection() ).thenReturn( flag2 );
+      when( calc1.dependsOn( hierarchy1 ) ).thenReturn( true );
+      when( calc2.dependsOn( hierarchy2 ) ).thenReturn( true );
+      when( member1.getHierarchy() ).thenReturn( hierarchy1 );
+      when( member2.getHierarchy() ).thenReturn( hierarchy2 );
+    }
 
   private TupleList genList() {
     TupleList tupleList = TupleCollections.createList( 2 );

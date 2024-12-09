@@ -60,6 +60,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantCalcs;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.function.def.aggregate.AggregateCalc;
 import org.eclipse.daanse.rolap.mapping.api.model.AnnotationMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
@@ -90,8 +91,6 @@ import mondrian.olap.MondrianException;
 import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.olap.fun.AggregateFunDef;
-import mondrian.olap.fun.BuiltinFunTable;
 import mondrian.olap.fun.FunUtil;
 import mondrian.olap.type.NumericType;
 import mondrian.olap.type.SetType;
@@ -1145,7 +1144,7 @@ public class RolapHierarchy extends HierarchyBase {
             		new InternalOperationAtom("$AggregateChildren"),
                 new Expression[] {new HierarchyExpressionImpl(this)});
             Validator validator =
-                    Util.createSimpleValidator(BuiltinFunTable.instance());
+                    Util.createSimpleValidator(getRolapSchema().getInternalConnection().getContext().getFunctionService());
             aggregateChildrenExpression = fc.accept(validator);
         }
         return aggregateChildrenExpression;
@@ -1601,7 +1600,7 @@ public class RolapHierarchy extends HierarchyBase {
      * The {@code listCalc} expression determines that list of children.
      */
     public static class LimitedRollupAggregateCalc
-        extends AggregateFunDef.AggregateCalc
+        extends AggregateCalc
     {
         public LimitedRollupAggregateCalc(
             Type returnType,

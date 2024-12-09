@@ -336,7 +336,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
     ArrayList<String> strings = executeQuery(context, mdx);
     assertEquals( 14, strings.size() );
     assertTrue(strings.get( 13 ).contains( "SumFunDef invoked 52 times for total of " ), strings.get( 13 ));
-    assertTrue(strings.get( 13 ).contains( "XtdFunDef invoked 24 times for total of " ), strings.get( 13 ));
+    assertTrue(strings.get( 13 ).contains( "XtdWithoutMemberCalc invoked 24 times for total of " ), strings.get( 13 ));
     assertTrue(strings.get( 13 ).contains( "FilterFunDef invoked 2 times for total of " ), strings.get( 13 ));
     assertTrue(strings.get( 13 ).contains( "OrderFunDef invoked 2 times for total of " ), strings.get( 13 ));
   }

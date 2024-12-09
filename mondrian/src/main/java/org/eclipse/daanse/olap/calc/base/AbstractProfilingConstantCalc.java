@@ -47,16 +47,6 @@ public abstract class AbstractProfilingConstantCalc<T> extends AbstractProfiling
 	}
 
 	@Override
-	public boolean isWrapperFor(Class<?> iface) {
-		return false;
-	}
-
-	@Override
-	public <X> X unwrap(Class<X> iface) {
-		return null;
-	}
-
-	@Override
 	List<CalculationProfile> getChildProfiles() {
 		return List.of();
 	}

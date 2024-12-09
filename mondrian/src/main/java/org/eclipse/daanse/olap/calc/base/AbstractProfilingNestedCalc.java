@@ -35,7 +35,7 @@ public abstract class AbstractProfilingNestedCalc<E> extends AbstractProfilingCa
 	 * Holds the childCalcs witch are accessible using {@link #getChildCalcs()}.
 	 * Enhances its own {@link CalculationProfile} with the Children's
 	 * {@link CalculationProfile}.
-	 * 
+	 *
 	 * @param calcs Child {@link Calc}s that are needed to calculate this.
 	 */
 //	protected AbstractProfilingNestedCalc(Type type, C[] childCalcs) {
@@ -43,31 +43,10 @@ public abstract class AbstractProfilingNestedCalc<E> extends AbstractProfilingCa
 //		this.childCalcs = childCalcs;
 //
 //	}
-	
+
 	protected AbstractProfilingNestedCalc(Type type, Calc<?>... childCalcs) {
 		super(type);
 		this.childCalcs = childCalcs;
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * by default check isInstance.
-	 */
-	@Override
-	public boolean isWrapperFor(Class<?> iface) {
-		return iface.isInstance(this);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * by default just cast.
-	 */
-	@Override
-	public <T> T unwrap(Class<T> iface) {
-		return iface.cast(this);
 	}
 
 	public Calc<?>[] getChildCalcs() {
@@ -77,11 +56,11 @@ public abstract class AbstractProfilingNestedCalc<E> extends AbstractProfilingCa
 	public Calc<?> getChildCalc(int i) {
 		return childCalcs[i];
 	}
-	
+
 	public <D extends Calc<?>> D getChildCalc(int i, Class<D> clazz) {
 		return clazz.cast(childCalcs[i]);
 	}
-	
+
 	protected Calc<?> getFirstChildCalc() {
 		return getChildCalcs()[0];
 	}
