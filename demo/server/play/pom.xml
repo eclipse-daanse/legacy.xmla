@@ -8,9 +8,9 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>org.eclipse.daanse.demo.server.play</artifactId>
-  <properties>
-    <maven-failsafe-plugin.argLine>-Duser.language=en -Duser.country=US</maven-failsafe-plugin.argLine>
-  </properties>
+	<properties>
+		<maven-failsafe-plugin.argLine>-Duser.language=en -Duser.country=US</maven-failsafe-plugin.argLine>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -20,7 +20,6 @@
 				<configuration>
 					<failOnChanges>false</failOnChanges>
 					<bndruns>
-						<bndrun>xmla.demo.server.bndrun</bndrun>
 						<bndrun>xmla.demo.server.min.bndrun</bndrun>
 					</bndruns>
 					<exporter>bnd.executablejar</exporter>
@@ -121,13 +120,6 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>
-				org.eclipse.daanse.olap.rolap.dbmapper.provider.sample.steelwheels.record</artifactId>
-			<version>${revision}</version>
-			<scope>runtime</scope>
-		</dependency>
 
 
 		<dependency>
@@ -151,37 +143,24 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.olap.rolap.dbmapper.provider.xml</artifactId>
-			<version>${revision}</version>
-			<scope>runtime</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.olap.documentation.api</artifactId>
+			<version>${revision}</version>
+			<artifactId>org.eclipse.daanse.rolap.mapping.emf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.olap.action.impl</artifactId>
 			<scope>compile</scope>
 			<version>${revision}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.olap.documentation.common</artifactId>
+			<artifactId>org.eclipse.daanse.olap.action.api</artifactId>
 			<scope>compile</scope>
 			<version>${revision}</version>
 		</dependency>
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.olap.action.impl</artifactId>
-      <scope>compile</scope>
-      <version>${revision}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.olap.action.api</artifactId>
-      <scope>compile</scope>
-      <version>${revision}</version>
-    </dependency>
 
 		<dependency>
 			<groupId>org.osgi</groupId>

@@ -39,12 +39,13 @@
 	org.apache.aries.spifly.dynamic.framework.extension;version='[1.3.7,1.3.8)',\
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
 	org.apache.felix.scr;version='[2.2.10,2.2.11)',\
-	org.eclipse.daanse.jdbc.db.dialect.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.db.jdbc.dataloader.ods;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.db.jdbc.dataloader.ods-tests;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.db.jdbc.util;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.io.fs.watcher.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.io.fs.watcher.watchservice;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.api;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.api;version='[0.0.1,0.0.2)',\
 	org.mockito.junit-jupiter;version='[4.9.0,4.9.1)',\
 	org.mockito.mockito-core;version='[4.9.0,4.9.1)',\
 	org.objenesis;version='[3.3.0,3.3.1)',\

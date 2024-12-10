@@ -43,10 +43,11 @@
 	org.apache.aries.spifly.dynamic.framework.extension;version='[1.3.7,1.3.8)',\
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
 	org.apache.felix.scr;version='[2.2.10,2.2.11)',\
+	org.eclipse.daanse.emondrian;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.dialect.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.dialect.db.common;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.jdbc.db.dialect.db.monetdb;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.emondrian;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.dialect.db.h2;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.mdx.model.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.mdx.parser.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.olap.action.api;version='[0.0.1,0.0.2)',\
