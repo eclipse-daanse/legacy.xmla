@@ -124,8 +124,4 @@ public interface Calc<E> {
      */
     ResultStyle getResultStyle();
 
-    boolean isWrapperFor(java.lang.Class<?> iface);
-
-    <X> X unwrap(java.lang.Class<X> iface);
-
 }

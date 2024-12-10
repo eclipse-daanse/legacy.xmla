@@ -256,29 +256,6 @@ public class NativizeSetFunDef extends AbstractFunctionDefinition {
             return parent.getResultStyle();
         }
 
-        /**
-         * {@inheritDoc}
-         *
-         * Default implementation just does 'instanceof TargetClass'. Subtypes
-         * that are wrappers should override.
-         */
-        @Override
-		public boolean isWrapperFor(Class<?> iface) {
-            return iface.isInstance(this);
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * Default implementation just casts to TargetClass.
-         * Subtypes that are wrappers should override.
-         */
-        @Override
-		public <T> T unwrap(Class<T> iface) {
-            return iface.cast(this);
-        }
-
-
     }
 
     static class NonNativeIterCalc

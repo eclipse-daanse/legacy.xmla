@@ -169,13 +169,13 @@ public class ValidMeasureFunDef extends AbstractFunctionDefinition
 			MemberCalc mc = null;
 			if (calc instanceof MemberCalc tmpMembCalc) {
 				mc = tmpMembCalc;
-			} else if (calc.isWrapperFor(MemberCalc.class)) {
-				mc = (MemberCalc) calc.unwrap(MemberCalc.class);
+			} else if (calc instanceof MemberCalc tmc) {
+				mc = tmc;
 			}
 			if (mc != null) {
 				memberList = Collections.singletonList(mc.evaluate(evaluator));
 			} else {
-				TupleCalc tc = (TupleCalc) calc.unwrap((TupleCalc.class));
+				TupleCalc tc = (TupleCalc) calc;
 				final Member[] tupleMembers = tc.evaluate(evaluator);
 				if (tupleMembers == null) {
 					memberList = null;

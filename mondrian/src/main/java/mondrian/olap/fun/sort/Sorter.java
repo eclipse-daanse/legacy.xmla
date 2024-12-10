@@ -428,8 +428,7 @@ public class Sorter {
   static Comparator<List<Member>> applySortSpecToComparator( Evaluator evaluator, int arity, Comparator<List<Member>> chain,
                                          SortKeySpec key ) {
     boolean brk = key.getDirection().brk;
-    boolean orderByKey =
-      key.getKey().isWrapperFor( MemberOrderKeyFunDef.CalcImpl.class );
+	boolean orderByKey = key.getKey() instanceof MemberOrderKeyFunDef.CalcImpl;
     boolean direction = key.getDirection().descending;
     if ( brk ) {
     	Comparator<List<Member>> comp =

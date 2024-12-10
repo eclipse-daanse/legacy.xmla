@@ -36,26 +36,6 @@ public abstract class AbstractProfilingValueCalc<T> extends AbstractProfilingCal
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * by default check isInstance.
-	 */
-	@Override
-	public boolean isWrapperFor(Class<?> iface) {
-		return iface.isInstance(this);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * by default just cast.
-	 */
-	@Override
-	public <T> T unwrap(Class<T> iface) {
-		return iface.cast(this);
-	}
-
 	@Override
 	public ResultStyle getResultStyle() {
 		return ResultStyle.VALUE;

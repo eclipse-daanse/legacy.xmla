@@ -82,13 +82,12 @@ public Calc compileCall( ResolvedFunCall call, ExpressionCompiler compiler ) {
     final Calc expCalc = keySpecList.get( 0 ).getKey();
     calcList[1] = expCalc;
 
-    if (keySpecCount == 1 && ( expCalc.isWrapperFor( MemberValueCalc.class ) || expCalc.isWrapperFor( MemberArrayValueCalc.class ) )) {
+    if (keySpecCount == 1 && ( expCalc instanceof MemberValueCalc ) ||( expCalc instanceof MemberArrayValueCalc ) ) {
         List<MemberCalc> constantList = new ArrayList<>();
         List<MemberCalc> variableList = new ArrayList<>();
         final MemberCalc[] calcs = (MemberCalc[]) ( (AbstractProfilingNestedCalc) expCalc ).getChildCalcs();
         for ( MemberCalc memberCalc : calcs ) {
-          if ( memberCalc.isWrapperFor( ConstantCalc.class ) && !listCalc.dependsOn( memberCalc.getType()
-              .getHierarchy() ) ) {
+			if ((memberCalc instanceof ConstantCalc) && !listCalc.dependsOn(memberCalc.getType().getHierarchy())) {
             constantList.add( memberCalc );
           } else {
             variableList.add( memberCalc );
