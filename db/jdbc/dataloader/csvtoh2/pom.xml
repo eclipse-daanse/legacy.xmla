@@ -18,7 +18,7 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.jdbc.loader.csv</artifactId>
+      <artifactId>org.eclipse.daanse.jdbc.db.importer.csv</artifactId>
     </dependency>
   </dependencies>
 </project>

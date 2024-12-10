@@ -34,14 +34,15 @@
 	bnd.identity;id='ch.qos.logback.classic',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.datasource.metatype.h2',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.h2',\
-	bnd.identity;id='org.eclipse.daanse.jdbc.loader.csv',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.core',\
 	bnd.identity;id='org.eclipse.daanse.olap.action.impl',\
 	bnd.identity;id='org.eclipse.daanse.mdx.parser.api',\
 	bnd.identity;id='org.eclipse.daanse.mdx.parser.ccc',\
 	bnd.identity;id='org.eclipse.daanse.xmla.server.authentication',\
 	bnd.identity;id='org.eclipse.daanse.rolap.mapping.api',\
-	bnd.identity;id='org.eclipse.daanse.rolap.mapping.emf'
+	bnd.identity;id='org.eclipse.daanse.rolap.mapping.emf',\
+	bnd.identity;id='com.sun.xml.bind.jaxb-impl',\
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.importer.csv'
 
 
 
@@ -55,9 +56,12 @@
 	ch.qos.logback.classic;version='[1.4.14,1.4.15)',\
 	com.github.ben-manes.caffeine;version='[3.1.2,3.1.3)',\
 	com.h2database;version='[2.3.230,2.3.231)',\
+	com.sun.xml.bind.jaxb-core;version='[4.0.4,4.0.5)',\
+	com.sun.xml.bind.jaxb-impl;version='[4.0.4,4.0.5)',\
 	com.sun.xml.messaging.saaj.impl;version='[3.0.3,3.0.4)',\
 	de.siegmar.fastcsv;version='[3.1.0,3.1.1)',\
 	jakarta.activation-api;version='[2.1.2,2.1.3)',\
+	jakarta.xml.bind-api;version='[4.0.1,4.0.2)',\
 	jakarta.xml.soap-api;version='[3.0.1,3.0.2)',\
 	org.apache.aries.spifly.dynamic.framework.extension;version='[1.3.7,1.3.8)',\
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
@@ -79,8 +83,8 @@
 	org.eclipse.daanse.jdbc.db.dialect.db.common;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.dialect.db.h2;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.dialect.resolver.basic;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.jdbc.db.importer.csv;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.jdbc.db.record;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.jdbc.loader.csv;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.mdx.model.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.mdx.model.record;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.mdx.parser.api;version='[0.0.1,0.0.2)',\
