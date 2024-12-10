@@ -13,25 +13,17 @@
  */
 package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlSeeAlso;
-
 /**
  * This is a base class for all elements that can match strings
  * where the case of the string is important. In addition,
  * it has an id which services as its tag.
  */
 //@XmlType(name = "")
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso({FactCountMatch.class, ForeignKeyMatch.class, NameMatcher.class, Mapper.class, Regex.class, TableMatch.class})
 public abstract class CaseMatcher extends Base {
 
     /**
      * The unique identifier for this Matcher.
      */
-    @XmlAttribute(name = "id", required = true)
     protected String id;
 
     /**
@@ -43,7 +35,6 @@ public abstract class CaseMatcher extends Base {
      * If "upper" then all characters must be upper-case.
      * If "lower" then all characters must be lower-case.
      */
-    @XmlAttribute(name = "charcase")
     protected CharCaseEnum charCase = CharCaseEnum.IGNORE;
 
     public String getId() {

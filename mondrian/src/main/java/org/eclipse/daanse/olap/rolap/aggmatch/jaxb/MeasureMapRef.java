@@ -13,12 +13,6 @@
  */
 package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlType;
-
-@XmlType(name = "MeasureMapRef")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class MeasureMapRef extends Ref {
 
     public void validate(

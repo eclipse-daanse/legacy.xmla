@@ -13,23 +13,13 @@
  */
 package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlSeeAlso;
-
 /**
  * Base is the base class for all of the elements.
  * All elements can be enabled or not, have a tag, and
  * can be validated.
  */
 //@XmlType(name = "")
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso({AggRule.class, CaseMatcher.class, FactCountMatch.class,
-    FactCountMatchRef.class, ForeignKeyMatch.class, ForeignKeyMatchRef.class,
-    IgnoreMap.class, IgnoreMapRef.class, LevelMap.class, LevelMapRef.class,
-    Mapper.class, MeasureMap.class, MeasureMapRef.class, NameMatcher.class,
-    Ref.class, Regex.class, RegexMapper.class, TableMatch.class, TableMatchRef.class})
+
 public abstract class Base {
 
     public static final String NAME = "Base";
@@ -37,7 +27,6 @@ public abstract class Base {
      * Is this element enabled - if true, then Mondrian can consider
      * using it otherwise it ignored.
      */
-    @XmlAttribute(name = "enabled")
     Boolean enabled = true;
 
     public Boolean isEnabled() {

@@ -16,13 +16,6 @@ package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlType;
-
 /**
  * The set of "named" rules for matching aggregate tables.
  * Only one rule can be applied to a given connection. In
@@ -31,67 +24,49 @@ import jakarta.xml.bind.annotation.XmlType;
  * It is very important that the AggRules validate method is called
  * prior to using any of the object.
  */
-@XmlType(name = "AggRules", propOrder = {
-    "tableMatches",
-    "factCountMatches",
-    "foreignKeyMatches",
-    "levelMaps",
-    "measureMaps",
-    "ignoreMaps",
-    "aggRules"
-})
-@XmlRootElement(name="AggRules")
-@XmlAccessorType(XmlAccessType.FIELD)
+
 public class AggRules {
 
     public static final String NAME = "AggRules";
     /**
      * The identifying tag for a schema.
      */
-    @XmlAttribute(name = "tag", required = true)
     String tag;
 
     /**
      * All shared TableMatches.
      */
-    @XmlElement(name = "TableMatch", type = TableMatch.class, required = false)
     List<TableMatch> tableMatches = new ArrayList<>();
 
     /**
      * All shared FactCountMatches.
      */
-    @XmlElement(name = "FactCountMatch", type = FactCountMatch.class, required = false)
     List<FactCountMatch> factCountMatches = new ArrayList<>();
 
     /**
      * All shared ForeignKeyMatches.
      */
-    @XmlElement(name = "ForeignKeyMatch", type = ForeignKeyMatch.class, required = false)
     List<ForeignKeyMatch> foreignKeyMatches = new ArrayList<>();
 
     /**
      * All shared LevelMap.
      */
-    @XmlElement(name = "LevelMap", type = LevelMap.class, required = false)
     List<LevelMap> levelMaps = new ArrayList<>();
 
     /**
      * All shared MeasureMap.
      */
-    @XmlElement(name = "MeasureMap", type = MeasureMap.class, required = false)
     List<MeasureMap> measureMaps = new ArrayList<>();
 
     /**
      * All shared IgnoreMap.
      */
-    @XmlElement(name = "IgnoreMap", type = IgnoreMap.class, required = false)
     List<IgnoreMap> ignoreMaps = new ArrayList<>();
 
     /**
      * All AggRules (at least one).
      * Also, one of them must be marked with default=true.
      */
-    @XmlElement(name = "AggRule", type = AggRule.class, required = true)
     List<AggRule> aggRules = new ArrayList<>();
 
     private static final org.slf4j.Logger LOGGER =

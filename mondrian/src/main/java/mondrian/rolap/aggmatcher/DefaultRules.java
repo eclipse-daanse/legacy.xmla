@@ -11,30 +11,32 @@
 
 package mondrian.rolap.aggmatcher;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import mondrian.olap.MondrianException;
-import mondrian.olap.exceptions.AggRuleParsingException;
 import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.AggRule;
 import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.AggRules;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.CharCaseEnum;
 import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.FactCountMatch;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.FactCountMatchRef;
 import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.ForeignKeyMatch;
 import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.IgnoreMap;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.LevelMap;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.LevelMapRef;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.MeasureMap;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.MeasureMapRef;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.Regex;
 import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.TableMatch;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.TableMatchRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
 import mondrian.recorder.ListRecorder;
 import mondrian.recorder.MessageRecorder;
 import mondrian.recorder.RecorderException;
@@ -62,19 +64,101 @@ public class DefaultRules {
      * There is a single instance of the {@link DefaultRecognizer} and the
      * {@link DefaultRules} class is a container of that instance.
      */
-    public static synchronized DefaultRules getInstance(String aggregateRuleTag, String aggregateRules) {
+    public static synchronized DefaultRules getInstance() {
         if (instance == null) {
-            InputStream inStream = getAggRuleInputStream(aggregateRules);
-            if (inStream  == null) {
-                return null;
-            }
+         
+            AggRules aggrules = new AggRules();
+            
+            TableMatch tm=new TableMatch();
+            tm.setId("ta");
+            tm.setPretemplate("agg_.+_");
+            
+            aggrules.getTableMatches().add(tm);
+            
+            FactCountMatch fcm=new FactCountMatch();
+            fcm.setId("fca");
+            aggrules.getFactCountMatches().add(fcm);
+            
+            LevelMap lvlMap=new LevelMap();
+            lvlMap.setId("lxx");
+            aggrules.getLevelMaps().add(lvlMap);
+            
+            Regex regexLog=new Regex();
+            regexLog.setId("logical");
+            regexLog.setCharCase(CharCaseEnum.LOWER);
+            regexLog.setTemplate("${hierarchy_name}_${level_name}");
+            
+            Regex regexMixed=new Regex();
+            regexMixed.setId("mixed");
+            regexMixed.setCharCase(CharCaseEnum.LOWER);
+            regexMixed.setTemplate("${hierarchy_name}_${level_column_name}");
+            
+            Regex regexUsage=new Regex();
+            regexUsage.setId("usage");
+            regexUsage.setCharCase(CharCaseEnum.EXACT);
+            regexUsage.setTemplate("${usage_prefix}${level_column_name}");
+            
+            Regex regexPhysical=new Regex();
+            regexPhysical.setId("physical");
+            regexPhysical.setCharCase(CharCaseEnum.EXACT);
+            regexPhysical.setTemplate("${level_column_name}");
 
-            AggRules defs = makeAggRules(inStream);
+            lvlMap.setRegexs(List.of(regexLog,regexMixed,regexUsage,regexPhysical));
+           
+            MeasureMap measMap=new MeasureMap();
+            measMap.setId("mxx");
 
+            Regex mmRegexLogical=new Regex();
+            mmRegexLogical.setId("logical");
+            mmRegexLogical.setCharCase(CharCaseEnum.LOWER);
+            mmRegexLogical.setTemplate("${measure_name}");
+
+//            Sometimes a base fact table foreign key is also used in a
+//            measure. This Regex is used to match such usages in
+//            the aggregate table. Using such a match only makes sense
+//            if one prior to attempting to match knows that the 
+//            column in question in the base fact table is indeed used
+//            as a measure (for this matches any foreign key).
+            Regex mmRegexForeignKey=new Regex();
+            mmRegexForeignKey.setId("foreignkey");
+            mmRegexForeignKey.setCharCase(CharCaseEnum.EXACT);
+            mmRegexForeignKey.setTemplate("${measure_column_name}");
+            
+            Regex mmRegexPhysical=new Regex();
+            regexPhysical.setId("physical");
+            regexPhysical.setCharCase(CharCaseEnum.EXACT);
+            regexPhysical.setTemplate("${measure_column_name}_${aggregate_name}");
+
+            measMap.setRegexs(List.of(mmRegexLogical,mmRegexForeignKey,mmRegexPhysical));
+            aggrules.getMeasureMaps().add(measMap);
+            
+            AggRule aggRDefault=new AggRule();
+            aggRDefault.setTag("default");
+            
+            FactCountMatchRef factCountMatchRef=new FactCountMatchRef();
+            factCountMatchRef.setRefId("fca");
+            aggRDefault.setFactCountMatchRef(factCountMatchRef);
+            
+            ForeignKeyMatch foreignKeyMatch=new ForeignKeyMatch();
+            factCountMatchRef.setRefId("fka");
+            aggRDefault.setForeignKeyMatch(foreignKeyMatch);
+            
+            TableMatchRef tableMatchRef=new TableMatchRef();
+            tableMatchRef.setRefId("ta");
+            aggRDefault.setTableMatchRef(tableMatchRef);
+            
+            LevelMapRef levelMapRef=new LevelMapRef();
+            levelMapRef.setRefId("lxx");
+            aggRDefault.setLevelMapRef(levelMapRef);
+            
+            MeasureMapRef measureMapRef=new MeasureMapRef();
+            measureMapRef.setRefId("mxx");
+            aggRDefault.setMeasureMapRef(measureMapRef);
+            
             // validate the DefaultDef.AggRules object
             ListRecorder reclists = new ListRecorder();
             try {
-                defs.validate(reclists);
+                aggrules.validate(reclists);
             } catch (RecorderException e) {
                 // ignore
             }
@@ -86,21 +170,19 @@ public class DefaultRules {
                 reclists.throwRTException();
             }
 
-
-            // make sure the tag name exists
-            AggRule aggrule = defs.getAggRule(aggregateRuleTag);
-            if (aggrule == null) {
-                throw new MondrianException(MessageFormat.format(missingDefaultAggRule, aggregateRuleTag));
-            }
-
-            DefaultRules rules = new DefaultRules(defs, aggregateRuleTag);
-            rules.setTag(aggregateRuleTag);
+            DefaultRules rules = new DefaultRules(aggrules, "default");
+            rules.setTag("default");
             instance = rules;
         }
         return instance;
     }
 
-    private static InputStream getAggRuleInputStream(String aggregateRules) {
+    private static AggRules of() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private static InputStream getAggRuleInputStream(String aggregateRules) {
 
         InputStream inStream = DefaultRules.class.getResourceAsStream(aggregateRules);
         if (inStream == null) {
@@ -175,53 +257,6 @@ public class DefaultRules {
         properties.AggregateRuleTag.addTrigger(trigger);
     }
     */
-
-
-    protected static AggRules makeAggRules(final File file) {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(AggRules.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            return (AggRules) jaxbUnmarshaller.unmarshal(file);
-        } catch (JAXBException e) {
-            throw new AggRuleParsingException(file.getName(), e);
-        }
-    }
-
-    protected static AggRules makeAggRules(final URL url) {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(AggRules.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            return (AggRules) jaxbUnmarshaller.unmarshal(url);
-
-        } catch (JAXBException e) {
-            throw new AggRuleParsingException(url.toString(), e);
-        }
-    }
-
-    protected static AggRules makeAggRules(
-        final InputStream inStream)
-    {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(AggRules.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            return (AggRules) jaxbUnmarshaller.unmarshal(inStream);
-        } catch (JAXBException e) {
-            throw new AggRuleParsingException("InputStream", e);
-        }
-    }
-
-    protected static AggRules makeAggRules(
-        final String text,
-        final String name)
-    {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(AggRules.class);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            return (AggRules) jaxbUnmarshaller.unmarshal(new StringReader(text));
-        } catch (JAXBException e) {
-            throw new AggRuleParsingException(name, e);
-        }
-    }
 
 
     private final AggRules rules;

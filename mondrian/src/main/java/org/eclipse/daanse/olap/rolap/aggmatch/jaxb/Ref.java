@@ -13,19 +13,8 @@
  */
 package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlSeeAlso;
-import jakarta.xml.bind.annotation.XmlType;
-
-@XmlType(name = "Ref")
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso({LevelMapRef.class, MeasureMapRef.class, IgnoreMapRef.class, FactCountMatchRef.class,
-    ForeignKeyMatchRef.class, TableMatchRef.class})
 public abstract class Ref extends Base {
 
-    @XmlAttribute(name = "refId", required = true)
     String refId;
 
     protected String getTag() {

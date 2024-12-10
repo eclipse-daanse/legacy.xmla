@@ -58,8 +58,6 @@ public interface BasicContextConfig {
     int MAX_CONSTRAINTS = 1000;
     int TEST_EXP_DEPENDENCIES = 0;
     boolean READ_AGGREGATES = false;
-    String AGGREGATE_RULE_TAG = "default";
-    String AGGREGATE_RULES = "/DefaultRules.xml";
     String ALERT_NATIVE_EVALUATION_UNSUPPORTED = "OFF";
     int CROSS_JOIN_OPTIMIZER_SIZE = 0;
     String CURRENT_MEMBER_WITH_COMPOUND_SLICER_ALERT = "ERROR";
@@ -182,17 +180,6 @@ public interface BasicContextConfig {
     @AttributeDefinition(name = "%chooseAggregateByVolume.name", description = "%chooseAggregateByVolume.description", type = AttributeType.BOOLEAN)
     default Boolean chooseAggregateByVolume() {
         return CHOOSE_AGGREGATE_BY_VOLUME;
-    }
-
-    //<p>String property containing the name of the file which defines the rules for recognizing an aggregate table. Can be either a resource in the Mondrian jar or a URL.</p> <p>The default value is "/DefaultRules.xml", which is in the mondrian.rolap.aggmatcher package in Mondrian.jar.</p> <p>Normally, this property is not set by a user.</p>
-    @AttributeDefinition(name = "%aggregateRules.name", description = "%aggregateRules.description", type = AttributeType.STRING)
-    default String aggregateRules() {
-        return AGGREGATE_RULES;
-    }
-
-    @AttributeDefinition(name = "%aggregateRuleTag.name", description = "%aggregateRuleTag.description", type = AttributeType.STRING)
-    default String aggregateRuleTag() {
-        return AGGREGATE_RULE_TAG;
     }
 
     @AttributeDefinition(name = "%generateAggregateSql.name", description = "%generateAggregateSql.description", type = AttributeType.BOOLEAN)

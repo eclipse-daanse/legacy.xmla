@@ -15,9 +15,6 @@ package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
 
 import java.util.List;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlType;
 import mondrian.rolap.aggmatcher.Recognizer;
 
 /**
@@ -25,8 +22,6 @@ import mondrian.rolap.aggmatcher.Recognizer;
  * There are NO template names. One simply uses a regular
  * expression.
  */
-@XmlType(name = "IgnoreMap")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class IgnoreMap extends RegexMapper {
 
     private static final List<String> TEMPLATE_NAMES = List.of();

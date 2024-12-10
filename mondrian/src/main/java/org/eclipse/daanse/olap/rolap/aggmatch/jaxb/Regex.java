@@ -17,12 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlMixed;
-import jakarta.xml.bind.annotation.XmlType;
-
 /**
  * This element is used in a vector of child elements when
  * one wishes to have one or more regular expressions associated
@@ -48,8 +42,6 @@ import jakarta.xml.bind.annotation.XmlType;
  * following cdata template is not supported:
  * .*_${country}_.*_${city}_${country}
  */
-@XmlType(name="Regex")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Regex extends CaseMatcher {
 
     private static final String BAD_TEMPLATE = "Bad template \"";
@@ -60,7 +52,6 @@ public class Regex extends CaseMatcher {
      * the source string is "Product Family",
      * then the target string is "Product_Family".
      */
-    @XmlAttribute(name = "space", required = false)
     private String space = "_";
 
     /**
@@ -69,11 +60,10 @@ public class Regex extends CaseMatcher {
      * the source string is "Time.Time Weekly",
      * then the target string is "Time_Time Weekly".
      */
-    @XmlAttribute(name = "dot", required = false)
     private String dot = "_";
 
-    @XmlMixed
-    private List<String> cdata;
+	private String template;
+
 
     public String getSpace() {
         return space;
@@ -84,7 +74,7 @@ public class Regex extends CaseMatcher {
     }
 
     public String getTemplate() {
-        return cdata != null ? cdata.stream().collect(Collectors.joining()).trim() : null;
+        return template;
     }
 
     protected static final int BAD_ID = -1;
@@ -336,4 +326,8 @@ public class Regex extends CaseMatcher {
     protected String getName() {
         return "Regex";
     }
+
+	public void setTemplate(String template) {
+		this.template = template;
+	}
 }

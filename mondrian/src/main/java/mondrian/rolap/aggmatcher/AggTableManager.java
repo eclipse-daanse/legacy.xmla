@@ -163,9 +163,7 @@ public class AggTableManager {
     {
         ListRecorder msgRecorder = new ListRecorder();
         try {
-            DefaultRules rules = DefaultRules.getInstance(
-            		context.getConfig().aggregateRuleTag(),
-            		context.getConfig().aggregateRules());
+            DefaultRules rules = DefaultRules.getInstance();
             
 //            connectionProps.aggregateScanCatalog();
             Optional<String> oAaggregateScanSchema=    connectionProps.aggregateScanSchema();

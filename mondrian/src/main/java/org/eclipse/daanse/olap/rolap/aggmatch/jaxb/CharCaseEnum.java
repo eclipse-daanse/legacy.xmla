@@ -13,20 +13,10 @@
  */
 package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
 
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
-import jakarta.xml.bind.annotation.XmlType;
-
-@XmlType(name = "charcase")
-@XmlEnum
 public enum CharCaseEnum {
-    @XmlEnumValue("ignore")
     IGNORE("ignore"),
-    @XmlEnumValue("exact")
     EXACT("exact"),
-    @XmlEnumValue("upper")
     UPPER("upper"),
-    @XmlEnumValue("lower")
     LOWER("lower");
 
     private final String value;

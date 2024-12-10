@@ -15,10 +15,6 @@ package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
 
 import java.util.Arrays;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlType;
 import mondrian.rolap.aggmatcher.Recognizer;
 
 /**
@@ -26,14 +22,11 @@ import mondrian.rolap.aggmatcher.Recognizer;
  * single template, where the template is an attribute.
  * While much loved, this is currently not used.
  */
-@XmlType(name = "Mapper")
-@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Mapper extends CaseMatcher {
 
     /**
      * This is used by Elements to create a regex string.
      */
-    @XmlAttribute(name = "template", required = true)
     String template;
 
     /**
@@ -42,7 +35,6 @@ public abstract class Mapper extends CaseMatcher {
      * the source string is "Product Family",
      * then the target string is "Product_Family".
      */
-    @XmlAttribute(name = "space", required = false)
     String space = "_";
 
     /**
@@ -57,7 +49,6 @@ public abstract class Mapper extends CaseMatcher {
      * target string
      * is "Time_Time Weekly".
      */
-    @XmlAttribute(name = "dot", required = false)
     String dot = "_";
 
     public String getTemplate() {

@@ -32,8 +32,6 @@ public class TestConfig implements BasicContextConfig {
 	private int maxConstraints = MAX_CONSTRAINTS;
 	private int testExpDependencies = TEST_EXP_DEPENDENCIES;
 	private boolean readAggregates = READ_AGGREGATES;
-	private String aggregateRuleTag = AGGREGATE_RULE_TAG;
-	private String aggregateRules = AGGREGATE_RULES;
 	private String alertNativeEvaluationUnsupported = ALERT_NATIVE_EVALUATION_UNSUPPORTED;
 	private int crossJoinOptimizerSize = CROSS_JOIN_OPTIMIZER_SIZE;
 	private String currentMemberWithCompoundSlicerAlert = CURRENT_MEMBER_WITH_COMPOUND_SLICER_ALERT;
@@ -43,7 +41,7 @@ public class TestConfig implements BasicContextConfig {
 	private boolean memoryMonitor = MEMORY_MONITOR;
 	private String warnIfNoPatternForDialect = WARN_IF_NO_PATTERN_FOR_DIALECT;
 	private boolean useAggregates = USE_AGGREGATES;
-	private int queryTimeout = QUERY_TIMEOUT;//?
+	private int queryTimeout = QUERY_TIMEOUT;// ?
 	private boolean optimizePredicates = OPTIMIZE_PREDICATES;
 	private boolean nullDenominatorProducesNull = NULL_DENOMINATOR_PRODUCES_NULL;
 	private boolean needDimensionPrefix = NEED_DIMENSION_PREFIX;
@@ -297,24 +295,6 @@ public class TestConfig implements BasicContextConfig {
 		return readAggregates;
 	}
 
-	@Override
-	public String aggregateRuleTag() {
-		return aggregateRuleTag;
-	}
-
-	public void setAggregateRuleTag(String aggregateRuleTag) {
-		this.aggregateRuleTag = aggregateRuleTag;
-	}
-
-	@Override
-	public String aggregateRules() {
-		return aggregateRules;
-	}
-
-	public void setAggregateRules(String aggregateRules) {
-		this.aggregateRules = aggregateRules;
-	}
-
 	public void setAlertNativeEvaluationUnsupported(String alertNativeEvaluationUnsupported) {
 		this.alertNativeEvaluationUnsupported = alertNativeEvaluationUnsupported;
 	}
@@ -484,6 +464,5 @@ public class TestConfig implements BasicContextConfig {
 	public Boolean generateFormattedSql() {
 		return generateFormattedSql;
 	}
-
 
 }

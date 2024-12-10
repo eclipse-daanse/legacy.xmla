@@ -16,26 +16,14 @@ package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlSeeAlso;
-import jakarta.xml.bind.annotation.XmlType;
 import mondrian.rolap.aggmatcher.Recognizer;
 
-@XmlType(name = "RegexMapper", propOrder = {
-    "regexs"
-})
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso({LevelMap.class, MeasureMap.class, IgnoreMap.class})
 public abstract class RegexMapper extends Base {
 
     /**
      * The unique identifier for this Matcher.
      */
-    @XmlAttribute(name = "id")
-    String id;
+    private String id;
     /**
      * This is an array of Regex. A match occurs if any one of
      * the Regex matches; it is the equivalent of or-ing the
@@ -43,11 +31,10 @@ public abstract class RegexMapper extends Base {
      * sequentially by each Regex in their document order until
      * one matches. In none match, well, none match.
      */
-    @XmlElement(name = "Regex", type = Regex.class, required = false)
-    List<Regex> regexs;
+    private List<Regex> regexs;
 
     protected String getTag() {
-        return id;
+        return getId();
     }
 
     public void validate(
@@ -59,7 +46,7 @@ public abstract class RegexMapper extends Base {
 
             List<String> templateNames = getTemplateNames();
 
-            for (Regex regex : regexs) {
+            for (Regex regex : getRegexs()) {
                 regex.validate(rules, templateNames, msgRecorder);
             }
 
@@ -82,7 +69,7 @@ public abstract class RegexMapper extends Base {
         final List<java.util.regex.Pattern> patterns =
             new ArrayList<>();
 
-        for (Regex regex : regexs) {
+        for (Regex regex : getRegexs()) {
             patterns.add(regex.getPattern(names));
         }
 
@@ -126,4 +113,20 @@ public abstract class RegexMapper extends Base {
     protected String getName() {
         return "RegexMapper";
     }
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public List<Regex> getRegexs() {
+		return regexs;
+	}
+
+	public void setRegexs(List<Regex> regexs) {
+		this.regexs = regexs;
+	}
 }

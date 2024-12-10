@@ -13,11 +13,6 @@
  */
 package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlSeeAlso;
-import jakarta.xml.bind.annotation.XmlType;
 import mondrian.rolap.aggmatcher.Recognizer;
 
 /**
@@ -30,21 +25,16 @@ import mondrian.rolap.aggmatcher.Recognizer;
  * be identified when their table names are formed by placing
  * text before and/or after the base fact table name.
  */
-@XmlType(name = "NameMatcher")
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso({FactCountMatch.class, ForeignKeyMatch.class, TableMatch.class})
 public abstract class NameMatcher extends CaseMatcher {
 
     /**
      * The regular expression to preppend to the table name.
      */
-    @XmlAttribute(name = "pretemplate", required = false)
-    String pretemplate;
+    private String pretemplate;
 
     /**
      * The regular expression to append to the table name.
      */
-    @XmlAttribute(name = "posttemplate", required = false)
     String posttemplate;
 
     /**
@@ -62,7 +52,6 @@ public abstract class NameMatcher extends CaseMatcher {
      * does not match the basename pattern, then the Matcher
      * return NEVER MATCHES ANYTHING.
      */
-    @XmlAttribute(name = "basename", required = false)
     String basename;
 
     java.util.regex.Pattern baseNamePattern = null;
@@ -94,8 +83,8 @@ public abstract class NameMatcher extends CaseMatcher {
      */
     public String getRegex(final String name) {
         StringBuilder buf = new StringBuilder();
-        if (pretemplate != null) {
-            buf.append(pretemplate);
+        if (getPretemplate() != null) {
+            buf.append(getPretemplate());
         }
         if (name != null) {
             String n = name;
@@ -219,4 +208,12 @@ public abstract class NameMatcher extends CaseMatcher {
     protected String getName() {
         return "NameMatcher";
     }
+
+	public String getPretemplate() {
+		return pretemplate;
+	}
+
+	public void setPretemplate(String pretemplate) {
+		this.pretemplate = pretemplate;
+	}
 }

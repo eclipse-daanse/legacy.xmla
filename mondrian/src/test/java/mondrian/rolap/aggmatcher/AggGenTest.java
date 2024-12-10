@@ -65,7 +65,7 @@ class AggGenTest {
         //Util.addAppender(appender, logger, org.apache.logging.log4j.Level.DEBUG);
 
         // If run in Ant and with mondrian.jar, please comment out this line:
-        ((TestConfig)context.getConfig()).setAggregateRules("/DefaultRules.xml");
+//        ((TestConfig)context.getConfig()).setAggregateRules("/DefaultRules.xml");
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         ((TestConfig)context.getConfig()).setGenerateAggregateSql(true);

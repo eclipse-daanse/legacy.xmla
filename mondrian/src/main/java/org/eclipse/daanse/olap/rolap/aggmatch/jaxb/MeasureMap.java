@@ -15,9 +15,6 @@ package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
 
 import java.util.List;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlType;
 import mondrian.rolap.aggmatcher.Recognizer;
 
 /**
@@ -27,8 +24,6 @@ import mondrian.rolap.aggmatcher.Recognizer;
  * aggregate_name ("count", "sum", "avg", "min", "max",
  * "distinct-count").
  */
-@XmlType(name = "MeasureMap")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class MeasureMap extends RegexMapper {
 
     private static final List<String> TEMPLATE_NAMES = List.of(

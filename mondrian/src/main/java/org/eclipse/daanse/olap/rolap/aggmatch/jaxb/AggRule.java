@@ -13,12 +13,6 @@
  */
 package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
-
 /**
  * A RolapConnection uses one AggRule. If no name is specified, then
  * the AggRule which is marked as default==true is used (validation
@@ -33,70 +27,101 @@ import jakarta.xml.bind.annotation.XmlType;
  * changed by changing the refid attribute value).
  */
 
-@XmlType(name = "AggRule", propOrder = {
-    "ignoreMap",
-    "ignoreMapRef",
-    "factCountMatch",
-    "factCountMatchRef",
-    "foreignKeyMatch",
-    "foreignKeyMatchRef",
-    "tableMatch",
-    "tableMatchRef",
-    "levelMap",
-    "levelMapRef",
-    "measureMap",
-    "measureMapRef"
-})
-@XmlAccessorType(XmlAccessType.FIELD)
 public class AggRule extends Base {
 
     /**
      * Name of this AggRule
      */
-    @XmlAttribute(name = "tag", required = true)
-    String tag;
+    private String tag;
 
     /**
      * Name of the aggregate column containing the count for
      * the row.
      */
-    @XmlAttribute(name = "countColumn", required = true)
     String countColumn = "fact_count";
 
-    @XmlElement(name = "IgnoreMap")
-    IgnoreMap ignoreMap;
+    private IgnoreMap ignoreMap;
 
-    @XmlElement(name = "IgnoreMapRef")
-    IgnoreMapRef ignoreMapRef;
+    public FactCountMatchRef getFactCountMatchRef() {
+		return factCountMatchRef;
+	}
 
-    @XmlElement(name = "FactCountMatch")
-    FactCountMatch factCountMatch;
+	public void setFactCountMatchRef(FactCountMatchRef factCountMatchRef) {
+		this.factCountMatchRef = factCountMatchRef;
+	}
 
-    @XmlElement(name = "FactCountMatchRef")
+	public ForeignKeyMatchRef getForeignKeyMatchRef() {
+		return foreignKeyMatchRef;
+	}
+
+	public void setForeignKeyMatchRef(ForeignKeyMatchRef foreignKeyMatchRef) {
+		this.foreignKeyMatchRef = foreignKeyMatchRef;
+	}
+
+	public TableMatchRef getTableMatchRef() {
+		return tableMatchRef;
+	}
+
+	public void setTableMatchRef(TableMatchRef tableMatchRef) {
+		this.tableMatchRef = tableMatchRef;
+	}
+
+	public LevelMapRef getLevelMapRef() {
+		return levelMapRef;
+	}
+
+	public void setLevelMapRef(LevelMapRef levelMapRef) {
+		this.levelMapRef = levelMapRef;
+	}
+
+	public MeasureMapRef getMeasureMapRef() {
+		return measureMapRef;
+	}
+
+	public void setMeasureMapRef(MeasureMapRef measureMapRef) {
+		this.measureMapRef = measureMapRef;
+	}
+
+	public void setCountColumn(String countColumn) {
+		this.countColumn = countColumn;
+	}
+
+	public void setForeignKeyMatch(ForeignKeyMatch foreignKeyMatch) {
+		this.foreignKeyMatch = foreignKeyMatch;
+	}
+
+	public void setTableMatch(TableMatch tableMatch) {
+		this.tableMatch = tableMatch;
+	}
+
+	public void setLevelMap(LevelMap levelMap) {
+		this.levelMap = levelMap;
+	}
+
+	public void setMeasureMap(MeasureMap measureMap) {
+		this.measureMap = measureMap;
+	}
+
+	private IgnoreMapRef ignoreMapRef;
+
+    private FactCountMatch factCountMatch;
+
     FactCountMatchRef factCountMatchRef;
 
-    @XmlElement(name = "ForeignKeyMatch")
     ForeignKeyMatch foreignKeyMatch;
 
-    @XmlElement(name = "ForeignKeyMatchRef")
     ForeignKeyMatchRef foreignKeyMatchRef;
 
-    @XmlElement(name = "TableMatch")
     TableMatch tableMatch;
 
-    @XmlElement(name = "TableMatchRef")
     TableMatchRef tableMatchRef;
 
-    @XmlElement(name = "LevelMap")
     LevelMap levelMap;
 
-    @XmlElement(name = "LevelMapRef")
     LevelMapRef levelMapRef;
 
-    @XmlElement(name = "MeasureMap")
     MeasureMap measureMap;
 
-    @XmlElement(name = "MeasureMapRef")
     MeasureMapRef measureMapRef;
 
     private boolean isOk(final Base base) {
@@ -145,17 +170,16 @@ public class AggRule extends Base {
         msgRecorder.pushContextName(getName());
         try {
             // IgnoreMap is optional
-            if (ignoreMap != null) {
-                ignoreMap.validate(rules, msgRecorder);
-            } else if (ignoreMapRef != null) {
-                ignoreMapRef.validate(rules, msgRecorder);
-                ignoreMap =
-                    rules.lookupIgnoreMap(ignoreMapRef.getRefId());
+            if (getIgnoreMap() != null) {
+                getIgnoreMap().validate(rules, msgRecorder);
+            } else if (getIgnoreMapRef() != null) {
+                getIgnoreMapRef().validate(rules, msgRecorder);
+                setIgnoreMap(rules.lookupIgnoreMap(getIgnoreMapRef().getRefId()));
             }
-            if (isRef(rules, msgRecorder, factCountMatch,
+            if (isRef(rules, msgRecorder, getFactCountMatch(),
                 factCountMatchRef, "FactCountMatch")) {
-                factCountMatch = rules.lookupFactCountMatch(
-                    factCountMatchRef.getRefId());
+                setFactCountMatch(rules.lookupFactCountMatch(
+                    factCountMatchRef.getRefId()));
             }
             if (isRef(rules, msgRecorder, foreignKeyMatch,
                 foreignKeyMatchRef, "ForeignKeyMatch")) {
@@ -217,4 +241,24 @@ public class AggRule extends Base {
     protected String getName() {
         return "AggRule";
     }
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
+	public void setFactCountMatch(FactCountMatch factCountMatch) {
+		this.factCountMatch = factCountMatch;
+	}
+
+	public void setIgnoreMap(IgnoreMap ignoreMap) {
+		this.ignoreMap = ignoreMap;
+	}
+
+	public IgnoreMapRef getIgnoreMapRef() {
+		return ignoreMapRef;
+	}
+
+	public void setIgnoreMapRef(IgnoreMapRef ignoreMapRef) {
+		this.ignoreMapRef = ignoreMapRef;
+	}
 }
