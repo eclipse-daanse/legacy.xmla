@@ -22,21 +22,55 @@ import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.core.BasicContextConfig;
 import org.eclipse.daanse.olap.function.core.FunctionServiceImpl;
 import org.eclipse.daanse.olap.function.def.aggregate.avg.AvgResolver;
+import org.eclipse.daanse.olap.function.def.aggregate.children.AggregateChildrenResolver;
+import org.eclipse.daanse.olap.function.def.aggregate.count.CountResolver;
 import org.eclipse.daanse.olap.function.def.ancestor.AncestorResolver;
 import org.eclipse.daanse.olap.function.def.as.AsAliasResolver;
+import org.eclipse.daanse.olap.function.def.cache.CacheFunResolver;
+import org.eclipse.daanse.olap.function.def.cast.CaseMatchResolver;
+import org.eclipse.daanse.olap.function.def.cast.CaseTestResolver;
 import org.eclipse.daanse.olap.function.def.dimension.dimension.DimensionOfDimensionResolver;
 import org.eclipse.daanse.olap.function.def.dimension.hierarchy.DimensionOfHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.dimension.level.DimensionOfLevelResolver;
 import org.eclipse.daanse.olap.function.def.dimension.member.DimensionOfMemberResolver;
 import org.eclipse.daanse.olap.function.def.dimensions.numeric.DimensionNumericResolver;
 import org.eclipse.daanse.olap.function.def.dimensions.string.DimensionsStringResolver;
+import org.eclipse.daanse.olap.function.def.member.DataMemberResolver;
+import org.eclipse.daanse.olap.function.def.member.DefaultMemberResolver;
+import org.eclipse.daanse.olap.function.def.member.FirstChildResolver;
+import org.eclipse.daanse.olap.function.def.member.FirstSiblingResolver;
+import org.eclipse.daanse.olap.function.def.member.LastChildResolver;
+import org.eclipse.daanse.olap.function.def.member.LastSiblingResolver;
+import org.eclipse.daanse.olap.function.def.member.MemberOrderKeyResolver;
+import org.eclipse.daanse.olap.function.def.member.MembersResolver;
+import org.eclipse.daanse.olap.function.def.member.NextMemberResolver;
+import org.eclipse.daanse.olap.function.def.member.ParentResolver;
+import org.eclipse.daanse.olap.function.def.member.PrevMemberResolver;
+import org.eclipse.daanse.olap.function.def.numeric.OrdinalResolver;
+import org.eclipse.daanse.olap.function.def.numeric.ValueResolver;
+import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyResolver;
+import org.eclipse.daanse.olap.function.def.hierarchy.member.NamedSetCurrentResolver;
+import org.eclipse.daanse.olap.function.def.level.member.MemberLevelResolver;
+import org.eclipse.daanse.olap.function.def.level.numeric.LevelsNumericPropertyResolver;
+import org.eclipse.daanse.olap.function.def.level.string.LevelsStringPropertyResolver;
+import org.eclipse.daanse.olap.function.def.level.string.LevelsStringResolver;
+import org.eclipse.daanse.olap.function.def.member.CousinResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.empty.EmptyExpressionResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.MtdMultiResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.QtdMultiResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.WtdMultiResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.YtdMultiResolver;
+import org.eclipse.daanse.olap.function.def.set.AddCalculatedMembersResolver;
+import org.eclipse.daanse.olap.function.def.set.AscendantsResolver;
+import org.eclipse.daanse.olap.function.def.set.ChildrenResolver;
+import org.eclipse.daanse.olap.function.def.set.ExtractResolver;
+import org.eclipse.daanse.olap.function.def.set.FilterResolver;
+import org.eclipse.daanse.olap.function.def.set.SiblingsResolver;
+import org.eclipse.daanse.olap.function.def.set.StripCalculatedMembersResolver;
+import org.eclipse.daanse.olap.function.def.set.hierarchy.AllMembersResolver;
+import org.eclipse.daanse.olap.function.def.set.level.LevelMembersResolver;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 
@@ -68,7 +102,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
             testConfig.rolapConnectionShepherdNbThreads());
 	    aggMgr = new AggregationManager(this);
 	    queryLimimitSemaphore=new Semaphore(testConfig.queryLimit());
-	    
+
 	    functionService.addResolver(new AsAliasResolver());
 	    functionService.addResolver(new AncestorResolver());
 	    functionService.addResolver(new AvgResolver());
@@ -88,7 +122,44 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 	    functionService.addResolver(new QtdMultiResolver());
 	    functionService.addResolver(new MtdMultiResolver());
 	    functionService.addResolver(new WtdMultiResolver());
-
+	    functionService.addResolver(new MemberLevelResolver());
+	    functionService.addResolver(new AggregateChildrenResolver());
+        functionService.addResolver(new CaseMatchResolver());
+        functionService.addResolver(new CaseTestResolver());
+        functionService.addResolver(new CacheFunResolver());
+        functionService.addResolver(new LevelsNumericPropertyResolver());
+        functionService.addResolver(new LevelsStringPropertyResolver());
+        functionService.addResolver(new LevelsStringResolver());
+        functionService.addResolver(new MemberLevelResolver());
+        functionService.addResolver(new CousinResolver());
+        functionService.addResolver(new HierarchyCurrentMemberResolver());
+        functionService.addResolver(new NamedSetCurrentResolver());
+        functionService.addResolver(new NamedSetCurrentResolver());
+        functionService.addResolver(new DataMemberResolver());
+        functionService.addResolver(new DefaultMemberResolver());
+        functionService.addResolver(new FirstChildResolver());
+        functionService.addResolver(new FirstSiblingResolver());
+        functionService.addResolver(new LastChildResolver());
+        functionService.addResolver(new LastSiblingResolver());
+        functionService.addResolver(new MembersResolver());
+        functionService.addResolver(new NextMemberResolver());
+        functionService.addResolver(new MemberOrderKeyResolver());
+        functionService.addResolver(new ParentResolver());
+        functionService.addResolver(new PrevMemberResolver());
+        functionService.addResolver(new CountResolver());
+        functionService.addResolver(new OrdinalResolver());
+        functionService.addResolver(new ValueResolver());
+        functionService.addResolver(new AddCalculatedMembersResolver());
+        functionService.addResolver(new AscendantsResolver());
+        functionService.addResolver(new ChildrenResolver());
+        functionService.addResolver(new ExtractResolver());
+        functionService.addResolver(new FilterResolver());
+        functionService.addResolver(new org.eclipse.daanse.olap.function.def.set.MembersResolver());
+        functionService.addResolver(new org.eclipse.daanse.olap.function.def.set.hierarchy.AllMembersResolver());
+        functionService.addResolver(new LevelMembersResolver());
+        functionService.addResolver(new org.eclipse.daanse.olap.function.def.set.level.AllMembersResolver());
+        functionService.addResolver(new StripCalculatedMembersResolver());
+        functionService.addResolver(new SiblingsResolver());
 }
 
 	@Override
@@ -220,7 +291,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 
 	@Override
 	public void setCatalogMappingSupplier(CatalogMappingSupplier catalogMappingSupplier) {
-		this.catalogMappingSupplier = catalogMappingSupplier;		
+		this.catalogMappingSupplier = catalogMappingSupplier;
 	}
 
 }

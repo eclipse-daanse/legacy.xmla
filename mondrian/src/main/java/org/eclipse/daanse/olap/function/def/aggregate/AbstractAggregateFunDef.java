@@ -28,13 +28,13 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.function.def.cache.CacheFunDef;
 
 import mondrian.calc.impl.DelegatingTupleList;
 import mondrian.calc.impl.TupleCollections;
 import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.ResourceLimitExceededException;
 import mondrian.olap.SystemWideProperties;
-import mondrian.olap.fun.CacheFunDef;
 import mondrian.olap.fun.FunUtil;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapMember;

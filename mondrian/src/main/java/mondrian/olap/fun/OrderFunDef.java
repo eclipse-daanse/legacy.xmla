@@ -41,6 +41,7 @@ import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFunctionResolver;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.function.def.member.MemberOrderKeyCalc;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.GenericIterCalc;
@@ -287,7 +288,7 @@ public Calc compileCall( ResolvedFunCall call, ExpressionCompiler compiler ) {
       while ( iter.hasNext() ) {
         SortKeySpec key = iter.next();
         Calc expCalc = key.getKey();
-        if ( expCalc instanceof MemberOrderKeyFunDef.CalcImpl calc) {
+        if ( expCalc instanceof MemberOrderKeyCalc calc) {
           Calc[] calcs = calc.getChildCalcs();
           MemberCalc memberCalc = (MemberCalc) calcs[0];
           if ( memberCalc instanceof org.eclipse.daanse.olap.calc.api.ConstantCalc || !listHierarchies.contains( memberCalc.getType()

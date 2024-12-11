@@ -41,7 +41,7 @@ implements TupleListCalc {
      * @param exp   Expression which was compiled
      * @param calcs List of child compiled expressions (for dependency analysis)
      */
-    protected AbstractListCalc(  Type type, Calc[] calcs ) {
+    protected AbstractListCalc(  Type type, Calc... calcs ) {
         this( type, calcs, true );
     }
 

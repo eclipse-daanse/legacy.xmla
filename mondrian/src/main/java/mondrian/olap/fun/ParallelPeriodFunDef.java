@@ -27,6 +27,7 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantIntegerCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc;
 
 import mondrian.olap.type.DecimalType;
 import mondrian.olap.type.MemberType;
@@ -95,7 +96,7 @@ class ParallelPeriodFunDef extends AbstractFunctionDefinition {
                 // For some functions, such as Levels(<string expression>),
                 // the dimension cannot be determined at compile time.
                 memberCalc =
-                    new HierarchyCurrentMemberFunDef.CurrentMemberFixedCalc(
+                    new HierarchyCurrentMemberFixedCalc(
                         call.getType(), hierarchy);
             } else {
                 memberCalc = null;
@@ -106,7 +107,7 @@ class ParallelPeriodFunDef extends AbstractFunctionDefinition {
                 ((RolapCube) compiler.getEvaluator().getCube())
                     .getTimeHierarchy(getFunctionMetaData().operationAtom().name());
             memberCalc =
-                new HierarchyCurrentMemberFunDef.CurrentMemberFixedCalc(
+                new HierarchyCurrentMemberFixedCalc(
                 		call.getType(), timeHierarchy);
             break;
         }
