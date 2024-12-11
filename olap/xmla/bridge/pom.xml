@@ -22,11 +22,6 @@
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.util.converter</artifactId>
-			<scope>compile</scope>
-		</dependency>
         <dependency>
             <groupId>org.eclipse.daanse</groupId>
             <artifactId>org.eclipse.daanse.xmla.model.record</artifactId>

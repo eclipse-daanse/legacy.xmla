@@ -21,52 +21,58 @@ import java.util.Optional;
 
 public abstract class AbstractAction implements XmlaAction {
 
+	private static String emptyIsNull(String value) {
+		if (value != null && value.isEmpty()) {
+			return null;
+		}
+		return value;
+	}
 
-    @Override
-    public Optional<String> catalogName() {
-        return Optional.ofNullable(getConfig().catalogName());
-    }
+	@Override
+	public Optional<String> catalogName() {
+		return Optional.ofNullable(emptyIsNull(getConfig().catalogName()));
+	}
 
-    @Override
-    public Optional<String> schemaName() {
-        return Optional.ofNullable(getConfig().schemaName());
-    }
+	@Override
+	public Optional<String> schemaName() {
+		return Optional.ofNullable(emptyIsNull(getConfig().schemaName()));
+	}
 
-    @Override
-    public String cubeName() {
-        return getConfig().cubeName();
-    }
+	@Override
+	public String cubeName() {
+		return getConfig().cubeName();
+	}
 
-    @Override
-    public Optional<String> actionName() {
-        return Optional.ofNullable(getConfig().actionName());
-    }
+	@Override
+	public Optional<String> actionName() {
+		return Optional.ofNullable(emptyIsNull(getConfig().actionName()));
+	}
 
-    @Override
-    public Optional<String> actionCaption() {
-        return Optional.ofNullable(getConfig().actionCaption());
-    }
+	@Override
+	public Optional<String> actionCaption() {
+		return Optional.ofNullable(emptyIsNull(getConfig().actionCaption()));
+	}
 
-    @Override
-    public Optional<String> description() {
-        return Optional.ofNullable(getConfig().actionDescription());
-    }
+	@Override
+	public Optional<String> description() {
+		return Optional.ofNullable(emptyIsNull(getConfig().actionDescription()));
+	}
 
-    @Override
-    public String coordinate() {
-        return getConfig().actionCoordinate();
-    }
+	@Override
+	public String coordinate() {
+		return getConfig().actionCoordinate();
+	}
 
-    @Override
-    public CoordinateTypeEnum coordinateType() {
-        return CoordinateTypeEnum.valueOf(getConfig().actionCoordinateType());
-    }
+	@Override
+	public CoordinateTypeEnum coordinateType() {
+		return CoordinateTypeEnum.valueOf(emptyIsNull(getConfig().actionCoordinateType()));
+	}
 
-    @Override
-    public abstract String content(String coordinate, String cubeName);
+	@Override
+	public abstract String content(String coordinate, String cubeName);
 
-    public abstract ActionTypeEnum actionType();
+	public abstract ActionTypeEnum actionType();
 
-    protected abstract AbstractActionConfig getConfig();
+	protected abstract AbstractActionConfig getConfig();
 
 }

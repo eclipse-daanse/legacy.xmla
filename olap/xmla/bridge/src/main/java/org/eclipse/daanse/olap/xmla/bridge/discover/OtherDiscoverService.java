@@ -162,7 +162,12 @@ public class OtherDiscoverService {
         List<DiscoverEnumeratorsResponseRow> result = new ArrayList();
         for (Class c : enums) {
             String enumDescription = getEnumDescription(c.getSimpleName());
-            Enumerator e = (Enumerator) c.getAnnotation(
+
+			if (enumDescription != null && enumDescription.isEmpty()) {
+				enumDescription = null;
+			}
+
+			Enumerator e = (Enumerator) c.getAnnotation(
                 Enumerator.class);
             Set<Enum> elements = EnumSet.allOf(c);
             for (Enum en : elements) {
@@ -180,6 +185,10 @@ public class OtherDiscoverService {
                 }
                 String elementName = o != null ? o.toString() : en.name();
                 String elementDescription = getEnumValueDescription(c.getSimpleName(), elementName);
+                
+				if (elementDescription != null && elementDescription.isEmpty()) {
+					elementDescription = null;
+				}
                 result.add(new DiscoverEnumeratorsResponseRowR(e.name(),
                     Optional.ofNullable(enumDescription),
                     "string",
@@ -269,7 +278,12 @@ public class OtherDiscoverService {
                 Operation.class);
             if(!schemaName.isPresent() || schemaName.get().equals(o.name())) {
                 String desc = getOperationDescription(o.name());
-                Method[] methods = c.getMethods();
+
+				if (desc != null && desc.isEmpty()) {
+					desc = null;
+				}
+
+				Method[] methods = c.getMethods();
                 List<Restriction> restrictions = new ArrayList<>();
                 for (Method method : methods) {
                     if (method.getName().equals("restrictions")) {

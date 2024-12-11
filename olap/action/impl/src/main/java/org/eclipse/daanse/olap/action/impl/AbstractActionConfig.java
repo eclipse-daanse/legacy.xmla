@@ -14,48 +14,31 @@
 package org.eclipse.daanse.olap.action.impl;
 
 import org.osgi.service.metatype.annotations.AttributeDefinition;
-import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
-public interface AbstractActionConfig {
+public @interface AbstractActionConfig {
 
-    @AttributeDefinition(name = "%CATALOG_NAME", required = false)
-    default String catalogName() {
-        return null;
-    }
+	@AttributeDefinition(name = "%CATALOG_NAME", required = false)
+	String catalogName();
 
-    @AttributeDefinition(name = "%SCHEMA_NAME", required = false)
-    default String schemaName() {
-        return null;
-    }
+	@AttributeDefinition(name = "%SCHEMA_NAME", required = false)
+	String schemaName();
 
-    @AttributeDefinition(name = "%CUBE_NAME", required = false)
-    default String cubeName() {
-        return null;
-    }
+	@AttributeDefinition(name = "%CUBE_NAME", required = false)
+	String cubeName();
 
-    @AttributeDefinition(name = "%ACTION_NAME", required = false)
-    default String actionName() {
-        return null;
-    }
+	@AttributeDefinition(name = "%ACTION_NAME", required = false)
+	String actionName();
 
-    @AttributeDefinition(name = "%ACTION_CAPTION", required = false)
-    default String actionCaption() {
-        return null;
-    }
+	@AttributeDefinition(name = "%ACTION_CAPTION", required = false)
+	String actionCaption();
 
-    @AttributeDefinition(name = "%ACTION_DESCRIPTION", required = false)
-    default String actionDescription() {
-        return null;
-    }
+	@AttributeDefinition(name = "%ACTION_DESCRIPTION", required = false)
+	String actionDescription();
 
-    @AttributeDefinition(name = "%ACTION_COORDINATE", required = false)
-    default String actionCoordinate() {
-        return null;
-    }
+	@AttributeDefinition(name = "%ACTION_COORDINATE", required = false)
+	String actionCoordinate();
 
-    @AttributeDefinition(name = "%ACTION_COORDINATE_TYPE", required = false)
-    default String actionCoordinateType() {
-        return null;
-    }
+	@AttributeDefinition(name = "%ACTION_COORDINATE_TYPE", required = false)
+	String actionCoordinateType();
 
 }

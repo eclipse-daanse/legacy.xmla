@@ -26,8 +26,8 @@
 # -runbundles is calculated by the bnd-resolver-maven-plugin
 
 -runbundles: \
-	ch.qos.logback.classic;version='[1.4.14,1.4.15)',\
-	ch.qos.logback.core;version='[1.4.14,1.4.15)',\
+	ch.qos.logback.classic;version='[1.5.12,1.5.13)',\
+	ch.qos.logback.core;version='[1.5.12,1.5.13)',\
 	com.sun.jna;version='[5.11.0,5.11.1)',\
 	junit-jupiter-api;version='[5.9.2,5.9.3)',\
 	junit-jupiter-engine;version='[5.9.2,5.9.3)',\

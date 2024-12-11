@@ -29,8 +29,8 @@
 
 # -runbundles is calculated by the bnd-resolver-maven-plugin
 -runbundles: \
-	ch.qos.logback.classic;version='[1.4.14,1.4.15)',\
-	ch.qos.logback.core;version='[1.4.14,1.4.15)',\
+	ch.qos.logback.classic;version='[1.5.12,1.5.13)',\
+	ch.qos.logback.core;version='[1.5.12,1.5.13)',\
 	com.sun.xml.bind.jaxb-core;version='[4.0.4,4.0.5)',\
 	com.sun.xml.bind.jaxb-impl;version='[4.0.4,4.0.5)',\
 	jakarta.activation-api;version='[2.1.2,2.1.3)',\

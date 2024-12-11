@@ -36,8 +36,8 @@
 # -runbundles is calculated by the bnd-resolver-maven-plugin
 -runbundles: \
 	assertj-core;version='[3.24.2,3.24.3)',\
-	ch.qos.logback.classic;version='[1.4.14,1.4.15)',\
-	ch.qos.logback.core;version='[1.4.14,1.4.15)',\
+	ch.qos.logback.classic;version='[1.5.12,1.5.13)',\
+	ch.qos.logback.core;version='[1.5.12,1.5.13)',\
 	com.sun.activation.jakarta.activation;version='[2.0.1,2.0.2)',\
 	com.sun.xml.bind.jaxb-core;version='[4.0.4,4.0.5)',\
 	com.sun.xml.bind.jaxb-impl;version='[4.0.4,4.0.5)',\

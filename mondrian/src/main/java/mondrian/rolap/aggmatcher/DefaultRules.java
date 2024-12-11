@@ -11,11 +11,6 @@
 
 package mondrian.rolap.aggmatcher;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,30 +170,6 @@ public class DefaultRules {
             instance = rules;
         }
         return instance;
-    }
-
-    private static AggRules of() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private static InputStream getAggRuleInputStream(String aggregateRules) {
-
-        InputStream inStream = DefaultRules.class.getResourceAsStream(aggregateRules);
-        if (inStream == null) {
-            try {
-                URL url = new URL(aggregateRules);
-                inStream = url.openStream();
-            } catch (MalformedURLException e) {
-                // ignore
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-        if (inStream == null) {
-            LOGGER.warn(MessageFormat.format(couldNotLoadDefaultAggregateRules, aggregateRules));
-        }
-        return inStream;
     }
     private static DefaultRules instance = null;
 

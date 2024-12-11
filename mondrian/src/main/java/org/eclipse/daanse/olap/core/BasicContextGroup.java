@@ -29,8 +29,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ServiceScope;
-import org.osgi.util.converter.Converter;
-import org.osgi.util.converter.Converters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +42,6 @@ public class BasicContextGroup implements ContextGroup {
 	public static final String PID = "org.eclipse.daanse.olap.core.BasicContextGroup";
 	public static final String REF_NAME_CONTEXTS = "context";
 
-	private static final Converter CONVERTER = Converters.standardConverter();
 
 	private List<Context> contexts = new CopyOnWriteArrayList<Context>();
 	private List<Context> contextsValid = List.of();
@@ -53,13 +50,8 @@ public class BasicContextGroup implements ContextGroup {
 	private BasicContextGroupConfig config;
 
 	@Activate
-	public void activate(Map<String, Object> coniguration) throws Exception {
-		activateI(CONVERTER.convert(coniguration).to(BasicContextGroupConfig.class));
-	}
-
-	public void activateI(BasicContextGroupConfig coniguration) {
-		this.config = coniguration;
-
+	public void activate(BasicContextGroupConfig config,Map<String, Object> coniguration) throws Exception {
+		this.config = config;
 	}
 
 //	
