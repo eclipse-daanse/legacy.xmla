@@ -24,11 +24,11 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
 
 import mondrian.olap.type.NullType;
-import mondrian.olap.type.StringType;
 
 public class NullLiteralImpl extends AbstractLiteralImpl<Object> implements NullLiteral {
 
 	public static final NullLiteralImpl nullValue = new NullLiteralImpl();
+	private static final ConstantStringCalc NULL_CALC = new ConstantStringCalc(NullType.INSTANCE, null);
 
 	private NullLiteralImpl() {
 		super(null);
@@ -51,8 +51,7 @@ public class NullLiteralImpl extends AbstractLiteralImpl<Object> implements Null
 
 	@Override
 	public Calc<?> accept(ExpressionCompiler compiler) {
-
-		return new ConstantStringCalc(NullType.INSTANCE, null);
+		return NULL_CALC;
 	}
 
 	@Override
