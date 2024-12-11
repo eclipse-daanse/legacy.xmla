@@ -80,7 +80,6 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 	    functionService.addResolver(new DimensionOfMemberResolver());
 	    functionService.addResolver(new DimensionNumericResolver());
 	    functionService.addResolver(new DimensionsStringResolver());
-	    functionService.addResolver(new DimensionsStringResolver());
 	    functionService.addResolver(new MemberHierarchyResolver());
 	    functionService.addResolver(new LevelHierarchyResolver());
 
