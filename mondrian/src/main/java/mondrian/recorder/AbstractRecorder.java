@@ -171,7 +171,7 @@ public abstract class AbstractRecorder implements MessageRecorder {
             final String errorMsg =
                 MessageFormat.format(forceMessageRecorderError,
                     getContext(),
-                    String.valueOf(errorMsgCount));
+                    errorMsgCount);
             throw new RecorderException(errorMsg);
         }
     }

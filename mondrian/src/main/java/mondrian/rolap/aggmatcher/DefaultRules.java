@@ -114,17 +114,19 @@ public class DefaultRules {
 //            if one prior to attempting to match knows that the 
 //            column in question in the base fact table is indeed used
 //            as a measure (for this matches any foreign key).
+
             Regex mmRegexForeignKey=new Regex();
             mmRegexForeignKey.setId("foreignkey");
             mmRegexForeignKey.setCharCase(CharCaseEnum.EXACT);
             mmRegexForeignKey.setTemplate("${measure_column_name}");
             
             Regex mmRegexPhysical=new Regex();
-            regexPhysical.setId("physical");
-            regexPhysical.setCharCase(CharCaseEnum.EXACT);
-            regexPhysical.setTemplate("${measure_column_name}_${aggregate_name}");
+            mmRegexPhysical.setId("physical");
+            mmRegexPhysical.setCharCase(CharCaseEnum.EXACT);
+            mmRegexPhysical.setTemplate("${measure_column_name}_${aggregate_name}");
 
             measMap.setRegexs(List.of(mmRegexLogical,mmRegexForeignKey,mmRegexPhysical));
+
             aggrules.getMeasureMaps().add(measMap);
             
             AggRule aggRDefault=new AggRule();
@@ -135,7 +137,7 @@ public class DefaultRules {
             aggRDefault.setFactCountMatchRef(factCountMatchRef);
             
             ForeignKeyMatch foreignKeyMatch=new ForeignKeyMatch();
-            factCountMatchRef.setRefId("fka");
+            foreignKeyMatch.setId("fka");
             aggRDefault.setForeignKeyMatch(foreignKeyMatch);
             
             TableMatchRef tableMatchRef=new TableMatchRef();
@@ -150,6 +152,8 @@ public class DefaultRules {
             measureMapRef.setRefId("mxx");
             aggRDefault.setMeasureMapRef(measureMapRef);
             
+            
+            aggrules.getAggRules().add(aggRDefault);
             // validate the DefaultDef.AggRules object
             ListRecorder reclists = new ListRecorder();
             try {
