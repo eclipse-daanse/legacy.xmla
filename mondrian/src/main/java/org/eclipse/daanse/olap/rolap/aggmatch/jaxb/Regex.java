@@ -69,8 +69,16 @@ public class Regex extends CaseMatcher {
         return space;
     }
 
+    public void setSpace(String space) {
+        this.space = space;
+    }
+
     public String getDot() {
         return dot;
+    }
+
+    public void setDot(String dot) {
+        this.dot = dot;
     }
 
     public String getTemplate() {

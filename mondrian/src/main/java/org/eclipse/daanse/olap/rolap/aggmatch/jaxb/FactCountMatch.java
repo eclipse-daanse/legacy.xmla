@@ -23,6 +23,14 @@ import mondrian.rolap.aggmatcher.Recognizer;
  */
 public class FactCountMatch extends NameMatcher {
 
+    public String getFactCountName() {
+        return factCountName;
+    }
+
+    public void setFactCountName(String factCountName) {
+        this.factCountName = factCountName;
+    }
+
     /**
      * The "base" name for a fact count column.
      */

@@ -210,4 +210,8 @@ public class AggRules {
     public List<AggRule> getAggRules() {
         return aggRules;
     }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 }

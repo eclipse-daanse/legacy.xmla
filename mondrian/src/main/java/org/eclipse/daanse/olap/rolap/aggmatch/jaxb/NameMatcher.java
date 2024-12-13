@@ -37,6 +37,10 @@ public abstract class NameMatcher extends CaseMatcher {
      */
     String posttemplate;
 
+    public void setBasename(String basename) {
+        this.basename = basename;
+    }
+
     /**
      * The regular expression used to extract the fact table's
      * base name from its full name. For instance, if the DBA

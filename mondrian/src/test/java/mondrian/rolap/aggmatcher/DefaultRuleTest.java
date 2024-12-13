@@ -10,24 +10,28 @@
 package mondrian.rolap.aggmatcher;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opencube.junit5.Constants.TESTFILES_DIR;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.AggRule;
 import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.AggRules;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.CharCaseEnum;
 import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.FactCountMatch;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.FactCountMatchRef;
 import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.ForeignKeyMatch;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.LevelMap;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.LevelMapRef;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.MeasureMap;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.MeasureMapRef;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.Regex;
 import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.TableMatch;
+import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.TableMatchRef;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.Unmarshaller;
 import mondrian.recorder.ListRecorder;
 
 /**
@@ -38,7 +42,6 @@ import mondrian.recorder.ListRecorder;
 class DefaultRuleTest {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(DefaultRuleTest.class);
-    private static final String TEST_RULE_XML = "TestRule.xml";
 
     private static AggRules rules;
 
@@ -48,12 +51,8 @@ class DefaultRuleTest {
 
     @BeforeAll
     public static void beforeAll() throws Exception {
-        File file = new File(TESTFILES_DIR, TEST_RULE_XML);
-        FileReader reader = new FileReader(file);
 
-        JAXBContext jaxbContext = JAXBContext.newInstance(AggRules.class);
-        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        rules = (AggRules) jaxbUnmarshaller.unmarshal(reader);
+        rules = prepareRules();
 
        ListRecorder msgRecorder = new ListRecorder();
        rules.validate(msgRecorder);
@@ -67,6 +66,192 @@ class DefaultRuleTest {
         }
     }
 
+
+    private static AggRules prepareRules() {
+        AggRules aggrules = new AggRules();
+        aggrules.setTag("default");
+
+        TableMatch tm=new TableMatch();
+        tm.setId("ta");
+        tm.setPretemplate("agg_.+_");
+
+        TableMatch tb=new TableMatch();
+        tm.setId("tb");
+        tm.setPretemplate("agg_.+_");
+
+        TableMatch tc=new TableMatch();
+        tm.setId("tc");
+        tm.setPretemplate("AGG_.+_");
+        tm.setBasename("RF_(.*)_TABLE");
+
+        aggrules.getTableMatches().add(tm);
+        aggrules.getTableMatches().add(tb);
+        aggrules.getTableMatches().add(tc);
+
+        FactCountMatch fcm = new FactCountMatch();
+        fcm.setId("fca");
+        aggrules.getFactCountMatches().add(fcm);
+
+
+        FactCountMatch fcb = new FactCountMatch();
+        fcm.setId("fcb");
+        fcm.setFactCountName("my_fact_count");
+        aggrules.getFactCountMatches().add(fcb);
+
+        FactCountMatch fcc = new FactCountMatch();
+        fcm.setId("fcc");
+        fcm.setFactCountName("my_fact_count");
+        fcm.setCharCase(CharCaseEnum.UPPER);
+        aggrules.getFactCountMatches().add(fcc);
+
+        LevelMap lvlMap=new LevelMap();
+        lvlMap.setId("lxx");
+        aggrules.getLevelMaps().add(lvlMap);
+
+        Regex regexLog=new Regex();
+        regexLog.setId("logical");
+        regexLog.setCharCase(CharCaseEnum.LOWER);
+        regexLog.setTemplate("${hierarchy_name}_${level_name}");
+
+        Regex regexMixed=new Regex();
+        regexMixed.setId("mixed");
+        regexMixed.setCharCase(CharCaseEnum.LOWER);
+        regexMixed.setTemplate("${hierarchy_name}_${level_column_name}");
+
+        Regex regexUsage=new Regex();
+        regexUsage.setId("usage");
+        regexUsage.setCharCase(CharCaseEnum.EXACT);
+        regexUsage.setTemplate("${usage_prefix}${level_column_name}");
+
+        Regex regexPhysical=new Regex();
+        regexPhysical.setId("physical");
+        regexPhysical.setCharCase(CharCaseEnum.EXACT);
+        regexPhysical.setTemplate("${level_column_name}");
+
+        lvlMap.setRegexs(List.of(regexLog,regexMixed,regexUsage,regexPhysical));
+
+        MeasureMap measMap=new MeasureMap();
+        measMap.setId("mxx");
+
+        Regex mmRegexLogical=new Regex();
+        mmRegexLogical.setId("logical");
+        mmRegexLogical.setCharCase(CharCaseEnum.LOWER);
+        mmRegexLogical.setTemplate("${measure_name}");
+
+//        Sometimes a base fact table foreign key is also used in a
+//        measure. This Regex is used to match such usages in
+//        the aggregate table. Using such a match only makes sense
+//        if one prior to attempting to match knows that the
+//        column in question in the base fact table is indeed used
+//        as a measure (for this matches any foreign key).
+
+        Regex mmRegexForeignKey=new Regex();
+        mmRegexForeignKey.setId("foreignkey");
+        mmRegexForeignKey.setCharCase(CharCaseEnum.EXACT);
+        mmRegexForeignKey.setTemplate("${measure_column_name}");
+
+        Regex mmRegexPhysical=new Regex();
+        mmRegexPhysical.setId("physical");
+        mmRegexPhysical.setCharCase(CharCaseEnum.EXACT);
+        mmRegexPhysical.setTemplate("${measure_column_name}_${aggregate_name}");
+
+        measMap.setRegexs(List.of(mmRegexLogical,mmRegexForeignKey,mmRegexPhysical));
+
+        aggrules.getMeasureMaps().add(measMap);
+
+        AggRule aggRDefault=new AggRule();
+        aggRDefault.setTag("default");
+
+        FactCountMatchRef factCountMatchRef=new FactCountMatchRef();
+        factCountMatchRef.setRefId("fca");
+        aggRDefault.setFactCountMatchRef(factCountMatchRef);
+
+        ForeignKeyMatch foreignKeyMatch=new ForeignKeyMatch();
+        foreignKeyMatch.setId("fka");
+        aggRDefault.setForeignKeyMatch(foreignKeyMatch);
+
+        TableMatchRef tableMatchRef=new TableMatchRef();
+        tableMatchRef.setRefId("ta");
+        aggRDefault.setTableMatchRef(tableMatchRef);
+
+        LevelMapRef levelMapRef=new LevelMapRef();
+        levelMapRef.setRefId("lxx");
+        aggRDefault.setLevelMapRef(levelMapRef);
+
+        MeasureMapRef measureMapRef=new MeasureMapRef();
+        measureMapRef.setRefId("mxx");
+        aggRDefault.setMeasureMapRef(measureMapRef);
+
+
+        aggrules.getAggRules().add(aggRDefault);
+
+
+        AggRule aggRbbbb=new AggRule();
+        aggRDefault.setTag("bbbb");
+        factCountMatchRef=new FactCountMatchRef();
+        factCountMatchRef.setRefId("fcb");
+        aggRbbbb.setFactCountMatchRef(factCountMatchRef);
+
+        foreignKeyMatch=new ForeignKeyMatch();
+        foreignKeyMatch.setId("fkb");
+        foreignKeyMatch.setBasename("FK_(.*)");
+        foreignKeyMatch.setPretemplate("_FK");
+        foreignKeyMatch.setCharCase(CharCaseEnum.UPPER);
+        aggRbbbb.setForeignKeyMatch(foreignKeyMatch);
+
+        tableMatchRef=new TableMatchRef();
+        tableMatchRef.setRefId("tb");
+        aggRbbbb.setTableMatchRef(tableMatchRef);
+
+        LevelMap levelMap= new LevelMap();
+        levelMap.setId("lb");
+
+        regexUsage=new Regex();
+        regexUsage.setId("usage");
+        regexUsage.setCharCase(CharCaseEnum.LOWER);
+        regexUsage.setSpace("_SP_");
+        regexUsage.setDot("_DOT_");
+        regexUsage.setTemplate("${usage_prefix}${hierarchy_name}_${level_name}_${level_column_name}");
+        levelMap.setRegexs(List.of(regexUsage));
+
+        aggRbbbb.setLevelMap(levelMap);
+
+        measureMapRef=new MeasureMapRef();
+        measureMapRef.setRefId("mxx");
+        aggRbbbb.setMeasureMapRef(measureMapRef);
+
+        aggrules.getAggRules().add(aggRbbbb);
+
+        AggRule aggRcccc=new AggRule();
+        aggRDefault.setTag("cccc");
+
+        factCountMatchRef=new FactCountMatchRef();
+        factCountMatchRef.setRefId("fcc");
+        aggRcccc.setFactCountMatchRef(factCountMatchRef);
+
+        foreignKeyMatch=new ForeignKeyMatch();
+        foreignKeyMatch.setId("fkc");
+        foreignKeyMatch.setBasename("(?:FK|fk)_(.*)");
+        foreignKeyMatch.setPretemplate("_[fF][kK]");
+        foreignKeyMatch.setCharCase(CharCaseEnum.EXACT);
+        aggRcccc.setForeignKeyMatch(foreignKeyMatch);
+
+        tableMatchRef=new TableMatchRef();
+        tableMatchRef.setRefId("tc");
+        aggRcccc.setTableMatchRef(tableMatchRef);
+
+        levelMapRef=new LevelMapRef();
+        levelMapRef.setRefId("lxx");
+        aggRcccc.setLevelMapRef(levelMapRef);
+
+        measureMapRef=new MeasureMapRef();
+        measureMapRef.setRefId("mxx");
+        aggRcccc.setMeasureMapRef(measureMapRef);
+
+        aggrules.getAggRules().add(aggRcccc);
+
+        return aggrules;
+    }
 
     private Recognizer.Matcher getTableMatcher(String tag, String tableName) {
         AggRule rule = getAggRule(tag);
