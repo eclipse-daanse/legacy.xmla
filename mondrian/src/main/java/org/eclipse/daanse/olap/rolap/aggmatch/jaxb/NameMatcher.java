@@ -220,4 +220,9 @@ public abstract class NameMatcher extends CaseMatcher {
 	public void setPretemplate(String pretemplate) {
 		this.pretemplate = pretemplate;
 	}
+	
+    public void setPosttemplate(String posttemplate) {
+        this.posttemplate = posttemplate;
+    }
+
 }

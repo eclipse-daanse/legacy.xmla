@@ -76,13 +76,13 @@ class DefaultRuleTest {
         tm.setPretemplate("agg_.+_");
 
         TableMatch tb=new TableMatch();
-        tm.setId("tb");
-        tm.setPretemplate("agg_.+_");
+        tb.setId("tb");
+        tb.setPosttemplate("_agg_.+");
 
         TableMatch tc=new TableMatch();
-        tm.setId("tc");
-        tm.setPretemplate("AGG_.+_");
-        tm.setBasename("RF_(.*)_TABLE");
+        tc.setId("tc");
+        tc.setPretemplate("AGG_.+_");
+        tc.setBasename("RF_(.*)_TABLE");
 
         aggrules.getTableMatches().add(tm);
         aggrules.getTableMatches().add(tb);
@@ -94,14 +94,14 @@ class DefaultRuleTest {
 
 
         FactCountMatch fcb = new FactCountMatch();
-        fcm.setId("fcb");
-        fcm.setFactCountName("my_fact_count");
+        fcb.setId("fcb");
+        fcb.setFactCountName("my_fact_count");
         aggrules.getFactCountMatches().add(fcb);
 
         FactCountMatch fcc = new FactCountMatch();
-        fcm.setId("fcc");
-        fcm.setFactCountName("my_fact_count");
-        fcm.setCharCase(CharCaseEnum.UPPER);
+        fcc.setId("fcc");
+        fcc.setFactCountName("my_fact_count");
+        fcc.setCharCase(CharCaseEnum.UPPER);
         aggrules.getFactCountMatches().add(fcc);
 
         LevelMap lvlMap=new LevelMap();
@@ -187,7 +187,7 @@ class DefaultRuleTest {
 
 
         AggRule aggRbbbb=new AggRule();
-        aggRDefault.setTag("bbbb");
+        aggRbbbb.setTag("bbbb");
         factCountMatchRef=new FactCountMatchRef();
         factCountMatchRef.setRefId("fcb");
         aggRbbbb.setFactCountMatchRef(factCountMatchRef);
@@ -195,7 +195,7 @@ class DefaultRuleTest {
         foreignKeyMatch=new ForeignKeyMatch();
         foreignKeyMatch.setId("fkb");
         foreignKeyMatch.setBasename("FK_(.*)");
-        foreignKeyMatch.setPretemplate("_FK");
+        foreignKeyMatch.setPosttemplate("_FK");
         foreignKeyMatch.setCharCase(CharCaseEnum.UPPER);
         aggRbbbb.setForeignKeyMatch(foreignKeyMatch);
 
@@ -223,7 +223,7 @@ class DefaultRuleTest {
         aggrules.getAggRules().add(aggRbbbb);
 
         AggRule aggRcccc=new AggRule();
-        aggRDefault.setTag("cccc");
+        aggRcccc.setTag("cccc");
 
         factCountMatchRef=new FactCountMatchRef();
         factCountMatchRef.setRefId("fcc");
@@ -232,7 +232,7 @@ class DefaultRuleTest {
         foreignKeyMatch=new ForeignKeyMatch();
         foreignKeyMatch.setId("fkc");
         foreignKeyMatch.setBasename("(?:FK|fk)_(.*)");
-        foreignKeyMatch.setPretemplate("_[fF][kK]");
+        foreignKeyMatch.setPosttemplate("_[fF][kK]");
         foreignKeyMatch.setCharCase(CharCaseEnum.EXACT);
         aggRcccc.setForeignKeyMatch(foreignKeyMatch);
 
