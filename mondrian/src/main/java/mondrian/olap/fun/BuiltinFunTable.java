@@ -91,11 +91,6 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(IifFunDef.DIMENSION_INSTANCE);
         builder.define(IifFunDef.SET_INSTANCE);
 
-        builder.define(PercentileFunDef.Resolver);
-
-
-        builder.define(RankFunDef.Resolver);
-
         builder.define(StdevFunDef.StdevResolver);
         builder.define(StdevFunDef.StddevResolver);
 

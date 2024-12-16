@@ -894,7 +894,7 @@ public class FunUtil extends Util {
     return Double.valueOf( covar / n );
   }
 
-  static Object stdev(
+  public static Object stdev(
     Evaluator evaluator,
     TupleList members,
     Calc exp,
@@ -1844,7 +1844,7 @@ public class FunUtil extends Util {
     /**
      * The singleton.
      */
-    static final DescendingValueComparator instance =
+    public static final DescendingValueComparator instance =
       new DescendingValueComparator();
 
     @Override

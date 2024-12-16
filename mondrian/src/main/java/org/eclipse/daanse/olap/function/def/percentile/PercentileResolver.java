@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.minmax;
+package org.eclipse.daanse.olap.function.def.percentile;
 
 import java.util.List;
 
@@ -25,21 +25,18 @@ import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinition
 import org.osgi.service.component.annotations.Component;
 
 @Component(service = FunctionResolver.class)
-public class MaxResolver extends AbstractFunctionDefinitionMultiResolver {
-    private static FunctionOperationAtom atom = new FunctionOperationAtom("Max");
-    private static String SIGNATURE = "Max(<Set>[, <Numeric Expression>])";
-    private static String DESCRIPTION = "Returns the maximum value of a numeric expression evaluated over a set.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC) };
-    // {"fnx", "fnxn"}
+public class PercentileResolver extends AbstractFunctionDefinitionMultiResolver {
+    private static FunctionOperationAtom atom = new FunctionOperationAtom("Percentile");
+    private static String SIGNATURE = "Percentile(<Set>, <Numeric Expression>, <Percent>)";
+    private static String DESCRIPTION = "Returns the value of the tuple that is at a given percentile of a set.";
+    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.NUMERIC) };
+    // {"fnxnn"}
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.NUMERIC, x);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.NUMERIC, xn);
+            DataType.NUMERIC, xnn);
 
-    public MaxResolver() {
-        super(List.of(new MinMaxFunDef(functionMetaData), new MinMaxFunDef(functionMetaData1)));
+    public PercentileResolver() {
+        super(List.of(new PercentileFunDef(functionMetaData)));
     }
 }

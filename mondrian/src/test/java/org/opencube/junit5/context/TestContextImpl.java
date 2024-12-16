@@ -112,10 +112,12 @@ import org.eclipse.daanse.olap.function.def.operators.plus.PlusResolver;
 import org.eclipse.daanse.olap.function.def.operators.xor.XorResolver;
 import org.eclipse.daanse.olap.function.def.order.OrderResolver;
 import org.eclipse.daanse.olap.function.def.parallelperiod.ParallelPeriodResolver;
+import org.eclipse.daanse.olap.function.def.percentile.PercentileResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.MtdMultiResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.QtdMultiResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.WtdMultiResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.YtdMultiResolver;
+import org.eclipse.daanse.olap.function.def.rank.RankResolver;
 import org.eclipse.daanse.olap.function.def.set.addcalculatedmembers.AddCalculatedMembersResolver;
 import org.eclipse.daanse.olap.function.def.set.ascendants.AscendantsResolver;
 import org.eclipse.daanse.olap.function.def.set.children.ChildrenResolver;
@@ -128,6 +130,8 @@ import org.eclipse.daanse.olap.function.def.set.range.RangeResolver;
 import org.eclipse.daanse.olap.function.def.set.siblings.SiblingsResolver;
 import org.eclipse.daanse.olap.function.def.set.stripcalculatedmembers.StripCalculatedMembersResolver;
 import org.eclipse.daanse.olap.function.def.settostr.SetToStrResolver;
+import org.eclipse.daanse.olap.function.def.stdev.StddevResolver;
+import org.eclipse.daanse.olap.function.def.stdev.StdevResolver;
 import org.eclipse.daanse.olap.function.def.string.LenResolver;
 import org.eclipse.daanse.olap.function.def.string.UCaseResolver;
 import org.eclipse.daanse.olap.function.def.strtoset.StrToSetResolver;
@@ -296,6 +300,11 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new MaxResolver());
         functionService.addResolver(new MinResolver());
         functionService.addResolver(new MedianResolver());
+        
+        functionService.addResolver(new PercentileResolver());
+        functionService.addResolver(new RankResolver());
+        functionService.addResolver(new StddevResolver());
+        functionService.addResolver(new StdevResolver());
 }
 
 	@Override
