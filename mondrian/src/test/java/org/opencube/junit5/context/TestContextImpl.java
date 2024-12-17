@@ -34,6 +34,8 @@ import org.eclipse.daanse.olap.function.def.cast.CaseTestResolver;
 import org.eclipse.daanse.olap.function.def.correlation.CorrelationResolver;
 import org.eclipse.daanse.olap.function.def.covariance.CovarianceNResolver;
 import org.eclipse.daanse.olap.function.def.covariance.CovarianceResolver;
+import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinResolver;
+import org.eclipse.daanse.olap.function.def.crossjoin.StarCrossJoinResolver;
 import org.eclipse.daanse.olap.function.def.dimension.current.CurrentResolver;
 import org.eclipse.daanse.olap.function.def.dimension.dimension.DimensionOfDimensionResolver;
 import org.eclipse.daanse.olap.function.def.dimension.hierarchy.DimensionOfHierarchyResolver;
@@ -81,6 +83,7 @@ import org.eclipse.daanse.olap.function.def.member.strtomember.StrToMemberResolv
 import org.eclipse.daanse.olap.function.def.member.validmeasure.ValidMeasureResolver;
 import org.eclipse.daanse.olap.function.def.minmax.MaxResolver;
 import org.eclipse.daanse.olap.function.def.minmax.MinResolver;
+import org.eclipse.daanse.olap.function.def.nonempty.NonEmptyResolver;
 import org.eclipse.daanse.olap.function.def.nonstandard.CachedExistsResolver;
 import org.eclipse.daanse.olap.function.def.nonstandard.CalculatedChildResolver;
 import org.eclipse.daanse.olap.function.def.nonstandard.CastResolver;
@@ -130,11 +133,24 @@ import org.eclipse.daanse.olap.function.def.set.range.RangeResolver;
 import org.eclipse.daanse.olap.function.def.set.siblings.SiblingsResolver;
 import org.eclipse.daanse.olap.function.def.set.stripcalculatedmembers.StripCalculatedMembersResolver;
 import org.eclipse.daanse.olap.function.def.settostr.SetToStrResolver;
+import org.eclipse.daanse.olap.function.def.stdev.StddevPResolver;
 import org.eclipse.daanse.olap.function.def.stdev.StddevResolver;
+import org.eclipse.daanse.olap.function.def.stdev.StdevPResolver;
 import org.eclipse.daanse.olap.function.def.stdev.StdevResolver;
 import org.eclipse.daanse.olap.function.def.string.LenResolver;
 import org.eclipse.daanse.olap.function.def.string.UCaseResolver;
 import org.eclipse.daanse.olap.function.def.strtoset.StrToSetResolver;
+import org.eclipse.daanse.olap.function.def.sum.SumResolver;
+import org.eclipse.daanse.olap.function.def.topbottomcount.BottomCountResolver;
+import org.eclipse.daanse.olap.function.def.topbottomcount.TopCountResolver;
+import org.eclipse.daanse.olap.function.def.topbottompercentsum.BottomPercentResolver;
+import org.eclipse.daanse.olap.function.def.topbottompercentsum.BottomSumResolver;
+import org.eclipse.daanse.olap.function.def.topbottompercentsum.TopPercentResolver;
+import org.eclipse.daanse.olap.function.def.topbottompercentsum.TopSumResolver;
+import org.eclipse.daanse.olap.function.def.var.VarPResolver;
+import org.eclipse.daanse.olap.function.def.var.VarResolver;
+import org.eclipse.daanse.olap.function.def.var.VariancePResolver;
+import org.eclipse.daanse.olap.function.def.var.VarianceResolver;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 
@@ -305,6 +321,23 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new RankResolver());
         functionService.addResolver(new StddevResolver());
         functionService.addResolver(new StdevResolver());
+        
+        functionService.addResolver(new StdevPResolver());
+        functionService.addResolver(new StddevPResolver());
+        functionService.addResolver(new SumResolver());
+        functionService.addResolver(new VarianceResolver());
+        functionService.addResolver(new VarResolver());
+        functionService.addResolver(new VariancePResolver());
+        functionService.addResolver(new VarPResolver());
+        functionService.addResolver(new BottomCountResolver());
+        functionService.addResolver(new TopCountResolver());
+        functionService.addResolver(new BottomPercentResolver());
+        functionService.addResolver(new BottomSumResolver());
+        functionService.addResolver(new TopPercentResolver());
+        functionService.addResolver(new TopSumResolver());
+        functionService.addResolver(new NonEmptyResolver());
+        functionService.addResolver(new StarCrossJoinResolver());
+        functionService.addResolver(new CrossJoinResolver());
 }
 
 	@Override

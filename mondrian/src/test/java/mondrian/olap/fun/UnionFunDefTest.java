@@ -26,6 +26,8 @@ import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
+import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
+import org.eclipse.daanse.olap.function.def.crossjoin.ImmutableListCalc;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.Mockito;
@@ -92,9 +94,9 @@ class UnionFunDefTest {
         new ResolvedFunCallImpl(mock(FunctionDefinition.class), expMock, mock(SetType.class));
     Calc[] calcs = new Calc[1];
     calcs[0] = Mockito.mock(Calc.class);
-    CrossJoinFunDef.ImmutableListCalc immutableListCalc =
-        crossJoinFunDef.new ImmutableListCalc(
-            resolvedFunCall, calcs);
+    ImmutableListCalc immutableListCalc =
+        new ImmutableListCalc(
+            resolvedFunCall, calcs, crossJoinFunDef.getCtag());
 
     TupleList listForUnion1 =
         immutableListCalc.makeList(unaryTupleList, arrayTupleList);

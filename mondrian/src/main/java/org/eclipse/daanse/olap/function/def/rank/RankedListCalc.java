@@ -14,7 +14,6 @@
 package org.eclipse.daanse.olap.function.def.rank;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
@@ -32,7 +31,7 @@ public class RankedListCalc extends AbstractProfilingNestedCalc {
      *          Whether elements of the list are tuples (as opposed to members)
      */
     public RankedListCalc( TupleListCalc tupleListCalc, boolean tuple ) {
-      super(  tupleListCalc.getType() , new Calc[] { tupleListCalc } );
+      super(  tupleListCalc.getType() , tupleListCalc );
       this.tupleListCalc = tupleListCalc;
       this.tuple = tuple;
     }

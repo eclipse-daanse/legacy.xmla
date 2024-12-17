@@ -480,7 +480,7 @@ public class FunUtil extends Util {
    * Turns the mapped values into relative values (percentages) for easy use by the general topOrBottom function. This
    * might also be a useful function in itself.
    */
-  static void toPercent(
+  public static void toPercent(
     TupleList members,
     Map<List<Member>, Object> mapMemberToValue ) {
     double total = 0;
@@ -799,7 +799,7 @@ public class FunUtil extends Util {
     }
   }
 
-  static Object var(
+  public static Object var(
     Evaluator evaluator,
     TupleList members,
     Calc exp,

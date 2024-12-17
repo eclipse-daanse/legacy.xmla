@@ -46,6 +46,11 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.core.BasicContextConfig;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
+import org.eclipse.daanse.olap.function.def.crossjoin.BaseListCalc;
+import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
+import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinIterCalc;
+import org.eclipse.daanse.olap.function.def.crossjoin.ImmutableListCalc;
+import org.eclipse.daanse.olap.function.def.crossjoin.MutableListCalc;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -140,15 +145,15 @@ public class CrossJoinTest {
         when(rolapConnection.getContext()).thenReturn(context);
         when(statement.getMondrianConnection()).thenReturn(rolapConnection);
         when(excMock.getMondrianStatement()).thenReturn(statement);
-      CrossJoinFunDef.CrossJoinIterCalc calc =
-        crossJoinFunDef.new CrossJoinIterCalc( getResolvedFunCall(), null );
+      CrossJoinIterCalc calc =
+        new CrossJoinIterCalc( getResolvedFunCall(), null, crossJoinFunDef.getCtag() );
 
       doTupleTupleIterTest( calc, excMock );
     }
   }
 
     private void doTupleTupleIterTest(
-    CrossJoinFunDef.CrossJoinIterCalc calc, ExecutionImpl execution ) {
+    CrossJoinIterCalc calc, ExecutionImpl execution ) {
     TupleList l4 = makeListTuple( m4 );
     String s4 = toString( l4 );
     String e4 = "{[U, V], [W, X], [Y, Z]}";
@@ -225,8 +230,8 @@ public class CrossJoinTest {
         @Override
 		public Integer execute() {
           TupleIterable iterable =
-            crossJoinFunDef.new CrossJoinIterCalc(
-              getResolvedFunCall(), null ).makeIterable( list1, list2 );
+            new CrossJoinIterCalc(
+              getResolvedFunCall(), null, crossJoinFunDef.getCtag() ).makeIterable( list1, list2 );
           TupleCursor tupleCursor = iterable.tupleCursor();
           // total count of all iterations
           int counter = 0;
@@ -244,15 +249,15 @@ public class CrossJoinTest {
 
   @Test
   void testImmutableListTupleListTupleListCalc() {
-    CrossJoinFunDef.ImmutableListCalc calc =
-      crossJoinFunDef.new ImmutableListCalc(
-        getResolvedFunCall(), null );
+    ImmutableListCalc calc =
+      new ImmutableListCalc(
+        getResolvedFunCall(), null, crossJoinFunDef.getCtag() );
 
     doTupleTupleListTest( calc );
   }
 
   protected void doTupleTupleListTest(
-    CrossJoinFunDef.BaseListCalc calc ) {
+    BaseListCalc calc ) {
     TupleList l4 = makeListTuple( m4 );
     String s4 = toString( l4 );
     String e4 = "{[U, V], [W, X], [Y, Z]}";
@@ -329,15 +334,15 @@ public class CrossJoinTest {
   ////////////////////////////////////////////////////////////////////////
   @Test
   void testMutableListTupleListTupleListCalc() {
-    CrossJoinFunDef.MutableListCalc calc =
-      crossJoinFunDef.new MutableListCalc(
-        getResolvedFunCall(), null );
+    MutableListCalc calc =
+      new MutableListCalc(
+        getResolvedFunCall(), null, crossJoinFunDef.getCtag() );
 
     doMTupleTupleListTest( calc );
   }
 
   protected void doMTupleTupleListTest(
-    CrossJoinFunDef.BaseListCalc calc ) {
+    BaseListCalc calc ) {
     TupleList l1 = makeListTuple( m3 );
     String s1 = toString( l1 );
     String e1 = "{[k, l], [m, n]}";

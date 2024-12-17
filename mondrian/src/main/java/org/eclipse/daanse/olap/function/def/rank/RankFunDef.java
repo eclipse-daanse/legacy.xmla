@@ -62,10 +62,10 @@ public class RankFunDef extends AbstractFunctionDefinition {
       final ExpCacheDescriptorImpl cacheDescriptor = new ExpCacheDescriptorImpl( call, sortedListCalc, compiler.getEvaluator() );
       if ( type0 instanceof TupleType ) {
         final TupleCalc tupleCalc = compiler.compileTuple( call.getArg( 0 ) );
-        return new Rank3TupleCalc( call, tupleCalc, keyCalc, cacheDescriptor );
+        return new Rank3TupleCalc( call.getType(), tupleCalc, keyCalc, cacheDescriptor );
       } else {
         final MemberCalc memberCalc = compiler.compileMember( call.getArg( 0 ) );
-        return new Rank3MemberCalc( call, memberCalc, keyCalc, cacheDescriptor );
+        return new Rank3MemberCalc( call.getType(), memberCalc, keyCalc, cacheDescriptor );
       }
     }
 
@@ -83,10 +83,10 @@ public class RankFunDef extends AbstractFunctionDefinition {
       }
       if ( tuple ) {
         final TupleCalc tupleCalc = compiler.compileTuple( call.getArg( 0 ) );
-        return new Rank2TupleCalc( call, tupleCalc, listCalc );
+        return new Rank2TupleCalc( call.getType(), tupleCalc, listCalc );
       } else {
         final MemberCalc memberCalc = compiler.compileMember( call.getArg( 0 ) );
-        return new Rank2MemberCalc( call, memberCalc, listCalc );
+        return new Rank2MemberCalc( call.getType(), memberCalc, listCalc );
       }
     }
 

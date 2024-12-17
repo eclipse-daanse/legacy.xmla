@@ -91,35 +91,10 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(IifFunDef.DIMENSION_INSTANCE);
         builder.define(IifFunDef.SET_INSTANCE);
 
-        builder.define(StdevFunDef.StdevResolver);
-        builder.define(StdevFunDef.StddevResolver);
-
-        builder.define(StdevPFunDef.StdevpResolver);
-        builder.define(StdevPFunDef.StddevpResolver);
-
-        builder.define(SumFunDef.Resolver);
-
-        builder.define(VarFunDef.VarResolver);
-        builder.define(VarFunDef.VarianceResolver);
-
-        builder.define(VarPFunDef.VariancePResolver);
-        builder.define(VarPFunDef.VarPResolver);
-
         //
         // SET FUNCTIONS
 
-        builder.define(TopBottomCountFunDef.BottomCountResolver);
-        builder.define(TopBottomPercentSumFunDef.BottomPercentResolver);
-        builder.define(TopBottomPercentSumFunDef.BottomSumResolver);
-        builder.define(TopBottomCountFunDef.TopCountResolver);
-        builder.define(TopBottomPercentSumFunDef.TopPercentResolver);
-        builder.define(TopBottomPercentSumFunDef.TopSumResolver);
-
-        builder.define(NonEmptyFunDef.Resolver);
-
-        builder.define(CrossJoinFunDef.Resolver);
         builder.define(NonEmptyCrossJoinFunDef.Resolver);
-        builder.define(CrossJoinFunDef.StarResolver);
         builder.define(DescendantsFunDef.Resolver);
         builder.define(DescendantsFunDef.Resolver2);
         builder.define(DrilldownLevelFunDef.Resolver);

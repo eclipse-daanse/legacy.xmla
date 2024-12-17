@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
+import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,7 +36,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import mondrian.calc.impl.UnaryTupleList;
 import mondrian.olap.MondrianException;
 import mondrian.olap.SystemWideProperties;
-import mondrian.olap.fun.CrossJoinFunDef;
 import mondrian.olap.fun.CrossJoinTest;
 import mondrian.server.ExecutionImpl;
 import mondrian.server.LocusImpl;
@@ -74,7 +74,7 @@ class CancellationTest {
         }
         ExecutionImpl exec = spy(new ExecutionImpl(eval.getQuery().getStatement(), Optional.empty()));
         eval.getQuery().getStatement().start(exec);
-        crossJoinFunDef.nonEmptyList(eval, list, null);
+        CrossJoinFunDef.nonEmptyList(eval, list, null, crossJoinFunDef.getCtag());
         // checkCancelOrTimeout should be called once
         // for each tuple since phase interval is 1
         verify(exec, times(list.size())).checkCancelOrTimeout();
@@ -141,13 +141,13 @@ class CancellationTest {
             super(functionMetaData);
         }
 
-        @Override
-		public TupleList nonEmptyList(
-            Evaluator evaluator,
-            TupleList list,
-            ResolvedFunCall call)
-        {
-            return super.nonEmptyList(evaluator, list, call);
-        }
+        //@Override
+		//public TupleList nonEmptyList(
+        //    Evaluator evaluator,
+        //    TupleList list,
+        //    ResolvedFunCall call)
+        //{
+        //    return super.nonEmptyList(evaluator, list, call);
+        //}
     }
 }

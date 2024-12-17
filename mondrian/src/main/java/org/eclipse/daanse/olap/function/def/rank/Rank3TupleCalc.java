@@ -19,7 +19,7 @@ import java.util.Collections;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.ExpCacheDescriptor;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.TupleCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedIntegerCalc;
@@ -28,15 +28,11 @@ import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
 
 public class Rank3TupleCalc extends AbstractProfilingNestedIntegerCalc {
-    private final TupleCalc tupleCalc;
-    private final Calc<?> sortCalc;
     private final ExpCacheDescriptor cacheDescriptor;
 
-    public Rank3TupleCalc( ResolvedFunCall call, TupleCalc tupleCalc, Calc<?> sortCalc,
+    public Rank3TupleCalc( Type type, TupleCalc tupleCalc, Calc<?> sortCalc,
         ExpCacheDescriptor cacheDescriptor ) {
-      super( call.getType(), new Calc[] { tupleCalc, sortCalc } );
-      this.tupleCalc = tupleCalc;
-      this.sortCalc = sortCalc;
+      super( type, tupleCalc, sortCalc );
       this.cacheDescriptor = cacheDescriptor;
     }
 
@@ -44,7 +40,7 @@ public class Rank3TupleCalc extends AbstractProfilingNestedIntegerCalc {
     public Integer evaluate( Evaluator evaluator ) {
       evaluator.getTiming().markStart( RankFunDef.TIMING_NAME );
       try {
-        Member[] members = tupleCalc.evaluate( evaluator );
+        Member[] members = getChildCalc(0, TupleCalc.class).evaluate( evaluator );
         if ( members == null ) {
           return null;
         }
@@ -80,7 +76,7 @@ public class Rank3TupleCalc extends AbstractProfilingNestedIntegerCalc {
         Object value;
         try {
           evaluator.setContext( members );
-          value = sortCalc.evaluate( evaluator );
+          value = getChildCalc(1, Calc.class).evaluate( evaluator );
         } finally {
           evaluator.restore( savepoint );
         }

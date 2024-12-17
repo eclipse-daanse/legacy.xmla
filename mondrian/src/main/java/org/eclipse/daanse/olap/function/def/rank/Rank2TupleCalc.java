@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.TupleCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedIntegerCalc;
@@ -26,13 +27,9 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedIntegerCa
 import mondrian.olap.fun.FunUtil;
 
 public class Rank2TupleCalc extends AbstractProfilingNestedIntegerCalc {
-    private final TupleCalc tupleCalc;
-    private final Calc<?> listCalc;
 
-    public Rank2TupleCalc( ResolvedFunCall call, TupleCalc tupleCalc, Calc<?> listCalc ) {
-      super( call.getType(), new Calc[] { tupleCalc, listCalc } );
-      this.tupleCalc = tupleCalc;
-      this.listCalc = listCalc;
+    public Rank2TupleCalc( Type type, TupleCalc tupleCalc, Calc<?> listCalc ) {
+      super( type, tupleCalc, listCalc );
     }
 
     @Override
@@ -42,7 +39,7 @@ public class Rank2TupleCalc extends AbstractProfilingNestedIntegerCalc {
         // Get member or tuple.
         // If the member is null (or the tuple contains a null member)
         // the result is null (even if the list is null).
-        final Member[] members = tupleCalc.evaluate( evaluator );
+        final Member[] members = getChildCalc(0, TupleCalc.class).evaluate( evaluator );
         if ( members == null ) {
           return null;
         }
@@ -53,7 +50,7 @@ public class Rank2TupleCalc extends AbstractProfilingNestedIntegerCalc {
         // list, so returns an error "Formula error - dimension count is
         // not valid - in the Rank function". We will naturally return 0,
         // which I think is better.
-        final RankedTupleList rankedTupleList = (RankedTupleList) listCalc.evaluate( evaluator );
+        final RankedTupleList rankedTupleList = (RankedTupleList) getChildCalc(1, Calc.class).evaluate( evaluator );
         if ( rankedTupleList == null ) {
           return 0;
         }

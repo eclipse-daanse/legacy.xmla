@@ -42,6 +42,6 @@ public class CovarianceNResolver extends AbstractFunctionDefinitionMultiResolver
             DataType.NUMERIC, xnn);
 
     public CovarianceNResolver() {
-        super(List.of(new CovarianceFunDef(functionMetaData), new AggregateFunDef(functionMetaData1)));
+        super(List.of(new CovarianceFunDef(functionMetaData), new CovarianceFunDef(functionMetaData1)));
     }
 }

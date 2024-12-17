@@ -19,7 +19,7 @@ import java.util.Collections;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.ExpCacheDescriptor;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedIntegerCalc;
@@ -27,15 +27,11 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedIntegerCa
 import mondrian.olap.Util;
 
 public class Rank3MemberCalc extends AbstractProfilingNestedIntegerCalc {
-    private final MemberCalc memberCalc;
-    private final Calc<?> sortCalc;
     private final ExpCacheDescriptor cacheDescriptor;
 
-    public Rank3MemberCalc( ResolvedFunCall call, MemberCalc memberCalc, Calc<?> sortCalc,
+    public Rank3MemberCalc( Type type, MemberCalc memberCalc, Calc<?> sortCalc,
         ExpCacheDescriptor cacheDescriptor ) {
-      super( call.getType(), new Calc[] { memberCalc, sortCalc } );
-      this.memberCalc = memberCalc;
-      this.sortCalc = sortCalc;
+      super( type, memberCalc, sortCalc );
       this.cacheDescriptor = cacheDescriptor;
     }
 
@@ -43,7 +39,7 @@ public class Rank3MemberCalc extends AbstractProfilingNestedIntegerCalc {
     public Integer evaluate( Evaluator evaluator ) {
       evaluator.getTiming().markStart( RankFunDef.TIMING_NAME );
       try {
-        Member member = memberCalc.evaluate( evaluator );
+        Member member = getChildCalc(0, MemberCalc.class).evaluate( evaluator );
         if ( member == null || member.isNull() ) {
           return null;
         }
@@ -71,7 +67,7 @@ public class Rank3MemberCalc extends AbstractProfilingNestedIntegerCalc {
         evaluator.setContext( member );
         Object value;
         try {
-          value = sortCalc.evaluate( evaluator );
+          value = getChildCalc(1, Calc.class).evaluate( evaluator );
         } finally {
           evaluator.restore( savepoint );
         }

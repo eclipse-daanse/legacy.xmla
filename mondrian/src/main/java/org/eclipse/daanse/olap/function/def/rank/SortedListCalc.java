@@ -34,7 +34,6 @@ import mondrian.olap.fun.FunUtil;
 
 public class SortedListCalc extends AbstractProfilingNestedCalc {
     private final TupleListCalc tupleListCalc;
-    private final Calc<?> keyCalc;
 
     private static final Integer ONE = 1;
 
@@ -49,9 +48,8 @@ public class SortedListCalc extends AbstractProfilingNestedCalc {
      *          Compiled expression to compute the sort key
      */
     public SortedListCalc( Type type, TupleListCalc tupleListCalc, Calc keyCalc ) {
-      super( type, new Calc[] { tupleListCalc, keyCalc } );
+      super( type, tupleListCalc, keyCalc );
       this.tupleListCalc = tupleListCalc;
-      this.keyCalc = keyCalc;
     }
 
     @Override
@@ -63,6 +61,7 @@ public class SortedListCalc extends AbstractProfilingNestedCalc {
     public Object evaluate( Evaluator evaluator ) {
       // Save the state of the evaluator.
       final int savepoint = evaluator.savepoint();
+      Calc<?> keyCalc = getChildCalc(1, Calc.class);
       RuntimeException exception = null;
       final Map<Member, Object> memberValueMap;
       final Map<List<Member>, Object> tupleValueMap;

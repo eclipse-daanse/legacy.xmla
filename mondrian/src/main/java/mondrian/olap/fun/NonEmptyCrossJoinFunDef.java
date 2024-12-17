@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
+import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.rolap.RolapEvaluator;
@@ -104,7 +105,7 @@ public class NonEmptyCrossJoinFunDef extends CrossJoinFunDef {
                     TupleList result = CrossJoinFunDef.mutableCrossJoin(list1, list2);
 
                     // remove any remaining empty crossings from the result
-                    result = nonEmptyList(evaluator, result, call);
+                    result = CrossJoinFunDef.nonEmptyList(evaluator, result, call, getCtag());
                     return result;
                 } finally {
                     evaluator.restore(savepoint);

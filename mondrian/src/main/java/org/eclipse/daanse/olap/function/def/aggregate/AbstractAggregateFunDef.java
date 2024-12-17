@@ -129,7 +129,7 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
         return iterable;
     }
 
-    private static void crossProd(Evaluator evaluator, int currLen) {
+    public static void crossProd(Evaluator evaluator, int currLen) {
         long iterationLimit =
             evaluator.getQuery().getConnection().getContext().getConfig().iterationLimit();
         final int productLen = currLen * evaluator.getIterationLength();
