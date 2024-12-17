@@ -958,7 +958,7 @@ public class FunctionTest {//extends FoodMartTestCase {
         + "196,770.888" );
   }
 
- 
+
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAncestors(Context context) {
@@ -2236,7 +2236,7 @@ public class FunctionTest {//extends FoodMartTestCase {
           public TestDefaultMemberModifier(CatalogMapping catalogMapping) {
               super(catalogMapping);
           }
-          
+
           protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
               List<DimensionConnectorMapping> result = new ArrayList<>();
               result.addAll(super.cubeDimensionConnectors(cube));
@@ -2312,7 +2312,7 @@ public class FunctionTest {//extends FoodMartTestCase {
                 		  .build());
               }
               return result;
-          }          
+          }
       }
       withSchema(context, TestDefaultMemberModifier::new);
 
@@ -5447,40 +5447,6 @@ public class FunctionTest {//extends FoodMartTestCase {
         + " [Store].[USA].[OR]}))",
       "{[Store Type].[Deluxe Supermarket], [Store].[USA]}\n"
         + "{[Store Type].[Deluxe Supermarket], [Store].[USA].[CA]}" );
-  }
-
-  // MONDRIAN-2408 - Consumer wants (immutable) LIST in CrossJoinFunDef.compileCall(ResolvedFunCall, ExpCompiler)
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testIIfSetType_InCrossJoinAndAvg(Context context) {
-    assertExprReturns(context.getConnection(),
-      "Avg(CROSSJOIN([Store Type].[Deluxe Supermarket],IIf(1 = 1, {[Store].[USA].[OR], [Store].[USA].[WA]}, {[Store]"
-        + ".[Mexico], [Store].[USA].[CA]})), [Measures].[Store Sales])",
-      "81,031.12" );
-  }
-
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDimensionCaption(Context context) {
-    assertExprReturns(context.getConnection(), "[Time].[1997].Dimension.Caption", "Time" );
-  }
-
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testHierarchyCaption(Context context) {
-    assertExprReturns(context.getConnection(), "[Time].[1997].Hierarchy.Caption", "Time" );
-  }
-
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testLevelCaption(Context context) {
-    assertExprReturns(context.getConnection(), "[Time].[1997].Level.Caption", "Year" );
-  }
-
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMemberCaption(Context context) {
-    assertExprReturns(context.getConnection(), "[Time].[1997].Caption", "1997" );
   }
 
   @ParameterizedTest
@@ -8998,7 +8964,7 @@ mondrian.olap.fun.OrderFunDef$CurrentMemberCalc(type=SetType<MemberType<hierarch
                   .withName("Sales vs HR")
                   .withDimensionConnectors(List.of(
                       DimensionConnectorMappingImpl.builder()
-                      	  .withPhysicalCube((PhysicalCubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))	
+                      	  .withPhysicalCube((PhysicalCubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
                       	  .withOverrideDimensionName("Customers")
                           .build(),
                       DimensionConnectorMappingImpl.builder()
@@ -9008,8 +8974,8 @@ mondrian.olap.fun.OrderFunDef$CurrentMemberCalc(type=SetType<MemberType<hierarch
                   ))
                   .withReferencedMeasures(List.of(look(FoodmartMappingSupplier.MEASURE_ORG_SALARY)))
                   .build());
-              return result;        	  
-          }      
+              return result;
+          }
       }
     /*
     String baseSchema = TestUtil.getRawSchema(context);

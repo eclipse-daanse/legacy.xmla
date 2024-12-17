@@ -20,22 +20,16 @@ import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-public class AvgTest {
+class AvgFunDefTest {
 
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAvg(Context context) {
-		TestUtil.assertExprReturns(context.getConnection(),
-				"AVG({[Store].[All Stores].[USA].children})", "88,924");
-	}
-
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAvgNumeric(Context context) {
-		TestUtil.assertExprReturns(context.getConnection(),
-				"AVG({[Store].[All Stores].[USA].children},[Measures].[Store Sales])", "188,412.71");
-	}
-
-	// todo: testAvgWithNulls
+    // MONDRIAN-2408 - Consumer wants (immutable) LIST in CrossJoinFunDef.compileCall(ResolvedFunCall, ExpCompiler)
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testIIfSetType_InCrossJoinAndAvg(Context context) {
+        TestUtil.assertExprReturns(context.getConnection(),
+            "Avg(CROSSJOIN([Store Type].[Deluxe Supermarket],IIf(1 = 1, {[Store].[USA].[OR], [Store].[USA].[WA]}, {[Store]"
+                + ".[Mexico], [Store].[USA].[CA]})), [Measures].[Store Sales])",
+            "81,031.12" );
+    }
 
 }
