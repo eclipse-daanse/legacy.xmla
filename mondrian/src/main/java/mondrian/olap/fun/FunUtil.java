@@ -177,7 +177,7 @@ public class FunUtil extends Util {
    * Returns an argument whose value is a literal.
    */
 
-  static String getLiteralArg(
+  public static String getLiteralArg(
     ResolvedFunCall call,
     int i,
     String defaultValue,

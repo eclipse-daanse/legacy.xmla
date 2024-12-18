@@ -93,7 +93,6 @@ public class BuiltinFunTable extends FunTableImpl {
 
         //
         // SET FUNCTIONS
-        builder.define(DrilldownMemberFunDef.Resolver);
 
 //        if (false)
 //        builder.define(
