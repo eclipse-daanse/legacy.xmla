@@ -56,6 +56,12 @@ public class DescendantsSetResolver extends AbstractFunctionDefinitionMultiResol
     private static FunctionMetaData functionMetaData5 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
             DataType.SET, xey);
 
+    @Override
+    public List<String> getReservedWords() {
+        return Flag.asReservedWords();
+    }
+
+    
     public DescendantsSetResolver() {
         super(List.of(new DescendantsByLevelFunDef(functionMetaData), new DescendantsByLevelFunDef(functionMetaData1),
                 new DescendantsByLevelFunDef(functionMetaData2), new DescendantsByLevelFunDef(functionMetaData3),

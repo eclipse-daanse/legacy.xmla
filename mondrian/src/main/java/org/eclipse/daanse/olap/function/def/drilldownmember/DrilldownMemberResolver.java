@@ -40,6 +40,12 @@ public class DrilldownMemberResolver extends AbstractFunctionDefinitionMultiReso
     private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
             DataType.SET, xxy);
 
+    @Override
+    public List<String> getReservedWords() {
+        return List.of("RECURSIVE");
+    }
+
+    
     public DrilldownMemberResolver() {
         super(List.of(new DrilldownMemberFunDef(functionMetaData1), new DrilldownMemberFunDef(functionMetaData2)));
     }

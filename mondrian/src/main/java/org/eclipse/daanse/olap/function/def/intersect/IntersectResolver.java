@@ -40,6 +40,12 @@ public class IntersectResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
             DataType.SET, xx);
 
+    @Override
+    public List<String> getReservedWords() {
+        return List.of("ALL");
+    }
+
+    
     public IntersectResolver() {
         super(List.of(new IntersectFunDef(functionMetaData1), new IntersectFunDef(functionMetaData2)));
     }

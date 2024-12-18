@@ -52,6 +52,12 @@ public class DrilldownLevelResolver extends AbstractFunctionDefinitionMultiResol
     private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
             DataType.SET, xeey);
 
+    @Override
+    public List<String> getReservedWords() {
+        return List.of("INCLUDE_CALC_MEMBERS");
+    }
+
+    
     public DrilldownLevelResolver() {
         super(List.of(new DrilldownLevelFunDef(functionMetaData), new DrilldownLevelFunDef(functionMetaData1),
                 new DrilldownLevelFunDef(functionMetaData2), new DrilldownLevelFunDef(functionMetaData3),

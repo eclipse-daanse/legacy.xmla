@@ -22,6 +22,7 @@ import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinitionMultiResolver;
+import org.eclipse.daanse.olap.function.def.descendants.Flag;
 import org.osgi.service.component.annotations.Component;
 
 @Component(service = FunctionResolver.class)
@@ -42,4 +43,10 @@ public class HierarchizeResolver extends AbstractFunctionDefinitionMultiResolver
     public HierarchizeResolver() {
         super(List.of(new HierarchizeFunDef(functionMetaData1), new HierarchizeFunDef(functionMetaData2)));
     }
+
+    @Override
+    public List<String> getReservedWords() {
+        return List.of( "PRE", "POST" );
+    }
+
 }
