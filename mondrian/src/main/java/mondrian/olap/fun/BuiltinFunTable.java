@@ -154,8 +154,6 @@ public class BuiltinFunTable extends FunTableImpl {
 //            }
 //        });
 
-        builder.define(ExistsFunDef.resolver);
-
         builder.define(GenerateFunDef.ListResolver);
         builder.define(GenerateFunDef.StringResolver);
         builder.define(HeadTailFunDef.HeadResolver);
