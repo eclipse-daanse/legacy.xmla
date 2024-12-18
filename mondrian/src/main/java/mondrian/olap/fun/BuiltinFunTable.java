@@ -93,9 +93,6 @@ public class BuiltinFunTable extends FunTableImpl {
 
         //
         // SET FUNCTIONS
-
-        builder.define(DrilldownLevelFunDef.Resolver);
-
         builder.define(DrilldownLevelTopBottomFunDef.DrilldownLevelTopResolver);
         builder.define(
             DrilldownLevelTopBottomFunDef.DrilldownLevelBottomResolver);

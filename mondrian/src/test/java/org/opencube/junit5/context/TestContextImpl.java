@@ -45,6 +45,7 @@ import org.eclipse.daanse.olap.function.def.dimension.level.DimensionOfLevelReso
 import org.eclipse.daanse.olap.function.def.dimension.member.DimensionOfMemberResolver;
 import org.eclipse.daanse.olap.function.def.dimensions.numeric.DimensionNumericResolver;
 import org.eclipse.daanse.olap.function.def.dimensions.string.DimensionsStringResolver;
+import org.eclipse.daanse.olap.function.def.drilldownlevel.DrilldownLevelResolver;
 import org.eclipse.daanse.olap.function.def.empty.EmptyExpressionResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberResolver;
@@ -345,6 +346,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new NonEmptyCrossJoinResolver());
         functionService.addResolver(new DescendantsMemberResolver());
         functionService.addResolver(new DescendantsSetResolver());
+        functionService.addResolver(new DrilldownLevelResolver());
 }
 
 	@Override
