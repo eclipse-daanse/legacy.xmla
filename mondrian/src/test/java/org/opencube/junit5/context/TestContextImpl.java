@@ -49,6 +49,7 @@ import org.eclipse.daanse.olap.function.def.drilldownlevel.DrilldownLevelResolve
 import org.eclipse.daanse.olap.function.def.drilldownleveltopbottom.DrilldownLevelTopResolver;
 import org.eclipse.daanse.olap.function.def.drilldownmember.DrilldownMemberResolver;
 import org.eclipse.daanse.olap.function.def.empty.EmptyExpressionResolver;
+import org.eclipse.daanse.olap.function.def.except.ExceptResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyResolver;
@@ -351,6 +352,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new DrilldownLevelResolver());
         functionService.addResolver(new DrilldownLevelTopResolver());
         functionService.addResolver(new DrilldownMemberResolver());
+        functionService.addResolver(new ExceptResolver());
 }
 
 	@Override
