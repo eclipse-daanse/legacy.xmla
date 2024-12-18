@@ -36,6 +36,8 @@ import org.eclipse.daanse.olap.function.def.covariance.CovarianceNResolver;
 import org.eclipse.daanse.olap.function.def.covariance.CovarianceResolver;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinResolver;
 import org.eclipse.daanse.olap.function.def.crossjoin.StarCrossJoinResolver;
+import org.eclipse.daanse.olap.function.def.descendants.DescendantsMemberResolver;
+import org.eclipse.daanse.olap.function.def.descendants.DescendantsSetResolver;
 import org.eclipse.daanse.olap.function.def.dimension.current.CurrentResolver;
 import org.eclipse.daanse.olap.function.def.dimension.dimension.DimensionOfDimensionResolver;
 import org.eclipse.daanse.olap.function.def.dimension.hierarchy.DimensionOfHierarchyResolver;
@@ -341,6 +343,8 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new CrossJoinResolver());
         
         functionService.addResolver(new NonEmptyCrossJoinResolver());
+        functionService.addResolver(new DescendantsMemberResolver());
+        functionService.addResolver(new DescendantsSetResolver());
 }
 
 	@Override
