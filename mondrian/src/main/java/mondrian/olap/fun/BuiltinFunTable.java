@@ -94,7 +94,6 @@ public class BuiltinFunTable extends FunTableImpl {
         //
         // SET FUNCTIONS
 
-        builder.define(NonEmptyCrossJoinFunDef.Resolver);
         builder.define(DescendantsFunDef.Resolver);
         builder.define(DescendantsFunDef.Resolver2);
         builder.define(DrilldownLevelFunDef.Resolver);

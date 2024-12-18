@@ -21,9 +21,9 @@ import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.function.def.nonemptycrossjoin.NonEmptyCrossJoinFunDef;
 
 import mondrian.olap.Util;
-import mondrian.olap.fun.NonEmptyCrossJoinFunDef;
 import mondrian.rolap.sql.CrossJoinArg;
 import mondrian.rolap.sql.MemberListCrossJoinArg;
 import mondrian.rolap.sql.TupleConstraint;
