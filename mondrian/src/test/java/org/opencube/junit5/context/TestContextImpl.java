@@ -61,6 +61,7 @@ import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMem
 import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.NamedSetCurrentResolver;
 import org.eclipse.daanse.olap.function.def.intersect.IntersectResolver;
+import org.eclipse.daanse.olap.function.def.lastperiods.LastPeriodsResolver;
 import org.eclipse.daanse.olap.function.def.leadlag.LagResolver;
 import org.eclipse.daanse.olap.function.def.leadlag.LeadResolver;
 import org.eclipse.daanse.olap.function.def.level.member.MemberLevelResolver;
@@ -367,6 +368,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new TailResolver());
         functionService.addResolver(new HierarchizeResolver());
         functionService.addResolver(new IntersectResolver());
+        functionService.addResolver(new LastPeriodsResolver());
 }
 
 	@Override

@@ -154,8 +154,6 @@ public class BuiltinFunTable extends FunTableImpl {
 //            }
 //        });
 
-        builder.define(LastPeriodsFunDef.Resolver);
-
         // <Dimension>.Members is really just shorthand for <Hierarchy>.Members
     	 OperationAtom functionAtomMembers =new PlainPropertyOperationAtom(MEMBERS);
 		builder.define(	new FunctionMetaDataR(functionAtomMembers, "Returns the set of members in a dimension.", "<DIMENSION>.Members",
