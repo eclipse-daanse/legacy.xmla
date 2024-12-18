@@ -154,9 +154,6 @@ public class BuiltinFunTable extends FunTableImpl {
 //            }
 //        });
 
-
-
-        builder.define(IntersectFunDef.resolver);
         builder.define(LastPeriodsFunDef.Resolver);
 
         // <Dimension>.Members is really just shorthand for <Hierarchy>.Members

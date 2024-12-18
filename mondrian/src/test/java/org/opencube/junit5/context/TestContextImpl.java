@@ -60,6 +60,7 @@ import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHierarchyResolv
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.NamedSetCurrentResolver;
+import org.eclipse.daanse.olap.function.def.intersect.IntersectResolver;
 import org.eclipse.daanse.olap.function.def.leadlag.LagResolver;
 import org.eclipse.daanse.olap.function.def.leadlag.LeadResolver;
 import org.eclipse.daanse.olap.function.def.level.member.MemberLevelResolver;
@@ -365,6 +366,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new HeadResolver());
         functionService.addResolver(new TailResolver());
         functionService.addResolver(new HierarchizeResolver());
+        functionService.addResolver(new IntersectResolver());
 }
 
 	@Override
