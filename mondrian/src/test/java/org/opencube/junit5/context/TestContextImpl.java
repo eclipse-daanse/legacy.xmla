@@ -51,6 +51,10 @@ import org.eclipse.daanse.olap.function.def.drilldownmember.DrilldownMemberResol
 import org.eclipse.daanse.olap.function.def.empty.EmptyExpressionResolver;
 import org.eclipse.daanse.olap.function.def.except.ExceptResolver;
 import org.eclipse.daanse.olap.function.def.exists.ExistsResolver;
+import org.eclipse.daanse.olap.function.def.generate.GenerateListResolver;
+import org.eclipse.daanse.olap.function.def.generate.GenerateStringResolver;
+import org.eclipse.daanse.olap.function.def.headtail.HeadResolver;
+import org.eclipse.daanse.olap.function.def.headtail.TailResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyResolver;
@@ -355,6 +359,10 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new DrilldownMemberResolver());
         functionService.addResolver(new ExceptResolver());
         functionService.addResolver(new ExistsResolver());
+        functionService.addResolver(new GenerateListResolver());
+        functionService.addResolver(new GenerateStringResolver());
+        functionService.addResolver(new HeadResolver());
+        functionService.addResolver(new TailResolver());
 }
 
 	@Override

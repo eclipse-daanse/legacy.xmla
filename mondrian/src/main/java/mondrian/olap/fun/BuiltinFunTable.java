@@ -154,9 +154,7 @@ public class BuiltinFunTable extends FunTableImpl {
 //            }
 //        });
 
-        builder.define(GenerateFunDef.ListResolver);
-        builder.define(GenerateFunDef.StringResolver);
-        builder.define(HeadTailFunDef.HeadResolver);
+
 
         builder.define(HierarchizeFunDef.Resolver);
 
@@ -172,7 +170,6 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(PeriodsToDateFunDef.Resolver);
 
         builder.define(SubsetFunDef.Resolver);
-        builder.define(HeadTailFunDef.TailResolver);
         builder.define(ToggleDrillStateFunDef.Resolver);
         builder.define(UnionFunDef.Resolver);
         builder.define(VisualTotalsFunDef.Resolver);
