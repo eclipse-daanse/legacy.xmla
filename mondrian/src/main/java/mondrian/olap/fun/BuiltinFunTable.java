@@ -156,8 +156,6 @@ public class BuiltinFunTable extends FunTableImpl {
 
 
 
-        builder.define(HierarchizeFunDef.Resolver);
-
         builder.define(IntersectFunDef.resolver);
         builder.define(LastPeriodsFunDef.Resolver);
 

@@ -55,6 +55,7 @@ import org.eclipse.daanse.olap.function.def.generate.GenerateListResolver;
 import org.eclipse.daanse.olap.function.def.generate.GenerateStringResolver;
 import org.eclipse.daanse.olap.function.def.headtail.HeadResolver;
 import org.eclipse.daanse.olap.function.def.headtail.TailResolver;
+import org.eclipse.daanse.olap.function.def.hierarchize.HierarchizeResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyResolver;
@@ -363,6 +364,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new GenerateStringResolver());
         functionService.addResolver(new HeadResolver());
         functionService.addResolver(new TailResolver());
+        functionService.addResolver(new HierarchizeResolver());
 }
 
 	@Override
