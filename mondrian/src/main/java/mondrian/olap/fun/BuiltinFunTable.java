@@ -173,8 +173,6 @@ public class BuiltinFunTable extends FunTableImpl {
         //
         // TUPLE FUNCTIONS
 
-        builder.define(SetItemFunDef.intResolver);
-        builder.define(SetItemFunDef.stringResolver);
         builder.define(TupleItemFunDef.instance);
         builder.define(StrToTupleFunDef.Resolver);
 

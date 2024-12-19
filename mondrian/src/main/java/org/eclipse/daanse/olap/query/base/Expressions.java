@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 
 public class Expressions {
 	public static void unparseExpressions(PrintWriter printWriter, Expression[] expressions, String start, String mid,
@@ -43,4 +44,9 @@ public class Expressions {
 	public static DataType[] categoriesOf(Expression[] expressions) {
 		return Stream.of(expressions).map(Expression::getCategory).toArray(DataType[]::new);
 	}
+	
+    public static FunctionParameterR[] functionParameterOf(Expression[] expressions) {
+        return Stream.of(expressions).map(e -> new FunctionParameterR(e.getCategory())).toArray(FunctionParameterR[]::new);
+    }
+
 }

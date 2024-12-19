@@ -147,6 +147,8 @@ import org.eclipse.daanse.olap.function.def.set.extract.ExtractResolver;
 import org.eclipse.daanse.olap.function.def.set.filter.FilterResolver;
 import org.eclipse.daanse.olap.function.def.set.level.LevelMembersResolver;
 import org.eclipse.daanse.olap.function.def.set.range.RangeResolver;
+import org.eclipse.daanse.olap.function.def.set.setitem.SetItemIntResolver;
+import org.eclipse.daanse.olap.function.def.set.setitem.SetItemStringResolver;
 import org.eclipse.daanse.olap.function.def.set.siblings.SiblingsResolver;
 import org.eclipse.daanse.olap.function.def.set.stripcalculatedmembers.StripCalculatedMembersResolver;
 import org.eclipse.daanse.olap.function.def.settostr.SetToStrResolver;
@@ -380,6 +382,8 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new PeriodsToDateResolver());
         functionService.addResolver(new SubsetResolver());
         functionService.addResolver(new ToggleDrillStateResolver());
+        functionService.addResolver(new SetItemStringResolver());
+        functionService.addResolver(new SetItemIntResolver());
 }
 
 	@Override

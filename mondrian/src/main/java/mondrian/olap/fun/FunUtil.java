@@ -1358,7 +1358,7 @@ public class FunUtil extends Util {
     return members;
   }
 
-  static Member makeNullMember( MemberType memberType ) {
+  public static Member makeNullMember( MemberType memberType ) {
     Hierarchy hierarchy = memberType.getHierarchy();
     if ( hierarchy == null ) {
       return FunUtil.NullMember;
