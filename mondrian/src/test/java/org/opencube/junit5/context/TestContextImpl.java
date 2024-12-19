@@ -168,6 +168,7 @@ import org.eclipse.daanse.olap.function.def.topbottompercentsum.BottomPercentRes
 import org.eclipse.daanse.olap.function.def.topbottompercentsum.BottomSumResolver;
 import org.eclipse.daanse.olap.function.def.topbottompercentsum.TopPercentResolver;
 import org.eclipse.daanse.olap.function.def.topbottompercentsum.TopSumResolver;
+import org.eclipse.daanse.olap.function.def.union.UnionResolver;
 import org.eclipse.daanse.olap.function.def.unorder.UnorderResolver;
 import org.eclipse.daanse.olap.function.def.var.VarPResolver;
 import org.eclipse.daanse.olap.function.def.var.VarResolver;
@@ -384,6 +385,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new ToggleDrillStateResolver());
         functionService.addResolver(new SetItemStringResolver());
         functionService.addResolver(new SetItemIntResolver());
+        functionService.addResolver(new UnionResolver());
 }
 
 	@Override

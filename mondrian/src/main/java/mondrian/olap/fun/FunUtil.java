@@ -265,7 +265,7 @@ public class FunUtil extends Util {
    *
    * @throws MondrianEvaluationException if expressions don't have the same hierarchy
    */
-  static void checkCompatible( Expression left, Expression right, FunctionDefinition funDef ) {
+  public static void checkCompatible( Expression left, Expression right, FunctionDefinition funDef ) {
     final Type leftType = TypeUtil.stripSetType( left.getType() );
     final Type rightType = TypeUtil.stripSetType( right.getType() );
     if ( !TypeUtil.isUnionCompatible( leftType, rightType ) ) {
@@ -277,7 +277,7 @@ public class FunUtil extends Util {
   /**
    * Adds every element of {@code right} which is not in {@code set} to both {@code set} and {@code left}.
    */
-  static void addUnique(
+  public static void addUnique(
     TupleList left,
     TupleList right,
     Set<List<Member>> set ) {
