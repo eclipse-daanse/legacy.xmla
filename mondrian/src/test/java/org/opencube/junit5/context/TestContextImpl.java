@@ -132,6 +132,7 @@ import org.eclipse.daanse.olap.function.def.operators.xor.XorResolver;
 import org.eclipse.daanse.olap.function.def.order.OrderResolver;
 import org.eclipse.daanse.olap.function.def.parallelperiod.ParallelPeriodResolver;
 import org.eclipse.daanse.olap.function.def.percentile.PercentileResolver;
+import org.eclipse.daanse.olap.function.def.periodstodate.PeriodsToDateResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.MtdMultiResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.QtdMultiResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.WtdMultiResolver;
@@ -373,6 +374,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new LastPeriodsResolver());
         functionService.addResolver(new DrilldownLevelBottomResolver());
         functionService.addResolver(new UnorderResolver());
+        functionService.addResolver(new PeriodsToDateResolver());
 }
 
 	@Override
