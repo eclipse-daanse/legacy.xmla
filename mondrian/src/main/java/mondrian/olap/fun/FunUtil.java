@@ -1650,7 +1650,7 @@ public class FunUtil extends Util {
    * @param hierarchies Hierarchies of the members
    * @return Tuple represented as array of members
    */
-  static Member[] parseTuple(
+  public static Member[] parseTuple(
     Evaluator evaluator,
     String string,
     List<Hierarchy> hierarchies ) {

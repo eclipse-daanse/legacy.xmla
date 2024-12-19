@@ -159,9 +159,6 @@ public class BuiltinFunTable extends FunTableImpl {
 						DataType.SET, new DataType[] { DataType.DIMENSION }));
 
 
-        //
-        // TUPLE FUNCTIONS
-        builder.define(StrToTupleFunDef.Resolver);
 
         // special resolver for "()"
         builder.define(TupleFunDef.Resolver);

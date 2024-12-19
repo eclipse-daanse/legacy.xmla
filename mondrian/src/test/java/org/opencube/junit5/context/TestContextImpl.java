@@ -164,6 +164,7 @@ import org.eclipse.daanse.olap.function.def.stdev.StdevResolver;
 import org.eclipse.daanse.olap.function.def.string.LenResolver;
 import org.eclipse.daanse.olap.function.def.string.UCaseResolver;
 import org.eclipse.daanse.olap.function.def.strtoset.StrToSetResolver;
+import org.eclipse.daanse.olap.function.def.strtotuple.StrToTupleResolver;
 import org.eclipse.daanse.olap.function.def.subset.SubsetResolver;
 import org.eclipse.daanse.olap.function.def.sum.SumResolver;
 import org.eclipse.daanse.olap.function.def.toggledrillstate.ToggleDrillStateResolver;
@@ -402,6 +403,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new TupleItemResolver());
         functionService.addResolver(new FirstQResolver());
         functionService.addResolver(new ThirdQResolver());
+        functionService.addResolver(new StrToTupleResolver());
 }
 
 	@Override
