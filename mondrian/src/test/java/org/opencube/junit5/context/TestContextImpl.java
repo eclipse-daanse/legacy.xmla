@@ -163,6 +163,7 @@ import org.eclipse.daanse.olap.function.def.topbottompercentsum.BottomPercentRes
 import org.eclipse.daanse.olap.function.def.topbottompercentsum.BottomSumResolver;
 import org.eclipse.daanse.olap.function.def.topbottompercentsum.TopPercentResolver;
 import org.eclipse.daanse.olap.function.def.topbottompercentsum.TopSumResolver;
+import org.eclipse.daanse.olap.function.def.unorder.UnorderResolver;
 import org.eclipse.daanse.olap.function.def.var.VarPResolver;
 import org.eclipse.daanse.olap.function.def.var.VarResolver;
 import org.eclipse.daanse.olap.function.def.var.VariancePResolver;
@@ -371,6 +372,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new IntersectResolver());
         functionService.addResolver(new LastPeriodsResolver());
         functionService.addResolver(new DrilldownLevelBottomResolver());
+        functionService.addResolver(new UnorderResolver());
 }
 
 	@Override
