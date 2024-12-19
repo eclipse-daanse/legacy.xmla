@@ -16,11 +16,11 @@ import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
 
 import mondrian.mdx.HierarchyExpressionImpl;
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.Property;
-import mondrian.olap.fun.VisualTotalsFunDef.VisualTotalMember;
 import mondrian.util.Bug;
 
 /**

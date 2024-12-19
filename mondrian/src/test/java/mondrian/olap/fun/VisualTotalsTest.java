@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.result.Position;
+import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalsCalc;
 import org.eclipse.daanse.olap.impl.CellImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,14 +42,14 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 class VisualTotalsTest {
 	@Test
     void testSubstituteEmpty() {
-        final String actual = VisualTotalsFunDef.substitute("", "anything");
+        final String actual = VisualTotalsCalc.substitute("", "anything");
         final String expected = "";
         assertEquals(expected, actual);
     }
 
 	@Test
     void testSubstituteOneStarOnly() {
-        final String actual = VisualTotalsFunDef.substitute("*", "anything");
+        final String actual = VisualTotalsCalc.substitute("*", "anything");
         final String expected = "anything";
         assertEquals(expected, actual);
     }
@@ -56,7 +57,7 @@ class VisualTotalsTest {
 	@Test
     void testSubstituteOneStarBegin() {
         final String actual =
-            VisualTotalsFunDef.substitute("* is the word.", "Grease");
+        VisualTotalsCalc.substitute("* is the word.", "Grease");
         final String expected = "Grease is the word.";
         assertEquals(expected, actual);
     }
@@ -64,7 +65,7 @@ class VisualTotalsTest {
 	@Test
     void testSubstituteOneStarEnd() {
         final String actual =
-            VisualTotalsFunDef.substitute(
+            VisualTotalsCalc.substitute(
                 "Lies, damned lies, and *!", "statistics");
         final String expected = "Lies, damned lies, and statistics!";
         assertEquals(expected, actual);
@@ -72,7 +73,7 @@ class VisualTotalsTest {
 
 	@Test
     void testSubstituteTwoStars() {
-        final String actual = VisualTotalsFunDef.substitute("**", "anything");
+        final String actual = VisualTotalsCalc.substitute("**", "anything");
         final String expected = "*";
         assertEquals(expected, actual);
     }
@@ -80,7 +81,7 @@ class VisualTotalsTest {
 	@Test
     void testSubstituteCombined() {
         final String actual =
-            VisualTotalsFunDef.substitute(
+            VisualTotalsCalc.substitute(
                 "*: see small print**** for *", "disclaimer");
         final String expected = "disclaimer: see small print** for disclaimer";
         assertEquals(expected, actual);

@@ -28,6 +28,7 @@ import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Formula;
+import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
@@ -35,7 +36,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.olap.fun.VisualTotalsFunDef;
 import mondrian.rolap.TupleReader.MemberBuilder;
 import mondrian.rolap.sql.MemberChildrenConstraint;
 import mondrian.rolap.sql.TupleConstraint;
@@ -666,7 +666,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
             // extract RolapMembers from their RolapCubeMember objects
             // populate lookup for reconnecting parents and children
             for (RolapMember member : parentMembers) {
-                if (member instanceof VisualTotalsFunDef.VisualTotalMember) {
+                if (member instanceof VisualTotalMember) {
                     continue;
                 }
                 final RolapCubeMember cubeMember = (RolapCubeMember) member;

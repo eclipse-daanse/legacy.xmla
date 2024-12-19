@@ -22,10 +22,10 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
+import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
 
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.Util;
-import mondrian.olap.fun.VisualTotalsFunDef;
 import mondrian.olap.type.SetType;
 import mondrian.rolap.agg.AndPredicate;
 import mondrian.rolap.agg.ListColumnPredicate;
@@ -197,7 +197,7 @@ public class CompoundPredicateInfo {
     int unsatisfiableTupleCount = 0;
     for ( List<Member> aggregation : aggregationList ) {
       if ( !( !aggregation.isEmpty() && ( aggregation.get( 0 ) instanceof RolapCubeMember
-          || aggregation.get( 0 ) instanceof VisualTotalsFunDef.VisualTotalMember ) ) ) {
+          || aggregation.get( 0 ) instanceof VisualTotalMember ) ) ) {
         ++unsatisfiableTupleCount;
         continue;
       }
@@ -208,8 +208,8 @@ public class CompoundPredicateInfo {
       tuple = new RolapCubeMember[aggregation.size()];
       int i = 0;
       for ( Member member : aggregation ) {
-        if ( member instanceof VisualTotalsFunDef.VisualTotalMember ) {
-          tuple[i] = (RolapCubeMember) ( (VisualTotalsFunDef.VisualTotalMember) member ).getMember();
+        if ( member instanceof VisualTotalMember ) {
+          tuple[i] = (RolapCubeMember) ( (VisualTotalMember) member ).getMember();
         } else {
           tuple[i] = (RolapCubeMember) member;
         }

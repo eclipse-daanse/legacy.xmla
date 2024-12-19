@@ -23,10 +23,10 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
+import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.TupleCollections;
-import mondrian.olap.fun.VisualTotalsFunDef;
 
 public class IntersectCalc extends AbstractListCalc {
 
@@ -93,8 +93,8 @@ public class IntersectCalc extends AbstractListCalc {
         List<Member> tuple = leftTuple;
         for (int i = 0; i < rightKey.size(); i++) {
             Member member = rightKey.get(i);
-            if (!(tuple.get(i) instanceof VisualTotalsFunDef.VisualTotalMember)
-                    && member instanceof VisualTotalsFunDef.VisualTotalMember) {
+            if (!(tuple.get(i) instanceof VisualTotalMember)
+                    && member instanceof VisualTotalMember) {
                 if (tuple == leftTuple) {
                     // clone on first VisualTotalMember -- to avoid
                     // alloc/copy in the common case where there are

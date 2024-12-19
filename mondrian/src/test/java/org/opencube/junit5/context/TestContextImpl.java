@@ -174,6 +174,7 @@ import org.eclipse.daanse.olap.function.def.var.VarPResolver;
 import org.eclipse.daanse.olap.function.def.var.VarResolver;
 import org.eclipse.daanse.olap.function.def.var.VariancePResolver;
 import org.eclipse.daanse.olap.function.def.var.VarianceResolver;
+import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalsResolver;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 
@@ -386,6 +387,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new SetItemStringResolver());
         functionService.addResolver(new SetItemIntResolver());
         functionService.addResolver(new UnionResolver());
+        functionService.addResolver(new VisualTotalsResolver());
 }
 
 	@Override
