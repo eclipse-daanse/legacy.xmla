@@ -159,9 +159,6 @@ public class BuiltinFunTable extends FunTableImpl {
 		builder.define(	new FunctionMetaDataR(functionAtomMembers, "Returns the set of members in a dimension.", "<DIMENSION>.Members",
 						DataType.SET, new DataType[] { DataType.DIMENSION }));
 
-        //
-        // STRING FUNCTIONS
-        builder.define(TupleToStrFunDef.instance);
 
         //
         // TUPLE FUNCTIONS
