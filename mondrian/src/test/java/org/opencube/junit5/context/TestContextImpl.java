@@ -174,6 +174,7 @@ import org.eclipse.daanse.olap.function.def.topbottompercentsum.BottomPercentRes
 import org.eclipse.daanse.olap.function.def.topbottompercentsum.BottomSumResolver;
 import org.eclipse.daanse.olap.function.def.topbottompercentsum.TopPercentResolver;
 import org.eclipse.daanse.olap.function.def.topbottompercentsum.TopSumResolver;
+import org.eclipse.daanse.olap.function.def.tuple.TupleResolver;
 import org.eclipse.daanse.olap.function.def.tupleitem.TupleItemResolver;
 import org.eclipse.daanse.olap.function.def.tupletostr.TupleToStrResolver;
 import org.eclipse.daanse.olap.function.def.union.UnionResolver;
@@ -404,6 +405,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new FirstQResolver());
         functionService.addResolver(new ThirdQResolver());
         functionService.addResolver(new StrToTupleResolver());
+        functionService.addResolver(new TupleResolver());
 }
 
 	@Override

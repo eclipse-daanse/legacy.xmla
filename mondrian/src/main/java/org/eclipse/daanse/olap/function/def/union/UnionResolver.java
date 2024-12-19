@@ -38,9 +38,9 @@ public class UnionResolver extends AbstractFunctionDefinitionMultiResolver {
 
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.NUMERIC, xx);
+            DataType.SET, xx);
     private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.NUMERIC, xxy);
+            DataType.SET, xxy);
 
     public UnionResolver() {
         super(List.of(new UnionFunDef(functionMetaData), new UnionFunDef(functionMetaData1)));

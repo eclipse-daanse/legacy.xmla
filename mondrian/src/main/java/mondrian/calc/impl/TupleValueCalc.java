@@ -16,7 +16,6 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.TupleCalc;
 
-import mondrian.olap.fun.TupleFunDef;
 import mondrian.olap.type.TupleType;
 
 /**
@@ -113,7 +112,7 @@ public class TupleValueCalc extends GenericCalc {
      * @return optimized expression
      */
     public Calc optimize() {
-        if (tupleCalc instanceof TupleFunDef.CurrentMemberCalc calc) {
+        if (tupleCalc instanceof org.eclipse.daanse.olap.function.def.tuple.TupleCalc calc) {
             return MemberValueCalc.create(
                     getType(),
                     calc.getMemberCalcs(),

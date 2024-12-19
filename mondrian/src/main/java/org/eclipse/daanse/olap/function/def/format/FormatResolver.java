@@ -33,11 +33,11 @@ public class FormatResolver extends AbstractFunctionDefinitionMultiResolver {
 
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.SET, mS);
+            DataType.STRING, mS);
     private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.SET, nS);
+            DataType.STRING, nS);
     private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.SET, DS);
+            DataType.STRING, DS);
 
     public FormatResolver() {
         super(List.of(new FormatFunDef(functionMetaData), new FormatFunDef(functionMetaData1), new FormatFunDef(functionMetaData2)));
