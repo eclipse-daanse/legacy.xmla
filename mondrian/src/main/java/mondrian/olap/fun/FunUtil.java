@@ -62,6 +62,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFunDef;
+import org.eclipse.daanse.olap.function.def.set.SetFunDef;
 import org.eclipse.daanse.olap.impl.IdentifierParser.Builder;
 
 import mondrian.calc.impl.UnaryTupleList;
@@ -265,7 +266,7 @@ public class FunUtil extends Util {
    *
    * @throws MondrianEvaluationException if expressions don't have the same hierarchy
    */
-  static void checkCompatible( Expression left, Expression right, FunctionDefinition funDef ) {
+  public static void checkCompatible( Expression left, Expression right, FunctionDefinition funDef ) {
     final Type leftType = TypeUtil.stripSetType( left.getType() );
     final Type rightType = TypeUtil.stripSetType( right.getType() );
     if ( !TypeUtil.isUnionCompatible( leftType, rightType ) ) {
@@ -277,7 +278,7 @@ public class FunUtil extends Util {
   /**
    * Adds every element of {@code right} which is not in {@code set} to both {@code set} and {@code left}.
    */
-  static void addUnique(
+  public static void addUnique(
     TupleList left,
     TupleList right,
     Set<List<Member>> set ) {
@@ -1358,7 +1359,7 @@ public class FunUtil extends Util {
     return members;
   }
 
-  static Member makeNullMember( MemberType memberType ) {
+  public static Member makeNullMember( MemberType memberType ) {
     Hierarchy hierarchy = memberType.getHierarchy();
     if ( hierarchy == null ) {
       return FunUtil.NullMember;
@@ -1649,7 +1650,7 @@ public class FunUtil extends Util {
    * @param hierarchies Hierarchies of the members
    * @return Tuple represented as array of members
    */
-  static Member[] parseTuple(
+  public static Member[] parseTuple(
     Evaluator evaluator,
     String string,
     List<Hierarchy> hierarchies ) {

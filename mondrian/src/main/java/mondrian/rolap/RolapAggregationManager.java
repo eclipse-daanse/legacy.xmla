@@ -23,10 +23,10 @@ import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
 
 import mondrian.olap.MondrianException;
 import mondrian.olap.Util;
-import mondrian.olap.fun.VisualTotalsFunDef.VisualTotalMember;
 import mondrian.rolap.agg.CellRequest;
 import mondrian.rolap.agg.DrillThroughCellRequest;
 import mondrian.rolap.agg.ListPredicate;

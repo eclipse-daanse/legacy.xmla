@@ -20,11 +20,11 @@ import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.function.def.set.SetListCalc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import mondrian.mdx.ResolvedFunCallImpl;
-import mondrian.olap.fun.SetFunDef.SetListCalc;
 import mondrian.olap.type.SetType;
 
 class IifFunDefTest {

@@ -41,6 +41,9 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.function.def.set.SetListCalc;
+import org.eclipse.daanse.olap.function.def.set.ExprIterCalc;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +53,6 @@ import mondrian.olap.ResultStyleException;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
 import mondrian.olap.fun.MemberExtractingVisitor;
-import mondrian.olap.fun.SetFunDef;
 import mondrian.olap.type.MemberType;
 import mondrian.olap.type.SetType;
 import mondrian.olap.type.TupleType;
@@ -194,7 +196,7 @@ public class CrossJoinFunDef extends AbstractFunctionDefinition {
             return compiler.compileAs(exp, null, ResultStyle.ITERABLE_LIST_MUTABLELIST);
         } else {
             // this always returns an TupleIteratorCalc
-            return new SetFunDef.ExprIterCalc(new SetType(type), new Expression[] { exp }, compiler,
+            return new ExprIterCalc(new SetType(type), new Expression[] { exp }, compiler,
                     ResultStyle.ITERABLE_LIST_MUTABLELIST);
         }
     }
@@ -264,7 +266,7 @@ public class CrossJoinFunDef extends AbstractFunctionDefinition {
             }
             return (TupleListCalc) calc;
         } else {
-            return new SetFunDef.SetListCalc(new SetType(type), new Expression[] { exp }, compiler,
+            return new SetListCalc(new SetType(type), new Expression[] { exp }, compiler,
                     ResultStyle.LIST_MUTABLELIST);
         }
     }

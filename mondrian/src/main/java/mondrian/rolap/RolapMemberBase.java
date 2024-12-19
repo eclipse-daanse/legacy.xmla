@@ -27,6 +27,7 @@ import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
+import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,6 @@ import mondrian.olap.DimensionType;
 import mondrian.olap.MemberBase;
 import mondrian.olap.Property;
 import mondrian.olap.Util;
-import mondrian.olap.fun.VisualTotalsFunDef;
 import mondrian.server.LocusImpl;
 import mondrian.spi.PropertyFormatter;
 import mondrian.util.Bug;
@@ -121,7 +121,7 @@ public class RolapMemberBase
         assert key != null;
         assert !(parentMember instanceof RolapCubeMember)
             || this instanceof RolapCalculatedMember
-            || this instanceof VisualTotalsFunDef.VisualTotalMember;
+            || this instanceof VisualTotalMember;
         if (key instanceof byte[]) {
             // Some drivers (e.g. Derby) return byte arrays for binary columns
             // but byte arrays do not implement Comparable
@@ -264,7 +264,7 @@ public class RolapMemberBase
         if (parentMember == null
             || (parentMember.isAll()
                 && (!isCalculated()
-                    || this instanceof VisualTotalsFunDef.VisualTotalMember
+                    || this instanceof VisualTotalMember
                     || getDataMember() != null)))
         {
             final RolapHierarchy hierarchy = getHierarchy();

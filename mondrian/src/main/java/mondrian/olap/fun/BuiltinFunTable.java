@@ -16,7 +16,6 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperat
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
-import mondrian.olap.fun.extra.NthQuartileFunDef;
 import mondrian.olap.fun.vba.Excel;
 import mondrian.olap.fun.vba.Vba;
 
@@ -159,33 +158,6 @@ public class BuiltinFunTable extends FunTableImpl {
 		builder.define(	new FunctionMetaDataR(functionAtomMembers, "Returns the set of members in a dimension.", "<DIMENSION>.Members",
 						DataType.SET, new DataType[] { DataType.DIMENSION }));
 
-        builder.define(UnorderFunDef.Resolver);
-        builder.define(PeriodsToDateFunDef.Resolver);
-
-        builder.define(SubsetFunDef.Resolver);
-        builder.define(ToggleDrillStateFunDef.Resolver);
-        builder.define(UnionFunDef.Resolver);
-        builder.define(VisualTotalsFunDef.Resolver);
-        builder.define(SetFunDef.Resolver); // "{ <member> [,...] }" operator
-        builder.define(NativizeSetFunDef.Resolver);
-
-        //
-        // STRING FUNCTIONS
-        builder.define(FormatFunDef.Resolver);
-
-        builder.define(TupleToStrFunDef.instance);
-
-        //
-        // TUPLE FUNCTIONS
-
-        builder.define(SetItemFunDef.intResolver);
-        builder.define(SetItemFunDef.stringResolver);
-        builder.define(TupleItemFunDef.instance);
-        builder.define(StrToTupleFunDef.Resolver);
-
-        // special resolver for "()"
-        builder.define(TupleFunDef.Resolver);
-
         //
         // GENERIC VALUE FUNCTIONS
         builder.define(CoalesceEmptyFunDef.Resolver);
@@ -198,13 +170,6 @@ public class BuiltinFunTable extends FunTableImpl {
 
         //
         // OPERATORS
-
-
-        // NON-STANDARD FUNCTIONS
-
-        builder.define(NthQuartileFunDef.FirstQResolver);
-
-        builder.define(NthQuartileFunDef.ThirdQResolver);
 
 
         // Define VBA functions.
