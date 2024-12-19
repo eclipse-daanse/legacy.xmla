@@ -163,8 +163,6 @@ public class BuiltinFunTable extends FunTableImpl {
 
         //
         // STRING FUNCTIONS
-        builder.define(FormatFunDef.Resolver);
-
         builder.define(TupleToStrFunDef.instance);
 
         //
