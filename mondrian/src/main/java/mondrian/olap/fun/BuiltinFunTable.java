@@ -160,7 +160,6 @@ public class BuiltinFunTable extends FunTableImpl {
 						DataType.SET, new DataType[] { DataType.DIMENSION }));
 
         builder.define(SetFunDef.Resolver); // "{ <member> [,...] }" operator
-        builder.define(NativizeSetFunDef.Resolver);
 
         //
         // STRING FUNCTIONS

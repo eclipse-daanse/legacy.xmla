@@ -98,6 +98,7 @@ import org.eclipse.daanse.olap.function.def.member.strtomember.StrToMemberResolv
 import org.eclipse.daanse.olap.function.def.member.validmeasure.ValidMeasureResolver;
 import org.eclipse.daanse.olap.function.def.minmax.MaxResolver;
 import org.eclipse.daanse.olap.function.def.minmax.MinResolver;
+import org.eclipse.daanse.olap.function.def.nativizeset.NativizeSetResolver;
 import org.eclipse.daanse.olap.function.def.nonempty.NonEmptyResolver;
 import org.eclipse.daanse.olap.function.def.nonemptycrossjoin.NonEmptyCrossJoinResolver;
 import org.eclipse.daanse.olap.function.def.nonstandard.CachedExistsResolver;
@@ -388,6 +389,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new SetItemIntResolver());
         functionService.addResolver(new UnionResolver());
         functionService.addResolver(new VisualTotalsResolver());
+        functionService.addResolver(new NativizeSetResolver());
 }
 
 	@Override
