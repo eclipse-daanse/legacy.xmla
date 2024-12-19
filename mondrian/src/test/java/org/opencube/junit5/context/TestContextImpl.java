@@ -157,7 +157,9 @@ import org.eclipse.daanse.olap.function.def.stdev.StdevResolver;
 import org.eclipse.daanse.olap.function.def.string.LenResolver;
 import org.eclipse.daanse.olap.function.def.string.UCaseResolver;
 import org.eclipse.daanse.olap.function.def.strtoset.StrToSetResolver;
+import org.eclipse.daanse.olap.function.def.subset.SubsetResolver;
 import org.eclipse.daanse.olap.function.def.sum.SumResolver;
+import org.eclipse.daanse.olap.function.def.toggledrillstate.ToggleDrillStateResolver;
 import org.eclipse.daanse.olap.function.def.topbottomcount.BottomCountResolver;
 import org.eclipse.daanse.olap.function.def.topbottomcount.TopCountResolver;
 import org.eclipse.daanse.olap.function.def.topbottompercentsum.BottomPercentResolver;
@@ -373,8 +375,11 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new IntersectResolver());
         functionService.addResolver(new LastPeriodsResolver());
         functionService.addResolver(new DrilldownLevelBottomResolver());
+        
         functionService.addResolver(new UnorderResolver());
         functionService.addResolver(new PeriodsToDateResolver());
+        functionService.addResolver(new SubsetResolver());
+        functionService.addResolver(new ToggleDrillStateResolver());
 }
 
 	@Override

@@ -158,9 +158,7 @@ public class BuiltinFunTable extends FunTableImpl {
     	 OperationAtom functionAtomMembers =new PlainPropertyOperationAtom(MEMBERS);
 		builder.define(	new FunctionMetaDataR(functionAtomMembers, "Returns the set of members in a dimension.", "<DIMENSION>.Members",
 						DataType.SET, new DataType[] { DataType.DIMENSION }));
-
-        builder.define(SubsetFunDef.Resolver);
-        builder.define(ToggleDrillStateFunDef.Resolver);
+        
         builder.define(UnionFunDef.Resolver);
         builder.define(VisualTotalsFunDef.Resolver);
         builder.define(SetFunDef.Resolver); // "{ <member> [,...] }" operator
