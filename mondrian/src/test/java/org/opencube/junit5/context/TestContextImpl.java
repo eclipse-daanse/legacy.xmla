@@ -140,6 +140,7 @@ import org.eclipse.daanse.olap.function.def.periodstodate.xtd.QtdMultiResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.WtdMultiResolver;
 import org.eclipse.daanse.olap.function.def.periodstodate.xtd.YtdMultiResolver;
 import org.eclipse.daanse.olap.function.def.rank.RankResolver;
+import org.eclipse.daanse.olap.function.def.set.SetResolver;
 import org.eclipse.daanse.olap.function.def.set.addcalculatedmembers.AddCalculatedMembersResolver;
 import org.eclipse.daanse.olap.function.def.set.ascendants.AscendantsResolver;
 import org.eclipse.daanse.olap.function.def.set.children.ChildrenResolver;
@@ -392,6 +393,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new VisualTotalsResolver());
         functionService.addResolver(new NativizeSetResolver());
         functionService.addResolver(new FormatResolver());
+        functionService.addResolver(new SetResolver());
 }
 
 	@Override

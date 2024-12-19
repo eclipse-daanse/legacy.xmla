@@ -41,6 +41,7 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
+import org.eclipse.daanse.olap.function.def.set.SetFunDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,6 @@ import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.fun.ParenthesesFunDef;
-import mondrian.olap.fun.SetFunDef;
 import mondrian.olap.fun.TupleFunDef;
 import mondrian.olap.type.HierarchyType;
 import mondrian.rolap.RolapCalculatedMember;

@@ -55,6 +55,7 @@ import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
+import org.eclipse.daanse.olap.function.def.set.SetFunDef;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
 import org.slf4j.Logger;
 
@@ -64,7 +65,6 @@ import mondrian.olap.MondrianException;
 import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.olap.fun.SetFunDef;
 import mondrian.rolap.agg.AndPredicate;
 import mondrian.rolap.agg.DrillThroughCellRequest;
 import mondrian.rolap.agg.MemberColumnPredicate;
