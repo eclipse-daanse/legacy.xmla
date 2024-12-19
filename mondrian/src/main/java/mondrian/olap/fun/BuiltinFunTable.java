@@ -16,7 +16,6 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperat
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
-import mondrian.olap.fun.extra.NthQuartileFunDef;
 import mondrian.olap.fun.vba.Excel;
 import mondrian.olap.fun.vba.Vba;
 
@@ -179,13 +178,6 @@ public class BuiltinFunTable extends FunTableImpl {
 
         //
         // OPERATORS
-
-
-        // NON-STANDARD FUNCTIONS
-
-        builder.define(NthQuartileFunDef.FirstQResolver);
-
-        builder.define(NthQuartileFunDef.ThirdQResolver);
 
 
         // Define VBA functions.

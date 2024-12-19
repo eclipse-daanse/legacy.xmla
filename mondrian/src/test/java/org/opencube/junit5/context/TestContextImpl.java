@@ -105,6 +105,8 @@ import org.eclipse.daanse.olap.function.def.nonemptycrossjoin.NonEmptyCrossJoinR
 import org.eclipse.daanse.olap.function.def.nonstandard.CachedExistsResolver;
 import org.eclipse.daanse.olap.function.def.nonstandard.CalculatedChildResolver;
 import org.eclipse.daanse.olap.function.def.nonstandard.CastResolver;
+import org.eclipse.daanse.olap.function.def.nthquartile.FirstQResolver;
+import org.eclipse.daanse.olap.function.def.nthquartile.ThirdQResolver;
 import org.eclipse.daanse.olap.function.def.numeric.ordinal.OrdinalResolver;
 import org.eclipse.daanse.olap.function.def.numeric.value.ValueResolver;
 import org.eclipse.daanse.olap.function.def.openingclosingperiod.ClosingPeriodResolved;
@@ -398,6 +400,8 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new SetResolver());
         functionService.addResolver(new TupleToStrResolver());
         functionService.addResolver(new TupleItemResolver());
+        functionService.addResolver(new FirstQResolver());
+        functionService.addResolver(new ThirdQResolver());
 }
 
 	@Override
