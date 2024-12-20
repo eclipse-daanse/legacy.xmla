@@ -75,72 +75,7 @@ public class BuiltinFunTable extends FunTableImpl {
 		builder.define(new FunctionMetaDataR(functionAtomDefaultMember, "Returns the default member of a dimension.", "<DIMENSION>.DefaultMember",
 				 DataType.MEMBER, new DataType[] { DataType.DIMENSION }));
 
-        //
-        // NUMERIC FUNCTIONS
-
         builder.define(NativizeSetFunDef.Resolver);
-        //
-        // SET FUNCTIONS
-
-//        if (false)
-//        builder.define(
-//            new AbstractFunctionDefinition(
-//                "DrilldownMemberBottom",
-//                "DrilldownMemberBottom(<Set1>, <Set2>, <Count>[, [<Numeric Expression>][, RECURSIVE]])",
-//                "Like DrilldownMember except that it includes only the bottom N children.",
-//                "fx*")
-//        {
-//            @Override
-//			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
-//            {
-//                throw new UnsupportedOperationException();
-//            }
-//        });
-//
-//        if (false)
-//        builder.define(
-//            new AbstractFunctionDefinition(
-//                "DrilldownMemberTop",
-//                "DrilldownMemberTop(<Set1>, <Set2>, <Count>[, [<Numeric Expression>][, RECURSIVE]])",
-//                "Like DrilldownMember except that it includes only the top N children.",
-//                "fx*")
-//        {
-//            @Override
-//			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
-//            {
-//                throw new UnsupportedOperationException();
-//            }
-//        });
-//
-//        if (false)
-//        builder.define(
-//            new AbstractFunctionDefinition(
-//                "DrillupLevel",
-//                "DrillupLevel(<Set>[, <Level>])",
-//                "Drills up the members of a set that are below a specified level.",
-//                "fx*")
-//        {
-//            @Override
-//			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
-//            {
-//                throw new UnsupportedOperationException();
-//            }
-//        });
-//
-//        if (false)
-//        builder.define(
-//            new AbstractFunctionDefinition(
-//                "DrillupMember",
-//                "DrillupMember(<Set1>, <Set2>)",
-//                "Drills up the members in a set that are present in a second specified set.",
-//                "fx*")
-//        {
-//            @Override
-//			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
-//            {
-//                throw new UnsupportedOperationException();
-//            }
-//        });
 
         // <Dimension>.Members is really just shorthand for <Hierarchy>.Members
     	 OperationAtom functionAtomMembers =new PlainPropertyOperationAtom(MEMBERS);
@@ -149,7 +84,6 @@ public class BuiltinFunTable extends FunTableImpl {
 
         //
         // GENERIC VALUE FUNCTIONS
-        builder.define(CoalesceEmptyFunDef.Resolver);
         builder.define(PropertiesFunDef.Resolver);
 
         //

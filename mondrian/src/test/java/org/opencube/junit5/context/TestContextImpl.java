@@ -31,6 +31,7 @@ import org.eclipse.daanse.olap.function.def.cache.CacheFunResolver;
 import org.eclipse.daanse.olap.function.def.caption.member.MemberCaptionResolver;
 import org.eclipse.daanse.olap.function.def.cast.CaseMatchResolver;
 import org.eclipse.daanse.olap.function.def.cast.CaseTestResolver;
+import org.eclipse.daanse.olap.function.def.coalesceempty.CoalesceEmptyResolver;
 import org.eclipse.daanse.olap.function.def.correlation.CorrelationResolver;
 import org.eclipse.daanse.olap.function.def.covariance.CovarianceNResolver;
 import org.eclipse.daanse.olap.function.def.covariance.CovarianceResolver;
@@ -427,6 +428,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new IifStringResolver());
         functionService.addResolver(new IifTupleResolver());
         functionService.addResolver(new org.eclipse.daanse.olap.function.def.count.CountResolver());
+        functionService.addResolver(new CoalesceEmptyResolver());
 }
 
 	@Override
