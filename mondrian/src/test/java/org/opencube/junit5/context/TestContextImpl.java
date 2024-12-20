@@ -420,15 +420,15 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new StrToTupleResolver());
         functionService.addResolver(new TupleResolver());
         
-        functionService.addResolver(new IifBooleanResolver());
-        functionService.addResolver(new IifDimensionResolver());
-        functionService.addResolver(new IifHierarchyResolver());
-        functionService.addResolver(new IifLevelResolver());
-        functionService.addResolver(new IifMemberResolver());
-        functionService.addResolver(new IifNumericResolver());
-        functionService.addResolver(new IifSetResolver());
-        functionService.addResolver(new IifStringResolver());
-        functionService.addResolver(new IifTupleResolver());
+        functionService.addResolver(new org.eclipse.daanse.olap.function.def.iif.IifBooleanResolver());
+        functionService.addResolver(new org.eclipse.daanse.olap.function.def.iif.IifDimensionResolver());
+        functionService.addResolver(new org.eclipse.daanse.olap.function.def.iif.IifHierarchyResolver());
+        functionService.addResolver(new org.eclipse.daanse.olap.function.def.iif.IifLevelResolver());
+        functionService.addResolver(new org.eclipse.daanse.olap.function.def.iif.IifMemberResolver());
+        functionService.addResolver(new org.eclipse.daanse.olap.function.def.iif.IifNumericResolver());
+        functionService.addResolver(new org.eclipse.daanse.olap.function.def.iif.IifSetResolver());
+        functionService.addResolver(new org.eclipse.daanse.olap.function.def.iif.IifStringResolver());
+        functionService.addResolver(new org.eclipse.daanse.olap.function.def.iif.IifTupleResolver());
         functionService.addResolver(new org.eclipse.daanse.olap.function.def.count.CountResolver());
         functionService.addResolver(new CoalesceEmptyResolver());
         functionService.addResolver(new PropertiesResolver());

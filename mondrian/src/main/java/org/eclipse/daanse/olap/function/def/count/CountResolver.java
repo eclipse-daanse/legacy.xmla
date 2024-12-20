@@ -36,9 +36,9 @@ public class CountResolver extends AbstractFunctionDefinitionMultiResolver {
     // {"fnx", "fnxy"}
     
     private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.SET, x);
+            DataType.NUMERIC, x);
     private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.SET, xy);
+            DataType.NUMERIC, xy);
 
     public CountResolver() {
         super(List.of(new CountFunDef(functionMetaData1), new CountFunDef(functionMetaData2)));

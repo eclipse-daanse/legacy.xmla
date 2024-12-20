@@ -13,6 +13,7 @@
  */
 package org.eclipse.daanse.olap.function.def.iif;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.InfixOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
@@ -27,7 +28,7 @@ import org.osgi.service.component.annotations.Component;
 public class IifSetResolver extends ParametersCheckingFunctionDefinitionResolver {
 
     // IIf(<Logical Expression>, <Set Expression>, <Set Expression>)
-    private static OperationAtom atom = new InfixOperationAtom("IIf");
+    static final OperationAtom atom = new FunctionOperationAtom("IIf");
     private static String DESCRIPTION = "Returns one of two dimension values determined by a logical test.";
     private static String SIGNATURE = "IIf(<LOGICAL>, <SET>, <SET>)";
     private static FunctionParameterR[] params = new FunctionParameterR[] {
