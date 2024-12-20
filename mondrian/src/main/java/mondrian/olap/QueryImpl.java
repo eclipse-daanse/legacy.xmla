@@ -85,6 +85,7 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.calc.api.profile.CalculationProfile;
 import org.eclipse.daanse.olap.calc.api.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
+import org.eclipse.daanse.olap.function.def.parameter.ParameterFunDef;
 import org.eclipse.daanse.olap.impl.IdentifierParser;
 import org.eclipse.daanse.olap.impl.IdentifierSegment;
 
@@ -93,7 +94,6 @@ import mondrian.mdx.LevelExpressionImpl;
 import mondrian.mdx.MdxVisitorImpl;
 import mondrian.mdx.MemberExpressionImpl;
 import mondrian.mdx.UnresolvedFunCallImpl;
-import mondrian.olap.fun.ParameterFunDef;
 import mondrian.olap.type.MemberType;
 import mondrian.olap.type.SetType;
 import mondrian.olap.type.TupleType;

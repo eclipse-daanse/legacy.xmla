@@ -48,30 +48,11 @@ public class BuiltinFunTable extends FunTableImpl {
 	public void defineFunctions(FunctionTableCollector builder) {
         builder.defineReserved("NULL");
 
-        // first char: p=Property, m=Method, i=Infix, P=Prefix
-        // 2nd:
-
-        // ARRAY FUNCTIONS
-
-        // "SetToArray(<Set>[, <Set>]...[, <Numeric Expression>])"
-//        if (false) builder.define(new AbstractFunctionDefinition(
-//                "SetToArray",
-//                "SetToArray(<Set>[, <Set>]...[, <Numeric Expression>])",
-//                "Converts one or more sets to an array for use in a user-defined function.",
-//                "fa*")
-//        {
-//            @Override
-//			public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler)
-//            {
-//                throw new UnsupportedOperationException();
-//            }
-//        });
 
         // "<Dimension>.DefaultMember". The function is implemented using an
         // implicit cast to hierarchy, and we create a FunInfo for
         // documentation & backwards compatibility.
         OperationAtom functionAtomDefaultMember = new PlainPropertyOperationAtom("DefaultMember");
-
 		builder.define(new FunctionMetaDataR(functionAtomDefaultMember, "Returns the default member of a dimension.", "<DIMENSION>.DefaultMember",
 				 DataType.MEMBER, new DataType[] { DataType.DIMENSION }));
 
@@ -81,15 +62,6 @@ public class BuiltinFunTable extends FunTableImpl {
     	 OperationAtom functionAtomMembers =new PlainPropertyOperationAtom(MEMBERS);
 		builder.define(	new FunctionMetaDataR(functionAtomMembers, "Returns the set of members in a dimension.", "<DIMENSION>.Members",
 						DataType.SET, new DataType[] { DataType.DIMENSION }));
-
-
-        //
-        // PARAMETER FUNCTIONS
-        builder.define(new ParameterFunDef.ParameterResolver());
-        builder.define(new ParameterFunDef.ParamRefResolver());
-
-        //
-        // OPERATORS
 
 
         // Define VBA functions.
