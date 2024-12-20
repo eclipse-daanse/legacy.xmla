@@ -20,6 +20,8 @@ import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.function.def.iif.IifFunDef;
+import org.eclipse.daanse.olap.function.def.iif.IifSetResolver;
 import org.eclipse.daanse.olap.function.def.set.SetListCalc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +54,8 @@ class IifFunDefTest {
     ResultStyle actualResStyle = null;
     ResultStyle expectedResStyle = setListCalc.getResultStyle();
     // Compile calculation for IIf function for (<Logical Expression>, <SetType>, <SetType>) params
-    Calc calc = IifFunDef.SET_INSTANCE.compileCall( call, compilerMock );
+    IifSetResolver resolver = new IifSetResolver();
+    Calc calc = new IifFunDef(resolver.getRepresentativeFunctionMetaDatas().get(0)).compileCall( call, compilerMock );
     try {
       actualResStyle = calc.getResultStyle();
     } catch ( Exception e ) {
