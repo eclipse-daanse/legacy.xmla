@@ -62,6 +62,15 @@ import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHierarchyResolv
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.NamedSetCurrentResolver;
+import org.eclipse.daanse.olap.function.def.iif.IifBooleanResolver;
+import org.eclipse.daanse.olap.function.def.iif.IifDimensionResolver;
+import org.eclipse.daanse.olap.function.def.iif.IifHierarchyResolver;
+import org.eclipse.daanse.olap.function.def.iif.IifLevelResolver;
+import org.eclipse.daanse.olap.function.def.iif.IifMemberResolver;
+import org.eclipse.daanse.olap.function.def.iif.IifNumericResolver;
+import org.eclipse.daanse.olap.function.def.iif.IifSetResolver;
+import org.eclipse.daanse.olap.function.def.iif.IifStringResolver;
+import org.eclipse.daanse.olap.function.def.iif.IifTupleResolver;
 import org.eclipse.daanse.olap.function.def.intersect.IntersectResolver;
 import org.eclipse.daanse.olap.function.def.lastperiods.LastPeriodsResolver;
 import org.eclipse.daanse.olap.function.def.leadlag.LagResolver;
@@ -187,6 +196,7 @@ import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalsResolver;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 
+import mondrian.olap.fun.IifFunDef;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapResultShepherd;
@@ -406,6 +416,16 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new ThirdQResolver());
         functionService.addResolver(new StrToTupleResolver());
         functionService.addResolver(new TupleResolver());
+        
+        functionService.addResolver(new IifBooleanResolver());
+        functionService.addResolver(new IifDimensionResolver());
+        functionService.addResolver(new IifHierarchyResolver());
+        functionService.addResolver(new IifLevelResolver());
+        functionService.addResolver(new IifMemberResolver());
+        functionService.addResolver(new IifNumericResolver());
+        functionService.addResolver(new IifSetResolver());
+        functionService.addResolver(new IifStringResolver());
+        functionService.addResolver(new IifTupleResolver());
 }
 
 	@Override

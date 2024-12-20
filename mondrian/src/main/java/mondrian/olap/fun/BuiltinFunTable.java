@@ -80,16 +80,6 @@ public class BuiltinFunTable extends FunTableImpl {
 
         builder.define(CountFunDef.Resolver);
 
-        builder.define(IifFunDef.STRING_INSTANCE);
-        builder.define(IifFunDef.NUMERIC_INSTANCE);
-        builder.define(IifFunDef.TUPLE_INSTANCE);
-        builder.define(IifFunDef.BOOLEAN_INSTANCE);
-        builder.define(IifFunDef.MEMBER_INSTANCE);
-        builder.define(IifFunDef.LEVEL_INSTANCE);
-        builder.define(IifFunDef.HIERARCHY_INSTANCE);
-        builder.define(IifFunDef.DIMENSION_INSTANCE);
-        builder.define(IifFunDef.SET_INSTANCE);
-
         builder.define(NativizeSetFunDef.Resolver);
         //
         // SET FUNCTIONS
