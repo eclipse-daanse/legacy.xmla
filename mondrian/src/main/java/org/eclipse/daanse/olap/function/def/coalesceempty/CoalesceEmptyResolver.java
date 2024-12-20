@@ -24,7 +24,9 @@ import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
+import org.osgi.service.component.annotations.Component;
 
+@Component(service = FunctionResolver.class)
 public class CoalesceEmptyResolver implements FunctionResolver {
 
     @Override
