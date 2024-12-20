@@ -426,6 +426,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new IifSetResolver());
         functionService.addResolver(new IifStringResolver());
         functionService.addResolver(new IifTupleResolver());
+        functionService.addResolver(new org.eclipse.daanse.olap.function.def.count.CountResolver());
 }
 
 	@Override

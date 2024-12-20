@@ -78,8 +78,6 @@ public class BuiltinFunTable extends FunTableImpl {
         //
         // NUMERIC FUNCTIONS
 
-        builder.define(CountFunDef.Resolver);
-
         builder.define(NativizeSetFunDef.Resolver);
         //
         // SET FUNCTIONS
