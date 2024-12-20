@@ -90,6 +90,7 @@ public class BuiltinFunTable extends FunTableImpl {
         builder.define(IifFunDef.DIMENSION_INSTANCE);
         builder.define(IifFunDef.SET_INSTANCE);
 
+        builder.define(NativizeSetFunDef.Resolver);
         //
         // SET FUNCTIONS
 

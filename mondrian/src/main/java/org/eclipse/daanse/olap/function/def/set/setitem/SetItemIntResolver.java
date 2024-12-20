@@ -21,7 +21,6 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinitionMultiResolver;
-import org.eclipse.daanse.olap.function.def.subset.SubsetFunDef;
 
 public class SetItemIntResolver extends AbstractFunctionDefinitionMultiResolver {
     private static MethodOperationAtom atom = new MethodOperationAtom("Item");
@@ -29,12 +28,12 @@ public class SetItemIntResolver extends AbstractFunctionDefinitionMultiResolver 
     private static String DESCRIPTION = "Returns a tuple from the set specified in <Set>. The tuple to be returned is specified by the zero-based position of the tuple in the set in <Index>.";
     private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC, "Index") };
     // {"mmxn"}
-    
+
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
             DataType.MEMBER, xn);
 
     public SetItemIntResolver() {
-        super(List.of(new SubsetFunDef(functionMetaData)));
+        super(List.of(new SetItemFunDef(functionMetaData)));
     }
 }

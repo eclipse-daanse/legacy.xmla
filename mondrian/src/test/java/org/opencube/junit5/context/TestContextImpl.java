@@ -397,7 +397,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new SetItemIntResolver());
         functionService.addResolver(new UnionResolver());
         functionService.addResolver(new VisualTotalsResolver());
-        functionService.addResolver(new NativizeSetResolver());
+        //functionService.addResolver(new NativizeSetResolver()); //TODO
         functionService.addResolver(new FormatResolver());
         functionService.addResolver(new SetResolver());
         functionService.addResolver(new TupleToStrResolver());

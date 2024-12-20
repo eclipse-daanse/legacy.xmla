@@ -58,7 +58,7 @@ public abstract class AbstractProfilingNestedCalc<E> extends AbstractProfilingCa
 	}
 
 	public <D extends Calc<?>> D getChildCalc(int i, Class<D> clazz) {
-		return clazz.cast(childCalcs[i]);
+		return childCalcs[i]  != null ? clazz.cast(childCalcs[i]) : null;
 	}
 
 	protected Calc<?> getFirstChildCalc() {
