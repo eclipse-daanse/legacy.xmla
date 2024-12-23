@@ -25,7 +25,7 @@ import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
-public class IifNumericFunDef extends AbstractFunctionDefinition {
+public class IifNumericFunDef extends IifFunDef {
 
     static FunctionParameterR[] params = { new FunctionParameterR(DataType.LOGICAL, "Condition"),
             new FunctionParameterR(DataType.NUMERIC, "Numeric1"),

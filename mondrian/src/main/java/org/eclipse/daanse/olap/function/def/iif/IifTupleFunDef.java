@@ -25,7 +25,7 @@ import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
-public class IifTupleFunDef extends AbstractFunctionDefinition {
+public class IifTupleFunDef extends IifFunDef {
 
     static OperationAtom TUPLE_INSTANCE_FUNCTION_ATOM = new FunctionOperationAtom("IIf");
     static FunctionParameterR[] params = { new FunctionParameterR(DataType.LOGICAL, "Condition"),
