@@ -56,8 +56,6 @@ public class BuiltinFunTable extends FunTableImpl {
 		builder.define(new FunctionMetaDataR(functionAtomDefaultMember, "Returns the default member of a dimension.", "<DIMENSION>.DefaultMember",
 				 DataType.MEMBER, new DataType[] { DataType.DIMENSION }));
 
-        builder.define(NativizeSetFunDef.Resolver);
-
         // <Dimension>.Members is really just shorthand for <Hierarchy>.Members
     	 OperationAtom functionAtomMembers =new PlainPropertyOperationAtom(MEMBERS);
 		builder.define(	new FunctionMetaDataR(functionAtomMembers, "Returns the set of members in a dimension.", "<DIMENSION>.Members",

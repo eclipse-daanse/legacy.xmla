@@ -17,8 +17,10 @@ import java.util.List;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
+import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
+import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinitionMultiResolver;
@@ -38,4 +40,15 @@ public class NativizeSetResolver  extends AbstractFunctionDefinitionMultiResolve
     public NativizeSetResolver() {
         super(List.of(new NativizeSetFunDef(functionMetaData)));
     }
+    
+    @Override
+    protected FunctionDefinition createFunDef(Expression[] args, FunctionMetaData fmd,
+            FunctionMetaData fmdTarget) {
+        if (functionMetaData.equals(fmd)) {
+            return new NativizeSetFunDef(functionMetaData);
+        }
+        return null;
+    }
+
+
 }

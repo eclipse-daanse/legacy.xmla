@@ -63,15 +63,6 @@ import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHierarchyResolv
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.NamedSetCurrentResolver;
-import org.eclipse.daanse.olap.function.def.iif.IifBooleanResolver;
-import org.eclipse.daanse.olap.function.def.iif.IifDimensionResolver;
-import org.eclipse.daanse.olap.function.def.iif.IifHierarchyResolver;
-import org.eclipse.daanse.olap.function.def.iif.IifLevelResolver;
-import org.eclipse.daanse.olap.function.def.iif.IifMemberResolver;
-import org.eclipse.daanse.olap.function.def.iif.IifNumericResolver;
-import org.eclipse.daanse.olap.function.def.iif.IifSetResolver;
-import org.eclipse.daanse.olap.function.def.iif.IifStringResolver;
-import org.eclipse.daanse.olap.function.def.iif.IifTupleResolver;
 import org.eclipse.daanse.olap.function.def.intersect.IntersectResolver;
 import org.eclipse.daanse.olap.function.def.lastperiods.LastPeriodsResolver;
 import org.eclipse.daanse.olap.function.def.leadlag.LagResolver;
@@ -410,7 +401,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new SetItemIntResolver());
         functionService.addResolver(new UnionResolver());
         functionService.addResolver(new VisualTotalsResolver());
-        //functionService.addResolver(new NativizeSetResolver()); //TODO
+        functionService.addResolver(new NativizeSetResolver());
         functionService.addResolver(new FormatResolver());
         functionService.addResolver(new SetResolver());
         functionService.addResolver(new TupleToStrResolver());
