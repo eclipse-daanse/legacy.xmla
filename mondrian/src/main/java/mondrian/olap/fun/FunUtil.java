@@ -62,6 +62,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFunDef;
+import org.eclipse.daanse.olap.function.def.parentheses.ParenthesesFunDef;
 import org.eclipse.daanse.olap.function.def.set.SetFunDef;
 import org.eclipse.daanse.olap.impl.IdentifierParser.Builder;
 

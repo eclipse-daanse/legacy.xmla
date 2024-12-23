@@ -25,9 +25,9 @@ import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFunctionResolver;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
+import org.eclipse.daanse.olap.function.def.parentheses.ParenthesesFunDef;
 import org.eclipse.daanse.olap.query.base.Expressions;
 
-import mondrian.olap.fun.ParenthesesFunDef;
 import mondrian.olap.type.MemberType;
 
 public class TupleResolver extends NoExpressionRequiredFunctionResolver {
