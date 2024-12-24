@@ -13,6 +13,8 @@
  */
 package org.eclipse.daanse.olap.function.def.parallelperiod;
 
+import static mondrian.olap.fun.FunctionTest.*;
+import static org.opencube.junit5.TestUtil.*;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
 
@@ -153,6 +155,180 @@ class ParallelPeriodFunDefTest {
           + "from [Sales]\n"
           + "where [Time].[1997].[Q2].[5]",
         "Cannot find MDX member '[Time].[Quarter]'. Make sure it is indeed a member and not a level or a hierarchy." );
+    }
+
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testParallelPeriod(Context context) {
+        assertAxisReturns(context.getConnection(),
+            "parallelperiod([Time].[Quarter], 1, [Time].[1998].[Q1])",
+            "[Time].[1997].[Q4]" );
+
+        assertAxisReturns(context.getConnection(),
+            "parallelperiod([Time].[Quarter], -1, [Time].[1997].[Q1])",
+            "[Time].[1997].[Q2]" );
+
+        assertAxisReturns(context.getConnection(),
+            "parallelperiod([Time].[Year], 1, [Time].[1998].[Q1])",
+            "[Time].[1997].[Q1]" );
+
+        assertAxisReturns(context.getConnection(),
+            "parallelperiod([Time].[Year], 1, [Time].[1998].[Q1].[1])",
+            "[Time].[1997].[Q1].[1]" );
+
+        // No args, therefore finds parallel period to [Time].[1997], which
+        // would be [Time].[1996], except that that doesn't exist, so null.
+        assertAxisReturns(context.getConnection(), "ParallelPeriod()", "" );
+
+        // Parallel period to [Time].[1997], which would be [Time].[1996],
+        // except that that doesn't exist, so null.
+        assertAxisReturns(context.getConnection(),
+            "ParallelPeriod([Time].[Year], 1, [Time].[1997])", "" );
+
+        // one parameter, level 2 above member
+        if ( isDefaultNullMemberRepresentation() ) {
+            assertQueryReturns(context.getConnection(),
+                "WITH MEMBER [Measures].[Foo] AS \n"
+                    + " ' ParallelPeriod([Time].[Year]).UniqueName '\n"
+                    + "SELECT {[Measures].[Foo]} ON COLUMNS\n"
+                    + "FROM [Sales]\n"
+                    + "WHERE [Time].[1997].[Q3].[8]",
+                "Axis #0:\n"
+                    + "{[Time].[1997].[Q3].[8]}\n"
+                    + "Axis #1:\n"
+                    + "{[Measures].[Foo]}\n"
+                    + "Row #0: [Time].[#null]\n" );
+        }
+
+        // one parameter, level 1 above member
+        assertQueryReturns(context.getConnection(),
+            "WITH MEMBER [Measures].[Foo] AS \n"
+                + " ' ParallelPeriod([Time].[Quarter]).UniqueName '\n"
+                + "SELECT {[Measures].[Foo]} ON COLUMNS\n"
+                + "FROM [Sales]\n"
+                + "WHERE [Time].[1997].[Q3].[8]",
+            "Axis #0:\n"
+                + "{[Time].[1997].[Q3].[8]}\n"
+                + "Axis #1:\n"
+                + "{[Measures].[Foo]}\n"
+                + "Row #0: [Time].[1997].[Q2].[5]\n" );
+
+        // one parameter, level same as member
+        assertQueryReturns(context.getConnection(),
+            "WITH MEMBER [Measures].[Foo] AS \n"
+                + " ' ParallelPeriod([Time].[Month]).UniqueName '\n"
+                + "SELECT {[Measures].[Foo]} ON COLUMNS\n"
+                + "FROM [Sales]\n"
+                + "WHERE [Time].[1997].[Q3].[8]",
+            "Axis #0:\n"
+                + "{[Time].[1997].[Q3].[8]}\n"
+                + "Axis #1:\n"
+                + "{[Measures].[Foo]}\n"
+                + "Row #0: [Time].[1997].[Q3].[7]\n" );
+
+        //  one parameter, level below member
+        if ( isDefaultNullMemberRepresentation() ) {
+            assertQueryReturns(context.getConnection(),
+                "WITH MEMBER [Measures].[Foo] AS \n"
+                    + " ' ParallelPeriod([Time].[Month]).UniqueName '\n"
+                    + "SELECT {[Measures].[Foo]} ON COLUMNS\n"
+                    + "FROM [Sales]\n"
+                    + "WHERE [Time].[1997].[Q3]",
+                "Axis #0:\n"
+                    + "{[Time].[1997].[Q3]}\n"
+                    + "Axis #1:\n"
+                    + "{[Measures].[Foo]}\n"
+                    + "Row #0: [Time].[#null]\n" );
+        }
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void _testParallelPeriodThrowsException(Context context) {
+        assertQueryThrows(context,
+            "select {parallelperiod([Time].[Year], 1)} on columns "
+                + "from [Sales] where ([Time].[1998].[Q1].[2])",
+            "Hierarchy '[Time]' appears in more than one independent axis" );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testParallelPeriodDepends(Context context) {
+        assertMemberExprDependsOn(context.getConnection(),
+            "ParallelPeriod([Time].[Quarter], 2.0)", "{[Time]}" );
+        assertMemberExprDependsOn(context.getConnection(),
+            "ParallelPeriod([Time].[Quarter], 2.0, [Time].[1997].[Q3])", "{}" );
+        assertMemberExprDependsOn(context.getConnection(),
+            "ParallelPeriod()",
+            "{[Time]}" );
+        assertMemberExprDependsOn(context.getConnection(),
+            "ParallelPeriod([Product].[Food])", "{[Product]}" );
+        // [Gender].[M] is used here as a numeric expression!
+        // The numeric expression DOES depend upon [Product].
+        // The expression as a whole depends upon everything except [Gender].
+        String s1 = allHiersExcept( "[Gender]" );
+        assertMemberExprDependsOn(context.getConnection(),
+            "ParallelPeriod([Product].[Product Family], [Gender].[M], [Product].[Food])",
+            s1 );
+        // As above
+        String s11 = allHiersExcept( "[Gender]" );
+        assertMemberExprDependsOn(context.getConnection(),
+            "ParallelPeriod([Product].[Product Family], [Gender].[M])", s11 );
+        assertSetExprDependsOn(context.getConnection(),
+            "parallelperiod([Time].[Time].CurrentMember)",
+            "{[Time]}" );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testParallelPeriodLevelLag(Context context) {
+        assertQueryReturns(context.getConnection(),
+            "with member [Measures].[Prev Unit Sales] as "
+                + "        '([Measures].[Unit Sales], parallelperiod([Time].[Quarter], 2))' "
+                + "select "
+                + "    crossjoin({[Measures].[Unit Sales], [Measures].[Prev Unit Sales]}, {[Marital Status].[All Marital "
+                + "Status].children}) on columns, "
+                + "    {[Time].[1997].[Q3]} on rows "
+                + "from  "
+                + "    [Sales] ",
+            "Axis #0:\n"
+                + "{}\n"
+                + "Axis #1:\n"
+                + "{[Measures].[Unit Sales], [Marital Status].[M]}\n"
+                + "{[Measures].[Unit Sales], [Marital Status].[S]}\n"
+                + "{[Measures].[Prev Unit Sales], [Marital Status].[M]}\n"
+                + "{[Measures].[Prev Unit Sales], [Marital Status].[S]}\n"
+                + "Axis #2:\n"
+                + "{[Time].[1997].[Q3]}\n"
+                + "Row #0: 32,815\n"
+                + "Row #0: 33,033\n"
+                + "Row #0: 33,101\n"
+                + "Row #0: 33,190\n" );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testParallelPeriodLevel(Context context) {
+        assertQueryReturns(context.getConnection(),
+            "with "
+                + "    member [Measures].[Prev Unit Sales] as "
+                + "        '([Measures].[Unit Sales], parallelperiod([Time].[Quarter]))' "
+                + "select "
+                + "    crossjoin({[Measures].[Unit Sales], [Measures].[Prev Unit Sales]}, {[Marital Status].[All Marital "
+                + "Status].[M]}) on columns, "
+                + "    {[Time].[1997].[Q3].[8]} on rows "
+                + "from  "
+                + "    [Sales]",
+            "Axis #0:\n"
+                + "{}\n"
+                + "Axis #1:\n"
+                + "{[Measures].[Unit Sales], [Marital Status].[M]}\n"
+                + "{[Measures].[Prev Unit Sales], [Marital Status].[M]}\n"
+                + "Axis #2:\n"
+                + "{[Time].[1997].[Q3].[8]}\n"
+                + "Row #0: 10,957\n"
+                + "Row #0: 10,280\n" );
     }
 
 }

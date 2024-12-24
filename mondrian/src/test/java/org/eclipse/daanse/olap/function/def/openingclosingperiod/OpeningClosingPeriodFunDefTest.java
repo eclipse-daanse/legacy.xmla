@@ -316,4 +316,67 @@ class OpeningClosingPeriodFunDefTest {
     }
 
 
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testOpeningPeriod(Context context) {
+        assertAxisReturns(context.getConnection(),
+            "OpeningPeriod([Time].[Month], [Time].[1997].[Q3])",
+            "[Time].[1997].[Q3].[7]" );
+
+        assertAxisReturns(context.getConnection(),
+            "OpeningPeriod([Time].[Quarter], [Time].[1997])",
+            "[Time].[1997].[Q1]" );
+
+        assertAxisReturns(context.getConnection(),
+            "OpeningPeriod([Time].[Year], [Time].[1997])", "[Time].[1997]" );
+
+        assertAxisReturns(context.getConnection(),
+            "OpeningPeriod([Time].[Month], [Time].[1997])",
+            "[Time].[1997].[Q1].[1]" );
+
+        assertAxisReturns(context.getConnection(),
+            "OpeningPeriod([Product].[Product Name], [Product].[All Products].[Drink])",
+            "[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Imported Beer]" );
+
+        //getTestContext().withCube( "[Sales Ragged]" ).
+        assertAxisReturns(context.getConnection(), "[Sales Ragged]",
+            "OpeningPeriod([Store].[Store City], [Store].[All Stores].[Israel])",
+            "[Store].[Israel].[Israel].[Haifa]" );
+
+        //getTestContext().withCube( "[Sales Ragged]" ).
+        assertAxisReturns(context.getConnection(), "[Sales Ragged]",
+            "OpeningPeriod([Store].[Store State], [Store].[All Stores].[Israel])",
+            "" );
+
+        // Default member is [Time].[1997].
+        assertAxisReturns(context.getConnection(),
+            "OpeningPeriod([Time].[Month])", "[Time].[1997].[Q1].[1]" );
+
+        assertAxisReturns(context.getConnection(), "OpeningPeriod()", "[Time].[1997].[Q1]" );
+
+        //TestContext testContext = getTestContext().withCube( "[Sales Ragged]" );
+        assertAxisThrows(context.getConnection(),
+            "OpeningPeriod([Time].[Year], [Store].[All Stores].[Israel])",
+            "The <level> and <member> arguments to OpeningPeriod must be "
+                + "from the same hierarchy. The level was from '[Time]' but "
+                + "the member was from '[Store]'.", "[Sales Ragged]");
+
+        assertAxisThrows(context.getConnection(),
+            "OpeningPeriod([Store].[Store City])",
+            "The <level> and <member> arguments to OpeningPeriod must be "
+                + "from the same hierarchy. The level was from '[Store]' but "
+                + "the member was from '[Time]'.", "[Sales Ragged]");
+    }
+
+    /**
+     * This tests new NULL functionality exception throwing
+     */
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testOpeningPeriodNull(Context context) {
+        assertAxisThrows(context.getConnection(),
+            "OpeningPeriod([Time].[Month], NULL)",
+            "Mondrian Error:Failed to parse query 'select {OpeningPeriod([Time].[Month], NULL)} on columns from Sales'" );
+    }
+
 }
