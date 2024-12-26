@@ -1,0 +1,144 @@
+/*
+ * Copyright (c) 2024 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   SmartCity Jena - initial
+ *   Stefan Bischof (bipolis.org) - initial
+ */
+package org.eclipse.daanse.olap.function.def.strtoset;
+
+import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.opencube.junit5.TestUtil.assertAxisThrows;
+
+import org.eclipse.daanse.olap.api.Context;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
+import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
+
+import mondrian.rolap.RolapSchemaPool;
+
+
+class StrToSetFunDefTest {
+
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testStrToSet(Context context) {
+        // TODO: handle text after '}'
+        // TODO: handle string which ends too soon
+        // TODO: handle spaces before first '{'
+        // TODO: test spaces before unbracketed names,
+        //       e.g. "{Gender. M, Gender. F   }".
+
+        assertAxisReturns(context.getConnection(),
+            "StrToSet("
+                + " \"{[Gender].[F], [Gender].[M]}\","
+                + " [Gender])",
+            "[Gender].[F]\n"
+                + "[Gender].[M]" );
+
+        assertAxisThrows(context.getConnection(),
+            "StrToSet("
+                + " \"{[Gender].[F], [Time].[1997]}\","
+                + " [Gender])",
+            "member is of wrong hierarchy" );
+
+        // whitespace ok
+        assertAxisReturns(context.getConnection(),
+            "StrToSet("
+                + " \"  {   [Gender] .  [F]  ,[Gender].[M] }  \","
+                + " [Gender])",
+            "[Gender].[F]\n"
+                + "[Gender].[M]" );
+
+        // tuples
+        assertAxisReturns(context.getConnection(),
+            "StrToSet("
+                + "\""
+                + "{"
+                + " ([Gender].[F], [Time].[1997].[Q2]), "
+                + " ([Gender].[M], [Time].[1997])"
+                + "}"
+                + "\","
+                + " [Gender],"
+                + " [Time])",
+            "{[Gender].[F], [Time].[1997].[Q2]}\n"
+                + "{[Gender].[M], [Time].[1997]}" );
+
+        // matches unique name
+        assertAxisReturns(context.getConnection(),
+            "StrToSet("
+                + "\""
+                + "{"
+                + " [Store].[USA].[CA], "
+                + " [Store].[All Stores].[USA].OR,"
+                + " [Store].[All Stores]. [USA] . [WA]"
+                + "}"
+                + "\","
+                + " [Store])",
+            "[Store].[USA].[CA]\n"
+                + "[Store].[USA].[OR]\n"
+                + "[Store].[USA].[WA]" );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testStrToSetDupDimensionsFails(Context context) {
+        assertAxisThrows(context.getConnection(),
+            "StrToSet("
+                + "\""
+                + "{"
+                + " ([Gender].[F], [Time].[1997].[Q2], [Gender].[F]), "
+                + " ([Gender].[M], [Time].[1997], [Gender].[F])"
+                + "}"
+                + "\","
+                + " [Gender],"
+                + " [Time],"
+                + " [Gender])",
+            "Tuple contains more than one member of hierarchy '[Gender]'." );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testStrToSetIgnoreInvalidMembers(Context context) {
+        RolapSchemaPool.instance().clear();
+        ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
+        assertAxisReturns(context.getConnection(),
+            "StrToSet("
+                + "\""
+                + "{"
+                + " [Product].[Food],"
+                + " [Product].[Food].[You wouldn't like],"
+                + " [Product].[Drink].[You would like],"
+                + " [Product].[Drink].[Dairy]"
+                + "}"
+                + "\","
+                + " [Product])",
+            "[Product].[Food]\n"
+                + "[Product].[Drink].[Dairy]" );
+
+        assertAxisReturns(context.getConnection(),
+            "StrToSet("
+                + "\""
+                + "{"
+                + " ([Gender].[M], [Product].[Food]),"
+                + " ([Gender].[F], [Product].[Food].[You wouldn't like]),"
+                + " ([Gender].[M], [Product].[Drink].[You would like]),"
+                + " ([Gender].[F], [Product].[Drink].[Dairy])"
+                + "}"
+                + "\","
+                + " [Gender], [Product])",
+            "{[Gender].[M], [Product].[Food]}\n"
+                + "{[Gender].[F], [Product].[Drink].[Dairy]}" );
+    }
+
+
+}

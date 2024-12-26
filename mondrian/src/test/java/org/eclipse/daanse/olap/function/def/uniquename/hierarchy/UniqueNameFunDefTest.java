@@ -18,6 +18,7 @@ import static mondrian.olap.fun.FunctionTest.assertExprReturns;
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -30,6 +31,35 @@ class UniqueNameFunDefTest {
         assertExprReturns(context.getConnection(),
             "[Gender].DefaultMember.Hierarchy.UniqueName",
             "[Gender]" );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testTime(Context context) {
+        TestUtil.assertExprReturns(context.getConnection(),
+            "[Time].[1997].[Q1].[1].Hierarchy.UniqueName", "[Time]" );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testBasic9(Context context) {
+        TestUtil.assertExprReturns(context.getConnection(),
+            "[Gender].[All Gender].[F].Hierarchy.UniqueName", "[Gender]" );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testFirstInLevel9(Context context) {
+        TestUtil.assertExprReturns(context.getConnection(),
+            "[Education Level].[All Education Levels].[Bachelors Degree].Hierarchy.UniqueName",
+            "[Education Level]" );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testHierarchyAll(Context context) {
+        TestUtil.assertExprReturns(context.getConnection(),
+            "[Gender].[All Gender].Hierarchy.UniqueName", "[Gender]" );
     }
 
 }

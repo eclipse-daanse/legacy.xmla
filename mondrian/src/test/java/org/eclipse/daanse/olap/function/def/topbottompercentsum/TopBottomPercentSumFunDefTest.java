@@ -13,11 +13,13 @@
  */
 package org.eclipse.daanse.olap.function.def.topbottompercentsum;
 
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.opencube.junit5.TestUtil.*;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.result.Result;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -78,4 +80,62 @@ class TopBottomPercentSumFunDefTest {
                 + "{[Product].[Food].[Produce], [Time].[1997].[Q3]}" );
     }
 
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testTopPercent(Context context) {
+        assertAxisReturns(context.getConnection(),
+            "TopPercent({[Promotion Media].[Media Type].members}, 70, [Measures].[Unit Sales])",
+            "[Promotion Media].[No Media]" );
+    }
+
+    // todo: test precision
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testTopSum(Context context) {
+        assertAxisReturns(context.getConnection(),
+            "TopSum({[Promotion Media].[Media Type].members}, 200000, [Measures].[Unit Sales])",
+            "[Promotion Media].[No Media]\n"
+                + "[Promotion Media].[Daily Paper, Radio, TV]" );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testTopSumEmpty(Context context) {
+        assertAxisReturns(context.getConnection(),
+            "TopSum(Filter({[Promotion Media].[Media Type].members}, 1=0), "
+                + "200000, [Measures].[Unit Sales])",
+            "" );
+    }
+
+
+    /**
+     * This is a test for
+     * <a href="http://jira.pentaho.com/browse/MONDRIAN-2157">MONDRIAN-2157</a>
+     * <p/>
+     * <p>The results should be equivalent either we use aliases or not</p>
+     */
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testTopPercentWithAlias(Context context) {
+        final String queryWithoutAlias =
+            "select\n"
+                + " {[Measures].[Store Cost]}on rows,\n"
+                + " TopPercent([Product].[Brand Name].Members*[Time].[1997].children,"
+                + " 50, [Measures].[Unit Sales]) on columns\n"
+                + "from Sales";
+        String queryWithAlias =
+            "with\n"
+                + " set [*aaa] as '[Product].[Brand Name].Members*[Time].[1997].children'\n"
+                + "select\n"
+                + " {[Measures].[Store Cost]}on rows,\n"
+                + " TopPercent([*aaa], 50, [Measures].[Unit Sales]) on columns\n"
+                + "from Sales";
+
+        final Result result = executeQuery(context.getConnection(), queryWithoutAlias );
+        assertQueryReturns(context.getConnection(),
+            queryWithAlias,
+            TestUtil.toString( result ) );
+    }
 }

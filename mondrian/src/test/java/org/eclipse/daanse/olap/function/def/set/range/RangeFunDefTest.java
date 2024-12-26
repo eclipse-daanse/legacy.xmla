@@ -185,4 +185,93 @@ class RangeFunDefTest {
             "" );
     }
 
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testComplexSlicerWith_Calc(Context context) {
+        String query =
+            "with "
+                + "member [Time].[H1 1997] as 'Aggregate([Time].[1997].[Q1] : [Time].[1997].[Q2])', $member_scope = \"CUBE\","
+                + " MEMBER_ORDINAL = 6 "
+                + "SELECT "
+                + "{[Measures].[Customer Count]} ON 0, "
+                + "{[Education Level].Members} ON 1 "
+                + "FROM [Sales] "
+                + "WHERE {[Time].[H1 1997]}";
+        String expectedResult =
+            "Axis #0:\n"
+                + "{[Time].[H1 1997]}\n"
+                + "Axis #1:\n"
+                + "{[Measures].[Customer Count]}\n"
+                + "Axis #2:\n"
+                + "{[Education Level].[All Education Levels]}\n"
+                + "{[Education Level].[Bachelors Degree]}\n"
+                + "{[Education Level].[Graduate Degree]}\n"
+                + "{[Education Level].[High School Degree]}\n"
+                + "{[Education Level].[Partial College]}\n"
+                + "{[Education Level].[Partial High School]}\n"
+                + "Row #0: 4,257\n"
+                + "Row #1: 1,109\n"
+                + "Row #2: 240\n"
+                + "Row #3: 1,237\n"
+                + "Row #4: 394\n"
+                + "Row #5: 1,277\n";
+        assertQueryReturns(context.getConnection(), query, expectedResult );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testComplexSlicerWith_CalcBase(Context context) {
+        String query =
+            "with "
+                + "member [Time].[H1 1997] as 'Aggregate([Time].[1997].[Q1] : [Time].[1997].[Q2])', $member_scope = \"CUBE\","
+                + " MEMBER_ORDINAL = 6 "
+                + "SELECT "
+                + "{[Measures].[Customer Count]} ON 0, "
+                + "{[Education Level].Members} ON 1 "
+                + "FROM [Sales] "
+                + "WHERE {[Time].[H1 1997],[Time].[1998].[Q1]}";
+        String expectedResult =
+            "Axis #0:\n"
+                + "{[Time].[H1 1997]}\n"
+                + "{[Time].[1998].[Q1]}\n"
+                + "Axis #1:\n"
+                + "{[Measures].[Customer Count]}\n"
+                + "Axis #2:\n"
+                + "{[Education Level].[All Education Levels]}\n"
+                + "{[Education Level].[Bachelors Degree]}\n"
+                + "{[Education Level].[Graduate Degree]}\n"
+                + "{[Education Level].[High School Degree]}\n"
+                + "{[Education Level].[Partial College]}\n"
+                + "{[Education Level].[Partial High School]}\n"
+                + "Row #0: 4,257\n"
+                + "Row #1: 1,109\n"
+                + "Row #2: 240\n"
+                + "Row #3: 1,237\n"
+                + "Row #4: 394\n"
+                + "Row #5: 1,277\n";
+        assertQueryReturns(context.getConnection(), query, expectedResult );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testComplexSlicerWith_Calc_Calc(Context context) {
+        String query =
+            "with "
+                + "member [Time].[H1 1997] as 'Aggregate([Time].[1997].[Q1] : [Time].[1997].[Q2])', $member_scope = \"CUBE\","
+                + " MEMBER_ORDINAL = 6 "
+                + "member [Education Level].[Partial] as 'Aggregate([Education Level].[Partial College]:[Education Level]"
+                + ".[Partial High School])', $member_scope = \"CUBE\", MEMBER_ORDINAL = 7 "
+                + "SELECT "
+                + "{[Measures].[Customer Count]} ON 0 "
+                + "FROM [Sales] "
+                + "WHERE ([Time].[H1 1997],[Education Level].[Partial])";
+        String expectedResult =
+            "Axis #0:\n"
+                + "{[Time].[H1 1997], [Education Level].[Partial]}\n"
+                + "Axis #1:\n"
+                + "{[Measures].[Customer Count]}\n"
+                + "Row #0: 1,671\n";
+        assertQueryReturns(context.getConnection(), query, expectedResult );
+    }
+
 }

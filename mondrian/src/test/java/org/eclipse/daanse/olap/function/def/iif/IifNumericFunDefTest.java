@@ -14,6 +14,7 @@
 package org.eclipse.daanse.olap.function.def.iif;
 
 import static mondrian.olap.fun.FunctionTest.assertExprReturns;
+import static org.opencube.junit5.TestUtil.*;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -48,6 +49,46 @@ class IifNumericFunDefTest {
         assertExprReturns(context.getConnection(),
             "IIf(([Measures].[Unit Sales],[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]) > 100, 20,null)",
             "20" );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testIifFWithBooleanBooleanAndNumericParameterForReturningTruePart(Context context) {
+        assertQueryReturns(context.getConnection(),
+            "SELECT Filter(Store.allmembers, "
+                + "iif(measures.profit < 400000,"
+                + "[store].currentMember.NAME = \"USA\", 0)) on 0 FROM SALES",
+            "Axis #0:\n"
+                + "{}\n"
+                + "Axis #1:\n"
+                + "{[Store].[USA]}\n"
+                + "Row #0: 266,773\n" );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testIifWithBooleanBooleanAndNumericParameterForReturningFalsePart(Context context) {
+        assertQueryReturns(context.getConnection(),
+            "SELECT Filter([Store].[USA].[CA].[Beverly Hills].children, "
+                + "iif(measures.profit > 400000,"
+                + "[store].currentMember.NAME = \"USA\", 1)) on 0 FROM SALES",
+            "Axis #0:\n"
+                + "{}\n"
+                + "Axis #1:\n"
+                + "{[Store].[USA].[CA].[Beverly Hills].[Store 6]}\n"
+                + "Row #0: 21,333\n" );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testIIFWithBooleanBooleanAndNumericParameterForReturningZero(Context context) {
+        assertQueryReturns(context.getConnection(),
+            "SELECT Filter(Store.allmembers, "
+                + "iif(measures.profit > 400000,"
+                + "[store].currentMember.NAME = \"USA\", 0)) on 0 FROM SALES",
+            "Axis #0:\n"
+                + "{}\n"
+                + "Axis #1:\n" );
     }
 
 }

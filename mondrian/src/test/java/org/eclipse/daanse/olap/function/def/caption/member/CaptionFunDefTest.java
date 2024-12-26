@@ -13,6 +13,7 @@
  */
 package org.eclipse.daanse.olap.function.def.caption.member;
 
+import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -26,6 +27,19 @@ class CaptionFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMemberCaption(Context context) {
         TestUtil.assertExprReturns(context.getConnection(), "[Time].[1997].Caption", "1997" );
+    }
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testGetCaptionUsingMemberDotCaption(Context context) {
+        assertQueryReturns(context.getConnection(),
+            "SELECT Filter(Store.allmembers, "
+                + "[store].currentMember.caption = \"USA\") on 0 FROM SALES",
+            "Axis #0:\n"
+                + "{}\n"
+                + "Axis #1:\n"
+                + "{[Store].[USA]}\n"
+                + "Row #0: 266,773\n" );
     }
 
 }

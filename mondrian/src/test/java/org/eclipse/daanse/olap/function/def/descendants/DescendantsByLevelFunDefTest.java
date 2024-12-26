@@ -13,6 +13,8 @@
  */
 package org.eclipse.daanse.olap.function.def.descendants;
 
+import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
+import static mondrian.olap.fun.FunctionTest.*;
 import static mondrian.olap.fun.FunctionTest.hierarchized1997;
 import static mondrian.olap.fun.FunctionTest.months;
 import static mondrian.olap.fun.FunctionTest.quarters;
@@ -598,5 +600,19 @@ class DescendantsByLevelFunDefTest {
             "" );
     }
 
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testItemMember(Context context) {
+        assertExprReturns(context.getConnection(),
+            "Descendants([Time].[1997], [Time].[Month]).Item(1).Item(0).UniqueName",
+            "[Time].[1997].[Q1].[2]" );
 
+        // Access beyond the list yields the Null member.
+        if ( isDefaultNullMemberRepresentation() ) {
+            assertExprReturns(context.getConnection(),
+                "[Time].[1997].Children.Item(6).UniqueName", "[Time].[#null]" );
+            assertExprReturns(context.getConnection(),
+                "[Time].[1997].Children.Item(-1).UniqueName", "[Time].[#null]" );
+        }
+    }
 }

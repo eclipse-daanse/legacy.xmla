@@ -13,6 +13,7 @@
  */
 package org.eclipse.daanse.olap.function.def.crossjoin;
 
+import static mondrian.olap.fun.FunctionTest.assertExprReturns;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.assertQueryThrows;
@@ -492,4 +493,13 @@ class CrossJoinFunDefTest {
             expectedResult );
     }
 
+
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    void testItemTuple(Context context) {
+        assertExprReturns(context.getConnection(),
+            "CrossJoin([Gender].[All Gender].children, "
+                + "[Time].[1997].[Q2].children).Item(0).Item(1).UniqueName",
+            "[Time].[1997].[Q2].[4]" );
+    }
 }
