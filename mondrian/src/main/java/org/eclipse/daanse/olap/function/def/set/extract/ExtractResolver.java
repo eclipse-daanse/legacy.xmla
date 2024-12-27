@@ -56,7 +56,7 @@ public class ExtractResolver extends NoExpressionRequiredFunctionResolver {
         ExtractFunDef.findExtractedHierarchies(args, extractedHierarchies, extractedOrdinals);
         FunctionParameterR[] parameterTypes = new FunctionParameterR[args.length];
         parameterTypes[0] = new FunctionParameterR(DataType.SET);
-        Arrays.fill(parameterTypes, 1, parameterTypes.length, DataType.HIERARCHY);
+        Arrays.fill(parameterTypes, 1, parameterTypes.length, new FunctionParameterR(DataType.HIERARCHY));
 
         return new ExtractFunDef(parameterTypes);
     }
