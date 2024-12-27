@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.core.BasicContextConfig;
 import org.eclipse.daanse.olap.function.core.FunctionServiceImpl;
+import org.eclipse.daanse.olap.function.core.resolver.NullReservedWordsResolver;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateResolver;
 import org.eclipse.daanse.olap.function.def.aggregate.avg.AvgResolver;
 import org.eclipse.daanse.olap.function.def.aggregate.children.AggregateChildrenResolver;
@@ -221,7 +222,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
             testConfig.rolapConnectionShepherdNbThreads());
 	    aggMgr = new AggregationManager(this);
 	    queryLimimitSemaphore=new Semaphore(testConfig.queryLimit());
-
+	    functionService.addResolver(new NullReservedWordsResolver());
 	    functionService.addResolver(new AsAliasResolver());
 	    functionService.addResolver(new AncestorResolver());
 	    functionService.addResolver(new AvgResolver());

@@ -28,8 +28,6 @@ import mondrian.olap.fun.vba.Vba;
  */
 public class BuiltinFunTable extends FunTableImpl {
 
-    public static final String LEVELS = "Levels";
-    public static final String MEMBERS = "Members";
     /** the singleton */
     private static BuiltinFunTable instance;
 
@@ -43,8 +41,6 @@ public class BuiltinFunTable extends FunTableImpl {
 
     @Override
 	public void defineFunctions(FunctionTableCollector builder) {
-        builder.defineReserved("NULL");
-
         // Define VBA functions.
         for (FunctionDefinition funDef : JavaFunDef.scan(Vba.class)) {
             builder.define(funDef);

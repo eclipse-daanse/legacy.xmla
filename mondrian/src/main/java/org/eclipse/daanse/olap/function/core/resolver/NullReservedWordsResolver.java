@@ -15,26 +15,20 @@ package org.eclipse.daanse.olap.function.core.resolver;
 
 import java.util.List;
 
+import org.eclipse.daanse.mdx.model.api.expression.operation.EmptyOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
-import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
-import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.osgi.service.component.annotations.Component;
 
-public class NonFunctionResolver implements FunctionResolver {
-
-    private FunctionMetaData functionMetaData;
-    
-    public NonFunctionResolver(FunctionMetaData functionMetaData) {
-        this.functionMetaData = functionMetaData;
-    }
-
-    
+@Component(service = FunctionResolver.class)
+public class NullReservedWordsResolver implements FunctionResolver {
+    private static OperationAtom atom = new EmptyOperationAtom();
     @Override
     public OperationAtom getFunctionAtom() {
-        return functionMetaData.operationAtom();
+        return atom; //need atom for NPE
     }
 
     @Override
@@ -43,9 +37,12 @@ public class NonFunctionResolver implements FunctionResolver {
     }
 
     @Override
-    public boolean requiresScalarExpressionOnArgument(int k) {
-        DataType[] parameterDataTypes = functionMetaData.parameterDataTypes();
-        return (k >= parameterDataTypes.length) || (parameterDataTypes[k] != DataType.SET);
+    public boolean requiresScalarExpressionOnArgument(int positionOfArgument) {
+        return false;
     }
 
+    @Override
+    public List<String> getReservedWords() {
+        return List.of("NULL");
+    }
 }
