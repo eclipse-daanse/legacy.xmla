@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.calc.impl.ValueCalc;
-import mondrian.olap.fun.ReflectiveMultiResolver;
 
 public class AggregateFunDef extends AbstractAggregateFunDef {
 

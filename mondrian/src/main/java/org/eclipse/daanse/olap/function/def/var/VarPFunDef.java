@@ -16,7 +16,6 @@ package org.eclipse.daanse.olap.function.def.var;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
-import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
@@ -28,7 +27,6 @@ import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 
 import mondrian.calc.impl.ValueCalc;
 import mondrian.olap.fun.FunUtil;
-import mondrian.olap.fun.ReflectiveMultiResolver;
 
 public class VarPFunDef extends AbstractAggregateFunDef {
 
