@@ -86,12 +86,14 @@ import org.eclipse.daanse.olap.function.def.member.AncestorsResolver;
 import org.eclipse.daanse.olap.function.def.member.cousin.CousinResolver;
 import org.eclipse.daanse.olap.function.def.member.datamember.DataMemberResolver;
 import org.eclipse.daanse.olap.function.def.member.defaultmember.DefaultMemberResolver;
+import org.eclipse.daanse.olap.function.def.member.defaultmember.NonFunctionDefaultMemberResolver;
 import org.eclipse.daanse.olap.function.def.member.firstchild.FirstChildResolver;
 import org.eclipse.daanse.olap.function.def.member.firstsibling.FirstSiblingResolver;
 import org.eclipse.daanse.olap.function.def.member.lastchild.LastChildResolver;
 import org.eclipse.daanse.olap.function.def.member.lastsibling.LastSiblingResolver;
 import org.eclipse.daanse.olap.function.def.member.memberorderkey.MemberOrderKeyResolver;
 import org.eclipse.daanse.olap.function.def.member.members.MembersResolver;
+import org.eclipse.daanse.olap.function.def.member.members.NonFunctionMembersResolver;
 import org.eclipse.daanse.olap.function.def.member.namedsetcurrentordinal.NamedSetCurrentOrdinalResolver;
 import org.eclipse.daanse.olap.function.def.member.nextmember.NextMemberResolver;
 import org.eclipse.daanse.olap.function.def.member.parentcalc.ParentResolver;
@@ -425,7 +427,8 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new PropertiesResolver());
         functionService.addResolver(new ParameterResolver());
         functionService.addResolver(new ParamRefResolver());
-        
+        functionService.addResolver(new NonFunctionDefaultMemberResolver());
+        functionService.addResolver(new NonFunctionMembersResolver());
 }
 
 	@Override

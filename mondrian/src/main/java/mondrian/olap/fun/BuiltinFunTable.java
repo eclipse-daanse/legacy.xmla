@@ -11,12 +11,7 @@
 */
 package mondrian.olap.fun;
 
-import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
-import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
-import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
-import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
-import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 
 import mondrian.olap.fun.vba.Excel;
 import mondrian.olap.fun.vba.Vba;
@@ -49,20 +44,6 @@ public class BuiltinFunTable extends FunTableImpl {
     @Override
 	public void defineFunctions(FunctionTableCollector builder) {
         builder.defineReserved("NULL");
-
-
-        // "<Dimension>.DefaultMember". The function is implemented using an
-        // implicit cast to hierarchy, and we create a FunInfo for
-        // documentation & backwards compatibility.
-        OperationAtom functionAtomDefaultMember = new PlainPropertyOperationAtom("DefaultMember");
-		builder.define(new FunctionMetaDataR(functionAtomDefaultMember, "Returns the default member of a dimension.", "<DIMENSION>.DefaultMember",
-				 DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.DIMENSION) }));
-
-        // <Dimension>.Members is really just shorthand for <Hierarchy>.Members
-    	 OperationAtom functionAtomMembers =new PlainPropertyOperationAtom(MEMBERS);
-		builder.define(	new FunctionMetaDataR(functionAtomMembers, "Returns the set of members in a dimension.", "<DIMENSION>.Members",
-						DataType.SET, new FunctionParameterR[] { new FunctionParameterR(DataType.DIMENSION) }));
-
 
         // Define VBA functions.
         for (FunctionDefinition funDef : JavaFunDef.scan(Vba.class)) {
