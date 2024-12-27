@@ -21,12 +21,13 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.type.HierarchyType;
 
 /**
- * 
+ *
  * Actually returns a hierarchy. NOT an DIMENSION. This is consistent with
  * Analysis Services.
  *
@@ -36,7 +37,7 @@ public class DimensionsNumericFunDef extends AbstractFunctionDefinition {
 	static final String DIMENSIONS_NUMERIC_FUN_DESCRIPTION = "Returns the hierarchy whose zero-based position within the cube is specified by a numeric expression.";
 	static final OperationAtom atom = new FunctionOperationAtom("Dimensions");
 	static final FunctionMetaData functionalMetaData = new FunctionMetaDataR(atom, DIMENSIONS_NUMERIC_FUN_DESCRIPTION,
-			"Dimension(<Numeric Expression>)", DataType.HIERARCHY, new DataType[] { DataType.NUMERIC });
+			"Dimension(<Numeric Expression>)", DataType.HIERARCHY, new FunctionParameterR[] { new FunctionParameterR(  DataType.NUMERIC ) });
 
 	public DimensionsNumericFunDef() {
 		super(functionalMetaData);

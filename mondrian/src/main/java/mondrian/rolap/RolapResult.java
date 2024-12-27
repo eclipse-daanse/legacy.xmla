@@ -60,6 +60,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateCalc;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
@@ -333,7 +334,7 @@ public class RolapResult extends ResultBase {
         OperationAtom internalOperationAtom = new InternalOperationAtom("$x");
 
         FunctionMetaData functionMetaData = new FunctionMetaDataR(internalOperationAtom, "x",
-                "$x", DataType.NUMERIC, new DataType[] { });
+                "$x", DataType.NUMERIC, new FunctionParameterR[] { });
         Expression partialExp =
                 new ResolvedFunCallImpl(
                         new org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition(functionMetaData) {

@@ -20,6 +20,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 
@@ -27,7 +28,7 @@ public class MemberOrderKeyFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("OrderKey");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the member order key.", "<MEMBER>.OrderKey", DataType.VALUE, new DataType[] { DataType.MEMBER });
+            "Returns the member order key.", "<MEMBER>.OrderKey", DataType.VALUE, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ) });
 
     /**
      * Creates the singleton MemberOrderKeyFunDef.

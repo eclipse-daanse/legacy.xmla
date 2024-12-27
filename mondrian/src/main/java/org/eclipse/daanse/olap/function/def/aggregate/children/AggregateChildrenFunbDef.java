@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.calc.impl.ValueCalc;
@@ -32,7 +33,7 @@ public class AggregateChildrenFunbDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtom$AggregateChildren = new InternalOperationAtom("$AggregateChildren");
     static FunctionMetaData functionMetaData$AggregateChildren = new FunctionMetaDataR(functionAtom$AggregateChildren,
             "Equivalent to 'Aggregate(<Hierarchy>.CurrentMember.Children); for internal use.",
-            "$AggregateChildren(<Hierarchy>)", DataType.NUMERIC, new DataType[] { DataType.HIERARCHY });
+            "$AggregateChildren(<Hierarchy>)", DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY ) });
 
     public AggregateChildrenFunbDef() {
         super(functionMetaData$AggregateChildren);

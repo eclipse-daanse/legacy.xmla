@@ -22,6 +22,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class CaptionFunDef extends AbstractFunctionDefinition {
@@ -30,7 +31,7 @@ public class CaptionFunDef extends AbstractFunctionDefinition {
     static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Caption");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the caption of a hierarchy.", "<HIERARCHY>.Caption", DataType.STRING,
-            new DataType[] { DataType.HIERARCHY });
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY )});
 
     public CaptionFunDef() {
         super(functionMetaData);

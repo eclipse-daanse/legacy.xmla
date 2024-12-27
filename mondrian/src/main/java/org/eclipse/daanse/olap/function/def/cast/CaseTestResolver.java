@@ -54,7 +54,7 @@ public class CaseTestResolver  implements FunctionResolver {
             return null;
         }
 
-        return new CaseTestFunDef(returnType, Expressions.categoriesOf(args));
+        return new CaseTestFunDef(returnType, Expressions.functionParameterOf(args));
     }
 
     @Override

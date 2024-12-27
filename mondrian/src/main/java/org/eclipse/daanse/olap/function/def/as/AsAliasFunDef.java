@@ -7,9 +7,9 @@
  * Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
  *
  * ---- All changes after Fork in 2023 ------------------------
- * 
+ *
  * Project: Eclipse daanse
- * 
+ *
  * Copyright (c) 2023 Contributors to the Eclipse Foundation.
  *
  * This program and the accompanying materials are made
@@ -31,6 +31,7 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.QueryImpl;
@@ -52,7 +53,7 @@ public class AsAliasFunDef extends AbstractFunctionDefinition {
 
 	static final OperationAtom functionAtom = new InfixOperationAtom("AS");
 	static final FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, DESCRIPTION, SIGNATURE,
-			DataType.SET, new DataType[] { DataType.SET, DataType.NUMERIC });
+			DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.SET ), new FunctionParameterR( DataType.NUMERIC ) });
 
 	private final QueryImpl.ScopedNamedSet scopedNamedSet;
 

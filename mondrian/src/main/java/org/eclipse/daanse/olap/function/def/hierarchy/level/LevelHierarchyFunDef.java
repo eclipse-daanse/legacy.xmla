@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class LevelHierarchyFunDef extends AbstractFunctionDefinition {
@@ -28,7 +29,7 @@ public class LevelHierarchyFunDef extends AbstractFunctionDefinition {
     static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Hierarchy");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns a level's hierarchy.", "<LEVEL>.Hierarchy", DataType.HIERARCHY, new DataType[] { DataType.LEVEL });
+            "Returns a level's hierarchy.", "<LEVEL>.Hierarchy", DataType.HIERARCHY, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL ) });
 
     public LevelHierarchyFunDef() {
         super(functionMetaData);

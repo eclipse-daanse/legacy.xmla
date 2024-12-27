@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFunctionResolver;
 import org.osgi.service.component.annotations.Component;
 
@@ -29,7 +30,7 @@ import mondrian.olap.fun.sort.Sorter.SorterFlag;
 @Component(service = FunctionResolver.class)
 public class OrderResolver  extends NoExpressionRequiredFunctionResolver {
     private final List<String> reservedWords;
-    static DataType[] argTypes;
+    static FunctionParameterR[] argTypes;
 
     public OrderResolver() {
 
@@ -38,7 +39,7 @@ public class OrderResolver  extends NoExpressionRequiredFunctionResolver {
 
     @Override
     public FunctionDefinition resolve( Expression[] args, Validator validator, List<Conversion> conversions ) {
-      OrderResolver.argTypes = new DataType[args.length];
+      OrderResolver.argTypes = new FunctionParameterR[args.length];
 
       if ( args.length < 2 ) {
         return null;
@@ -47,14 +48,14 @@ public class OrderResolver  extends NoExpressionRequiredFunctionResolver {
       if ( !validator.canConvert( 0, args[0], DataType.SET, conversions ) ) {
         return null;
       }
-      OrderResolver.argTypes[0] = DataType.SET;
+      OrderResolver.argTypes[0] = new FunctionParameterR(DataType.SET);
       // after fist args, should be: value [, symbol]
       int i = 1;
       while ( i < args.length ) {
         if ( !validator.canConvert( i, args[i], DataType.VALUE, conversions ) ) {
           return null;
         } else {
-          OrderResolver.argTypes[i] = DataType.VALUE;
+          OrderResolver.argTypes[i] = new FunctionParameterR(DataType.VALUE);
           i++;
         }
         // if symbol is not specified, skip to the next
@@ -64,7 +65,7 @@ public class OrderResolver  extends NoExpressionRequiredFunctionResolver {
           if ( !validator.canConvert( i, args[i], DataType.SYMBOL, conversions ) ) {
             // continue, will default sort flag for prev arg to ASC
           } else {
-            OrderResolver.argTypes[i] = DataType.SYMBOL;
+            OrderResolver.argTypes[i] = new FunctionParameterR(DataType.SYMBOL);
             i++;
           }
         }

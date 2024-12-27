@@ -20,6 +20,7 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class MembersFunDef extends AbstractFunctionDefinition {
@@ -28,7 +29,7 @@ public class MembersFunDef extends AbstractFunctionDefinition {
     static FunctionOperationAtom functionOperationAtom = new FunctionOperationAtom("Members");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionOperationAtom,
             "Returns the last child of the parent of a member.", "<STRING>Members(<STRING>)", DataType.MEMBER,
-            new DataType[] { DataType.STRING });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.STRING ) });
 
     public MembersFunDef() {
         super(functionMetaData);

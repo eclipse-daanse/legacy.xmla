@@ -25,6 +25,7 @@ import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.MondrianException;
@@ -37,7 +38,7 @@ public class RangeFunDef extends AbstractFunctionDefinition {
     static final RangeFunDef instance = new RangeFunDef();
     static final FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
             "Infix colon operator returns the set of members between a given pair of members.", "<Member> : <Member>",
-            DataType.SET, new DataType[] { DataType.MEMBER, DataType.MEMBER });
+            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ), new FunctionParameterR( DataType.MEMBER ) });
     private final static String twoNullsNotSupported = "Function does not support two NULL member parameters";
 
     public RangeFunDef() {

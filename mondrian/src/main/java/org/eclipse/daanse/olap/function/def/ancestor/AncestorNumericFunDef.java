@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.calc.api.IntegerCalc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.MondrianException;
@@ -34,7 +35,7 @@ class AncestorNumericFunDef extends AbstractFunctionDefinition {
 	static final FunctionMetaData fmdNum = new FunctionMetaDataR(AncestorResolver.operationAtom,
 			"Ancestor(<Member>, <Numeric Expression>)",
 			"Returns the ancestor of a member at a specified level, defined by the distance.", DataType.MEMBER,
-			new DataType[] { DataType.MEMBER, DataType.NUMERIC });
+			new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ), new FunctionParameterR( DataType.NUMERIC) });
 
 	public AncestorNumericFunDef() {
 		super(fmdNum);

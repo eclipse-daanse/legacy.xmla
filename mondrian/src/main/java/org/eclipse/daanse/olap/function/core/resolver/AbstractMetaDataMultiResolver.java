@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.query.base.Expressions;
 
 import mondrian.olap.MondrianException;
@@ -65,7 +66,7 @@ public abstract class AbstractMetaDataMultiResolver implements FunctionResolver 
 				}
 			}
 
-			DataType[] paramDataTypesOfExpr = Expressions.categoriesOf(expressions);
+			FunctionParameterR[] paramDataTypesOfExpr = Expressions.functionParameterOf(expressions);
 			FunctionMetaData fmdTarget = new FunctionMetaDataR(operationAtom, functionMetaData.description(),
 					functionMetaData.signature(), functionMetaData.returnCategory(), paramDataTypesOfExpr);
 			return createFunDef(expressions, functionMetaData, fmdTarget);

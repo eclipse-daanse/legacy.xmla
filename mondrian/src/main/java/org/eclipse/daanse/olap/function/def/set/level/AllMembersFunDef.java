@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.LevelCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class AllMembersFunDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class AllMembersFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("AllMembers");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns a set that contains all members, including calculated members, of the specified level.",
-            "<LEVEL>.AllMembers", DataType.SET, new DataType[] { DataType.LEVEL });
+            "<LEVEL>.AllMembers", DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL ) });
 
     public AllMembersFunDef() {
         super(functionMetaData);

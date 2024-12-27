@@ -23,6 +23,7 @@ import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.type.dimension.DimensionOfHierarchyCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class DimensionOfHierarchyFunDef extends AbstractFunctionDefinition {
@@ -31,7 +32,7 @@ public class DimensionOfHierarchyFunDef extends AbstractFunctionDefinition {
 
 	private static final FunctionMetaData functionMetaData = new FunctionMetaDataR(atom,
 			"Returns the dimension that contains a specified hierarchy.", "<Hierarchy>.Dimension", DataType.DIMENSION,
-			new DataType[] { DataType.HIERARCHY });
+			new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY ) });
 
 	public DimensionOfHierarchyFunDef() {
 		super(functionMetaData);

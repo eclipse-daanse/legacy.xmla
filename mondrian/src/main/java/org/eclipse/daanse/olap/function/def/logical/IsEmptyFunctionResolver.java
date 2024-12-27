@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinitionMultiResolver;
 import org.osgi.service.component.annotations.Component;
 
@@ -31,11 +32,11 @@ public class IsEmptyFunctionResolver extends AbstractFunctionDefinitionMultiReso
 
     private static FunctionMetaData functionMetaDataString = new FunctionMetaDataR(fAtom,
         "Determines if an expression evaluates to the empty cell value.", "IsEmpty(<Value Expression>)",
-        DataType.LOGICAL, new DataType[]{DataType.STRING});
+        DataType.LOGICAL, new FunctionParameterR[]{ new FunctionParameterR(DataType.STRING)});
 
     private static FunctionMetaData functionMetaDataNumeric = new FunctionMetaDataR(fAtom,
         "Determines if an expression evaluates to the empty cell value.", "IsEmpty(<Value Expression>)",
-        DataType.LOGICAL, new DataType[]{DataType.NUMERIC});
+        DataType.LOGICAL, new FunctionParameterR[]{ new FunctionParameterR(DataType.NUMERIC)});
 
     public IsEmptyFunctionResolver() {
         super(List.of(new IsEmptyFunDef(functionMetaDataString), new IsEmptyFunDef(functionMetaDataNumeric)));

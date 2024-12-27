@@ -35,6 +35,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.udf.impl.BooleanScalarUserDefinedFunctionCalcImpl;
 
@@ -99,9 +100,9 @@ public class UdfResolver implements FunctionResolver {
     @Override
 	public List<FunctionMetaData> getRepresentativeFunctionMetaDatas()  {
         Type[] parameterTypes = udf.getParameterTypes();
-        DataType[] parameterCategories = new DataType[parameterTypes.length];
+        FunctionParameterR[] parameterCategories = new FunctionParameterR[parameterTypes.length];
         for (int i = 0; i < parameterCategories.length; i++) {
-            parameterCategories[i] = TypeUtil.typeToCategory(parameterTypes[i]);
+            parameterCategories[i] = new FunctionParameterR(TypeUtil.typeToCategory(parameterTypes[i]));
         }
         Type returnType = udf.getReturnType(parameterTypes);
         return List.of( new UdfFunDef(parameterCategories, returnType).getFunctionMetaData());
@@ -117,7 +118,7 @@ public class UdfResolver implements FunctionResolver {
         if (args.length != parameterTypes.length) {
             return null;
         }
-        DataType[] parameterCategories = new DataType[parameterTypes.length];
+        FunctionParameterR[] parameterCategories = new FunctionParameterR[parameterTypes.length];
         Type[] castArgTypes = new Type[parameterTypes.length];
         for (int i = 0; i < parameterTypes.length; i++) {
             Type parameterType = parameterTypes[i];
@@ -130,7 +131,7 @@ public class UdfResolver implements FunctionResolver {
             {
                 return null;
             }
-            parameterCategories[i] = parameterCategory;
+            parameterCategories[i] = new FunctionParameterR(parameterCategory);
             if (!parameterType.equals(argType)) {
                 castArgTypes[i] =
                     TypeUtil.castType(argType, parameterCategory);
@@ -157,7 +158,7 @@ public class UdfResolver implements FunctionResolver {
     private class UdfFunDef extends AbstractFunctionDefinition {
         private Type returnType;
 
-        public UdfFunDef(DataType[] parameterCategories, Type returnType) {
+        public UdfFunDef(FunctionParameterR[] parameterCategories, Type returnType) {
         	
 
             super(new FunctionMetaDataR( UdfResolver.this.getSyntax().getOperationAtom(UdfResolver.this.getName()), UdfResolver.this.getDescription(), UdfResolver.this.getSignature(),  TypeUtil.typeToCategory(returnType), parameterCategories));

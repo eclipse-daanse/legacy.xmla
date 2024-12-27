@@ -22,6 +22,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class CousinFunDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class CousinFunDef extends AbstractFunctionDefinition {
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtomCousin,
             "Returns the member with the same relative position under <ancestor member> as the member specified.",
             "<Member> Cousin(<Member>, <Ancestor Member>)", DataType.MEMBER,
-            new DataType[] { DataType.MEMBER, DataType.MEMBER });
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ), new FunctionParameterR( DataType.MEMBER ) });
 
     public CousinFunDef() {
         super(functionMetaData);

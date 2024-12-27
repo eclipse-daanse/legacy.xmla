@@ -23,6 +23,7 @@ import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFunctionResolver;
 
 public class ExtractResolver extends NoExpressionRequiredFunctionResolver {
@@ -53,8 +54,8 @@ public class ExtractResolver extends NoExpressionRequiredFunctionResolver {
         List<Integer> extractedOrdinals = new ArrayList<>();
         final List<Hierarchy> extractedHierarchies = new ArrayList<>();
         ExtractFunDef.findExtractedHierarchies(args, extractedHierarchies, extractedOrdinals);
-        DataType[] parameterTypes = new DataType[args.length];
-        parameterTypes[0] = DataType.SET;
+        FunctionParameterR[] parameterTypes = new FunctionParameterR[args.length];
+        parameterTypes[0] = new FunctionParameterR(DataType.SET);
         Arrays.fill(parameterTypes, 1, parameterTypes.length, DataType.HIERARCHY);
 
         return new ExtractFunDef(parameterTypes);

@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.DimensionCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class NameFunDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class NameFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Name");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the name of a dimension.", "<DIMENSION>.Name", DataType.STRING,
-            new DataType[] { DataType.DIMENSION });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.DIMENSION ) });
 
     public NameFunDef() {
         super(functionMetaData);

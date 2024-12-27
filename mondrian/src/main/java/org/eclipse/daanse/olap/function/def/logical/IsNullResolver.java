@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinitionMultiResolver;
 import org.osgi.service.component.annotations.Component;
 
@@ -32,16 +33,16 @@ public class IsNullResolver extends AbstractFunctionDefinitionMultiResolver {
     private static OperationAtom atom = new PostfixOperationAtom("IS NULL");
 
     private static FunctionMetaData functionMetaDataWithMember = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new DataType[] { DataType.MEMBER });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
 
     private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new DataType[] { DataType.LEVEL });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL ) });
 
     private static FunctionMetaData functionMetaDataWithHierrchy = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new DataType[] { DataType.HIERARCHY });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY ) });
 
     private static FunctionMetaData functionMetaDataWithDimension = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new DataType[] { DataType.DIMENSION });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.DIMENSION ) });
 
     public IsNullResolver() {
         super(List.of(new IsNullFunDef(functionMetaDataWithMember), new IsNullFunDef(functionMetaDataWithLevel),

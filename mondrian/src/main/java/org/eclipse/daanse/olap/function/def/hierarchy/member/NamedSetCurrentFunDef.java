@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.exceptions.NotANamedSetException;
@@ -34,7 +35,7 @@ public class NamedSetCurrentFunDef extends AbstractFunctionDefinition {
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the current member or tuple of a named set.", "<SET>.Current", DataType.TUPLE,
-            new DataType[] { DataType.SET });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.SET ) });
 
     public NamedSetCurrentFunDef() {
         super(functionMetaData);

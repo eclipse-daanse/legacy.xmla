@@ -22,6 +22,7 @@ import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinitionMultiResolver;
 import org.osgi.service.component.annotations.Component;
 
@@ -33,11 +34,11 @@ public class MtdMultiResolver extends AbstractFunctionDefinitionMultiResolver {
 
 	private static FunctionMetaData functionMetaDataWithMember = new FunctionMetaDataR(atom,
 			"A shortcut function for the PeriodsToDate function that specifies the level to be Month.", "Mtd(<Member>)",
-			DataType.SET, new DataType[] { DataType.MEMBER });
+			DataType.SET, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ) });
 
 	private static FunctionMetaData functionMetaDataWithoutMember = new FunctionMetaDataR(atom,
 			"A shortcut function for the PeriodsToDate function that specifies the level to be Month.", "Mtd()",
-			DataType.SET, new DataType[] {});
+			DataType.SET, new FunctionParameterR[] { });
 
 	public MtdMultiResolver() {
 		super(List.of(new XtdFunDef(functionMetaDataWithMember, LevelType.TIME_MONTHS),

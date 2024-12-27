@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantDimensionCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class DimensionOfDimensionFunDef extends AbstractFunctionDefinition {
@@ -32,7 +33,7 @@ public class DimensionOfDimensionFunDef extends AbstractFunctionDefinition {
 
 	private static final FunctionMetaData functionMetaData = new FunctionMetaDataR(atom,
 			"Returns the dimension that contains a specified dimension.", "<DIMENSION>.Dimension", DataType.DIMENSION,
-			new DataType[] { DataType.DIMENSION });
+			new FunctionParameterR[] { new FunctionParameterR(  DataType.DIMENSION ) });
 
 	public DimensionOfDimensionFunDef() {
 		super(functionMetaData);

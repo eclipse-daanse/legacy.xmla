@@ -25,13 +25,14 @@ import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class DataMemberFunDef extends AbstractFunctionDefinition {
     static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("DataMember");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the system-generated data member that is associated with a nonleaf member of a dimension.",
-            "<MEMBER>.DataMember", DataType.MEMBER, new DataType[] { DataType.MEMBER });
+            "<MEMBER>.DataMember", DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
 
     public DataMemberFunDef() {
         super(functionMetaData);

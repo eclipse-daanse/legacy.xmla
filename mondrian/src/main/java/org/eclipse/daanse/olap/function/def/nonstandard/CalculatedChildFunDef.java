@@ -23,6 +23,7 @@ import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class CalculatedChildFunDef extends AbstractFunctionDefinition {
@@ -31,7 +32,7 @@ public class CalculatedChildFunDef extends AbstractFunctionDefinition {
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(methodOperationAtom,
             "Returns an existing calculated child member with name <String> from the specified <Member>.",
-            "<MEMBER>.CalculatedChild(<STRING>)", DataType.MEMBER, new DataType[] { DataType.MEMBER, DataType.STRING });
+            "<MEMBER>.CalculatedChild(<STRING>)", DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ), new FunctionParameterR( DataType.STRING ) });
 
     CalculatedChildFunDef() {
         super(functionMetaData);

@@ -16,6 +16,8 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperat
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
+
 import mondrian.olap.fun.vba.Excel;
 import mondrian.olap.fun.vba.Vba;
 
@@ -54,12 +56,12 @@ public class BuiltinFunTable extends FunTableImpl {
         // documentation & backwards compatibility.
         OperationAtom functionAtomDefaultMember = new PlainPropertyOperationAtom("DefaultMember");
 		builder.define(new FunctionMetaDataR(functionAtomDefaultMember, "Returns the default member of a dimension.", "<DIMENSION>.DefaultMember",
-				 DataType.MEMBER, new DataType[] { DataType.DIMENSION }));
+				 DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.DIMENSION) }));
 
         // <Dimension>.Members is really just shorthand for <Hierarchy>.Members
     	 OperationAtom functionAtomMembers =new PlainPropertyOperationAtom(MEMBERS);
 		builder.define(	new FunctionMetaDataR(functionAtomMembers, "Returns the set of members in a dimension.", "<DIMENSION>.Members",
-						DataType.SET, new DataType[] { DataType.DIMENSION }));
+						DataType.SET, new FunctionParameterR[] { new FunctionParameterR(DataType.DIMENSION) }));
 
 
         // Define VBA functions.

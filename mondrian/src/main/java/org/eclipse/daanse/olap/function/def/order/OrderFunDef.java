@@ -30,6 +30,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.calc.impl.MemberArrayValueCalc;
@@ -44,7 +45,7 @@ public class OrderFunDef  extends AbstractFunctionDefinition {
     static final String TIMING_NAME = OrderFunDef.class.getSimpleName();
     public static final String CALC_IMPL = "CurrentMemberCalc";
 
-    public OrderFunDef( DataType[] argTypes ) {
+    public OrderFunDef( FunctionParameterR[] argTypes ) {
     super( new FunctionMetaDataR(functionAtom,
             "Arranges members of a set, optionally preserving or breaking the hierarchy.",
             "Order(<Set> {, <Key Specification>}...)", DataType.SET, argTypes));

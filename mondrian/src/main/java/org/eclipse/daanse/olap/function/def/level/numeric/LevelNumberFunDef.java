@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class LevelNumberFunDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class LevelNumberFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Level_Number");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the level number of a member.", "<MEMBER>.Level_Number", DataType.INTEGER,
-            new DataType[] { DataType.MEMBER });
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
 
     public LevelNumberFunDef() {
         super(functionMetaData);

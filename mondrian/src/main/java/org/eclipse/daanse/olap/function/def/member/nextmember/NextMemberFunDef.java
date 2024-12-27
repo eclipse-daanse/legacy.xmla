@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class NextMemberFunDef extends AbstractFunctionDefinition {
@@ -28,7 +29,7 @@ public class NextMemberFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("NextMember");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the next member in the level that contains a specified member.", "<MEMBER>.NextMember",
-            DataType.MEMBER, new DataType[] { DataType.MEMBER });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ) });
 
     public NextMemberFunDef() {
         super(functionMetaData);

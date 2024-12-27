@@ -26,6 +26,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class ExistingFunDef extends AbstractFunctionDefinition {
@@ -34,7 +35,7 @@ public class ExistingFunDef extends AbstractFunctionDefinition {
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
             "Forces the set to be evaluated within the current context.", "Existing <Set>", DataType.SET,
-            new DataType[] { DataType.SET });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.SET ) });
 
     protected ExistingFunDef() {
         super(functionMetaData);

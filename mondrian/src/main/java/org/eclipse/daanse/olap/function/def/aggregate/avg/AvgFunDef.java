@@ -20,6 +20,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 
 import mondrian.calc.impl.ValueCalc;
@@ -29,7 +30,7 @@ class AvgFunDef extends AbstractAggregateFunDef {
 
 	static final FunctionMetaData fmd = new FunctionMetaDataR(AvgResolver.operationAtom, "Avg(<Set>)",
 			"Returns the average value of a numeric expression evaluated over a set.", DataType.NUMERIC,
-			new DataType[] { DataType.SET });
+			new FunctionParameterR[] { new FunctionParameterR(  DataType.SET ) });
 
 	public AvgFunDef() {
 		super(fmd);

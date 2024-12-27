@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class SiblingsFunDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class SiblingsFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Siblings");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the siblings of a specified member, including the member itself.", "<MEMBER>.Siblings",
-            DataType.SET, new DataType[] { DataType.MEMBER });
+            DataType.SET, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER )});
 
     public SiblingsFunDef() {
         super(functionMetaData);

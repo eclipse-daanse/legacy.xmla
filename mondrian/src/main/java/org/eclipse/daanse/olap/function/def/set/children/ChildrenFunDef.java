@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class ChildrenFunDef extends AbstractFunctionDefinition {
@@ -28,7 +29,7 @@ public class ChildrenFunDef extends AbstractFunctionDefinition {
     // <Member>.Children
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Children");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the children of a member.", "<MEMBER>.Children", DataType.SET, new DataType[] { DataType.MEMBER });
+            "Returns the children of a member.", "<MEMBER>.Children", DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
 
     public ChildrenFunDef() {
         super(functionMetaData);

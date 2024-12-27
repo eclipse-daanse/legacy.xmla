@@ -64,7 +64,7 @@ public class CaseMatchResolver extends NoExpressionRequiredFunctionResolver {
             return null;
         }
 
-        return new CaseMatchFunDef(returnType, Expressions.categoriesOf(args));
+        return new CaseMatchFunDef(returnType, Expressions.functionParameterOf(args));
     }
 
     @Override

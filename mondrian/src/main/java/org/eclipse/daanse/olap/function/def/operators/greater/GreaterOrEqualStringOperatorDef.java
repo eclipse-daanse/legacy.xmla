@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class GreaterOrEqualStringOperatorDef extends AbstractFunctionDefinition {
@@ -28,7 +29,7 @@ public class GreaterOrEqualStringOperatorDef extends AbstractFunctionDefinition 
     // <String Expression> >= <String Expression>
     static InfixOperationAtom infixOperationAtom = new InfixOperationAtom(">=");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether an expression is greater than or equal to another.",
-            "<STRING> >= <STRING>", DataType.LOGICAL, new DataType[] { DataType.STRING, DataType.STRING });
+            "<STRING> >= <STRING>", DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.STRING ), new FunctionParameterR( DataType.STRING ) });
 
     public GreaterOrEqualStringOperatorDef() {
         super(functionMetaData);

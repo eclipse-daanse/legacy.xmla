@@ -73,6 +73,7 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.impl.IdentifierNode;
 import org.eclipse.daanse.olap.impl.IdentifierSegment;
@@ -3501,7 +3502,7 @@ public class RolapCube extends CubeBase {
         OperationAtom functionAtom = new FunctionOperationAtom("dummy");
 
         FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, null,
-                "dummy()", DataType.NUMERIC, new DataType[] { });
+                "dummy()", DataType.NUMERIC, new FunctionParameterR[] { });
 
         return new ResolvedFunCallImpl(
             new AbstractFunctionDefinition(functionMetaData) {

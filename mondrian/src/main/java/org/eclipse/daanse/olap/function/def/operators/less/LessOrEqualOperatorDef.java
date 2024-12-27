@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class LessOrEqualOperatorDef extends AbstractFunctionDefinition {
@@ -28,7 +29,7 @@ public class LessOrEqualOperatorDef extends AbstractFunctionDefinition {
     // <Numeric Expression> <= <Numeric Expression>
     static InfixOperationAtom infixOperationAtom = new InfixOperationAtom("<=");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether an expression is less than or equal to another.",
-            "<NUMERIC> <= <NUMERIC>", DataType.LOGICAL, new DataType[] { DataType.NUMERIC, DataType.NUMERIC });
+            "<NUMERIC> <= <NUMERIC>", DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.NUMERIC ), new FunctionParameterR( DataType.NUMERIC ) });
 
     public LessOrEqualOperatorDef() {
         super(functionMetaData);

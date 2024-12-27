@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.calc.api.TupleCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class CachedExistsFunDef extends AbstractFunctionDefinition {
@@ -33,7 +34,7 @@ public class CachedExistsFunDef extends AbstractFunctionDefinition {
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
             "Returns tuples from a non-dynamic <Set> that exists in the specified <Tuple>.  This function will build a query level cache named <String> based on the <Tuple> type.",
             "CachedExists(<SET>, <TUPLE>, <STRING>)", DataType.SET,
-            new DataType[] { DataType.SET, DataType.TUPLE, DataType.STRING });
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.SET ), new FunctionParameterR( DataType.TUPLE ), new FunctionParameterR( DataType.STRING ) });
 
     CachedExistsFunDef() {
         super(functionMetaData);

@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class LenFunDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class LenFunDef extends AbstractFunctionDefinition {
     static FunctionOperationAtom functionOperationAtom = new FunctionOperationAtom("Len");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionOperationAtom,
             "Returns the number of characters in a string", "Len(<STRING>)", DataType.NUMERIC,
-            new DataType[] { DataType.STRING });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.STRING ) });
 
     public LenFunDef() {
         super(functionMetaData);

@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class MinusPrefixOperatorDef extends AbstractFunctionDefinition {
@@ -28,7 +29,7 @@ public class MinusPrefixOperatorDef extends AbstractFunctionDefinition {
     // - <Numeric Expression>
     static PrefixOperationAtom prefixOperationAtom = new PrefixOperationAtom("-");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(prefixOperationAtom,
-            "Returns the negative of a number.", "- <NUMERIC>", DataType.NUMERIC, new DataType[] { DataType.NUMERIC });
+            "Returns the negative of a number.", "- <NUMERIC>", DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR(  DataType.NUMERIC ) });
 
     public MinusPrefixOperatorDef() {
         super(functionMetaData);

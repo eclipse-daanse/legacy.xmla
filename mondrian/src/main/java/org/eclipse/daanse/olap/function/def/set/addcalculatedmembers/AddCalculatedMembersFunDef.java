@@ -22,6 +22,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class AddCalculatedMembersFunDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class AddCalculatedMembersFunDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtom = new FunctionOperationAtom("AddCalculatedMembers");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Adds calculated members to a set.",
-            "", DataType.SET, new DataType[] { DataType.SET });
+            "", DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.SET ) });
 
     public AddCalculatedMembersFunDef() {
         super(functionMetaData);

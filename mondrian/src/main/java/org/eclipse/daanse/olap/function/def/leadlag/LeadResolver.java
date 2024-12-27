@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinitionMultiResolver;
 import org.osgi.service.component.annotations.Component;
 
@@ -32,7 +33,7 @@ public class LeadResolver extends AbstractFunctionDefinitionMultiResolver {
     //{"mmmn"}
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.MEMBER, new DataType[] { DataType.MEMBER, DataType.NUMERIC });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ), new FunctionParameterR( DataType.NUMERIC ) });
 
 
     public LeadResolver() {

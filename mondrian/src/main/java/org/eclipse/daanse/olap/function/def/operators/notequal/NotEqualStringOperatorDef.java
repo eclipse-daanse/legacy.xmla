@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class NotEqualStringOperatorDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class NotEqualStringOperatorDef extends AbstractFunctionDefinition {
     static InfixOperationAtom infixOperationAtom = new InfixOperationAtom("<>");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(infixOperationAtom,
             "Returns whether two expressions are not equal.", "<STRING> <> <STRING>", DataType.LOGICAL,
-            new DataType[] { DataType.STRING, DataType.STRING });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.STRING ), new FunctionParameterR( DataType.STRING )});
 
     public NotEqualStringOperatorDef() {
         super(functionMetaData);

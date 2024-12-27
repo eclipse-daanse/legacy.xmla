@@ -26,6 +26,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantCalcs;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 class CaseMatchFunDef extends AbstractFunctionDefinition {
@@ -36,7 +37,7 @@ class CaseMatchFunDef extends AbstractFunctionDefinition {
     static final String DESCRIPTION = "Evaluates various expressions, and returns the corresponding expression for the first which matches a particular value.";
     static final String SIGNATURE = "Case <Expression> When <Expression> Then <Expression> [...] [Else <Expression>] End";
 
-    public CaseMatchFunDef(DataType returnType, DataType[] types) {
+    public CaseMatchFunDef(DataType returnType, FunctionParameterR[] types) {
         super(new FunctionMetaDataR(functionAtom, DESCRIPTION, SIGNATURE,
                 returnType, types));
     }

@@ -25,6 +25,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.type.LevelType;
@@ -36,7 +37,7 @@ public class LevelsStringFunDef extends AbstractFunctionDefinition {
     static OperationAtom functionOperationAtom = new FunctionOperationAtom(LEVELS);
     static FunctionMetaData levelsFunctionMetaData = new FunctionMetaDataR(functionOperationAtom,
             "Returns the level whose name is specified by a string expression.", "Levels(<STRING>)", DataType.LEVEL,
-            new DataType[] { DataType.STRING });
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.STRING )});
 
     public LevelsStringFunDef() {
         super(levelsFunctionMetaData);

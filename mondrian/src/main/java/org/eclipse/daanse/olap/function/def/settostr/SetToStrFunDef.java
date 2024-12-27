@@ -23,6 +23,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class SetToStrFunDef extends AbstractFunctionDefinition {
@@ -30,7 +31,7 @@ public class SetToStrFunDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtom = new FunctionOperationAtom("SetToStr");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Constructs a string from a set.",
-            "SetToStr(<SET>)", DataType.STRING, new DataType[] { DataType.SET });
+            "SetToStr(<SET>)", DataType.STRING, new FunctionParameterR[] { new FunctionParameterR(  DataType.SET ) });
 
     public static final AbstractFunctionDefinition instance = new SetToStrFunDef();
 

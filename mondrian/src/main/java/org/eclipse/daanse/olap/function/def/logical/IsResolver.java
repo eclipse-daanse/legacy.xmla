@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinitionMultiResolver;
 import org.osgi.service.component.annotations.Component;
 
@@ -33,19 +34,19 @@ public class IsResolver extends AbstractFunctionDefinitionMultiResolver {
     //{"ibmm", "ibll", "ibhh", "ibdd", "ibtt"}
 
     private static FunctionMetaData functionMetaDataWithMember = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new DataType[] { DataType.MEMBER, DataType.MEMBER });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ), new FunctionParameterR( DataType.MEMBER )});
 
     private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new DataType[] { DataType.LEVEL, DataType.LEVEL});
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL ), new FunctionParameterR( DataType.LEVEL ) });
 
     private static FunctionMetaData functionMetaDataWithHierrchy = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new DataType[] { DataType.HIERARCHY, DataType.HIERARCHY });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY ), new FunctionParameterR( DataType.HIERARCHY ) });
 
     private static FunctionMetaData functionMetaDataWithDimension = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new DataType[] { DataType.DIMENSION, DataType.DIMENSION });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.DIMENSION ), new FunctionParameterR( DataType.DIMENSION ) });
 
     private static FunctionMetaData functionMetaDataWithTuple = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new DataType[] { DataType.TUPLE, DataType.TUPLE });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.TUPLE ), new FunctionParameterR( DataType.TUPLE ) });
 
     public IsResolver() {
         super(List.of(new IsFunDef(functionMetaDataWithMember), new IsFunDef(functionMetaDataWithLevel),

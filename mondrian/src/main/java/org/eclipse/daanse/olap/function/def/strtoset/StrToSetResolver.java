@@ -25,6 +25,7 @@ import org.eclipse.daanse.olap.api.query.component.DimensionExpression;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFunctionResolver;
 
 import mondrian.mdx.HierarchyExpressionImpl;
@@ -56,10 +57,10 @@ public class StrToSetResolver extends NoExpressionRequiredFunctionResolver {
                 return null;
             }
         }
-        DataType[] argTypes = new DataType[args.length];
-        argTypes[0] = DataType.STRING;
+        FunctionParameterR[] argTypes = new FunctionParameterR[args.length];
+        argTypes[0] = new FunctionParameterR( DataType.STRING );
         for (int i = 1; i < argTypes.length; i++) {
-            argTypes[i] = DataType.HIERARCHY;
+            argTypes[i] = new FunctionParameterR( DataType.HIERARCHY );
         }
 
         FunctionMetaData functionMetaData = functionMetaDataFor(argTypes);
@@ -67,7 +68,7 @@ public class StrToSetResolver extends NoExpressionRequiredFunctionResolver {
     }
 
 
-    private FunctionMetaData functionMetaDataFor(DataType[] argTypes) {
+    private FunctionMetaData functionMetaDataFor(FunctionParameterR[] argTypes) {
         FunctionMetaData functionMetaData = new FunctionMetaDataR(StrToSetFunDef.functionAtom,
                 "Constructs a set from a string expression.", "<Set> StrToSet(<String>[, <Hierarchy>...])",
                  DataType.SET, argTypes);
@@ -77,7 +78,7 @@ public class StrToSetResolver extends NoExpressionRequiredFunctionResolver {
 
     @Override
     public List<FunctionMetaData> getRepresentativeFunctionMetaDatas() {
-        return List.of(functionMetaDataFor(new DataType[] { DataType.STRING }));
+        return List.of(functionMetaDataFor(new FunctionParameterR[] { new FunctionParameterR( DataType.STRING ) }));
     }
 
 

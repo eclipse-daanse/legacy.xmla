@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class LastSiblingFunDef extends AbstractFunctionDefinition {
@@ -28,7 +29,7 @@ public class LastSiblingFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("LastSibling");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the last child of the parent of a member.", "<MEMBER>.LastSibling", DataType.MEMBER,
-            new DataType[] { DataType.MEMBER });
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
 
     public LastSiblingFunDef() {
         super(functionMetaData);

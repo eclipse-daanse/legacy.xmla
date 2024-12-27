@@ -21,13 +21,14 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class ValueFunDef extends AbstractFunctionDefinition {
     // <Measure>.Value
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Value");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the value of a measure.", "<MEMBER>.Value", DataType.NUMERIC, new DataType[] { DataType.MEMBER });
+            "Returns the value of a measure.", "<MEMBER>.Value", DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ) });
 
     public ValueFunDef() {
         super(functionMetaData);

@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class NotPrefixOperatorDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class NotPrefixOperatorDef extends AbstractFunctionDefinition {
     static PrefixOperationAtom prefixOperationAtom = new PrefixOperationAtom("NOT");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(prefixOperationAtom,
             "Returns the negation of a condition.", "NOT <LOGICAL>", DataType.LOGICAL,
-            new DataType[] { DataType.LOGICAL });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.LOGICAL ) });
 
     public NotPrefixOperatorDef() {
         super(functionMetaData);

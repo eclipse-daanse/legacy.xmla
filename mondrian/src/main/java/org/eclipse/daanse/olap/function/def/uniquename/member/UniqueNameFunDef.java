@@ -22,6 +22,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class UniqueNameFunDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class UniqueNameFunDef extends AbstractFunctionDefinition {
     // <Member>.UniqueName
     static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("UniqueName");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the unique name of a member.",
-            "<MEMBER>.UniqueName", DataType.STRING, new DataType[] { DataType.MEMBER });
+            "<MEMBER>.UniqueName", DataType.STRING, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
 
     public UniqueNameFunDef() {
         super(functionMetaData);

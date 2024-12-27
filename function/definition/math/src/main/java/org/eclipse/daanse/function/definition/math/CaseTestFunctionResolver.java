@@ -69,7 +69,7 @@ public class CaseTestFunctionResolver implements FunctionResolver {
 		FunctionMetaData functionInformation = new FunctionMetaDataR(OPERATION_ATOM,
 				DESCRIPTION,
 				SIGNATURE, 
-				returnType, Expressions.categoriesOf(argumentExpressions));
+				returnType, Expressions.functionParameterOf(argumentExpressions));
 		return new CaseTestFunctionDefinition(functionInformation);
 	}
 

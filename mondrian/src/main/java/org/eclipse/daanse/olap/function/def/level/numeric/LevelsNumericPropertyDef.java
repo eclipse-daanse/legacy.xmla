@@ -26,6 +26,7 @@ import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.type.LevelType;
@@ -38,7 +39,7 @@ public class LevelsNumericPropertyDef extends AbstractFunctionDefinition {
 
     static FunctionMetaData levelsFunctionMetaData = new FunctionMetaDataR(methodOperationAtom,
             "Returns the level whose position in a hierarchy is specified by a numeric expression.",
-            "<Hierarchy>.Levels(<NUMERIC>)", DataType.LEVEL, new DataType[] { DataType.HIERARCHY, DataType.NUMERIC });
+            "<Hierarchy>.Levels(<NUMERIC>)", DataType.LEVEL, new FunctionParameterR[] { new FunctionParameterR( DataType.HIERARCHY ), new FunctionParameterR( DataType.NUMERIC ) });
 
     public LevelsNumericPropertyDef() {
         super(levelsFunctionMetaData);

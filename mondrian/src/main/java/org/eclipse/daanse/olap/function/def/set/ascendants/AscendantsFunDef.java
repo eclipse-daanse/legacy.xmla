@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class AscendantsFunDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class AscendantsFunDef extends AbstractFunctionDefinition {
     static FunctionOperationAtom functionAtom = new FunctionOperationAtom("Ascendants");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
             "Returns the set of the ascendants of a specified member.", "Ascendants(<MEMBER>)", DataType.SET,
-            new DataType[] { DataType.MEMBER });
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
 
     public AscendantsFunDef() {
         super(functionMetaData);

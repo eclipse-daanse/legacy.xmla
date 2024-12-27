@@ -30,6 +30,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.set.distinct.DistinctCalc;
 
@@ -44,7 +45,7 @@ public class ExtractFunDef extends AbstractFunctionDefinition {
 
     static OperationAtom functionAtom = new FunctionOperationAtom("Extract");
 
-    public ExtractFunDef(DataType[] parameterTypes) {
+    public ExtractFunDef(FunctionParameterR[] parameterTypes) {
         super(new FunctionMetaDataR(functionAtom,
                 "Returns a set of tuples from extracted hierarchy elements. The opposite of Crossjoin.",
                 "Extract(<Set>, <Hierarchy>[, <Hierarchy>...])", DataType.SET, parameterTypes));

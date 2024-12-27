@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class XorOperatorDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class XorOperatorDef extends AbstractFunctionDefinition {
     static InfixOperationAtom infixOperationAtom = new InfixOperationAtom("XOR");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(infixOperationAtom,
             "Returns whether two conditions are mutually exclusive.", "<LOGICAL> XOR <LOGICAL>", DataType.LOGICAL,
-            new DataType[] { DataType.LOGICAL, DataType.LOGICAL });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.LOGICAL ), new FunctionParameterR( DataType.LOGICAL ) });
 
     public XorOperatorDef() {
         super(functionMetaData);

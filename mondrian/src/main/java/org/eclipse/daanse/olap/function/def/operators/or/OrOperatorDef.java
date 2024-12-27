@@ -22,6 +22,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class OrOperatorDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class OrOperatorDef extends AbstractFunctionDefinition {
     // <Logical Expression> OR <Logical Expression>
     static InfixOperationAtom infixOperationAtom = new InfixOperationAtom("OR");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns the disjunction of two conditions.",
-            "<LOGICAL> OR <LOGICAL>", DataType.LOGICAL, new DataType[] { DataType.LOGICAL, DataType.LOGICAL });
+            "<LOGICAL> OR <LOGICAL>", DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.LOGICAL ), new FunctionParameterR( DataType.LOGICAL )});
 
     public OrOperatorDef() {
         super(functionMetaData);

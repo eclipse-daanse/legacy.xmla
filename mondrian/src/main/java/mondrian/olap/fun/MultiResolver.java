@@ -74,7 +74,7 @@ outer:
             DataType returnType = FunUtil.decodeReturnCategory(signature);
 
 			FunctionMetaData functionMetaData = new FunctionMetaDataR(operationAtom, description, signature,  returnType,
-					Expressions.categoriesOf(args));
+					Expressions.functionParameterOf(args));
             return createFunDef(args, functionMetaData);
         }
         return null;

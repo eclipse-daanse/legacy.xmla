@@ -21,17 +21,10 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 
 public record FunctionMetaDataR(OperationAtom operationAtom, String description, String signature,
-		DataType returnCategory, FunctionParameterR[] parameters) implements FunctionMetaData {
+        DataType returnCategory, FunctionParameterR[] parameters) implements FunctionMetaData {
 
-	@Deprecated
-	public FunctionMetaDataR(OperationAtom operationAtom, String description, String signature, DataType returnCategory,
-			DataType[] parameterDataTypes) {
-		this(operationAtom, description, signature, returnCategory,
-				Stream.of(parameterDataTypes).map(dt -> new FunctionParameterR(dt)).toArray(FunctionParameterR[]::new));
-	}
-
-	public DataType[] parameterDataTypes() {
-		return Stream.of(parameters()).map(FunctionParameterR::dataType).toArray(DataType[]::new);
-	}
+    public DataType[] parameterDataTypes() {
+        return Stream.of(parameters()).map(FunctionParameterR::dataType).toArray(DataType[]::new);
+    }
 
 }

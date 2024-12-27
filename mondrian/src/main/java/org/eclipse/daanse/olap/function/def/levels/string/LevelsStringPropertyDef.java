@@ -26,6 +26,7 @@ import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.type.LevelType;
@@ -37,7 +38,7 @@ public class LevelsStringPropertyDef extends AbstractFunctionDefinition {
     static OperationAtom hierarchyMethodOperationAtom = new MethodOperationAtom(LEVELS);
     static FunctionMetaData hierarchyLevelsFunctionMetaData = new FunctionMetaDataR(hierarchyMethodOperationAtom,
             "Returns the level whose name is specified by a string expression.", "<HIERARCHY>.Levels(<STRING>)",
-            DataType.LEVEL, new DataType[] { DataType.HIERARCHY, DataType.STRING });
+            DataType.LEVEL, new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY ), new FunctionParameterR( DataType.STRING ) });
 
     public LevelsStringPropertyDef() {
         super(hierarchyLevelsFunctionMetaData);

@@ -59,6 +59,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantCalcs;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateCalc;
 import org.eclipse.daanse.rolap.mapping.api.model.AnnotationMapping;
@@ -957,7 +958,7 @@ public class RolapHierarchy extends HierarchyBase {
         final Access access = role.getAccess(this);
         final OperationAtom internalOperationAtom = new InternalOperationAtom("$x");
         final FunctionMetaData functionMetaData = new FunctionMetaDataR(internalOperationAtom, "x",
-                "$x", DataType.NUMERIC, new DataType[] { });
+                "$x", DataType.NUMERIC, new FunctionParameterR[] { });
 
         switch (access) {
         case NONE:

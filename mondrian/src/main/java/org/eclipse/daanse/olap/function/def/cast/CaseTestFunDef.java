@@ -27,6 +27,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantCalcs;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.type.BooleanType;
@@ -38,7 +39,7 @@ class CaseTestFunDef extends AbstractFunctionDefinition {
     static final String DESCRIPTION = "Evaluates various conditions, and returns the corresponding expression for the first which evaluates to true.";
     static final String SIGNATURE = "Case When <Logical Expression> Then <Expression> [...] [Else <Expression>] End";
 
-    public CaseTestFunDef(DataType returnType, DataType[] types) {
+    public CaseTestFunDef(DataType returnType, FunctionParameterR[] types) {
         super(new FunctionMetaDataR(functionAtom, DESCRIPTION, SIGNATURE, returnType, types));
     }
 

@@ -27,6 +27,7 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.ResultStyleException;
@@ -40,7 +41,7 @@ public class FilterFunDef extends AbstractFunctionDefinition {
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
             "Returns the set resulting from filtering a set based on a search condition.", "Filter(<SET>, <LOGICAL>)",
-            DataType.SET, new DataType[] { DataType.SET, DataType.LOGICAL });
+            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.SET ), new FunctionParameterR( DataType.LOGICAL ) });
 
     public FilterFunDef() {
         super(functionMetaData);

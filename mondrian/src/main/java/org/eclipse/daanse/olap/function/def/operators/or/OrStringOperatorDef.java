@@ -23,6 +23,7 @@ import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class OrStringOperatorDef extends AbstractFunctionDefinition {
@@ -30,7 +31,7 @@ public class OrStringOperatorDef extends AbstractFunctionDefinition {
     // <String Expression> || <String Expression>
     static InfixOperationAtom infixOperationAtom = new InfixOperationAtom("||");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Concatenates two strings.",
-            "<STRING> || <STRING>", DataType.STRING, new DataType[] { DataType.STRING, DataType.STRING });
+            "<STRING> || <STRING>", DataType.STRING, new FunctionParameterR[] { new FunctionParameterR(  DataType.STRING ), new FunctionParameterR( DataType.STRING )});
 
     public OrStringOperatorDef() {
         super(functionMetaData);

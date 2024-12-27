@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class EmptyExpressionFunDef extends AbstractFunctionDefinition {
@@ -28,7 +29,7 @@ public class EmptyExpressionFunDef extends AbstractFunctionDefinition {
 	private static final OperationAtom atom = new EmptyOperationAtom();
 
 	private static final FunctionMetaData functionMetaData = new FunctionMetaDataR(atom,
-			"Dummy function representing the empty expression", "", DataType.EMPTY, new DataType[] {});
+			"Dummy function representing the empty expression", "", DataType.EMPTY, new FunctionParameterR[] {  });
 
 	public EmptyExpressionFunDef() {
 		super(functionMetaData);

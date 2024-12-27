@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class MembersFunDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class MembersFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Members");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the set of members in a hierarchy.", "<HIERARCHY>.Members", DataType.SET,
-            new DataType[] { DataType.HIERARCHY });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.HIERARCHY ) });
 
     public MembersFunDef() {
         super(functionMetaData);

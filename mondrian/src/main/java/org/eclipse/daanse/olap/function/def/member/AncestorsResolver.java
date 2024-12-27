@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinitionMultiResolver;
 import org.osgi.service.component.annotations.Component;
 
@@ -33,10 +34,10 @@ public class AncestorsResolver extends AbstractFunctionDefinitionMultiResolver {
     //{"fxml", "fxmn"}
 
     private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.SET, new DataType[] { DataType.MEMBER, DataType.LEVEL });
+            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ), new FunctionParameterR( DataType.LEVEL ) });
 
     private static FunctionMetaData functionMetaDataWithNumeric = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.SET, new DataType[] { DataType.MEMBER, DataType.NUMERIC});
+            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ), new FunctionParameterR( DataType.NUMERIC ) });
 
 
     public AncestorsResolver() {

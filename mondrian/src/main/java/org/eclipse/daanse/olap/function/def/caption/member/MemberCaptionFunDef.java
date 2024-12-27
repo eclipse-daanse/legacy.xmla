@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class MemberCaptionFunDef extends AbstractFunctionDefinition {
@@ -29,7 +30,7 @@ public class MemberCaptionFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Member_Caption");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the caption of a member.", "<MEMBER>.Member_Caption", DataType.STRING,
-            new DataType[] { DataType.MEMBER });
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
 
     public MemberCaptionFunDef() {
         super(functionMetaData);

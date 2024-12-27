@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class MinusOperatorDef extends AbstractFunctionDefinition {
@@ -28,7 +29,7 @@ public class MinusOperatorDef extends AbstractFunctionDefinition {
     // <Numeric Expression> - <Numeric Expression>
     static InfixOperationAtom infixOperationAtom = new InfixOperationAtom("-");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Subtracts two numbers.",
-            "<NUMERIC> - <NUMERIC>", DataType.NUMERIC, new DataType[] { DataType.NUMERIC, DataType.NUMERIC });
+            "<NUMERIC> - <NUMERIC>", DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR(  DataType.NUMERIC ), new FunctionParameterR( DataType.NUMERIC ) });
 
     public MinusOperatorDef() {
         super(functionMetaData);

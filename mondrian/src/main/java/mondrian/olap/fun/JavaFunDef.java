@@ -39,6 +39,7 @@ import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
+import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.calc.impl.GenericCalc;
@@ -109,10 +110,10 @@ public class JavaFunDef extends AbstractFunctionDefinition {
         return JavaFunDef.getCategory(m.getReturnType());
     }
 
-    private static DataType[] getParameterCategories(Method m) {
-    	DataType[] arr = new DataType[m.getParameterTypes().length];
+    private static FunctionParameterR[] getParameterCategories(Method m) {
+        FunctionParameterR[] arr = new FunctionParameterR[m.getParameterTypes().length];
         for (int i = 0; i < m.getParameterTypes().length; i++) {
-            arr[i] = JavaFunDef.getCategory(m.getParameterTypes()[i]);
+            arr[i] = new FunctionParameterR(JavaFunDef.getCategory(m.getParameterTypes()[i]));
         }
         return arr;
     }
@@ -130,7 +131,7 @@ public class JavaFunDef extends AbstractFunctionDefinition {
 
         DataType returnCategory = JavaFunDef.getReturnCategory(method);
 
-        DataType[] paramCategories = JavaFunDef.getParameterCategories(method);
+        FunctionParameterR[] paramCategories = JavaFunDef.getParameterCategories(method);
 
         
     	OperationAtom functionAtom = syntax.getOperationAtom(name);
