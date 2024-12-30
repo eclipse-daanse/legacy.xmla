@@ -62,6 +62,7 @@ import org.eclipse.daanse.olap.function.def.excel.degrees.DegreesResolver;
 import org.eclipse.daanse.olap.function.def.excel.log10.Log10Resolver;
 import org.eclipse.daanse.olap.function.def.excel.mod.ModResolver;
 import org.eclipse.daanse.olap.function.def.excel.pi.PiResolver;
+import org.eclipse.daanse.olap.function.def.excel.power.PowerResolver;
 import org.eclipse.daanse.olap.function.def.excel.radians.RadiansResolver;
 import org.eclipse.daanse.olap.function.def.excel.sinh.SinhResolver;
 import org.eclipse.daanse.olap.function.def.excel.sqrtpi.SqrtPiResolver;
@@ -470,6 +471,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new SinhResolver());
         functionService.addResolver(new SqrtPiResolver());
         functionService.addResolver(new TanhResolver());
+        functionService.addResolver(new PowerResolver());
         
         //Vba
         functionService.addResolver(new CBoolResolver());

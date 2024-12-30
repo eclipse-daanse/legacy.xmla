@@ -30,7 +30,7 @@ public class CByteFunDef  extends AbstractFunctionDefinition {
         Returns an expression that has been converted to a Variant of subtype Boolean.""";
     static String signature = "CByte(expression)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.UNKNOWN, "expression" ) });
+            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "expression" ) });
 
     public CByteFunDef() {
         super(functionMetaData);

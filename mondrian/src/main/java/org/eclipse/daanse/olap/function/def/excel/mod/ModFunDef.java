@@ -31,7 +31,7 @@ public class ModFunDef  extends AbstractFunctionDefinition {
         Returns the remainder of dividing n by d.""";
     static String signature = "Mod(n, d)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.UNKNOWN, "n" ), new FunctionParameterR( DataType.UNKNOWN, "d" ) });
+            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "n" ), new FunctionParameterR( DataType.VALUE, "d" ) });
 
     public ModFunDef() {
         super(functionMetaData);

@@ -30,7 +30,7 @@ public class StrFunDef  extends AbstractFunctionDefinition {
         Returns a Variant (String) representation of a number.""";
     static String signature = "Str(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.STRING, new FunctionParameterR[] { new FunctionParameterR( DataType.UNKNOWN, "number" ) });
+            signature, DataType.STRING, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "number" ) });
 
     public StrFunDef() {
         super(functionMetaData);

@@ -31,7 +31,7 @@ public class IntFunDef  extends AbstractFunctionDefinition {
         negative number less than or equal to the number.""";
     static String signature = "Int(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.UNKNOWN, "expression" ) });
+            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "expression" ) });
 
     public IntFunDef() {
         super(functionMetaData);

@@ -30,7 +30,7 @@ public class HexFunDef  extends AbstractFunctionDefinition {
         Returns a String representing the hexadecimal value of a number.""";
     static String signature = "Hex(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.STRING, new FunctionParameterR[] { new FunctionParameterR( DataType.UNKNOWN, "number" ) });
+            signature, DataType.STRING, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "number" ) });
 
     public HexFunDef() {
         super(functionMetaData);

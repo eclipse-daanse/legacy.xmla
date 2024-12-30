@@ -30,7 +30,7 @@ public class CDateFunDef  extends AbstractFunctionDefinition {
         Returns an expression that has been converted to a Variant of subtype""";
     static String signature = "CDate(date)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.DATE_TIME, new FunctionParameterR[] { new FunctionParameterR( DataType.UNKNOWN, "expression" ) });
+            signature, DataType.DATE_TIME, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "expression" ) });
 
     public CDateFunDef() {
         super(functionMetaData);

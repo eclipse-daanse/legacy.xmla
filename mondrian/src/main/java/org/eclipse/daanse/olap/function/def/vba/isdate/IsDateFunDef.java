@@ -31,7 +31,7 @@ public class IsDateFunDef  extends AbstractFunctionDefinition {
         converted to a date.""";
     static String signature = "IsDate(varname)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR( DataType.UNKNOWN, "expression" ) });
+            signature, DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "expression" ) });
 
     public IsDateFunDef() {
         super(functionMetaData);
