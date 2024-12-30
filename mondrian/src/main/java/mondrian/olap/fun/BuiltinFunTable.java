@@ -46,10 +46,7 @@ public class BuiltinFunTable extends FunTableImpl {
             builder.define(funDef);
         }
 
-        // Define Excel functions.
-        for (FunctionDefinition funDef : JavaFunDef.scan(Excel.class)) {
-            builder.define(funDef);
-        }
+
     }
 
     /**

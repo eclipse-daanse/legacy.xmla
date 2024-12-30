@@ -11,28 +11,24 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.acos;
+package org.eclipse.daanse.olap.function.def.excel.atan2;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
 
-import mondrian.olap.fun.FunUtil;
+public class Atan2Calc extends AbstractProfilingNestedDoubleCalc {
 
-public class AcosCalc extends AbstractProfilingNestedDoubleCalc {
-
-    protected AcosCalc(Type type, DoubleCalc doubleCalc) {
-        super(type, doubleCalc);
+    protected Atan2Calc(Type type, DoubleCalc calc0, DoubleCalc calc1) {
+        super(type, calc0, calc1);
     }
 
     @Override
     public Double evaluate(Evaluator evaluator) {
-        Double number = getChildCalc(0, DoubleCalc.class).evaluate(evaluator);
-        if (number == FunUtil.DOUBLE_NULL) {
-            return null;
-        }
-        return Math.acos(number);
+        Double x = getChildCalc(0, DoubleCalc.class).evaluate(evaluator);
+        Double y = getChildCalc(1, DoubleCalc.class).evaluate(evaluator);
+        return Math.atan2(y, x);
     }
 
 }

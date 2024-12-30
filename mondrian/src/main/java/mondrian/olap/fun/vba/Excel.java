@@ -9,11 +9,6 @@
 
 package mondrian.olap.fun.vba;
 
-import mondrian.olap.InvalidArgumentException;
-import mondrian.olap.fun.JavaFunDef;
-import mondrian.olap.fun.JavaFunDef.Description;
-import mondrian.olap.fun.JavaFunDef.FunctionName;
-
 /**
  * Implementations of functions in the Excel worksheet library.
  *
@@ -39,26 +34,6 @@ public abstract class Excel {
     //  AccrIntM Returns the accrued interest for a security that pays interest
     //  at maturity.
 
-    @FunctionName("Acos")
-    @JavaFunDef.Signature("Acos(number)")
-    @Description(
-        "Returns the arccosine, or inverse cosine, of a number. The arccosine "
-        + "is the angle whose cosine is Arg1. The returned angle is given in "
-        + "radians in the range 0 (zero) to pi.")
-    public static double acos(double number) {
-        return Math.acos(number);
-    }
-
-    @FunctionName("Acosh")
-    @JavaFunDef.Signature("Acosh(number)")
-    @Description(
-        "Returns the inverse hyperbolic cosine of a number. Number must be "
-        + "greater than or equal to 1. The inverse hyperbolic cosine is the "
-        + "value whose hyperbolic cosine is Arg1, so Acosh(Cosh(number)) "
-        + "equals Arg1.")
-    public static double acosh(double x) {
-        return Math.log(x + Math.sqrt((x * x) - 1.0));
-    }
 
     // Todo: AmorDegrc Returns the depreciation for each accounting
     // period. This function is provided for the French accounting
@@ -74,47 +49,6 @@ public abstract class Excel {
     // Todo: Asc For Double-byte character set (DBCS) languages,
     // changes full-width (double-byte) characters to half-width
     // (single-byte) characters.
-
-    @FunctionName("Asin")
-    @JavaFunDef.Signature("Asin(number)")
-    @Description(
-        "Returns the arcsine, or inverse sine, of a number. The arcsine is the "
-        + "angle whose sine is Arg1. The returned angle is given in radians in "
-        + "the range -pi/2 to pi/2.")
-    public static double asin(double number) {
-        return Math.asin(number);
-    }
-
-    @FunctionName("Asinh")
-    @JavaFunDef.Signature("Asinh(number)")
-    @Description(
-        "Returns the inverse hyperbolic sine of a number. The inverse "
-        + "hyperbolic sine is the value whose hyperbolic sine is Arg1, "
-        + "so Asinh(Sinh(number)) equals Arg1.")
-    public static double asinh(double x) {
-        return Math.log(x + Math.sqrt(1.0 + (x * x)));
-    }
-
-    @FunctionName("Atan2")
-    @JavaFunDef.Signature("Atan2(x, y)")
-    @Description(
-        "Returns the arctangent, or inverse tangent, of the specified x- and "
-        + "y-coordinates. The arctangent is the angle from the x-axis to a "
-        + "line containing the origin (0, 0) and a point with coordinates "
-        + "(x_num, y_num). The angle is given in radians between -pi and pi, "
-        + "excluding -pi.")
-    public static double atan2(double y, double x) {
-        return Math.atan2(y, x);
-    }
-
-    @FunctionName("Atanh")
-    @JavaFunDef.Signature("Atanh(number)")
-    @Description(
-        "Returns the inverse hyperbolic tangent of a number. Number "
-        + "must be between -1 and 1 (excluding -1 and 1).")
-    public static double atanh(double x) {
-        return .5 * Math.log((1.0 + x) / (1.0 - x));
-    }
 
     // Todo: AveDev Returns the average of the absolute deviations of data
     // points from their mean. AveDev is a measure of the variability in a data
@@ -189,12 +123,6 @@ public abstract class Excel {
 
     // Todo: Correl Returns the correlation coefficient of the Arg1 and Arg2
     // cell ranges.
-
-    @FunctionName("Cosh")
-    @Description("Returns the hyperbolic cosine of a number.")
-    public static double cosh(double number) {
-        return Math.cosh(number);
-    }
 
     // Todo: Count Counts the number of cells that contain numbers and counts
     // numbers within the list of arguments.
@@ -271,14 +199,6 @@ public abstract class Excel {
     // Todo: Dec2Oct Converts a decimal number to octal.
 
     // Todo: Degrees Converts radians into degrees.
-
-
-    @FunctionName("Degrees")
-    @Description("Converts radians to degrees.")
-    public static double degrees(double number) {
-        // 180 degrees = Pi radians
-        return number * 180.0 / Math.PI;
-    }
 
     // Todo: Delta Tests whether two values are equal. Returns 1 if number1 =
     // number2; returns 0 otherwise.
@@ -621,12 +541,6 @@ public abstract class Excel {
     // See Vba
     // Skip: Log   Returns the logarithm of a number to the base you specify.
 
-    @FunctionName("Log10")
-    @Description("Returns the base-10 logarithm of a number.")
-    public static double log10(double number) {
-        return Math.log10(number);
-    }
-
     // Todo: LogEst In regression analysis, calculates an exponential curve that
     // fits your data and returns an array of values that describes the
     // curve. Because this function returns an array of values, it must be
@@ -651,46 +565,6 @@ public abstract class Excel {
 
     // Skip: Max Returns the largest value in a set of values.  Todo: MDeterm
     // Returns the matrix determinant of an array.
-
-    /**
-     * The MOD function. Not technically in the Excel package, but this seemed
-     * like a good place to put it, since Excel has a MOD function.
-     *
-     * @param first First
-     * @param second Second
-     * @return First modulo second
-     */
-    @FunctionName("Mod")
-    @JavaFunDef.Signature("Mod(n, d)")
-    @Description("Returns the remainder of dividing n by d.")
-    public static double mod(
-        Object first,
-        Object second)
-    {
-        double iFirst;
-        if (!(first instanceof Number numberFirst)) {
-            throw new InvalidArgumentException(
-                new StringBuilder("Invalid parameter. ")
-                .append("first parameter ").append(first)
-                .append(" of Mod function must be of type number").toString());
-        } else {
-            iFirst = numberFirst.doubleValue();
-        }
-        double iSecond;
-        if (!(second instanceof Number numberSecond)) {
-            throw new InvalidArgumentException(
-                new StringBuilder("Invalid parameter. ")
-                .append("second parameter ").append(second)
-                .append(" of Mod function must be of type number").toString());
-        } else {
-            iSecond = numberSecond.doubleValue();
-        }
-        // Use formula "mod(n, d) = n - d * int(n / d)".
-        if (iSecond == 0) {
-            throw new ArithmeticException("/ by zero");
-        }
-        return iFirst - iSecond * Vba.intNative(iFirst / iSecond);
-    }
 
     // Todo: MDuration Returns the modified Macauley duration for a security
     // with an assumed par value of $100.
@@ -805,15 +679,6 @@ public abstract class Excel {
     // Todo: Phonetic Extracts the phonetic (furigana) characters from a text
     // string.
 
-
-    @FunctionName("Pi")
-    @Description(
-        "Returns the number 3.14159265358979, the mathematical constant pi, "
-        + "accurate to 15 digits.")
-    public static double pi() {
-        return Math.PI;
-    }
-
     // Todo: Pmt Calculates the payment for a loan based on constant payments
     // and a constant interest rate.
 
@@ -821,13 +686,6 @@ public abstract class Excel {
     // the Poisson distribution is predicting the number of events over a
     // specific time, such as the number of cars arriving at a toll plaza in 1
     // minute.
-
-
-    @FunctionName("Power")
-    @Description("Returns the result of a number raised to a power.")
-    public static double power(double x, double y) {
-        return Math.pow(x, y);
-    }
 
     // Todo: Ppmt Returns the payment on the principal for a given period for an
     // investment based on periodic, constant payments and a constant interest
@@ -865,14 +723,6 @@ public abstract class Excel {
 
     // Todo: Quotient Returns the integer portion of a division. Use this
     // function when you want to discard the remainder of a division.
-
-
-    @FunctionName("Radians")
-    @Description("Converts degrees to radians.")
-    public static double radians(double number) {
-        // 180 degrees = Pi radians
-        return number / 180.0 * Math.PI;
-    }
 
     // Todo: RandBetween Returns a random integer number between the numbers you
     // specify. A new random integer number is returned every time the worksheet
@@ -925,13 +775,6 @@ public abstract class Excel {
 
     // Todo: Sinh Returns the hyperbolic sine of a number.
 
-
-    @FunctionName("Sinh")
-    @Description("Returns the hyperbolic sine of a number.")
-    public static double sinh(double number) {
-        return Math.sinh(number);
-    }
-
     // Todo: Skew Returns the skewness of a distribution. Skewness characterizes
     // the degree of asymmetry of a distribution around its mean. Positive
     // skewness indicates a distribution with an asymmetric tail extending
@@ -949,13 +792,6 @@ public abstract class Excel {
     // Todo: Small Returns the k-th smallest value in a data set. Use this
     // function to return values with a particular relative standing in a data
     // set.
-
-
-    @FunctionName("SqrtPi")
-    @Description("Returns the square root of (number * pi).")
-    public static double sqrtPi(double number) {
-        return Math.sqrt(number * Math.PI);
-    }
 
     // Todo: Standardize Returns a normalized value from a distribution
     // characterized by mean and standard_dev.
@@ -1002,13 +838,6 @@ public abstract class Excel {
 
     // Todo: Syd Returns the sum-of-years' digits depreciation of an asset for a
     // specified period.
-
-
-    @FunctionName("Tanh")
-    @Description("Returns the hyperbolic tangent of a number.")
-    public static double tanh(double number) {
-        return Math.tanh(number);
-    }
 
     // Todo: TBillEq Returns the bond-equivalent yield for a Treasury bill.
 

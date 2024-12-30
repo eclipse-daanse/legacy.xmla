@@ -14,8 +14,6 @@ import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,122 +45,10 @@ public class Vba {
 
     // Conversion
 
-    @FunctionName("CBool")
-    @Signature("CBool(expression)")
-    @Description(
-        "Returns an expression that has been converted to a Variant of subtype "
-        + "Boolean.")
-    public static boolean cBool(Object expression) {
-        if (expression instanceof Boolean bool) {
-            return bool;
-        } else {
-            int i = cInt(expression);
-            return i != 0;
-        }
-    }
-
     // Conversion functions
 
-    @FunctionName("CByte")
-    @Signature("CByte(expression)")
-    @Description(
-        "Returns an expression that has been converted to a Variant of subtype "
-        + "Byte.")
-    public static byte cByte(Object expression) {
-        if (expression instanceof Byte bt) {
-            return bt;
-        } else {
-            int i = cInt(expression);
-            return (byte) i;
-        }
-    }
 
     // public Currency cCur(Object expression)
-
-    @FunctionName("CDate")
-    @Signature("CDate(date)")
-    @Description(
-        "Returns an expression that has been converted to a Variant of subtype "
-        + "Date.")
-    public static Date cDate(Object expression) {
-        String str = String.valueOf(expression);
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        if (expression instanceof Date date) {
-            return date;
-        } else if (expression == null) {
-            return null;
-        } else {
-            // note that this currently only supports a limited set of dates and
-            // times
-            // "October 19, 1962"
-            // "4:35:47 PM"
-            try {
-                return sdf.parse(str);
-            } catch (ParseException ex0) {
-                try {
-                    return DateFormat.getDateTimeInstance().parse(str);
-                } catch (ParseException ex1) {
-                    try {
-                        return DateFormat.getDateInstance().parse(str);
-                    } catch (ParseException ex2) {
-                        throw new InvalidArgumentException(
-                            new StringBuilder("Invalid parameter. ")
-                            .append("expression parameter of CDate function must be ")
-                            .append("formatted correctly (")
-                            .append(String.valueOf(expression)).append(")").toString());
-                    }
-                }
-            }
-        }
-    }
-
-    @FunctionName("CDbl")
-    @Signature("CDbl(expression)")
-    @Description(
-        "Returns an expression that has been converted to a Variant of subtype "
-        + "Double.")
-    public static double cDbl(Object expression) {
-        if (expression instanceof Number number) {
-            return number.doubleValue();
-        } else {
-            final String s = String.valueOf(expression);
-            return Double.valueOf(s);
-        }
-    }
-
-    @FunctionName("CInt")
-    @Signature("CInt(expression)")
-    @Description(
-        "Returns an expression that has been converted to a Variant of subtype "
-        + "Integer.")
-    public static int cInt(Object expression) {
-        if (expression instanceof Number number) {
-            final int intValue = number.intValue();
-            if (number instanceof Float || number instanceof Double) {
-                final double doubleValue = number.doubleValue();
-                if (doubleValue == (double) intValue) {
-                    // Number is already an integer
-                    return intValue;
-                }
-                final double doubleDouble = doubleValue * 2d;
-                if (doubleDouble == Math.floor(doubleDouble)) {
-                    // Number ends in .5 - round towards even required
-                    return (int) Math.round(doubleValue / 2d) * 2;
-                }
-                return (int) Math.round(doubleValue);
-            }
-            return intValue;
-        } else {
-            // Try to parse as integer before parsing as double. More
-            // efficient, and avoids loss of precision.
-            final String s = String.valueOf(expression);
-            try {
-                return Integer.parseInt(s);
-            } catch (NumberFormatException e) {
-                return Double.valueOf(s).intValue();
-            }
-        }
-    }
 
     // public int cLng(Object expression)
     // public float cSng(Object expression)
@@ -173,64 +59,6 @@ public class Vba {
     // public String error$(Object errorNumber)
     // public Object error(Object errorNumber)
 
-    @FunctionName("Fix")
-    @Signature("Fix(number)")
-    @Description(
-        "Returns the integer portion of a number. If negative, returns the "
-        + "negative number greater than or equal to the number.")
-    public static int fix(Object number) {
-        if (number instanceof Number num) {
-            int v = num.intValue();
-            double dv = num.doubleValue();
-            if (v < 0 && v < dv) {
-                v++;
-            }
-            return v;
-        } else {
-            throw new InvalidArgumentException(
-                new StringBuilder("Invalid parameter. ")
-                    .append("number parameter ").append(number)
-                    .append(" of Int function must be of type number").toString());
-        }
-    }
-
-    @FunctionName("Hex")
-    @Signature("Hex(number)")
-    @Description(
-        "Returns a String representing the hexadecimal value of a number.")
-    public static String hex(Object number) {
-        if (number instanceof Number num) {
-            return Integer.toHexString(num.intValue())
-                    .toUpperCase();
-        } else {
-            throw new InvalidArgumentException(
-                new StringBuilder("Invalid parameter. ")
-                    .append("number parameter ").append(number)
-                    .append(" of Hex function must be of type number").toString());
-        }
-    }
-
-    @FunctionName("Int")
-    @Signature("Int(number)")
-    @Description(
-        "Returns the integer portion of a number. If negative, returns the "
-        + "negative number less than or equal to the number.")
-    public static int toInt(Object number) {
-        if (number instanceof Number num) {
-            int v = num.intValue();
-            double dv = num.doubleValue();
-            if (v < 0 && v > dv) {
-                v--;
-            }
-            return v;
-        } else {
-            throw new InvalidArgumentException(
-                new StringBuilder("Invalid parameter. ")
-                    .append("number parameter ").append(number)
-                    .append(" of Int function must be of type number").toString());
-        }
-    }
-
     /**
      * Equivalent of the {@link #toInt} function on the native 'double' type.
      * Not an MDX function.
@@ -238,110 +66,12 @@ public class Vba {
      * @param dv Double value
      * @return Value rounded towards negative infinity
      */
-    static int intNative(double dv) {
+    public static int intNative(double dv) {
         int v = (int) dv;
         if (v < 0 && v > dv) {
             v--;
         }
         return v;
-    }
-
-    // public String oct$(Object number)
-
-    @FunctionName("Oct")
-    @Signature("Oct(number)")
-    @Description(
-        "Returns a Variant (String) representing the octal value of a number.")
-    public static String oct(Object number) {
-        if (number instanceof Number num) {
-            return Integer.toOctalString(num.intValue());
-        } else {
-            throw new InvalidArgumentException(
-                new StringBuilder("Invalid parameter. ")
-                    .append("number parameter ").append(number)
-                    .append(" of Oct function must be of type number").toString());
-        }
-    }
-
-    // public String str$(Object number)
-
-    @FunctionName("Str")
-    @Signature("Str(number)")
-    @Description("Returns a Variant (String) representation of a number.")
-    public static String str(Object number) {
-        // When numbers are converted to strings, a leading space is always
-        // reserved for the sign of number. If number is positive, the returned
-        // string contains a leading space and the plus sign is implied.
-        //
-        // Use the Format function to convert numeric values you want formatted
-        // as dates, times, or currency or in other user-defined formats.
-        // Unlike Str, the Format function doesn't include a leading space for
-        // the sign of number.
-        //
-        // Note The Str function recognizes only the period (.) as a valid
-        // decimal separator. When different decimal separators may be used
-        // (for example, in international applications), use CStr to convert a
-        // number to a string.
-        if (number instanceof Number num) {
-            if (num.doubleValue() >= 0) {
-                return " " + number.toString();
-            } else {
-                return number.toString();
-            }
-        } else {
-            throw new InvalidArgumentException(
-                new StringBuilder("Invalid parameter. ")
-                    .append("number parameter ").append(number)
-                    .append(" of Str function must be ")
-                    .append("of type number").toString());
-        }
-    }
-
-    @FunctionName("Val")
-    @Signature("Val(string)")
-    @Description(
-        "Returns the numbers contained in a string as a numeric value of "
-        + "appropriate type.")
-    public static double val(String string) {
-        // The Val function stops reading the string at the first character it
-        // can't recognize as part of a number. Symbols and characters that are
-        // often considered parts of numeric values, such as dollar signs and
-        // commas, are not recognized. However, the function recognizes the
-        // radix prefixes &O (for octal) and &H (for hexadecimal). Blanks,
-        // tabs, and linefeed characters are stripped from the argument.
-        //
-        // The following returns the value 1615198:
-        //
-        // Val(" 1615 198th Street N.E.")
-        // In the code below, Val returns the decimal value -1 for the
-        // hexadecimal value shown:
-        //
-        // Val("&HFFFF")
-        // Note The Val function recognizes only the period (.) as a valid
-        // decimal separator. When different decimal separators are used, as in
-        // international applications, use CDbl instead to convert a string to
-        // a number.
-
-        string = string.replaceAll("\\s", ""); // remove all whitespace
-        if (string.startsWith("&H")) {
-            string = string.substring(2);
-            Pattern p = Pattern.compile("[0-9a-fA-F]*");
-            Matcher m = p.matcher(string);
-            m.find();
-            return Integer.parseInt(m.group(), 16);
-        } else if (string.startsWith("&O")) {
-            string = string.substring(2);
-            Pattern p = Pattern.compile("[0-7]*");
-            Matcher m = p.matcher(string);
-            m.find();
-            return Integer.parseInt(m.group(), 8);
-        } else {
-            // find the first number
-            Pattern p = Pattern.compile("-?[0-9]*[.]?[0-9]*");
-            Matcher m = p.matcher(string);
-            m.find();
-            return Double.parseDouble(m.group());
-        }
     }
 
     // DateTime
@@ -1175,22 +905,6 @@ public class Vba {
     public boolean isArray(Object varName) {
         // arrays are not supported at present
         return false;
-    }
-
-    @FunctionName("IsDate")
-    @Signature("IsDate(varname)")
-    @Description(
-        "Returns a Boolean value indicating whether an expression can be "
-        + "converted to a date.")
-    public static boolean isDate(Object expression) {
-        // IsDate returns True if Expression represents a valid date, a valid
-        // time, or a valid date and time.
-        try {
-            Date val = cDate(expression);
-            return (val != null);
-        } catch (InvalidArgumentException e) {
-            return false;
-        }
     }
 
     // use mondrian's implementation of IsEmpty

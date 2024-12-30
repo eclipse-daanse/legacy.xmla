@@ -11,38 +11,35 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.acos;
+package org.eclipse.daanse.olap.function.def.vba.cbool;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
-public class AcosFunDef  extends AbstractFunctionDefinition {
+public class CBoolFunDef  extends AbstractFunctionDefinition {
 
-    static FunctionOperationAtom atom = new FunctionOperationAtom("Acos");
+    static FunctionOperationAtom atom = new FunctionOperationAtom("CBool");
     static String description = """
-        Returns the arccosine, or inverse cosine, of a number. The arccosine
-        is the angle whose cosine is Arg1. The returned angle is given in
-        radians in the range 0 (zero) to pi.""";
-    static String signature = "Acos(number)";
+        Returns an expression that has been converted to a Variant of subtype Boolean.""";
+    static String signature = "CBool(expression)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Angle" ) });
+            signature, DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR( DataType.UNKNOWN, "Expression" ) });
 
-    public AcosFunDef() {
+    public CBoolFunDef() {
         super(functionMetaData);
     }
 
     @Override
     public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
-        final DoubleCalc calc0 = compiler.compileDouble(call.getArg(0));
-        return new AcosCalc(call.getType(), calc0);
+        final Calc<?> calc = compiler.compile(call.getArg(0));
+        return new CBoolCalc(call.getType(), calc);
     }
 
 }

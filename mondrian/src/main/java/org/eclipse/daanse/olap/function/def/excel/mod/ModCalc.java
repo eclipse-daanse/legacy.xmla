@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2024 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   SmartCity Jena - initial
+ *   Stefan Bischof (bipolis.org) - initial
+ */
+package org.eclipse.daanse.olap.function.def.excel.mod;
+
+import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.api.Calc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
+
+import mondrian.olap.InvalidArgumentException;
+import mondrian.olap.fun.vba.Vba;
+
+public class ModCalc extends AbstractProfilingNestedDoubleCalc {
+
+    protected ModCalc(Type type, Calc<?> calc0, Calc<?> calc1) {
+        super(type, calc0, calc1);
+    }
+
+    @Override
+    public Double evaluate(Evaluator evaluator) {
+        Object first = getChildCalc(0, Calc.class).evaluate(evaluator);
+        Object second = getChildCalc(1, Calc.class).evaluate(evaluator);
+        double iFirst;
+        if (!(first instanceof Number numberFirst)) {
+            throw new InvalidArgumentException(
+                new StringBuilder("Invalid parameter. ")
+                .append("first parameter ").append(first)
+                .append(" of Mod function must be of type number").toString());
+        } else {
+            iFirst = numberFirst.doubleValue();
+        }
+        double iSecond;
+        if (!(second instanceof Number numberSecond)) {
+            throw new InvalidArgumentException(
+                new StringBuilder("Invalid parameter. ")
+                .append("second parameter ").append(second)
+                .append(" of Mod function must be of type number").toString());
+        } else {
+            iSecond = numberSecond.doubleValue();
+        }
+        // Use formula "mod(n, d) = n - d * int(n / d)".
+        if (iSecond == 0) {
+            throw new ArithmeticException("/ by zero");
+        }
+        return iFirst - iSecond * Vba.intNative(iFirst / iSecond);
+    }
+
+}

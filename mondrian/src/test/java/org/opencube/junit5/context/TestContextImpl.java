@@ -52,6 +52,20 @@ import org.eclipse.daanse.olap.function.def.drilldownleveltopbottom.DrilldownLev
 import org.eclipse.daanse.olap.function.def.drilldownleveltopbottom.DrilldownLevelTopResolver;
 import org.eclipse.daanse.olap.function.def.drilldownmember.DrilldownMemberResolver;
 import org.eclipse.daanse.olap.function.def.empty.EmptyExpressionResolver;
+import org.eclipse.daanse.olap.function.def.excel.acos.AcosResolver;
+import org.eclipse.daanse.olap.function.def.excel.acos.AcoshResolver;
+import org.eclipse.daanse.olap.function.def.excel.asin.AsinhResolver;
+import org.eclipse.daanse.olap.function.def.excel.atan2.Atan2Resolver;
+import org.eclipse.daanse.olap.function.def.excel.atan2.AtanhResolver;
+import org.eclipse.daanse.olap.function.def.excel.cosh.CoshResolver;
+import org.eclipse.daanse.olap.function.def.excel.degrees.DegreesResolver;
+import org.eclipse.daanse.olap.function.def.excel.log10.Log10Resolver;
+import org.eclipse.daanse.olap.function.def.excel.mod.ModResolver;
+import org.eclipse.daanse.olap.function.def.excel.pi.PiResolver;
+import org.eclipse.daanse.olap.function.def.excel.radians.RadiansResolver;
+import org.eclipse.daanse.olap.function.def.excel.sinh.SinhResolver;
+import org.eclipse.daanse.olap.function.def.excel.sqrtpi.SqrtPiResolver;
+import org.eclipse.daanse.olap.function.def.excel.tanh.TanhResolver;
 import org.eclipse.daanse.olap.function.def.except.ExceptResolver;
 import org.eclipse.daanse.olap.function.def.exists.ExistsResolver;
 import org.eclipse.daanse.olap.function.def.format.FormatResolver;
@@ -190,6 +204,15 @@ import org.eclipse.daanse.olap.function.def.var.VarPResolver;
 import org.eclipse.daanse.olap.function.def.var.VarResolver;
 import org.eclipse.daanse.olap.function.def.var.VariancePResolver;
 import org.eclipse.daanse.olap.function.def.var.VarianceResolver;
+import org.eclipse.daanse.olap.function.def.vba.cbool.CBoolResolver;
+import org.eclipse.daanse.olap.function.def.vba.cbyte.CByteResolver;
+import org.eclipse.daanse.olap.function.def.vba.cdate.CDateResolver;
+import org.eclipse.daanse.olap.function.def.vba.cdbl.CDblResolver;
+import org.eclipse.daanse.olap.function.def.vba.cint.CIntResolver;
+import org.eclipse.daanse.olap.function.def.vba.fix.FixResolver;
+import org.eclipse.daanse.olap.function.def.vba.hex.HexResolver;
+import org.eclipse.daanse.olap.function.def.vba.integer.IntResolver;
+import org.eclipse.daanse.olap.function.def.vba.isdate.IsDateResolver;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalsResolver;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -345,7 +368,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new ValidMeasureResolver());
         functionService.addResolver(new AggregateResolver());
         functionService.addResolver(new CorrelationResolver());
-        
+
         functionService.addResolver(new CovarianceResolver());
         functionService.addResolver(new CovarianceNResolver());
         functionService.addResolver(new LinRegInterceptResolver());
@@ -356,12 +379,12 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new MaxResolver());
         functionService.addResolver(new MinResolver());
         functionService.addResolver(new MedianResolver());
-        
+
         functionService.addResolver(new PercentileResolver());
         functionService.addResolver(new RankResolver());
         functionService.addResolver(new StddevResolver());
         functionService.addResolver(new StdevResolver());
-        
+
         functionService.addResolver(new StdevPResolver());
         functionService.addResolver(new StddevPResolver());
         functionService.addResolver(new SumResolver());
@@ -378,7 +401,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new NonEmptyResolver());
         functionService.addResolver(new StarCrossJoinResolver());
         functionService.addResolver(new CrossJoinResolver());
-        
+
         functionService.addResolver(new NonEmptyCrossJoinResolver());
         functionService.addResolver(new DescendantsMemberResolver());
         functionService.addResolver(new DescendantsSetResolver());
@@ -395,7 +418,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new IntersectResolver());
         functionService.addResolver(new LastPeriodsResolver());
         functionService.addResolver(new DrilldownLevelBottomResolver());
-        
+
         functionService.addResolver(new UnorderResolver());
         functionService.addResolver(new PeriodsToDateResolver());
         functionService.addResolver(new SubsetResolver());
@@ -413,7 +436,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new ThirdQResolver());
         functionService.addResolver(new StrToTupleResolver());
         functionService.addResolver(new TupleResolver());
-        
+
         functionService.addResolver(new org.eclipse.daanse.olap.function.def.iif.IifBooleanResolver());
         functionService.addResolver(new org.eclipse.daanse.olap.function.def.iif.IifDimensionResolver());
         functionService.addResolver(new org.eclipse.daanse.olap.function.def.iif.IifHierarchyResolver());
@@ -430,6 +453,34 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new ParamRefResolver());
         functionService.addResolver(new NonFunctionDefaultMemberResolver());
         functionService.addResolver(new NonFunctionMembersResolver());
+
+        //excel functions
+        functionService.addResolver(new AcoshResolver());
+        functionService.addResolver(new AcosResolver());
+        functionService.addResolver(new AsinhResolver());
+        functionService.addResolver(new CoshResolver());
+        functionService.addResolver(new Atan2Resolver());
+        functionService.addResolver(new AtanhResolver());
+        functionService.addResolver(new CoshResolver());
+        functionService.addResolver(new DegreesResolver());
+        functionService.addResolver(new Log10Resolver());
+        functionService.addResolver(new ModResolver());
+        functionService.addResolver(new PiResolver());
+        functionService.addResolver(new RadiansResolver());
+        functionService.addResolver(new SinhResolver());
+        functionService.addResolver(new SqrtPiResolver());
+        functionService.addResolver(new TanhResolver());
+        
+        //Vba
+        functionService.addResolver(new CBoolResolver());
+        functionService.addResolver(new CByteResolver());
+        functionService.addResolver(new CDblResolver());
+        functionService.addResolver(new CDateResolver());
+        functionService.addResolver(new IsDateResolver());
+        functionService.addResolver(new CIntResolver());
+        functionService.addResolver(new FixResolver());
+        functionService.addResolver(new HexResolver());
+        functionService.addResolver(new IntResolver());
 }
 
 	@Override
