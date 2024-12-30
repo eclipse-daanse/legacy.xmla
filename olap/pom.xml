@@ -23,7 +23,6 @@
     <module>rolap</module>
     <module>xmla</module>
     <module>filecatalog</module>
-    <module>udf</module>
     <module>documentation</module>
     <module>action</module>
   </modules>

@@ -57,7 +57,6 @@ import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.Segment;
-import org.eclipse.daanse.olap.api.Syntax;
 import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
@@ -100,13 +99,10 @@ import mondrian.olap.RoleImpl;
 import mondrian.olap.Util;
 import mondrian.olap.exceptions.RoleUnionGrantsException;
 import mondrian.olap.exceptions.UnknownRoleException;
-import mondrian.olap.fun.UdfResolver;
 import mondrian.olap.type.MemberType;
 import mondrian.olap.type.NumericType;
 import mondrian.olap.type.StringType;
 import mondrian.rolap.aggmatcher.AggTableManager;
-import mondrian.spi.UserDefinedFunction;
-import mondrian.spi.impl.Scripts;
 import mondrian.util.ByteString;
 import mondrian.util.ClassResolver;
 
@@ -226,15 +222,12 @@ public class RolapSchema implements Schema {
     private Context context;
 
     RolapNativeRegistry nativeRegistry;
-    private final static String udfClassNotFound =
-        "Failed to load user-defined function ''{0}'': class ''{1}'' not found";
     private final static String publicDimensionMustNotHaveForeignKey =
         "Dimension ''{0}'' has a foreign key. This attribute is only valid in private dimensions and dimension usages.";
     private final static String duplicateSchemaParameter = "Duplicate parameter ''{0}'' in schema";
     private final static String finalizerErrorRolapSchema =
         "An exception was encountered while finalizing a RolapSchema object instance.";
     private final static String namedSetHasBadFormula = "Named set ''{0}'' has bad formula";
-    private final static String udfDuplicateName = "Duplicate user-defined function ''{0}''";
 
     /**
      * This is ONLY called by other constructors (and MUST be called
@@ -900,105 +893,7 @@ public class RolapSchema implements Schema {
             new Parameter[parameterList.size()]);
     }
 
-    /**
-     * Defines a user-defined function in this table.
-     *
-     * <p>If the function is not valid, throws an error.
-     *
-     * @param name Name of the function.
-     * @param className Name of the class which implements the function.
-     *   The class must implement {@link mondrian.spi.UserDefinedFunction}
-     *   (otherwise it is a user-error).
-     */
-    private void defineFunction(
-        Map<String, UdfResolver.UdfFactory> mapNameToUdf,
-        final String name,
-        String className,
-        final Scripts.ScriptDefinition script)
-    {
-        if (className == null && script == null) {
-            throw Util.newError(
-                "Must specify either className attribute or Script element");
-        }
-        if (className != null && script != null) {
-            throw Util.newError(
-                "Must not specify both className attribute and Script element");
-        }
-        final UdfResolver.UdfFactory udfFactory;
-        if (className != null) {
-            // Lookup class.
-            try {
-                final Class<UserDefinedFunction> klass =
-                    ClassResolver.INSTANCE.forName(className, true);
 
-                // Instantiate UDF by calling correct constructor.
-                udfFactory = new UdfResolver.ClassUdfFactory(klass, name);
-            } catch (ClassNotFoundException e) {
-                throw new MondrianException(MessageFormat.format(udfClassNotFound,
-                    name,
-                    className));
-            }
-        } else {
-            udfFactory =
-                new UdfResolver.UdfFactory() {
-                    @Override
-					public UserDefinedFunction create() {
-                        return Scripts.userDefinedFunction(script, name);
-                    }
-                };
-        }
-        // Validate function.
-        validateFunction(udfFactory);
-        // Check for duplicate.
-        UdfResolver.UdfFactory existingUdf = mapNameToUdf.get(name);
-        if (existingUdf != null) {
-            throw new MondrianException(udfDuplicateName);
-        }
-        mapNameToUdf.put(name, udfFactory);
-    }
-
-    /**
-     * Throws an error if a user-defined function does not adhere to the
-     * API.
-     */
-    private void validateFunction(UdfResolver.UdfFactory udfFactory) {
-        final UserDefinedFunction udf = udfFactory.create();
-
-        // Check that the name is not null or empty.
-        final String udfName = udf.getName();
-        if (udfName == null || udfName.equals("")) {
-            throw Util.newInternal(
-                new StringBuilder("User-defined function defined by class '")
-                .append(udf.getClass()).append("' has empty name").toString());
-        }
-        // It's OK for the description to be null.
-        final String description = udf.getDescription();
-//        discard(description);
-        final Type[] parameterTypes = udf.getParameterTypes();
-        for (int i = 0; i < parameterTypes.length; i++) {
-            Type parameterType = parameterTypes[i];
-            if (parameterType == null) {
-                throw Util.newInternal(
-                    new StringBuilder("Invalid user-defined function '")
-                    .append(udfName).append("': parameter type #").append(i).append(" is null").toString());
-            }
-        }
-        // Test that the function returns a sensible type when given the FORMAL
-        // types. It may still fail when we give it the ACTUAL types, but it's
-        // impossible to check that now.
-        final Type returnType = udf.getReturnType(parameterTypes);
-        if (returnType == null) {
-            throw Util.newInternal(
-                new StringBuilder("Invalid user-defined function '")
-                .append(udfName).append("': return type is null").toString());
-        }
-        final Syntax syntax = udf.getSyntax();
-        if (syntax == null) {
-            throw Util.newInternal(
-                new StringBuilder("Invalid user-defined function '")
-                .append(udfName).append("': syntax is null").toString());
-        }
-    }
 
     /**
      * Gets a {@link MemberReader} with which to read a hierarchy. If the

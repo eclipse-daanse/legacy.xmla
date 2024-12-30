@@ -32,6 +32,7 @@ import org.eclipse.daanse.olap.api.type.Type;
  *
  * @author jhyde
   */
+@Deprecated
 public interface UserDefinedFunction {
     /**
      * Returns the name with which the user-defined function will be used

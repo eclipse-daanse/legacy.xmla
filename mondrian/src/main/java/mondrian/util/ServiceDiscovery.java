@@ -35,8 +35,6 @@ import mondrian.spi.UserDefinedFunction;
  * @deprecated use ServiceLoader
  */
 @Deprecated()
-@ServiceConsumer(UserDefinedFunction.class)
-//@ServiceConsumer(ScriptEngineFactory.class)
 @ServiceConsumer(org.eclipse.daanse.jdbc.db.dialect.api.DialectFactory.class)
 public class ServiceDiscovery<T> {
 
@@ -71,7 +69,7 @@ public class ServiceDiscovery<T> {
      * Returns a list of classes that implement the service.
      *
      * @return List of classes that implement the service
-     * @deprecated use ServiceLoader
+     * @deprecated use ServiceLoaderU
      */
     @Deprecated
     public List<Class<T>> getImplementor() {

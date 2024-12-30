@@ -18,7 +18,6 @@ import org.eclipse.daanse.olap.api.element.MemberFormatter;
 import mondrian.olap.MondrianException;
 import mondrian.spi.CellFormatter;
 import mondrian.spi.PropertyFormatter;
-import mondrian.spi.impl.Scripts;
 
 
 /**
@@ -71,11 +70,6 @@ public class FormatterFactory {
             if (context.getFormatterClassName() != null) {
                 return createFormatter(context.getFormatterClassName());
             }
-            if (context.getScriptText() != null) {
-                return Scripts.cellFormatter(
-                    context.getScriptText(),
-                    context.getScriptLanguage());
-            }
         } catch (Exception e) {
             throw new MondrianException(MessageFormat.format(cellFormatterLoadFailed,
                 context.getFormatterClassName(),
@@ -99,11 +93,6 @@ public class FormatterFactory {
         try {
             if (context.getFormatterClassName() != null) {
                 return createFormatter(context.getFormatterClassName());
-            }
-            if (context.getScriptText() != null) {
-                return Scripts.memberFormatter(
-                    context.getScriptText(),
-                    context.getScriptLanguage());
             }
         } catch (Exception e) {
             throw new MondrianException(MessageFormat.format(memberFormatterLoadFailed,
@@ -129,11 +118,6 @@ public class FormatterFactory {
         try {
             if (context.getFormatterClassName() != null) {
                 return createFormatter(context.getFormatterClassName());
-            }
-            if (context.getScriptText() != null) {
-                return Scripts.propertyFormatter(
-                    context.getScriptText(),
-                    context.getScriptLanguage());
             }
         } catch (Exception e) {
             throw new MondrianException(MessageFormat.format(propertyFormatterLoadFailed,
