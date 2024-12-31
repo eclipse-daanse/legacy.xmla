@@ -199,6 +199,8 @@ import org.eclipse.daanse.olap.function.def.topbottompercentsum.TopSumResolver;
 import org.eclipse.daanse.olap.function.def.tuple.TupleResolver;
 import org.eclipse.daanse.olap.function.def.tupleitem.TupleItemResolver;
 import org.eclipse.daanse.olap.function.def.tupletostr.TupleToStrResolver;
+import org.eclipse.daanse.olap.function.def.udf.in.InResolver;
+import org.eclipse.daanse.olap.function.def.udf.matches.MatchesResolver;
 import org.eclipse.daanse.olap.function.def.union.UnionResolver;
 import org.eclipse.daanse.olap.function.def.unorder.UnorderResolver;
 import org.eclipse.daanse.olap.function.def.var.VarPResolver;
@@ -483,6 +485,10 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new FixResolver());
         functionService.addResolver(new HexResolver());
         functionService.addResolver(new IntResolver());
+        
+        //UDF
+        functionService.addResolver(new InResolver());
+        functionService.addResolver(new MatchesResolver());
 }
 
 	@Override

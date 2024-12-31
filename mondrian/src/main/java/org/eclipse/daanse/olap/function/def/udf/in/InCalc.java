@@ -1,0 +1,55 @@
+/*
+ * Copyright (c) 2024 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   SmartCity Jena - initial
+ *   Stefan Bischof (bipolis.org) - initial
+ */
+package org.eclipse.daanse.olap.function.def.udf.in;
+
+import java.util.List;
+
+import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.api.DoubleCalc;
+import org.eclipse.daanse.olap.calc.api.MemberCalc;
+import org.eclipse.daanse.olap.calc.api.todo.TupleList;
+import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedBooleanCalc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
+
+import mondrian.olap.fun.FunUtil;
+
+public class InCalc extends AbstractProfilingNestedBooleanCalc {
+
+    protected InCalc(Type type, MemberCalc memberCalc, TupleListCalc tupleListCalc) {
+        super(type, memberCalc, tupleListCalc);
+    }
+
+    @Override
+    public Boolean evaluate(Evaluator evaluator) {
+        final MemberCalc memberCalc = getChildCalc(0, MemberCalc.class);
+        final TupleListCalc tupleListCalc = getChildCalc(1, TupleListCalc.class);
+        TupleList tupleList = tupleListCalc.evaluateList(evaluator);
+        Member member = memberCalc.evaluate(evaluator);
+        //List arg1 = (List) arguments[1].evaluate(evaluator);
+
+        for (Member m : tupleList.slice(0)) {
+            if (member.getUniqueName().equals(
+                    m.getUniqueName()))
+            {
+                return Boolean.TRUE;
+            }
+        }
+        return Boolean.FALSE;
+
+    }
+
+}
