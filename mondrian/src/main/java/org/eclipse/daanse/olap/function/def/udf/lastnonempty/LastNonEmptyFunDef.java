@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.vba.cint;
+package org.eclipse.daanse.olap.function.def.udf.lastnonempty;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
@@ -19,28 +19,29 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
-public class CIntFunDef  extends AbstractFunctionDefinition {
+public class LastNonEmptyFunDef  extends AbstractFunctionDefinition {
 
-    static FunctionOperationAtom atom = new FunctionOperationAtom("CInt");
+    static FunctionOperationAtom atom = new FunctionOperationAtom("LastNonEmpty");
     static String description = """
-        Returns an expression that has been converted to a Variant of subtype
-        Integer.""";
-    static String signature = "CInt(expression)";
+        Returns the last member of a set whose value is not empty""";
+    static String signature = "LastNonEmpty(<Set>, <Member>)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "expression" ) });
+            signature, DataType.MEMBER , new FunctionParameterR[] { new FunctionParameterR( DataType.SET ), new FunctionParameterR( DataType.MEMBER ) });
 
-    public CIntFunDef() {
+    public LastNonEmptyFunDef() {
         super(functionMetaData);
     }
 
     @Override
     public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
-        final Calc<?> calc = compiler.compileDouble(call.getArg(0));
-        return new CIntCalc(call.getType(), calc);
+        final TupleListCalc tupleListCalc = compiler.compileList(call.getArg(0));
+        final Calc<?> memberCalc = compiler.compileScalar(call.getArg(1), false);
+        return new LastNonEmptyCalc(call.getType(), tupleListCalc, memberCalc);
     }
 
 }

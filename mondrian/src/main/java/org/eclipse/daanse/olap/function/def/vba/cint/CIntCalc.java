@@ -20,8 +20,8 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedIntegerCa
 
 public class CIntCalc extends AbstractProfilingNestedIntegerCalc {
 
-    protected CIntCalc(Type type, Calc<?> doubleCalc) {
-        super(type, doubleCalc);
+    protected CIntCalc(Type type, Calc<?> calc) {
+        super(type, calc);
     }
 
     @Override

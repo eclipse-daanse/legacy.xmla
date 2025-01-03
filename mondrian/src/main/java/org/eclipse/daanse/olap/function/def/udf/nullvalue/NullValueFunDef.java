@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.vba.cint;
+package org.eclipse.daanse.olap.function.def.udf.nullvalue;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
@@ -23,24 +23,22 @@ import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
-public class CIntFunDef  extends AbstractFunctionDefinition {
+public class NullValueFunDef  extends AbstractFunctionDefinition {
 
-    static FunctionOperationAtom atom = new FunctionOperationAtom("CInt");
+    static FunctionOperationAtom atom = new FunctionOperationAtom("NullValue");
     static String description = """
-        Returns an expression that has been converted to a Variant of subtype
-        Integer.""";
-    static String signature = "CInt(expression)";
+        Returns the null value""";
+    static String signature = "NullValue()";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "expression" ) });
+            signature, DataType.NUMERIC , new FunctionParameterR[] { });
 
-    public CIntFunDef() {
+    public NullValueFunDef() {
         super(functionMetaData);
     }
 
     @Override
     public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
-        final Calc<?> calc = compiler.compileDouble(call.getArg(0));
-        return new CIntCalc(call.getType(), calc);
+        return new NullValueCalc(call.getType());
     }
 
 }

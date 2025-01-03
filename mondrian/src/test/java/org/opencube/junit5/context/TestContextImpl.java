@@ -199,8 +199,13 @@ import org.eclipse.daanse.olap.function.def.topbottompercentsum.TopSumResolver;
 import org.eclipse.daanse.olap.function.def.tuple.TupleResolver;
 import org.eclipse.daanse.olap.function.def.tupleitem.TupleItemResolver;
 import org.eclipse.daanse.olap.function.def.tupletostr.TupleToStrResolver;
+import org.eclipse.daanse.olap.function.def.udf.currentdatemember.CurrentDateMemberResolver;
+import org.eclipse.daanse.olap.function.def.udf.currentdatestring.CurrentDateStringResolver;
 import org.eclipse.daanse.olap.function.def.udf.in.InResolver;
+import org.eclipse.daanse.olap.function.def.udf.lastnonempty.LastNonEmptyResolver;
 import org.eclipse.daanse.olap.function.def.udf.matches.MatchesResolver;
+import org.eclipse.daanse.olap.function.def.udf.nullvalue.NullValueResolver;
+import org.eclipse.daanse.olap.function.def.udf.val.ValResolver;
 import org.eclipse.daanse.olap.function.def.union.UnionResolver;
 import org.eclipse.daanse.olap.function.def.unorder.UnorderResolver;
 import org.eclipse.daanse.olap.function.def.var.VarPResolver;
@@ -489,6 +494,11 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         //UDF
         functionService.addResolver(new InResolver());
         functionService.addResolver(new MatchesResolver());
+        functionService.addResolver(new LastNonEmptyResolver());
+        functionService.addResolver(new NullValueResolver());
+        functionService.addResolver(new ValResolver());
+        functionService.addResolver(new CurrentDateStringResolver());
+        functionService.addResolver(new CurrentDateMemberResolver());
 }
 
 	@Override
