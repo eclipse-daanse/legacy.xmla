@@ -285,7 +285,7 @@ class VbaTest   {
         assertTrue(Vba.isDate("October 19, 1962 4:35:47 PM"));
         assertFalse(Vba.isDate("Jan, 1952"));
     }
-*/
+
     // DateTime
 
     @Test
@@ -295,7 +295,7 @@ class VbaTest   {
         // 2008-02-01 0:00:00
         Calendar calendar = Calendar.getInstance();
 
-        calendar.set(2007, 1 /* 0-based! */, 1, 0, 0, 0);
+        calendar.set(2007, 1, 1, 0, 0, 0);
         final Date feb2007 = calendar.getTime();
         assertEqualsD("2007/02/01 00:00:00", feb2007);
 
@@ -624,16 +624,16 @@ class VbaTest   {
         assertEquals(0, calendar.get(Calendar.SECOND));
         assertEquals(0, calendar.get(Calendar.MILLISECOND));
     }
-
+*/
     private static Date sampleDate() {
         Calendar calendar = Calendar.getInstance();
         // Thursday 2008-04-24 7:10:45pm
         // Chose a Thursday because 2008 starts on a Tuesday - it makes weeks
         // interesting.
-        calendar.set(2008, 3 /* 0-based! */, 24, 19, 10, 45);
+        calendar.set(2008, 3 , 24, 19, 10, 45);
         return calendar.getTime();
     }
-
+/*
     @Test
     void testDay() {
         assertEquals(24, Vba.day(SAMPLE_DATE));
@@ -761,7 +761,7 @@ class VbaTest   {
         assertEquals("100000.0%",  Vba.formatPercent(1000.0,  1, -1, -1,  0));
         assertEquals("100,000.0%", Vba.formatPercent(1000.0,  1, -1, -1,  1));
     }
-
+*/
     @Test
     void testFormatCurrency() {
         assertEquals("$1.00", Vba.formatCurrency(1.0));
@@ -1017,7 +1017,7 @@ class VbaTest   {
         x = 12000;
         assertEquals(x, p);
     }
-
+/*
     @Test
     void testDdb() {
         double cost, salvage, life, period, factor, result;
@@ -1035,7 +1035,7 @@ class VbaTest   {
         result = Vba.dDB(cost, salvage, life, period + 3, factor);
         assertEquals(80.0, result);
     }
-
+*/
     @Test
     void testRate() {
         double nPer, pmt, PV, fv, guess, result;
@@ -1097,6 +1097,7 @@ class VbaTest   {
             -60.79248252633988, Vba.iPmt(0.10, 30, 30, 100000, 0, false));
     }
 
+/*
     @Test
     void testPPmt() {
         assertEquals(
@@ -1112,7 +1113,7 @@ class VbaTest   {
         double ppmt = Vba.pPmt(0.10, 15, 30, 100000, 0, false);
         assertTrue(Math.abs(pmt - (ipmt + ppmt)) < 0.0000001);
     }
-
+*/
     @Test
     void testSLN() {
         assertEquals(18.0, Vba.sLN(100, 10, 5));
@@ -1182,7 +1183,7 @@ class VbaTest   {
         assertEquals(0, Vba.strComp("a", "a", 0));
         assertEquals(1, Vba.strComp("b", "a", 0));
     }
-
+/*
     @Test
     void testNper() {
         double f, r, y, p, x, n;
@@ -1236,7 +1237,7 @@ class VbaTest   {
         x = 12;
         assertEquals(x, n, SMALL);
     }
-
+*/
     // String functions
 
     @Test

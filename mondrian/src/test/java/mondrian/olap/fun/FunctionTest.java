@@ -73,7 +73,7 @@ import mondrian.util.Bug;
 public class FunctionTest {//extends FoodMartTestCase {
 
   private static final Logger LOGGER = LoggerFactory.getLogger( FunctionTest.class );
-  private static final int NUM_EXPECTED_FUNCTIONS = 108;
+  private static final int NUM_EXPECTED_FUNCTIONS = 75;
 
   public static final String[] AllHiers = {
           "[Measures]",

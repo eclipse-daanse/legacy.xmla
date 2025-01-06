@@ -11,12 +11,13 @@ package mondrian.olap.fun.vba;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.daanse.olap.function.def.excel.ExcelTodo;
 import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for implementations of Excel worksheet functions.
  *
- * <p>Every function defined in {@link Excel} must have a test here. In addition,
+ * <p>Every function defined in {@link ExcelTodo} must have a test here. In addition,
  * there should be MDX tests (usually in
  * {@link mondrian.olap.fun.FunctionTest}) if handling of argument types,
  * result types, operator overloading, exception handling or null handling

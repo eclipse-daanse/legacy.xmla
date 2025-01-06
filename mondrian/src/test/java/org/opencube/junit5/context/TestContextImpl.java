@@ -217,10 +217,35 @@ import org.eclipse.daanse.olap.function.def.vba.cbyte.CByteResolver;
 import org.eclipse.daanse.olap.function.def.vba.cdate.CDateResolver;
 import org.eclipse.daanse.olap.function.def.vba.cdbl.CDblResolver;
 import org.eclipse.daanse.olap.function.def.vba.cint.CIntResolver;
+import org.eclipse.daanse.olap.function.def.vba.date.DateResolver;
+import org.eclipse.daanse.olap.function.def.vba.dateadd.DateAddResolver;
+import org.eclipse.daanse.olap.function.def.vba.datediff.DateDiffResolver;
+import org.eclipse.daanse.olap.function.def.vba.datepart.DatePartResolver;
+import org.eclipse.daanse.olap.function.def.vba.dateserial.DateSerialResolver;
+import org.eclipse.daanse.olap.function.def.vba.datevalue.DateValueResolver;
+import org.eclipse.daanse.olap.function.def.vba.day.DayResolver;
+import org.eclipse.daanse.olap.function.def.vba.ddb.DDBResolver;
 import org.eclipse.daanse.olap.function.def.vba.fix.FixResolver;
+import org.eclipse.daanse.olap.function.def.vba.fv.FVResolver;
 import org.eclipse.daanse.olap.function.def.vba.hex.HexResolver;
+import org.eclipse.daanse.olap.function.def.vba.hour.HourResolver;
 import org.eclipse.daanse.olap.function.def.vba.integer.IntResolver;
+import org.eclipse.daanse.olap.function.def.vba.ipmt.IPmtResolver;
 import org.eclipse.daanse.olap.function.def.vba.isdate.IsDateResolver;
+import org.eclipse.daanse.olap.function.def.vba.minute.MinuteResolver;
+import org.eclipse.daanse.olap.function.def.vba.month.MonthResolver;
+import org.eclipse.daanse.olap.function.def.vba.now.NowResolver;
+import org.eclipse.daanse.olap.function.def.vba.nper.NPerResolver;
+import org.eclipse.daanse.olap.function.def.vba.pmt.PmtResolver;
+import org.eclipse.daanse.olap.function.def.vba.ppmt.PPmtResolver;
+import org.eclipse.daanse.olap.function.def.vba.pv.PVResolver;
+import org.eclipse.daanse.olap.function.def.vba.second.SecondResolver;
+import org.eclipse.daanse.olap.function.def.vba.time.TimeResolver;
+import org.eclipse.daanse.olap.function.def.vba.timer.TimerResolver;
+import org.eclipse.daanse.olap.function.def.vba.timeserial.TimeSerialResolver;
+import org.eclipse.daanse.olap.function.def.vba.timevalue.TimeValueResolver;
+import org.eclipse.daanse.olap.function.def.vba.weekday.WeekdayResolver;
+import org.eclipse.daanse.olap.function.def.vba.year.YearResolver;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalsResolver;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -479,7 +504,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new SqrtPiResolver());
         functionService.addResolver(new TanhResolver());
         functionService.addResolver(new PowerResolver());
-        
+
         //Vba
         functionService.addResolver(new CBoolResolver());
         functionService.addResolver(new CByteResolver());
@@ -491,6 +516,32 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new HexResolver());
         functionService.addResolver(new IntResolver());
         
+        functionService.addResolver(new DateAddResolver());
+        functionService.addResolver(new DateDiffResolver());
+        functionService.addResolver(new DatePartResolver());
+        functionService.addResolver(new DateResolver());
+        functionService.addResolver(new DateSerialResolver());
+        functionService.addResolver(new DateValueResolver());
+        functionService.addResolver(new DayResolver());
+        functionService.addResolver(new HourResolver());
+        functionService.addResolver(new MinuteResolver());
+        functionService.addResolver(new MonthResolver());
+        functionService.addResolver(new NowResolver());
+        functionService.addResolver(new SecondResolver());
+        functionService.addResolver(new TimeResolver());
+        functionService.addResolver(new TimeSerialResolver());
+        functionService.addResolver(new TimeValueResolver());
+        functionService.addResolver(new TimerResolver());
+        functionService.addResolver(new YearResolver());
+        functionService.addResolver(new WeekdayResolver());
+        functionService.addResolver(new DDBResolver());
+        functionService.addResolver(new FVResolver());
+        functionService.addResolver(new IPmtResolver());
+        functionService.addResolver(new NPerResolver());
+        functionService.addResolver(new PPmtResolver());
+        functionService.addResolver(new PmtResolver());
+        functionService.addResolver(new PVResolver());
+
         //UDF
         functionService.addResolver(new InResolver());
         functionService.addResolver(new MatchesResolver());

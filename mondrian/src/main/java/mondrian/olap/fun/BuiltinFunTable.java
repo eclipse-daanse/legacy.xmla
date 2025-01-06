@@ -12,8 +12,8 @@
 package mondrian.olap.fun;
 
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
+import org.eclipse.daanse.olap.function.def.excel.ExcelTodo;
 
-import mondrian.olap.fun.vba.Excel;
 import mondrian.olap.fun.vba.Vba;
 
 /**

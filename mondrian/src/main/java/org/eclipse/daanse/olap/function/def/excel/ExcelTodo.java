@@ -7,7 +7,7 @@
 * Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
 */
 
-package mondrian.olap.fun.vba;
+package org.eclipse.daanse.olap.function.def.excel;
 
 /**
  * Implementations of functions in the Excel worksheet library.
@@ -17,9 +17,9 @@ package mondrian.olap.fun.vba;
  * @author jhyde
  * @since Dec 31, 2007
  */
-public abstract class Excel {
+public abstract class ExcelTodo {
 
-    private Excel() {
+    private ExcelTodo() {
         // constructor
     }
     // There follows a list of all functions defined in Excel. Functions are

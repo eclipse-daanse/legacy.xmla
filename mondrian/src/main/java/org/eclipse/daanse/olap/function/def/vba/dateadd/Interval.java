@@ -91,7 +91,7 @@ public enum Interval {
         }
     }
 
-    int diff(Calendar calendar1, Calendar calendar2, int firstDayOfWeek) {
+    public int diff(Calendar calendar1, Calendar calendar2, int firstDayOfWeek) {
         switch (this) {
         case q:
             return m.diff(calendar1, calendar2, firstDayOfWeek) / 3;
@@ -103,7 +103,7 @@ public enum Interval {
         }
     }
 
-    int datePart(Calendar calendar) {
+    public int datePart(Calendar calendar) {
         switch (this) {
         case q:
             return (m.datePart(calendar) + 2) / 3;
