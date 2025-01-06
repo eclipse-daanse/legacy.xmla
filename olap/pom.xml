@@ -22,7 +22,6 @@
   <modules>
     <module>rolap</module>
     <module>xmla</module>
-    <module>filecatalog</module>
     <module>documentation</module>
     <module>action</module>
   </modules>

@@ -56,7 +56,6 @@ public class BasicContext extends AbstractBasicContext {
 	public static final String PID = "org.eclipse.daanse.olap.core.BasicContext";
 
 	public static final String REF_NAME_DIALECT_RESOLVER = "dialectResolver";
-	public static final String REF_NAME_STATISTICS_PROVIDER = "statisticsProvider";
 	public static final String REF_NAME_DATA_SOURCE = "dataSource";
 //	public static final String REF_NAME_QUERY_PROVIDER = "queryProvier";
 	public static final String REF_NAME_DB_MAPPING_CATALOG_SUPPLIER = "databaseMappingCatalogSuppier";

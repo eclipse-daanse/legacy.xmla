@@ -29,7 +29,6 @@
 	bnd.identity;id='org.eclipse.daanse.olap.xmla.bridge',\
 	bnd.identity;id='org.eclipse.daanse.xmla.server.jakarta.saaj',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.resolver.basic',\
-	bnd.identity;id='org.eclipse.daanse.db.jdbc.dataloader.csvtoh2',\
 	bnd.identity;id='org.eclipse.daanse.olap.filecatalog',\
 	bnd.identity;id='ch.qos.logback.classic',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.datasource.metatype.h2',\
@@ -41,7 +40,11 @@
 	bnd.identity;id='org.eclipse.daanse.xmla.server.authentication',\
 	bnd.identity;id='org.eclipse.daanse.rolap.mapping.api',\
 	bnd.identity;id='org.eclipse.daanse.rolap.mapping.emf',\
-	bnd.identity;id='org.eclipse.daanse.jdbc.db.importer.csv'
+	bnd.identity;id='org.eclipse.daanse.jdbc.db.importer.csv',\
+	bnd.identity;id='org.apache.felix.gogo.shell',\
+	bnd.identity;id='biz.aQute.gogo.commands.provider',\
+	bnd.identity;id='org.apache.felix.gogo.runtime',\
+	bnd.identity;id='org.gecko.emf.osgi.component'
 
 
 
@@ -52,6 +55,7 @@
 
 
 -runbundles: \
+	biz.aQute.gogo.commands.provider;version='[1.10.0,1.10.1)',\
 	ch.qos.logback.classic;version='[1.5.12,1.5.13)',\
 	com.github.ben-manes.caffeine;version='[3.1.2,3.1.3)',\
 	com.h2database;version='[2.3.230,2.3.231)',\
@@ -61,11 +65,12 @@
 	jakarta.xml.soap-api;version='[3.0.1,3.0.2)',\
 	org.apache.aries.spifly.dynamic.framework.extension;version='[1.3.7,1.3.8)',\
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
+	org.apache.felix.gogo.runtime;version='[1.1.6,1.1.7)',\
+	org.apache.felix.gogo.shell;version='[1.1.4,1.1.5)',\
 	org.apache.felix.http.jetty12.light;version='[1.0.18,1.0.19)',\
 	org.apache.felix.http.servlet-api;version='[3.0.0,3.0.1)',\
 	org.apache.felix.metatype;version='[1.2.4,1.2.5)',\
 	org.apache.felix.scr;version='[2.2.10,2.2.11)',\
-	org.eclipse.daanse.db.jdbc.dataloader.csvtoh2;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.demo.server.play;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.emondrian;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.io.fs.watcher.api;version='[0.0.1,0.0.2)',\
@@ -115,7 +120,7 @@
 	org.eclipse.jetty.server;version='[12.0.15,12.0.16)',\
 	org.eclipse.jetty.session;version='[12.0.15,12.0.16)',\
 	org.eclipse.jetty.util;version='[12.0.15,12.0.16)',\
-	org.gecko.emf.osgi.api;version='[6.1.3,6.1.4)',\
+	org.gecko.emf.osgi.component;version='[6.1.3,6.1.4)',\
 	org.glassfish.hk2.osgi-resource-locator;version='[2.4.0,2.4.1)',\
 	org.jvnet.staxex.stax-ex;version='[2.1.0,2.1.1)',\
 	org.osgi.service.component;version='[1.5.1,1.5.2)',\
