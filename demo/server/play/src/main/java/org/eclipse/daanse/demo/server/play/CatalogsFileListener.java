@@ -17,19 +17,15 @@ import org.eclipse.daanse.io.fs.watcher.api.FileSystemWatcherWhiteboardConstants
 import org.eclipse.daanse.io.fs.watcher.api.propertytypes.FileSystemWatcherListenerProperties;
 import org.eclipse.daanse.jdbc.datasource.metatype.h2.api.Constants;
 import org.eclipse.daanse.olap.core.BasicContext;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.cm.annotations.RequireConfigurationAdmin;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.RequireServiceComponentRuntime;
-import org.osgi.service.metatype.annotations.AttributeDefinition;
-import org.osgi.service.metatype.annotations.Designate;
 
-@Designate(factory = true, ocd = CatalogsFileListener.Config.class)
-@Component(configurationPid = CatalogsFileListener.PID)
+@Component(configurationPid = CatalogsFileListener.PID, configurationPolicy = ConfigurationPolicy.REQUIRE)
 @RequireConfigurationAdmin
 @RequireServiceComponentRuntime
 @FileSystemWatcherListenerProperties(recursive = false)
@@ -51,20 +47,11 @@ public class CatalogsFileListener implements FileSystemWatcherListener {
 	@Reference
 	ConfigurationAdmin configurationAdmin;
 
-	@Activate
-	BundleContext bc;
 	private Map<Path, Configuration> catalogFolderConfigsDS = new ConcurrentHashMap<>();
 
 	private Map<Path, Configuration> catalogFolderConfigsCSV = new ConcurrentHashMap<>();
 	private Map<Path, Configuration> catalogFolderConfigsContext = new ConcurrentHashMap<>();
 	private Map<Path, Configuration> catalogFolderConfigsMapping = new ConcurrentHashMap<>();
-
-	@interface Config {
-
-		@AttributeDefinition
-		String io_fs_watcher_path();
-
-	}
 
 	@Override
 	public void handleBasePath(Path basePath) {
@@ -130,7 +117,7 @@ public class CatalogsFileListener implements FileSystemWatcherListener {
 		String pathString = path.toString();
 
 		String matcherKey = pathString.replace("\\", "-.-");
-		 matcherKey = UUID.randomUUID().toString();
+		matcherKey = UUID.randomUUID().toString();
 
 		try {
 			createH2DataSource(path, matcherKey);

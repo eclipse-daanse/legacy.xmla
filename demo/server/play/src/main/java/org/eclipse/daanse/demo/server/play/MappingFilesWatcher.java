@@ -20,20 +20,21 @@ import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 @FileSystemWatcherListenerProperties(recursive = true, pattern = ".*.xmi")
-@Component(service = FileSystemWatcherListener.class)
+@Component(service = FileSystemWatcherListener.class, configurationPid = MappingFilesWatcher.PID,configurationPolicy = ConfigurationPolicy.REQUIRE)
 public class MappingFilesWatcher implements FileSystemWatcherListener {
 
-	public static String PID = "org.eclipse.daanse.demo.server.play.MappingFilesWatcher";
+	public static final String PID = "org.eclipse.daanse.demo.server.play.MappingFilesWatcher";
 	@Reference
 	private ConfigurationAdmin ca;
 	private String matcherKey;
 
 	@Activate
-	void activate(Map<String, Object> props) {
+	public MappingFilesWatcher(Map<String, Object> props) {
 		this.matcherKey = (String) props.get("matcherKey");
 	}
 
