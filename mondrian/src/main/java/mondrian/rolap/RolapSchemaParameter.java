@@ -17,7 +17,7 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.CompilableParameter;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
-import mondrian.calc.impl.GenericCalc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 
 /**
  * Parameter that is defined in a schema.
@@ -133,7 +133,7 @@ public class RolapSchemaParameter implements Parameter, CompilableParameter {
 
         // Generate a program which looks at the assigned value first,
         // and if it is not set, returns the default expression.
-        return new GenericCalc(defaultExp.getType()) {
+        return new AbstractProfilingNestedUnknownCalc(defaultExp.getType()) {
             @Override
 			public Calc[] getChildCalcs() {
                 return new Calc[] {defaultCalc};

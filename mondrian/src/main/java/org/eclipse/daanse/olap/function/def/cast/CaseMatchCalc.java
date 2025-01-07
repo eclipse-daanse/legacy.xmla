@@ -16,10 +16,9 @@ package org.eclipse.daanse.olap.function.def.cast;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 
-import mondrian.calc.impl.GenericCalc;
-
-public class CaseMatchCalc extends GenericCalc {
+public class CaseMatchCalc extends AbstractProfilingNestedUnknownCalc {
 
     private final Calc<?> valueCalc;
     private final Calc<?>[] exprCalcs;

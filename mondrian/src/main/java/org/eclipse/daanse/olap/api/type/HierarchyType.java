@@ -9,14 +9,13 @@
 // All Rights Reserved.
 */
 
-package mondrian.olap.type;
+package org.eclipse.daanse.olap.api.type;
 
 import java.util.Objects;
 
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
-import org.eclipse.daanse.olap.api.type.Type;
 
 /**
  * The type of an expression which represents a hierarchy.

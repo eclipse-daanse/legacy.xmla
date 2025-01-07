@@ -10,14 +10,13 @@
 package mondrian.calc.impl;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
-
-import mondrian.olap.type.SetType;
 
 /**
  * Abstract implementation of the {@link org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc} interface.

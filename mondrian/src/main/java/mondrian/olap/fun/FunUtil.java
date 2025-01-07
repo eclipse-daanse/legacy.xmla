@@ -53,6 +53,9 @@ import org.eclipse.daanse.olap.api.query.component.Literal;
 import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.ScalarType;
+import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.DoubleCalc;
@@ -65,6 +68,7 @@ import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMem
 import org.eclipse.daanse.olap.function.def.parentheses.ParenthesesFunDef;
 import org.eclipse.daanse.olap.function.def.set.SetFunDef;
 import org.eclipse.daanse.olap.impl.IdentifierParser.Builder;
+import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.calc.impl.UnaryTupleList;
 import mondrian.mdx.HierarchyExpressionImpl;
@@ -76,10 +80,6 @@ import mondrian.olap.exceptions.CousinHierarchyMismatchException;
 import mondrian.olap.exceptions.MdxChildObjectNotFoundException;
 import mondrian.olap.fun.sort.OrderKey;
 import mondrian.olap.fun.sort.Sorter;
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.ScalarType;
-import mondrian.olap.type.TupleType;
-import mondrian.olap.type.TypeUtil;
 import mondrian.rolap.RolapUtil;
 import mondrian.util.CancellationChecker;
 import mondrian.util.ConcatenableList;

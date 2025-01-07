@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
@@ -39,7 +40,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import mondrian.calc.impl.ArrayTupleList;
 import mondrian.calc.impl.UnaryTupleList;
 import mondrian.mdx.ResolvedFunCallImpl;
-import mondrian.olap.type.SetType;
 import mondrian.rolap.RolapMemberBase;
 
 /**

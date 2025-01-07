@@ -18,13 +18,12 @@ import java.io.PrintWriter;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.query.component.SymbolLiteral;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
+import org.eclipse.daanse.olap.api.type.StringType;
+import org.eclipse.daanse.olap.api.type.SymbolType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
-
-import mondrian.olap.type.StringType;
-import mondrian.olap.type.SymbolType;
 
 public class SymbolLiteralImpl extends AbstractLiteralImpl<String> implements SymbolLiteral {
 

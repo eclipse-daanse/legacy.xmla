@@ -24,13 +24,12 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.SetType;
+import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.SetType;
-import mondrian.olap.type.TupleType;
 
 /**
  * Skeleton implementation of {@link NamedSet} interface.

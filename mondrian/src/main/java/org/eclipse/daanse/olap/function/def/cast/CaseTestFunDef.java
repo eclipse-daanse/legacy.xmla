@@ -22,6 +22,7 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.BooleanType;
 import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
@@ -29,8 +30,6 @@ import org.eclipse.daanse.olap.calc.base.constant.ConstantCalcs;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
-
-import mondrian.olap.type.BooleanType;
 
 class CaseTestFunDef extends AbstractFunctionDefinition {
     static final String NAME = "_CaseTest";

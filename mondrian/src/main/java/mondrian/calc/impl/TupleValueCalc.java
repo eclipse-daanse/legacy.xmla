@@ -12,11 +12,11 @@ package mondrian.calc.impl;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.TupleCalc;
-
-import mondrian.olap.type.TupleType;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 
 /**
  * Expression which evaluates a tuple expression,
@@ -26,13 +26,13 @@ import mondrian.olap.type.TupleType;
  *
  * <p>The evaluator's context is preserved.
  *
- * @see mondrian.calc.impl.ValueCalc
+ * @see org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc
  * @see mondrian.calc.impl.MemberValueCalc
  *
  * @author jhyde
  * @since Sep 27, 2005
  */
-public class TupleValueCalc extends GenericCalc {
+public class TupleValueCalc extends AbstractProfilingNestedUnknownCalc {
     private final TupleCalc tupleCalc;
     private final boolean nullCheck;
 

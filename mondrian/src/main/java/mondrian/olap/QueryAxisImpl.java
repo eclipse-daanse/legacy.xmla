@@ -29,19 +29,19 @@ import org.eclipse.daanse.olap.api.query.component.Id;
 import org.eclipse.daanse.olap.api.query.component.LevelExpression;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
+import org.eclipse.daanse.olap.api.type.DimensionType;
+import org.eclipse.daanse.olap.api.type.HierarchyType;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.mdx.HierarchyExpressionImpl;
 import mondrian.mdx.LevelExpressionImpl;
 import mondrian.mdx.UnresolvedFunCallImpl;
-import mondrian.olap.type.DimensionType;
-import mondrian.olap.type.HierarchyType;
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.TupleType;
-import mondrian.olap.type.TypeUtil;
 
 /**
  * An axis in an MDX query. For example, the typical MDX query has two axes,

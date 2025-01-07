@@ -17,18 +17,17 @@ import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.BooleanType;
+import org.eclipse.daanse.olap.api.type.NumericType;
+import org.eclipse.daanse.olap.api.type.SetType;
+import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
-
-import mondrian.olap.type.BooleanType;
-import mondrian.olap.type.NumericType;
-import mondrian.olap.type.SetType;
-import mondrian.olap.type.StringType;
-import mondrian.olap.type.TypeUtil;
+import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 public class IifFunDef extends AbstractFunctionDefinition {
     /**

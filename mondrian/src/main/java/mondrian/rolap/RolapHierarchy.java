@@ -52,12 +52,15 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.NumericType;
+import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantCalcs;
+import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
@@ -80,7 +83,6 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.UnaryTupleList;
-import mondrian.calc.impl.ValueCalc;
 import mondrian.mdx.HierarchyExpressionImpl;
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.mdx.UnresolvedFunCallImpl;
@@ -93,8 +95,6 @@ import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
-import mondrian.olap.type.NumericType;
-import mondrian.olap.type.SetType;
 import mondrian.rolap.RestrictedMemberReader.MultiCardinalityDefaultMember;
 import mondrian.rolap.format.FormatterCreateContext;
 import mondrian.rolap.format.FormatterFactory;
@@ -982,7 +982,7 @@ public class RolapHierarchy extends HierarchyBase {
                     getMemberReader(), role);
             case PARTIAL:
                 Type memberType1 =
-                    new mondrian.olap.type.MemberType(
+                    new org.eclipse.daanse.olap.api.type.MemberType(
                         getDimension(),
                         this,
                         null,
@@ -1610,7 +1610,7 @@ public class RolapHierarchy extends HierarchyBase {
             super(
                 returnType,
                 tupleListCalc,
-                new ValueCalc(returnType));
+                new CurrentValueUnknownCalc(returnType));
         }
     }
 

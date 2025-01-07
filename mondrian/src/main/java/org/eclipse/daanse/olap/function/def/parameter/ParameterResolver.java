@@ -12,6 +12,10 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Literal;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.NumericType;
+import org.eclipse.daanse.olap.api.type.SetType;
+import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
@@ -21,10 +25,6 @@ import org.osgi.service.component.annotations.Component;
 import mondrian.olap.Util;
 import mondrian.olap.fun.BuiltinFunTable;
 import mondrian.olap.fun.FunUtil;
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.NumericType;
-import mondrian.olap.type.SetType;
-import mondrian.olap.type.StringType;
 
 /**
  * Resolves calls to the <code>Parameter</code> MDX function.

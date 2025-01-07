@@ -1,10 +1,8 @@
 package org.eclipse.daanse.olap.impl;
 
-import mondrian.calc.impl.GenericCalc;
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.QueryImpl;
 import mondrian.olap.Util;
-import mondrian.olap.type.ScalarType;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.RolapCalculatedMember;
 import mondrian.rolap.RolapConnection;
@@ -28,7 +26,9 @@ import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.result.AllocationPolicy;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.api.result.Scenario;
+import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.calc.api.Calc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -517,7 +517,7 @@ public class ScenarioImpl implements Scenario {
      * and modifies the values of ancestors or descendants of such cells
      * according to the allocation policy.
      */
-    private static class ScenarioCalc extends GenericCalc {
+    private static class ScenarioCalc extends AbstractProfilingNestedUnknownCalc {
         private final ScenarioImpl scenario;
 
         /**

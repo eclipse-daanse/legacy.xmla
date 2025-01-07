@@ -17,6 +17,8 @@ import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
@@ -24,10 +26,8 @@ import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc;
+import org.eclipse.daanse.olap.util.type.TypeUtil;
 
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.SetType;
-import mondrian.olap.type.TypeUtil;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapHierarchy;
 

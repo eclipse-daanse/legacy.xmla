@@ -16,15 +16,14 @@ package org.eclipse.daanse.olap.function.def.drilldownleveltopbottom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
 import org.eclipse.daanse.olap.calc.api.LevelCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
+import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
-
-import mondrian.calc.impl.ValueCalc;
-import mondrian.olap.type.ScalarType;
 
 public class DrilldownLevelTopBottomFunDef extends AbstractFunctionDefinition {
     final boolean top;
@@ -54,7 +53,7 @@ public class DrilldownLevelTopBottomFunDef extends AbstractFunctionDefinition {
       final Calc<?> orderCalc =
         call.getArgCount() > 3
           ? compiler.compileScalar( call.getArg( 3 ), true )
-          : new ValueCalc(
+          : new CurrentValueUnknownCalc(
                  ScalarType.INSTANCE  );
       return new DrilldownLevelTopBottomCalc(
               call.getType(),

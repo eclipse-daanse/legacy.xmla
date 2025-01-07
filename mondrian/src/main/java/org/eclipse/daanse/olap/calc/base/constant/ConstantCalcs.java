@@ -1,12 +1,11 @@
 package org.eclipse.daanse.olap.calc.base.constant;
 
+import org.eclipse.daanse.olap.api.type.BooleanType;
+import org.eclipse.daanse.olap.api.type.DecimalType;
+import org.eclipse.daanse.olap.api.type.NumericType;
+import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.ConstantCalc;
-
-import mondrian.olap.type.BooleanType;
-import mondrian.olap.type.DecimalType;
-import mondrian.olap.type.NumericType;
-import mondrian.olap.type.StringType;
 
 public class ConstantCalcs {
 

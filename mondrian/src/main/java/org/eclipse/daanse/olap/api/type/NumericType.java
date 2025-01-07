@@ -9,7 +9,7 @@
 // All Rights Reserved.
 */
 
-package mondrian.olap.type;
+package org.eclipse.daanse.olap.api.type;
 
 public class NumericType extends ScalarType {
 

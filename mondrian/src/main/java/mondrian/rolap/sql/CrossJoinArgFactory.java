@@ -37,6 +37,7 @@ import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.NamedSetExpression;
 import org.eclipse.daanse.olap.api.query.component.NumericLiteral;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
+import org.eclipse.daanse.olap.api.type.HierarchyType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
@@ -50,7 +51,6 @@ import org.slf4j.LoggerFactory;
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.olap.type.HierarchyType;
 import mondrian.rolap.RolapCalculatedMember;
 import mondrian.rolap.RolapEvaluator;
 import mondrian.rolap.RolapLevel;
@@ -902,7 +902,7 @@ public class CrossJoinArgFactory {
 
         // Input to CurremntMember should be either Dimension or Hierarchy type.
         if (!(currentMemberArgType
-            instanceof mondrian.olap.type.DimensionType
+            instanceof org.eclipse.daanse.olap.api.type.DimensionType
             || currentMemberArgType instanceof HierarchyType))
         {
             return null;

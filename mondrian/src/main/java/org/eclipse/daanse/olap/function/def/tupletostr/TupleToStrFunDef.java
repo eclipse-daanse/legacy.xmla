@@ -28,9 +28,9 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCal
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.olap.fun.FunUtil;
-import mondrian.olap.type.TypeUtil;
 
 public class TupleToStrFunDef extends AbstractFunctionDefinition {
 

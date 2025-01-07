@@ -10,6 +10,7 @@
 package mondrian.calc.impl;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
@@ -18,8 +19,6 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
-
-import mondrian.olap.type.SetType;
 
 /**
  * Adapter which computes a set expression and converts it to any list or
@@ -41,7 +40,7 @@ implements TupleListCalc, TupleIteratorCalc
      * @param exp Source expression
      */
     protected GenericIterCalc( Type type) {
-        super(   type, null);
+        super(   type);
     }
 
     /**

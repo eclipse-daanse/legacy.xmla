@@ -18,12 +18,11 @@ import java.io.PrintWriter;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.query.component.NullLiteral;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
+import org.eclipse.daanse.olap.api.type.NullType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
-
-import mondrian.olap.type.NullType;
 
 public class NullLiteralImpl extends AbstractLiteralImpl<Object> implements NullLiteral {
 

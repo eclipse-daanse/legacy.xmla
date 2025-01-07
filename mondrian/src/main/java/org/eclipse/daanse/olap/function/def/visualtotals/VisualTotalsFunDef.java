@@ -15,10 +15,11 @@ package org.eclipse.daanse.olap.function.def.visualtotals;
 
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Validator;
-import mondrian.olap.type.MemberType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
@@ -27,7 +28,6 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.MondrianException;
-import mondrian.olap.type.SetType;
 
 public class VisualTotalsFunDef extends AbstractFunctionDefinition {
         private final static String visualTotalsAppliedToTuples =

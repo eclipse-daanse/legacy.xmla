@@ -13,11 +13,10 @@
 */
 package org.eclipse.daanse.olap.calc.base.constant;
 
-import mondrian.olap.type.NullType;
+import org.eclipse.daanse.olap.api.type.NullType;
+import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingConstantCalc;
-
-import mondrian.olap.type.StringType;
 
 public class ConstantStringCalc extends AbstractProfilingConstantCalc<String> implements StringCalc {
 

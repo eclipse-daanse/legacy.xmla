@@ -18,6 +18,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.LevelType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.LevelCalc;
@@ -28,7 +29,6 @@ import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.MondrianException;
-import mondrian.olap.type.LevelType;
 
 class AncestorLevelFunDef extends AbstractFunctionDefinition {
 

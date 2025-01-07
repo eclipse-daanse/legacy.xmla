@@ -18,10 +18,9 @@ import org.eclipse.daanse.olap.api.ExpCacheDescriptor;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 
-import mondrian.calc.impl.GenericCalc;
-
-public class CacheGenericCalc extends GenericCalc {
+public class CacheGenericCalc extends AbstractProfilingNestedUnknownCalc {
     private final ExpCacheDescriptor cacheDescriptor;
     
     protected CacheGenericCalc(Type type, ExpCacheDescriptor cacheDescriptor) {

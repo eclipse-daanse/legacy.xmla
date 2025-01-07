@@ -20,6 +20,9 @@ import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.NumericType;
+import org.eclipse.daanse.olap.api.type.SetType;
+import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
@@ -28,12 +31,9 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.olap.fun.FunUtil;
-import mondrian.olap.type.NumericType;
-import mondrian.olap.type.SetType;
-import mondrian.olap.type.StringType;
-import mondrian.olap.type.TypeUtil;
 
 public class GenerateFunDef extends AbstractFunctionDefinition {
 

@@ -26,8 +26,6 @@ public class TestSetup {
     @WithFactoryConfiguration(factoryPid = BasicContext.PID, location = "?", properties = {
             @Property(key = BasicContext.REF_NAME_DATA_SOURCE
                     + ".target", value = "(test.exec=%s)", templateArguments = @TemplateArgument(source = ValueSource.TestUniqueId)),
-            @Property(key = BasicContext.REF_NAME_STATISTICS_PROVIDER
-                    + ".target", value = "(test.exec=%s)", templateArguments = @TemplateArgument(source = ValueSource.TestUniqueId)),
             @Property(key = BasicContext.REF_NAME_DATA_SOURCE
                     + ".target", value = "(test.exec=%s)", templateArguments = @TemplateArgument(source = ValueSource.TestUniqueId)),
             @Property(key = BasicContext.REF_NAME_DB_MAPPING_CATALOG_SUPPLIER

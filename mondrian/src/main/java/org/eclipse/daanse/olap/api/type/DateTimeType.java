@@ -7,7 +7,7 @@
 * Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
 */
 
-package mondrian.olap.type;
+package org.eclipse.daanse.olap.api.type;
 
 
 public class DateTimeType extends ScalarType {

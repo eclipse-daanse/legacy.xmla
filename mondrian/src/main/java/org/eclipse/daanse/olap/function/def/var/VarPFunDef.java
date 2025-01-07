@@ -23,9 +23,9 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
+import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 
-import mondrian.calc.impl.ValueCalc;
 import mondrian.olap.fun.FunUtil;
 
 public class VarPFunDef extends AbstractAggregateFunDef {
@@ -41,7 +41,7 @@ public class VarPFunDef extends AbstractAggregateFunDef {
             final Calc calc =
                 call.getArgCount() > 1
                 ? compiler.compileScalar(call.getArg(1), true)
-                : new ValueCalc(call.getType());
+                : new CurrentValueUnknownCalc(call.getType());
             return new AbstractProfilingNestedDoubleCalc(call.getType(), new Calc[] {tupleListCalc, calc}) {
                 @Override
                 public Double evaluate(Evaluator evaluator) {

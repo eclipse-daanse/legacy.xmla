@@ -17,10 +17,9 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.api.Calc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 
-import mondrian.calc.impl.GenericCalc;
-
-public class CaseTestGenericCalc extends GenericCalc {
+public class CaseTestGenericCalc extends AbstractProfilingNestedUnknownCalc {
 
     private final BooleanCalc[] conditionCalcs;
     private final Calc<?>[] exprCalcs;

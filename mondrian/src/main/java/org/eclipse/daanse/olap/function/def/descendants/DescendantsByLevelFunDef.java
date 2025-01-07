@@ -19,6 +19,11 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.EmptyType;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.NumericType;
+import org.eclipse.daanse.olap.api.type.SetType;
+import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
@@ -33,11 +38,6 @@ import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.MondrianException;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
-import mondrian.olap.type.EmptyType;
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.NumericType;
-import mondrian.olap.type.SetType;
-import mondrian.olap.type.TupleType;
 
 public class DescendantsByLevelFunDef extends AbstractFunctionDefinition {
 

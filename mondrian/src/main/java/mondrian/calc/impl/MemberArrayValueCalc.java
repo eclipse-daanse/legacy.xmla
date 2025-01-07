@@ -12,11 +12,12 @@ package mondrian.calc.impl;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
-
-import mondrian.olap.type.ScalarType;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
+import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 
 /**
  * Expression which evaluates a few member expressions,
@@ -27,11 +28,11 @@ import mondrian.olap.type.ScalarType;
  * <p>The evaluator's context is preserved.
  *
  * <p>Note that a MemberValueCalc with 0 member expressions is equivalent to a
- * {@link ValueCalc}; see also {@link TupleValueCalc}.
+ * {@link CurrentValueUnknownCalc}; see also {@link TupleValueCalc}.
  *
  * @author jhyde
  */
-public class MemberArrayValueCalc extends GenericCalc {
+public class MemberArrayValueCalc extends AbstractProfilingNestedUnknownCalc {
     private final MemberCalc[] memberCalcs;
     private final Member[] members;
     private final boolean nullCheck;

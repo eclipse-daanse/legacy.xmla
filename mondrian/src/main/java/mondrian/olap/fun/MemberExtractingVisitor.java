@@ -81,7 +81,7 @@ public class MemberExtractingVisitor extends MdxVisitorImpl {
 	public Object visitParameterExpression(ParameterExpression parameterExpr) {
         final Parameter parameter = parameterExpr.getParameter();
         final Type type = parameter.getType();
-        if (type instanceof mondrian.olap.type.MemberType) {
+        if (type instanceof org.eclipse.daanse.olap.api.type.MemberType) {
             final Object value = parameter.getValue();
             if (value instanceof Member member) {
                 if (!member.isMeasure() && !member.isCalculated()) {

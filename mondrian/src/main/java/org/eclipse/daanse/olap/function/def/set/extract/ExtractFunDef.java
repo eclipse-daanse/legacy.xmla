@@ -25,6 +25,9 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.query.component.DimensionExpression;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.SetType;
+import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
@@ -37,9 +40,6 @@ import org.eclipse.daanse.olap.function.def.set.distinct.DistinctCalc;
 import mondrian.mdx.HierarchyExpressionImpl;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunctionException;
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.SetType;
-import mondrian.olap.type.TupleType;
 
 public class ExtractFunDef extends AbstractFunctionDefinition {
 

@@ -23,6 +23,8 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.DimensionExpression;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.api.type.NullType;
+import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
@@ -30,8 +32,6 @@ import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFuncti
 import org.osgi.service.component.annotations.Component;
 
 import mondrian.mdx.HierarchyExpressionImpl;
-import mondrian.olap.type.NullType;
-import mondrian.olap.type.StringType;
 
 @Component(service = FunctionResolver.class)
 public class StrToTupleResolver extends NoExpressionRequiredFunctionResolver {

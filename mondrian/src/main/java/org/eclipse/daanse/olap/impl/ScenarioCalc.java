@@ -13,19 +13,19 @@
  */
 package org.eclipse.daanse.olap.impl;
 
-import mondrian.calc.impl.GenericCalc;
 import mondrian.olap.Util;
-import mondrian.olap.type.ScalarType;
 import mondrian.rolap.RolapEvaluator;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.result.Scenario;
+import org.eclipse.daanse.olap.api.type.ScalarType;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class ScenarioCalc extends GenericCalc {
+public class ScenarioCalc extends AbstractProfilingNestedUnknownCalc {
     static final Logger LOGGER = LoggerFactory.getLogger(ScenarioCalc.class);
     private final Scenario scenario;
     private final Object o;

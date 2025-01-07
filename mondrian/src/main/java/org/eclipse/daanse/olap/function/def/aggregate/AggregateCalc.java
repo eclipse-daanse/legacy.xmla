@@ -36,10 +36,10 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterator;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 
-import mondrian.calc.impl.GenericCalc;
 import mondrian.calc.impl.UnaryTupleList;
 import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
@@ -47,7 +47,7 @@ import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
 import mondrian.rolap.RolapAggregator;
 
-public class AggregateCalc  extends GenericCalc {
+public class AggregateCalc  extends AbstractProfilingNestedUnknownCalc {
     private static final String TIMING_NAME =
             AggregateFunDef.class.getSimpleName();
     private final TupleListCalc tupleListCalc;

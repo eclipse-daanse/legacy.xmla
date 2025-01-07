@@ -19,6 +19,7 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAt
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.NullType;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
@@ -27,7 +28,6 @@ import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.fun.FunUtil;
-import mondrian.olap.type.NullType;
 
 public class UCaseFunDef extends AbstractFunctionDefinition {
 

@@ -40,10 +40,10 @@ import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.core.FunctionPrinter;
 import org.eclipse.daanse.olap.query.base.Expressions;
+import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.mdx.UnresolvedFunCallImpl;
-import mondrian.olap.type.TypeUtil;
 import mondrian.util.ArrayStack;
 
 /**

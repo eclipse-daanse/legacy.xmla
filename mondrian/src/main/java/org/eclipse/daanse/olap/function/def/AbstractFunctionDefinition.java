@@ -39,10 +39,10 @@ import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionPrinter;
+import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.fun.FunUtil;
-import mondrian.olap.type.TypeUtil;
 
 public abstract class AbstractFunctionDefinition implements FunctionDefinition {
 

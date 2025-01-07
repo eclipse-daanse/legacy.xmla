@@ -23,11 +23,10 @@ import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
-
-import mondrian.calc.impl.ValueCalc;
 
 public class AggregateChildrenFunbDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtom$AggregateChildren = new InternalOperationAtom("$AggregateChildren");
@@ -50,7 +49,7 @@ public class AggregateChildrenFunbDef extends AbstractFunctionDefinition {
     @Override
     public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
         return new AggregateChildrenCalc(call.getType(), compiler.compileHierarchy(call.getArg(0)),
-                new ValueCalc(call.getType()));
+                new CurrentValueUnknownCalc(call.getType()));
     }
 
 }

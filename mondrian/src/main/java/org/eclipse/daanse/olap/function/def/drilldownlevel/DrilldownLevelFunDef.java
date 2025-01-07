@@ -38,13 +38,13 @@ public class DrilldownLevelFunDef extends AbstractFunctionDefinition {
         final LevelCalc levelCalc =
             call.getArgCount() > 1
                 && call.getArg(1).getType()
-                instanceof mondrian.olap.type.LevelType
+                instanceof org.eclipse.daanse.olap.api.type.LevelType
                 ? compiler.compileLevel(call.getArg(1))
                 : null;
         final IntegerCalc indexCalc =
             call.getArgCount() > 2
                 && call.getArg(2) != null
-                && !(call.getArg(2).getType() instanceof mondrian.olap.type.EmptyType)
+                && !(call.getArg(2).getType() instanceof org.eclipse.daanse.olap.api.type.EmptyType)
                 ? compiler.compileInteger(call.getArg(2))
                 : null;
         final int arity = tupleListCalc.getType().getArity();

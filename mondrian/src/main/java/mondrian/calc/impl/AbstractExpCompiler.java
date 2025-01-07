@@ -25,6 +25,18 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Literal;
 import org.eclipse.daanse.olap.api.query.component.MemberExpression;
+import org.eclipse.daanse.olap.api.type.BooleanType;
+import org.eclipse.daanse.olap.api.type.DecimalType;
+import org.eclipse.daanse.olap.api.type.DimensionType;
+import org.eclipse.daanse.olap.api.type.HierarchyType;
+import org.eclipse.daanse.olap.api.type.LevelType;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.NullType;
+import org.eclipse.daanse.olap.api.type.NumericType;
+import org.eclipse.daanse.olap.api.type.ScalarType;
+import org.eclipse.daanse.olap.api.type.SetType;
+import org.eclipse.daanse.olap.api.type.StringType;
+import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.api.Calc;
@@ -69,25 +81,13 @@ import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMem
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyCalc;
 import org.eclipse.daanse.olap.function.def.level.member.MemberLevelCalc;
+import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.MondrianException;
 import mondrian.olap.SymbolLiteralImpl;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
-import mondrian.olap.type.BooleanType;
-import mondrian.olap.type.DecimalType;
-import mondrian.olap.type.DimensionType;
-import mondrian.olap.type.HierarchyType;
-import mondrian.olap.type.LevelType;
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.NullType;
-import mondrian.olap.type.NumericType;
-import mondrian.olap.type.ScalarType;
-import mondrian.olap.type.SetType;
-import mondrian.olap.type.StringType;
-import mondrian.olap.type.TupleType;
-import mondrian.olap.type.TypeUtil;
 
 /**
  * Abstract implementation of the {@link org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler} interface.

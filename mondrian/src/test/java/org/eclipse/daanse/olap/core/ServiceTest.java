@@ -125,7 +125,6 @@ class ServiceTest {
 
         props.put(BasicContext.REF_NAME_DATA_SOURCE + TARGET_EXT, "(ds=1)");
         props.put(BasicContext.REF_NAME_DIALECT_RESOLVER + TARGET_EXT, "(dr=2)");
-        props.put(BasicContext.REF_NAME_STATISTICS_PROVIDER + TARGET_EXT, "(sp=3)");
         props.put(BasicContext.REF_NAME_EXPRESSION_COMPILER_FACTORY + TARGET_EXT, "(ecf=1)");
         props.put(BasicContext.REF_NAME_DB_MAPPING_CATALOG_SUPPLIER + TARGET_EXT, "(dbmsp=1)");
         props.put(BasicContext.REF_NAME_MDX_PARSER_PROVIDER + TARGET_EXT, "(parser=1)");

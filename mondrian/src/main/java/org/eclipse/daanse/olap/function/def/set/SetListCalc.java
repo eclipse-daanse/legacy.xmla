@@ -19,6 +19,8 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperat
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
@@ -33,8 +35,6 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedVoidCalc;
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.fun.FunUtil;
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.SetType;
 
 /**
  * Compiled expression to implement the MDX set function, <code>{ ...
@@ -109,7 +109,7 @@ public class SetListCalc  extends AbstractListCalc {
                 }
 
             };
-        } else if (type instanceof mondrian.olap.type.LevelType) {
+        } else if (type instanceof org.eclipse.daanse.olap.api.type.LevelType) {
             mondrian.mdx.UnresolvedFunCallImpl unresolvedFunCall = new mondrian.mdx.UnresolvedFunCallImpl(
                     new PlainPropertyOperationAtom("Members"),
                     new Expression[] {arg});

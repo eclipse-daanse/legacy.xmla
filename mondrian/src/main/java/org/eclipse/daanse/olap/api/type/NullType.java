@@ -9,29 +9,25 @@
 // All Rights Reserved.
 */
 
-package mondrian.olap.type;
+package org.eclipse.daanse.olap.api.type;
 
 
-public class BooleanType extends ScalarType {
+public class NullType extends ScalarType
+{
 
-	public static final BooleanType INSTANCE = new BooleanType();
+	public static final NullType INSTANCE = new NullType();
 
-	private BooleanType() {
-		super("BOOLEAN");
+	private NullType() {
+		super("<NULLTYPE>");
 	}
 
-	@Override
+    @Override
 	public boolean equals(Object obj) {
-		return obj instanceof BooleanType;
-	}
+        return obj instanceof NullType;
+    }
 
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
-
-	@Override
-	public boolean isInstance(Object value) {
-		return value instanceof Boolean;
-	}
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

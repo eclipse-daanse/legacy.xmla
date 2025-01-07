@@ -23,6 +23,10 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.SetType;
+import org.eclipse.daanse.olap.api.type.StringType;
+import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
@@ -32,10 +36,6 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.fun.FunUtil;
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.SetType;
-import mondrian.olap.type.StringType;
-import mondrian.olap.type.TupleType;
 
 public class SetItemFunDef extends AbstractFunctionDefinition {
     

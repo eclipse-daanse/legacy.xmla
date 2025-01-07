@@ -14,10 +14,9 @@
 package org.eclipse.daanse.olap.calc.base.constant;
 
 import org.eclipse.daanse.olap.api.element.Hierarchy;
+import org.eclipse.daanse.olap.api.type.HierarchyType;
 import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingConstantCalc;
-
-import mondrian.olap.type.HierarchyType;
 
 public class ConstantHierarchyCalc extends AbstractProfilingConstantCalc<Hierarchy> implements HierarchyCalc {
 

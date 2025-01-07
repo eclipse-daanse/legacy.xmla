@@ -38,11 +38,11 @@ import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
-import mondrian.calc.impl.GenericCalc;
 import mondrian.olap.Util;
 
 /**
@@ -362,7 +362,7 @@ public class JavaFunDef extends AbstractFunctionDefinition {
     /**
      * Calc which calls a Java method.
      */
-    private static class JavaMethodCalc extends GenericCalc {
+    private static class JavaMethodCalc extends AbstractProfilingNestedUnknownCalc {
         private final Method method;
         private final Object[] args;
 

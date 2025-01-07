@@ -9,7 +9,7 @@
 // All Rights Reserved.
 */
 
-package mondrian.olap.type;
+package org.eclipse.daanse.olap.api.type;
 
 public class SymbolType extends ScalarType {
 	public static final SymbolType INSTANCE = new SymbolType();

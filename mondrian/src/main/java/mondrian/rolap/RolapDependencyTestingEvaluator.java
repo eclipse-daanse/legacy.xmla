@@ -22,17 +22,17 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 
 import mondrian.calc.impl.DelegatingExpCompiler;
-import mondrian.calc.impl.GenericCalc;
 import mondrian.calc.impl.GenericIterCalc;
 import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.Util;
-import mondrian.olap.type.SetType;
 
 /**
  * Evaluator which checks dependencies of expressions.
@@ -305,7 +305,7 @@ public class RolapDependencyTestingEvaluator extends RolapEvaluator {
     /**
      * Expression which checks dependencies of an underlying scalar expression.
      */
-    private static class DteScalarCalcImpl extends GenericCalc {
+    private static class DteScalarCalcImpl extends AbstractProfilingNestedUnknownCalc {
         private final Calc calc;
         private final Hierarchy[] independentHierarchies;
         private final String mdxString;

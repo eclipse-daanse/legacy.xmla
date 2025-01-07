@@ -20,9 +20,9 @@ import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
+import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 
-import mondrian.calc.impl.ValueCalc;
 import mondrian.olap.ResultStyleException;
 
 public class SumFunDef extends AbstractAggregateFunDef {
@@ -74,7 +74,7 @@ public class SumFunDef extends AbstractAggregateFunDef {
             return null;
           }
           final Calc<?> calc =
-              call.getArgCount() > 1 ? compiler.compileScalar( call.getArg( 1 ), true ) : new ValueCalc( call.getType() );
+              call.getArgCount() > 1 ? compiler.compileScalar( call.getArg( 1 ), true ) : new CurrentValueUnknownCalc( call.getType() );
           // we may have asked for one sort of Calc, but here's what we got.
           if ( ncalc instanceof TupleListCalc ) {
             return genListCalc( call, (TupleListCalc) ncalc, calc );

@@ -29,13 +29,13 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
+import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.calc.impl.MemberArrayValueCalc;
 import mondrian.calc.impl.MemberValueCalc;
-import mondrian.calc.impl.ValueCalc;
 import mondrian.olap.fun.FunUtil;
 import mondrian.olap.fun.sort.SortKeySpec;
 import mondrian.olap.fun.sort.Sorter.SorterFlag;
@@ -80,7 +80,7 @@ public Calc<?> compileCall( ResolvedFunCall call, ExpressionCompiler compiler ) 
         } else if ( variableList.isEmpty() ) {
           // All members are constant. Optimize by setting entire
           // context first.
-          calcList[1] = new ValueCalc( expCalc.getType()  );
+          calcList[1] = new CurrentValueUnknownCalc( expCalc.getType()  );
           return new OrderContextCalc( calcs, new OrderCurrentMemberCalc(call.getType(), calcList, keySpecList ) );
         } else {
           // Some members are constant. Evaluate these before

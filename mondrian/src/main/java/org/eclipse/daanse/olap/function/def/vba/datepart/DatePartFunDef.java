@@ -17,6 +17,7 @@ import java.util.Calendar;
 
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.DecimalType;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.DateTimeCalc;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
@@ -24,8 +25,6 @@ import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantIntegerCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
-
-import mondrian.olap.type.DecimalType;
 
 public class DatePartFunDef  extends AbstractFunctionDefinition {
 

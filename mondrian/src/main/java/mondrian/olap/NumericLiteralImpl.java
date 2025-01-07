@@ -20,12 +20,11 @@ import java.util.Map;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.query.component.NumericLiteral;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
+import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantDoubleCalc;
-
-import mondrian.olap.type.NumericType;
 
 public class NumericLiteralImpl extends AbstractLiteralImpl<BigDecimal> implements NumericLiteral {
 	private static final NumericLiteralImpl negativeOne = new NumericLiteralImpl(BigDecimal.ONE.negate());

@@ -42,12 +42,12 @@ import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.MemberProperty;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
+import org.eclipse.daanse.olap.api.type.DecimalType;
+import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.mdx.MdxVisitorImpl;
-import mondrian.olap.type.DecimalType;
-import mondrian.olap.type.NumericType;
-import mondrian.olap.type.TypeUtil;
 import mondrian.rolap.RolapCalculatedMember;
 
 

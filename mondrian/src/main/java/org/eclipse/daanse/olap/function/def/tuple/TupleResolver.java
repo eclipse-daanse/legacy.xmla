@@ -21,14 +21,13 @@ import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.api.type.MemberType;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFunctionResolver;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.olap.function.def.parentheses.ParenthesesFunDef;
 import org.eclipse.daanse.olap.query.base.Expressions;
-
-import mondrian.olap.type.MemberType;
 
 public class TupleResolver extends NoExpressionRequiredFunctionResolver {
 

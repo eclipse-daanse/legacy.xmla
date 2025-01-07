@@ -3496,7 +3496,7 @@ public class RolapCube extends CubeBase {
      * expression. The expression has minimal amounts of metadata, for example
      * type information, but the function has no name or description.
      *
-     * @see mondrian.olap.type.TypeWrapperExp
+     * @see org.eclipse.daanse.olap.util.type.TypeWrapperExp
      */
     static Expression createDummyExp(final Calc calc) {
         OperationAtom functionAtom = new FunctionOperationAtom("dummy");

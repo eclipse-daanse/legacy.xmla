@@ -10,7 +10,7 @@
 // All Rights Reserved.
 */
 
-package mondrian.olap.type;
+package org.eclipse.daanse.olap.api.type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,6 @@ import java.util.Objects;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
-import org.eclipse.daanse.olap.api.type.Type;
 
 /**
  * Set type.

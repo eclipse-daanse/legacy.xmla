@@ -14,11 +14,10 @@
 package org.eclipse.daanse.olap.function.def.set.addcalculatedmembers;
 
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.core.resolver.ParametersCheckingFunctionDefinitionResolver;
-
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.SetType;
 
 public class AddCalculatedMembersResolver extends ParametersCheckingFunctionDefinitionResolver {
 

@@ -42,20 +42,20 @@ import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 import org.eclipse.daanse.olap.impl.IdentifierSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.calc.impl.ElevatorSimplifyer;
-import mondrian.calc.impl.GenericCalc;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.NameResolverImpl;
 import mondrian.olap.NullLiteralImpl;
 import mondrian.olap.ParameterImpl;
 import mondrian.olap.Util;
-import mondrian.olap.type.StringType;
 import mondrian.rolap.sql.MemberChildrenConstraint;
 import mondrian.rolap.sql.TupleConstraint;
 
@@ -883,7 +883,7 @@ ElevatorSimplifyer.simplifyEvaluator(calc, evaluator);
 
         @Override
 		public Calc compile(ExpressionCompiler compiler) {
-            return new GenericCalc(getType()) {
+            return new AbstractProfilingNestedUnknownCalc(getType()) {
             	//"SystemPropertyCalc"
                 @Override
 				public Calc[] getChildCalcs() {

@@ -18,12 +18,11 @@ import java.io.PrintWriter;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.query.component.StringLiteral;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
+import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
-
-import mondrian.olap.type.StringType;
 
 public class StringLiteralImpl extends AbstractLiteralImpl<String> implements StringLiteral {
     public static final StringLiteralImpl EMPTY_STRING_LITERAL = new StringLiteralImpl("");

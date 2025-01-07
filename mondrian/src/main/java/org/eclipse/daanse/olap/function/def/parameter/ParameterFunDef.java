@@ -12,6 +12,9 @@ import org.eclipse.daanse.olap.api.query.component.LevelExpression;
 import org.eclipse.daanse.olap.api.query.component.Literal;
 import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.NumericType;
+import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
@@ -20,9 +23,6 @@ import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import mondrian.mdx.HierarchyExpressionImpl;
 import mondrian.mdx.ParameterExpressionImpl;
 import mondrian.olap.Util;
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.NumericType;
-import mondrian.olap.type.StringType;
 
 public class ParameterFunDef  extends AbstractFunctionDefinition {
     public final String parameterName;

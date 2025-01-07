@@ -21,12 +21,12 @@ import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFunctionResolver;
 import org.eclipse.daanse.olap.query.base.Expressions;
 
 import mondrian.olap.Util;
-import mondrian.olap.type.SetType;
 
 public class SetItemStringResolver extends NoExpressionRequiredFunctionResolver {
     @Override

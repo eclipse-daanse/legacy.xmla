@@ -9,7 +9,7 @@
 // All Rights Reserved.
 */
 
-package mondrian.olap.type;
+package org.eclipse.daanse.olap.api.type;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -20,7 +20,6 @@ import mondrian.olap.MondrianException;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
-import org.eclipse.daanse.olap.api.type.Type;
 
 
 

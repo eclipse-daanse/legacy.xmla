@@ -9,21 +9,23 @@
 // All Rights Reserved.
 */
 
-package mondrian.olap.type;
+package org.eclipse.daanse.olap.api.type;
 
+public class StringType extends ScalarType {
 
-public class NullType extends ScalarType
-{
-
-	public static final NullType INSTANCE = new NullType();
-
-	private NullType() {
-		super("<NULLTYPE>");
-	}
+	public static final StringType INSTANCE = new StringType();
+    private StringType() {
+        super("STRING");
+    }
 
     @Override
 	public boolean equals(Object obj) {
-        return obj instanceof NullType;
+        return obj instanceof StringType;
+    }
+
+    @Override
+	public boolean isInstance(Object value) {
+        return value instanceof String;
     }
 
     @Override

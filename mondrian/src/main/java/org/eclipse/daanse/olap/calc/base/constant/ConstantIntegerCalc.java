@@ -13,10 +13,9 @@
 */
 package org.eclipse.daanse.olap.calc.base.constant;
 
+import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingConstantCalc;
-
-import mondrian.olap.type.NumericType;
 
 public class ConstantIntegerCalc extends AbstractProfilingConstantCalc<Integer> implements IntegerCalc {
 

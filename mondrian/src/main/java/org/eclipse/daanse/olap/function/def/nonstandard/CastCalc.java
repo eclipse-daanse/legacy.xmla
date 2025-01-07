@@ -20,13 +20,13 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
+import org.eclipse.daanse.olap.util.type.TypeUtil;
 
-import mondrian.calc.impl.GenericCalc;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
-import mondrian.olap.type.TypeUtil;
 
-public class CastCalc extends GenericCalc {
+public class CastCalc extends AbstractProfilingNestedUnknownCalc {
     private final Calc<?> calc;
     private final Type targetType;
     private final DataType targetCategory;

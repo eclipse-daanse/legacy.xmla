@@ -15,12 +15,11 @@
 package org.eclipse.daanse.olap.calc.base.nested;
 
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.type.MemberType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
-
-import mondrian.olap.type.MemberType;
 
 public abstract class AbstractProfilingNestedMemberCalc extends AbstractProfilingNestedCalc<Member>
 		implements MemberCalc {

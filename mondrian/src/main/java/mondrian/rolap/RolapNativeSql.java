@@ -26,14 +26,14 @@ import org.eclipse.daanse.olap.api.query.component.FunctionCall;
 import org.eclipse.daanse.olap.api.query.component.LevelExpression;
 import org.eclipse.daanse.olap.api.query.component.Literal;
 import org.eclipse.daanse.olap.api.query.component.MemberExpression;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 
 import mondrian.mdx.HierarchyExpressionImpl;
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.ExpCacheDescriptorImpl;
 import mondrian.olap.fun.MondrianEvaluationException;
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.StringType;
 import mondrian.rolap.aggmatcher.AggStar;
 import mondrian.rolap.sql.SqlQuery;
 

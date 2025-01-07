@@ -12,11 +12,12 @@ package mondrian.calc.impl;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
-
-import mondrian.olap.type.ScalarType;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
+import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 
 /**
  * Expression which evaluates a few member expressions,
@@ -27,12 +28,12 @@ import mondrian.olap.type.ScalarType;
  * <p>The evaluator's context is preserved.
  *
  * <p>Note that a MemberValueCalc with 0 member expressions is equivalent to a
- * {@link mondrian.calc.impl.ValueCalc}; see also {@link mondrian.calc.impl.TupleValueCalc}.
+ * {@link org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc}; see also {@link mondrian.calc.impl.TupleValueCalc}.
  *
  * @author jhyde
  * @since Sep 27, 2005
  */
-public class MemberValueCalc extends GenericCalc {
+public class MemberValueCalc extends AbstractProfilingNestedUnknownCalc {
     private final MemberCalc memberCalc;
     private final boolean nullCheck;
 
@@ -59,7 +60,7 @@ public class MemberValueCalc extends GenericCalc {
     }
 
     /**
-     * Creates a {@link ValueCalc}, {@link MemberValueCalc} or
+     * Creates a {@link CurrentValueUnknownCalc}, {@link MemberValueCalc} or
      * {@link MemberArrayValueCalc}.
      *
      * @param exp Expression
@@ -70,13 +71,13 @@ public class MemberValueCalc extends GenericCalc {
      *   evaluator context to each resulting member, then evaluate the current
      *   context
      */
-    public static GenericCalc create(
+    public static AbstractProfilingNestedUnknownCalc create(
     		 Type type,
             MemberCalc[] memberCalcs,
             boolean nullCheck)
     {
         return switch (memberCalcs.length) {
-        case 0 -> new ValueCalc(type);
+        case 0 -> new CurrentValueUnknownCalc(type);
         case 1 -> new MemberValueCalc(type, memberCalcs[0], nullCheck);
         default -> new MemberArrayValueCalc(type, memberCalcs, nullCheck);
         };

@@ -29,14 +29,14 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.api.TupleCalc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 
-import mondrian.calc.impl.GenericCalc;
 import mondrian.olap.MondrianException;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapVirtualCubeMeasure;
 
-public class ValidMeasureCalc extends GenericCalc {
+public class ValidMeasureCalc extends AbstractProfilingNestedUnknownCalc {
 
     private final Calc<?> calc;
     private final static String validMeasureUsingCalculatedMember = """

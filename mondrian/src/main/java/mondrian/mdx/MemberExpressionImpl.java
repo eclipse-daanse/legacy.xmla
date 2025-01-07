@@ -15,6 +15,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
+import org.eclipse.daanse.olap.api.type.MemberType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
@@ -22,7 +23,6 @@ import org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc;
 import org.eclipse.daanse.olap.query.component.expression.AbstractExpression;
 
 import mondrian.olap.Util;
-import mondrian.olap.type.MemberType;
 
 /**
  * Usage of a {@link org.eclipse.daanse.olap.api.element.Member} as an MDX expression.

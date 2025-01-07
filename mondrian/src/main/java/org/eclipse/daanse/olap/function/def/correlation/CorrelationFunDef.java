@@ -23,9 +23,9 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
+import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 
-import mondrian.calc.impl.ValueCalc;
 import mondrian.olap.fun.FunUtil;
 
 public class CorrelationFunDef extends AbstractAggregateFunDef {
@@ -39,7 +39,7 @@ public class CorrelationFunDef extends AbstractAggregateFunDef {
         final TupleListCalc tupleListCalc = compiler.compileList(call.getArg(0));
         final Calc calc1 = compiler.compileScalar(call.getArg(1), true);
         final Calc calc2 = call.getArgCount() > 2 ? compiler.compileScalar(call.getArg(2), true)
-                : new ValueCalc(call.getType());
+                : new CurrentValueUnknownCalc(call.getType());
         return new AbstractProfilingNestedDoubleCalc(call.getType(), new Calc[] { tupleListCalc, calc1, calc2 }) {
             @Override
             public Double evaluate(Evaluator evaluator) {

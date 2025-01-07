@@ -24,7 +24,6 @@
 	bnd.identity;id=junit-platform-launcher,\
 	bnd.identity;id='org.glassfish.hk2.osgi-resource-locator',\
 	bnd.identity;id='com.sun.xml.bind.jaxb-impl',\
-	bnd.identity;id='org.eclipse.daanse.repackage.rhino.engine',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.api',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.core',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.db.mysql',\
@@ -79,7 +78,6 @@
 	org.eclipse.daanse.rdb.structure.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rdb.structure.pojo;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.repackage.dockerjava;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.repackage.rhino.engine;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.instance.complex.expressivenames;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.instance.complex.foodmart;version='[0.0.1,0.0.2)',\
@@ -109,3 +107,4 @@
     #tester.names='mondrian.rolap.aggmatcher.AggMeasureFactCountTest'
 #-runproperties.tester: \
 	#tester.names='org.eclipse.daanse.olap.function.def.order.OrderFunDefTest'
+	

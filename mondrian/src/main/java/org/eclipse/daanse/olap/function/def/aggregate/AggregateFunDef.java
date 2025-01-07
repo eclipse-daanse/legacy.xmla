@@ -21,10 +21,9 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
+import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.calc.impl.ValueCalc;
 
 public class AggregateFunDef extends AbstractAggregateFunDef {
 
@@ -61,7 +60,7 @@ public class AggregateFunDef extends AbstractAggregateFunDef {
         final Calc<?> calc =
             call.getArgCount() > 1
                 ? compiler.compileScalar(call.getArg(1), true)
-                : new ValueCalc(call.getType());
+                : new CurrentValueUnknownCalc(call.getType());
         final Member member =
             call.getArgCount() > 1 ? getMember(call.getArg(1)) : null;
         return new AggregateCalc(calc.getType(), tupleListCalc, calc, member);

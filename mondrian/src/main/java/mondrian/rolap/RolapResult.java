@@ -51,6 +51,9 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Position;
+import org.eclipse.daanse.olap.api.type.NumericType;
+import org.eclipse.daanse.olap.api.type.ScalarType;
+import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ParameterSlot;
 import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
@@ -58,21 +61,22 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterator;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
+import org.eclipse.daanse.olap.calc.base.cache.CacheCalc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
+import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateCalc;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
+import org.eclipse.daanse.olap.util.type.TypeWrapperExp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.calc.impl.CacheCalc;
 import mondrian.calc.impl.DelegatingTupleList;
-import mondrian.calc.impl.GenericCalc;
 import mondrian.calc.impl.ListTupleList;
 import mondrian.calc.impl.TupleCollections;
-import mondrian.calc.impl.ValueCalc;
 import mondrian.mdx.MdxVisitorImpl;
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.DimensionType;
@@ -87,10 +91,6 @@ import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.fun.MondrianEvaluationException;
 import mondrian.olap.fun.sort.Sorter;
-import mondrian.olap.type.NumericType;
-import mondrian.olap.type.ScalarType;
-import mondrian.olap.type.SetType;
-import mondrian.olap.type.TypeWrapperExp;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.agg.CellRequestQuantumExceededException;
 import mondrian.server.LocusImpl;
@@ -292,7 +292,7 @@ public class RolapResult extends ResultBase {
         HashMap<Member, Member> subcubeHierarchyMembers = new HashMap<>();
 
         org.eclipse.daanse.olap.api.type.Type memberType1 =
-                new mondrian.olap.type.MemberType(
+                new org.eclipse.daanse.olap.api.type.MemberType(
                         hierarchy.getDimension(),
                         hierarchy,
                         null,
@@ -327,7 +327,7 @@ public class RolapResult extends ResultBase {
                     return true;
                   }
                 };
-        final mondrian.olap.type.NumericType returnType =NumericType.INSTANCE;
+        final org.eclipse.daanse.olap.api.type.NumericType returnType =NumericType.INSTANCE;
         final Calc partialCalc =
                 new RolapHierarchy.LimitedRollupAggregateCalc(returnType, tupleListCalc);
         
@@ -477,11 +477,11 @@ public class RolapResult extends ResultBase {
           tupleList = AggregateCalc.optimizeTupleList( evaluator, tupleList, false );
           evaluator.setSlicerTuples( tupleList );
 
-          final Calc valueCalc = new ValueCalc( ScalarType.INSTANCE ) ;
+          final Calc valueCalc = new CurrentValueUnknownCalc( ScalarType.INSTANCE ) ;
 
           final List<Member> prevSlicerMembers = new ArrayList<>();
 
-          final Calc calcCached = new GenericCalc( query.getSlicerCalc().getType() ) {
+          final Calc calcCached = new AbstractProfilingNestedUnknownCalc( query.getSlicerCalc().getType() ) {
             @Override
 			public Object evaluate( Evaluator evaluator ) {
               try {

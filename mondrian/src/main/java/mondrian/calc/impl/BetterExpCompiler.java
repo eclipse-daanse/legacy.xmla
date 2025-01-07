@@ -17,6 +17,8 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperat
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.api.type.MemberType;
+import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
@@ -29,8 +31,6 @@ import org.eclipse.daanse.olap.calc.base.type.tuple.MemberCalcToTupleCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuple.UnknownToTupleCalc;
 
 import mondrian.olap.Util;
-import mondrian.olap.type.MemberType;
-import mondrian.olap.type.TupleType;
 
 /**
  * Enhanced expression compiler. It can generate code to convert between scalar
@@ -52,7 +52,7 @@ public class BetterExpCompiler extends AbstractExpCompiler {
 	public TupleCalc compileTuple(Expression exp) {
 		final Calc<?> calc = compile(exp);
 		final Type type = exp.getType();
-		if (type instanceof mondrian.olap.type.DimensionType || type instanceof mondrian.olap.type.HierarchyType) {
+		if (type instanceof org.eclipse.daanse.olap.api.type.DimensionType || type instanceof org.eclipse.daanse.olap.api.type.HierarchyType) {
 			final mondrian.mdx.UnresolvedFunCallImpl unresolvedFunCall = new mondrian.mdx.UnresolvedFunCallImpl(
 					new PlainPropertyOperationAtom("DefaultMember"), new Expression[] { exp });
 			final Expression defaultMember = unresolvedFunCall.accept(getValidator());

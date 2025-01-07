@@ -23,28 +23,28 @@ import org.eclipse.daanse.olap.api.rolap.agg.Aggregator;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
+import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 
-import mondrian.calc.impl.GenericCalc;
 import mondrian.calc.impl.UnaryTupleList;
-import mondrian.calc.impl.ValueCalc;
 import mondrian.olap.Property;
 import mondrian.olap.fun.FunUtil;
 
-public class AggregateChildrenCalc extends GenericCalc {
+public class AggregateChildrenCalc extends AbstractProfilingNestedUnknownCalc {
 
-    protected AggregateChildrenCalc(Type type, HierarchyCalc hierarchyCalc, ValueCalc valueCalc) {
+    protected AggregateChildrenCalc(Type type, HierarchyCalc hierarchyCalc, CurrentValueUnknownCalc valueCalc) {
         super(type, hierarchyCalc, valueCalc);
     }
 
     @Override
     public Object evaluate(Evaluator evaluator) {
         Hierarchy hierarchy = getChildCalc(0, HierarchyCalc.class).evaluate(evaluator);
-        return aggregateChildren(evaluator, hierarchy, getChildCalc(1, ValueCalc.class));
+        return aggregateChildren(evaluator, hierarchy, getChildCalc(1, CurrentValueUnknownCalc.class));
     }
 
     @Override
     public Calc<?>[] getChildCalcs() {
-        return new Calc[] { getChildCalc(0, HierarchyCalc.class), getChildCalc(1, ValueCalc.class) };
+        return new Calc[] { getChildCalc(0, HierarchyCalc.class), getChildCalc(1, CurrentValueUnknownCalc.class) };
     }
 
     Object aggregateChildren(Evaluator evaluator, Hierarchy hierarchy, final Calc<?> valueFunCall) {
