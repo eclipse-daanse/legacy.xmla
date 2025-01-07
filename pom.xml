@@ -957,10 +957,7 @@
 
   </dependencies>
   <modules>
-    <!--module>org.eclipse.daanse.repackage.eigenbase.properties</module-->
-    <module>org.eclipse.daanse.repackage.rhino.engine</module>
     <module>function</module>
-    <module>db</module>
     <module>tooling</module>
     <module>mondrian</module>
     <module>olap</module>

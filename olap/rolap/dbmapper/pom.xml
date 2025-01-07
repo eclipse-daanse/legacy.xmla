@@ -39,12 +39,5 @@
     <module>provider.sample.expressivenames.record</module>
     <module>provider.sample.minimal.xml</module>
     <module>provider.sample.minimal.record</module>
-    <module>dbcreator.api</module>
-    <module>dbcreator.basic</module>
-    <module>schemacreator.api</module>
-    <module>schemacreator.basic</module>
-    <module>templatecreator.api</module>
-    <module>utils</module>
-    <module>templatecreator.ods.basic</module>
   </modules>
 </project>

@@ -17,11 +17,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.type.BooleanType;
 import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedBooleanCalc;
-
-import mondrian.olap.type.BooleanType;
 
 public class CaseTestBooleanCalc extends AbstractProfilingNestedBooleanCalc {
 
