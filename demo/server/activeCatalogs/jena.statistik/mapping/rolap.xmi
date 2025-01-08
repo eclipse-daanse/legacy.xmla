@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:roma="https://www.daanse.org/spec/org.eclipse.daanse.rolap.mapping">
+  <roma:StandardDimension id="Jahr" name="Jahr" hierarchies="Jahr"/>
+  <roma:StandardDimension id="StatistischerBezirk" name="statistischer Bezirk" hierarchies="Stadt - Planungsraum - statistischer Bezirk"/>
+  <roma:StandardDimension id="Geschlecht" name="Geschlecht" hierarchies="Geschlecht"/>
+  <roma:StandardDimension id="Alter" name="Alter"/>
+  <roma:Hierarchy id="Jahr" name="Jahr" levels="Jahr" defaultMember="2023" primaryKey="YearYear">
+    <query xsi:type="roma:TableQuery" table="year"/>
+  </roma:Hierarchy>
+  <roma:Hierarchy id="Stadt - Planungsraum - statistischer Bezirk" name="Stadt - Planungsraum - statistischer Bezirk" levels="Stadt Planungsraum Statistischer Bezirk" hasAll="true" primaryKey="StatbezGid" primaryKeyTable="statbez">
+    <query xsi:type="roma:JoinQuery">
+      <left key="StatbezPlraum">
+        <query xsi:type="roma:TableQuery" table="statbez"/>
+      </left>
+      <right key="PlraumGid">
+        <query xsi:type="roma:JoinQuery">
+          <left key="PlraumTownid">
+            <query xsi:type="roma:TableQuery" table="plraum"/>
+          </left>
+          <right key="TownId">
+            <query xsi:type="roma:TableQuery" table="town"/>
+          </right>
+        </query>
+      </right>
+    </query>
+  </roma:Hierarchy>
+  <roma:Hierarchy id="Geschlecht" name="Geschlecht (m/w/d)" levels="Geschlecht" hasAll="true" primaryKey="GenderKey">
+    <query xsi:type="roma:TableQuery" table="gender"/>
+  </roma:Hierarchy>
+  <roma:Hierarchy id="Alter (Einzeljahrg&#xe4;nge)" name="Alter (Einzeljahrg&#xe4;nge)" levels="Alter1" hasAll="true" primaryKey="AgeGroupsAge"/>
+  <roma:Hierarchy id="Altersgruppen (Standard)" name="Altersgruppen (Standard)" levels="AltersgruppeH1 AlterH1" hasAll="true" primaryKey="AgeGroupsAge"/>
+  <roma:Hierarchy id="Altersgruppen (Kinder)" name="Altersgruppen (Kinder)" levels="AltersgruppeH2 AlterH2 AltersgruppeH7 AltersgruppeH8 AltersgruppeH9" hasAll="true" primaryKey="AgeGroupsAge"/>
+  <roma:Hierarchy id="Altersgruppen (Systematik RKI)" name="Altersgruppen (Systematik RKI)" levels="AlterH7" hasAll="true" primaryKey="AgeGroupsAge"/>
+  <roma:Hierarchy id="Altersgruppen (Systematik RKI)" name="Altersgruppen (Systematik RKI)" levels="AlterH8" hasAll="true" primaryKey="AgeGroupsAge"/>
+  <roma:Hierarchy id="Altersgruppen (10-Jahres-Gruppen)" name="Altersgruppen (10-Jahres-Gruppen)" levels="AlterH9" hasAll="true" primaryKey="AgeGroupsAge">
+    <query xsi:type="roma:TableQuery" table="AgeGroups"/>
+  </roma:Hierarchy>
+  <roma:Level id="Jahr" name="Jahr" column="YearYear" ordinalColumn="YearOrdinal"/>
+  <roma:Level id="Stadt" name="Stadt" column="TownName" ordinalColumn="YearOrdinal" table="town">
+    <memberProperties id="GeoJson1" name="GeoJson" column="TownGeojson" propertyType=" String"/>
+  </roma:Level>
+  <roma:Level id="Planungsraum" name="Planungsraum" column="PlraumGid" nameColumn="PlraumPlraum" table="plraum" columnType="Integer">
+    <memberProperties id="uuid1" name="uuid" column="PlraumUuid"/>
+    <memberProperties id="GeoJson1" name="GeoJson" column="PlraumGeojson" propertyType=" String"/>
+  </roma:Level>
+  <roma:Level id="Statistischer Bezirk" name="Statistischer Bezirk" column="StatbezGid" nameColumn="StatbezStatbezName" table="statbez" columnType="Integer">
+    <memberProperties id="uuid2" name="uuid" column="StatbezUuid"/>
+    <memberProperties id="GeoJson2" name="GeoJson" column="StatbezGeojson" propertyType=" String"/>
+  </roma:Level>
+  <roma:Level id="Geschlecht" name="Geschlecht" column="GenderKey" nameColumn="GenderName"/>
+  <roma:Level id="Alter1" name="Alter" column="AgeGroupsAge"/>
+  <roma:Level id="AltersgruppeH1" name="Altersgruppe" column="AgeGroupsH1" ordinalColumn="AgeGroupsH1Order"/>
+  <roma:Level id="AlterH1" name="Alter" column="AgeGroupsAge"/>
+  <roma:Level id="AltersgruppeH2" name="Altersgruppe" column="AgeGroupsH2" ordinalColumn="AgeGroupsH2Order"/>
+  <roma:Level id="AlterH2" name="Alter" column="AgeGroupsAge"/>
+  <roma:Level id="AltersgruppeH7" name="Altersgruppe" column="AgeGroupsH7" ordinalColumn="AgeGroupsH7Order"/>
+  <roma:Level id="AlterH7" name="Alter" column="AgeGroupsAge"/>
+  <roma:Level id="AltersgruppeH8" name="Altersgruppe" column="AgeGroupsH8" ordinalColumn="AgeGroupsH8Order"/>
+  <roma:Level id="AlterH8" name="Alter" column="AgeGroupsAge"/>
+  <roma:Level id="AltersgruppeH9" name="Altersgruppe" column="AgeGroupsH9" ordinalColumn="AgeGroupsH9Order"/>
+  <roma:Level id="AlterH9" name="Alter" column="AgeGroupsAge"/>
+  <roma:Catalog dbschemas="jena.statistik_id">
+    <schemas name="Bevolkerung" cubes="Bevolkerung"/>
+    <cubes xsi:type="roma:PhysicalCube" id="Bevolkerung" name="Bevolkerung">
+      <dimensionConnectors foreignKey="EinwohnerJAHR" dimension="Jahr" overrideDimensionName="Jahr" id="Jahr"/>
+      <dimensionConnectors foreignKey="EinwohnerSTATBEZ" dimension="StatistischerBezirk" overrideDimensionName="statistischer Bezirk" id="StatistischerBezirk"/>
+      <dimensionConnectors foreignKey="EinwohnerKerGesch" dimension="Geschlecht" overrideDimensionName="Geschlecht" id="Geschlecht"/>
+      <dimensionConnectors foreignKey="EinwohnerAge" dimension="Geschlecht" overrideDimensionName="Alter" id="Alter"/>
+      <query xsi:type="roma:TableQuery" table="einwohner"/>
+      <measureGroups>
+        <measures name="Einwohnerzahl" column="EinwohnerAnzahl"/>
+      </measureGroups>
+    </cubes>
+  </roma:Catalog>
+</xmi:XMI>
