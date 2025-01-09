@@ -34,9 +34,9 @@ import java.util.function.Consumer;
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEvent;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.ResourceLimitExceededException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
@@ -139,7 +139,7 @@ public class SegmentLoader {
       segmentFutures.add( cacheMgr.sqlExecutor.submit( new SegmentLoadCommand( LocusImpl.peek(), this, cellRequestCount,
           groupingSets, compoundPredicateList ) ) );
     } catch ( Exception e ) {
-      throw new MondrianException( e );
+      throw new OlapRuntimeException( e );
     }
   }
 
@@ -212,7 +212,7 @@ public class SegmentLoader {
     } catch ( Throwable e ) {
       throwable = e;
       if ( stmt == null ) {
-        throw new MondrianException( e );
+        throw new OlapRuntimeException( e );
       }
       throw stmt.handle( e );
     } finally {
@@ -525,7 +525,7 @@ public class SegmentLoader {
       if ( Util.getMatchingCause( t, AbortException.class ) != null ) {
         return null;
       } else {
-        throw new MondrianException( "Failed to load segment form SQL", t );
+        throw new OlapRuntimeException( "Failed to load segment form SQL", t );
       }
     }
   }

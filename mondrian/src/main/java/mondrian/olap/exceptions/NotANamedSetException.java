@@ -13,12 +13,13 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-public class NotANamedSetException extends MondrianException {
-    public final static String message = "Not a named set";
+@SuppressWarnings("serial")
+public class NotANamedSetException extends OlapRuntimeException {
+	public final static String message = "Not a named set";
 
-    public NotANamedSetException() {
-        super(message);
-    }
+	public NotANamedSetException() {
+		super(message);
+	}
 }

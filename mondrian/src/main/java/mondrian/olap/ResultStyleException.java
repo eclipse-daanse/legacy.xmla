@@ -13,6 +13,7 @@ package mondrian.olap;
 
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
 
 /**
@@ -21,7 +22,7 @@ import org.eclipse.daanse.olap.calc.api.ResultStyle;
  *
  * @author Richard Emberson
  */
-public class ResultStyleException extends MondrianException {
+public class ResultStyleException extends OlapRuntimeException {
     public static ResultStyleException generate(
         List<ResultStyle> producer,
         List<ResultStyle> consumer)

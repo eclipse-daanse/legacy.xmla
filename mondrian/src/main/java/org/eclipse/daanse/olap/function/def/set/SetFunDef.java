@@ -22,6 +22,7 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.BracesOperationAtom
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Validator;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.MemberType;
@@ -41,7 +42,6 @@ import org.eclipse.daanse.olap.query.base.Expressions;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.mdx.ResolvedFunCallImpl;
-import mondrian.olap.MondrianException;
 import mondrian.olap.ResultStyleException;
 
 /**
@@ -86,7 +86,7 @@ public class SetFunDef extends AbstractFunctionDefinition {
                     type0 = type;
                 } else {
                     if (!TypeUtil.isUnionCompatible(type0, type)) {
-                        throw new MondrianException(MessageFormat.format(argsMustHaveSameHierarchy,
+                        throw new OlapRuntimeException(MessageFormat.format(argsMustHaveSameHierarchy,
                                 getFunctionMetaData().operationAtom().name()));
                     }
                 }

@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
 import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl;
@@ -31,7 +32,6 @@ import org.eclipse.daanse.rolap.mapping.pojo.TableQueryOptimizationHintMappingIm
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.Util;
 import mondrian.olap.Util.PropertyList;
 import mondrian.recorder.ListRecorder;
@@ -95,7 +95,7 @@ public class AggTableManager {
             try {
                 loadRolapStarAggregates(connectionProps);
             } catch (SQLException ex) {
-                throw new MondrianException(aggLoadingError, ex);
+                throw new OlapRuntimeException(aggLoadingError, ex);
             }
         }
         printResults();
@@ -288,13 +288,13 @@ public class AggTableManager {
                 }
             }
         } catch (RecorderException ex) {
-            throw new MondrianException(ex);
+            throw new OlapRuntimeException(ex);
         } finally {
             msgRecorder.logInfoMessage(getLogger());
             msgRecorder.logWarningMessage(getLogger());
             msgRecorder.logErrorMessage(getLogger());
             if (msgRecorder.hasErrors()) {
-                throw new MondrianException(MessageFormat.format(aggLoadingExceededErrorCount,
+                throw new OlapRuntimeException(MessageFormat.format(aggLoadingExceededErrorCount,
                     msgRecorder.getErrorCount()));
             }
         }

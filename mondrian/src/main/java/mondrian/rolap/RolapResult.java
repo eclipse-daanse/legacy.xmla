@@ -39,6 +39,7 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.DimensionExpression;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -82,7 +83,6 @@ import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.DimensionType;
 import mondrian.olap.ExpCacheDescriptorImpl;
 import mondrian.olap.MemberBase;
-import mondrian.olap.MondrianException;
 import mondrian.olap.Property;
 import mondrian.olap.ResourceLimitExceededException;
 import mondrian.olap.ResultBase;
@@ -1744,7 +1744,7 @@ public Cell getCell( int[] pos ) {
       Object value;
       if ( liftedValue != null ) {
         if ( liftedValue == CycleSentinel ) {
-          throw new MondrianException(MessageFormat.format(cycleDuringParameterEvaluation, slot.getParameter().getName() ));
+          throw new OlapRuntimeException(MessageFormat.format(cycleDuringParameterEvaluation, slot.getParameter().getName() ));
         }
         if ( liftedValue == NullSentinel ) {
           value = null;

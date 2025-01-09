@@ -13,14 +13,15 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class CreateTableFailedException extends MondrianException {
-    public final static String message = "Mondrian loader could not create table ''{0}''.";
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    public CreateTableFailedException(String name, Throwable cause) {
-        super(MessageFormat.format(message, name), cause);
-    }
+@SuppressWarnings("serial")
+public class CreateTableFailedException extends OlapRuntimeException {
+	public final static String message = "Mondrian loader could not create table ''{0}''.";
+
+	public CreateTableFailedException(String name, Throwable cause) {
+		super(MessageFormat.format(message, name), cause);
+	}
 }

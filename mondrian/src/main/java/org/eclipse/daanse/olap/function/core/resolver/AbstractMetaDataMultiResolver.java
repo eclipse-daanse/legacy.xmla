@@ -19,6 +19,7 @@ import java.util.Objects;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Validator;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
@@ -26,8 +27,6 @@ import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.query.base.Expressions;
-
-import mondrian.olap.MondrianException;
 
 public abstract class AbstractMetaDataMultiResolver implements FunctionResolver {
 
@@ -47,7 +46,7 @@ public abstract class AbstractMetaDataMultiResolver implements FunctionResolver 
 		for (FunctionMetaData fmd : fmds) {
 			OperationAtom operationAtomTemp = fmd.operationAtom();
 			if (!Objects.equals(operationAtom, operationAtomTemp)) {
-				throw new MondrianException("all FunctionMetaData inside a Resolver must have same OperationAtom");
+				throw new OlapRuntimeException("all FunctionMetaData inside a Resolver must have same OperationAtom");
 			}
 		}
 	}

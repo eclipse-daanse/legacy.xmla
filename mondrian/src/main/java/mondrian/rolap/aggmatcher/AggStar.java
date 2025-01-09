@@ -34,13 +34,13 @@ import java.util.Set;
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.rolap.agg.Aggregator;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.RolapAggregator;
@@ -1453,7 +1453,7 @@ public class AggStar {
                                 c.getName() : null});
                     final int bitPos = bk.nextSetBit(0);
                     if (bitPos == -1) {
-                        throw new MondrianException(
+                        throw new OlapRuntimeException(
                             "Failed to match non-collapsed aggregate level with a column from the RolapStar.");
                     }
                     // Now we will create the Column object to return to the

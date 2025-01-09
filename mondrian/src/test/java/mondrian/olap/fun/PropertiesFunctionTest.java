@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Result;
@@ -25,8 +26,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.olap.MondrianException;
 
 class PropertiesFunctionTest {
 
@@ -156,7 +155,7 @@ class PropertiesFunctionTest {
     connection = context.getConnection();
     try {
       query = connection.parseQuery( generateQueryString( functionQuery ) );
-    } catch ( MondrianException e ) {
+    } catch ( OlapRuntimeException e ) {
       e.printStackTrace();
       fail( "No exception should be thrown but we have: " + e.getCause().getLocalizedMessage() );
     }

@@ -13,16 +13,16 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class BadMeasureSourceException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    private final static String message =
-        "Cube ''{0}'': Measure ''{1}'' must contain either a source column or a source expression, but not both";
+@SuppressWarnings("serial")
+public class BadMeasureSourceException extends OlapRuntimeException {
 
-    public BadMeasureSourceException(String cubeName, String measureName) {
-        super(MessageFormat.format(message, cubeName, measureName));
-    }
+	private final static String message = "Cube ''{0}'': Measure ''{1}'' must contain either a source column or a source expression, but not both";
+
+	public BadMeasureSourceException(String cubeName, String measureName) {
+		super(MessageFormat.format(message, cubeName, measureName));
+	}
 }

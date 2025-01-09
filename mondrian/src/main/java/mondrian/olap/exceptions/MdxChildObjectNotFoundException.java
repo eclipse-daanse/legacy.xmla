@@ -13,15 +13,16 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class MdxChildObjectNotFoundException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    private final static String mdxChildObjectNotFound = "MDX object ''{0}'' not found in {1}";
+@SuppressWarnings("serial")
+public class MdxChildObjectNotFoundException extends OlapRuntimeException {
 
-    public MdxChildObjectNotFoundException(String o1, String o2) {
-        super(MessageFormat.format(mdxChildObjectNotFound, o1, o2));
-    }
+	private final static String mdxChildObjectNotFound = "MDX object ''{0}'' not found in {1}";
+
+	public MdxChildObjectNotFoundException(String o1, String o2) {
+		super(MessageFormat.format(mdxChildObjectNotFound, o1, o2));
+	}
 }

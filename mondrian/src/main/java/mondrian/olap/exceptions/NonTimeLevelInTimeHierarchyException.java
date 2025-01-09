@@ -13,11 +13,12 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class NonTimeLevelInTimeHierarchyException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+
+@SuppressWarnings("serial")
+public class NonTimeLevelInTimeHierarchyException extends OlapRuntimeException {
 
     private final static String nonTimeLevelInTimeHierarchy = """
         Level ''{0}'' belongs to a time hierarchy, so its level-type must be  ''Regular'', ''TimeYears'', ''TimeHalfYears'', ''TimeHalfYear'', ''TimeQuarters'', ''TimeMonths'', ''TimeWeeks'', ''TimeDays'', ''TimeHours'', ''TimeMinutes'', ''TimeSeconds'', ''TimeUndefined''.

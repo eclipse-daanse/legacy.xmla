@@ -13,11 +13,12 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class MissingArgException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+
+@SuppressWarnings("serial")
+public class MissingArgException extends OlapRuntimeException {
 
     private final static String message = "Argument ''{0}'' must be specified.";
 

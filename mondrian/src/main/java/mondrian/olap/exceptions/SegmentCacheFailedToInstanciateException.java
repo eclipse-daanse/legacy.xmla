@@ -13,9 +13,10 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-public class SegmentCacheFailedToInstanciateException extends MondrianException {
+@SuppressWarnings("serial")
+public class SegmentCacheFailedToInstanciateException extends OlapRuntimeException {
     public final static String segmentCacheFailedToInstanciate = "An exception was encountered while creating the SegmentCache.";
 
     public SegmentCacheFailedToInstanciateException(Throwable t) {

@@ -11,13 +11,15 @@
 
 package mondrian.olap;
 
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+
 /**
  * Exception which indicates that an argument is invalid
  *
  * @author Thiyagu
  * @since April 5, 2007
  */
-public class InvalidArgumentException extends MondrianException {
+public class InvalidArgumentException extends OlapRuntimeException {
     /**
      * Creates a InvalidArgumentException.
      *

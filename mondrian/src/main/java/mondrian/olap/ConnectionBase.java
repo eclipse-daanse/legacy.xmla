@@ -19,6 +19,7 @@ import org.eclipse.daanse.mdx.parser.api.MdxParser;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionTable;
 import org.eclipse.daanse.olap.api.query.ExpressionProvider;
 import org.eclipse.daanse.olap.api.query.QueryProvider;
@@ -67,7 +68,7 @@ public abstract class ConnectionBase implements Connection {
      * @param funTable Customized function table to use in parsing
      * @param strictValidation If true, do not ignore invalid members
      * @return Query the corresponding Query object if parsing is successful
-     * @throws MondrianException if parsing fails
+     * @throws OlapRuntimeException if parsing fails
      */
     public QueryComponent parseStatement(
         Statement statement,

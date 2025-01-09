@@ -13,13 +13,14 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-public class EmptyExpressionWasSpecifiedException extends MondrianException {
+@SuppressWarnings("serial")
+public class EmptyExpressionWasSpecifiedException extends OlapRuntimeException {
 
-    public final static String message = "An MDX expression was expected. An empty expression was specified.";
+	public final static String message = "An MDX expression was expected. An empty expression was specified.";
 
-    public EmptyExpressionWasSpecifiedException() {
-        super(message);
-    }
+	public EmptyExpressionWasSpecifiedException() {
+		super(message);
+	}
 }

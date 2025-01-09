@@ -15,10 +15,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.ResourceLimitExceededException;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterator;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;

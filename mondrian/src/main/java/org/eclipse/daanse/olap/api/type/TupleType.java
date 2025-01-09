@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import mondrian.olap.MondrianException;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
 
 
@@ -202,7 +202,7 @@ public class TupleType implements Type {
     /**
      * Checks that there are no duplicate dimensions in a list of member types.
      * If so, the member types will form a valid tuple type.
-     * If not, throws {@link mondrian.olap.MondrianException}.
+     * If not, throws {@link org.eclipse.daanse.olap.api.exception.OlapRuntimeException}.
      *
      * @param memberTypes Array of member types
      */
@@ -214,7 +214,7 @@ public class TupleType implements Type {
                 final Hierarchy hierarchy = memberType.getHierarchy();
                 final Hierarchy hierarchy1 = member1.getHierarchy();
                 if (hierarchy != null && hierarchy == hierarchy1) {
-                    throw new MondrianException(MessageFormat.format(dupHierarchiesInTuple,
+                    throw new OlapRuntimeException(MessageFormat.format(dupHierarchiesInTuple,
                         hierarchy.getUniqueName()));
                 }
             }

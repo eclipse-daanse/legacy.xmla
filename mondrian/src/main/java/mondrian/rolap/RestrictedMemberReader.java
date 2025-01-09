@@ -17,12 +17,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import mondrian.olap.MondrianException;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
 import mondrian.olap.RoleImpl;
 import mondrian.rolap.sql.MemberChildrenConstraint;
@@ -230,7 +230,7 @@ public class RestrictedMemberReader extends DelegatingMemberReader {
             final List<RolapMember> memberList =
                 getMembersInLevel(topLevel);
             if (memberList.isEmpty()) {
-                throw new MondrianException(MessageFormat.format(
+                throw new OlapRuntimeException(MessageFormat.format(
                     hierarchyHasNoAccessibleMembers,
                         getHierarchy().getUniqueName()));
             }

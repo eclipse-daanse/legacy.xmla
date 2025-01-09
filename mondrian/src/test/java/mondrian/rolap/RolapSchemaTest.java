@@ -38,6 +38,7 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
@@ -68,7 +69,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opencube.junit5.context.TestConfig;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.RoleImpl;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.exceptions.RoleUnionGrantsException;
@@ -141,7 +141,7 @@ class RolapSchemaTest {
 
         try {
             createSchema().createUnionRole(role);
-        } catch (MondrianException ex) {
+        } catch (OlapRuntimeException ex) {
             assertMondrianException(
                 new RoleUnionGrantsException(), ex);
             return;
@@ -161,7 +161,7 @@ class RolapSchemaTest {
 
         try {
             createSchema().createUnionRole(role);
-        } catch (MondrianException ex) {
+        } catch (OlapRuntimeException ex) {
             assertMondrianException(
                 new UnknownRoleException(roleName), ex);
             return;
@@ -205,7 +205,7 @@ class RolapSchemaTest {
 
         try {
             schema.handleCubeGrant(new mondrian.olap.RoleImpl(), grant);
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             String message = e.getMessage();
             assertTrue(message.contains(grant.getCube().getName()), message);
             return;

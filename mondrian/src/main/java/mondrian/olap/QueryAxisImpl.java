@@ -21,6 +21,7 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperat
 import org.eclipse.daanse.olap.api.SubtotalVisibility;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Level;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.AxisOrdinal;
 import org.eclipse.daanse.olap.api.query.component.DimensionExpression;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -263,7 +264,7 @@ public class QueryAxisImpl extends AbstractQueryPart implements QueryAxis {
                         new Expression[] {exp});
                 exp = validator.validate(exp, false);
             } else {
-                throw new MondrianException(MessageFormat.format(mdxAxisIsNotSet,
+                throw new OlapRuntimeException(MessageFormat.format(mdxAxisIsNotSet,
                     axisOrdinal.name()));
             }
         }

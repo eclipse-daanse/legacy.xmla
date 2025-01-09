@@ -19,6 +19,7 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.result.Position;
@@ -34,7 +35,6 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.calc.impl.UnaryTupleList;
-import mondrian.olap.MondrianException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.fun.CrossJoinTest;
 import mondrian.server.ExecutionImpl;
@@ -59,7 +59,7 @@ class CancellationTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonEmptyListCancellation(Context context) throws MondrianException {
+    void testNonEmptyListCancellation(Context context) throws OlapRuntimeException {
         // tests that cancellation/timeout is checked in
         // CrossJoinFunDef.nonEmptyList
         ((TestConfig)context.getConfig()).setCheckCancelOrTimeoutInterval(1);
@@ -82,7 +82,7 @@ class CancellationTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMutableCrossJoinCancellation(Context context) throws MondrianException {
+    void testMutableCrossJoinCancellation(Context context) throws OlapRuntimeException {
         // tests that cancellation/timeout is checked in
         // CrossJoinFunDef.mutableCrossJoin
         ((TestConfig)context.getConfig()).setCheckCancelOrTimeoutInterval(1);

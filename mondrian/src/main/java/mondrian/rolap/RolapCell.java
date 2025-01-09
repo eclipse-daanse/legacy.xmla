@@ -33,6 +33,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEvent;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEventCommon;
@@ -61,7 +62,6 @@ import org.slf4j.Logger;
 
 import mondrian.mdx.MdxVisitorImpl;
 import mondrian.mdx.ResolvedFunCallImpl;
-import mondrian.olap.MondrianException;
 import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
@@ -168,7 +168,7 @@ public class RolapCell implements Cell {
         if (!result.getExecution().getMondrianStatement().getMondrianConnection().getContext().getConfig()
             .enableDrillThrough())
         {
-            throw new MondrianException(MessageFormat.format(
+            throw new OlapRuntimeException(MessageFormat.format(
                 drillthroughDisabled,
                         "enableDrillThrough"));
         }

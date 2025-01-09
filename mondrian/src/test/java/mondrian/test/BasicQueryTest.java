@@ -70,6 +70,7 @@ import org.eclipse.daanse.olap.api.Syntax;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
@@ -94,7 +95,6 @@ import org.slf4j.Logger;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.olap.IdImpl;
-import mondrian.olap.MondrianException;
 import mondrian.olap.Property;
 import mondrian.olap.QueryCanceledException;
 import mondrian.olap.SystemWideProperties;
@@ -6045,7 +6045,7 @@ public class BasicQueryTest {
     try {
       executeQuery(context.getConnection(), mdx );
       fail( "MondrianException is expected" );
-    } catch ( MondrianException e ) {
+    } catch ( OlapRuntimeException e ) {
       assertEquals( "Mondrian Error:The " + "MDX function CURRENTMEMBER failed "
           + "because the coordinate for the '[Gender]'" + " hierarchy contains a set", e.getCause().getMessage() );
     }
@@ -6066,7 +6066,7 @@ public class BasicQueryTest {
     try {
       assertQueryReturns(context.getConnection(), mdx, "Axis #0:\n" + "{[Gender].[M]}\n" + "{[Gender].[F]}\n" + "Axis #1:\n"
           + "{[Measures].[Gender Current Member]}\n" + "Row #0: #null\n" );
-    } catch ( MondrianException e ) {
+    } catch ( OlapRuntimeException e ) {
       fail( "MondrianException is not expected" );
     } finally {
       SystemWideProperties.instance().populateInitial();
@@ -6087,7 +6087,7 @@ public class BasicQueryTest {
     try {
       executeQuery(context.getConnection(), mdx);
       fail( "MondrianException is expected" );
-    } catch ( MondrianException e ) {
+    } catch ( OlapRuntimeException e ) {
       assertEquals( "Mondrian Error:The " + "MDX function CURRENTMEMBER failed "
           + "because the coordinate for the '[Time]' " + "hierarchy contains a set", e.getCause().getMessage() );
     }
@@ -6112,7 +6112,7 @@ public class BasicQueryTest {
       assertQueryReturns(context.getConnection(), mdx, "Axis #0:\n" + "{[Time].[1997].[Q4]}\n" + "{[Time].[1997].[Q3]}\n"
           + "Axis #1:\n" + "{[Measures].[Drink Sales Current Period]}\n"
           + "{[Measures].[Drink Sales Current Period]}\n" + "Row #0: \n" + "Row #0: \n" );
-    } catch ( MondrianException e ) {
+    } catch ( OlapRuntimeException e ) {
       fail( "MondrianException is not expected" );
     } finally {
       SystemWideProperties.instance().populateInitial();

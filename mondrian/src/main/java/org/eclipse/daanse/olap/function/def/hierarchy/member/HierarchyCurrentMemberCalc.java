@@ -19,13 +19,13 @@ import java.util.Set;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.exceptions.CurrentMemberWithCompoundSlicerException;
 import mondrian.rolap.RolapEvaluator;
 
@@ -64,7 +64,7 @@ public class HierarchyCurrentMemberCalc extends AbstractProfilingNestedMemberCal
             Set<Member> members = map.get(hierarchy);
 
             if (members != null && members.size() > 1) {
-                MondrianException exception = new CurrentMemberWithCompoundSlicerException(hierarchy.getUniqueName());
+                OlapRuntimeException exception = new CurrentMemberWithCompoundSlicerException(hierarchy.getUniqueName());
 
                 if (alertValue.equalsIgnoreCase("WARN")) {
                     LOGGER.warn(exception.getMessage());

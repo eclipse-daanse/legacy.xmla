@@ -13,14 +13,15 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class CastInvalidTypeException extends MondrianException {
-    private final static String castInvalidType =
-        "Unknown type ''{0}''; values are NUMERIC, STRING, BOOLEAN";
-    public CastInvalidTypeException(String message) {
-        super(MessageFormat.format(castInvalidType, message));
-    }
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+
+@SuppressWarnings("serial")
+public class CastInvalidTypeException extends OlapRuntimeException {
+	private final static String castInvalidType = "Unknown type ''{0}''; values are NUMERIC, STRING, BOOLEAN";
+
+	public CastInvalidTypeException(String message) {
+		super(MessageFormat.format(castInvalidType, message));
+	}
 }

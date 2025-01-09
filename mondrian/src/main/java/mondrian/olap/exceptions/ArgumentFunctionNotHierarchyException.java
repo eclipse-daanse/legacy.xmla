@@ -13,15 +13,16 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class ArgumentFunctionNotHierarchyException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    private final static String message = "Argument ''{0,number}'' of function ''{1}'' must be a hierarchy";
+@SuppressWarnings("serial")
+public class ArgumentFunctionNotHierarchyException extends OlapRuntimeException {
 
-    public ArgumentFunctionNotHierarchyException(Integer i, String o) {
-        super(MessageFormat.format(message, i, o));
-    }
+	private final static String message = "Argument ''{0,number}'' of function ''{1}'' must be a hierarchy";
+
+	public ArgumentFunctionNotHierarchyException(Integer i, String o) {
+		super(MessageFormat.format(message, i, o));
+	}
 }

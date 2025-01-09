@@ -32,6 +32,7 @@ import org.eclipse.daanse.olap.api.CacheControl.CellRegion;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
 import org.eclipse.daanse.olap.api.monitor.event.CellCacheEvent;
 import org.eclipse.daanse.olap.api.monitor.event.CellCacheEventCommon;
@@ -45,7 +46,6 @@ import org.eclipse.daanse.olap.api.monitor.event.ServertEventCommon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.Util;
 import mondrian.rolap.CacheControlImpl;
 import mondrian.rolap.FastBatchingCellReader;
@@ -340,7 +340,7 @@ public class SegmentCacheManager {
             1,
             "mondrian.rolap.agg.SegmentCacheManager$cacheExecutor",
             ( r, executor ) -> {
-                throw new MondrianException(segmentCacheLimitReached);
+                throw new OlapRuntimeException(segmentCacheLimitReached);
             } );
     }
 
@@ -356,7 +356,7 @@ public class SegmentCacheManager {
             1,
             "mondrian.rolap.agg.SegmentCacheManager$sqlExecutor",
             ( r, executor ) -> {
-                throw new MondrianException(sqlQueryLimitReached);
+                throw new OlapRuntimeException(sqlQueryLimitReached);
             } );
     }
 

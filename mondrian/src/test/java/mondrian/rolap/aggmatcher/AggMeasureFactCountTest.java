@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -45,7 +46,6 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.olap.MondrianException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.test.SqlPattern;
 import mondrian.test.loader.CsvDBTestCase;
@@ -252,7 +252,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         try {
             verifySameAggAndNot(context, QUERY, getAggSchema(List.of(), aggTables));
             fail("Should throw mondrian exception");
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             assertTrue
                     (e.getMessage().startsWith
                             ("Mondrian Error:Internal"
@@ -569,7 +569,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         try {
             assertQuerySql(context, QUERY, getAggSchema(List.of(), aggTables), "");
             fail("Should have thrown mondrian exception");
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             assertEquals
                     ("Mondrian Error:Too many errors, '1',"
                                     + " while loading/reloading aggregates.",

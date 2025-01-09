@@ -33,6 +33,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.query.component.FunctionCall;
@@ -149,7 +150,7 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
             }
         } else {
             if (!TypeUtil.isSet(type)) {
-                throw new MondrianException(MessageFormat.format(mdxSetExpNotSet, idInner));
+                throw new OlapRuntimeException(MessageFormat.format(mdxSetExpNotSet, idInner));
             }
         }
         for (MemberProperty memberProperty : memberProperties) {
@@ -264,7 +265,7 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
                             hierarchy = parent.getHierarchy();
                         }
                         if (hierarchy == null) {
-                            throw new MondrianException(
+                            throw new OlapRuntimeException(
                                 MessageFormat.format(mdxCalculatedHierarchyError, id.toString()));
                         }
                         level = hierarchy.getLevels()[0];

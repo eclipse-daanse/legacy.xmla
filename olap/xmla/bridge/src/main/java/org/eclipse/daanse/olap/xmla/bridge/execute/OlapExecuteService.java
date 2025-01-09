@@ -13,7 +13,6 @@
  */
 package org.eclipse.daanse.olap.xmla.bridge.execute;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.UpdateImpl;
 import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapCube;
@@ -28,6 +27,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.CalculatedFormula;
 import org.eclipse.daanse.olap.api.query.component.DmvQuery;
 import org.eclipse.daanse.olap.api.query.component.DrillThrough;
@@ -748,7 +748,7 @@ public class OlapExecuteService implements ExecuteService {
             try {
                 parseTree =
                     connection.parseStatement(statementRequest.command().statement());
-            } catch (MondrianException e) {
+            } catch (OlapRuntimeException e) {
                 throw new RuntimeException(
                     "mondrian gave exception while parsing query", e);
             }

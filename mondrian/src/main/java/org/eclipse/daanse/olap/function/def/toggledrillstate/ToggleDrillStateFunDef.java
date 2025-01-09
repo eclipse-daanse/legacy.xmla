@@ -13,14 +13,13 @@
  */
 package org.eclipse.daanse.olap.function.def.toggledrillstate;
 
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
-
-import mondrian.olap.MondrianException;
 
 public class ToggleDrillStateFunDef extends AbstractFunctionDefinition {
     private final static String toggleDrillStateRecursiveNotSupported =
@@ -33,7 +32,7 @@ public class ToggleDrillStateFunDef extends AbstractFunctionDefinition {
     @Override
     public Calc<?> compileCall( ResolvedFunCall call, ExpressionCompiler compiler) {
         if (call.getArgCount() > 2) {
-            throw new MondrianException(toggleDrillStateRecursiveNotSupported);
+            throw new OlapRuntimeException(toggleDrillStateRecursiveNotSupported);
         }
         final TupleListCalc listCalc0 =
             compiler.compileList(call.getArg(0));

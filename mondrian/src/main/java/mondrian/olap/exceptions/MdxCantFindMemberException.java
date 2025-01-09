@@ -13,16 +13,16 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class MdxCantFindMemberException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    private final static String mdxCantFindMember =
-        "Cannot find MDX member ''{0}''. Make sure it is indeed a member and not a level or a hierarchy.";
+@SuppressWarnings("serial")
+public class MdxCantFindMemberException extends OlapRuntimeException {
 
-    public MdxCantFindMemberException(String member) {
-        super(MessageFormat.format(mdxCantFindMember, member));
-    }
+	private final static String mdxCantFindMember = "Cannot find MDX member ''{0}''. Make sure it is indeed a member and not a level or a hierarchy.";
+
+	public MdxCantFindMemberException(String member) {
+		super(MessageFormat.format(mdxCantFindMember, member));
+	}
 }

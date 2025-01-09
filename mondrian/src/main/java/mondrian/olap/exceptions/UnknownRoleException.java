@@ -13,14 +13,15 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class UnknownRoleException extends MondrianException {
-    private final static String unknownRole = "Unknown role ''{0}''";
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    public UnknownRoleException(String roleName) {
-        super(MessageFormat.format(unknownRole, roleName));
-    }
+@SuppressWarnings("serial")
+public class UnknownRoleException extends OlapRuntimeException {
+	private final static String unknownRole = "Unknown role ''{0}''";
+
+	public UnknownRoleException(String roleName) {
+		super(MessageFormat.format(unknownRole, roleName));
+	}
 }

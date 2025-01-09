@@ -38,6 +38,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
@@ -65,7 +66,6 @@ import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.QueryTimeoutException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;

@@ -27,6 +27,7 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.Validator;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.function.FunctionTable;
@@ -240,7 +241,7 @@ abstract class ValidatorImpl implements Validator {
         }
         switch (matchDefs.size()) {
         case 0:
-            throw new MondrianException(MessageFormat.format(noFunctionMatchesSignature,
+            throw new OlapRuntimeException(MessageFormat.format(noFunctionMatchesSignature,
                 signature));
         case 1:
             break;
@@ -252,7 +253,7 @@ abstract class ValidatorImpl implements Validator {
                 }
                 buf.append(matchDef.getSignature());
             }
-            throw new MondrianException(MessageFormat.format(
+            throw new OlapRuntimeException(MessageFormat.format(
                 moreThanOneFunctionMatchesSignature,
                     signature,
                     buf.toString()));

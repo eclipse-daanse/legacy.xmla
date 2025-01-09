@@ -35,10 +35,10 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 
 import mondrian.olap.IdImpl;
-import mondrian.olap.MondrianException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.agg.SegmentCacheManager;
@@ -130,7 +130,7 @@ public class CacheControlImpl implements CacheControl {
             List<Dimension> dimensionality = region.getDimensionality();
             set.addAll(dimensionality);
             if (set.size() < prevSize + dimensionality.size()) {
-                throw new MondrianException(
+                throw new OlapRuntimeException(
                     MessageFormat.format(cacheFlushCrossjoinDimensionsInCommon, getDimensionalityList(regions)));
             }
 
@@ -168,7 +168,7 @@ public class CacheControlImpl implements CacheControl {
             if (!region.getDimensionality().equals(
                     regions[0].getDimensionality()))
             {
-                throw new MondrianException(MessageFormat.format(
+                throw new OlapRuntimeException(MessageFormat.format(
                     cacheFlushUnionDimensionalityMismatch,
                         regions[0].getDimensionality().toString(),
                         region.getDimensionality().toString()));
@@ -188,7 +188,7 @@ public class CacheControlImpl implements CacheControl {
             }
         }
         if (measuresDimension == null) {
-            throw new MondrianException(
+            throw new OlapRuntimeException(
                 "No measures dimension found for cube "
                 + cube.getName());
         }
@@ -229,7 +229,7 @@ public class CacheControlImpl implements CacheControl {
             }
         }
         if (!found) {
-            throw new MondrianException(cacheFlushRegionMustContainMembers);
+            throw new OlapRuntimeException(cacheFlushRegionMustContainMembers);
         }
         final UnionCellRegion union = normalize((CellRegionImpl) region);
         for (CellRegionImpl cellRegion : union.regions) {
@@ -879,7 +879,7 @@ public class CacheControlImpl implements CacheControl {
                                     instanceof InvocationTargetException ite)
                                 {
                                     if (ite.getTargetException()
-                                        instanceof MondrianException me)
+                                        instanceof OlapRuntimeException me)
                                     {
                                         if (me.getMessage()
                                             .matches(
@@ -889,8 +889,8 @@ public class CacheControlImpl implements CacheControl {
                                         }
                                     }
                                 }
-                                throw new MondrianException(e);
-                            } catch (MondrianException e) {
+                                throw new OlapRuntimeException(e);
+                            } catch (OlapRuntimeException e) {
                                 if (e.getMessage()
                                     .matches(
                                         "^Mondrian Error:Member '\\[.*\\]' not found$"))
@@ -1659,7 +1659,7 @@ public class CacheControlImpl implements CacheControl {
             try {
                 callable.call();
             } catch (Exception e) {
-                throw new MondrianException(e);
+                throw new OlapRuntimeException(e);
             }
         }
     }
@@ -1694,7 +1694,7 @@ public class CacheControlImpl implements CacheControl {
             try {
                 callable.call();
             } catch (Exception e) {
-                throw new MondrianException(e);
+                throw new OlapRuntimeException(e);
             }
         }
     }
@@ -1735,7 +1735,7 @@ public class CacheControlImpl implements CacheControl {
                 ((RolapMemberBase) member).setUniqueName(member.getKey());
                 callable2.call();
             } catch (Exception e) {
-                throw new MondrianException(e);
+                throw new OlapRuntimeException(e);
             }
         }
     }

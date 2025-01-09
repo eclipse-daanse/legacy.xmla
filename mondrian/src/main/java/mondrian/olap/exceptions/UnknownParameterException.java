@@ -13,15 +13,16 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class UnknownParameterException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    private final static String unknownParameter = "Unknown parameter ''{0}''";
+@SuppressWarnings("serial")
+public class UnknownParameterException extends OlapRuntimeException {
 
-    public UnknownParameterException(String parameterName) {
-        super(MessageFormat.format(unknownParameter, parameterName));
-    }
+	private final static String unknownParameter = "Unknown parameter ''{0}''";
+
+	public UnknownParameterException(String parameterName) {
+		super(MessageFormat.format(unknownParameter, parameterName));
+	}
 }

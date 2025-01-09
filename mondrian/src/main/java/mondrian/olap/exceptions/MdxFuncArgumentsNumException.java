@@ -13,14 +13,15 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class MdxFuncArgumentsNumException extends MondrianException {
-    private final static String message = "Function ''{0}'' must have at least 2 arguments";
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    public MdxFuncArgumentsNumException(String function) {
-        super(MessageFormat.format(message, function));
-    }
+@SuppressWarnings("serial")
+public class MdxFuncArgumentsNumException extends OlapRuntimeException {
+	private final static String message = "Function ''{0}'' must have at least 2 arguments";
+
+	public MdxFuncArgumentsNumException(String function) {
+		super(MessageFormat.format(message, function));
+	}
 }

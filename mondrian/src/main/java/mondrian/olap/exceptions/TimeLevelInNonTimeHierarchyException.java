@@ -13,17 +13,18 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class TimeLevelInNonTimeHierarchyException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    private final static String timeLevelInNonTimeHierarchy = """
-        Level ''{0}'' does not belong to a time hierarchy, so its level-type must be ''Standard''.
-        """;
+@SuppressWarnings("serial")
+public class TimeLevelInNonTimeHierarchyException extends OlapRuntimeException {
 
-    public TimeLevelInNonTimeHierarchyException(String name) {
-        super(MessageFormat.format(timeLevelInNonTimeHierarchy, name));
-    }
+	private final static String timeLevelInNonTimeHierarchy = """
+			Level ''{0}'' does not belong to a time hierarchy, so its level-type must be ''Standard''.
+			""";
+
+	public TimeLevelInNonTimeHierarchyException(String name) {
+		super(MessageFormat.format(timeLevelInNonTimeHierarchy, name));
+	}
 }

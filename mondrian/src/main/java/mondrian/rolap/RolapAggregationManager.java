@@ -23,9 +23,9 @@ import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.Util;
 import mondrian.rolap.agg.CellRequest;
 import mondrian.rolap.agg.DrillThroughCellRequest;
@@ -478,10 +478,10 @@ public abstract class RolapAggregationManager {
                         ((RolapBaseCubeMeasure)member).getStarMeasure());
             return;
         } else if (member instanceof RolapHierarchy.RolapCalculatedMeasure) {
-            throw new MondrianException(MessageFormat.format(drillthroughCalculatedMember,
+            throw new OlapRuntimeException(MessageFormat.format(drillthroughCalculatedMember,
                 member.getUniqueName()));
         } else {
-            throw new MondrianException(
+            throw new OlapRuntimeException(
                 "Unknown member type in DRILLTHROUGH operation.");
         }
         RolapStar.Column column = level.getBaseStarKeyColumn(baseCube);

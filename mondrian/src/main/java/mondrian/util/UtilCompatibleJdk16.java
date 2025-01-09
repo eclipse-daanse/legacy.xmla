@@ -22,7 +22,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptException;
 
-import mondrian.olap.MondrianException;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +90,7 @@ public class UtilCompatibleJdk16 implements UtilCompatible  {
             // side.
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("",
-                    new MondrianException(MessageFormat.format(
+                    new OlapRuntimeException(MessageFormat.format(
                         executionStatementCleanupException,
                             t.getMessage()), t),
                     t);

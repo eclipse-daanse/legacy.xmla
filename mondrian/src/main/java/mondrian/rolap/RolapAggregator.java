@@ -14,12 +14,12 @@ import java.util.List;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.rolap.agg.Aggregator;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 
 import mondrian.olap.EnumeratedValues;
-import mondrian.olap.MondrianException;
 import mondrian.olap.fun.FunUtil;
 
 /**
@@ -78,7 +78,7 @@ public abstract class RolapAggregator extends EnumeratedValues.BasicValue implem
           }
           return sumDouble == Double.MIN_VALUE ? null : sumDouble;
         default:
-          throw new MondrianException( new StringBuilder("Aggregator ").append(this.name)
+          throw new OlapRuntimeException( new StringBuilder("Aggregator ").append(this.name)
               .append(" does not support datatype").append(datatype.getValue()).toString() );
       }
     }
@@ -134,7 +134,7 @@ public abstract class RolapAggregator extends EnumeratedValues.BasicValue implem
           }
           return minDouble == Double.MAX_VALUE ? null : minDouble;
         default:
-          throw new MondrianException( new StringBuilder("Aggregator ").append(this.name)
+          throw new OlapRuntimeException( new StringBuilder("Aggregator ").append(this.name)
               .append(" does not support datatype").append(datatype.getValue()).toString() );
       }
     }
@@ -179,7 +179,7 @@ public abstract class RolapAggregator extends EnumeratedValues.BasicValue implem
 
           return maxDouble == Double.NEGATIVE_INFINITY ? null : maxDouble;
         default:
-          throw new MondrianException( new StringBuilder("Aggregator ").append(this.name)
+          throw new OlapRuntimeException( new StringBuilder("Aggregator ").append(this.name)
               .append(" does not support datatype").append(datatype.getValue()).toString() );
       }
     }

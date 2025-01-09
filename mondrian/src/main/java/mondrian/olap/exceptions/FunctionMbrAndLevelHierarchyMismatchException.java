@@ -13,18 +13,18 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class FunctionMbrAndLevelHierarchyMismatchException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    private final static String functionMbrAndLevelHierarchyMismatch =
-        """
-             The <level> and <member> arguments to {0} must be from the same hierarchy. The level was from ''{1}'' but the member was from ''{2}''.
-            """;
+@SuppressWarnings("serial")
+public class FunctionMbrAndLevelHierarchyMismatchException extends OlapRuntimeException {
 
-    public FunctionMbrAndLevelHierarchyMismatchException(String a, String n1, String n2) {
-        super(MessageFormat.format(functionMbrAndLevelHierarchyMismatch, a, n1, n2));
-    }
+	private final static String functionMbrAndLevelHierarchyMismatch = """
+			 The <level> and <member> arguments to {0} must be from the same hierarchy. The level was from ''{1}'' but the member was from ''{2}''.
+			""";
+
+	public FunctionMbrAndLevelHierarchyMismatchException(String a, String n1, String n2) {
+		super(MessageFormat.format(functionMbrAndLevelHierarchyMismatch, a, n1, n2));
+	}
 }

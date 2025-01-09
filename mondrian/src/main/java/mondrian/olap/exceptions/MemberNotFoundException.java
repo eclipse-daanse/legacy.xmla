@@ -13,15 +13,16 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class MemberNotFoundException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    private final static String memberNotFound = "Member ''{0}'' not found";
+@SuppressWarnings("serial")
+public class MemberNotFoundException extends OlapRuntimeException {
 
-    public MemberNotFoundException(String o) {
-        super(MessageFormat.format(memberNotFound, o));
-    }
+	private final static String memberNotFound = "Member ''{0}'' not found";
+
+	public MemberNotFoundException(String o) {
+		super(MessageFormat.format(memberNotFound, o));
+	}
 }

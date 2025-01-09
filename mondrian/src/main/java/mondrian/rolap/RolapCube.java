@@ -62,6 +62,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.CellProperty;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -119,7 +120,6 @@ import mondrian.olap.CubeBase;
 import mondrian.olap.DimensionType;
 import mondrian.olap.FormulaImpl;
 import mondrian.olap.IdImpl;
-import mondrian.olap.MondrianException;
 import mondrian.olap.NameResolverImpl;
 import mondrian.olap.Property;
 import mondrian.olap.QueryAxisImpl;
@@ -1217,7 +1217,7 @@ public class RolapCube extends CubeBase {
             if (!ordinals.containsKey(ordinal)) {
                 ordinals.put(ordinal, measure.getUniqueName());
             } else {
-                throw new MondrianException(MessageFormat.format(measureOrdinalsNotUnique,
+                throw new OlapRuntimeException(MessageFormat.format(measureOrdinalsNotUnique,
                     cubeName,
                     ordinal.toString(),
                     ordinals.get(ordinal),
@@ -1317,7 +1317,7 @@ public class RolapCube extends CubeBase {
                     }
                 });
         } catch (Exception e) {
-            throw new MondrianException(MessageFormat.format(unknownNamedSetHasBadFormula, getName()), e);
+            throw new OlapRuntimeException(MessageFormat.format(unknownNamedSetHasBadFormula, getName()), e);
         }
     }
 
@@ -1363,7 +1363,7 @@ public class RolapCube extends CubeBase {
         StringBuilder buf)
     {
         if (!nameSet.add(mappingNamedSet.getName())) {
-            throw new MondrianException(MessageFormat.format(namedSetNotUnique,
+            throw new OlapRuntimeException(MessageFormat.format(namedSetNotUnique,
                 mappingNamedSet.getName(), getName()));
         }
 
@@ -1459,7 +1459,7 @@ public class RolapCube extends CubeBase {
 //                    DataType.HIERARCHY);
 //        }
         if (hierarchy == null) {
-            throw new MondrianException(MessageFormat.format(calcMemberHasBadDimension,
+            throw new OlapRuntimeException(MessageFormat.format(calcMemberHasBadDimension,
                     mappingCalcMember.getHierarchy().getName(),   mappingCalcMember.getName(), getName()));
         }
 
@@ -1482,13 +1482,13 @@ public class RolapCube extends CubeBase {
                     DataType.UNKNOWN);
 
             if (parent == null) {
-                throw new MondrianException(MessageFormat.format(
+                throw new OlapRuntimeException(MessageFormat.format(
                     calcMemberHasUnknownParent,
                         parentFqName, mappingCalcMember.getName(), getName()));
             }
 
             if (parent.getHierarchy() != hierarchy) {
-                throw  new MondrianException(MessageFormat.format(
+                throw  new OlapRuntimeException(MessageFormat.format(
                 calcMemberHasDifferentParentAndHierarchy,
                     mappingCalcMember.getName(), getName(), hierarchy.getUniqueName()));
             }
@@ -1642,12 +1642,12 @@ public class RolapCube extends CubeBase {
         }
         for (CalculatedMemberPropertyMapping mappingProperty : list) {
             if (mappingProperty.getExpression() == null && mappingProperty.getValue() == null) {
-                throw  new MondrianException(MessageFormat.format(
+                throw  new OlapRuntimeException(MessageFormat.format(
                     neitherExprNorValueForCalcMemberProperty,
                         mappingProperty.getName(), memberName, getName()));
             }
             if (mappingProperty.getExpression() != null && mappingProperty.getValue() != null) {
-                throw new MondrianException(
+                throw new OlapRuntimeException(
                     MessageFormat.format(exprAndValueForMemberProperty, mappingProperty.getName(), memberName, getName()));
             }
             propNames.add(mappingProperty.getName());
@@ -2156,7 +2156,7 @@ public class RolapCube extends CubeBase {
                 if (relation != null && !Utils.equalsQuery(relation, table.getRelation())) {
                     // HierarchyUsage should have checked this.
                     if (hierarchyUsage.getForeignKey() == null) {
-                        throw new MondrianException(MessageFormat.format(
+                        throw new OlapRuntimeException(MessageFormat.format(
                             hierarchyMustHaveForeignKey,
                                 hierarchy.getName(), getName()));
                     }
@@ -2165,7 +2165,7 @@ public class RolapCube extends CubeBase {
                         && !starInner.getFactTable().containsColumn(
                             hierarchyUsage.getForeignKey().getName()))
                     {
-                        throw  new MondrianException(MessageFormat.format(
+                        throw  new OlapRuntimeException(MessageFormat.format(
                             hierarchyInvalidForeignKey,
                                 hierarchyUsage.getForeignKey(),
                                 hierarchy.getName(),
@@ -2749,7 +2749,7 @@ public class RolapCube extends CubeBase {
             }
         }
 
-        throw new MondrianException(MessageFormat.format(noTimeDimensionInCube, funName));
+        throw new OlapRuntimeException(MessageFormat.format(noTimeDimensionInCube, funName));
     }
 
     /**
@@ -3002,7 +3002,7 @@ public class RolapCube extends CubeBase {
                     buf.append("\" ");
                     String msg = buf.toString();
                     getLogger().error(msg);
-                    throw new MondrianException(buf.toString());
+                    throw new OlapRuntimeException(buf.toString());
                 } else {
                     // ERROR: this is not allowed
                     buf.append("\" rather than one of the alias names ");
@@ -3013,7 +3013,7 @@ public class RolapCube extends CubeBase {
                     }
                     String msg = buf.toString();
                     getLogger().error(msg);
-                    throw new MondrianException(buf.toString());
+                    throw new OlapRuntimeException(buf.toString());
                 }
             }
         }

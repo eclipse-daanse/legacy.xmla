@@ -46,6 +46,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.rdb.structure.pojo.InlineTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
@@ -72,7 +73,6 @@ import org.slf4j.LoggerFactory;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
@@ -424,7 +424,7 @@ public class RolapStar {
             }
         } else if (relOrJoin instanceof JoinQueryMapping join) {
             if (left(join) instanceof JoinQueryMapping) {
-                throw new MondrianException(illegalLeftDeepJoin);
+                throw new OlapRuntimeException(illegalLeftDeepJoin);
             }
             final QueryMapping left;
             final QueryMapping right;
@@ -453,7 +453,7 @@ public class RolapStar {
                         parent, left(join), join.getRight().getKey() != null ? join.getRight().getKey().getName() : null,
                         join.getLeft().getKey() != null ? join.getLeft().getKey().getName() : null, getLeftAlias(join));
             } else {
-                throw new MondrianException(
+                throw new OlapRuntimeException(
                     "failed to match primary key table to join tables");
             }
 

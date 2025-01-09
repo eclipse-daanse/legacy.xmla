@@ -9,22 +9,21 @@
 
 package mondrian.util;
 
-import mondrian.olap.MondrianException;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-public class CreationException extends MondrianException {
-    public CreationException() {
-        super();
-    }
-    public CreationException(String s) {
-        super(s);
-    }
-    public CreationException(String s, Throwable t) {
-        super(s, t);
-    }
-    public CreationException(Throwable t) {
-        super(t);
-    }
+public class CreationException extends OlapRuntimeException {
+
+	public CreationException(String s) {
+		super(s);
+	}
+
+	public CreationException(String s, Throwable t) {
+		super(s, t);
+	}
+
+	public CreationException(Throwable t) {
+		super(t);
+	}
 }
-
 
 // End CreationException.java

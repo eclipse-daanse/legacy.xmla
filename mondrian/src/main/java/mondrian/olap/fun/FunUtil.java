@@ -44,6 +44,7 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.DimensionExpression;
@@ -72,7 +73,6 @@ import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.calc.impl.UnaryTupleList;
 import mondrian.mdx.HierarchyExpressionImpl;
-import mondrian.olap.MondrianException;
 import mondrian.olap.Property;
 import mondrian.olap.ResultStyleException;
 import mondrian.olap.Util;
@@ -1224,7 +1224,7 @@ public class FunUtil extends Util {
     Level targetLevel ) {
     if ( ( targetLevel != null )
       && ( member.getHierarchy() != targetLevel.getHierarchy() ) ) {
-      throw new MondrianException(MessageFormat.format(memberNotInLevelHierarchy,
+      throw new OlapRuntimeException(MessageFormat.format(memberNotInLevelHierarchy,
         member.getUniqueName(), targetLevel.getUniqueName() ));
     }
 

@@ -26,6 +26,7 @@ import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.QueryTiming;
 import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.monitor.event.ConnectionEventCommon;
 import org.eclipse.daanse.olap.api.monitor.event.EventCommon;
 import org.eclipse.daanse.olap.api.monitor.event.ExecutionEndEvent;
@@ -38,7 +39,6 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 
 import mondrian.olap.MemoryLimitExceededException;
-import mondrian.olap.MondrianException;
 import mondrian.olap.QueryCanceledException;
 import mondrian.olap.QueryTimingImpl;
 import mondrian.olap.Util;
@@ -192,10 +192,10 @@ public class ExecutionImpl implements Execution{
    * <p>
    * It won't throw anything if the query has successfully completed.
    *
-   * @throws MondrianException
+   * @throws OlapRuntimeException
    *           The exception encountered.
    */
-  public synchronized void checkCancelOrTimeout() throws MondrianException {
+  public synchronized void checkCancelOrTimeout() throws OlapRuntimeException {
     if ( parent != null ) {
       parent.checkCancelOrTimeout();
     }

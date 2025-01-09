@@ -40,6 +40,7 @@ import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.AxisOrdinal;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
@@ -57,7 +58,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 
 import mondrian.olap.IdImpl;
-import mondrian.olap.MondrianException;
 import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
 import mondrian.rolap.agg.AggregationManager;
@@ -165,7 +165,7 @@ class MemberCacheControlTest {
      * @param cubeName Cube name
      * @param names the full-qualified Member name
      * @return the Member
-     * @throws MondrianException when not found.
+     * @throws OlapRuntimeException when not found.
      */
     protected static RolapMember findMember(
         Connection connection,
@@ -898,7 +898,7 @@ class MemberCacheControlTest {
         try {
             cc.execute(command);
             fail("Should have failed due to improper level");
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             assertEquals(
                 "new parent belongs to different level than old",
                 e.getCause().getMessage());

@@ -44,6 +44,7 @@ import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.rdb.structure.api.model.Row;
 import org.eclipse.daanse.rdb.structure.api.model.RowValue;
@@ -56,7 +57,6 @@ import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.NativeEvaluationUnsupportedException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
@@ -219,7 +219,7 @@ public class RolapUtil {
                 if (o2 == RolapUtilComparable.INSTANCE) {
                     return 1;
                 }
-                throw new MondrianException(cce);
+                throw new OlapRuntimeException(cce);
             }
         }
     }

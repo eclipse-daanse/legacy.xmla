@@ -13,18 +13,18 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-public class SegmentCacheFailedToSaveSegmentException extends MondrianException {
+@SuppressWarnings("serial")
+public class SegmentCacheFailedToSaveSegmentException extends OlapRuntimeException {
 
-    public final static String segmentCacheFailedToSaveSegment =
-        "An exception was encountered while loading a segment from the SegmentCache.";
+	public final static String segmentCacheFailedToSaveSegment = "An exception was encountered while loading a segment from the SegmentCache.";
 
-    public SegmentCacheFailedToSaveSegmentException() {
-        super(segmentCacheFailedToSaveSegment);
-    }
+	public SegmentCacheFailedToSaveSegmentException() {
+		super(segmentCacheFailedToSaveSegment);
+	}
 
-    public SegmentCacheFailedToSaveSegmentException(Throwable t) {
-        super(segmentCacheFailedToSaveSegment, t);
-    }
+	public SegmentCacheFailedToSaveSegmentException(Throwable t) {
+		super(segmentCacheFailedToSaveSegment, t);
+	}
 }

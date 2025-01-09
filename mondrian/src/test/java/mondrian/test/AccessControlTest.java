@@ -38,6 +38,7 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
@@ -71,7 +72,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.olap.DelegatingRole;
 import mondrian.olap.IdImpl;
-import mondrian.olap.MondrianException;
 import mondrian.olap.RoleImpl;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
@@ -213,7 +213,7 @@ class AccessControlTest {
           + "Row #0: 89,043.253\n"
           + "Row #0: 196,770.888\n"
           + "Row #0: 4,070\n");
-      } catch (MondrianException e) {
+      } catch (OlapRuntimeException e) {
         if (e.getCause().getLocalizedMessage()
             .contains(
                 "MDX object '[Measures]' not found in cube 'Warehouse2'"))
@@ -237,7 +237,7 @@ class AccessControlTest {
           + "Row #0: 89,043.253\n"
           + "Row #0: 196,770.888\n"
           + "Row #0: 4,070\n");
-      } catch (MondrianException e) {
+      } catch (OlapRuntimeException e) {
         if (e.getCause().getLocalizedMessage()
             .contains(
                 "MDX object '[Measures]' not found in cube 'Warehouse1'"))

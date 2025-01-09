@@ -15,6 +15,7 @@
 package org.eclipse.daanse.olap.function.def.ancestor;
 
 import org.eclipse.daanse.olap.api.DataType;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
@@ -27,8 +28,6 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
-
-import mondrian.olap.MondrianException;
 
 class AncestorNumericFunDef extends AbstractFunctionDefinition {
 
@@ -48,7 +47,7 @@ class AncestorNumericFunDef extends AbstractFunctionDefinition {
 		final Type type1 = expressionOfArg1.getType();
 
 		if (!(type1 instanceof NumericType)) {
-			new MondrianException("unexpected type: " + type1 + " sould be " + NumericType.class);
+			new OlapRuntimeException("unexpected type: " + type1 + " sould be " + NumericType.class);
 		}
 
 		final IntegerCalc distanceCalc = compiler.compileInteger(call.getArg(1));

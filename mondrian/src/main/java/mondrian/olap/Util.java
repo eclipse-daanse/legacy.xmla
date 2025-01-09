@@ -85,7 +85,6 @@ import java.util.stream.Collectors;
 import mondrian.olap.exceptions.MdxCantFindMemberException;
 import mondrian.olap.exceptions.MdxChildObjectNotFoundException;
 import mondrian.olap.exceptions.MemberNotFoundException;
-import mondrian.olap.exceptions.UdfClassWrongInterfaceException;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
@@ -107,6 +106,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.function.FunctionTable;
@@ -131,7 +131,6 @@ import org.eclipse.daanse.olap.impl.IdentifierParser;
 import org.eclipse.daanse.olap.impl.IdentifierSegment;
 import org.eclipse.daanse.olap.impl.KeySegment;
 import org.eclipse.daanse.olap.impl.NameSegment;
-import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -955,7 +954,7 @@ public class Util {
             }
         }
         if (fail) {
-            throw new MondrianException(MessageFormat.format("MDX cube ''{0}'' not found", cubeName));
+            throw new OlapRuntimeException(MessageFormat.format("MDX cube ''{0}'' not found", cubeName));
         }
         return null;
     }
@@ -2089,14 +2088,14 @@ public class Util {
      * Creates an internal error with a given message.
      */
     public static RuntimeException newInternal(String message) {
-        return new MondrianException(MessageFormat.format("Internal error: {0}", message));
+        return new OlapRuntimeException(MessageFormat.format("Internal error: {0}", message));
     }
 
     /**
      * Creates an internal error with a given message and cause.
      */
     public static RuntimeException newInternal(Throwable e, String message) {
-        return new MondrianException(MessageFormat.format("Internal error: {0}", message), e);
+        return new OlapRuntimeException(MessageFormat.format("Internal error: {0}", message), e);
     }
 
     /**

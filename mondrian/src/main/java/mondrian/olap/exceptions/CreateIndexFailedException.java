@@ -13,14 +13,15 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class CreateIndexFailedException extends MondrianException {
-    public final static String message = "Mondrian loader could not create index ''{0}'' on table ''{1}''.";
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    public CreateIndexFailedException(String indexName, String tableName, Throwable cause) {
-        super(MessageFormat.format(message, indexName, tableName), cause);
-    }
+@SuppressWarnings("serial")
+public class CreateIndexFailedException extends OlapRuntimeException {
+	public final static String message = "Mondrian loader could not create index ''{0}'' on table ''{1}''.";
+
+	public CreateIndexFailedException(String indexName, String tableName, Throwable cause) {
+		super(MessageFormat.format(message, indexName, tableName), cause);
+	}
 }

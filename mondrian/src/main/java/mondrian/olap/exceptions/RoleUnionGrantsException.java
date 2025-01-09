@@ -13,11 +13,10 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-import java.text.MessageFormat;
-
-public class RoleUnionGrantsException extends MondrianException {
+@SuppressWarnings("serial")
+public class RoleUnionGrantsException extends OlapRuntimeException {
     public final static String message = "Union role must not contain grants";
 
     public RoleUnionGrantsException() {

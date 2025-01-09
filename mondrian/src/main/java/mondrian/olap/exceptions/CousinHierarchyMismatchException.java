@@ -13,17 +13,18 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class CousinHierarchyMismatchException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    public final static String cousinHierarchyMismatch = """
-        The member arguments to the Cousin function must be from the same hierarchy. The members are ''{0}'' and ''{1}''.
-        """;
+@SuppressWarnings("serial")
+public class CousinHierarchyMismatchException extends OlapRuntimeException {
 
-    public CousinHierarchyMismatchException(String name1, String name2) {
-        super(MessageFormat.format(cousinHierarchyMismatch, name1, name2));
-    }
+	public final static String cousinHierarchyMismatch = """
+			The member arguments to the Cousin function must be from the same hierarchy. The members are ''{0}'' and ''{1}''.
+			""";
+
+	public CousinHierarchyMismatchException(String name1, String name2) {
+		super(MessageFormat.format(cousinHierarchyMismatch, name1, name2));
+	}
 }

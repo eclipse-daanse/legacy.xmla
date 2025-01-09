@@ -46,6 +46,7 @@ import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
@@ -59,7 +60,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.olap.IdImpl;
-import mondrian.olap.MondrianException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapLevel;
@@ -1786,7 +1786,7 @@ class DrillThroughTest {
         try {
             cell.getDrillThroughSQL(false);
             fail();
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             assertTrue(
                 e.getMessage().contains(
                     "Can't perform drillthrough operations because"));

@@ -13,16 +13,16 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class MdxAxisShowSubtotalsNotSupportedException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    private final static String mdxAxisShowSubtotalsNotSupported =
-        "Show/hide subtotals operation on axis ''{0,number}'' is not supported.";
+@SuppressWarnings("serial")
+public class MdxAxisShowSubtotalsNotSupportedException extends OlapRuntimeException {
 
-    public MdxAxisShowSubtotalsNotSupportedException(int axis) {
-        super(MessageFormat.format(mdxAxisShowSubtotalsNotSupported, axis));
-    }
+	private final static String mdxAxisShowSubtotalsNotSupported = "Show/hide subtotals operation on axis ''{0,number}'' is not supported.";
+
+	public MdxAxisShowSubtotalsNotSupportedException(int axis) {
+		super(MessageFormat.format(mdxAxisShowSubtotalsNotSupported, axis));
+	}
 }

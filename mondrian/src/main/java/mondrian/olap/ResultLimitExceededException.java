@@ -11,10 +11,12 @@
 
 package mondrian.olap;
 
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+
 /**
  * Abstract base class for exceptions that indicate some limit was exceeded.
  */
-public abstract class ResultLimitExceededException extends MondrianException {
+public abstract class ResultLimitExceededException extends OlapRuntimeException {
 
     /**
      * Creates a ResultLimitExceededException.

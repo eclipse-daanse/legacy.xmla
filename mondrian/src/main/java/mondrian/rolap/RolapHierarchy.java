@@ -48,6 +48,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
@@ -90,7 +91,6 @@ import mondrian.olap.DimensionType;
 import mondrian.olap.HierarchyBase;
 import mondrian.olap.IdImpl;
 import mondrian.olap.InvalidHierarchyException;
-import mondrian.olap.MondrianException;
 import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
@@ -348,14 +348,14 @@ public class RolapHierarchy extends HierarchyBase {
         this.allMember.setOrdinal(0);
 
         if (xmlHierarchy.getLevels().isEmpty()) {
-            throw new MondrianException(MessageFormat.format(hierarchyHasNoLevels,
+            throw new OlapRuntimeException(MessageFormat.format(hierarchyHasNoLevels,
                 getUniqueName()));
         }
 
         Set<String> levelNameSet = new HashSet<>();
         for (LevelMapping level : xmlHierarchy.getLevels()) {
             if (!levelNameSet.add(level.getName())) {
-                throw new MondrianException(MessageFormat.format(hierarchyLevelNamesNotUnique,
+                throw new OlapRuntimeException(MessageFormat.format(hierarchyLevelNamesNotUnique,
                         getUniqueName(), level.getName()));
             }
         }
@@ -369,7 +369,7 @@ public class RolapHierarchy extends HierarchyBase {
                 if (getKeyExp(xmlLevel) == null
                     && xmlHierarchy.getMemberReaderClass() == null)
                 {
-                    throw new MondrianException(MessageFormat.format(
+                    throw new OlapRuntimeException(MessageFormat.format(
                         levelMustHaveNameExpression, xmlLevel.getName()));
                 }
                 levels[i + 1] = new RolapLevel(this, i + 1, xmlLevel);
@@ -403,7 +403,7 @@ public class RolapHierarchy extends HierarchyBase {
         if (xmlHierarchyRelation != null
             && xmlHierarchy.getMemberReaderClass() != null)
         {
-            throw new MondrianException(MessageFormat.format(
+            throw new OlapRuntimeException(MessageFormat.format(
                 hierarchyMustNotHaveMoreThanOneSource, getUniqueName()));
         }
         if (!Util.isEmpty(xmlHierarchy.getName())) {

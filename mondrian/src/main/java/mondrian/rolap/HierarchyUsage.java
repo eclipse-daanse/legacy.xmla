@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rdb.structure.api.model.Column;
 import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
@@ -31,7 +32,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 
@@ -404,7 +404,7 @@ public class HierarchyUsage {
             RolapLevel joinLevel = (RolapLevel)
                     Util.lookupHierarchyLevel(hierarchy, cubeDim.getLevel().getName());
             if (joinLevel == null) {
-                throw new MondrianException(MessageFormat.format(
+                throw new OlapRuntimeException(MessageFormat.format(
                     dimensionUsageHasUnknownLevel,
                         hierarchy.getUniqueName(),
                         cube.getName(),
@@ -448,13 +448,13 @@ public class HierarchyUsage {
         final boolean inFactTable = Utils.equalsQuery(this.joinTable, cube.getFact());
         if (!inFactTable) {
             if (this.joinExp == null) {
-                throw new MondrianException(MessageFormat.format(
+                throw new OlapRuntimeException(MessageFormat.format(
                     mustSpecifyPrimaryKeyForHierarchy,
                         hierarchy.getUniqueName(),
                         cube.getName()));
             }
             if (foreignKey == null) {
-                throw new MondrianException(MessageFormat.format(
+                throw new OlapRuntimeException(MessageFormat.format(
                     mustSpecifyForeignKeyForHierarchy,
                         hierarchy.getUniqueName(),
                         cube.getName()));
@@ -478,7 +478,7 @@ public class HierarchyUsage {
         if (tab == null) {
             table = hierarchy.getUniqueTable();
             if (table == null) {
-                throw new MondrianException(MessageFormat.format(
+                throw new OlapRuntimeException(MessageFormat.format(
                     mustSpecifyPrimaryKeyTableForHierarchy,
                         hierarchy.getUniqueName()));
             }
@@ -502,7 +502,7 @@ public class HierarchyUsage {
             if (tableName == null) {
                 table = hierarchy.getUniqueTable();
                 if (table == null) {
-                    throw new MondrianException(MessageFormat.format(
+                    throw new OlapRuntimeException(MessageFormat.format(
                         mustSpecifyPrimaryKeyTableForHierarchy,
                             hierarchy.getUniqueName()));
                 }

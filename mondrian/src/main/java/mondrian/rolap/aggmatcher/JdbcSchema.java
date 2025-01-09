@@ -29,6 +29,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
 import org.eclipse.daanse.rdb.structure.api.model.PhysicalTable;
 import org.eclipse.daanse.rdb.structure.api.model.SystemTable;
@@ -39,7 +40,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.MondrianException;
 import mondrian.rolap.RolapAggregator;
 import mondrian.rolap.RolapLevel;
 import mondrian.rolap.RolapStar;
@@ -859,7 +859,7 @@ public class JdbcSchema {
             if ((this.tableUsageType != TableUsageType.UNKNOWN)
                 && (this.tableUsageType != tableUsageType))
             {
-                throw new MondrianException(MessageFormat.format(attemptToChangeTableUsage,
+                throw new OlapRuntimeException(MessageFormat.format(attemptToChangeTableUsage,
                     getName(),
                     this.tableUsageType.name(),
                     tableUsageType.name()));

@@ -27,12 +27,12 @@ import java.util.TreeMap;
 
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.MondrianException;
 import mondrian.recorder.MessageRecorder;
 import mondrian.rolap.RolapColumn;
 import mondrian.rolap.HierarchyUsage;
@@ -796,7 +796,7 @@ public abstract class Recognizer {
         if (usagePrefix.length() > 0
             && !usagePrefix.equals(
             aggColumnName.substring(0, usagePrefix.length()))) {
-            throw new MondrianException(
+            throw new OlapRuntimeException(
                 new StringBuilder("usagePrefix attribute ")
                     .append(usagePrefix)
                     .append(" was specified for ").append(hierarchyUsage.getHierarchyName())

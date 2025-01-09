@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.SubtotalVisibility;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.AxisOrdinal;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
@@ -16,7 +17,6 @@ import org.eclipse.daanse.olap.api.result.CellSetAxis;
 import org.eclipse.daanse.olap.api.result.CellSetMetaData;
 import org.eclipse.daanse.olap.api.result.Result;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.QueryAxisImpl;
 import mondrian.rolap.RolapCell;
 import mondrian.rolap.RolapConnection;
@@ -80,7 +80,7 @@ public class CellSetImpl extends ExecutionImpl implements CellSet {
         RolapCell cell;
         try {
             cell = (RolapCell) result.getCell(pos);
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             if (e.getMessage().indexOf("coordinates out of range") >= 0) {
                 int[] dimensions = new int[getAxes().size()];
                 for (int i = 0; i < axisList.size(); i++) {

@@ -15,6 +15,7 @@ package org.eclipse.daanse.olap.function.def.visualtotals;
 
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Validator;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
@@ -26,8 +27,6 @@ import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
-
-import mondrian.olap.MondrianException;
 
 public class VisualTotalsFunDef extends AbstractFunctionDefinition {
         private final static String visualTotalsAppliedToTuples =
@@ -49,7 +48,7 @@ public class VisualTotalsFunDef extends AbstractFunctionDefinition {
                 final SetType setType = (SetType) validatedArg.getType();
                 final Type elementType = setType.getElementType();
                 if (!(elementType instanceof MemberType)) {
-                    throw new MondrianException(visualTotalsAppliedToTuples);
+                    throw new OlapRuntimeException(visualTotalsAppliedToTuples);
                 }
             }
             return validatedArg;

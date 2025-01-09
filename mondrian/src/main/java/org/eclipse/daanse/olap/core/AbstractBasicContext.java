@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ResultShepherd;
 import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
 import org.eclipse.daanse.olap.api.monitor.event.ConnectionEndEvent;
 import org.eclipse.daanse.olap.api.monitor.event.ConnectionEventCommon;
@@ -36,7 +37,6 @@ import org.eclipse.daanse.olap.api.monitor.event.ServertEventCommon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.MondrianException;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.server.NopEventBus;
 
@@ -120,7 +120,7 @@ public abstract class AbstractBasicContext implements Context {
 	@Override
 	public ResultShepherd getResultShepherd() {
 		if (shutdown) {
-			throw new MondrianException(SERVER_ALREADY_SHUTDOWN);
+			throw new OlapRuntimeException(SERVER_ALREADY_SHUTDOWN);
 		}
 		return this.shepherd;
 	}
@@ -132,7 +132,7 @@ public abstract class AbstractBasicContext implements Context {
 
 	public AggregationManager getAggregationManager() {
 		if (shutdown) {
-			throw new MondrianException(SERVER_ALREADY_SHUTDOWN);
+			throw new OlapRuntimeException(SERVER_ALREADY_SHUTDOWN);
 		}
 		return aggMgr;
 	}
@@ -147,7 +147,7 @@ public abstract class AbstractBasicContext implements Context {
 			if (silent) {
 				return;
 			}
-			throw new MondrianException("Server already shutdown.");
+			throw new OlapRuntimeException("Server already shutdown.");
 		}
 		this.shutdown = true;
 		aggMgr.shutdown();
@@ -162,7 +162,7 @@ public abstract class AbstractBasicContext implements Context {
 					connections.size());
 		}
 		if (shutdown) {
-			throw new MondrianException("Server already shutdown.");
+			throw new OlapRuntimeException("Server already shutdown.");
 		}
 		connections.add(connection);
 		
@@ -181,7 +181,7 @@ public abstract class AbstractBasicContext implements Context {
 					connections.size());
 		}
 		if (shutdown) {
-			throw new MondrianException("Server already shutdown.");
+			throw new OlapRuntimeException("Server already shutdown.");
 		}
 		connections.remove(connection);
 		
@@ -196,7 +196,7 @@ public abstract class AbstractBasicContext implements Context {
 	@Override
 	public synchronized void addStatement(Statement statement) {
 		if (shutdown) {
-			throw new MondrianException("Server already shutdown.");
+			throw new OlapRuntimeException("Server already shutdown.");
 		}
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("addStatement , id={}, statements={}, connections={}", id, statements.size(),
@@ -222,7 +222,7 @@ public abstract class AbstractBasicContext implements Context {
 					connections.size());
 		}
 		if (shutdown) {
-			throw new MondrianException("Server already shutdown.");
+			throw new OlapRuntimeException("Server already shutdown.");
 		}
 		statements.remove(statement);
 		final Connection connection = statement.getMondrianConnection();
@@ -241,7 +241,7 @@ public abstract class AbstractBasicContext implements Context {
 	@Override
 	public EventBus getMonitor() {
 		if (shutdown) {
-			throw new MondrianException("Server already shutdown.");
+			throw new OlapRuntimeException("Server already shutdown.");
 		}
 		return monitor;
 	}

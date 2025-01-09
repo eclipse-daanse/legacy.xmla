@@ -30,6 +30,7 @@ import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
@@ -52,8 +53,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.olap.MondrianException;
 
 /**
  * Unit test for {@link SchemaReader}.
@@ -141,7 +140,7 @@ class RolapSchemaReaderTest {
             //DriverManager.getConnection(
             //    properties,
             //    null);
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             e.printStackTrace();
             fail("unexpected exception for UseContentChecksum");
         }

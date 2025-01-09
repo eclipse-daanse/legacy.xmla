@@ -22,6 +22,7 @@ import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Literal;
 import org.eclipse.daanse.olap.api.query.component.MemberExpression;
@@ -84,7 +85,6 @@ import org.eclipse.daanse.olap.function.def.level.member.MemberLevelCalc;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.mdx.UnresolvedFunCallImpl;
-import mondrian.olap.MondrianException;
 import mondrian.olap.SymbolLiteralImpl;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
@@ -224,7 +224,7 @@ public class AbstractExpCompiler implements ExpressionCompiler {
             return hierarchyToMember(hierarchyCalc);
         }
         if (type instanceof NullType) {
-            throw new MondrianException(nullNotSupported);
+            throw new OlapRuntimeException(nullNotSupported);
         } else if (type instanceof DimensionType) {
             final HierarchyCalc hierarchyCalc = compileHierarchy(exp);
             return hierarchyToMember(hierarchyCalc);

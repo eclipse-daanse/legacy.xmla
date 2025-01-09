@@ -26,13 +26,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Locus;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.opencube.junit5.context.TestConfig;
 
-import mondrian.olap.MondrianException;
 import mondrian.server.ExecutionImpl;
 import mondrian.server.LocusImpl;
 
@@ -96,7 +96,7 @@ class SegmentCacheManagerTest {
     }
     assertEquals( 20, results.size() );
     assertEquals( "done", results.get( 0 ) );
-    assertTrue( results.get( 19 ) instanceof MondrianException );
+    assertTrue( results.get( 19 ) instanceof OlapRuntimeException );
   }
 
   private void executeNtimes( BlockingQueue<Object> queue, SegmentCacheManager man, int n ) {

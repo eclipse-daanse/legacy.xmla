@@ -19,12 +19,12 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.fun.MondrianEvaluationException;
 
 
@@ -82,7 +82,7 @@ class UCaseFunDefTest {
                     + " UCase(NULL) = \"\" "
                     + "And [Store].CURRENTMEMBER.Name = \"Bellingham\") "
                     + "on 0 from sales" );
-        } catch ( MondrianException e ) {
+        } catch ( OlapRuntimeException e ) {
             Throwable mondrianEvaluationException = e.getCause();
             assertEquals(
                 mondrianEvaluationException.getClass(),

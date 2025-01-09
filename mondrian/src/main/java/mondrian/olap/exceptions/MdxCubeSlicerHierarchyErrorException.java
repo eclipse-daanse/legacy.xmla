@@ -13,15 +13,15 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class MdxCubeSlicerHierarchyErrorException extends MondrianException {
-    private final static String mdxCubeSlicerHierarchyError =
-        "Failed to add Cube Slicer for hierarchy ''{0}'' on cube ''{1}''";
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    public MdxCubeSlicerHierarchyErrorException(String hierarchy, String name) {
-        super(MessageFormat.format(mdxCubeSlicerHierarchyError, hierarchy, name));
-    }
+@SuppressWarnings("serial")
+public class MdxCubeSlicerHierarchyErrorException extends OlapRuntimeException {
+	private final static String mdxCubeSlicerHierarchyError = "Failed to add Cube Slicer for hierarchy ''{0}'' on cube ''{1}''";
+
+	public MdxCubeSlicerHierarchyErrorException(String hierarchy, String name) {
+		super(MessageFormat.format(mdxCubeSlicerHierarchyError, hierarchy, name));
+	}
 }

@@ -12,10 +12,10 @@ package mondrian.rolap;
 import java.text.MessageFormat;
 import java.util.Map;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.exceptions.CastInvalidTypeException;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 
 import mondrian.olap.Property;
@@ -132,7 +132,7 @@ public class RolapBaseCubeMeasure
                 buf.append(aggName);
                 buf.append('\'');
             }
-            throw new MondrianException(MessageFormat.format(unknownAggregator,
+            throw new OlapRuntimeException(MessageFormat.format(unknownAggregator,
                 aggregatorName,
                 buf.toString()));
         }

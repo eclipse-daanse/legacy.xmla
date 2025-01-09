@@ -13,15 +13,16 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class FailedToParseQueryException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    private final static String failedToParseQuery = "Failed to parse query ''{0}''";
+@SuppressWarnings("serial")
+public class FailedToParseQueryException extends OlapRuntimeException {
 
-    public FailedToParseQueryException(String query, Throwable e) {
-        super(MessageFormat.format(failedToParseQuery, query), e);
-    }
+	private final static String failedToParseQuery = "Failed to parse query ''{0}''";
+
+	public FailedToParseQueryException(String query, Throwable e) {
+		super(MessageFormat.format(failedToParseQuery, query), e);
+	}
 }

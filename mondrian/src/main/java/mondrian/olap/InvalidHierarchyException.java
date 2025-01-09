@@ -11,11 +11,13 @@
 
 package mondrian.olap;
 
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+
 /**
  * Exception which indicates that a Cube is invalid
  * because there is a hierarchy with no members.
  */
-public class InvalidHierarchyException extends MondrianException {
+public class InvalidHierarchyException extends OlapRuntimeException {
     /**
      * Creates a InvalidHierarchyException.
      *

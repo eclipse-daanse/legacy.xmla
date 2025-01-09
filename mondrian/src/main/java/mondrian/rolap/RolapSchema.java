@@ -68,6 +68,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.type.MemberType;
@@ -97,7 +98,6 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.olap.FormulaImpl;
 import mondrian.olap.IdImpl;
-import mondrian.olap.MondrianException;
 import mondrian.olap.RoleImpl;
 import mondrian.olap.Util;
 import mondrian.olap.exceptions.RoleUnionGrantsException;
@@ -423,7 +423,7 @@ public class RolapSchema implements Schema {
         for (ParameterMapping mappingParameter : mappingSchema2.getParameters()) {
             String name = mappingParameter.getName();
             if (!parameterNames.add(name)) {
-                throw new MondrianException(MessageFormat.format(duplicateSchemaParameter,
+                throw new OlapRuntimeException(MessageFormat.format(duplicateSchemaParameter,
                     name));
             }
             Type type;
@@ -519,7 +519,7 @@ public class RolapSchema implements Schema {
         try {
             exp = getInternalConnection().parseExpression(formulaString);
         } catch (Exception e) {
-            throw new MondrianException(MessageFormat.format(namedSetHasBadFormula,
+            throw new OlapRuntimeException(MessageFormat.format(namedSetHasBadFormula,
                 namedSetsMapping.getName(), e));
         }
         final Formula formula =
@@ -741,7 +741,7 @@ public class RolapSchema implements Schema {
 	public Cube lookupCube(final CubeMapping cube, final boolean failIfNotFound) {
         RolapCube mdxCube = lookupCube(cube);
         if (mdxCube == null && failIfNotFound) {
-            throw new MondrianException(MessageFormat.format("MDX cube ''{0}'' not found", cube));
+            throw new OlapRuntimeException(MessageFormat.format("MDX cube ''{0}'' not found", cube));
         }
         return mdxCube;
     }
@@ -766,7 +766,7 @@ public class RolapSchema implements Schema {
     public RolapCube lookupCube(String cubeName, boolean failIfNotFound) {
         RolapCube cube = lookupCube(cubeName);
         if (cube == null && failIfNotFound) {
-            throw new MondrianException(MessageFormat.format("MDX cube ''{0}'' not found", cubeName));
+            throw new OlapRuntimeException(MessageFormat.format("MDX cube ''{0}'' not found", cubeName));
         }
         return cube;
     }

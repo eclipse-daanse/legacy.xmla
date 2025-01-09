@@ -12,6 +12,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DrillThroughAction;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.DrillThrough;
 import org.eclipse.daanse.olap.api.query.component.Explain;
 import org.eclipse.daanse.olap.api.query.component.Query;
@@ -22,7 +23,6 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
 
 import mondrian.olap.ConnectionBase;
-import mondrian.olap.MondrianException;
 import mondrian.olap.QueryCanceledException;
 import mondrian.olap.QueryTimeoutException;
 import mondrian.rolap.RolapConnection;
@@ -90,7 +90,7 @@ public class StatementImpl extends mondrian.server.StatementImpl implements Stat
         try {
             parseTree =
                 connection.parseStatement(mdx);
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             throw new RuntimeException(
                 "mondrian gave exception while parsing query", e);
         }
@@ -199,7 +199,7 @@ public class StatementImpl extends mondrian.server.StatementImpl implements Stat
         } catch (QueryTimeoutException e) {
             throw new RuntimeException(
                 e.getMessage(), e);
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             throw new RuntimeException(
                 "mondrian gave exception while executing query", e);
         }
@@ -225,7 +225,7 @@ public class StatementImpl extends mondrian.server.StatementImpl implements Stat
 
                     }
                 });
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             throw new RuntimeException(
                 "mondrian gave exception while parsing query", e);
         }

@@ -13,9 +13,10 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-public class SegmentCacheFailedToLoadSegmentException extends MondrianException {
+@SuppressWarnings("serial")
+public class SegmentCacheFailedToLoadSegmentException extends OlapRuntimeException {
     public final static String segmentCacheFailedToLoadSegment =
         "An exception was encountered while loading a segment from the SegmentCache.";
 

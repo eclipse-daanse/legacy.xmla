@@ -45,6 +45,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
@@ -127,7 +128,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
@@ -5667,7 +5667,7 @@ class SchemaTest {
                 + "{[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
             //fail();
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
         	//dimension was removed in new model
             //assertTrue(
             //    e.getMessage().contains(
@@ -5725,7 +5725,7 @@ class SchemaTest {
                 + "{[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
             fail();
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             assertTrue(
                 e.getCause().getMessage().contains(
                     "'[Store].[All Stores].[USA].[CA].[SF and LA]' not found in cube 'Sales'"));
@@ -5780,7 +5780,7 @@ class SchemaTest {
                 + "{[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
             fail();
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             assertTrue(
                 e.getMessage().contains(
                     "Named set in cube 'Sales' has bad formula"));
@@ -5836,7 +5836,7 @@ class SchemaTest {
                 + "{[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
             fail();
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             assertTrue(
                 e.getMessage().contains(
                     "Cannot find a parent with name '[Store].[USA].[CA]"
@@ -5895,7 +5895,7 @@ class SchemaTest {
                 + "{[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
             fail();
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             assertTrue(
                 e.getMessage().contains(
                     "The calculated member 'SF and LA' in cube 'Sales'"
@@ -5953,7 +5953,7 @@ class SchemaTest {
                 + "{[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
             fail();
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             assertTrue(
                 e.getMessage().contains(
                     "Named set in cube 'Sales' has bad formula"));
@@ -6598,7 +6598,7 @@ class SchemaTest {
                 + "Row #0: 266,773\n"
                 + "Row #0: 192,025\n");
             fail();
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             assertTrue(e.getMessage().indexOf("bad formula") >= 0);
         }
     }
@@ -9237,7 +9237,7 @@ class SchemaTest {
             withSchema(context, TestLeftDeepJoinFailsModifier::new);
             assertSimpleQuery(context.getConnection());
             fail("expected error");
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             assertEquals(
                 "Mondrian Error:Left side of join must not be a join; mondrian only supports right-deep joins.",
                 e.getMessage());

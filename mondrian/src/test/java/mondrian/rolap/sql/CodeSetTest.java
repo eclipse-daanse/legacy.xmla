@@ -14,12 +14,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.eclipse.daanse.jdbc.db.dialect.db.postgresql.PostgreSqlDialect;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.jdbc.db.api.meta.DatabaseInfo;
 import org.eclipse.daanse.jdbc.db.api.meta.IdentifierInfo;
 import org.eclipse.daanse.jdbc.db.api.meta.MetaInfo;
 import org.junit.jupiter.api.Test;
-
-import mondrian.olap.MondrianException;
 
 /**
  * @author Tatsiana_Kasiankova
@@ -64,7 +63,7 @@ class CodeSetTest {
     try {
       String chooseQuery = codeSet.chooseQuery(postgreSqlDialect);
       assertEquals(SQL_CODE_FOR_POSTGRES_DIALECT, chooseQuery);
-    } catch (MondrianException mExc) {
+    } catch (OlapRuntimeException mExc) {
       fail(
           "Not expected any MondrianException but it occured: "
           + mExc.getLocalizedMessage());
@@ -92,7 +91,7 @@ class CodeSetTest {
     try {
       String chooseQuery = codeSet.chooseQuery(postgreSqlDialect);
       assertEquals(SQL_CODE_FOR_POSTGRES_DIALECT, chooseQuery);
-    } catch (MondrianException mExc) {
+    } catch (OlapRuntimeException mExc) {
       fail(
           "Not expected any MondrianException but it occured: "
           + mExc.getLocalizedMessage());
@@ -121,7 +120,7 @@ class CodeSetTest {
     try {
       String chooseQuery = codeSet.chooseQuery(postgreSqlDialect);
       assertEquals(SQL_CODE_FOR_POSTGRES_DIALECT, chooseQuery);
-    } catch (MondrianException mExc) {
+    } catch (OlapRuntimeException mExc) {
       fail(
           "Not expected any MondrianException but it occured: "
           + mExc.getLocalizedMessage());
@@ -147,7 +146,7 @@ class CodeSetTest {
     try {
       String chooseQuery = codeSet.chooseQuery(postgreSqlDialect);
       assertEquals(SQL_CODE_FOR_GENERIC_DIALECT, chooseQuery);
-    } catch (MondrianException mExc) {
+    } catch (OlapRuntimeException mExc) {
       fail(
           "Not expected any MondrianException but it occured: "
           + mExc.getLocalizedMessage());
@@ -174,7 +173,7 @@ class CodeSetTest {
       fail(
           "Expected MondrianException but not occured");
       assertEquals(SQL_CODE_FOR_GENERIC_DIALECT, chooseQuery);
-    } catch (MondrianException mExc) {
+    } catch (OlapRuntimeException mExc) {
       assertEquals(
           MONDRIAN_ERROR_NO_GENERIC_VARIANT,
           mExc.getLocalizedMessage());

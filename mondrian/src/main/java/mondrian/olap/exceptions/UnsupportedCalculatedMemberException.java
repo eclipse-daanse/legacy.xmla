@@ -13,15 +13,15 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class UnsupportedCalculatedMemberException extends MondrianException {
-    private final static String unsupportedCalculatedMember =
-        "Calculated member ''{0}'' is not supported within a compound predicate";
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    public UnsupportedCalculatedMemberException(String name) {
-        super(MessageFormat.format(unsupportedCalculatedMember, name));
-    }
+@SuppressWarnings("serial")
+public class UnsupportedCalculatedMemberException extends OlapRuntimeException {
+	private final static String unsupportedCalculatedMember = "Calculated member ''{0}'' is not supported within a compound predicate";
+
+	public UnsupportedCalculatedMemberException(String name) {
+		super(MessageFormat.format(unsupportedCalculatedMember, name));
+	}
 }

@@ -56,6 +56,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionTable;
 import org.eclipse.daanse.olap.api.query.component.AxisOrdinal;
@@ -711,7 +712,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
             for (QueryAxis axis : axes) {
                 validator.validate(axis);
                 if (!axisNames.add(axis.getAxisOrdinal().logicalOrdinal())) {
-                    throw new MondrianException(MessageFormat.format(duplicateAxis,
+                    throw new OlapRuntimeException(MessageFormat.format(duplicateAxis,
                         axis.getAxisName()));
                 }
             }
@@ -725,7 +726,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
                     AxisOrdinal axisName =
                         AxisOrdinal.StandardAxisOrdinal.forLogicalOrdinal(
                             seekOrdinal);
-                    throw new MondrianException(MessageFormat.format(nonContiguousAxis,
+                    throw new OlapRuntimeException(MessageFormat.format(nonContiguousAxis,
                         seekOrdinal,
                         axisName.name()));
                 }
@@ -745,7 +746,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
                 }
             }
             if (useCount > 1) {
-                throw new MondrianException(MessageFormat.format(hierarchyInIndependentAxes,
+                throw new OlapRuntimeException(MessageFormat.format(hierarchyInIndependentAxes,
                     hierarchy.getUniqueName()));
             }
         }
@@ -1276,7 +1277,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
                 while ((parent != null) && (grandParent != null)) {
                     if (grandParent instanceof Query) {
                         if (parent instanceof Axis) {
-                            throw new MondrianException(MessageFormat.format(
+                            throw new OlapRuntimeException(MessageFormat.format(
                                 mdxCalculatedFormulaUsedOnAxis,
                                     formulaType,
                                     uniqueName,
@@ -1287,13 +1288,13 @@ public class QueryImpl extends AbstractQueryPart implements Query {
                                 form.isMember()
                                     ? calculatedMember
                                     : calculatedSet;
-                            throw new MondrianException(MessageFormat.format(
+                            throw new OlapRuntimeException(MessageFormat.format(
                                 mdxCalculatedFormulaUsedInFormula,
                                     formulaType, uniqueName, parentFormulaType,
                                     form.getUniqueName()));
 
                         } else {
-                            throw new MondrianException(MessageFormat.format(
+                            throw new OlapRuntimeException(MessageFormat.format(
                                 mdxCalculatedFormulaUsedOnSlicer,
                                     formulaType, uniqueName));
                         }
@@ -1302,7 +1303,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
                     parent = walker.getAncestor(i);
                     grandParent = walker.getAncestor(i + 1);
                 }
-                throw new MondrianException(MessageFormat.format(
+                throw new OlapRuntimeException(MessageFormat.format(
                     mdxCalculatedFormulaUsedInQuery,
                         formulaType, uniqueName, Util.unparse(this)));
             }
@@ -1377,7 +1378,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
     public void renameFormula(String uniqueName, String newName) {
         Formula formula = findFormula(uniqueName);
         if (formula == null) {
-            throw new MondrianException(MessageFormat.format( mdxFormulaNotFound,
+            throw new OlapRuntimeException(MessageFormat.format( mdxFormulaNotFound,
                 "formula", uniqueName, Util.unparse(this)));
         }
         formula.rename(newName);
@@ -2290,7 +2291,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
                 String parameterName =
                     ParameterFunDef.getParameterName(call.getArgs());
                 if (parametersByName.get(parameterName) != null) {
-                    throw new MondrianException(MessageFormat.format(
+                    throw new OlapRuntimeException(MessageFormat.format(
                         parameterDefinedMoreThanOnce, parameterName));
                 }
 

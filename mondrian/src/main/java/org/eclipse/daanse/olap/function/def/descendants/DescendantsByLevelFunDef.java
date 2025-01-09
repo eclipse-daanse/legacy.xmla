@@ -16,6 +16,7 @@ package org.eclipse.daanse.olap.function.def.descendants;
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
@@ -35,7 +36,6 @@ import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import mondrian.mdx.HierarchyExpressionImpl;
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.mdx.UnresolvedFunCallImpl;
-import mondrian.olap.MondrianException;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
 
@@ -55,13 +55,13 @@ public class DescendantsByLevelFunDef extends AbstractFunctionDefinition {
         final Type type0 = call.getArg(0).getType();
         if (type0 instanceof SetType setType) {
             if (setType.getElementType() instanceof TupleType) {
-                throw new MondrianException(descendantsAppliedToSetOfTuples);
+                throw new OlapRuntimeException(descendantsAppliedToSetOfTuples);
             }
 
             MemberType memberType = (MemberType) setType.getElementType();
             final Hierarchy hierarchy = memberType.getHierarchy();
             if (hierarchy == null) {
-                throw new MondrianException(cannotDeduceTypeOfSet);
+                throw new OlapRuntimeException(cannotDeduceTypeOfSet);
             }
             // Convert
             // Descendants(<set>, <args>)

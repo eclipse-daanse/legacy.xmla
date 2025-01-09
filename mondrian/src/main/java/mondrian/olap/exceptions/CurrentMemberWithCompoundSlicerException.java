@@ -13,15 +13,15 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class CurrentMemberWithCompoundSlicerException extends MondrianException {
-    private final static String currentMemberWithCompoundSlicer =
-        "The MDX function CURRENTMEMBER failed because the coordinate for the ''{0}'' hierarchy contains a set";
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    public CurrentMemberWithCompoundSlicerException(String h) {
-        super(MessageFormat.format(currentMemberWithCompoundSlicer, h));
-    }
+@SuppressWarnings("serial")
+public class CurrentMemberWithCompoundSlicerException extends OlapRuntimeException {
+	private final static String currentMemberWithCompoundSlicer = "The MDX function CURRENTMEMBER failed because the coordinate for the ''{0}'' hierarchy contains a set";
+
+	public CurrentMemberWithCompoundSlicerException(String h) {
+		super(MessageFormat.format(currentMemberWithCompoundSlicer, h));
+	}
 }

@@ -13,14 +13,15 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class CalcMemberNotUniqueException extends MondrianException {
-    private final static String message = "Calculated member ''{0}'' already exists in cube ''{1}''";
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    public CalcMemberNotUniqueException(String member, String cube) {
-        super(MessageFormat.format(message, member, cube));
-    }
+@SuppressWarnings("serial")
+public class CalcMemberNotUniqueException extends OlapRuntimeException {
+	private final static String message = "Calculated member ''{0}'' already exists in cube ''{1}''";
+
+	public CalcMemberNotUniqueException(String member, String cube) {
+		super(MessageFormat.format(message, member, cube));
+	}
 }

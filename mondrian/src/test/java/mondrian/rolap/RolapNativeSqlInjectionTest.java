@@ -16,6 +16,7 @@ import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,7 +24,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.SystemWideProperties;
 
 
@@ -50,7 +50,7 @@ class RolapNativeSqlInjectionTest {
         Connection connection = context.getConnection();
         try {
             executeQuery(connection, mdxQuery);
-        } catch (MondrianException e) {
+        } catch (OlapRuntimeException e) {
             assertNotNull(e.getCause(), "MondrianEvaluationException is expected on invalid filter condition");
             assertEquals(e.getCause().getMessage(), "Expected to get decimal, but got (select 1000)");
             return;

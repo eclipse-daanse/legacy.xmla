@@ -12,10 +12,11 @@ package mondrian.rolap.agg;
 import java.util.ArrayList;
 import java.util.List;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.exceptions.SegmentCacheFailedToInstanciateException;
 import mondrian.olap.exceptions.SegmentCacheFailedToLoadSegmentException;
 import mondrian.olap.exceptions.SegmentCacheFailedToSaveSegmentException;
+
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +122,7 @@ public final class SegmentCacheWorker {
             LOGGER.debug("Starting cache instance: " + cacheName);
             return ClassResolver.INSTANCE.instantiateSafe(cacheName);
         } catch (ClassCastException e) {
-            throw new MondrianException(segmentCacheIsNotImplementingInterface);
+            throw new OlapRuntimeException(segmentCacheIsNotImplementingInterface);
         } catch (Exception e) {
             LOGGER.error(
                     segmentCacheFailedToInstanciate,
@@ -188,7 +189,7 @@ public final class SegmentCacheWorker {
         } catch (Throwable t) {
             LOGGER.error(segmentCacheFailedToDeleteSegment,
                 t);
-            throw new MondrianException(segmentCacheFailedToDeleteSegment, t);
+            throw new OlapRuntimeException(segmentCacheFailedToDeleteSegment, t);
         }
     }
 
@@ -203,7 +204,7 @@ public final class SegmentCacheWorker {
             return cache.getSegmentHeaders();
         } catch (Throwable t) {
             LOGGER.error("Failed to get a list of segment headers.", t);
-            throw new MondrianException(
+            throw new OlapRuntimeException(
                 segmentCacheFailedToScanSegments, t);
         }
     }

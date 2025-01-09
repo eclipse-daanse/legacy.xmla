@@ -16,9 +16,10 @@ package mondrian.rolap;
 import java.util.Collections;
 import java.util.List;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.exceptions.MdxCantFindMemberException;
+
 import org.eclipse.daanse.olap.api.Segment;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
 import mondrian.olap.Util;
 /**

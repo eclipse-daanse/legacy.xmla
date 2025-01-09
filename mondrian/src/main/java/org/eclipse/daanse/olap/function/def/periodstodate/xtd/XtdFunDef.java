@@ -32,6 +32,7 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.LevelType;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
@@ -44,7 +45,6 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.DimensionType;
-import mondrian.olap.MondrianException;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapHierarchy;
@@ -72,7 +72,7 @@ public class XtdFunDef extends AbstractFunctionDefinition {
 		}
 		final Type type = args[0].getType();
 		if (type.getDimension().getDimensionType() != DimensionType.TIME_DIMENSION) {
-			throw new MondrianException(
+			throw new OlapRuntimeException(
 					MessageFormat.format(timeArgNeeded, getFunctionMetaData().operationAtom().name()));
 		}
 		return super.getResultType(validator, args);

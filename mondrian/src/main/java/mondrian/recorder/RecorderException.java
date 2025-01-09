@@ -11,7 +11,7 @@
 
 package mondrian.recorder;
 
-import mondrian.olap.MondrianException;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
 /**
  * Exception thrown by {@link MessageRecorder} when too many errors
@@ -19,7 +19,7 @@ import mondrian.olap.MondrianException;
  *
  * @author Richard M. Emberson
  */
-public final class RecorderException extends MondrianException {
+public final class RecorderException extends OlapRuntimeException {
      protected RecorderException(String msg) {
         super(msg);
     }

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
 /**
  * <code>EnumeratedValues</code> is a helper class for declaring a set of

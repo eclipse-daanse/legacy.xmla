@@ -24,9 +24,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.ResultShepherd;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Result;
 
-import mondrian.olap.MondrianException;
 import mondrian.olap.QueryCanceledException;
 import mondrian.olap.QueryTimeoutException;
 import mondrian.olap.ResourceLimitExceededException;
@@ -85,7 +85,7 @@ public class RolapResultShepherd implements ResultShepherd {
                         Runnable r,
                         ThreadPoolExecutor executor)
                     {
-                        throw new MondrianException(MessageFormat.format(queryLimitReached,
+                        throw new OlapRuntimeException(MessageFormat.format(queryLimitReached,
                             maximumPoolSize,
                             "rolapConnectionShepherdNbThreads"));
                     }
@@ -195,9 +195,9 @@ public class RolapResultShepherd implements ResultShepherd {
 
             // Check for Mondrian exceptions in the exception chain.
             // we can throw these back as-is.
-            final MondrianException m =
+            final OlapRuntimeException m =
                 Util.getMatchingCause(
-                    node, MondrianException.class);
+                    node, OlapRuntimeException.class);
             if (m != null) {
                 // Throw that.
                 throw m;
@@ -210,7 +210,7 @@ public class RolapResultShepherd implements ResultShepherd {
             } else if (node instanceof Error) {
                 throw (Error) node;
             } else {
-                throw new MondrianException(node);
+                throw new OlapRuntimeException(node);
             }
         }
     }

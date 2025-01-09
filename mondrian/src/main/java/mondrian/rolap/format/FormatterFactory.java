@@ -14,8 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
 import org.eclipse.daanse.olap.api.element.MemberFormatter;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-import mondrian.olap.MondrianException;
 import mondrian.spi.CellFormatter;
 import mondrian.spi.PropertyFormatter;
 
@@ -71,7 +71,7 @@ public class FormatterFactory {
                 return createFormatter(context.getFormatterClassName());
             }
         } catch (Exception e) {
-            throw new MondrianException(MessageFormat.format(cellFormatterLoadFailed,
+            throw new OlapRuntimeException(MessageFormat.format(cellFormatterLoadFailed,
                 context.getFormatterClassName(),
                 context.getElementName(),
                 e));
@@ -95,7 +95,7 @@ public class FormatterFactory {
                 return createFormatter(context.getFormatterClassName());
             }
         } catch (Exception e) {
-            throw new MondrianException(MessageFormat.format(memberFormatterLoadFailed,
+            throw new OlapRuntimeException(MessageFormat.format(memberFormatterLoadFailed,
                 context.getFormatterClassName(),
                 context.getElementName(),
                 e));
@@ -120,7 +120,7 @@ public class FormatterFactory {
                 return createFormatter(context.getFormatterClassName());
             }
         } catch (Exception e) {
-            throw new MondrianException(MessageFormat.format(propertyFormatterLoadFailed,
+            throw new OlapRuntimeException(MessageFormat.format(propertyFormatterLoadFailed,
                 context.getFormatterClassName(),
                 context.getElementName(),
                 e));

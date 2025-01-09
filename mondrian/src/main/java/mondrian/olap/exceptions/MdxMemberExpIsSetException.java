@@ -13,11 +13,12 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class MdxMemberExpIsSetException extends MondrianException {
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+
+@SuppressWarnings("serial")
+public class MdxMemberExpIsSetException extends OlapRuntimeException {
     private final static String message = "Member expression ''{0}'' must not be a set";
 
     public MdxMemberExpIsSetException(String o) {

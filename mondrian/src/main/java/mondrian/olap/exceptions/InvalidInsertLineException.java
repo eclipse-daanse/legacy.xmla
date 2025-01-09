@@ -13,15 +13,15 @@
  */
 package mondrian.olap.exceptions;
 
-import mondrian.olap.MondrianException;
-
 import java.text.MessageFormat;
 
-public class InvalidInsertLineException extends MondrianException {
-    private final static String message =
-        "Input line is not a valid INSERT statement; line {0,number}: {1}.";
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
-    public InvalidInsertLineException(int lineNumber, String line) {
-        super(MessageFormat.format(message, lineNumber, line));
-    }
+@SuppressWarnings("serial")
+public class InvalidInsertLineException extends OlapRuntimeException {
+	private final static String message = "Input line is not a valid INSERT statement; line {0,number}: {1}.";
+
+	public InvalidInsertLineException(int lineNumber, String line) {
+		super(MessageFormat.format(message, lineNumber, line));
+	}
 }
