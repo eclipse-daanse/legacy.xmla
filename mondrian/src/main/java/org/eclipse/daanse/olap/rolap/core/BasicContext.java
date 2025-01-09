@@ -11,7 +11,7 @@
 *   SmartCity Jena - initial
 *   Stefan Bischof (bipolis.org) - initial
 */
-package org.eclipse.daanse.olap.core;
+package org.eclipse.daanse.olap.rolap.core;
 
 import java.sql.Connection;
 import java.util.Map;
@@ -28,6 +28,8 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.result.Scenario;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
+import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.osgi.namespace.unresolvable.UnresolvableNamespace;
@@ -51,9 +53,9 @@ import mondrian.server.NopEventBus;
 
 @Designate(ocd = BasicContextConfig.class, factory = true)
 @Component(service = Context.class, scope = ServiceScope.SINGLETON)
-public class BasicContext extends AbstractBasicContext {
+public class BasicContext extends AbstractBasicContext implements RolapContext{
 
-	public static final String PID = "org.eclipse.daanse.olap.core.BasicContext";
+	public static final String PID = "org.eclipse.daanse.olap.rolap.core.BasicContext";
 
 	public static final String REF_NAME_DIALECT_RESOLVER = "dialectResolver";
 	public static final String REF_NAME_DATA_SOURCE = "dataSource";

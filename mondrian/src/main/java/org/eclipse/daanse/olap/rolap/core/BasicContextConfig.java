@@ -14,7 +14,7 @@
 *   Stefan Bischof (bipolis.org) - initial
 *
 */
-package org.eclipse.daanse.olap.core;
+package org.eclipse.daanse.olap.rolap.core;
 
 import java.time.Duration;
 import java.util.Optional;

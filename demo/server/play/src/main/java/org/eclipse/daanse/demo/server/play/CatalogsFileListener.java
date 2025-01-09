@@ -16,7 +16,7 @@ import org.eclipse.daanse.io.fs.watcher.api.FileSystemWatcherListener;
 import org.eclipse.daanse.io.fs.watcher.api.FileSystemWatcherWhiteboardConstants;
 import org.eclipse.daanse.io.fs.watcher.api.propertytypes.FileSystemWatcherListenerProperties;
 import org.eclipse.daanse.jdbc.datasource.metatype.h2.api.Constants;
-import org.eclipse.daanse.olap.core.BasicContext;
+import org.eclipse.daanse.olap.rolap.core.BasicContext;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.cm.annotations.RequireConfigurationAdmin;

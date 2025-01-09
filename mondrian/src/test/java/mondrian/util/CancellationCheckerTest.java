@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.core.BasicContextConfig;
+import org.eclipse.daanse.olap.rolap.core.BasicContextConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

@@ -27,7 +27,7 @@ import org.eclipse.daanse.olap.api.monitor.EventBus;
 import org.eclipse.daanse.olap.api.query.QueryProvider;
 import org.eclipse.daanse.olap.api.result.Scenario;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
-import org.eclipse.daanse.olap.core.BasicContextConfig;
+import org.eclipse.daanse.olap.rolap.core.BasicContextConfig;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 
 /**
@@ -55,6 +55,7 @@ public interface Context {
      */
     Dialect getDialect();
 
+    //TODO REMOVE HERE. Only In RolapContext
     CatalogMapping getCatalogMapping();
 
 

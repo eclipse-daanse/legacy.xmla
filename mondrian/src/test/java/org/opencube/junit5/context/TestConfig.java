@@ -2,7 +2,7 @@ package org.opencube.junit5.context;
 
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.daanse.olap.core.BasicContextConfig;
+import org.eclipse.daanse.olap.rolap.core.BasicContextConfig;
 
 public class TestConfig implements BasicContextConfig {
 	private Integer cellBatchSize = CELL_BATCH_SIZE;

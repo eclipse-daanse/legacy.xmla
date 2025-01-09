@@ -11,10 +11,11 @@
 *   SmartCity Jena - initial
 *   Stefan Bischof (bipolis.org) - initial
 */
-package org.eclipse.daanse.olap.core;
+package org.eclipse.daanse.olap.rolap.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.eclipse.daanse.olap.rolap.core.BasicContext;
 import org.junit.jupiter.api.Test;
 
 class PidTest {

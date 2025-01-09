@@ -1,7 +1,7 @@
 package org.eclipse.daanse.olap.tests;
 
 import org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory;
-import org.eclipse.daanse.olap.core.BasicContext;
+import org.eclipse.daanse.olap.rolap.core.BasicContext;
 import org.osgi.test.common.annotation.Property;
 import org.osgi.test.common.annotation.Property.TemplateArgument;
 import org.osgi.test.common.annotation.Property.ValueSource;
