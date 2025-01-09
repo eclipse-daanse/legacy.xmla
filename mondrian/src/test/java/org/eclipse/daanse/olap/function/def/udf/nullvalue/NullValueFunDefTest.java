@@ -1,17 +1,17 @@
 /*
-// This software is subject to the terms of the Eclipse Public License v1.0
-// Agreement, available at the following URL:
-// http://www.eclipse.org/legal/epl-v10.html.
-// You must accept the terms of that agreement to use this software.
-//
-// Copyright (C) 2003-2005 Julian Hyde
-// Copyright (C) 2005-2017 Hitachi Vantara
-// All Rights Reserved.
-//
-// jhyde, Feb 14, 2003
-*/
-
-package mondrian.udf;
+ * Copyright (c) 2025 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   SmartCity Jena - initial
+ *   Stefan Bischof (bipolis.org) - initial
+ */
+package org.eclipse.daanse.olap.function.def.udf.nullvalue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,21 +25,13 @@ import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-/**
- * <code>NullValueTest</code> is a test case which tests simple queries
- * expressions.
- *
- * @author <a>Richard M. Emberson</a>
- * @since Mar 01 2007
- */
-class NullValueTest{
+class NullValueFunDefTest {
 
-
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testNullValue(Context context) {
-		Connection connection=context.getConnection();
-		String cubeName="Sales";
+        Connection connection=context.getConnection();
+        String cubeName="Sales";
         Cell c=  TestUtil.executeExprRaw(connection,cubeName," NullValue()/NullValue() ");
         String s=c.getFormattedValue();
         assertEquals("", s);
@@ -94,7 +86,8 @@ class NullValueTest{
         c = TestUtil.executeExprRaw(connection,cubeName," NullValue()/4 ");
         s=c.getFormattedValue();
         assertEquals("", s);
-/*
-*/
+        /*
+         */
     }
+
 }

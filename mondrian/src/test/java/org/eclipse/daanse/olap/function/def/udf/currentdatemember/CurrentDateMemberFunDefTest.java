@@ -1,12 +1,17 @@
 /*
-// This software is subject to the terms of the Eclipse Public License v1.0
-// Agreement, available at the following URL:
-// http://www.eclipse.org/legal/epl-v10.html.
-// You must accept the terms of that agreement to use this software.
-//
-// Copyright (c) 2002-2017 Hitachi Vantara.  All rights reserved.
-*/
-package mondrian.udf;
+ * Copyright (c) 2025 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   SmartCity Jena - initial
+ *   Stefan Bischof (bipolis.org) - initial
+ */
+package org.eclipse.daanse.olap.function.def.udf.currentdatemember;
 
 import static org.opencube.junit5.TestUtil.withSchema;
 
@@ -21,22 +26,17 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.rolap.SchemaModifiers;
 
-/**
- * Tests the CurrentDateMemberUdf class.
- *
- * @author Luc Boudreau
- */
-class CurrentDateMemberUdfTest {
+class CurrentDateMemberFunDefTest {
 
-	@Disabled //TODO: UserDefinedFunction
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @Disabled //TODO: UserDefinedFunction
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testCurrentDateMemberUdf(Context context) {
-		//TODO: context redesign
-		//Assertions.fail("Handle comment , Context redesign nedded");
+        //TODO: context redesign
+        //Assertions.fail("Handle comment , Context redesign nedded");
         /*
-		String baseSchema = TestUtil.getRawSchema(context);
-	    String schema = SchemaUtil.getSchema(baseSchema,
+        String baseSchema = TestUtil.getRawSchema(context);
+        String schema = SchemaUtil.getSchema(baseSchema,
             null,
             null,
             null,
@@ -44,10 +44,10 @@ class CurrentDateMemberUdfTest {
             "<UserDefinedFunction name=\"MockCurrentDateMember\" "
             + "className=\"mondrian.udf.MockCurrentDateMember\" /> ",
             null);
-	    withSchema(context, schema);
+        withSchema(context, schema);
          */
         withSchema(context, SchemaModifiers.CurrentDateMemberUdfTestModifier1::new);
-	    TestUtil.assertQueryReturns(context.getConnection(),
+        TestUtil.assertQueryReturns(context.getConnection(),
             "SELECT NON EMPTY {[Measures].[Org Salary]} ON COLUMNS, "
             + "NON EMPTY {MockCurrentDateMember([Time].[Time], \"[yyyy]\")} ON ROWS "
             + "FROM [HR] ",
@@ -66,14 +66,15 @@ class CurrentDateMemberUdfTest {
      * current year to 1997. In this case expected should be ended with
      * "266,773\n"
     */
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @ParameterizedTest
+    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testGetReturnType(Context context) {
-		Connection connection=context.getConnection();
+        Connection connection=context.getConnection();
         String query = "WITH MEMBER [Time].[YTD] AS SUM( YTD(CurrentDateMember"
              + "([Time], '[\"Time\"]\\.[yyyy]\\.[Qq].[m]', EXACT)), Measures.[Unit Sales]) SELECT Time.YTD on 0 FROM sales";
         String expected = "Axis #0:\n" + "{}\n" + "Axis #1:\n"
              + "{[Time].[YTD]}\n" + "Row #0: \n";
         TestUtil.assertQueryReturns(connection,query, expected);
     }
+
 }
