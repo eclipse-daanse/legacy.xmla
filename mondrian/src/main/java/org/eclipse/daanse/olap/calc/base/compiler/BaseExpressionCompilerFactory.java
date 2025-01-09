@@ -27,22 +27,22 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ServiceScope;
 
 import mondrian.calc.impl.BetterExpCompiler;
-import mondrian.util.CreationException;
 
-@Component(scope = ServiceScope.SINGLETON, configurationPid = BaseExpressionCompilerFactory.PID,service = ExpressionCompilerFactory.class)
+@Component(scope = ServiceScope.SINGLETON, configurationPid = BaseExpressionCompilerFactory.PID, service = ExpressionCompilerFactory.class)
 public class BaseExpressionCompilerFactory implements ExpressionCompilerFactory {
-    public static final String PID = "org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory";
+	public static final String PID = "org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory";
 
 	public BaseExpressionCompilerFactory() {
 		this(Map.of());
 	}
+
 	@Activate
-	public BaseExpressionCompilerFactory(Map<String,Object> map) {
+	public BaseExpressionCompilerFactory(Map<String, Object> map) {
 	}
 
 	@Override
 	public ExpressionCompiler createExpressionCompiler(Evaluator evaluator, Validator validator,
-			List<ResultStyle> resultStyles) throws CreationException {
+			List<ResultStyle> resultStyles) {
 		return new BetterExpCompiler(evaluator, validator, resultStyles);
 	}
 

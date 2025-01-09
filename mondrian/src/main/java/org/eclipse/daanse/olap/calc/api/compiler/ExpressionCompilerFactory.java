@@ -20,8 +20,6 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
 
-import mondrian.util.CreationException;
-
 /**
  * The {@link ExpressionCompilerFactory} create a new {@link ExpressionCompiler}
  * instance, each call of a
@@ -38,11 +36,8 @@ public interface ExpressionCompilerFactory {
 	 * @param validator the {@link Validator} that must be used from the
 	 *                  {@link ExpressionCompiler}
 	 * @return the new {@link ExpressionCompiler}
-	 * @throws {@link CreationException} if the {@link ExpressionCompiler} can not
-	 *                be created
 	 */
-	default ExpressionCompiler createExpressionCompiler(final Evaluator evaluator, final Validator validator)
-			throws CreationException {
+	default ExpressionCompiler createExpressionCompiler(final Evaluator evaluator, final Validator validator) {
 		return createExpressionCompiler(evaluator, validator, ResultStyle.ANY_LIST);
 	}
 
@@ -56,10 +51,8 @@ public interface ExpressionCompilerFactory {
 	 * @param resultStyles the initial {@link ResultStyle} array for the
 	 *                     {@link ExpressionCompiler}
 	 * @return the new {@link ExpressionCompiler}
-	 * @throws {@link CreationException} if the {@link ExpressionCompiler} can not
-	 *                be created
 	 */
 	ExpressionCompiler createExpressionCompiler(final Evaluator evaluator, final Validator validator,
-			final List<ResultStyle> resultStyles) throws CreationException;
+			final List<ResultStyle> resultStyles);
 
 }
