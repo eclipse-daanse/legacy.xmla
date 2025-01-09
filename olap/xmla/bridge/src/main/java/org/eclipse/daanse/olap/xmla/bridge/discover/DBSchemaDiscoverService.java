@@ -15,6 +15,9 @@ package org.eclipse.daanse.olap.xmla.bridge.discover;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
+import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.xmla.api.XmlaConstants;
 import org.eclipse.daanse.xmla.api.common.enums.ColumnOlapTypeEnum;
 import org.eclipse.daanse.xmla.api.common.enums.LevelDbTypeEnum;
@@ -65,45 +68,46 @@ public class DBSchemaDiscoverService {
             Optional<Context> oContext = oName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
             if (oContext.isPresent()) {
                 Context context = oContext.get();
-                return context.getCatalogMapping().getSchemas().stream().map(s -> {                        
-                        return (DbSchemaCatalogsResponseRow) new DbSchemaCatalogsResponseRowR(
-                            Optional.ofNullable(context.getName()),
-                            Optional.ofNullable(s.getDescription()),
-                            getRoles(s.getAccessRoles()),
-                            Optional.of(LocalDateTime.now()),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty());
-                    }
-                ).toList();
+                CatalogMapping catalog = context.getCatalogMapping();
+                return List.of((DbSchemaCatalogsResponseRow) new DbSchemaCatalogsResponseRowR(
+                    Optional.ofNullable(catalog.getName()),
+                    Optional.ofNullable(catalog.getDescription()),
+                    getRoles(getAccessRoleMappings(catalog.getSchemas())),
+                    Optional.of(LocalDateTime.now()),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty()));
             }
         }
         else {
-            return contextsListSupplyer.get().stream().map(c -> c.getCatalogMapping().getSchemas().stream().map(s -> {                    
-                    return (DbSchemaCatalogsResponseRow) new DbSchemaCatalogsResponseRowR(
-                        Optional.ofNullable(c.getName()),
-                        Optional.ofNullable(s.getDescription()),
-                        getRoles(s.getAccessRoles()),
-                        Optional.of(LocalDateTime.now()),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty());
-                }
-            ).toList()).flatMap(Collection::stream).toList();
+            return contextsListSupplyer.get().stream().map(c ->
+                (DbSchemaCatalogsResponseRow) new DbSchemaCatalogsResponseRowR(
+                    Optional.ofNullable(c.getCatalogMapping().getName()),
+                    Optional.ofNullable(c.getCatalogMapping().getDescription()),
+                    getRoles(getAccessRoleMappings(c.getCatalogMapping().getSchemas())),
+                    Optional.of(LocalDateTime.now()),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty())
+            ).toList();
         }
         return List.of();
+    }
+
+    private List<? extends AccessRoleMapping> getAccessRoleMappings(List<? extends SchemaMapping> schemas) {
+        return schemas.stream().flatMap(s -> s.getAccessRoles().stream()).toList();
     }
 
     public List<DbSchemaColumnsResponseRow> dbSchemaColumns(DbSchemaColumnsRequest request) {
