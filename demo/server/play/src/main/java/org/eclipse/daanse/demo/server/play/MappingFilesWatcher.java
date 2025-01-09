@@ -1,13 +1,8 @@
 package org.eclipse.daanse.demo.server.play;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
 import java.nio.file.WatchEvent.Kind;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
@@ -25,7 +20,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 @FileSystemWatcherListenerProperties(recursive = true, pattern = ".*.xmi")
-@Component(service = FileSystemWatcherListener.class, configurationPid = MappingFilesWatcher.PID,configurationPolicy = ConfigurationPolicy.REQUIRE)
+@Component(service = FileSystemWatcherListener.class, configurationPid = MappingFilesWatcher.PID, configurationPolicy = ConfigurationPolicy.REQUIRE)
 public class MappingFilesWatcher implements FileSystemWatcherListener {
 
 	public static final String PID = "org.eclipse.daanse.demo.server.play.MappingFilesWatcher";
@@ -40,33 +35,6 @@ public class MappingFilesWatcher implements FileSystemWatcherListener {
 
 	private Path basePath;
 	private Configuration configuration;
-
-	public static class XmiFilesVisitor extends SimpleFileVisitor<Path> {
-
-		private List<Path> xmiFiles = new ArrayList<>();
-
-		public String[] getXmiFiles() {
-			return xmiFiles.stream().map(Path::toAbsolutePath).map(Path::toString).toArray(String[]::new);
-		}
-
-		@Override
-		public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
-			if (file.toString().endsWith(".xmi")) {
-				xmiFiles.add(file);
-			}
-			return FileVisitResult.CONTINUE;
-		}
-
-		@Override
-		public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
-			return FileVisitResult.CONTINUE;
-		}
-
-		@Override
-		public FileVisitResult visitFileFailed(Path file, IOException exc) {
-			return FileVisitResult.CONTINUE;
-		}
-	}
 
 	@Override
 	public void handleBasePath(Path basePath) {
@@ -88,22 +56,14 @@ public class MappingFilesWatcher implements FileSystemWatcherListener {
 	private void configMappingReader() {
 		deleteConfig();
 
-		XmiFilesVisitor filesVisitor = new XmiFilesVisitor();
-
-		try {
-			Files.walkFileTree(basePath, filesVisitor);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 		try {
 			configuration = ca.getFactoryConfiguration(
 					org.eclipse.daanse.rolap.mapping.emf.rolapmapping.provider.Constants.PID_EMF_MAPPING_PROVIDER,
 					UUID.randomUUID().toString(), "?");
 
 			Dictionary<String, Object> props = new Hashtable<>();
-			props.put(org.eclipse.daanse.rolap.mapping.emf.rolapmapping.provider.Constants.RESOURCE_URLS,
-					filesVisitor.getXmiFiles());
+			props.put(org.eclipse.daanse.rolap.mapping.emf.rolapmapping.provider.Constants.RESOURCE_URL,
+					basePath.resolve("catalog.xmi").toAbsolutePath().toString());
 			props.put(CatalogsFileListener.KEY_FILE_CONTEXT_MATCHER, matcherKey);
 
 			configuration.update(props);
