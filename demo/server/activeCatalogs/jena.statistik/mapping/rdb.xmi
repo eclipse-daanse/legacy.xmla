@@ -1,60 +1,63 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<rdbs:DatabaseSchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdbs="https://www.daanse.org/spec/org.eclipse.daanse.rdb.structure" id="jena.statistik_id" name="jena.statistik">
-  <tables xsi:type="rdbs:PhysicalTable" id="einwohner" name="einwohner">
-    <columns id="EinwohnerJAHR" name="JAHR" type="Integer"/>
-    <columns id="EinwohnerSTATBEZ" name="STATBEZ" type="Integer"/>
-    <columns id="EinwohnerKerGesch" name="KER_GESCH" type="Text"/>
-    <columns id="EinwohnerAge" name="AGE" type="Integer"/>
-    <columns id="EinwohnerAnzahl" name="Anzahl" type="Integer"/>
-    <columns id="EinwohnerGeojson" name="GEOJSON" type="Text"/>
-  </tables>
-  <tables xsi:type="rdbs:PhysicalTable" id="year" name="year">
-    <columns id="YearYear" name="year" type="Integer"/>
-    <columns id="YearOrdinal" name="ordinal" type="Integer"/>
-  </tables>
-  <tables xsi:type="rdbs:PhysicalTable" id="statbez" name="statbez">
-    <columns id="StatbezGid" name="gid" type="Integer"/>
-    <columns id="StatbezPlraum" name="plraum" type="Integer"/>
-    <columns id="StatbezStatbezName" name="statbez_name" type="Text"/>
-    <columns id="StatbezTheGeom" name="the_geom" type="Text"/>
-    <columns id="StatbezUuid" name="uuid" type="Text"/>
-    <columns id="StatbezGeojson" name="geojson" type="Text"/>
-  </tables>
-  <tables xsi:type="rdbs:PhysicalTable" id="plraum" name="plraum">
-    <columns id="PlraumGid" name="gid" type="Integer"/>
-    <columns id="PlraumPlraum" name="plraum" type="Text"/>
-    <columns id="PlraumTheGeom" name="the_geom" type="Text"/>
-    <columns id="PlraumUuid" name="uuid" type="Text"/>
-    <columns id="PlraumGeojson" name="geojson" type="Text"/>
-    <columns id="PlraumTownid" name="townid" type="Integer"/>
-  </tables>
-  <tables xsi:type="rdbs:PhysicalTable" id="town" name="town">
-    <columns id="TownId" name="id" type="Integer"/>
-    <columns id="TownName" name="name" type="Text"/>
-  </tables>
-  <tables xsi:type="rdbs:PhysicalTable" id="gender" name="gender">
-    <columns id="GenderKey" name="key" type="Text"/>
-    <columns id="GenderName" name="name" type="Text"/>
-  </tables>
-  <tables xsi:type="rdbs:PhysicalTable" id="AgeGroups" name="AgeGroups">
-    <columns id="AgeGroupsAge" name="Age" type="Integer"/>
-    <columns id="AgeGroupsH1" name="H1" type="Text"/>
-    <columns id="AgeGroupsH1Order" name="H1_Order" type="Integer"/>
-    <columns id="AgeGroupsH2" name="H2" type="Text"/>
-    <columns id="AgeGroupsH2Order" name="H2_Order" type="Integer"/>
-    <columns id="AgeGroupsH3" name="H3" type="Text"/>
-    <columns id="AgeGroupsH3Order" name="H3_Order" type="Integer"/>
-    <columns id="AgeGroupsH4" name="H4" type="Text"/>
-    <columns id="AgeGroupsH4Order" name="H4_Order" type="Integer"/>
-    <columns id="AgeGroupsH5" name="H5" type="Text"/>
-    <columns id="AgeGroupsH5Order" name="H5_Order" type="Integer"/>
-    <columns id="AgeGroupsH6" name="H6" type="Text"/>
-    <columns id="AgeGroupsH6Order" name="H6_Order" type="Integer"/>
-    <columns id="AgeGroupsH7" name="H7" type="Text"/>
-    <columns id="AgeGroupsH7Order" name="H7_Order" type="Integer"/>
-    <columns id="AgeGroupsH8" name="H8" type="Text"/>
-    <columns id="AgeGroupsH8Order" name="H8_Order" type="Integer"/>
-    <columns id="AgeGroupsH9" name="H9" type="Text"/>
-    <columns id="AgeGroupsH9Order" name="H9_Order" type="Integer"/>
-  </tables>
-</rdbs:DatabaseSchema>
+<?xml version="1.0" encoding="ASCII"?>
+<rdbs:DatabaseCatalog xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdbs="https://www.daanse.org/spec/org.eclipse.daanse.rdb.structure">
+  <schemas id="jena.statistik_id" name="jena.statistik">
+    <tables xsi:type="rdbs:PhysicalTable" id="einwohner" name="einwohner">
+      <columns id="EinwohnerJAHR" name="JAHR" type="Integer"/>
+      <columns id="EinwohnerSTATBEZ" name="STATBEZ" type="Integer"/>
+      <columns id="EinwohnerKerGesch" name="KER_GESCH" type="Text"/>
+      <columns id="EinwohnerAge" name="AGE" type="Integer"/>
+      <columns id="EinwohnerAnzahl" name="Anzahl" type="Integer"/>
+      <columns id="EinwohnerGeojson" name="GEOJSON" type="Text"/>
+    </tables>
+    <tables xsi:type="rdbs:PhysicalTable" id="tyear" name="year">
+      <columns id="YearYear" name="year" type="Integer"/>
+      <columns id="YearOrdinal" name="ordinal" type="Integer"/>
+    </tables>
+    <tables xsi:type="rdbs:PhysicalTable" id="statbez" name="statbez">
+      <columns id="StatbezGid" name="gid" type="Integer"/>
+      <columns id="StatbezPlraum" name="plraum" type="Integer"/>
+      <columns id="StatbezStatbezName" name="statbez_name" type="Text"/>
+      <columns id="StatbezTheGeom" name="the_geom" type="Text"/>
+      <columns id="StatbezUuid" name="uuid" type="Text"/>
+      <columns id="StatbezGeojson" name="geojson" type="Text"/>
+    </tables>
+    <tables xsi:type="rdbs:PhysicalTable" id="plraum" name="plraum">
+      <columns id="PlraumGid" name="gid" type="Integer"/>
+      <columns id="PlraumPlraum" name="plraum" type="Text"/>
+      <columns id="PlraumTheGeom" name="the_geom" type="Text"/>
+      <columns id="PlraumUuid" name="uuid" type="Text"/>
+      <columns id="PlraumGeojson" name="geojson" type="Text"/>
+      <columns id="PlraumTownid" name="townid" type="Integer"/>
+    </tables>
+    <tables xsi:type="rdbs:PhysicalTable" id="town" name="town">
+      <columns id="TownId" name="id" type="Integer"/>
+      <columns id="TownName" name="name" type="Text"/>
+      <columns id="TownGeojson" name="geojson" type="Text"/>
+    </tables>
+    <tables xsi:type="rdbs:PhysicalTable" id="gender" name="gender">
+      <columns id="GenderKey" name="key" type="Text"/>
+      <columns id="GenderName" name="name" type="Text"/>
+    </tables>
+    <tables xsi:type="rdbs:PhysicalTable" id="AgeGroups" name="AgeGroups">
+      <columns id="AgeGroupsAge" name="Age" type="Integer"/>
+      <columns id="AgeGroupsH1" name="H1" type="Text"/>
+      <columns id="AgeGroupsH1Order" name="H1_Order" type="Integer"/>
+      <columns id="AgeGroupsH2" name="H2" type="Text"/>
+      <columns id="AgeGroupsH2Order" name="H2_Order" type="Integer"/>
+      <columns id="AgeGroupsH3" name="H3" type="Text"/>
+      <columns id="AgeGroupsH3Order" name="H3_Order" type="Integer"/>
+      <columns id="AgeGroupsH4" name="H4" type="Text"/>
+      <columns id="AgeGroupsH4Order" name="H4_Order" type="Integer"/>
+      <columns id="AgeGroupsH5" name="H5" type="Text"/>
+      <columns id="AgeGroupsH5Order" name="H5_Order" type="Integer"/>
+      <columns id="AgeGroupsH6" name="H6" type="Text"/>
+      <columns id="AgeGroupsH6Order" name="H6_Order" type="Integer"/>
+      <columns id="AgeGroupsH7" name="H7" type="Text"/>
+      <columns id="AgeGroupsH7Order" name="H7_Order" type="Integer"/>
+      <columns id="AgeGroupsH8" name="H8" type="Text"/>
+      <columns id="AgeGroupsH8Order" name="H8_Order" type="Integer"/>
+      <columns id="AgeGroupsH9" name="H9" type="Text"/>
+      <columns id="AgeGroupsH9Order" name="H9_Order" type="Integer"/>
+    </tables>
+  </schemas>
+</rdbs:DatabaseCatalog>
