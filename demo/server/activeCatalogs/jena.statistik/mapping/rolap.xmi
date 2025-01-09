@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdbs="https://www.daanse.org/spec/org.eclipse.daanse.rdb.structure" xmlns:roma="https://www.daanse.org/spec/org.eclipse.daanse.rolap.mapping">
+  <roma:Level id="lJahr" name="Jahr">
+    <column href="rdbs.xmi#YearYear"/>
+    <ordinalColumn href="rdbs.xmi#YearOrdinal"/>
+  </roma:Level>
+  <roma:Level id="Stadt" name="Stadt">
+    <memberProperties id="GeoJson1" name="GeoJson" propertyType=" String">
+      <column href="rdbs.xmi#TownGeojson"/>
+    </memberProperties>
+    <column href="rdbs.xmi#TownName"/>
+    <ordinalColumn href="rdbs.xmi#YearOrdinal"/>
+    <table xsi:type="rdbs:PhysicalTable" href="rdbs.xmi#town"/>
+  </roma:Level>
+  <roma:Level id="Planungsraum" name="Planungsraum" columnType="Integer">
+    <memberProperties id="uuid1" name="uuid">
+      <column href="rdbs.xmi#PlraumUuid"/>
+    </memberProperties>
+    <memberProperties id="GeoJson1" name="GeoJson" propertyType=" String">
+      <column href="rdbs.xmi#PlraumGeojson"/>
+    </memberProperties>
+    <column href="rdbs.xmi#PlraumGid"/>
+    <nameColumn href="rdbs.xmi#PlraumPlraum"/>
+    <table xsi:type="rdbs:PhysicalTable" href="rdbs.xmi#plraum"/>
+  </roma:Level>
+  <roma:Level id="lStatistischerBezirk" name="Statistischer Bezirk" columnType="Integer">
+    <memberProperties id="uuid2" name="uuid">
+      <column href="rdbs.xmi#StatbezUuid"/>
+    </memberProperties>
+    <memberProperties id="GeoJson2" name="GeoJson" propertyType=" String">
+      <column href="rdbs.xmi#StatbezGeojson"/>
+    </memberProperties>
+    <column href="rdbs.xmi#StatbezGid"/>
+    <nameColumn href="rdbs.xmi#StatbezStatbezName"/>
+    <table xsi:type="rdbs:PhysicalTable" href="rdbs.xmi#statbez"/>
+  </roma:Level>
+  <roma:Level id="lGeschlecht" name="Geschlecht">
+    <column href="rdbs.xmi#GenderKey"/>
+    <nameColumn href="rdbs.xmi#GenderName"/>
+  </roma:Level>
+  <roma:Level id="Alter1" name="Alter">
+    <column href="rdbs.xmi#AgeGroupsAge"/>
+  </roma:Level>
+  <roma:Level id="AltersgruppeH1" name="Altersgruppe">
+    <column href="rdbs.xmi#AgeGroupsH1"/>
+    <ordinalColumn href="rdbs.xmi#AgeGroupsH1Order"/>
+  </roma:Level>
+  <roma:Level id="AlterH1" name="Alter">
+    <column href="rdbs.xmi#AgeGroupsAge"/>
+  </roma:Level>
+  <roma:Level id="AltersgruppeH2" name="Altersgruppe">
+    <column href="rdbs.xmi#AgeGroupsH2"/>
+    <ordinalColumn href="rdbs.xmi#AgeGroupsH2Order"/>
+  </roma:Level>
+  <roma:Level id="AlterH2" name="Alter">
+    <column href="rdbs.xmi#AgeGroupsAge"/>
+  </roma:Level>
+  <roma:Level id="AltersgruppeH7" name="Altersgruppe">
+    <column href="rdbs.xmi#AgeGroupsH7"/>
+    <ordinalColumn href="rdbs.xmi#AgeGroupsH7Order"/>
+  </roma:Level>
+  <roma:Level id="AlterH7" name="Alter">
+    <column href="rdbs.xmi#AgeGroupsAge"/>
+  </roma:Level>
+  <roma:Level id="AltersgruppeH8" name="Altersgruppe">
+    <column href="rdbs.xmi#AgeGroupsH8"/>
+    <ordinalColumn href="rdbs.xmi#AgeGroupsH8Order"/>
+  </roma:Level>
+  <roma:Level id="AlterH8" name="Alter">
+    <column href="rdbs.xmi#AgeGroupsAge"/>
+  </roma:Level>
+  <roma:Level id="AltersgruppeH9" name="Altersgruppe">
+    <column href="rdbs.xmi#AgeGroupsH9"/>
+    <ordinalColumn href="rdbs.xmi#AgeGroupsH9Order"/>
+  </roma:Level>
+  <roma:Level id="AlterH9" name="Alter">
+    <column href="rdbs.xmi#AgeGroupsAge"/>
+  </roma:Level>
+  <roma:Hierarchy id="hJahr" name="Jahr" levels="lJahr" defaultMember="2023">
+    <primaryKey href="rdbs.xmi#YearYear"/>
+    <query xsi:type="roma:TableQuery">
+      <table xsi:type="rdbs:PhysicalTable" href="rdbs.xmi#tyear"/>
+    </query>
+  </roma:Hierarchy>
+  <roma:Hierarchy id="hStadtPlanungsraumStatistischerBezirk" name="Stadt - Planungsraum - statistischer Bezirk" levels="Stadt Planungsraum lStatistischerBezirk" hasAll="true">
+    <primaryKey href="rdbs.xmi#StatbezGid"/>
+    <primaryKeyTable xsi:type="rdbs:PhysicalTable" href="rdbs.xmi#statbez"/>
+    <query xsi:type="roma:JoinQuery">
+      <left>
+        <key href="rdbs.xmi#StatbezPlraum"/>
+        <query xsi:type="roma:TableQuery">
+          <table xsi:type="rdbs:PhysicalTable" href="rdbs.xmi#statbez"/>
+        </query>
+      </left>
+      <right>
+        <key href="rdbs.xmi#PlraumGid"/>
+        <query xsi:type="roma:JoinQuery">
+          <left>
+            <key href="rdbs.xmi#PlraumTownid"/>
+            <query xsi:type="roma:TableQuery">
+              <table xsi:type="rdbs:PhysicalTable" href="rdbs.xmi#plraum"/>
+            </query>
+          </left>
+          <right>
+            <key href="rdbs.xmi#TownId"/>
+            <query xsi:type="roma:TableQuery">
+              <table xsi:type="rdbs:PhysicalTable" href="rdbs.xmi#town"/>
+            </query>
+          </right>
+        </query>
+      </right>
+    </query>
+  </roma:Hierarchy>
+  <roma:Hierarchy id="hGeschlecht" name="Geschlecht (m/w/d)" levels="lGeschlecht" hasAll="true">
+    <primaryKey href="rdbs.xmi#GenderKey"/>
+    <query xsi:type="roma:TableQuery">
+      <table xsi:type="rdbs:PhysicalTable" href="rdbs.xmi#gender"/>
+    </query>
+  </roma:Hierarchy>
+  <roma:Hierarchy id="Alter (Einzeljahrg&#xe4;nge)" name="Alter (Einzeljahrg&#xe4;nge)" levels="Alter1" hasAll="true">
+    <primaryKey href="rdbs.xmi#AgeGroupsAge"/>
+  </roma:Hierarchy>
+  <roma:Hierarchy id="Altersgruppen (Standard)" name="Altersgruppen (Standard)" levels="AltersgruppeH1 AlterH1" hasAll="true">
+    <primaryKey href="rdbs.xmi#AgeGroupsAge"/>
+  </roma:Hierarchy>
+  <roma:Hierarchy id="Altersgruppen (Kinder)" name="Altersgruppen (Kinder)" levels="AltersgruppeH2 AlterH2 AltersgruppeH7 AltersgruppeH8 AltersgruppeH9" hasAll="true">
+    <primaryKey href="rdbs.xmi#AgeGroupsAge"/>
+  </roma:Hierarchy>
+  <roma:Hierarchy id="Altersgruppen (Systematik RKI)" name="Altersgruppen (Systematik RKI)" levels="AlterH7" hasAll="true">
+    <primaryKey href="rdbs.xmi#AgeGroupsAge"/>
+  </roma:Hierarchy>
+  <roma:Hierarchy id="Altersgruppen (Systematik RKI)" name="Altersgruppen (Systematik RKI)" levels="AlterH8" hasAll="true">
+    <primaryKey href="rdbs.xmi#AgeGroupsAge"/>
+  </roma:Hierarchy>
+  <roma:Hierarchy id="Altersgruppen (10-Jahres-Gruppen)" name="Altersgruppen (10-Jahres-Gruppen)" levels="AlterH9" hasAll="true">
+    <primaryKey href="rdbs.xmi#AgeGroupsAge"/>
+    <query xsi:type="roma:TableQuery">
+      <table xsi:type="rdbs:PhysicalTable" href="rdbs.xmi#AgeGroups"/>
+    </query>
+  </roma:Hierarchy>
+  <roma:StandardDimension id="dJahr" name="Jahr" hierarchies="hJahr"/>
+  <roma:StandardDimension id="dStatistischerBezirk" name="statistischer Bezirk" hierarchies="hStadtPlanungsraumStatistischerBezirk"/>
+  <roma:StandardDimension id="dGeschlecht" name="Geschlecht" hierarchies="hGeschlecht"/>
+  <roma:StandardDimension id="Alter" name="Alter"/>
+  <roma:Catalog name="Bevolkerung" description="Bevolkerung">
+    <schemas description="Bevolkerung schema" name="Bevolkerung" cubes="Bevolkerung"/>
+    <cubes xsi:type="roma:PhysicalCube" id="Bevolkerung" name="Bevolkerung">
+      <dimensionConnectors dimension="dJahr" overrideDimensionName="Jahr" id="Jahr">
+        <foreignKey href="rdbs.xmi#EinwohnerJAHR"/>
+      </dimensionConnectors>
+      <dimensionConnectors dimension="dStatistischerBezirk" overrideDimensionName="statistischer Bezirk" id="dcStatistischerBezirk">
+        <foreignKey href="rdbs.xmi#EinwohnerSTATBEZ"/>
+      </dimensionConnectors>
+      <dimensionConnectors dimension="dGeschlecht" overrideDimensionName="Geschlecht" id="dcGeschlecht">
+        <foreignKey href="rdbs.xmi#EinwohnerKerGesch"/>
+      </dimensionConnectors>
+      <dimensionConnectors dimension="dGeschlecht" overrideDimensionName="Alter" id="Alter">
+        <foreignKey href="rdbs.xmi#EinwohnerAge"/>
+      </dimensionConnectors>
+      <query xsi:type="roma:TableQuery">
+        <table xsi:type="rdbs:PhysicalTable" href="rdbs.xmi#einwohner"/>
+      </query>
+      <measureGroups>
+        <measures name="Einwohnerzahl">
+          <column href="rdbs.xmi#EinwohnerAnzahl"/>
+        </measures>
+      </measureGroups>
+    </cubes>
+    <dbschemas href="rdbs.xmi#jena.statistik_id"/>
+  </roma:Catalog>
+</xmi:XMI>
