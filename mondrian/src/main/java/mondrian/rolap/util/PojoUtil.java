@@ -252,19 +252,23 @@ public class PojoUtil {
             Boolean nullable = column.getNullable();
             String description = column.getDescription();
             ColumnImpl c = ColumnImpl.builder().withName(name).withType(type)
-                    .withColumnSize(columnSize)
-                    .withDecimalDigits(decimalDigits)
-                    .withNumPrecRadix(numPrecRadix)
-                    .withCharOctetLength(charOctetLength)
-                    .withNullable(nullable)
+                    .withColumnSize(orZero(columnSize))
+                    .withDecimalDigits(orZero(decimalDigits))
+                    .withNumPrecRadix(orZero(numPrecRadix))
+                    .withCharOctetLength(orZero(charOctetLength ))
+                    .withNullable(nullable == null ? false : nullable)
                     .build();
             c.setDescription(description);
             return c;
         }
         return null;
 	}
-	// TODO: migrate to org.eclipse.daanse.rdb.structure.pojo.util.Converter
-	private static PhysicalTableImpl getPhysicalTable(Table table) {
+	private static int orZero(Integer val) {
+        return val == null ? 0 : val;
+    }
+
+    // TODO: migrate to org.eclipse.daanse.rdb.structure.pojo.util.Converter
+	public static PhysicalTableImpl getPhysicalTable(Table table) {
 		if (table != null) {
             String name = table.getName();
             List<org.eclipse.daanse.rdb.structure.pojo.ColumnImpl> columns = getColumns(table.getColumns());

@@ -321,7 +321,7 @@ public class RolapStar {
         	String aliasOrName = tbl.getAlias() == null ? tbl.getTable().getName() : tbl.getAlias();
         	return TableQueryMappingImpl.builder()
         	.withAlias(possibleName)
-        	.withTable((PhysicalTableImpl) tbl.getTable())
+        	.withTable(PojoUtil.getPhysicalTable(tbl.getTable()))
         	.withOptimizationHints(tableQueryOptimizationHints(tbl.getOptimizationHints()))
         	.withSqlWhereExpression(sql(tbl.getSqlWhereExpression(), possibleName, aliasOrName))
         	.build();
@@ -330,7 +330,7 @@ public class RolapStar {
         } else if (rel instanceof InlineTableQueryMapping inlineTable) {
             return InlineTableQueryMappingImpl.builder()
             		.withAlias(possibleName)
-            		.withTable((InlineTableImpl) inlineTable.getTable())
+            		.withTable(PojoUtil.getInlineTable(inlineTable.getTable()))
             		.build();
         } else {
             throw new UnsupportedOperationException();
