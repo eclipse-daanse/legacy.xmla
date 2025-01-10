@@ -37,7 +37,7 @@ public class CatalogsFileListener implements FileSystemWatcherListener {
 	private static final String PID_H2 = Constants.PID_DATASOURCE;
 	private static final String PID_CSV_IMPORTER = org.eclipse.daanse.jdbc.db.importer.csv.api.Constants.PID_CSV_DATA_IMPORTER;
 
-	public static final String PID_CONTEXT = "org.eclipse.daanse.olap.core.BasicContext";
+	public static final String PID_CONTEXT = "org.eclipse.daanse.olap.rolap.core.BasicContext";
 
 	public static final String PID_PARSER = "org.eclipse.daanse.mdx.parser.ccc.MdxParserProviderImpl";
 
