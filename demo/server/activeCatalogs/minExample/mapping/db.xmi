@@ -15,9 +15,9 @@
   xmlns:rdbs="https://www.daanse.org/spec/org.eclipse.daanse.rdb.structure">
   <schemas id="dbs1" name="schemaone">
     <tables xsi:type="rdbs:PhysicalTable" id="pt1" name="ptone">
-      <columns id="pt1c1" name="dim" type="varchar" columnSize="255" />
-      <columns id="pt1c2" name="meas" type="Integer" columnSize="32" />
-      <columns id="c3" name="c3" />
+      <columns id="pt1c1" name="dim" type="VARCHAR" columnSize="255" />
+      <columns id="pt1c2" name="meas" type="INTEGER" columnSize="32" />
+      <columns id="c3" name="c3" type="VARCHAR" columnSize="255" />
     </tables>
   </schemas>
 </rdbs:DatabaseCatalog>

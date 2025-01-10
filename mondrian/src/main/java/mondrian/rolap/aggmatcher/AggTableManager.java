@@ -212,9 +212,8 @@ public class AggTableManager {
                     // are measure or foreign key columns
 
                     bindToStar(dbFactTable, star, msgRecorder);
-                    DatabaseSchema schemaInner = 
-                    		dbFactTable.table.getTable().getSchema() != null ? dbFactTable.table.getTable().getSchema() : null;
-
+                    DatabaseSchemaImpl schemaInner = getDatabaseSchema(dbFactTable.table.getTable().getSchema());
+                    
                     // Now look at all tables in the database and per table,
                     // first see if it is a match for an aggregate table for
                     // this fact table and second see if its columns match
@@ -223,7 +222,7 @@ public class AggTableManager {
                     for (JdbcSchema.Table dbTable : db.getTables()) {
                         String name = dbTable.getName();
                         List<ColumnImpl> columns =  dbTable.getColumns().stream().map(c -> ColumnImpl.builder().withName(c.getName()).withType(c.getTypeName()).build()).toList();
-                        PhysicalTableImpl t = ((Builder) PhysicalTableImpl.builder().withName(name).withColumns(columns).withsSchema((DatabaseSchemaImpl) schemaInner)).build();
+                        PhysicalTableImpl t = ((Builder) PhysicalTableImpl.builder().withName(name).withColumns(columns).withsSchema(schemaInner)).build();
 
                         // Do the catalog schema aggregate excludes, exclude
                         // this table name.
@@ -300,6 +299,13 @@ public class AggTableManager {
         }
     }
 
+    private DatabaseSchemaImpl getDatabaseSchema(DatabaseSchema schema) {
+        if (schema != null) {
+            return DatabaseSchemaImpl.builder().withName(schema.getName()).withId(schema.getId()).build(); //TODO add tables?
+        }
+        return null;
+    }
+
     private Collection<RolapStar> getStars() {
         return schema.getStars();
     }
@@ -340,15 +346,15 @@ public class AggTableManager {
 
             QueryMapping relation =
                 star.getFactTable().getRelation();
-            DatabaseSchema schemaInner = null;
+            DatabaseSchemaImpl schemaInner = null;
             List<TableQueryOptimizationHintMappingImpl> tableHints = null;
             if (relation instanceof TableQueryMapping table) {
-                schemaInner = table.getTable().getSchema();
+                schemaInner = getDatabaseSchema(table.getTable().getSchema());
                 tableHints = PojoUtil.getOptimizationHints(table.getOptimizationHints());
             }
             String tableName = dbFactTable.getName();
             List<ColumnImpl> columns =  dbFactTable.getColumns().stream().map(c -> ColumnImpl.builder().withName(c.getName()).withType(c.getTypeName()).build()).toList();
-            PhysicalTableImpl t = ((Builder) PhysicalTableImpl.builder().withName(tableName).withColumns(columns).withsSchema((DatabaseSchemaImpl) schemaInner)).build();
+            PhysicalTableImpl t = ((Builder) PhysicalTableImpl.builder().withName(tableName).withColumns(columns).withsSchema(schemaInner)).build();
 
             String alias = null;
             dbFactTable.table = TableQueryMappingImpl.builder().withTable(t).withAlias(alias).withOptimizationHints(tableHints).build();
