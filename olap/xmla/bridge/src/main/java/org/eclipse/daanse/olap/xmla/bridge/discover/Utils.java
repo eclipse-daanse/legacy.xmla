@@ -667,7 +667,7 @@ public class Utils {
                             String tableName = table.getName();
                             result.add(new  DbSchemaTablesResponseRowR(
                             Optional.of(catalogName),
-                            Optional.of(dbSchema.getName()),
+                            Optional.ofNullable(dbSchema.getName()),
                             Optional.of(tableName),
                             Optional.of(SCHEMA),
                             Optional.empty(),
@@ -2518,12 +2518,11 @@ oHierarchyName)
 
             // DATA_TYPE DBType best guess is string
             DBType dbType = XmlaConstants.DBType.WSTR;
-            String datatype = (String)
-                m.getPropertyValue(Property.StandardCellProperty.DATATYPE.getName());
+            org.eclipse.daanse.rolap.mapping.api.model.enums.DataType datatype = (org.eclipse.daanse.rolap.mapping.api.model.enums.DataType) m.getPropertyValue(Property.StandardCellProperty.DATATYPE.getName());
             if (datatype != null) {
-                if (datatype.equals("Integer")) {
+                if (datatype.equals(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.INTEGER)) {
                     dbType = XmlaConstants.DBType.I4;
-                } else if (datatype.equals("Numeric")) {
+                } else if (datatype.equals(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)) {
                     dbType = XmlaConstants.DBType.R8;
                 } else {
                     dbType = XmlaConstants.DBType.WSTR;

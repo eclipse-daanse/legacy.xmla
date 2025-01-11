@@ -44,7 +44,7 @@ public class ContextsSupplyerImpl implements ContextListSupplyer {
 
 	@Override
 	public Optional<Context> tryGetFirstByName(String catalogName) {
-		return get().stream().filter(c -> c.getName().equals(catalogName)).findFirst();
+		return get().stream().filter(c -> c.getCatalogMapping().getName().equals(catalogName)).findFirst();
 	}
 
 	@Override

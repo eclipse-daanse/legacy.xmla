@@ -20,6 +20,7 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
+import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.MemberType;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
@@ -28,7 +29,9 @@ import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFuncti
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.olap.function.def.parentheses.ParenthesesFunDef;
 import org.eclipse.daanse.olap.query.base.Expressions;
+import org.osgi.service.component.annotations.Component;
 
+@Component(service = FunctionResolver.class)
 public class TupleResolver extends NoExpressionRequiredFunctionResolver {
 
     @Override
@@ -74,16 +77,16 @@ public class TupleResolver extends NoExpressionRequiredFunctionResolver {
 
                 FunctionMetaData functionMetaData = new FunctionMetaDataR(TupleFunDef.functionAtom,"Parenthesis operator constructs a tuple.  If there is only one member, the expression is equivalent to the member expression.", "(<Member> [, <Member>]...)",
                           DataType.SET, Expressions.functionParameterOf(args));
-                
-    
+
+
                 return new CrossJoinFunDef(functionMetaData);
             }
             else {
-                
+
 
                 FunctionMetaData functionMetaData = new FunctionMetaDataR(TupleFunDef.functionAtom,"Parenthesis operator constructs a tuple.  If there is only one member, the expression is equivalent to the member expression.", "(<Member> [, <Member>]...)",
                           DataType.TUPLE, argTypes);
-                
+
                 return new TupleFunDef(functionMetaData);
             }
         }

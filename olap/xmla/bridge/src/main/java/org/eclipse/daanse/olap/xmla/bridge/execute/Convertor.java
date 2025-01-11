@@ -552,9 +552,9 @@ public class Convertor {
                     // Return cell without value as in case of AS2005
                     continue;
                 }
-                final String dataType =
-                    (String) cell.getPropertyValue(
-                        Property.StandardCellProperty.DATATYPE.getName());
+                //final String dataType =
+                //    (String) cell.getPropertyValue(
+                //        Property.StandardCellProperty.DATATYPE.getName());
 
                 //final ValueInfo vi = new ValueInfo(dataType, value);
                 //will always get real datatype (see ValueInfo logic)
