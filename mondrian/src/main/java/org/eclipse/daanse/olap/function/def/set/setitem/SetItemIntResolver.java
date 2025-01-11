@@ -18,10 +18,13 @@ import java.util.List;
 import org.eclipse.daanse.mdx.model.api.expression.operation.MethodOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
+import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinitionMultiResolver;
+import org.osgi.service.component.annotations.Component;
 
+@Component(service = FunctionResolver.class)
 public class SetItemIntResolver extends AbstractFunctionDefinitionMultiResolver {
     private static MethodOperationAtom atom = new MethodOperationAtom("Item");
     private static String SIGNATURE = "<Set>.Item(<Index>)";
