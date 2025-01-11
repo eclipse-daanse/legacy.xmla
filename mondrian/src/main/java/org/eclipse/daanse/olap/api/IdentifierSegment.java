@@ -15,11 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 */
-package org.eclipse.daanse.olap.impl;
+package org.eclipse.daanse.olap.api;
 
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.Quoting;
+import org.eclipse.daanse.olap.impl.KeySegment;
+import org.eclipse.daanse.olap.impl.NameSegment;
+import org.eclipse.daanse.olap.impl.ParseRegion;
 
 /**
  * Component in a compound identifier. It is described by its name and how

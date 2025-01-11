@@ -166,7 +166,7 @@ public class QueryProviderImpl implements QueryProvider {
                              Formula[] formula,
                              QueryAxis[] axes,
                              Subcube subcube,
-                             QueryAxisImpl slicerAxis,
+                             QueryAxis slicerAxis,
                              CellProperty[] cellProps,
                              boolean strictValidation) {
         return new QueryImpl(

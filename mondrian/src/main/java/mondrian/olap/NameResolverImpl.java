@@ -12,6 +12,7 @@ package mondrian.olap;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.DataType;
+import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameResolver;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -23,7 +24,6 @@ import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.impl.IdentifierNode;
-import org.eclipse.daanse.olap.impl.IdentifierSegment;
 
 /**
  * Resolves a list of segments (a parsed identifier) to an OLAP element.

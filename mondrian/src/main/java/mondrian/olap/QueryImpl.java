@@ -38,6 +38,7 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperat
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Parameter;
@@ -91,7 +92,6 @@ import org.eclipse.daanse.olap.calc.api.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
 import org.eclipse.daanse.olap.function.def.parameter.ParameterFunDef;
 import org.eclipse.daanse.olap.impl.IdentifierParser;
-import org.eclipse.daanse.olap.impl.IdentifierSegment;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.mdx.HierarchyExpressionImpl;

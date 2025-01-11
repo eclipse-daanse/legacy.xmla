@@ -3,7 +3,6 @@ package org.eclipse.daanse.olap.api;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.element.OlapElement;
-import org.eclipse.daanse.olap.impl.IdentifierSegment;
 
 public interface NameResolver {
 
@@ -39,7 +38,7 @@ public interface NameResolver {
          *
          * <p>If {@code matchType} is {@link MatchType#EXACT}, effect is
          * identical to calling
-         * {@link #lookupChild(OlapElement, org.olap4j.mdx.IdentifierSegment)}.</p>
+         * {@link #lookupChild(OlapElement, org.eclipse.daanse.olap.api.olap4j.mdx.IdentifierSegment)}.</p>
          *
          * <p>Match type is ignored except when searching for members.</p>
          *

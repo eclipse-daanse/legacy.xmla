@@ -18,6 +18,7 @@
 package org.eclipse.daanse.olap.impl;
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.Quoting;
 
 /**

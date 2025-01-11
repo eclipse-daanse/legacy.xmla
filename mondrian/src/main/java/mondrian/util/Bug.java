@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * <dl>
  *
  * <dt>Obsolete {@link Segment}</dt>
- * <dd>Replace it by {@link org.olap4j.mdx.IdentifierSegment}. Likewise
+ * <dd>Replace it by {@link org.eclipse.daanse.olap.api.olap4j.mdx.IdentifierSegment}. Likewise
  * {@link org.eclipse.daanse.olap.api.Quoting} with {@link org.olap4j.mdx.Quoting}.
  * Should wait until after the mondrian 4 'big bang', because there are ~300
  * uses of Segment in the code.</dd>

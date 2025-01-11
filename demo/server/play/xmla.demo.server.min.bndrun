@@ -1,11 +1,11 @@
--runtrace: true
+#-runtrace: true
 
 -runproperties: \
     org.slf4j.simpleLogger.defaultLogLevel=error,\
 	org.osgi.service.http.port=8090,\
     osgi.console=,\
-    osgi.console.enable.builtin=true
-    logback.configurationFile=${project.basedir}/logback.xml,\
+    osgi.console.enable.builtin=true,\
+    logback.configurationFile=${.}/logback.xml
 
 -runpath: \
 	ch.qos.logback.classic,\

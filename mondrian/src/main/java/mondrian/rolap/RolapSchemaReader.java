@@ -24,6 +24,7 @@ import mondrian.olap.SystemProperty;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
@@ -46,7 +47,6 @@ import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
-import org.eclipse.daanse.olap.impl.IdentifierSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
