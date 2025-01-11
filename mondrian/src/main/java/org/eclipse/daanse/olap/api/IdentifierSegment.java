@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.impl.KeySegment;
 import org.eclipse.daanse.olap.impl.NameSegment;
-import org.eclipse.daanse.olap.impl.ParseRegion;
 
 /**
  * Component in a compound identifier. It is described by its name and how

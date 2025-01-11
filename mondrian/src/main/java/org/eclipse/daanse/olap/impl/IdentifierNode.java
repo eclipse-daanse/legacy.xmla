@@ -21,6 +21,7 @@ import java.util.AbstractList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.IdentifierSegment;
+import org.eclipse.daanse.olap.api.ParseRegion;
 import org.eclipse.daanse.olap.api.result.Olap4jUtil;
 
 /**
@@ -151,7 +152,7 @@ public class IdentifierNode
     static ParseRegion sumSegmentRegions(
         final List<? extends IdentifierSegment> segments)
     {
-        return ParseRegion.sum(
+        return ParseRegionImpl.sum(
             new AbstractList<ParseRegion>() {
                 public ParseRegion get(int index) {
                     return segments.get(index).getRegion();

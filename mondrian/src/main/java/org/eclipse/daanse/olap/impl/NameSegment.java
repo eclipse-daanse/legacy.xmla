@@ -34,7 +34,7 @@ import org.eclipse.daanse.olap.api.result.Olap4jUtil;
 public class NameSegment implements IdentifierSegment {
     final String name;
     final Quoting quoting;
-    private final ParseRegion region;
+    private final ParseRegionImpl region;
 
     /**
      * Creates a segment with the given quoting and region.
@@ -44,7 +44,7 @@ public class NameSegment implements IdentifierSegment {
      * @param quoting Quoting style
      */
     public NameSegment(
-        ParseRegion region,
+        ParseRegionImpl region,
         String name,
         Quoting quoting)
     {
@@ -91,7 +91,7 @@ public class NameSegment implements IdentifierSegment {
                 throw unexpected(quoting);
         }
     }
-    public ParseRegion getRegion() {
+    public ParseRegionImpl getRegion() {
         return region;
     }
 

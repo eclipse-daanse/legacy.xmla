@@ -21,6 +21,8 @@ import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.ParseRegion;
+
 /**
  * Region of parser source code.
  *
@@ -43,7 +45,7 @@ import java.util.List;
  *
  * @author jhyde
  */
-public class ParseRegion {
+public class ParseRegionImpl implements ParseRegion {
     private final int startLine;
     private final int startColumn;
     private final int endLine;
@@ -60,7 +62,7 @@ public class ParseRegion {
      * @param endLine Line of the end of the region
      * @param endColumn Column of the end of the region
      */
-    public ParseRegion(
+    public ParseRegionImpl(
         int startLine,
         int startColumn,
         int endLine,
@@ -82,7 +84,7 @@ public class ParseRegion {
      * @param line Line of the beginning and end of the region
      * @param column Column of the beginning and end of the region
      */
-    public ParseRegion(
+    public ParseRegionImpl(
         int line,
         int column)
     {
@@ -94,7 +96,8 @@ public class ParseRegion {
      *
      * @return 1-based starting line number
      */
-    public int getStartLine() {
+    @Override
+	public int getStartLine() {
         return startLine;
     }
 
@@ -103,7 +106,8 @@ public class ParseRegion {
      *
      * @return 1-based starting column number
      */
-    public int getStartColumn() {
+    @Override
+	public int getStartColumn() {
         return startColumn;
     }
 
@@ -112,7 +116,8 @@ public class ParseRegion {
      *
      * @return 1-based ending line number
      */
-    public int getEndLine() {
+    @Override
+	public int getEndLine() {
         return endLine;
     }
 
@@ -121,7 +126,8 @@ public class ParseRegion {
      *
      * @return 1-based starting endings column number
      */
-    public int getEndColumn() {
+    @Override
+	public int getEndColumn() {
         return endColumn;
     }
 
@@ -159,8 +165,8 @@ public class ParseRegion {
     }
 
     public boolean equals(Object obj) {
-        if (obj instanceof ParseRegion) {
-            final ParseRegion that = (ParseRegion) obj;
+        if (obj instanceof ParseRegionImpl) {
+            final ParseRegionImpl that = (ParseRegionImpl) obj;
             return this.startLine == that.startLine
                 && this.startColumn == that.startColumn
                 && this.endLine == that.endLine
@@ -220,7 +226,7 @@ public class ParseRegion {
      * @param regions Source code regions
      * @return region which represents the span of the given regions
      */
-    public ParseRegion plus(ParseRegion... regions)
+    public ParseRegion plus(ParseRegionImpl... regions)
     {
         return plusAll(Arrays.asList(regions));
     }
@@ -287,7 +293,7 @@ public class ParseRegion {
                 endColumn = testColumn;
             }
         }
-        return new ParseRegion(startLine, startColumn, endLine, endColumn);
+        return new ParseRegionImpl(startLine, startColumn, endLine, endColumn);
     }
 
     /**
@@ -320,7 +326,7 @@ public class ParseRegion {
             int [] start = indexToLineCol(code, firstCaret);
             return new RegionAndSource(
                 codeSansCaret,
-                new ParseRegion(start[0], start[1]));
+                new ParseRegionImpl(start[0], start[1]));
         } else {
             String codeSansCaret =
                 code.substring(0, firstCaret)
@@ -336,7 +342,7 @@ public class ParseRegion {
             int [] end = indexToLineCol(code, secondCaret);
             return new RegionAndSource(
                 codeSansCaret,
-                new ParseRegion(start[0], start[1], end[0], end[1]));
+                new ParseRegionImpl(start[0], start[1], end[0], end[1]));
         }
     }
 

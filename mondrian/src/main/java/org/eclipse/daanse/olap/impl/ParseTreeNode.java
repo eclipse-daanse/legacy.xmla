@@ -17,6 +17,8 @@
 */
 package org.eclipse.daanse.olap.impl;
 
+import org.eclipse.daanse.olap.api.ParseRegion;
+
 /**
  * Node in a parse tree representing a parsed MDX statement.
  *
