@@ -20,6 +20,7 @@ import java.util.Optional;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
 import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl;
@@ -168,7 +169,7 @@ public class AggTableManager {
 //            connectionProps.aggregateScanCatalog();
             Optional<String> oAaggregateScanSchema=    connectionProps.aggregateScanSchema();
  
-			List<? extends DatabaseSchema> schemas = context.getCatalogMapping()
+			List<? extends DatabaseSchema> schemas = ((RolapContext) context).getCatalogMapping()
 					.getDbschemas();
 
 			DatabaseSchema databaseSchema = schemas.getFirst();

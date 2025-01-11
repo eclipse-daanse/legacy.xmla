@@ -53,6 +53,7 @@ import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.impl.StatementImpl;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.junit.jupiter.api.Disabled;
@@ -953,7 +954,7 @@ public class UdfTest {
             + functionClass.getName()
             + "\"/>\n");
          */
-    	CatalogMapping catalogMapping = context.getCatalogMapping();
+    	CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
     	PojoMappingModifier modifier = new SchemaModifiers.UdfTestModifier17(catalogMapping, functionClass);
         updateTestContext(context, modifier);
         final String expectedResult =

@@ -34,6 +34,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.DialectResolver;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.olap.rolap.core.BasicContext;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -153,7 +154,7 @@ class ServiceTest {
             assertThat(x.getDialect()).isEqualTo(dialect);
             //assertThat(x.getStatisticsProvider()).isEqualTo(statisticsProvider);
             assertThat(x.getExpressionCompilerFactory()).isEqualTo(expressionCompilerFactory);
-            assertThat(x.getCatalogMapping()).isEqualTo(catalogMapping);
+            assertThat(((RolapContext) x).getCatalogMapping()).isEqualTo(catalogMapping);
             //            assertThat(x.getQueryProvider()).isEqualTo(queryProvider);
         });
 

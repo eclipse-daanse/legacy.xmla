@@ -80,6 +80,7 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -4807,7 +4808,7 @@ public class BasicQueryTest {
                 + "aggregator=\"sum\"/>\n" + "</Cube>", null, null, null, null );
        */
     RolapSchemaPool.instance().clear();
-    CatalogMapping catalog = context.getCatalogMapping();
+    CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
     ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.BasicQueryTestModifier27(catalog, "Supply Time Error"));
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
     String queryWithFirstMeasure =
@@ -4830,7 +4831,7 @@ public class BasicQueryTest {
        */
 
     RolapSchemaPool.instance().clear();
-    CatalogMapping catalog = context.getCatalogMapping();
+    CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
     ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.BasicQueryTestModifier27(catalog, "SUPPLY TIME"));
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
     String queryWithFirstMeasure =
@@ -5972,7 +5973,7 @@ public class BasicQueryTest {
      */
 
     RolapSchemaPool.instance().clear();
-    CatalogMapping catalog = context.getCatalogMapping();
+    CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
     ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.BasicQueryTestModifier8(catalog, dialect));
 
         connection = context.getConnection();

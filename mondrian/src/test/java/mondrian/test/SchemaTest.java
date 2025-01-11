@@ -49,6 +49,7 @@ import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rdb.structure.pojo.InlineTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
@@ -9790,7 +9791,7 @@ class SchemaTest {
             withSchema(context, schema);
              */
             RolapSchemaPool.instance().clear();
-            CatalogMapping catalogMapping = context.getCatalogMapping();
+            CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
             TestDimensionUsageVisibilityModifier testDimensionUsageVisibilityModifier =
             		new TestDimensionUsageVisibilityModifier(catalogMapping, testValue);
             ((TestContext)context).setCatalogMappingSupplier(testDimensionUsageVisibilityModifier);

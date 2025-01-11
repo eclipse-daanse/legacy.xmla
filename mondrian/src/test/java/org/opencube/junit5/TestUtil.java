@@ -74,6 +74,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
 import org.eclipse.daanse.olap.impl.CoordinateIterator;
 import org.eclipse.daanse.olap.impl.TraditionalCellSetFormatter;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.opencube.junit5.context.TestConfig;
 import org.opencube.junit5.context.TestContext;
@@ -1277,7 +1278,7 @@ public class TestUtil {
 
 	public static void withSchema(Context context, Function<CatalogMapping, org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier> f) {
           RolapSchemaPool.instance().clear();
-          CatalogMapping catalogMapping = context.getCatalogMapping();
+          CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
           ((TestContext)context).setCatalogMappingSupplier(f.apply(catalogMapping));
     }
 

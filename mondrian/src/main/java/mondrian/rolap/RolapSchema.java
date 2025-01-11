@@ -77,6 +77,7 @@ import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCubeGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessDimensionGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessHierarchyGrantMapping;
@@ -240,7 +241,7 @@ public class RolapSchema implements Schema {
     public RolapSchema(
         final SchemaKey key,
          ConnectionProps rolapConnectionProps,
-        final Context context)
+        final RolapContext context)
     {
         this.id = UUID.randomUUID().toString();
         this.key = key;
@@ -269,7 +270,7 @@ public class RolapSchema implements Schema {
     RolapSchema(
         SchemaKey key,
         RolapConnection internalConnection,
-        final Context context)
+        final RolapContext context)
     {
     	this.id = UUID.randomUUID().toString();
     	this.key = key;
@@ -327,11 +328,11 @@ public class RolapSchema implements Schema {
      * @param catalogStr Text of catalog, or null
      * @param connectInfo Mondrian connection properties
      */
-	protected void load(Context context, ConnectionProps connectionProps) {
+	protected void load(RolapContext context, ConnectionProps connectionProps) {
 
 		this.context = context;
 		// TODO: get from schema var
-		mappingSchema = context.getCatalogMapping().getSchemas().get(0);
+		mappingSchema =  context.getCatalogMapping().getSchemas().get(0);
 
 
 		sha512Bytes = new ByteString((""+mappingSchema.hashCode()).getBytes());

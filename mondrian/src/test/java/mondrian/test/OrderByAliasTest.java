@@ -13,9 +13,8 @@ import static org.opencube.junit5.TestUtil.flushSchemaCache;
 import static org.opencube.junit5.TestUtil.getDialect;
 import static org.opencube.junit5.TestUtil.withSchema;
 
-import java.util.List;
-
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,7 +83,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "</Dimension>"));
      */
       RolapSchemaPool.instance().clear();
-      CatalogMapping catalog = context.getCatalogMapping();
+      CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
       ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1KE(catalog, colName));
 
       assertQuerySql(context.getConnection(),
@@ -132,7 +131,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "</Dimension>"));
      */
          RolapSchemaPool.instance().clear();       
-         CatalogMapping catalog = context.getCatalogMapping();
+         CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1NE(catalog, colName));
          assertQuerySql(
         context.getConnection(),
@@ -182,7 +181,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "</Dimension>"));
      */
          RolapSchemaPool.instance().clear();
-         CatalogMapping catalog = context.getCatalogMapping();
+         CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1CE(catalog, colName));
          assertQuerySql(
         context.getConnection(),
@@ -232,7 +231,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "</Dimension>"));
      */
          RolapSchemaPool.instance().clear();
-         CatalogMapping catalog = context.getCatalogMapping();
+         CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1OE(catalog, colName));         
          assertQuerySql(
         context.getConnection(),
@@ -294,7 +293,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "</Dimension>"));
      */
          RolapSchemaPool.instance().clear();
-         CatalogMapping catalog = context.getCatalogMapping();
+         CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier2(catalog, colName));         
          assertQuerySql(
         context.getConnection(),
@@ -356,7 +355,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "</Dimension>"));
      */
          RolapSchemaPool.instance().clear();
-         CatalogMapping catalog = context.getCatalogMapping();
+         CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier3(catalog, colName));
          assertQuerySql(
         context.getConnection(),
@@ -405,7 +404,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "</Dimension>"));
      */
         RolapSchemaPool.instance().clear();
-        CatalogMapping catalog = context.getCatalogMapping();
+        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1ME(catalog, colName));
 
         assertQuerySql(

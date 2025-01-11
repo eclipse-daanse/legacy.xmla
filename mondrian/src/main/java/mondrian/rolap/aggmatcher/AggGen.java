@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.slf4j.Logger;
@@ -171,7 +172,7 @@ public class AggGen {
      * create lost create and insert commands.
      */
     private void init() {
-    DatabaseSchema dbschema=	star.getContext().getCatalogMapping().getDbschemas().getFirst();
+    DatabaseSchema dbschema=	((RolapContext) star.getContext()).getCatalogMapping().getDbschemas().getFirst();
         JdbcSchema db =   new JdbcSchema(dbschema);
 
         JdbcSchema.Table factTable = getTable(db, getFactTableName());

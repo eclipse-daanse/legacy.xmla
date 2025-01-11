@@ -30,7 +30,6 @@
 package org.eclipse.daanse.olap.api;
 
 import java.io.PrintWriter;
-import java.sql.DriverManager;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,8 +46,6 @@ import org.eclipse.daanse.olap.api.result.Scenario;
 
 /**
  * Connection to a multi-dimensional database.
- *
- * @see DriverManager
  *
  * @author jhyde
  */

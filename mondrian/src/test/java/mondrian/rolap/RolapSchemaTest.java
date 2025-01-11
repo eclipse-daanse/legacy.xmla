@@ -39,7 +39,6 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCubeGrantMapping;
@@ -104,7 +103,7 @@ class RolapSchemaTest {
 
         //noinspection deprecation
         //mock rolap connection to eliminate calls for cache loading
-        AbstractBasicContext contextMock = mock(AbstractBasicContext.class);
+        AbstractRolapContext contextMock = mock(AbstractRolapContext.class);
         RolapConnection rolapConnectionMock = mock(RolapConnection.class);
         AggregationManager aggManagerMock = mock(AggregationManager.class);
         SegmentCacheManager scManagerMock = mock(SegmentCacheManager.class);

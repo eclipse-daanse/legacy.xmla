@@ -42,7 +42,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.sql.DataSource;
 
-import mondrian.olap.TransactionCommandImpl;
 import org.eclipse.daanse.mdx.model.api.expression.MdxExpression;
 import org.eclipse.daanse.mdx.parser.api.MdxParser;
 import org.eclipse.daanse.olap.api.CacheControl;
@@ -67,6 +66,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +79,7 @@ import mondrian.olap.ResourceLimitExceededException;
 import mondrian.olap.ResultBase;
 import mondrian.olap.ResultLimitExceededException;
 import mondrian.olap.RoleImpl;
+import mondrian.olap.TransactionCommandImpl;
 import mondrian.olap.Util;
 import mondrian.olap.exceptions.FailedToParseQueryException;
 import mondrian.server.ExecutionImpl;
@@ -108,7 +109,7 @@ public class RolapConnection extends ConnectionBase {
   private final Statement internalStatement;
 
 
-	public RolapConnection(Context context, ConnectionProps rolapConnectionProps) {
+	public RolapConnection(RolapContext context, ConnectionProps rolapConnectionProps) {
 		this(context, null, rolapConnectionProps);
 	}
 
@@ -128,7 +129,7 @@ public class RolapConnection extends ConnectionBase {
    * @param context  If not null an external DataSource to be used
    *                    by Mondrian
    */
-	RolapConnection(Context context, RolapSchema schema, ConnectionProps rolapConnectionProps) {
+	RolapConnection(RolapContext context, RolapSchema schema, ConnectionProps rolapConnectionProps) {
     super();
 
     this.context = context;

@@ -56,7 +56,7 @@ public interface Context {
     Dialect getDialect();
 
     //TODO REMOVE HERE. Only In RolapContext
-    CatalogMapping getCatalogMapping();
+//    CatalogMapping getCatalogMapping();
 
 
     /**

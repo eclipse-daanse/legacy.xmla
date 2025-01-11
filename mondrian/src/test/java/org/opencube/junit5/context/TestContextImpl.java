@@ -246,6 +246,7 @@ import org.eclipse.daanse.olap.function.def.vba.timevalue.TimeValueResolver;
 import org.eclipse.daanse.olap.function.def.vba.weekday.WeekdayResolver;
 import org.eclipse.daanse.olap.function.def.vba.year.YearResolver;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalsResolver;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.olap.rolap.core.BasicContextConfig;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -256,7 +257,7 @@ import mondrian.rolap.RolapResultShepherd;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.server.NopEventBus;
 
-public class TestContextImpl extends AbstractBasicContext implements TestContext {
+public class TestContextImpl extends AbstractBasicContext implements TestContext, RolapContext {
 
 	private Dialect dialect;
 	private DataSource dataSource;

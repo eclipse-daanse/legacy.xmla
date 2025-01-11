@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.junit.jupiter.api.AfterEach;
@@ -83,7 +84,7 @@ class AggGenTest {
         try {
             sqlConnection = dataSource.getConnection();
             DatabaseMetaData dbmeta = sqlConnection.getMetaData();
-            CatalogMapping catalogMapping = context.getCatalogMapping();
+            CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
             List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
             DatabaseSchema databaseSchema = schemas.getFirst();
             

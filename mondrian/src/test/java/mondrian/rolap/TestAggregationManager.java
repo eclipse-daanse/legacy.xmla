@@ -37,6 +37,7 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -2052,7 +2053,7 @@ class TestAggregationManager extends BatchTestCase {
             + "</Dimension>", false));
          */
         RolapSchemaPool.instance().clear();
-        CatalogMapping catalog = context.getCatalogMapping();
+        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.TestAggregationManagerModifier2(catalog, colName));
         assertQueryThrows(context,
             mdxQuery,
@@ -2072,7 +2073,7 @@ class TestAggregationManager extends BatchTestCase {
             + "</Dimension>", false));
          */
         RolapSchemaPool.instance().clear();
-        catalog = context.getCatalogMapping();
+        catalog = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.TestAggregationManagerModifier10(catalog, colName));
         assertQueryReturns(context.getConnection(),
             "select non empty{[Promotions].[All Promotions].Children} ON rows, "

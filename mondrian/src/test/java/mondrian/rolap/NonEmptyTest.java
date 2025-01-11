@@ -36,6 +36,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
@@ -1913,7 +1914,7 @@ class NonEmptyTest extends BatchTestCase {
         + "</Dimension>" ) );
      */
       RolapSchemaPool.instance().clear();
-      CatalogMapping catalog = context.getCatalogMapping();
+      CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
       ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.NonEmptyTestModifier2(catalog,
     		  HideMemberIfType.IF_BLANK_NAME));
 
@@ -1951,7 +1952,7 @@ class NonEmptyTest extends BatchTestCase {
         + "</Dimension>" ) );
      */
       RolapSchemaPool.instance().clear();
-      CatalogMapping catalogMapping = context.getCatalogMapping();
+      CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
       ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.NonEmptyTestModifier2(catalogMapping,
     		  HideMemberIfType.IF_PARENTS_NAME));
 
@@ -2056,7 +2057,7 @@ class NonEmptyTest extends BatchTestCase {
         + "</Dimension>" ) );
       */
       RolapSchemaPool.instance().clear();
-      CatalogMapping schema = context.getCatalogMapping();
+      CatalogMapping schema = ((RolapContext) context).getCatalogMapping();
       ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.NonEmptyTestModifier2(schema,
     		  HideMemberIfType.IF_BLANK_NAME));
 

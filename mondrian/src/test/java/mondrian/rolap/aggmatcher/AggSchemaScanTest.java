@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.junit.jupiter.api.BeforeAll;
@@ -56,7 +57,7 @@ class AggSchemaScanTest {
     try {
       sqlConnection = dataSource.getConnection();
 
-      CatalogMapping catalogMapping = context.getCatalogMapping();
+      CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
       List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
       DatabaseSchema databaseSchema = schemas.getFirst();
       
@@ -145,7 +146,7 @@ class AggSchemaScanTest {
         System.out.println( "Cannot find foodmart schema or catalog in database.  Cannot run test." );
         return;
       }
-      CatalogMapping catalogMapping = context.getCatalogMapping();
+      CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
       List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
       DatabaseSchema databaseSchema = schemas.getFirst();
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
