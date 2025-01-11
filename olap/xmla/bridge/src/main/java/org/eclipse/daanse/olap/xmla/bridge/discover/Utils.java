@@ -40,6 +40,7 @@ import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.result.Property;
 import org.eclipse.daanse.olap.api.result.Property.TypeFlag;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
 import org.eclipse.daanse.rdb.structure.api.model.PhysicalTable;
 import org.eclipse.daanse.rdb.structure.api.model.SystemTable;
@@ -155,7 +156,7 @@ public class Utils {
     ) {
 
         List<? extends SchemaMapping> schemas =
-            getDatabaseMappingSchemaProviderWithFilter(context.getCatalogMapping(), oTableSchema);
+            getDatabaseMappingSchemaProviderWithFilter(((RolapContext) context).getCatalogMapping(), oTableSchema);
         return schemas.stream().map(schema -> {
             return getDbSchemaColumnsResponseRow(context.getName(), schema, oTableName, oColumnName, oColumnOlapType
                 );
@@ -361,7 +362,7 @@ public class Utils {
         String schemaName,
         String schemaOwner
     ) {
-        CatalogMapping catalog = context.getCatalogMapping();
+        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         if (catalog != null) {
             return getDatabaseMappingSchemaProviderWithFilter(catalog, schemaName).stream()
                 .map(s -> getDbSchemaSchemataResponseRow(context.getName(), s, schemaOwner)).toList();
@@ -581,7 +582,7 @@ public class Utils {
         Optional<String> oTableType
     ) {
         List<Schema> schemas = context.getConnection().getSchemas();
-        List<? extends DatabaseSchema> dbSchemas = context.getCatalogMapping().getDbschemas();
+        List<? extends DatabaseSchema> dbSchemas = ((RolapContext) context).getCatalogMapping().getDbschemas();
         if (schemas != null) {
             return getSchemasWithFilter(schemas, oTableSchema).stream()
                 .map(s -> getDbSchemaTablesResponseRow(context.getName(), s, dbSchemas, oTableName, oTableType))
@@ -767,7 +768,7 @@ public class Utils {
         String tableName,
         TableTypeEnum tableType
     ) {
-        return getDatabaseMappingSchemaProviderWithFilter(context.getCatalogMapping(), oSchemaName)
+        return getDatabaseMappingSchemaProviderWithFilter(((RolapContext) context).getCatalogMapping(), oSchemaName)
             .stream()
             .map(s -> getDbSchemaTablesInfoResponseRow(context.getName(), s, tableName, tableType))
             .flatMap(Collection::stream).toList();
@@ -905,7 +906,7 @@ public class Utils {
         Optional<String> oKpiName
     ) {
         List<? extends SchemaMapping> schemas =
-            getDatabaseMappingSchemaProviderWithFilter(context.getCatalogMapping(), oSchemaName);
+            getDatabaseMappingSchemaProviderWithFilter(((RolapContext) context).getCatalogMapping(), oSchemaName);
         return schemas.stream().map(schema -> {
             return getMdSchemaKpisResponseRow(context.getName(), schema, oCubeName, oKpiName);
         }).flatMap(Collection::stream).toList();
@@ -2100,7 +2101,7 @@ oHierarchyName)
         Optional<String> oCubeName,
         Optional<String> oMeasureGroupName
     ) {
-        return getDatabaseMappingSchemaProviderWithFilter(context.getCatalogMapping(), oSchemaName)
+        return getDatabaseMappingSchemaProviderWithFilter(((RolapContext) context).getCatalogMapping(), oSchemaName)
             .stream()
             .map(s -> getMdSchemaMeasureGroupsResponseRow(context.getName(), s, oCubeName,
                 oMeasureGroupName))

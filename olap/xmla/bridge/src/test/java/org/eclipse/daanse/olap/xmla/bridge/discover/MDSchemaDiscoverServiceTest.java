@@ -32,7 +32,6 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.MethodOperationAtom
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.action.api.ActionService;
 import org.eclipse.daanse.olap.api.Connection;
-import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ContextGroup;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -46,6 +45,7 @@ import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.result.Property;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.olap.xmla.bridge.ContextsSupplyerImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
@@ -118,10 +118,10 @@ import org.mockito.stubbing.Answer;
 class MDSchemaDiscoverServiceTest {
 
     @Mock
-    private Context context1;
+    private RolapContext context1;
 
     @Mock
-    private Context context2;
+    private RolapContext context2;
 
     @Mock
     private CatalogMapping catalog;

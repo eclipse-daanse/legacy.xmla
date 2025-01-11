@@ -27,8 +27,8 @@ import java.util.Optional;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ContextGroup;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.olap.xmla.bridge.ContextGroupXmlaServiceConfig;
 import org.eclipse.daanse.olap.xmla.bridge.ContextsSupplyerImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -62,10 +62,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class OtherDiscoverServiceTest {
 
     @Mock
-    private Context context1;
+    private RolapContext context1;
 
     @Mock
-    private Context context2;
+    private RolapContext context2;
 
     @Mock
     private CatalogMapping catalog;

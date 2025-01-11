@@ -45,9 +45,7 @@ import org.eclipse.daanse.jdbc.db.record.schema.SchemaReferenceR;
 import org.eclipse.daanse.jdbc.db.record.schema.TableReferenceR;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.documentation.api.ConntextDocumentationProvider;
-import org.eclipse.daanse.rolap.mapping.verifyer.api.Level;
-import org.eclipse.daanse.rolap.mapping.verifyer.api.VerificationResult;
-import org.eclipse.daanse.rolap.mapping.verifyer.api.Verifyer;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rdb.structure.api.model.Column;
 import org.eclipse.daanse.rdb.structure.api.model.DatabaseCatalog;
 import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
@@ -79,6 +77,9 @@ import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
+import org.eclipse.daanse.rolap.mapping.verifyer.api.Level;
+import org.eclipse.daanse.rolap.mapping.verifyer.api.VerificationResult;
+import org.eclipse.daanse.rolap.mapping.verifyer.api.Verifyer;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
@@ -130,7 +131,8 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     }
 
     @Override
-    public void createDocumentation(Context context, Path path) throws Exception {
+    public void createDocumentation(Context ctx, Path path) throws Exception {
+    	RolapContext context=(RolapContext) ctx;
         metaInfo = databaseService.createMetaInfo(context.getConnection().getDataSource());
         File file = path.toFile();
 
@@ -167,7 +169,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     }
 
-    private void writeCubeMatrixDiagram(FileWriter writer, Context context) {
+    private void writeCubeMatrixDiagram(FileWriter writer, RolapContext context) {
         context.getCatalogMapping().getSchemas().forEach(s -> {
             writeCubeMatrixDiagram(writer, context, s);
         });
@@ -316,7 +318,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         checkServices.remove(checkService);
     }
 
-    private List<String> schemaTablesConnections(Context context, List<String> missedTableNames) {
+    private List<String> schemaTablesConnections(RolapContext context, List<String> missedTableNames) {
         List<String> result = new ArrayList<>();
         context.getCatalogMapping().getSchemas().forEach(schema -> {
             result.addAll(schema.getCubes().stream().flatMap(c -> cubeTablesConnections(schema, c, missedTableNames).stream()).toList());
@@ -498,14 +500,14 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 	}
 
 
-	private void writeVerifyer(FileWriter writer, Context context) {
+	private void writeVerifyer(FileWriter writer, RolapContext context) {
         context.getCatalogMapping().getSchemas().forEach(schema -> {
             writeSchemaVerifyer(writer, schema, context);
         });
 
     }
 
-    private void writeSchemaVerifyer(FileWriter writer, SchemaMapping schema, Context context) {
+    private void writeSchemaVerifyer(FileWriter writer, SchemaMapping schema, RolapContext context) {
         try {
         	List<? extends DatabaseSchema> dbschemas = context.getCatalogMapping().getDbschemas();
             List<VerificationResult> verifyResult = new ArrayList<>();
@@ -605,25 +607,25 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         return path;
     }
 
-    private void writeSchemasAsXML(FileWriter writer, Context context) {
+    private void writeSchemasAsXML(FileWriter writer, RolapContext context) {
         context.getCatalogMapping().getSchemas().forEach(schema -> {
             writeSchemaAsXML(writer, schema);
         });
     }
 
-    private void writeSchemas(FileWriter writer, Context context) {
+    private void writeSchemas(FileWriter writer, RolapContext context) {
         context.getCatalogMapping().getSchemas().forEach(schema -> {
             writeSchema(writer, schema);
         });
     }
 
-    private void writeCubeDiagram(FileWriter writer, Context context) {
+    private void writeCubeDiagram(FileWriter writer, RolapContext context) {
         context.getCatalogMapping().getSchemas().forEach(schema -> {
             writeSchemaDiagram(writer, schema, context);
         });
     }
 
-    private void writeSchemaDiagram(FileWriter writer, SchemaMapping schema, Context context) {
+    private void writeSchemaDiagram(FileWriter writer, SchemaMapping schema, RolapContext context) {
         List<? extends CubeMapping> cubes =  schema.getCubes();
         int i = 0;
         if (cubes != null && !cubes.isEmpty()) {
@@ -747,7 +749,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         }
     }
 
-    private void writePhysicalCubeDiagram(FileWriter writer, SchemaMapping schema, PhysicalCubeMapping cube, int index, Context context) {
+    private void writePhysicalCubeDiagram(FileWriter writer, SchemaMapping schema, PhysicalCubeMapping cube, int index, RolapContext context) {
         try {
             List<String> connections = cubeDimensionConnections(schema, cube, index);
             if (cube.getName() != null) {
@@ -851,7 +853,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     }
 
     private void writeAggregationSection(FileWriter writer, SchemaMapping schema, PhysicalCubeMapping cube,
-        Context context) {
+    		RolapContext context) {
     	Optional<TableQueryMapping> tableQuery = getFactTableQuery(cube);
         if (!tableQuery.isPresent() && tableQuery.get().getAggregationTables() != null) {
             try (Connection connection = context.getDataSource().getConnection()) {
@@ -1377,7 +1379,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         return "";
     }
 
-    private void writeDatabaseInfo(FileWriter writer, Context context) {
+    private void writeDatabaseInfo(FileWriter writer, RolapContext context) {
         try (Connection connection = context.getDataSource().getConnection()) {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
             List<? extends DatabaseSchema> dbschemas = context.getCatalogMapping().getDbschemas();
@@ -1391,7 +1393,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     private void writeTables(
         final FileWriter writer,
-        final Context context,
+        final RolapContext context,
         final List<TableDefinition> tables,
         final DatabaseMetaData databaseMetaData,
         List<? extends DatabaseSchema> dbschemas

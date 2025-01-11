@@ -36,6 +36,7 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.olap.xmla.bridge.ContextsSupplyerImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -86,10 +87,10 @@ import javax.sql.DataSource;
 class DbSchemaDiscoverServiceTest {
 
     @Mock
-    private Context context1;
+    private RolapContext context1;
 
     @Mock
-    private Context context2;
+    private RolapContext context2;
 
     @Mock
     private CatalogMapping catalog;

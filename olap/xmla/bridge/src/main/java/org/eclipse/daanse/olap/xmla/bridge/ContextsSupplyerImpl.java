@@ -19,6 +19,7 @@ import java.util.function.Predicate;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ContextGroup;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 
 public class ContextsSupplyerImpl implements ContextListSupplyer {
 
@@ -44,7 +45,7 @@ public class ContextsSupplyerImpl implements ContextListSupplyer {
 
 	@Override
 	public Optional<Context> tryGetFirstByName(String catalogName) {
-		return get().stream().filter(c -> c.getCatalogMapping().getName().equals(catalogName)).findFirst();
+		return get().stream().filter(c -> ((RolapContext) c).getCatalogMapping().getName().equals(catalogName)).findFirst();
 	}
 
 	@Override

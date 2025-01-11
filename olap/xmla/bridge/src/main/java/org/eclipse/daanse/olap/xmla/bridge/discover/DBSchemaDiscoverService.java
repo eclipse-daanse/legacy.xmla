@@ -14,6 +14,7 @@
 package org.eclipse.daanse.olap.xmla.bridge.discover;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -68,7 +69,7 @@ public class DBSchemaDiscoverService {
             Optional<Context> oContext = oName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
             if (oContext.isPresent()) {
                 Context context = oContext.get();
-                CatalogMapping catalog = context.getCatalogMapping();
+                CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
                 return List.of((DbSchemaCatalogsResponseRow) new DbSchemaCatalogsResponseRowR(
                     Optional.ofNullable(catalog.getName()),
                     Optional.ofNullable(catalog.getDescription()),
@@ -88,9 +89,9 @@ public class DBSchemaDiscoverService {
         else {
             return contextsListSupplyer.get().stream().map(c ->
                 (DbSchemaCatalogsResponseRow) new DbSchemaCatalogsResponseRowR(
-                    Optional.ofNullable(c.getCatalogMapping().getName()),
-                    Optional.ofNullable(c.getCatalogMapping().getDescription()),
-                    getRoles(getAccessRoleMappings(c.getCatalogMapping().getSchemas())),
+                    Optional.ofNullable(((RolapContext) c).getCatalogMapping().getName()),
+                    Optional.ofNullable(((RolapContext) c).getCatalogMapping().getDescription()),
+                    getRoles(getAccessRoleMappings(((RolapContext) c).getCatalogMapping().getSchemas())),
                     Optional.of(LocalDateTime.now()),
                     Optional.empty(),
                     Optional.empty(),
