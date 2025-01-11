@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -118,26 +117,6 @@ import mondrian.util.ClassResolver;
  */
 public class RolapSchema implements Schema {
     static final Logger LOGGER = LoggerFactory.getLogger(RolapSchema.class);
-
-    private static final Set<Access> schemaAllowed =
-        EnumSet.of(
-            Access.NONE,
-            Access.ALL,
-            Access.ALL_DIMENSIONS,
-            Access.CUSTOM);
-
-    private static final Set<Access> cubeAllowed =
-        EnumSet.of(Access.NONE, Access.ALL, Access.CUSTOM);
-
-    private static final Set<Access> dimensionAllowed =
-        EnumSet.of(Access.NONE, Access.ALL, Access.CUSTOM);
-
-    private static final Set<Access> hierarchyAllowed =
-        EnumSet.of(Access.NONE, Access.ALL, Access.CUSTOM);
-
-    private static final Set<Access> memberAllowed =
-        EnumSet.of(Access.NONE, Access.ALL);
-    public static final String WHILE_PARSING_CATALOG = "while parsing catalog ";
 
     private String name;
 
@@ -360,6 +339,7 @@ public class RolapSchema implements Schema {
         return Collections.unmodifiableList(warningList);
     }
 
+    @Override
     public Role getDefaultRole() {
         return defaultRole;
     }
@@ -738,7 +718,11 @@ public class RolapSchema implements Schema {
         return RolapSchemaPool.instance().contains(rolapSchema);
     }
 
-    @Override
+    /**
+     * Finds a cube called <code>cube</code> in this schema; if no cube
+     * exists, <code>failIfNotFound</code> controls whether to raise an error
+     * or return <code>null</code>.
+     */
 	public Cube lookupCube(final CubeMapping cube, final boolean failIfNotFound) {
         RolapCube mdxCube = lookupCube(cube);
         if (mdxCube == null && failIfNotFound) {
@@ -857,6 +841,7 @@ public class RolapSchema implements Schema {
         return mapSharedHierarchyNameToHierarchy.get(name);
     }
 
+    @Override
     public NamedSet getNamedSet(String name) {
         return mapNameToSet.get(name);
     }
@@ -1100,8 +1085,5 @@ System.out.println("RolapSchema.createMemberReader: CONTAINS NAME");
     RolapNativeRegistry getNativeRegistry() {
         return nativeRegistry;
     }
-
-
-
 
 }

@@ -13,14 +13,14 @@
 package org.eclipse.daanse.olap.api.element;
 
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.access.Role;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-
-import mondrian.rolap.RolapCube;
 
 /**
  * A <code>Schema</code> is a collection of cubes, shared dimensions, and roles.
@@ -28,6 +28,27 @@ import mondrian.rolap.RolapCube;
  * @author jhyde
  */
 public interface Schema extends MetaElement {
+
+     static final Set<Access> schemaAllowed =
+        EnumSet.of(
+            Access.NONE,
+            Access.ALL,
+            Access.ALL_DIMENSIONS,
+            Access.CUSTOM);
+
+     static final Set<Access> cubeAllowed =
+        EnumSet.of(Access.NONE, Access.ALL, Access.CUSTOM);
+
+     static final Set<Access> dimensionAllowed =
+        EnumSet.of(Access.NONE, Access.ALL, Access.CUSTOM);
+
+     static final Set<Access> hierarchyAllowed =
+        EnumSet.of(Access.NONE, Access.ALL, Access.CUSTOM);
+
+     static final Set<Access> memberAllowed =
+        EnumSet.of(Access.NONE, Access.ALL);
+    
+     public static final String WHILE_PARSING_CATALOG = "while parsing catalog ";
 
     /**
      * Returns the name of this schema.
@@ -41,12 +62,6 @@ public interface Schema extends MetaElement {
      */
     String getId();
 
-    /**
-     * Finds a cube called <code>cube</code> in this schema; if no cube
-     * exists, <code>failIfNotFound</code> controls whether to raise an error
-     * or return <code>null</code>.
-     */
-    Cube lookupCube(CubeMapping cube, boolean failIfNotFound);
 
     /**
      * Returns a list of all cubes in this schema.
@@ -95,4 +110,8 @@ public interface Schema extends MetaElement {
     
     @Deprecated
     Cube lookupCube(String cubeName);
+
+	Role getDefaultRole();
+
+	NamedSet getNamedSet(String name);
 }
