@@ -23,6 +23,7 @@ import javax.sql.DataSource;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.jdbc.db.dialect.api.DialectResolver;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
+import org.eclipse.daanse.olap.api.BasicContextConfig;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.function.FunctionService;

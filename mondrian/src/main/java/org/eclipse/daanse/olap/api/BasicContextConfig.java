@@ -14,12 +14,13 @@
 *   Stefan Bischof (bipolis.org) - initial
 *
 */
-package org.eclipse.daanse.olap.rolap.core;
+package org.eclipse.daanse.olap.api;
 
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.daanse.olap.rolap.core.BasicContext;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.AttributeType;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;

@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.mdx.parser.ccc.MdxParserProviderImpl;
+import org.eclipse.daanse.olap.api.BasicContextConfig;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.result.Scenario;
@@ -247,7 +248,6 @@ import org.eclipse.daanse.olap.function.def.vba.weekday.WeekdayResolver;
 import org.eclipse.daanse.olap.function.def.vba.year.YearResolver;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalsResolver;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
-import org.eclipse.daanse.olap.rolap.core.BasicContextConfig;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 

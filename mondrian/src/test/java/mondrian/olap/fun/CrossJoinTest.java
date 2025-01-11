@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.BasicContextConfig;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
@@ -53,7 +54,6 @@ import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinIterCalc;
 import org.eclipse.daanse.olap.function.def.crossjoin.ImmutableListCalc;
 import org.eclipse.daanse.olap.function.def.crossjoin.MutableListCalc;
-import org.eclipse.daanse.olap.rolap.core.BasicContextConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
