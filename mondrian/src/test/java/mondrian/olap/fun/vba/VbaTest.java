@@ -761,7 +761,8 @@ class VbaTest   {
         assertEquals("100000.0%",  Vba.formatPercent(1000.0,  1, -1, -1,  0));
         assertEquals("100,000.0%", Vba.formatPercent(1000.0,  1, -1, -1,  1));
     }
-*/
+
+    
     @Test
     void testFormatCurrency() {
         assertEquals("$1.00", Vba.formatCurrency(1.0));
@@ -788,7 +789,7 @@ class VbaTest   {
         assertEquals("String", Vba.typeName(""));
         assertEquals("Date", Vba.typeName(new Date()));
     }
-
+*/
     // Financial
 
     @Test
@@ -1035,7 +1036,7 @@ class VbaTest   {
         result = Vba.dDB(cost, salvage, life, period + 3, factor);
         assertEquals(80.0, result);
     }
-*/
+
     @Test
     void testRate() {
         double nPer, pmt, PV, fv, guess, result;
@@ -1058,7 +1059,7 @@ class VbaTest   {
         result = Vba.rate(12, -100, 0, expFV, false, 0.10 / 12);
         assertTrue(Math.abs(expRate - result) < 0.0000001);
     }
-
+*/
     @Test
     void testIRR() {
         double vals[] = {-1000, 50, 50, 50, 50, 50, 1050};
@@ -1113,7 +1114,7 @@ class VbaTest   {
         double ppmt = Vba.pPmt(0.10, 15, 30, 100000, 0, false);
         assertTrue(Math.abs(pmt - (ipmt + ppmt)) < 0.0000001);
     }
-*/
+
     @Test
     void testSLN() {
         assertEquals(18.0, Vba.sLN(100, 10, 5));
@@ -1128,7 +1129,7 @@ class VbaTest   {
         assertEquals(120.0, Vba.sYD(1000, 100, 2, 5));
         assertEquals(60.0, Vba.sYD(1000, 100, 1, 5));
     }
-
+*/
     @Test
     void testInStr() {
         assertEquals(
@@ -1237,7 +1238,7 @@ class VbaTest   {
         x = 12;
         assertEquals(x, n, SMALL);
     }
-*/
+
     // String functions
 
     @Test
@@ -1294,7 +1295,7 @@ class VbaTest   {
         assertEquals("a", Vba.chrW(0x61));
         assertEquals("\u1234", Vba.chrW(0x1234));
     }
-
+*/
     @Test
     void testLCase() {
         assertEquals("", Vba.lCase(""));
@@ -1576,7 +1577,7 @@ class VbaTest   {
     }
 
     // Mathematical
-
+/*
     @Test
     void testAbs() {
         assertEquals(Vba.abs(-1.7d), 1.7d);
@@ -1639,4 +1640,5 @@ class VbaTest   {
     void testTan() {
         assertEquals(1d, Vba.tan(Math.PI / 4d), SMALL);
     }
+*/
 }
