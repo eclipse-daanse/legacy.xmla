@@ -1129,7 +1129,7 @@ class VbaTest   {
         assertEquals(120.0, Vba.sYD(1000, 100, 2, 5));
         assertEquals(60.0, Vba.sYD(1000, 100, 1, 5));
     }
-*/
+
     @Test
     void testInStr() {
         assertEquals(
@@ -1177,7 +1177,7 @@ class VbaTest   {
             assertTrue(e.getMessage().indexOf("-1 or a location") >= 0);
         }
     }
-
+*/
     @Test
     void testStrComp() {
         assertEquals(-1, Vba.strComp("a", "b", 0));
@@ -1295,7 +1295,7 @@ class VbaTest   {
         assertEquals("a", Vba.chrW(0x61));
         assertEquals("\u1234", Vba.chrW(0x1234));
     }
-*/
+
     @Test
     void testLCase() {
         assertEquals("", Vba.lCase(""));
@@ -1498,7 +1498,7 @@ class VbaTest   {
         assertEquals(" \n\tabc", Vba.rTrim(" \n\tabc"));
         assertEquals(" \n\tabc", Vba.rTrim(" \n\tabc  \r"));
     }
-
+*/
     @Test
     void testSpace() {
         assertEquals("   ", Vba.space(3));

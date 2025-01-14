@@ -27,7 +27,7 @@ public class RoundCalc extends AbstractProfilingNestedDoubleCalc {
     @Override
     public Double evaluate(Evaluator evaluator) {
         Double number = getChildCalc(0, DoubleCalc.class).evaluate(evaluator);
-        Integer numDigitsAfterDecimal = getChildCalc(0, IntegerCalc.class).evaluate(evaluator);
+        Integer numDigitsAfterDecimal = getChildCalc(1, IntegerCalc.class).evaluate(evaluator);
 
         if (numDigitsAfterDecimal == 0) {
             return (double) Math.round(number);
