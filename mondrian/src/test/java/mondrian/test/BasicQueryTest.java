@@ -6047,7 +6047,7 @@ public class BasicQueryTest {
       executeQuery(context.getConnection(), mdx );
       fail( "MondrianException is expected" );
     } catch ( OlapRuntimeException e ) {
-      assertEquals( "Mondrian Error:The " + "MDX function CURRENTMEMBER failed "
+      assertEquals( "The " + "MDX function CURRENTMEMBER failed "
           + "because the coordinate for the '[Gender]'" + " hierarchy contains a set", e.getCause().getMessage() );
     }
   }
@@ -6089,7 +6089,7 @@ public class BasicQueryTest {
       executeQuery(context.getConnection(), mdx);
       fail( "MondrianException is expected" );
     } catch ( OlapRuntimeException e ) {
-      assertEquals( "Mondrian Error:The " + "MDX function CURRENTMEMBER failed "
+      assertEquals( "The " + "MDX function CURRENTMEMBER failed "
           + "because the coordinate for the '[Time]' " + "hierarchy contains a set", e.getCause().getMessage() );
     }
   }

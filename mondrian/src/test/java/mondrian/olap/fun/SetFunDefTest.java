@@ -52,7 +52,7 @@ class SetFunDefTest {
     private void assertQueryFailsInSetValidation(Connection connection, String query) {
         assertQueryThrows(connection,
             query,
-            "Mondrian Error:All arguments to function '{}' "
+            "All arguments to function '{}' "
             + "must have same hierarchy");
     }
 }

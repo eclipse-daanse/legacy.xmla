@@ -571,7 +571,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
             fail("Should have thrown mondrian exception");
         } catch (OlapRuntimeException e) {
             assertEquals
-                    ("Mondrian Error:Too many errors, '1',"
+                    ("Too many errors, '1',"
                                     + " while loading/reloading aggregates.",
                             e.getMessage());
         }

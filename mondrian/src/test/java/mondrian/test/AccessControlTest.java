@@ -2679,7 +2679,7 @@ class AccessControlTest {
     	TestUtil.assertAxisThrows(
 			connection,
             "[Customers].Members",
-            "Mondrian Error:Failed to parse query 'select {[Customers].Members} on columns from Sales'");
+            "Failed to parse query 'select {[Customers].Members} on columns from Sales'");
     	TestUtil.assertQueryReturns(
 			connection,
             "select {[Education Level].Members} on columns, {[Measures].[Unit Sales]} on rows from Sales",
@@ -2705,13 +2705,13 @@ class AccessControlTest {
     	TestUtil.assertAxisThrows(
 			connection,
             "[Customers].Members",
-            "Mondrian Error:Failed to parse query 'select {[Customers].Members} on columns from Sales'");
+            "Failed to parse query 'select {[Customers].Members} on columns from Sales'");
         props = new RolapConnectionPropsR(List.of("Role3"), true, Locale.getDefault(), -1, TimeUnit.SECONDS, Optional.empty(), Optional.empty());
         connection = foodMartContext.getConnection(props);
     	TestUtil.assertQueryThrows(
 			connection,
             "select {[Education Level].Members} on columns, {[Measures].[Unit Sales]} on rows from Sales",
-            "Mondrian Error:Failed to parse query 'select {[Education Level].Members} on columns, {[Measures].[Unit Sales]} on rows from Sales'");
+            "Failed to parse query 'select {[Education Level].Members} on columns, {[Measures].[Unit Sales]} on rows from Sales'");
     }
 
     // ~ Inner classes =========================================================

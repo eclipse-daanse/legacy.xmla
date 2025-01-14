@@ -234,6 +234,7 @@ import org.eclipse.daanse.olap.function.def.vba.dateserial.DateSerialResolver;
 import org.eclipse.daanse.olap.function.def.vba.datevalue.DateValueResolver;
 import org.eclipse.daanse.olap.function.def.vba.day.DayResolver;
 import org.eclipse.daanse.olap.function.def.vba.ddb.DDBResolver;
+import org.eclipse.daanse.olap.function.def.vba.exp.ExpResolver;
 import org.eclipse.daanse.olap.function.def.vba.fix.FixResolver;
 import org.eclipse.daanse.olap.function.def.vba.formatcurrency.FormatCurrencyResolver;
 import org.eclipse.daanse.olap.function.def.vba.fv.FVResolver;
@@ -594,6 +595,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new ChrBResolver());
         functionService.addResolver(new ChrWResolver());
         functionService.addResolver(new FormatCurrencyResolver());
+        functionService.addResolver(new ExpResolver());
 
         //UDF
         functionService.addResolver(new InResolver());

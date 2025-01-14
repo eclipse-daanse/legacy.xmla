@@ -128,7 +128,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
     org.eclipse.daanse.olap.function.def.order.OrderCurrentMemberCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0, direction=ASC)
         org.eclipse.daanse.olap.function.def.set.children.ChildrenCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
             org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
-        mondrian.calc.impl.ValueCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
+        org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
 					""";
         assertAxisCompilesTo(connection, expr, expected);
     }

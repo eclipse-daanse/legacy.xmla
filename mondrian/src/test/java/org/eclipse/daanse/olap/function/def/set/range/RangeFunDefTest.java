@@ -73,7 +73,7 @@ class RangeFunDefTest {
     void testTwoNullRange(Context context) {
         assertAxisThrows(context.getConnection(),
             "NULL : NULL",
-            "Mondrian Error:Failed to parse query 'select {NULL : NULL} on columns from Sales'" );
+            "Failed to parse query 'select {NULL : NULL} on columns from Sales'" );
     }
 
     /**

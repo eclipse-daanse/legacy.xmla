@@ -1142,7 +1142,7 @@ class NonEmptyTest extends BatchTestCase {
       fail( "Expected error did not occur" );
     } catch ( Throwable e ) {
       String expectedErrorMsg =
-        "Mondrian Error:Size of CrossJoin result (3) exceeded limit (2)";
+        "Size of CrossJoin result (3) exceeded limit (2)";
       assertEquals( expectedErrorMsg, e.getMessage() );
     }
   }

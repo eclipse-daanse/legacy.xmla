@@ -647,18 +647,18 @@ class CompatibilityTest {
         TestUtil.assertAxisThrows(
     		connection,
             "{[M]}",
-            "Mondrian Error:MDX object '[M]' not found in cube 'Sales'");
+            "MDX object '[M]' not found in cube 'Sales'");
         TestUtil.assertAxisThrows(
     		connection,
             "{M}",
-            "Mondrian Error:MDX object 'M' not found in cube 'Sales'");
+            "MDX object 'M' not found in cube 'Sales'");
         TestUtil.assertAxisThrows(
     		connection,
             "{[USA].[CA]}",
-            "Mondrian Error:MDX object '[USA].[CA]' not found in cube 'Sales'");
+            "MDX object '[USA].[CA]' not found in cube 'Sales'");
         TestUtil.assertAxisThrows(
     		connection,
             "{USA.CA}",
-            "Mondrian Error:MDX object 'USA.CA' not found in cube 'Sales'");
+            "MDX object 'USA.CA' not found in cube 'Sales'");
     }
 }

@@ -376,7 +376,7 @@ class OpeningClosingPeriodFunDefTest {
     void testOpeningPeriodNull(Context context) {
         assertAxisThrows(context.getConnection(),
             "OpeningPeriod([Time].[Month], NULL)",
-            "Mondrian Error:Failed to parse query 'select {OpeningPeriod([Time].[Month], NULL)} on columns from Sales'" );
+            "Failed to parse query 'select {OpeningPeriod([Time].[Month], NULL)} on columns from Sales'" );
     }
 
 }

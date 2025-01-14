@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 class CodeSetTest {
 
   private static final String MONDRIAN_ERROR_NO_GENERIC_VARIANT =
-      "Mondrian Error:Internal error: View has no 'generic' variant";
+      "Internal error: View has no 'generic' variant";
   private static final String POSTGRESQL_DIALECT = "postgresql";
   private static final String SQL_CODE_FOR_POSTGRESQL_DIALECT =
       "Code for dialect='postgresql'";

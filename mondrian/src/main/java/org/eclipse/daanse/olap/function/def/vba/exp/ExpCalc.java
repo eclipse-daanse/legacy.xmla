@@ -18,6 +18,8 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
 
+import mondrian.olap.Util;
+
 public class ExpCalc extends AbstractProfilingNestedDoubleCalc {
 
     protected ExpCalc(Type type, final DoubleCalc numberCalc) {
@@ -27,6 +29,9 @@ public class ExpCalc extends AbstractProfilingNestedDoubleCalc {
     @Override
     public Double evaluate(Evaluator evaluator) {
         Double number = getChildCalc(0, DoubleCalc.class).evaluate(evaluator);
+        if (Util.DOUBLE_NULL.equals(number)) {
+            return null;
+        }
         return Math.exp(number);
     }
 
