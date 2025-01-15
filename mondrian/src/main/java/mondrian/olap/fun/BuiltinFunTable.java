@@ -11,11 +11,6 @@
 */
 package mondrian.olap.fun;
 
-import org.eclipse.daanse.olap.api.function.FunctionDefinition;
-import org.eclipse.daanse.olap.function.def.excel.ExcelTodo;
-
-import mondrian.olap.fun.vba.Vba;
-
 /**
  * <code>BuiltinFunTable</code> contains a list of all built-in MDX functions.
  *
@@ -42,10 +37,6 @@ public class BuiltinFunTable extends FunTableImpl {
     @Override
 	public void defineFunctions(FunctionTableCollector builder) {
         // Define VBA functions.
-        for (FunctionDefinition funDef : JavaFunDef.scan(Vba.class)) {
-            builder.define(funDef);
-        }
-
 
     }
 

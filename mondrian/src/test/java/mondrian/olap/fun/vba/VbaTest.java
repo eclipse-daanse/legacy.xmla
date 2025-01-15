@@ -9,24 +9,27 @@
 package mondrian.olap.fun.vba;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.TimeZone;
 
+import org.eclipse.daanse.olap.function.def.vba.fv.FVCalc;
+import org.eclipse.daanse.olap.function.def.vba.ipmt.IPmtCalc;
+import org.eclipse.daanse.olap.function.def.vba.irr.IRRCalc;
+import org.eclipse.daanse.olap.function.def.vba.mirr.MIRRCalc;
+import org.eclipse.daanse.olap.function.def.vba.npv.NPVCalc;
+import org.eclipse.daanse.olap.function.def.vba.pmt.PmtCalc;
+import org.eclipse.daanse.olap.function.def.vba.pv.PVCalc;
+import org.eclipse.daanse.olap.function.def.vba.space.SpaceCalc;
+import org.eclipse.daanse.olap.function.def.vba.strcomp.StrCompCalc;
+import org.eclipse.daanse.olap.function.def.vba.string.StringCalc;
+import org.eclipse.daanse.olap.function.def.vba.strreverse.StrReverseCalc;
+import org.eclipse.daanse.olap.function.def.vba.trim.TrimCalc;
+import org.eclipse.daanse.olap.function.def.vba.weekdayname.WeekdayNameCalc;
 import org.junit.jupiter.api.Test;
-
-import mondrian.olap.InvalidArgumentException;
-import mondrian.util.Bug;
 
 /**
  * Unit tests for implementations of Visual Basic for Applications (VBA)
@@ -803,7 +806,7 @@ class VbaTest   {
         y = 2;
         p = 7;
         t = true;
-        f = Vba.fV(r, n, y, p, t);
+        f = FVCalc.fV(r, n, y, p, t);
         x = -13;
         assertEquals(x, f);
 
@@ -812,7 +815,7 @@ class VbaTest   {
         y = 100;
         p = 10000;
         t = false;
-        f = Vba.fV(r, n, y, p, t);
+        f = FVCalc.fV(r, n, y, p, t);
         x = -10342300;
         assertEquals(x, f);
 
@@ -821,7 +824,7 @@ class VbaTest   {
         y = 100;
         p = 10000;
         t = true;
-        f = Vba.fV(r, n, y, p, t);
+        f = FVCalc.fV(r, n, y, p, t);
         x = -10444600;
         assertEquals(x, f);
 
@@ -830,7 +833,7 @@ class VbaTest   {
         y = 120;
         p = 12000;
         t = false;
-        f = Vba.fV(r, n, y, p, t);
+        f = FVCalc.fV(r, n, y, p, t);
         x = -6409178400d;
         assertEquals(x, f);
 
@@ -839,7 +842,7 @@ class VbaTest   {
         y = 120;
         p = 12000;
         t = true;
-        f = Vba.fV(r, n, y, p, t);
+        f = FVCalc.fV(r, n, y, p, t);
         x = -6472951200d;
         assertEquals(x, f);
 
@@ -849,7 +852,7 @@ class VbaTest   {
         y = 13000;
         p = -4406.78544294496;
         t = false;
-        f = Vba.fV(r, n, y, p, t);
+        f = FVCalc.fV(r, n, y, p, t);
         x = 333891.230010986; // as returned by excel
         assertEquals(x, f, 1e-2);
 
@@ -858,38 +861,38 @@ class VbaTest   {
         y = 13000;
         p = -17406.7852148156;
         t = true;
-        f = Vba.fV(r, n, y, p, t);
+        f = FVCalc.fV(r, n, y, p, t);
         x = 333891.230102539; // as returned by excel
         assertEquals(x, f, 1e-2);
     }
 
     @Test
     void testNpv() {
-        double r, v[], npv, x;
-
+        double r, npv, x;
+        Double v[];
         r = 1;
-        v = new double[] {100, 200, 300, 400};
-        npv = Vba.nPV(r, v);
+        v = new Double[] {100d, 200d, 300d, 400d};
+        npv = NPVCalc.nPV(r, v);
         x = 162.5;
         assertEquals(x, npv);
 
         r = 2.5;
-        v = new double[] {1000, 666.66666, 333.33, 12.2768416};
-        npv = Vba.nPV(r, v);
+        v = new Double[] {1000d, 666.66666, 333.33, 12.2768416};
+        npv = NPVCalc.nPV(r, v);
         x = 347.99232604144827;
         assertEquals(x, npv, SMALL);
 
         r = 12.33333;
-        v = new double[] {1000, 0, -900, -7777.5765};
-        npv = Vba.nPV(r, v);
+        v = new Double[] {1000d, 0d, -900d, -7777.5765};
+        npv = NPVCalc.nPV(r, v);
         x = 74.3742433377061;
         assertEquals(x, npv, 1e-12);
 
         r = 0.05;
-        v = new double[] {
-            200000, 300000.55, 400000, 1000000, 6000000, 7000000, -300000
+        v = new Double[] {
+            200000d, 300000.55, 400000d, 1000000d, 6000000d, 7000000d, -300000d
         };
-        npv = Vba.nPV(r, v);
+        npv = NPVCalc.nPV(r, v);
         x = 11342283.4233124;
         assertEquals(x, npv, 1e-8);
     }
@@ -897,7 +900,7 @@ class VbaTest   {
     @Test
     void testPmt() {
         double f, r, y, p, x;
-        int n;
+        double n;
         boolean t;
 
         r = 0;
@@ -905,7 +908,7 @@ class VbaTest   {
         p = 2;
         f = 7;
         t = true;
-        y = Vba.pmt(r, n, p, f, t);
+        y = PmtCalc.pmt(r, n, p, f, t);
         x = -3;
         assertEquals(x, y);
 
@@ -915,7 +918,7 @@ class VbaTest   {
         p = -109.66796875;
         f = 10000;
         t = false;
-        y = Vba.pmt(r, n, p, f, t);
+        y = PmtCalc.pmt(r, n, p, f, t);
         x = 100;
         assertEquals(x, y);
 
@@ -924,7 +927,7 @@ class VbaTest   {
         p = -209.5703125;
         f = 10000;
         t = true;
-        y = Vba.pmt(r, n, p, f, t);
+        y = PmtCalc.pmt(r, n, p, f, t);
         x = 100;
         assertEquals(x, y);
 
@@ -934,7 +937,7 @@ class VbaTest   {
         f = -6409178400d;
         p = 12000;
         t = false;
-        y = Vba.pmt(r, n, p, f, t);
+        y = PmtCalc.pmt(r, n, p, f, t);
         x = 120;
         assertEquals(x, y);
 
@@ -943,7 +946,7 @@ class VbaTest   {
         f = -6472951200d;
         p = 12000;
         t = true;
-        y = Vba.pmt(r, n, p, f, t);
+        y = PmtCalc.pmt(r, n, p, f, t);
         x = 120;
         assertEquals(x, y);
     }
@@ -959,7 +962,7 @@ class VbaTest   {
         y = 2;
         f = 7;
         t = true;
-        f = Vba.pV(r, n, y, f, t);
+        f = PVCalc.pV(r, n, y, f, t);
         x = -13;
         assertEquals(x, f);
 
@@ -968,7 +971,7 @@ class VbaTest   {
         y = 100;
         f = 10000;
         t = false;
-        p = Vba.pV(r, n, y, f, t);
+        p = PVCalc.pV(r, n, y, f, t);
         x = -109.66796875;
         assertEquals(x, p);
 
@@ -977,7 +980,7 @@ class VbaTest   {
         y = 100;
         f = 10000;
         t = true;
-        p = Vba.pV(r, n, y, f, t);
+        p = PVCalc.pV(r, n, y, f, t);
         x = -209.5703125;
         assertEquals(x, p);
 
@@ -986,7 +989,7 @@ class VbaTest   {
         y = 13000;
         f = 333891.23;
         t = false;
-        p = Vba.pV(r, n, y, f, t);
+        p = PVCalc.pV(r, n, y, f, t);
         x = -4406.78544294496;
         assertEquals(x, p, 1e-10);
 
@@ -995,7 +998,7 @@ class VbaTest   {
         y = 13000;
         f = 333891.23;
         t = true;
-        p = Vba.pV(r, n, y, f, t);
+        p = PVCalc.pV(r, n, y, f, t);
         x = -17406.7852148156;
         assertEquals(x, p, 1e-10);
 
@@ -1005,7 +1008,7 @@ class VbaTest   {
         y = 120;
         f = -6409178400d;
         t = false;
-        p = Vba.pV(r, n, y, f, t);
+        p = PVCalc.pV(r, n, y, f, t);
         x = 12000;
         assertEquals(x, p);
 
@@ -1014,7 +1017,7 @@ class VbaTest   {
         y = 120;
         f = -6472951200d;
         t = true;
-        p = Vba.pV(r, n, y, f, t);
+        p = PVCalc.pV(r, n, y, f, t);
         x = 12000;
         assertEquals(x, p);
     }
@@ -1062,40 +1065,40 @@ class VbaTest   {
 */
     @Test
     void testIRR() {
-        double vals[] = {-1000, 50, 50, 50, 50, 50, 1050};
-        assertTrue(Math.abs(0.05 - Vba.irr(vals, 0.1)) < 0.0000001);
+        Double vals[] = {-1000d, 50d, 50d, 50d, 50d, 50d, 1050d};
+        assertTrue(Math.abs(0.05 - IRRCalc.irr(vals, 0.1)) < 0.0000001);
 
-        vals = new double[] {-1000, 200, 200, 200, 200, 200, 200};
-        assertTrue(Math.abs(0.05471796 - Vba.irr(vals, 0.1)) < 0.0000001);
+        vals = new Double[] {-1000d, 200d, 200d, 200d, 200d, 200d, 200d};
+        assertTrue(Math.abs(0.05471796 - IRRCalc.irr(vals, 0.1)) < 0.0000001);
 
         // what happens if the numbers are inversed? this may not be
         // accurate
 
-        vals = new double[] {1000, -200, -200, -200, -200, -200, -200};
-        assertTrue(Math.abs(0.05471796 - Vba.irr(vals, 0.1)) < 0.0000001);
+        vals = new Double[] {1000d, -200d, -200d, -200d, -200d, -200d, -200d};
+        assertTrue(Math.abs(0.05471796 - IRRCalc.irr(vals, 0.1)) < 0.0000001);
     }
 
     @Test
     void testMIRR() {
-        double vals[] = {-1000, 50, 50, 50, 50, 50, 1050};
-        assertTrue(Math.abs(0.05 - Vba.mirr(vals, 0.05, 0.05)) < 0.0000001);
+        Double vals[] = {-1000d, 50d, 50d, 50d, 50d, 50d, 1050d};
+        assertTrue(Math.abs(0.05 - MIRRCalc.mirr(vals, 0.05, 0.05)) < 0.0000001);
 
-        vals = new double[] {-1000, 200, 200, 200, 200, 200, 200};
+        vals = new Double[] {-1000d, 200d, 200d, 200d, 200d, 200d, 200d};
         assertTrue(
-            Math.abs(0.05263266 - Vba.mirr(vals, 0.05, 0.05)) < 0.0000001);
+            Math.abs(0.05263266 - MIRRCalc.mirr(vals, 0.05, 0.05)) < 0.0000001);
 
-        vals = new double[] {-1000, 200, 200, 200, 200, 200, 200};
+        vals = new Double[] {-1000d, 200d, 200d, 200d, 200d, 200d, 200d};
         assertTrue(
-            Math.abs(0.04490701 - Vba.mirr(vals, 0.06, 0.04)) < 0.0000001);
+            Math.abs(0.04490701 - MIRRCalc.mirr(vals, 0.06, 0.04)) < 0.0000001);
     }
 
     @Test
     void testIPmt() {
-        assertEquals(-10000.0, Vba.iPmt(0.10, 1, 30, 100000, 0, false));
+        assertEquals(-10000.0, IPmtCalc.iPmt(0.10, 1, 30, 100000, 0, false));
         assertEquals(
-            -2185.473324557822, Vba.iPmt(0.10, 15, 30, 100000, 0, false));
+            -2185.473324557822, IPmtCalc.iPmt(0.10, 15, 30, 100000, 0, false));
         assertEquals(
-            -60.79248252633988, Vba.iPmt(0.10, 30, 30, 100000, 0, false));
+            -60.79248252633988, IPmtCalc.iPmt(0.10, 30, 30, 100000, 0, false));
     }
 
 /*
@@ -1180,9 +1183,9 @@ class VbaTest   {
 */
     @Test
     void testStrComp() {
-        assertEquals(-1, Vba.strComp("a", "b", 0));
-        assertEquals(0, Vba.strComp("a", "a", 0));
-        assertEquals(1, Vba.strComp("b", "a", 0));
+        assertEquals(-1, StrCompCalc.strComp("a", "b", 0));
+        assertEquals(0, StrCompCalc.strComp("a", "a", 0));
+        assertEquals(1, StrCompCalc.strComp("b", "a", 0));
     }
 /*
     @Test
@@ -1501,10 +1504,10 @@ class VbaTest   {
 */
     @Test
     void testSpace() {
-        assertEquals("   ", Vba.space(3));
-        assertEquals("", Vba.space(0));
+        assertEquals("   ", SpaceCalc.space(3));
+        assertEquals("", SpaceCalc.space(0));
         try {
-            String s = Vba.space(-2);
+            String s = SpaceCalc.space(-2);
             fail("expected error, got " + s);
         } catch (RuntimeException e) {
             assertMessage(e, "NegativeArraySizeException");
@@ -1513,33 +1516,33 @@ class VbaTest   {
 
     @Test
     void testString() {
-        assertEquals("xxx", Vba.string(3, 'x'));
-        assertEquals("", Vba.string(0, 'y'));
+        assertEquals("xxx", StringCalc.string(3, 'x'));
+        assertEquals("", StringCalc.string(0, 'y'));
         try {
-            String s = Vba.string(-2, 'z');
+            String s = StringCalc.string(-2, 'z');
             fail("expected error, got " + s);
         } catch (RuntimeException e) {
             assertMessage(e, "NegativeArraySizeException");
         }
-        assertEquals("", Vba.string(100, '\0'));
+        assertEquals("", StringCalc.string(100, '\0'));
     }
 
     @Test
     void testStrReverse() {
         // odd length
-        assertEquals("cba", Vba.strReverse("abc"));
+        assertEquals("cba", StrReverseCalc.strReverse("abc"));
         // even length
-        assertEquals("wxyz", Vba.strReverse("zyxw"));
+        assertEquals("wxyz", StrReverseCalc.strReverse("zyxw"));
         // zero length
-        assertEquals("", Vba.strReverse(""));
+        assertEquals("", StrReverseCalc.strReverse(""));
     }
 
     @Test
     void testTrim() {
-        assertEquals("", Vba.trim(""));
-        assertEquals("", Vba.trim("  "));
-        assertEquals("abc", Vba.trim("abc"));
-        assertEquals("abc", Vba.trim(" \n\tabc  \r"));
+        assertEquals("", TrimCalc.trim(""));
+        assertEquals("", TrimCalc.trim("  "));
+        assertEquals("abc", TrimCalc.trim("abc"));
+        assertEquals("abc", TrimCalc.trim(" \n\tabc  \r"));
     }
 
     @Test
@@ -1548,30 +1551,30 @@ class VbaTest   {
         // then day 1 is Sunday,
         // then day 2 is Monday,
         // and day 7 is Saturday
-        assertEquals("Sunday", Vba.weekdayName(1, false, 1));
-        assertEquals("Monday", Vba.weekdayName(2, false, 1));
-        assertEquals("Saturday", Vba.weekdayName(7, false, 1));
-        assertEquals("Sat", Vba.weekdayName(7, true, 1));
+        assertEquals("Sunday", WeekdayNameCalc.weekdayName(1, false, 1));
+        assertEquals("Monday", WeekdayNameCalc.weekdayName(2, false, 1));
+        assertEquals("Saturday", WeekdayNameCalc.weekdayName(7, false, 1));
+        assertEquals("Sat", WeekdayNameCalc.weekdayName(7, true, 1));
 
         // If Monday (2) is the first day of the week
         // then day 1 is Monday,
         // and day 7 is Sunday
-        assertEquals("Monday", Vba.weekdayName(1, false, 2));
-        assertEquals("Sunday", Vba.weekdayName(7, false, 2));
+        assertEquals("Monday", WeekdayNameCalc.weekdayName(1, false, 2));
+        assertEquals("Sunday", WeekdayNameCalc.weekdayName(7, false, 2));
 
         // Use weekday start from locale. Test for the 2 most common.
         switch (Calendar.getInstance().getFirstDayOfWeek()) {
         case Calendar.SUNDAY:
-            assertEquals("Sunday", Vba.weekdayName(1, false, 0));
-            assertEquals("Monday", Vba.weekdayName(2, false, 0));
-            assertEquals("Saturday", Vba.weekdayName(7, false, 0));
-            assertEquals("Sat", Vba.weekdayName(7, true, 0));
+            assertEquals("Sunday", WeekdayNameCalc.weekdayName(1, false, 0));
+            assertEquals("Monday", WeekdayNameCalc.weekdayName(2, false, 0));
+            assertEquals("Saturday", WeekdayNameCalc.weekdayName(7, false, 0));
+            assertEquals("Sat", WeekdayNameCalc.weekdayName(7, true, 0));
             break;
         case Calendar.MONDAY:
-            assertEquals("Monday", Vba.weekdayName(1, false, 0));
-            assertEquals("Tuesday", Vba.weekdayName(2, false, 0));
-            assertEquals("Sunday", Vba.weekdayName(7, false, 0));
-            assertEquals("Sun", Vba.weekdayName(7, true, 0));
+            assertEquals("Monday", WeekdayNameCalc.weekdayName(1, false, 0));
+            assertEquals("Tuesday", WeekdayNameCalc.weekdayName(2, false, 0));
+            assertEquals("Sunday", WeekdayNameCalc.weekdayName(7, false, 0));
+            assertEquals("Sun", WeekdayNameCalc.weekdayName(7, true, 0));
             break;
         }
     }

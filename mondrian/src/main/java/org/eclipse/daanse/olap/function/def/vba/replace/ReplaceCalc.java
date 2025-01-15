@@ -29,11 +29,11 @@ public class ReplaceCalc extends AbstractProfilingNestedStringCalc {
     @Override
     public String evaluate(Evaluator evaluator) {
         String expression = getChildCalc(0, StringCalc.class).evaluate(evaluator);
-        String find = getChildCalc(0, StringCalc.class).evaluate(evaluator);
-        String replace = getChildCalc(0, StringCalc.class).evaluate(evaluator);
-        Integer start = getChildCalc(1, IntegerCalc.class).evaluate(evaluator);
-        Integer count = getChildCalc(1, IntegerCalc.class).evaluate(evaluator);
-        Integer compare = getChildCalc(1, IntegerCalc.class).evaluate(evaluator); // compare is currently ignored
+        String find = getChildCalc(1, StringCalc.class).evaluate(evaluator);
+        String replace = getChildCalc(2, StringCalc.class).evaluate(evaluator);
+        Integer start = getChildCalc(3, IntegerCalc.class).evaluate(evaluator);
+        Integer count = getChildCalc(4, IntegerCalc.class).evaluate(evaluator);
+        Integer compare = getChildCalc(5, IntegerCalc.class).evaluate(evaluator); // compare is currently ignored
         return replace(expression, find, replace, start, count);
     }
 

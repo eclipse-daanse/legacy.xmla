@@ -15,20 +15,18 @@ package org.eclipse.daanse.olap.function.def.vba.irr;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.BooleanCalc;
+import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
 
 public class IRRCalc extends AbstractProfilingNestedDoubleCalc {
-    protected IRRCalc(Type type, DoubleCalc rateCalc, DoubleCalc nPerCalc, DoubleCalc pmtCalc, DoubleCalc pvCalc,
-            BooleanCalc typeCalc) {
-        super(type, rateCalc, nPerCalc, pmtCalc, pvCalc, typeCalc);
+    protected IRRCalc(Type type, Calc<?> valueArray, DoubleCalc guess) {
+        super(type, valueArray, guess);
     }
 
     @Override
     public Double evaluate(Evaluator evaluator) {
-        //TODO
-        Double[] valueArray = {};
+        Double[] valueArray = (Double[]) getChildCalc(0).evaluate(evaluator);
         Double guess = getChildCalc(1, DoubleCalc.class).evaluate(evaluator);
         
 

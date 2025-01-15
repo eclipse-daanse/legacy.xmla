@@ -40,6 +40,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
+import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.function.core.FunctionPrinter;
@@ -73,7 +74,7 @@ import mondrian.util.Bug;
 public class FunctionTest {//extends FoodMartTestCase {
 
   private static final Logger LOGGER = LoggerFactory.getLogger( FunctionTest.class );
-  private static final int NUM_EXPECTED_FUNCTIONS = 46;
+  private static final int NUM_EXPECTED_FUNCTIONS = 301;
 
   public static final String[] AllHiers = {
           "[Measures]",
@@ -1194,66 +1195,11 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
    * implemented functions into a file called "functions.html". You can manually include that table in the <a
    * href="{@docRoot}/../mdx.html">MDX specification</a>.
    */
-  @Test
-  void testDumpFunctions() throws IOException {
-    final List<FunctionMetaData> functionMetaDatas = new ArrayList<>(BuiltinFunTable.instance().getFunctionMetaDatas());
-
-    // Add some UDFs.
-//    functionMetaDatas.add(
-//      new FunInfo(
-//        new UdfResolver(
-//          new UdfResolver.ClassUdfFactory(
-//            CurrentDateMemberExactUdf.class,
-//            null ) ) ) );
-//    functionMetaDatas.add(
-//      new FunInfo(
-//        new UdfResolver(
-//          new UdfResolver.ClassUdfFactory(
-//            CurrentDateMemberUdf.class,
-//            null ) ) ) );
-//    functionMetaDatas.add(
-//      new FunInfo(
-//        new UdfResolver(
-//          new UdfResolver.ClassUdfFactory(
-//            CurrentDateStringUdf.class,
-//            null ) ) ) );
-//    Collections.sort( functionMetaDatas );
-
-    final File file = new File( "functions.html" );
-    final FileOutputStream os = new FileOutputStream( file );
-    final PrintWriter pw = new PrintWriter( os );
-    pw.println( "<table border='1'>" );
-    pw.println( "<tr>" );
-    pw.println( "<td><b>Name</b></td>" );
-    pw.println( "<td><b>Description</b></td>" );
-    pw.println( "</tr>" );
-    for ( FunctionMetaData funInfo : functionMetaDatas ) {
-      pw.println( "<tr>" );
-      pw.print( "  <td valign=top><code>" );
-      printHtml( pw, funInfo.operationAtom().name() );
-      pw.println( "</code></td>" );
-      pw.print( "  <td>" );
-      if ( funInfo.description() != null ) {
-        printHtml( pw, funInfo.description() );
-      }
-      pw.println();
-      final String signature = funInfo.signature();
-			pw.println("    <h1>Syntax</h1>");
-
-			String newSig=FunctionPrinter.getSignature(funInfo);
-			pw.print("    ");
-			printHtml(pw,"old: "+signature);
-			pw.print("    ");
-			printHtml(pw,"new: "+newSig);
-
-			pw.println();
-
-      pw.println( "  </td>" );
-      pw.println( "</tr>" );
-    }
-    pw.println( "</table>" );
-    pw.close();
-    assertEquals( NUM_EXPECTED_FUNCTIONS, functionMetaDatas.size() );
+  @ParameterizedTest
+  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+  void testDumpFunctions(Context context) throws IOException {
+    FunctionService functionService = context.getFunctionService();
+    assertEquals( NUM_EXPECTED_FUNCTIONS, functionService.getResolvers().size() );
 
   }
 

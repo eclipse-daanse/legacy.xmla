@@ -15,13 +15,10 @@ package org.eclipse.daanse.olap.function.def.vba.irr;
 
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
-import org.eclipse.daanse.olap.api.type.BooleanType;
 import org.eclipse.daanse.olap.api.type.NumericType;
-import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
-import org.eclipse.daanse.olap.calc.base.constant.ConstantBooleanCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantDoubleCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
@@ -34,25 +31,16 @@ public class IRRFunDef  extends AbstractFunctionDefinition {
 
     @Override
     public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
-        final DoubleCalc rateCalc = compiler.compileDouble(call.getArg(0));
-        final DoubleCalc nPerCalc = compiler.compileDouble(call.getArg(1));
-        final DoubleCalc pmtCalc = compiler.compileDouble(call.getArg(2));
-        DoubleCalc pvCalc = null;
-        BooleanCalc typeCalc = null;
-        if (call.getArgCount() == 3) {
-            pvCalc = new ConstantDoubleCalc(NumericType.INSTANCE, 0d);
-            typeCalc = new ConstantBooleanCalc(BooleanType.INSTANCE, false);
+        final Calc<?> valueArrayCalc = compiler.compileScalar(call.getArg(0), false);
+        DoubleCalc guessCalc = null;
+        if (call.getArgCount() == 1) {
+            guessCalc = new ConstantDoubleCalc(NumericType.INSTANCE, 0.10);
         }
-        if (call.getArgCount() == 4) {
-            pvCalc = compiler.compileDouble(call.getArg(3));
-            typeCalc = new ConstantBooleanCalc(BooleanType.INSTANCE, false);
-        }
-        if (call.getArgCount() == 5) {
-            pvCalc = compiler.compileDouble(call.getArg(3));
-            typeCalc = compiler.compileBoolean(call.getArg(4));
+        if (call.getArgCount() == 2) {
+            guessCalc = compiler.compileDouble(call.getArg(1));
         }
 
-        return new IRRCalc(call.getType(), rateCalc, nPerCalc, pmtCalc, pvCalc, typeCalc);
+        return new IRRCalc(call.getType(), valueArrayCalc, guessCalc);
     }
 
 }

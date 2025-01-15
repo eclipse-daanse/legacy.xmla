@@ -27,7 +27,7 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class ReplaceResolver extends AbstractFunctionDefinitionMultiResolver {
 
-    private static FunctionOperationAtom atom = new FunctionOperationAtom("ReplaceResolver.java");
+    private static FunctionOperationAtom atom = new FunctionOperationAtom("Replace");
     private static String SIGNATURE = "Replace(expression, find, replace[, start[, count[, compare]]])";
     private static String DESCRIPTION = """
         Returns a string in which a specified substring has been replaced

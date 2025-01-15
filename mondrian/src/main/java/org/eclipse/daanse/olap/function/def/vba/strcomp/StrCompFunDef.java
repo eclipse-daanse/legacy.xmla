@@ -11,34 +11,39 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.vba.mid;
+package org.eclipse.daanse.olap.function.def.vba.strcomp;
 
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.type.DecimalType;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.calc.base.constant.ConstantIntegerCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
-public class MidFunDef  extends AbstractFunctionDefinition {
+public class StrCompFunDef  extends AbstractFunctionDefinition {
 
 
-    public MidFunDef(FunctionMetaData functionMetaData) {
+    public StrCompFunDef(FunctionMetaData functionMetaData) {
         super(functionMetaData);
     }
 
     @Override
     public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
-        final StringCalc valueCalc = compiler.compileString(call.getArg(0));
-        final IntegerCalc beginIndexCalc = compiler.compileInteger(call.getArg(1));
+        final StringCalc string1Calc = compiler.compileString(call.getArg(0));
+        final StringCalc string2Calc = compiler.compileString(call.getArg(1));
 
-        IntegerCalc lengthCalc = null;
+        IntegerCalc compareCalc = null;
+        if (call.getArgCount() == 2) {
+            compareCalc = new ConstantIntegerCalc(new DecimalType(Integer.MAX_VALUE, 0), 0);
+        }
         if (call.getArgCount() == 3) {
-            lengthCalc = compiler.compileInteger(call.getArg(2));
+            compareCalc = compiler.compileInteger(call.getArg(2));;
         }
 
-        return new MidCalc(call.getType(), valueCalc, beginIndexCalc, lengthCalc);
+        return new StrCompCalc(call.getType(), string1Calc, string2Calc, compareCalc);
     }
 
 }

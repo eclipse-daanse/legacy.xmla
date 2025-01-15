@@ -15,24 +15,30 @@ package org.eclipse.daanse.olap.function.def.vba.mid;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
-import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
 
 import mondrian.olap.InvalidArgumentException;
 
 public class MidCalc extends AbstractProfilingNestedStringCalc {
+    private final IntegerCalc lengthCalc;
     protected MidCalc(final Type type, final StringCalc valueCalc, final IntegerCalc beginIndexCalc, final IntegerCalc lengthCalc) {
         super(type, valueCalc, beginIndexCalc, lengthCalc);
+        this.lengthCalc = lengthCalc;
     }
 
     @Override
     public String evaluate(Evaluator evaluator) {
         String value = getChildCalc(0, StringCalc.class).evaluate(evaluator);
         Integer beginIndex = getChildCalc(1, IntegerCalc.class).evaluate(evaluator);
-        Integer length = getChildCalc(2, IntegerCalc.class).evaluate(evaluator);
+        Integer length;
+        if (lengthCalc != null) {
+            length = getChildCalc(2, IntegerCalc.class).evaluate(evaluator);
+        } else {
+            length = value.length();
+        }
+        
         return mid(value, beginIndex, length);
 
     }

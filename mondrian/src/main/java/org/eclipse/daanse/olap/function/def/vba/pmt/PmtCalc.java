@@ -33,6 +33,11 @@ public class PmtCalc extends AbstractProfilingNestedDoubleCalc {
         Double fv = getChildCalc(3, DoubleCalc.class).evaluate(evaluator);
         Boolean due = getChildCalc(3, BooleanCalc.class).evaluate(evaluator);
         
+        return pmt(rate, nPer, pv, fv, due);
+    }
+
+    public static double pmt(Double rate, Double nPer, Double pv, Double fv, Boolean due) {
+        
         if (rate == 0) {
             return -(fv + pv) / nPer;
         } else {

@@ -19,7 +19,6 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
 
 import mondrian.olap.InvalidArgumentException;
-import mondrian.olap.fun.vba.Vba;
 
 public class ModCalc extends AbstractProfilingNestedDoubleCalc {
 
@@ -53,7 +52,22 @@ public class ModCalc extends AbstractProfilingNestedDoubleCalc {
         if (iSecond == 0) {
             throw new ArithmeticException("/ by zero");
         }
-        return iFirst - iSecond * Vba.intNative(iFirst / iSecond);
+        return iFirst - iSecond * intNative(iFirst / iSecond);
+    }
+
+    /**
+     * Equivalent of the {@link #toInt} function on the native 'double' type.
+     * Not an MDX function.
+     *
+     * @param dv Double value
+     * @return Value rounded towards negative infinity
+     */
+    public static int intNative(double dv) {
+        int v = (int) dv;
+        if (v < 0 && v > dv) {
+            v--;
+        }
+        return v;
     }
 
 }

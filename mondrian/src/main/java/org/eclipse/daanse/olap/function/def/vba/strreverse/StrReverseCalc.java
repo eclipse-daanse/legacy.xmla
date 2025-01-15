@@ -11,32 +11,33 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.vba.left;
+package org.eclipse.daanse.olap.function.def.vba.strreverse;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.IntegerCalc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
 
-public class LeftCalc extends AbstractProfilingNestedStringCalc {
+public class StrReverseCalc extends AbstractProfilingNestedStringCalc {
 
-    protected LeftCalc(Type type, final StringCalc strCalc, final IntegerCalc lengthCalc) {
-        super(type, strCalc, lengthCalc);
+    protected StrReverseCalc(Type type, final StringCalc stringCalc) {
+        super(type, stringCalc);
     }
 
     @Override
     public String evaluate(Evaluator evaluator) {
         String string = getChildCalc(0, StringCalc.class).evaluate(evaluator);
-        Integer length = getChildCalc(1, IntegerCalc.class).evaluate(evaluator);
-        return left(string, length);
+        return strReverse(string);
     }
 
-    public static String left(String string, int length) {
-        final int stringLength = string.length();
-        if (length >= stringLength) {
-            return string;
+    public static String strReverse(String expression) {
+        final char[] chars = expression.toCharArray();
+        for (int i = 0, j = chars.length - 1; i < j; i++, j--) {
+            char c = chars[i];
+            chars[i] = chars[j];
+            chars[j] = c;
         }
-        return string.substring(0, length);
+        return new String(chars);
     }
+
 }
