@@ -1,19 +1,26 @@
 <configuration>
 
-  <import
-    class="ch.qos.logback.classic.jul.LevelChangePropagator" />
-  <contextListener class="LevelChangePropagator">
-    <resetJUL>true</resetJUL>
-  </contextListener>
+	<import
+		class="ch.qos.logback.classic.jul.LevelChangePropagator" />
+	<contextListener class="LevelChangePropagator">
+		<resetJUL>true</resetJUL>
+	</contextListener>
 
-  <appender name="STDOUT"
-    class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>%-5level %logger{36} - %msg%n</pattern>
-    </encoder>
-  </appender>
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
 
-  <root level="DEBUG">
-    <appender-ref ref="STDOUT" />
-  </root>
+	<!-- Logger für AbstractSoapServlet explizit auf DEBUG setzen -->
+	<logger name="org.eclipse.daanse.jakarta.servlet.soap.AbstractSoapServlet"
+		level="DEBUG" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<!-- Standardlevel für alle anderen Klassen auf WARN -->
+	<root level="WARN">
+		<appender-ref ref="STDOUT" />
+	</root>
 </configuration>

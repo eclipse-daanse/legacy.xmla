@@ -1,20 +1,12 @@
 package org.eclipse.daanse.demo.server.play;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.nio.file.Paths;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.eclipse.daanse.io.fs.watcher.api.FileSystemWatcherWhiteboardConstants;
-import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.api.query.component.Query;
-import org.eclipse.daanse.olap.api.query.component.QueryComponent;
-import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.core.BasicContextGroup;
-import org.eclipse.daanse.olap.impl.RectangularCellSetFormatter;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.cm.annotations.RequireConfigurationAdmin;
@@ -22,9 +14,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 import org.osgi.service.component.annotations.RequireServiceComponentRuntime;
 
 @Component(immediate = true)
@@ -91,9 +80,7 @@ public class DemoSetup {
 
 	private void initContext() throws IOException {
 
-		String PATH_TO_OBSERVE = "./../activeCatalogs";
-
-//		String PATH_TO_OBSERVE = "./../../../../../activeCatalogs";
+		String PATH_TO_OBSERVE = "./catalogs";
 
 		String path = Paths.get(PATH_TO_OBSERVE).toAbsolutePath().normalize().toString();
 
