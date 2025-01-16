@@ -39,8 +39,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
 import org.osgi.service.component.annotations.ServiceScope;
 
-import mondrian.olap.fun.FunTableImpl.FunctionAtomCompareKey;
-import mondrian.olap.fun.GlobalFunTable;
+import mondrian.olap.fun.FunctionAtomCompareKey;
 
 //@Designate(ocd = Config.class, factory = true)
 @Component(service = FunctionService.class, scope = ServiceScope.SINGLETON)
@@ -61,10 +60,6 @@ public class FunctionServiceImpl implements FunctionService {
 
 	@Activate
 	public FunctionServiceImpl(Map<String, Object> configuration) {
-
-		GlobalFunTable	oldfunctiontable = GlobalFunTable.instance();
-		oldfunctiontable.init();
-		addResolvers(oldfunctiontable.getResolvers());
 
 	}
 

@@ -1,11 +1,10 @@
 package org.eclipse.daanse.olap.function.def.parameter;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
-import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
@@ -22,8 +21,6 @@ import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractMetaDataMultiResolver;
 import org.osgi.service.component.annotations.Component;
 
-import mondrian.olap.Util;
-import mondrian.olap.fun.BuiltinFunTable;
 import mondrian.olap.fun.FunUtil;
 
 /**
@@ -141,13 +138,13 @@ public class ParameterResolver extends AbstractMetaDataMultiResolver {
 
         // Default value
         Expression exp = args[2];
-        Validator validator = Util.createSimpleValidator(BuiltinFunTable.instance());
-        final List<Conversion> conversionList = new ArrayList<>();
-        String typeName = category.getName().toUpperCase();
-        if (!validator.canConvert(2, exp, category, conversionList)) {
-            throw FunUtil.newEvalException(functionMetaData, new StringBuilder("Default value of parameter '")
-                    .append(parameterName).append("' is inconsistent with its type, ").append(typeName).toString());
-        }
+        //Validator validator = Util.createSimpleValidator(BuiltinFunTable.instance());
+        //final List<Conversion> conversionList = new ArrayList<>();
+        //String typeName = category.getName().toUpperCase();
+        //if (!validator.canConvert(2, exp, category, conversionList)) {
+        //    throw FunUtil.newEvalException(functionMetaData, new StringBuilder("Default value of parameter '")
+        //            .append(parameterName).append("' is inconsistent with its type, ").append(typeName).toString());
+        //}
         if (exp.getCategory() == DataType.SET && category == DataType.MEMBER) {
             // Default value is a set; take this an indication that
             // the type is 'set of <member type>'.
