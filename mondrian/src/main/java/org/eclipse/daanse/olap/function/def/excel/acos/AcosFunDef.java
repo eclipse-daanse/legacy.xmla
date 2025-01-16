@@ -31,9 +31,8 @@ public class AcosFunDef  extends AbstractFunctionDefinition {
         Returns the arccosine, or inverse cosine, of a number. The arccosine
         is the angle whose cosine is Arg1. The returned angle is given in
         radians in the range 0 (zero) to pi.""";
-    static String signature = "Acos(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
+            DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
 
     public AcosFunDef() {
         super(functionMetaData);

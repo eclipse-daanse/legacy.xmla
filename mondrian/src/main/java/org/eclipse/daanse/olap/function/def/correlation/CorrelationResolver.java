@@ -27,14 +27,13 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class CorrelationResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Correlation");
-    private static String SIGNATURE = "Correlation(<Set>, <Numeric Expression>[, <Numeric Expression>])";
     private static String DESCRIPTION = "Returns the correlation of two series evaluated over a set.";
     // {"fnxn", "fnxnn"}
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR(DataType.SET),
                     new FunctionParameterR(DataType.NUMERIC) });
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR(DataType.SET),
                     new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.NUMERIC) });
 

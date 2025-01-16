@@ -30,9 +30,8 @@ public class DayFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Variant (Integer) specifying a whole number between 1 and
         31, inclusive, representing the day of the month.""";
-    static String signature = "Day(date)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
+            DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
 
     public DayFunDef() {
         super(functionMetaData);

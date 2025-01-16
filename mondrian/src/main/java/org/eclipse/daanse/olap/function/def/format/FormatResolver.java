@@ -27,7 +27,6 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class FormatResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Format");
-    private static String SIGNATURE = "Format(<Expression>, <String Expression>)";
     private static String DESCRIPTION = "Formats a number or date to a string.";
     private static FunctionParameterR[] mS = { new FunctionParameterR(DataType.MEMBER, "Value"), new FunctionParameterR(DataType.STRING, "Format") };
     private static FunctionParameterR[] nS = { new FunctionParameterR(DataType.NUMERIC, "Value"), new FunctionParameterR(DataType.STRING, "Format") };
@@ -35,11 +34,11 @@ public class FormatResolver extends AbstractFunctionDefinitionMultiResolver {
     // {"fSmS", "fSnS", "fSDS"}
 
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, mS);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, nS);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, DS);
 
     public FormatResolver() {

@@ -29,9 +29,8 @@ public class CoshFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("Cosh");
     static String description = """
         Returns the hyperbolic cosine of a number.""";
-    static String signature = "Cosh(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
+            DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
 
     public CoshFunDef() {
         super(functionMetaData);

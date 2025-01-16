@@ -19,7 +19,6 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
@@ -30,7 +29,8 @@ public class OrOperatorDef extends AbstractFunctionDefinition {
     // <Logical Expression> OR <Logical Expression>
     static InfixOperationAtom infixOperationAtom = new InfixOperationAtom("OR");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns the disjunction of two conditions.",
-            "<LOGICAL> OR <LOGICAL>", DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.LOGICAL ), new FunctionParameterR( DataType.LOGICAL )});
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.LOGICAL, "Condition1" ),
+                    new FunctionParameterR( DataType.LOGICAL, "Condition2" )});
 
     public OrOperatorDef() {
         super(functionMetaData);

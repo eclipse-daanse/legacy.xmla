@@ -29,9 +29,8 @@ public class NowFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Variant (Date) specifying the current date and time
         according your computer's system date and time.""";
-    static String signature = "Now()";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.DATE_TIME, new FunctionParameterR[] { });
+            DataType.DATE_TIME, new FunctionParameterR[] { });
 
     public NowFunDef() {
         super(functionMetaData);

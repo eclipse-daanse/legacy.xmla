@@ -27,19 +27,16 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class LinRegVarianceResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("LinRegVariance");
-    private static String SIGNATURE = "LinRegVariance(<Set>, <Numeric Expression>[, <Numeric Expression>])";
     private static String DESCRIPTION = "Calculates the linear regression of a set and returns the variance associated with the regression line y = ax + b.";
-    private static FunctionParameterR[] nxn = { new FunctionParameterR(DataType.NUMERIC),
-            new FunctionParameterR(DataType.SET), new FunctionParameterR(DataType.NUMERIC) };
-    private static FunctionParameterR[] nxnn = { new FunctionParameterR(DataType.NUMERIC),
-            new FunctionParameterR(DataType.SET), new FunctionParameterR(DataType.NUMERIC),
-            new FunctionParameterR(DataType.NUMERIC) };
-    // {"fnnxn", "fnnxnn"}
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC, "Y") };
+    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC, "Y"),
+            new FunctionParameterR(DataType.NUMERIC, "X") };
+    // {"fnxn", "fnxnn"}
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.NUMERIC, nxn);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.NUMERIC, nxnn);
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.NUMERIC, xn);
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.NUMERIC, xnn);
 
     public LinRegVarianceResolver() {
         super(List.of(new LinRegFunDef(functionMetaData, LinRegFunDef.VARIANCE),

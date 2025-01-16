@@ -32,11 +32,11 @@ public class YtdMultiResolver extends AbstractFunctionDefinitionMultiResolver {
 	private static OperationAtom atom = new FunctionOperationAtom("Ytd");
 
 	private static FunctionMetaData functionMetaDataWithMember = new FunctionMetaDataR(atom,
-			"A shortcut function for the PeriodsToDate function that specifies the level to be Year.", "Ytd(<Member>)",
-			DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
+			"A shortcut function for the PeriodsToDate function that specifies the level to be Year.",
+			DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER, "Member" ) });
 
 	private static FunctionMetaData functionMetaDataWithoutMember = new FunctionMetaDataR(atom,
-			"A shortcut function for the PeriodsToDate function that specifies the level to be Year.", "Ytd()",
+			"A shortcut function for the PeriodsToDate function that specifies the level to be Year.",
 			DataType.SET, new FunctionParameterR[] {  });
 
 	public YtdMultiResolver() {

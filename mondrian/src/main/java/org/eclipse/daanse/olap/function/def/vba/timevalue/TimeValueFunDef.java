@@ -29,9 +29,8 @@ public class TimeValueFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("TimeValue");
     static String description = """
         Returns a Variant (Date) containing the time.""";
-    static String signature = "TimeValue(time)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.DATE_TIME, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
+            DataType.DATE_TIME, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
 
     public TimeValueFunDef() {
         super(functionMetaData);

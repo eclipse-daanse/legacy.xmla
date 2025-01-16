@@ -67,7 +67,7 @@ public abstract class AbstractMetaDataMultiResolver implements FunctionResolver 
 
 			FunctionParameterR[] paramDataTypesOfExpr = Expressions.functionParameterOf(expressions);
 			FunctionMetaData fmdTarget = new FunctionMetaDataR(operationAtom, functionMetaData.description(),
-					functionMetaData.signature(), functionMetaData.returnCategory(), paramDataTypesOfExpr);
+					functionMetaData.returnCategory(), paramDataTypesOfExpr);
 			return createFunDef(expressions, functionMetaData, fmdTarget);
 		}
 		return null;

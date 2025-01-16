@@ -31,7 +31,7 @@ public class IifBooleanFunDef extends AbstractFunctionDefinition {
     static FunctionParameterR[] params = { new FunctionParameterR(DataType.LOGICAL, "Condition"),
             new FunctionParameterR(DataType.LOGICAL, "Boolean1"), new FunctionParameterR(DataType.LOGICAL, "Boolean2") };
     static final FunctionMetaData BOOLEAN_INSTANCE_FUNCTION_META_DATA = new FunctionMetaDataR(BOOLEAN_INSTANCE_FUNCTION_ATOM, "Returns boolean determined by a logical test.",
-            "IIf(<LOGICAL>, <LOGICAL>, <LOGICAL>)", DataType.LOGICAL, params);
+            DataType.LOGICAL, params);
     // IIf(<Logical Expression>, <Boolean Expression>, <Boolean Expression>)
 
     public IifBooleanFunDef() {

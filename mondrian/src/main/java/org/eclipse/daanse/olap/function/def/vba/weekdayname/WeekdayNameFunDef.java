@@ -30,9 +30,8 @@ public class WeekdayNameFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("WeekdayName");
     static String description = """
         Returns a string indicating the specified day of the week.""";
-    static String signature = "WeekdayName(weekday, abbreviate, firstdayofweek)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.STRING, new FunctionParameterR[] { new FunctionParameterR( DataType.INTEGER, "Weekday" ),
+            DataType.STRING, new FunctionParameterR[] { new FunctionParameterR( DataType.INTEGER, "Weekday" ),
                     new FunctionParameterR( DataType.LOGICAL, "abbreviate" ), new FunctionParameterR( DataType.INTEGER, "First day of week" )});
 
     public WeekdayNameFunDef() {

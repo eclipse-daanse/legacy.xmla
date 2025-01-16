@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class FVResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("FV");
-    private static String SIGNATURE = "FV(rate, nper, pmt[, pv[, type]])";
     private static String DESCRIPTION = """
             Returns a Double specifying the future value of an annuity based on
             periodic, fixed payments and a fixed interest rate.""";
@@ -42,11 +41,11 @@ public class FVResolver extends AbstractFunctionDefinitionMultiResolver {
             new FunctionParameterR(DataType.NUMERIC, "NPer"), new FunctionParameterR(DataType.NUMERIC, "Pmt"),
             new FunctionParameterR(DataType.NUMERIC, "Pv"), new FunctionParameterR(DataType.LOGICAL, "Type") };
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p2);
-    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p3);
 
     public FVResolver() {

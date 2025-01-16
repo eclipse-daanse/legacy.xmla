@@ -38,7 +38,7 @@ public class LevelsNumericPropertyDef extends AbstractFunctionDefinition {
 
     static FunctionMetaData levelsFunctionMetaData = new FunctionMetaDataR(methodOperationAtom,
             "Returns the level whose position in a hierarchy is specified by a numeric expression.",
-            "<Hierarchy>.Levels(<NUMERIC>)", DataType.LEVEL, new FunctionParameterR[] { new FunctionParameterR( DataType.HIERARCHY ), new FunctionParameterR( DataType.NUMERIC ) });
+            DataType.LEVEL, new FunctionParameterR[] { new FunctionParameterR( DataType.HIERARCHY, "Hierarchy" ), new FunctionParameterR( DataType.NUMERIC, "numeric" ) });
 
     public LevelsNumericPropertyDef() {
         super(levelsFunctionMetaData);

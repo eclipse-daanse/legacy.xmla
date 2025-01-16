@@ -14,7 +14,7 @@ import mondrian.olap.fun.FunUtil;
 
 public class MedianCalc extends AbstractProfilingNestedDoubleCalc {
 
-    protected MedianCalc(Type type, final TupleListCalc tupleListCalc, final Calc calc) {
+    protected MedianCalc(Type type, final TupleListCalc tupleListCalc, final Calc<?> calc) {
         super(type, tupleListCalc, calc);
     }
 

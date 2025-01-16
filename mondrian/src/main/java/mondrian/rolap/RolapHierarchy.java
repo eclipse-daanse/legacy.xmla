@@ -958,7 +958,7 @@ public class RolapHierarchy extends HierarchyBase {
         final Access access = role.getAccess(this);
         final OperationAtom internalOperationAtom = new InternalOperationAtom("$x");
         final FunctionMetaData functionMetaData = new FunctionMetaDataR(internalOperationAtom, "x",
-                "$x", DataType.NUMERIC, new FunctionParameterR[] { });
+                DataType.NUMERIC, new FunctionParameterR[] { });
 
         switch (access) {
         case NONE:

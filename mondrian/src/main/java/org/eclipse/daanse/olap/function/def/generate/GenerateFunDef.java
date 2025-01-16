@@ -37,7 +37,7 @@ import mondrian.olap.fun.FunUtil;
 
 public class GenerateFunDef extends AbstractFunctionDefinition {
 
-        private static final List<String> ReservedWords = List.of("ALL");
+        static final List<String> ReservedWords = List.of("ALL");
 
         public GenerateFunDef(FunctionMetaData functionMetaData) {
             super(functionMetaData);

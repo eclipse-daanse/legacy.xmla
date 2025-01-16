@@ -37,8 +37,8 @@ public class RangeFunDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtom = new InfixOperationAtom(":");
     static final RangeFunDef instance = new RangeFunDef();
     static final FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
-            "Infix colon operator returns the set of members between a given pair of members.", "<Member> : <Member>",
-            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ), new FunctionParameterR( DataType.MEMBER ) });
+            "Infix colon operator returns the set of members between a given pair of members.",
+            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER, "Member1" ), new FunctionParameterR( DataType.MEMBER, "Member2" ) });
     private final static String twoNullsNotSupported = "Function does not support two NULL member parameters";
 
     public RangeFunDef() {

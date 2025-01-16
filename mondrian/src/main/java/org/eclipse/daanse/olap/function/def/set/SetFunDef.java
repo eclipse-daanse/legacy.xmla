@@ -54,12 +54,11 @@ import mondrian.olap.ResultStyleException;
 public class SetFunDef extends AbstractFunctionDefinition {
 
     static OperationAtom functionAtom = new BracesOperationAtom();
-    public static final String SIGNATURE = "{<Member> [, <Member>...]}";
     public static final String DESCRIPTION = "Brace operator constructs a set.";
     private final static String argsMustHaveSameHierarchy = "All arguments to function ''{0}'' must have same hierarchy.";
 
     SetFunDef(FunctionParameterR[] parameterTypes) {
-        super(new FunctionMetaDataR(SetFunDef.functionAtom, DESCRIPTION, SIGNATURE,
+        super(new FunctionMetaDataR(SetFunDef.functionAtom, DESCRIPTION,
                 DataType.SET, parameterTypes));
     }
 

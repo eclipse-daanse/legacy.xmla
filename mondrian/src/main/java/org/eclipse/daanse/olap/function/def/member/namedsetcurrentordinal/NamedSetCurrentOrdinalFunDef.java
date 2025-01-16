@@ -34,8 +34,8 @@ public class NamedSetCurrentOrdinalFunDef extends AbstractFunctionDefinition {
     static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("CurrentOrdinal");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the ordinal of the current iteration through a named set.", "<SET>.CurrentMember",
-            DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.SET ) });
+            "Returns the ordinal of the current iteration through a named set.",
+            DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.SET, "Set" ) });
 
     public NamedSetCurrentOrdinalFunDef() {
         super(functionMetaData);

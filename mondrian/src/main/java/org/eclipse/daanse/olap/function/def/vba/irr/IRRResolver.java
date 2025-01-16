@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class IRRResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("IRR");
-    private static String SIGNATURE = "IRR(values()[, guess])";
     private static String DESCRIPTION = """
             Returns a Double specifying the internal rate of return for a series
             of periodic cash flows (payments and receipts).""";
@@ -37,9 +36,9 @@ public class IRRResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionParameterR[] p2 = { new FunctionParameterR(DataType.ARRAY, "ValueArray"),
             new FunctionParameterR(DataType.NUMERIC, "Guess") };
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p2);
 
     public IRRResolver() {

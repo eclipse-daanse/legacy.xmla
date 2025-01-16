@@ -14,7 +14,6 @@
 package org.eclipse.daanse.olap.function.def.iif;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
-import org.eclipse.daanse.mdx.model.api.expression.operation.InfixOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
@@ -30,11 +29,10 @@ public class IifHierarchyResolver extends ParametersCheckingFunctionDefinitionRe
     // IIf(<Logical Expression>, <Hierarchy Expression>, <Hierarchy Expression>)
     static final OperationAtom atom = new FunctionOperationAtom("IIf");
     private static String DESCRIPTION = "Returns one of two hierarchy values determined by a logical test.";
-    private static String SIGNATURE = "IIf(<LOGICAL>, <HIERARCHY>, <HIERARCHY>)";
     private static FunctionParameterR[] params = new FunctionParameterR[] {
             new FunctionParameterR(DataType.LOGICAL, "Condition"), new FunctionParameterR(DataType.HIERARCHY, "Hierarchy1"),
             new FunctionParameterR(DataType.HIERARCHY, "Hierarchy2") };
-    static FunctionMetaData metadata = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE, DataType.HIERARCHY, params);
+    static FunctionMetaData metadata = new FunctionMetaDataR(atom, DESCRIPTION, DataType.HIERARCHY, params);
     
     public IifHierarchyResolver() {
         super(new IifFunDef(metadata));

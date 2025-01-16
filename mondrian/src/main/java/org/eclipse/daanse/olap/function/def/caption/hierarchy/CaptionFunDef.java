@@ -30,7 +30,7 @@ public class CaptionFunDef extends AbstractFunctionDefinition {
     // <Hierarchy>.Caption
     static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Caption");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the caption of a hierarchy.", "<HIERARCHY>.Caption", DataType.STRING,
+            "Returns the caption of a hierarchy.", DataType.STRING,
             new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY )});
 
     public CaptionFunDef() {

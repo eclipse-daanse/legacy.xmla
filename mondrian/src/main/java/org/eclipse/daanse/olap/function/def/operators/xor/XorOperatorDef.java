@@ -29,8 +29,8 @@ public class XorOperatorDef extends AbstractFunctionDefinition {
     // <Logical Expression> XOR <Logical Expression>
     static InfixOperationAtom infixOperationAtom = new InfixOperationAtom("XOR");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(infixOperationAtom,
-            "Returns whether two conditions are mutually exclusive.", "<LOGICAL> XOR <LOGICAL>", DataType.LOGICAL,
-            new FunctionParameterR[] { new FunctionParameterR( DataType.LOGICAL ), new FunctionParameterR( DataType.LOGICAL ) });
+            "Returns whether two conditions are mutually exclusive.", DataType.LOGICAL,
+            new FunctionParameterR[] { new FunctionParameterR( DataType.LOGICAL, "Condition1" ), new FunctionParameterR( DataType.LOGICAL, "Condition1" ) });
 
     public XorOperatorDef() {
         super(functionMetaData);

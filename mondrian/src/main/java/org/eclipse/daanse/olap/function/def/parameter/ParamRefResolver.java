@@ -20,13 +20,12 @@ import org.osgi.service.component.annotations.Component;
 public class ParamRefResolver  extends AbstractMetaDataMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("ParamRef");
-    private static String SIGNATURE = "ParamRef(<Name>)";
     private static String DESCRIPTION = "Returns the current value of this parameter. If it is null, returns the default value.";
     
-    private static FunctionParameterR[] S = { new FunctionParameterR(DataType.STRING) };
+    private static FunctionParameterR[] S = { new FunctionParameterR(DataType.STRING, "Name") };
     //"fvS"
     
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.VALUE, S);
 
     public ParamRefResolver() {

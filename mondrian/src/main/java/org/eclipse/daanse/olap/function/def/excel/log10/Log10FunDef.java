@@ -29,9 +29,8 @@ public class Log10FunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("Log10");
     static String description = """
         Returns the base-10 logarithm of a number.""";
-    static String signature = "Log10(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
+            DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
 
     public Log10FunDef() {
         super(functionMetaData);

@@ -33,11 +33,11 @@ public class MtdMultiResolver extends AbstractFunctionDefinitionMultiResolver {
 	private static OperationAtom atom = new FunctionOperationAtom("Mtd");
 
 	private static FunctionMetaData functionMetaDataWithMember = new FunctionMetaDataR(atom,
-			"A shortcut function for the PeriodsToDate function that specifies the level to be Month.", "Mtd(<Member>)",
-			DataType.SET, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ) });
+			"A shortcut function for the PeriodsToDate function that specifies the level to be Month.",
+			DataType.SET, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER, "Member" ) });
 
 	private static FunctionMetaData functionMetaDataWithoutMember = new FunctionMetaDataR(atom,
-			"A shortcut function for the PeriodsToDate function that specifies the level to be Month.", "Mtd()",
+			"A shortcut function for the PeriodsToDate function that specifies the level to be Month.",
 			DataType.SET, new FunctionParameterR[] { });
 
 	public MtdMultiResolver() {

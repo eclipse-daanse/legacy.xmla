@@ -27,15 +27,14 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class VisualTotalsResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("VisualTotals");
-    private static String SIGNATURE = "VisualTotals(<Set>[, <Pattern>])";
     private static String DESCRIPTION = "Dynamically totals child members specified in a set using a pattern for the total label in the result set.";
     private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
     private static FunctionParameterR[] xS = { new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.STRING, "Pattern") };
     // {"fxx", "fxxS"}
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, x);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, xS);
 
     public VisualTotalsResolver() {

@@ -30,9 +30,8 @@ public class ChrFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns an Integer representing the character code corresponding to
         the first letter in a string.""";
-    static String signature = "Chr(charcode)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.STRING, new FunctionParameterR[] {
+            DataType.STRING, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.INTEGER, "charcode" )});
 
     public ChrFunDef() {

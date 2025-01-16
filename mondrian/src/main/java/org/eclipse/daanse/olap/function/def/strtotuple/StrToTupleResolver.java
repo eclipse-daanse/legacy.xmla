@@ -76,7 +76,7 @@ public class StrToTupleResolver extends NoExpressionRequiredFunctionResolver {
 
     private FunctionMetaData functionMetaDataFor(FunctionParameterR[] argTypes) {
         FunctionMetaData functionMetaData = new FunctionMetaDataR(StrToTupleFunDef.functionAtom,
-                "Constructs a tuple from a string.", "StrToTuple(<String Expression>)",
+                "Constructs a tuple from a string.",
                  DataType.TUPLE, argTypes);
         return functionMetaData;
     }

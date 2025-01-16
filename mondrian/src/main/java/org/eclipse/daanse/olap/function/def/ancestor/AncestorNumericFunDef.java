@@ -32,7 +32,6 @@ import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 class AncestorNumericFunDef extends AbstractFunctionDefinition {
 
 	static final FunctionMetaData fmdNum = new FunctionMetaDataR(AncestorResolver.operationAtom,
-			"Ancestor(<Member>, <Numeric Expression>)",
 			"Returns the ancestor of a member at a specified level, defined by the distance.", DataType.MEMBER,
 			new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ), new FunctionParameterR( DataType.NUMERIC) });
 

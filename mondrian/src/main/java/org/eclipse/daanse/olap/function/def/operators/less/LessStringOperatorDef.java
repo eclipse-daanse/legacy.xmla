@@ -31,7 +31,8 @@ public class LessStringOperatorDef extends AbstractFunctionDefinition {
     // <String Expression> < <String Expression>
     static InfixOperationAtom infixOperationAtom = new InfixOperationAtom("<");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether an expression is less than another.",
-            "<STRING> < <STRING>", DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.STRING ), new FunctionParameterR( DataType.STRING ) });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.STRING, "String1" ),
+                    new FunctionParameterR( DataType.STRING, "String2" ) });
 
     public LessStringOperatorDef() {
         super(functionMetaData);

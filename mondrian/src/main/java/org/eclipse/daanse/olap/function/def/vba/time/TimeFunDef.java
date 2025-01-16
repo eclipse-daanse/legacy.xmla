@@ -28,9 +28,8 @@ public class TimeFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("Time");
     static String description = """
         Returns a Variant (Date) indicating the current system time.""";
-    static String signature = "Time()";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.DATE_TIME, new FunctionParameterR[] { });
+            DataType.DATE_TIME, new FunctionParameterR[] { });
 
     public TimeFunDef() {
         super(functionMetaData);

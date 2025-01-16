@@ -29,24 +29,23 @@ import org.osgi.service.component.annotations.Component;
 public class IsResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static String DESCRIPTION = "Returns whether two objects are the same";
-    private static String SIGNATURE = "<Expression> IS <Expression>";
     private static OperationAtom atom = new InfixOperationAtom("IS");
     //{"ibmm", "ibll", "ibhh", "ibdd", "ibtt"}
 
-    private static FunctionMetaData functionMetaDataWithMember = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ), new FunctionParameterR( DataType.MEMBER )});
+    private static FunctionMetaData functionMetaDataWithMember = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER, "Member1" ), new FunctionParameterR( DataType.MEMBER, "Member2" )});
 
-    private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL ), new FunctionParameterR( DataType.LEVEL ) });
+    private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL, "Level1" ), new FunctionParameterR( DataType.LEVEL, "Level2" ) });
 
-    private static FunctionMetaData functionMetaDataWithHierrchy = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY ), new FunctionParameterR( DataType.HIERARCHY ) });
+    private static FunctionMetaData functionMetaDataWithHierrchy = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY, "Hierarchy1" ), new FunctionParameterR( DataType.HIERARCHY, "Hierarchy2" ) });
 
-    private static FunctionMetaData functionMetaDataWithDimension = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.DIMENSION ), new FunctionParameterR( DataType.DIMENSION ) });
+    private static FunctionMetaData functionMetaDataWithDimension = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.DIMENSION, "Dimension1" ), new FunctionParameterR( DataType.DIMENSION, "Dimension2" ) });
 
-    private static FunctionMetaData functionMetaDataWithTuple = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.TUPLE ), new FunctionParameterR( DataType.TUPLE ) });
+    private static FunctionMetaData functionMetaDataWithTuple = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.TUPLE, "Tuple1" ), new FunctionParameterR( DataType.TUPLE, "Tuple2" ) });
 
     public IsResolver() {
         super(List.of(new IsFunDef(functionMetaDataWithMember), new IsFunDef(functionMetaDataWithLevel),

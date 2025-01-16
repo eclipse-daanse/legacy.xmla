@@ -31,9 +31,8 @@ public class AsinhFunDef  extends AbstractFunctionDefinition {
         Returns the inverse hyperbolic sine of a number. The inverse
         hyperbolic sine is the value whose hyperbolic sine is Arg1,
         so Asinh(Sinh(number)) equals Arg1.""";
-    static String signature = "Asinh(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
+            DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
 
     public AsinhFunDef() {
         super(functionMetaData);

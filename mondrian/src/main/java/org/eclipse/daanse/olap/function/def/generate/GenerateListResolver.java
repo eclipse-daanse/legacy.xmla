@@ -14,6 +14,7 @@
 package org.eclipse.daanse.olap.function.def.generate;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
@@ -27,18 +28,17 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class GenerateListResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Generate");
-    private static String SIGNATURE = "Generate(<Set1>, <Set2>[, ALL])";
     private static String DESCRIPTION = "Applies a set to each member of another set and joins the resulting sets by union.";
     private static FunctionParameterR[] xx = { new FunctionParameterR(DataType.SET, "Set1"),
             new FunctionParameterR(DataType.SET, "Set2") };
     private static FunctionParameterR[] xxy = { new FunctionParameterR(DataType.SET, "Set1"),
-            new FunctionParameterR(DataType.SET, "Set2"), new FunctionParameterR(DataType.SYMBOL) };
+            new FunctionParameterR(DataType.SET, "Set2"), new FunctionParameterR(DataType.SYMBOL, "All", Optional.of(GenerateFunDef.ReservedWords)) };
     // {"fxxx", "fxxxy"}
 
     
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, xx);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, xxy);
 
     public GenerateListResolver() {

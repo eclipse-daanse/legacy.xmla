@@ -30,9 +30,8 @@ public class AbsFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a value of the same type that is passed to it specifying the
         absolute value of a number.""";
-    static String signature = "Abs(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] {
+            DataType.NUMERIC, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.NUMERIC, "Number" )});
 
     public AbsFunDef() {

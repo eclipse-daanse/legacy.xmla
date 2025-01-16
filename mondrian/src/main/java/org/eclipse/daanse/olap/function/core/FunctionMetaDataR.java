@@ -20,7 +20,7 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 
-public record FunctionMetaDataR(OperationAtom operationAtom, String description, String signature,
+public record FunctionMetaDataR(OperationAtom operationAtom, String description,
         DataType returnCategory, FunctionParameterR[] parameters) implements FunctionMetaData {
 
     public DataType[] parameterDataTypes() {

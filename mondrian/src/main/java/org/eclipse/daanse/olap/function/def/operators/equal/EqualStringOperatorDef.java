@@ -18,7 +18,6 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
@@ -30,7 +29,7 @@ public class EqualStringOperatorDef extends AbstractFunctionDefinition {
     // <String Expression> = <String Expression>
     static InfixOperationAtom infixOperationAtom = new InfixOperationAtom("=");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether two expressions are equal.",
-            "<STRING> = <STRING>", DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.STRING ), new FunctionParameterR( DataType.STRING ) });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.STRING, "String1" ), new FunctionParameterR( DataType.STRING, "String2" ) });
 
     public EqualStringOperatorDef() {
         super(functionMetaData);

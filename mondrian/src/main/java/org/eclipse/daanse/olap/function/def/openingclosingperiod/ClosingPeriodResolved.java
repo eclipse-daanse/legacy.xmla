@@ -29,19 +29,18 @@ import org.osgi.service.component.annotations.Component;
 public class ClosingPeriodResolved extends AbstractFunctionDefinitionMultiResolver {
 
     private static OperationAtom atom = new FunctionOperationAtom("ClosingPeriod");
-    private static String SIGNATURE = "ClosingPeriod([<Level>[, <Member>]])";
     private static String DESCRIPTION = "Returns the last descendant of a member at a level.";
     // {"fm", "fml", "fmlm", "fmm"}
 
-    private static FunctionMetaData functionMetaDataWithoutParam = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaDataWithoutParam = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.MEMBER, new FunctionParameterR[] {});
-    private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL) });
+    private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL, "Level") });
     private static FunctionMetaData functionMetaDataWithLevelMember = new FunctionMetaDataR(atom, DESCRIPTION,
-            SIGNATURE, DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL),
-                    new FunctionParameterR(DataType.MEMBER) });
-    private static FunctionMetaData functionMetaDataWithMember = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.MEMBER) });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL, "Level"),
+                    new FunctionParameterR(DataType.MEMBER, "Member") });
+    private static FunctionMetaData functionMetaDataWithMember = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.MEMBER, "Member") });
 
     public ClosingPeriodResolved() {
         super(List.of(new OpeningClosingPeriodFunDef(functionMetaDataWithoutParam, false),

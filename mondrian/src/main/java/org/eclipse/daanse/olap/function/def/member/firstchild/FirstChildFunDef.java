@@ -29,8 +29,8 @@ public class FirstChildFunDef extends AbstractFunctionDefinition {
     // "<Member>.FirstChild"
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("FirstChild");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the first child of a member.", "<MEMBER>.FirstChild", DataType.MEMBER,
-            new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
+            "Returns the first child of a member.", DataType.MEMBER,
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER, "Member" ) });
 
     public FirstChildFunDef() {
         super(functionMetaData);

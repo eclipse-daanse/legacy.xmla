@@ -28,7 +28,7 @@ public class CountFunDef extends AbstractFunctionDefinition {
     // <Set>.Count
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Count");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the number of tuples in a set including empty cells.", "<SET>.Count", DataType.NUMERIC,
+            "Returns the number of tuples in a set including empty cells.", DataType.NUMERIC,
             new FunctionParameterR[] { new FunctionParameterR(  DataType.SET )});
 
     public CountFunDef() {

@@ -29,9 +29,8 @@ public class SqrtPiFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("SqrtPi");
     static String description = """
         Returns the square root of (number * pi).""";
-    static String signature = "SqrtPi(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
+            DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
 
     public SqrtPiFunDef() {
         super(functionMetaData);

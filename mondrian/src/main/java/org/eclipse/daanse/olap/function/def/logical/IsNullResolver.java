@@ -28,21 +28,20 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class IsNullResolver extends AbstractFunctionDefinitionMultiResolver {
     private static String DESCRIPTION = "Returns whether an object is null";
-    private static String SIGNATURE = "<Expression> IS NULL";
 
     private static OperationAtom atom = new PostfixOperationAtom("IS NULL");
 
-    private static FunctionMetaData functionMetaDataWithMember = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
+    private static FunctionMetaData functionMetaDataWithMember = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER, "Member" ) });
 
-    private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL ) });
+    private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL, "Level" ) });
 
-    private static FunctionMetaData functionMetaDataWithHierrchy = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY ) });
+    private static FunctionMetaData functionMetaDataWithHierrchy = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY, "Hierarchy" ) });
 
-    private static FunctionMetaData functionMetaDataWithDimension = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.DIMENSION ) });
+    private static FunctionMetaData functionMetaDataWithDimension = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.DIMENSION, "Dimension" ) });
 
     public IsNullResolver() {
         super(List.of(new IsNullFunDef(functionMetaDataWithMember), new IsNullFunDef(functionMetaDataWithLevel),

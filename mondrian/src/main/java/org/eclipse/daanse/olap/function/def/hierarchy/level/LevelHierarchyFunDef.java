@@ -29,7 +29,7 @@ public class LevelHierarchyFunDef extends AbstractFunctionDefinition {
     static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Hierarchy");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns a level's hierarchy.", "<LEVEL>.Hierarchy", DataType.HIERARCHY, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL ) });
+            "Returns a level's hierarchy.", DataType.HIERARCHY, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL ) });
 
     public LevelHierarchyFunDef() {
         super(functionMetaData);

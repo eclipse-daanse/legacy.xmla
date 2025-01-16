@@ -30,9 +30,8 @@ public class MinuteFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Variant (Integer) specifying a whole number between 0 and
         59, inclusive, representing the minute of the hour.""";
-    static String signature = "Minute(time)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
+            DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
 
     public MinuteFunDef() {
         super(functionMetaData);

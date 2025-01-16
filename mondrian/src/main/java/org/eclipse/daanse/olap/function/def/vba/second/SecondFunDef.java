@@ -30,9 +30,8 @@ public class SecondFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Variant (Integer) specifying a whole number between 0 and
         59, inclusive, representing the second of the minute.""";
-    static String signature = "Second(time)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
+            DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
 
     public SecondFunDef() {
         super(functionMetaData);

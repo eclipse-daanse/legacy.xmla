@@ -32,9 +32,8 @@ public class AcoshFunDef  extends AbstractFunctionDefinition {
         greater than or equal to 1. The inverse hyperbolic cosine is the
         value whose hyperbolic cosine is Arg1, so Acosh(Cosh(number))
         equals Arg1.""";
-    static String signature = "Acosh(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
+            DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
 
     public AcoshFunDef() {
         super(functionMetaData);

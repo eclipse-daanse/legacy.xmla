@@ -14,6 +14,7 @@
 package org.eclipse.daanse.olap.function.def.drilldownmember;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
@@ -27,22 +28,22 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class DrilldownMemberResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("DrilldownMember");
-    private static String SIGNATURE = "DrilldownMember(<Set1>, <Set2>[, RECURSIVE])";
+    private static List<String> reservedWords = List.of("RECURSIVE");
     private static String DESCRIPTION = "Drills down the members in a set that are present in a second specified set.";
     private static FunctionParameterR[] xx = { new FunctionParameterR(DataType.SET, "Set1"),
             new FunctionParameterR(DataType.SET, "Set2") };
     private static FunctionParameterR[] xxy = { new FunctionParameterR(DataType.SET, "Set1"),
-            new FunctionParameterR(DataType.SET, "Set2"), new FunctionParameterR(DataType.SYMBOL, "Recursive") };
+            new FunctionParameterR(DataType.SET, "Set2"), new FunctionParameterR(DataType.SYMBOL, "Recursive", Optional.of(reservedWords)) };
     // {"fxxx", "fxxxy"}
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, xx);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, xxy);
 
     @Override
     public List<String> getReservedWords() {
-        return List.of("RECURSIVE");
+        return reservedWords;
     }
 
     

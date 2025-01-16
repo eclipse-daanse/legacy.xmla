@@ -29,9 +29,8 @@ public class TanFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("Tan");
     static String description = """
         Returns a Double specifying the tangent of an angle.""";
-    static String signature = "Tan(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] {
+            DataType.NUMERIC, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.NUMERIC, "Number" )});
 
     public TanFunDef() {

@@ -29,9 +29,8 @@ public class IsMissingFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Boolean value indicating whether an optional Variant
         argument has been passed to a procedure.""";
-    static String signature = "IsMissing(varname)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.LOGICAL, new FunctionParameterR[] {
+            DataType.LOGICAL, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.VALUE, "VarName" )});
 
     public IsMissingFunDef() {

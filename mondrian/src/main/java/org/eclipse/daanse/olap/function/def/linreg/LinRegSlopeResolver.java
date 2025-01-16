@@ -27,17 +27,16 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class LinRegSlopeResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("LinRegSlope");
-    private static String SIGNATURE = "LinRegSlope(<Set>, <Numeric Expression>[, <Numeric Expression>])";
     private static String DESCRIPTION = "Calculates the linear regression of a set and returns the value of a in the regression line y = ax + b.";
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC) };
-    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.NUMERIC) };
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
+            new FunctionParameterR(DataType.NUMERIC, "Y") };
+    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET, "Set"),
+            new FunctionParameterR(DataType.NUMERIC, "Y"), new FunctionParameterR(DataType.NUMERIC, "X") };
     // {"fnxn", "fnxnn"}
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, xn);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, xnn);
 
     public LinRegSlopeResolver() {

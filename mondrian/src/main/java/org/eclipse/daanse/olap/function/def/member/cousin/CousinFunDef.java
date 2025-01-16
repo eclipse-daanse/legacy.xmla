@@ -29,8 +29,8 @@ public class CousinFunDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtomCousin = new FunctionOperationAtom("Cousin");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtomCousin,
             "Returns the member with the same relative position under <ancestor member> as the member specified.",
-            "<Member> Cousin(<Member>, <Ancestor Member>)", DataType.MEMBER,
-            new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ), new FunctionParameterR( DataType.MEMBER ) });
+            DataType.MEMBER,
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER, "Member1"), new FunctionParameterR( DataType.MEMBER, "Member2" ) });
 
     public CousinFunDef() {
         super(functionMetaData);

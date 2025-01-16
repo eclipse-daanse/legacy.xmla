@@ -29,9 +29,8 @@ public class DateSerialFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("DateSerial");
     static String description = """
         Returns a Variant (Date) for a specified year, month, and day.""";
-    static String signature = "DateSerial(year, month, day)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.DATE_TIME, new FunctionParameterR[] { new FunctionParameterR( DataType.INTEGER, "Year" ), new FunctionParameterR( DataType.INTEGER, "Month" ), new FunctionParameterR( DataType.INTEGER, "Day" ) });
+            DataType.DATE_TIME, new FunctionParameterR[] { new FunctionParameterR( DataType.INTEGER, "Year" ), new FunctionParameterR( DataType.INTEGER, "Month" ), new FunctionParameterR( DataType.INTEGER, "Day" ) });
 
     public DateSerialFunDef() {
         super(functionMetaData);

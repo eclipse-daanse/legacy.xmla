@@ -30,9 +30,8 @@ public class StrReverseFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a string in which the character order of a specified string
         is reversed.""";
-    static String signature = "StrReverse(string)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.STRING, new FunctionParameterR[] { new FunctionParameterR( DataType.STRING, "String" ) });
+            DataType.STRING, new FunctionParameterR[] { new FunctionParameterR( DataType.STRING, "String" ) });
 
     public StrReverseFunDef() {
         super(functionMetaData);

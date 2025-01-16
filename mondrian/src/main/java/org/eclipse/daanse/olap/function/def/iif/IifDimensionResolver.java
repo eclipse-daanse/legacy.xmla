@@ -14,7 +14,6 @@
 package org.eclipse.daanse.olap.function.def.iif;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
-import org.eclipse.daanse.mdx.model.api.expression.operation.InfixOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
@@ -30,11 +29,10 @@ public class IifDimensionResolver extends ParametersCheckingFunctionDefinitionRe
     // IIf(<Logical Expression>, <Dimension Expression>, <Dimension Expression>)
     static final OperationAtom atom = new FunctionOperationAtom("IIf");
     private static String DESCRIPTION = "Returns one of two dimension values determined by a logical test.";
-    private static String SIGNATURE = "IIf(<LOGICAL>, <DIMENSION>, <DIMENSION>)";
     private static FunctionParameterR[] params = new FunctionParameterR[] {
             new FunctionParameterR(DataType.LOGICAL, "Condition"), new FunctionParameterR(DataType.DIMENSION, "Dimension1"),
             new FunctionParameterR(DataType.DIMENSION, "Dimension2") };
-    static FunctionMetaData metadata = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE, DataType.DIMENSION, params);
+    static FunctionMetaData metadata = new FunctionMetaDataR(atom, DESCRIPTION, DataType.DIMENSION, params);
     
     public IifDimensionResolver() {
         super(new IifFunDef(metadata));

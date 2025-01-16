@@ -28,9 +28,8 @@ public class StrFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("Str");
     static String description = """
         Returns a Variant (String) representation of a number.""";
-    static String signature = "Str(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.STRING, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "number" ) });
+            DataType.STRING, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "number" ) });
 
     public StrFunDef() {
         super(functionMetaData);

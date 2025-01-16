@@ -29,9 +29,8 @@ public class MatchesFunDef  extends AbstractFunctionDefinition {
     static InfixOperationAtom atom = new InfixOperationAtom("MATCHES");
     static String description = """
         Returns true if the string matches the regular expression.""";
-    static String signature = "<String> MATCHES <String>";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.LOGICAL , new FunctionParameterR[] { new FunctionParameterR( DataType.STRING ), new FunctionParameterR( DataType.STRING ) });
+            DataType.LOGICAL , new FunctionParameterR[] { new FunctionParameterR( DataType.STRING, "String1" ), new FunctionParameterR( DataType.STRING, "String2" ) });
 
     public MatchesFunDef() {
         super(functionMetaData);

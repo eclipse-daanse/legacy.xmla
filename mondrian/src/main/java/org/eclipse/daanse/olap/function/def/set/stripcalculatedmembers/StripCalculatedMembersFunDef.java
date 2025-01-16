@@ -29,15 +29,15 @@ public class StripCalculatedMembersFunDef extends AbstractFunctionDefinition {
     // StripCalculatedMembers(<Set>)
     static FunctionOperationAtom functionAtom = new FunctionOperationAtom("StripCalculatedMembers");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
-            "Removes calculated members from a set.", "StripCalculatedMembers(<SET>)", DataType.SET,
-            new FunctionParameterR[] { new FunctionParameterR( DataType.SET ) });
+            "Removes calculated members from a set.", DataType.SET,
+            new FunctionParameterR[] { new FunctionParameterR( DataType.SET, "Set" ) });
 
     public StripCalculatedMembersFunDef() {
         super(functionMetaData);
     }
 
     @Override
-    public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
+    public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
         final TupleListCalc tupleListCalc = compiler.compileList(call.getArg(0));
         return new StripCalculatedMembersCalc(call.getType(), tupleListCalc);
     }

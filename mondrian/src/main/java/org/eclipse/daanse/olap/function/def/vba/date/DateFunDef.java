@@ -28,9 +28,8 @@ public class DateFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("Date");
     static String description = """
         Returns a Variant (Date) containing the current system date.""";
-    static String signature = "Date()";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.DATE_TIME, new FunctionParameterR[] { });
+            DataType.DATE_TIME, new FunctionParameterR[] { });
 
     public DateFunDef() {
         super(functionMetaData);

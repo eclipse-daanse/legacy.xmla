@@ -33,8 +33,8 @@ public class CachedExistsFunDef extends AbstractFunctionDefinition {
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
             "Returns tuples from a non-dynamic <Set> that exists in the specified <Tuple>.  This function will build a query level cache named <String> based on the <Tuple> type.",
-            "CachedExists(<SET>, <TUPLE>, <STRING>)", DataType.SET,
-            new FunctionParameterR[] { new FunctionParameterR(  DataType.SET ), new FunctionParameterR( DataType.TUPLE ), new FunctionParameterR( DataType.STRING ) });
+            DataType.SET,
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.SET, "Set" ), new FunctionParameterR( DataType.TUPLE, "Tuple" ), new FunctionParameterR( DataType.STRING, "String") });
 
     CachedExistsFunDef() {
         super(functionMetaData);

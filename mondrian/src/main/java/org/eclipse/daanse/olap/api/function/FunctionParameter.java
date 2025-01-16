@@ -14,6 +14,7 @@
 
 package org.eclipse.daanse.olap.api.function;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.DataType;
@@ -25,5 +26,7 @@ public interface FunctionParameter {
 	Optional<String> name();
 
 	Optional<String> description();
+	
+	Optional<List<String>> reservedWords();
 
 }

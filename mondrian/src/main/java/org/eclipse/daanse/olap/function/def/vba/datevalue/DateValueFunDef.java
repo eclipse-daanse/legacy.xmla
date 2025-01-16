@@ -29,9 +29,8 @@ public class DateValueFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("DateValue");
     static String description = """
         Returns a Variant (Date) for a specified year, month, and day.""";
-    static String signature = "DateValue(date)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.DATE_TIME, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
+            DataType.DATE_TIME, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
 
     public DateValueFunDef() {
         super(functionMetaData);

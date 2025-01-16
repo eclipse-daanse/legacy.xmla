@@ -29,9 +29,8 @@ public class SinFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("Sin");
     static String description = """
         Returns a Double specifying the sine of an angle.""";
-    static String signature = "Sin(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] {
+            DataType.NUMERIC, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.NUMERIC, "Number" )});
 
     public SinFunDef() {

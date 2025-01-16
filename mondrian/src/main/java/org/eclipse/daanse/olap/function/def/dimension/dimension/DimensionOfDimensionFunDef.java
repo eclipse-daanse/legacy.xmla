@@ -32,8 +32,8 @@ public class DimensionOfDimensionFunDef extends AbstractFunctionDefinition {
 	private static final OperationAtom atom = new PlainPropertyOperationAtom("Dimension");
 
 	private static final FunctionMetaData functionMetaData = new FunctionMetaDataR(atom,
-			"Returns the dimension that contains a specified dimension.", "<DIMENSION>.Dimension", DataType.DIMENSION,
-			new FunctionParameterR[] { new FunctionParameterR(  DataType.DIMENSION ) });
+			"Returns the dimension that contains a specified dimension.", DataType.DIMENSION,
+			new FunctionParameterR[] { new FunctionParameterR(  DataType.DIMENSION, "Dimension" ) });
 
 	public DimensionOfDimensionFunDef() {
 		super(functionMetaData);

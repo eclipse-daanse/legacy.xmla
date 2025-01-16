@@ -29,9 +29,8 @@ public class CIntFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns an expression that has been converted to a Variant of subtype
         Integer.""";
-    static String signature = "CInt(expression)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "expression" ) });
+            DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "expression" ) });
 
     public CIntFunDef() {
         super(functionMetaData);

@@ -27,12 +27,11 @@ import org.osgi.service.component.annotations.Component;
 public class TopPercentResolver extends ParametersCheckingFunctionDefinitionResolver {
 
     static final OperationAtom atomTopPercent = new FunctionOperationAtom("TopPercent");
-    private static String SIGNATURE = "TopPercent(<Set>, <Percentage>, <Numeric Expression>)";
     private static String DESCRIPTION = "Sorts a set and returns the top N elements whose cumulative total is at least a specified percentage.";
-    private static FunctionParameterR[] params = { new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.NUMERIC) };
+    private static FunctionParameterR[] params = { new FunctionParameterR(DataType.SET, "Set"),
+            new FunctionParameterR(DataType.NUMERIC, "Percentage"), new FunctionParameterR(DataType.NUMERIC, "Numeric") };
 
-    static final FunctionMetaData fmdTopPercent = new FunctionMetaDataR(atomTopPercent, DESCRIPTION, SIGNATURE,
+    static final FunctionMetaData fmdTopPercent = new FunctionMetaDataR(atomTopPercent, DESCRIPTION,
             DataType.SET, params);
 
     public TopPercentResolver() {

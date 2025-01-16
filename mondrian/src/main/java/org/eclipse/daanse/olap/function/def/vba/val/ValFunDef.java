@@ -28,9 +28,8 @@ public class ValFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("Val");
     static String description = """
         Returns an expression that has been converted to a Variant of subtype Double.""";
-    static String signature = "Val(string)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.STRING, "String" ) });
+            DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.STRING, "String" ) });
 
     public ValFunDef() {
         super(functionMetaData);

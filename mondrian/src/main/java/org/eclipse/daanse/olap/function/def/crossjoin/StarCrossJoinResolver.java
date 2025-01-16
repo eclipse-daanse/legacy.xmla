@@ -35,22 +35,22 @@ public class StarCrossJoinResolver extends AbstractFunctionDefinitionMultiResolv
 
     static final FunctionParameterR[] starCrossJoinSetSetParam = { new FunctionParameterR(DataType.SET), new FunctionParameterR(DataType.SET) };
     static final FunctionMetaData starCrossJoinSetSet = new FunctionMetaDataR(atom,
-            "Returns the cross product of two sets.", "<Set1> * <Set2>", DataType.SET,
+            "Returns the cross product of two sets.", DataType.SET,
             starCrossJoinSetSetParam);
 
     static final FunctionParameterR[] starCrossJoinSetMemberParam = { new FunctionParameterR(DataType.SET), new FunctionParameterR(DataType.MEMBER) };
     static final FunctionMetaData starCrossJoinSetMember = new FunctionMetaDataR(atom,
-            "Returns the cross product of Set and Member.", "<Set> * <Member>", DataType.SET,
+            "Returns the cross product of Set and Member.", DataType.SET,
             starCrossJoinSetMemberParam);
 
     static final FunctionParameterR[] starCrossJoinMemberSetParam = { new FunctionParameterR(DataType.MEMBER), new FunctionParameterR(DataType.SET) };
     static final FunctionMetaData starCrossJoinMemberSet = new FunctionMetaDataR(atom,
-            "Returns the cross product of Member and Set.", "<Member> * <Set>", DataType.SET,
+            "Returns the cross product of Member and Set.", DataType.SET,
             starCrossJoinMemberSetParam);
 
     static final FunctionParameterR[] starCrossJoinMemberMemberParam = { new FunctionParameterR(DataType.MEMBER), new FunctionParameterR(DataType.MEMBER) };
     static final FunctionMetaData starCrossJoinMemberMember = new FunctionMetaDataR(atom,
-            "Returns the cross product of two Members.", "<Member> * <Set>", DataType.SET,
+            "Returns the cross product of two Members.", DataType.SET,
             starCrossJoinMemberMemberParam);
 
     public StarCrossJoinResolver() {

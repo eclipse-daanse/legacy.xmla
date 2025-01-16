@@ -30,9 +30,8 @@ public class SpaceFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Variant (String) consisting of the specified number of
         spaces.""";
-    static String signature = "Space(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.STRING, new FunctionParameterR[] {
+            DataType.STRING, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.INTEGER, "Number" ) });
 
     public SpaceFunDef() {

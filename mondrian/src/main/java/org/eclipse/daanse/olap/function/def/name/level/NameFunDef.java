@@ -29,7 +29,7 @@ public class NameFunDef extends AbstractFunctionDefinition {
     // <Level>.Name
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Name");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the name of a level.", "<LEVEL>.Name", DataType.STRING, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL ) });
+            "Returns the name of a level.", DataType.STRING, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL, "Level" ) });
 
     public NameFunDef() {
         super(functionMetaData);

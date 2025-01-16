@@ -30,9 +30,8 @@ public class ExpFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Double specifying e (the base of natural logarithms)
         raised to a power.""";
-    static String signature = "Exp(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] {
+            DataType.NUMERIC, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.NUMERIC, "Number" )});
 
     public ExpFunDef() {

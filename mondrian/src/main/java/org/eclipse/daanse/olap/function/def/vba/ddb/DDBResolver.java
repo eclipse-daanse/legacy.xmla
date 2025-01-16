@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class DDBResolver extends AbstractFunctionDefinitionMultiResolver {
     
     private static FunctionOperationAtom atom = new FunctionOperationAtom("DDB");
-    private static String SIGNATURE = "DDB(cost, salvage, life, period[, factor])";
     private static String DESCRIPTION = """
             Returns a Double specifying the depreciation of an asset for a
             specific time period using the double-declining balance method or
@@ -37,9 +36,9 @@ public class DDBResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionParameterR[] p1 = { new FunctionParameterR( DataType.NUMERIC, "Cost" ), new FunctionParameterR( DataType.NUMERIC, "Salvage" ), new FunctionParameterR( DataType.NUMERIC, "Life" ) , new FunctionParameterR( DataType.NUMERIC, "Period" )};
     private static FunctionParameterR[] p2 = { new FunctionParameterR( DataType.NUMERIC, "Cost" ), new FunctionParameterR( DataType.NUMERIC, "Salvage" ), new FunctionParameterR( DataType.NUMERIC, "Life" ), new FunctionParameterR( DataType.NUMERIC, "Period" ), new FunctionParameterR( DataType.NUMERIC, "Factor" ) };
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p2);
 
     public DDBResolver() {

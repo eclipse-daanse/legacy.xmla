@@ -2,6 +2,7 @@ package org.eclipse.daanse.olap.function.def.parameter;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
@@ -29,56 +30,56 @@ import mondrian.olap.fun.FunUtil;
 @Component(service = FunctionResolver.class)
 public class ParameterResolver extends AbstractMetaDataMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Parameter");
-    private static String SIGNATURE = "Parameter(<Name>, <Type>, <DefaultValue>, <Description>, <Set>)";
+    private static final List<String> RESERVED_WORDS = List.of("NUMERIC", "STRING");
     private static String DESCRIPTION = "Returns default value of parameter.";
 
-    private static FunctionParameterR[] SySS = { new FunctionParameterR(DataType.STRING),
-            new FunctionParameterR(DataType.SYMBOL), new FunctionParameterR(DataType.STRING),
-            new FunctionParameterR(DataType.STRING) };
-    private static FunctionParameterR[] SyS = { new FunctionParameterR(DataType.STRING),
-            new FunctionParameterR(DataType.SYMBOL), new FunctionParameterR(DataType.STRING) };
+    private static FunctionParameterR[] SySS = { new FunctionParameterR(DataType.STRING, "Name"),
+            new FunctionParameterR(DataType.SYMBOL, "Type", Optional.of(RESERVED_WORDS)), new FunctionParameterR(DataType.STRING, "DefaultValue"),
+            new FunctionParameterR(DataType.STRING, "Description") };
+    private static FunctionParameterR[] SyS = { new FunctionParameterR(DataType.STRING, "Name"),
+            new FunctionParameterR(DataType.SYMBOL, "Type", Optional.of(RESERVED_WORDS)), new FunctionParameterR(DataType.STRING, "DefaultValue") };
 
-    private static FunctionParameterR[] SynS = { new FunctionParameterR(DataType.STRING),
-            new FunctionParameterR(DataType.SYMBOL), new FunctionParameterR(DataType.NUMERIC),
-            new FunctionParameterR(DataType.STRING) };
-    private static FunctionParameterR[] Syn = { new FunctionParameterR(DataType.STRING),
-            new FunctionParameterR(DataType.SYMBOL), new FunctionParameterR(DataType.NUMERIC) };
+    private static FunctionParameterR[] SynS = { new FunctionParameterR(DataType.STRING, "Name"),
+            new FunctionParameterR(DataType.SYMBOL, "Type", Optional.of(RESERVED_WORDS)), new FunctionParameterR(DataType.NUMERIC, "DefaultValue"),
+            new FunctionParameterR(DataType.STRING, "Description") };
+    private static FunctionParameterR[] Syn = { new FunctionParameterR(DataType.STRING, "Name"),
+            new FunctionParameterR(DataType.SYMBOL, "Type", Optional.of(RESERVED_WORDS)), new FunctionParameterR(DataType.NUMERIC, "DefaultValue") };
 
-    private static FunctionParameterR[] ShmS = { new FunctionParameterR(DataType.STRING),
-            new FunctionParameterR(DataType.HIERARCHY), new FunctionParameterR(DataType.MEMBER),
-            new FunctionParameterR(DataType.STRING) };
-    private static FunctionParameterR[] Shm = { new FunctionParameterR(DataType.STRING),
-            new FunctionParameterR(DataType.HIERARCHY), new FunctionParameterR(DataType.MEMBER) };
+    private static FunctionParameterR[] ShmS = { new FunctionParameterR(DataType.STRING, "Name"),
+            new FunctionParameterR(DataType.HIERARCHY, "Hierarchy"), new FunctionParameterR(DataType.MEMBER, "DefaultValue"),
+            new FunctionParameterR(DataType.STRING, "Description") };
+    private static FunctionParameterR[] Shm = { new FunctionParameterR(DataType.STRING, "Name"),
+            new FunctionParameterR(DataType.HIERARCHY, "Hierarchy"), new FunctionParameterR(DataType.MEMBER, "DefaultValue") };
 
-    private static FunctionParameterR[] ShxS = { new FunctionParameterR(DataType.STRING),
-            new FunctionParameterR(DataType.HIERARCHY), new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.STRING) };
-    private static FunctionParameterR[] Shx = { new FunctionParameterR(DataType.STRING),
-            new FunctionParameterR(DataType.HIERARCHY), new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] ShxS = { new FunctionParameterR(DataType.STRING, "Name"),
+            new FunctionParameterR(DataType.HIERARCHY, "Hierarchy"), new FunctionParameterR(DataType.SET, "DefaultValue"),
+            new FunctionParameterR(DataType.STRING, "Description") };
+    private static FunctionParameterR[] Shx = { new FunctionParameterR(DataType.STRING, "Name"),
+            new FunctionParameterR(DataType.HIERARCHY, "Hierarchy"), new FunctionParameterR(DataType.SET, "DefaultValue") };
 
     // {"fSSySS", "fSSyS", "fnSynS", "fnSyn", "fmShmS", "fmShm","fxShxS", "fxShx"}
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, SySS);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, SyS);
 
-    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, SynS);
-    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, Syn);
 
-    private static FunctionMetaData functionMetaData5 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData5 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.MEMBER, ShmS);
-    private static FunctionMetaData functionMetaData6 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData6 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.MEMBER, Shm);
 
-    private static FunctionMetaData functionMetaData7 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData7 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, ShxS);
-    private static FunctionMetaData functionMetaData8 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData8 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, Shx);
 
-    private static final List<String> RESERVED_WORDS = List.of("NUMERIC", "STRING");
+
 
     @Override
     public List<String> getReservedWords() {

@@ -23,8 +23,6 @@ public interface FunctionMetaData {
 
 	String description();
 
-	String signature();
-
 	DataType returnCategory();
 
 	DataType[] parameterDataTypes();

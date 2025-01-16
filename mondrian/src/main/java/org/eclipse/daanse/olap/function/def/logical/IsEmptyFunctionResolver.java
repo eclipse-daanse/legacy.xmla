@@ -31,12 +31,12 @@ public class IsEmptyFunctionResolver extends AbstractFunctionDefinitionMultiReso
     private static OperationAtom fAtom = new FunctionOperationAtom("IsEmpty");
 
     private static FunctionMetaData functionMetaDataString = new FunctionMetaDataR(fAtom,
-        "Determines if an expression evaluates to the empty cell value.", "IsEmpty(<Value Expression>)",
-        DataType.LOGICAL, new FunctionParameterR[]{ new FunctionParameterR(DataType.STRING)});
+        "Determines if an expression evaluates to the empty cell value.",
+        DataType.LOGICAL, new FunctionParameterR[]{ new FunctionParameterR(DataType.STRING, "String")});
 
     private static FunctionMetaData functionMetaDataNumeric = new FunctionMetaDataR(fAtom,
-        "Determines if an expression evaluates to the empty cell value.", "IsEmpty(<Value Expression>)",
-        DataType.LOGICAL, new FunctionParameterR[]{ new FunctionParameterR(DataType.NUMERIC)});
+        "Determines if an expression evaluates to the empty cell value.",
+        DataType.LOGICAL, new FunctionParameterR[]{ new FunctionParameterR(DataType.NUMERIC, "Numeric")});
 
     public IsEmptyFunctionResolver() {
         super(List.of(new IsEmptyFunDef(functionMetaDataString), new IsEmptyFunDef(functionMetaDataNumeric)));

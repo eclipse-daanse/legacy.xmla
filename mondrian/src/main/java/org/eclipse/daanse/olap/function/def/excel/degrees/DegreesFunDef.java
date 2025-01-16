@@ -29,9 +29,8 @@ public class DegreesFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("Degrees");
     static String description = """
         Converts radians to degrees.""";
-    static String signature = "Degrees(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Radians" ) });
+            DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Radians" ) });
 
     public DegreesFunDef() {
         super(functionMetaData);

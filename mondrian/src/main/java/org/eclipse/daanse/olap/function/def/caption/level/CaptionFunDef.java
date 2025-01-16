@@ -29,7 +29,7 @@ public class CaptionFunDef extends AbstractFunctionDefinition {
     // <Level>.Caption
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Caption");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the caption of a level.",
-            "<LEVEL>.Caption", DataType.STRING, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL ) });
+            DataType.STRING, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL ) });
 
     public CaptionFunDef() {
         super(functionMetaData);

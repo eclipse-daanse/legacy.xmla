@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class DescendantsMemberResolver extends AbstractFunctionDefinitionMultiResolver {
     private static String descFlagDescription = "SELF, AFTER, BEFORE, BEFORE_AND_AFTER, SELF_AND_AFTER, SELF_AND_BEFORE, SELF_BEFORE_AFTER, LEAVES";
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Descendants");
-    private static String SIGNATURE = "Descendants(<Member>[, <Level>[, <Desc_flag>]])";
     private static String DESCRIPTION = "Returns the set of descendants of a member at a specified level, optionally including or excluding descendants in other levels.";
     private static FunctionParameterR[] m = { new FunctionParameterR(DataType.MEMBER, "Member") };
     private static FunctionParameterR[] ml = { new FunctionParameterR(DataType.MEMBER, "Member"),
@@ -43,17 +42,17 @@ public class DescendantsMemberResolver extends AbstractFunctionDefinitionMultiRe
             new FunctionParameterR(DataType.EMPTY), new FunctionParameterR(DataType.SYMBOL, "Desc_flag", descFlagDescription) };
     // {"fxm", "fxml", "fxmly", "fxmn", "fxmny", "fxmey"}
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE, DataType.SET,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, DataType.SET,
             m);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, ml);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, mly);
-    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, mn);
-    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, mny);
-    private static FunctionMetaData functionMetaData5 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData5 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, mey);
 
     public DescendantsMemberResolver() {

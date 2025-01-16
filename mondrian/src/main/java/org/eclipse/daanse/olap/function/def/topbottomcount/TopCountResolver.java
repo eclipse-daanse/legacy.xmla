@@ -27,17 +27,16 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class TopCountResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("TopCount");
-    private static String SIGNATURE = "TopCount(<Set>, <Count>[, <Numeric Expression>])";
     private static String DESCRIPTION = "Returns a specified number of items from the top of a set, optionally ordering the set first.";
-    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.NUMERIC) };
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC) };
+    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET, "Set"),
+            new FunctionParameterR(DataType.NUMERIC, "Count"), new FunctionParameterR(DataType.NUMERIC, "Numeric") };
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
+            new FunctionParameterR(DataType.NUMERIC, "Count") };
     // {"fxxnn", "fxxn"}
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE, DataType.SET,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, DataType.SET,
             xnn);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, xn);
 
     public TopCountResolver() {

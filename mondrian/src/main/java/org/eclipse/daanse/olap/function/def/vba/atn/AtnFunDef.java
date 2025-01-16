@@ -29,9 +29,8 @@ public class AtnFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("Atn");
     static String description = """
         Returns a Double specifying the arctangent of a number.""";
-    static String signature = "Atn(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] {
+            DataType.NUMERIC, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.NUMERIC, "Number" )});
 
     public AtnFunDef() {

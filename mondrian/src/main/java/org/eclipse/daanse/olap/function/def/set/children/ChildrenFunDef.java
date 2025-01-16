@@ -29,7 +29,7 @@ public class ChildrenFunDef extends AbstractFunctionDefinition {
     // <Member>.Children
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Children");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the children of a member.", "<MEMBER>.Children", DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
+            "Returns the children of a member.", DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER, "Member" ) });
 
     public ChildrenFunDef() {
         super(functionMetaData);

@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class StrCompResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("StrComp");
-    private static String SIGNATURE = "StrComp(string1, string2[, compare])";
     private static String DESCRIPTION = """
         Returns a Variant (Integer) indicating the result of a string
         comparison.""";
@@ -37,9 +36,9 @@ public class StrCompResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionParameterR[] p2 = { new FunctionParameterR(DataType.STRING, "String1"), new FunctionParameterR(DataType.STRING, "String2"),
             new FunctionParameterR(DataType.INTEGER, "Compare")  };
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.INTEGER, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.INTEGER, p2);
 
     public StrCompResolver() {

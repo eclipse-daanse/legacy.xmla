@@ -30,9 +30,8 @@ public class InFunDef  extends AbstractFunctionDefinition {
     static InfixOperationAtom atom = new InfixOperationAtom("IN");
     static String description = """
         Returns true if the member argument is contained in the set argument.""";
-    static String signature = "<Member> IN <Set>";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.LOGICAL , new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ), new FunctionParameterR( DataType.SET ) });
+            DataType.LOGICAL , new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER, "Member" ), new FunctionParameterR( DataType.SET, "Set" ) });
 
     public InFunDef() {
         super(functionMetaData);

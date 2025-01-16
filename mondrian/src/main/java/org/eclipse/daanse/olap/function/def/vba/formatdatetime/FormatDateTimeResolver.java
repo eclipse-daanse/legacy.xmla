@@ -28,16 +28,15 @@ import org.osgi.service.component.annotations.Component;
 public class FormatDateTimeResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("FormatDateTime");
-    private static String SIGNATURE = "FormatDateTime(Date[,NamedFormat])";
     private static String DESCRIPTION = """
         Returns an expression formatted as a date or time.""";
 
     private static FunctionParameterR[] p1 = { new FunctionParameterR(DataType.DATE_TIME, "Date") };
     private static FunctionParameterR[] p2 = { new FunctionParameterR(DataType.DATE_TIME, "Date"), new FunctionParameterR(DataType.INTEGER, "Named Format") };
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p2);
 
     public FormatDateTimeResolver() {

@@ -23,7 +23,6 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
-import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class IifTupleFunDef extends IifFunDef {
 
@@ -31,7 +30,7 @@ public class IifTupleFunDef extends IifFunDef {
     static FunctionParameterR[] params = { new FunctionParameterR(DataType.LOGICAL, "Condition"),
             new FunctionParameterR(DataType.TUPLE, "Tuple1"), new FunctionParameterR(DataType.TUPLE, "Tuple2") };
     static FunctionMetaData TUPLE_INSTANCE_FUNCTION_META_DATA = new FunctionMetaDataR(TUPLE_INSTANCE_FUNCTION_ATOM,
-            "Returns one of two tuples determined by a logical test.", "IIf(<LOGICAL>, <TUPLE>, <TUPLE>)",
+            "Returns one of two tuples determined by a logical test.",
             DataType.TUPLE, params);
     // IIf(<Logical Expression>, <Tuple Expression>, <Tuple Expression>)
 

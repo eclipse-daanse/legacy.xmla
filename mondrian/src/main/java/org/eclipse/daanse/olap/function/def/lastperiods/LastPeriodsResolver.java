@@ -27,16 +27,15 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class LastPeriodsResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("LastPeriods");
-    private static String SIGNATURE = "LastPeriods(<Index> [, <Member>])";
     private static String DESCRIPTION = "Returns a set of members prior to and including a specified member.";
     private static FunctionParameterR[] n = { new FunctionParameterR(DataType.NUMERIC, "Index") };
     private static FunctionParameterR[] nm = { new FunctionParameterR(DataType.NUMERIC, "Index"),
             new FunctionParameterR(DataType.MEMBER, "Member") };
     // {"fxn", "fxnm"}
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, n);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, nm);
 
     public LastPeriodsResolver() {

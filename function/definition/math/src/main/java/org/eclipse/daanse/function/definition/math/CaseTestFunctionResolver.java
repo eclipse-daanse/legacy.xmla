@@ -31,7 +31,6 @@ public class CaseTestFunctionResolver implements FunctionResolver {
 	private static final String NAME = "_CaseTest";
 	private static final OperationAtom OPERATION_ATOM = new CaseOperationAtom(NAME);
 
-	private static final String SIGNATURE = "Case When <Logical Expression> Then <Expression> [...] [Else <Expression>] End";
 	private static final String DESCRIPTION = "Evaluates various conditions, and returns the corresponding expression for the first which evaluates to true.";
 
 	@Override
@@ -67,8 +66,7 @@ public class CaseTestFunctionResolver implements FunctionResolver {
 			return null;
 		}
 		FunctionMetaData functionInformation = new FunctionMetaDataR(OPERATION_ATOM,
-				DESCRIPTION,
-				SIGNATURE, 
+				DESCRIPTION, 
 				returnType, Expressions.functionParameterOf(argumentExpressions));
 		return new CaseTestFunctionDefinition(functionInformation);
 	}

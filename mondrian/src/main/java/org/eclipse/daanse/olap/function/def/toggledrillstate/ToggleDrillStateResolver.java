@@ -14,6 +14,7 @@
 package org.eclipse.daanse.olap.function.def.toggledrillstate;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
@@ -27,19 +28,17 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class ToggleDrillStateResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("ToggleDrillState");
-    private static String SIGNATURE = "ToggleDrillState(<Set1>, <Set2>[, RECURSIVE])";
+    static final List<String> ReservedWords = List.of("RECURSIVE");
     private static String DESCRIPTION = "Toggles the drill state of members. This function is a combination of DrillupMember and DrilldownMember.";
     private static FunctionParameterR[] xx = { new FunctionParameterR(DataType.SET, "Set1"),
             new FunctionParameterR(DataType.SET, "Set2") };
     private static FunctionParameterR[] xxy = { new FunctionParameterR(DataType.SET, "Set1"),
-            new FunctionParameterR(DataType.SET, "Set2"), new FunctionParameterR(DataType.SYMBOL, "RECURSIVE") };
+            new FunctionParameterR(DataType.SET, "Set2"), new FunctionParameterR(DataType.SYMBOL, "RECURSIVE", Optional.of(ReservedWords)) };
     // {"fxxx", "fxxxy"}
 
-    static final List<String> ReservedWords = List.of("RECURSIVE");
-
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE, DataType.SET,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, DataType.SET,
             xx);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, xxy);
 
     public ToggleDrillStateResolver() {

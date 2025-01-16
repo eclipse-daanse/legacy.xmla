@@ -28,11 +28,11 @@ import org.osgi.service.component.annotations.Component;
 public class DateDiffResolver extends AbstractFunctionDefinitionMultiResolver {
     
     private static FunctionOperationAtom atom = new FunctionOperationAtom("DateDiff");
-    private static String SIGNATURE = "DateDiff(interval, date1, date2[, firstdayofweek[, firstweekofyear]])";
     private static String DESCRIPTION = """
             Returns a Variant (Long) specifying the number of time intervals
             between two specified dates.""";
-    private static FunctionParameterR[] p1 = { new FunctionParameterR( DataType.STRING, "IntervalName" ), new FunctionParameterR( DataType.DATE_TIME, "Date1" ), new FunctionParameterR( DataType.DATE_TIME, "Date2" ) };
+    private static FunctionParameterR[] p1 = { new FunctionParameterR( DataType.STRING, "IntervalName" ), new FunctionParameterR( DataType.DATE_TIME, "Date1" ),
+            new FunctionParameterR( DataType.DATE_TIME, "Date2" ) };
     private static FunctionParameterR[] p2 = { new FunctionParameterR( DataType.STRING, "IntervalName" ), 
             new FunctionParameterR( DataType.DATE_TIME, "Date1" ), new FunctionParameterR( DataType.DATE_TIME, "Date2" ),
             new FunctionParameterR( DataType.INTEGER, "First Day Of Week" ) };
@@ -41,11 +41,11 @@ public class DateDiffResolver extends AbstractFunctionDefinitionMultiResolver {
             new FunctionParameterR( DataType.INTEGER, "First Day Of Week" ), new FunctionParameterR( DataType.INTEGER, "First Week Of Year" ) };
 
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p2);
-    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p3);
 
     public DateDiffResolver() {

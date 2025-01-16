@@ -29,7 +29,8 @@ public class GreaterOperatorDef extends AbstractFunctionDefinition {
     // <Numeric Expression> > <Numeric Expression>
     static InfixOperationAtom infixOperationAtom = new InfixOperationAtom(">");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(infixOperationAtom, "Returns whether an expression is greater than another.",
-            "<NUMERIC> > <NUMERIC>", DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.NUMERIC ), new FunctionParameterR( DataType.NUMERIC )  });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.NUMERIC, "Numeric1" ),
+                    new FunctionParameterR( DataType.NUMERIC, "Numeric2" )  });
 
     public GreaterOperatorDef() {
         super(functionMetaData);

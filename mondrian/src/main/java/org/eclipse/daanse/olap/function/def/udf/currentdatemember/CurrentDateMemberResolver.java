@@ -14,6 +14,7 @@
 package org.eclipse.daanse.olap.function.def.udf.currentdatemember;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
@@ -27,7 +28,7 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class CurrentDateMemberResolver extends AbstractFunctionDefinitionMultiResolver {
     private final static FunctionOperationAtom atom = new FunctionOperationAtom("CurrentDateMember");
-    private final static String SIGNATURE = "CurrentDateMember(<String>)";
+    private final static List<String> reservedWords = List.of("EXACT", "BEFORE", "AFTER");
     private final static String DESCRIPTION = """
             Returns the closest or exact member within the specified
             dimension corresponding to the current date, in the format
@@ -45,19 +46,19 @@ public class CurrentDateMemberResolver extends AbstractFunctionDefinitionMultiRe
             namely the Visual Basic format strings.
             See http://www.apostate.com/programming/vb-format.html.""";
 
-    private static FunctionParameterR[] fp = { new FunctionParameterR(DataType.HIERARCHY),
-            new FunctionParameterR(DataType.STRING), new FunctionParameterR(DataType.SYMBOL) };
-    private static FunctionParameterR[] fp1 = { new FunctionParameterR(DataType.HIERARCHY),
-            new FunctionParameterR(DataType.STRING) };
+    private static FunctionParameterR[] fp = { new FunctionParameterR(DataType.HIERARCHY, "Hierarchy"),
+            new FunctionParameterR(DataType.STRING, "Format"), new FunctionParameterR(DataType.SYMBOL, "MatchType", Optional.of(reservedWords)) };
+    private static FunctionParameterR[] fp1 = { new FunctionParameterR(DataType.HIERARCHY, "Hierarchy"),
+            new FunctionParameterR(DataType.STRING, "Format") };
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.MEMBER, fp);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION1, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION1,
             DataType.MEMBER, fp1);
 
     @Override
     public List<String> getReservedWords() {
-        return List.of("EXACT", "BEFORE", "AFTER");
+        return reservedWords;
     }
 
     public CurrentDateMemberResolver() {

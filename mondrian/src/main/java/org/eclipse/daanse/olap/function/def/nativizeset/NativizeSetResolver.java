@@ -28,13 +28,12 @@ import org.osgi.service.component.annotations.Component;
 
 @Component(service = FunctionResolver.class)
 public class NativizeSetResolver  extends AbstractFunctionDefinitionMultiResolver {
-    private static FunctionOperationAtom atom = new FunctionOperationAtom("NativizeSet");
-    private static String SIGNATURE = "NativizeSet(<Set>)";
+    private static FunctionOperationAtom atom = new FunctionOperationAtom("NativizeSet");    
     private static String DESCRIPTION = "Tries to natively evaluate <Set>.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
     // {"fxx"}
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, x);
 
     public NativizeSetResolver() {

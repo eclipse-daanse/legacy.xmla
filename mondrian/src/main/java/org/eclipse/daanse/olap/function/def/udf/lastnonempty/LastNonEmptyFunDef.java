@@ -29,9 +29,8 @@ public class LastNonEmptyFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("LastNonEmpty");
     static String description = """
         Returns the last member of a set whose value is not empty""";
-    static String signature = "LastNonEmpty(<Set>, <Member>)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.MEMBER , new FunctionParameterR[] { new FunctionParameterR( DataType.SET ), new FunctionParameterR( DataType.MEMBER ) });
+            DataType.MEMBER , new FunctionParameterR[] { new FunctionParameterR( DataType.SET, "Set" ), new FunctionParameterR( DataType.MEMBER, "Member" ) });
 
     public LastNonEmptyFunDef() {
         super(functionMetaData);

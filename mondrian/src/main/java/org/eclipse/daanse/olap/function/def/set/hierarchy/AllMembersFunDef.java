@@ -29,7 +29,7 @@ public class AllMembersFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("AllMembers");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns a set that contains all members, including calculated members, of the specified hierarchy.",
-            "<HIERARCHY>.AllMembers", DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY ) });
+            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY, "Hierarchy" ) });
 
     public AllMembersFunDef() {
         super(functionMetaData);

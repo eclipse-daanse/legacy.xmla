@@ -56,7 +56,7 @@ public class SetItemStringResolver extends NoExpressionRequiredFunctionResolver 
 
         FunctionMetaData functionMetaData = new FunctionMetaDataR(SetItemFunDef.functionAtom,
                 "Returns a tuple from the set specified in <Set>. The tuple to be returned is specified by the member name (or names) in <String>.",
-                "<Set>.Item(<String> [, ...])", category, Expressions.functionParameterOf(args));
+                category, Expressions.functionParameterOf(args));
 
         return new SetItemFunDef(functionMetaData);
     }

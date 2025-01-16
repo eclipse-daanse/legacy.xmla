@@ -27,16 +27,15 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class SubsetResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Subset");
-    private static String SIGNATURE = "Subset(<Set>, <Start>[, <Count>])";
     private static String DESCRIPTION = "Returns a subset of elements from a set.";
     private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC, "Start") };
     private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET, "Set"),
             new FunctionParameterR(DataType.NUMERIC, "Start"), new FunctionParameterR(DataType.NUMERIC, "Count") };
     // {"fxxn", "fxxnn"}
-    
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, xn);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, xnn);
 
     public SubsetResolver() {

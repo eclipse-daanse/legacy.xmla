@@ -36,10 +36,9 @@ class CaseTestFunDef extends AbstractFunctionDefinition {
     static final OperationAtom functionAtom = new CaseOperationAtom(NAME);
 
     static final String DESCRIPTION = "Evaluates various conditions, and returns the corresponding expression for the first which evaluates to true.";
-    static final String SIGNATURE = "Case When <Logical Expression> Then <Expression> [...] [Else <Expression>] End";
 
     public CaseTestFunDef(DataType returnType, FunctionParameterR[] types) {
-        super(new FunctionMetaDataR(functionAtom, DESCRIPTION, SIGNATURE, returnType, types));
+        super(new FunctionMetaDataR(functionAtom, DESCRIPTION, returnType, types));
     }
 
     @Override

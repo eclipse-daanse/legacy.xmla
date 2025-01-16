@@ -25,7 +25,6 @@ import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 
 class AvgNumericFunDef extends AbstractAggregateFunDef {
 	static final FunctionMetaData fmd = new FunctionMetaDataR(AvgResolver.operationAtom,
-			"Avg(<Set>, <Numeric Expression>)",
 			"Returns the average value of a numeric expression evaluated over a set.", DataType.NUMERIC,
 			new FunctionParameterR[] { new FunctionParameterR(  DataType.SET ), new FunctionParameterR( DataType.NUMERIC ) });
 

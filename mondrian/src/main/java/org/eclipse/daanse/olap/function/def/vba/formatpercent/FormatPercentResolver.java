@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class FormatPercentResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("FormatPercent");
-    private static String SIGNATURE = "FormatPercent(Expression[,NumDigitsAfterDecimal [,IncludeLeadingDigit [,UseParensForNegativeNumbers [,GroupDigits]]]])";
     private static String DESCRIPTION = """
         Returns an expression formatted as a percentage (multipled by 100)
         with a trailing % character.""";
@@ -43,15 +42,15 @@ public class FormatPercentResolver extends AbstractFunctionDefinitionMultiResolv
             new FunctionParameterR(DataType.INTEGER, "Include Leading Digit"), new FunctionParameterR(DataType.INTEGER, "Use Parens For Negative Numbers"),
             new FunctionParameterR(DataType.INTEGER, "Group Digits")};
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p2);
-    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p3);
-    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p4);
-    private static FunctionMetaData functionMetaData5 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData5 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p5);
 
     public FormatPercentResolver() {

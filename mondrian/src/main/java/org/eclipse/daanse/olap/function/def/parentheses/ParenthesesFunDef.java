@@ -37,7 +37,7 @@ public class ParenthesesFunDef extends AbstractFunctionDefinition {
 
     public ParenthesesFunDef(DataType argType) {
         super(new FunctionMetaDataR(functionAtom, "Parenthesis enclose an expression and indicate precedence.",
-                "(<Expression>)",  argType, new FunctionParameterR[] { new FunctionParameterR(argType) }));
+                argType, new FunctionParameterR[] { new FunctionParameterR(argType) }));
 
     }
     

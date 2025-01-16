@@ -35,8 +35,8 @@ public class LevelsStringFunDef extends AbstractFunctionDefinition {
 
     static OperationAtom functionOperationAtom = new FunctionOperationAtom(LEVELS);
     static FunctionMetaData levelsFunctionMetaData = new FunctionMetaDataR(functionOperationAtom,
-            "Returns the level whose name is specified by a string expression.", "Levels(<STRING>)", DataType.LEVEL,
-            new FunctionParameterR[] { new FunctionParameterR(  DataType.STRING )});
+            "Returns the level whose name is specified by a string expression.", DataType.LEVEL,
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.STRING, "String" )});
 
     public LevelsStringFunDef() {
         super(levelsFunctionMetaData);

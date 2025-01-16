@@ -31,8 +31,8 @@ public class DimensionOfHierarchyFunDef extends AbstractFunctionDefinition {
 	private static final OperationAtom atom = new PlainPropertyOperationAtom("Dimension");
 
 	private static final FunctionMetaData functionMetaData = new FunctionMetaDataR(atom,
-			"Returns the dimension that contains a specified hierarchy.", "<Hierarchy>.Dimension", DataType.DIMENSION,
-			new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY ) });
+			"Returns the dimension that contains a specified hierarchy.", DataType.DIMENSION,
+			new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY, "Hierarchy" ) });
 
 	public DimensionOfHierarchyFunDef() {
 		super(functionMetaData);

@@ -32,12 +32,12 @@ import mondrian.olap.fun.MondrianEvaluationException;
 
 public class PropertiesFunDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtom = new MethodOperationAtom("Properties");
-    public static final FunctionParameterR[] PARAMETER_TYPES = { new FunctionParameterR(DataType.MEMBER),
-            new FunctionParameterR(DataType.STRING) };
+    public static final FunctionParameterR[] PARAMETER_TYPES = { new FunctionParameterR(DataType.MEMBER, "Member"),
+            new FunctionParameterR(DataType.STRING, "String") };
 
     public PropertiesFunDef(DataType returnType) {
         super(new FunctionMetaDataR(functionAtom, "Returns the value of a member property.",
-                "<Member>.Properties(<String Expression>)", returnType, PARAMETER_TYPES));
+                returnType, PARAMETER_TYPES));
     }
 
     @Override

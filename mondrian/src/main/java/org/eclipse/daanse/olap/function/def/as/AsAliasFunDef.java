@@ -48,11 +48,10 @@ import mondrian.olap.QueryImpl;
  */
 public class AsAliasFunDef extends AbstractFunctionDefinition {
 
-	static final String SIGNATURE = "<Expression> AS <Name>";
 	static final String DESCRIPTION = "Assigns an alias to an expression";
 
 	static final OperationAtom functionAtom = new InfixOperationAtom("AS");
-	static final FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, DESCRIPTION, SIGNATURE,
+	static final FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, DESCRIPTION,
 			DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.SET ), new FunctionParameterR( DataType.NUMERIC ) });
 
 	private final QueryImpl.ScopedNamedSet scopedNamedSet;

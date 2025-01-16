@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class FormatNumberResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("FormatNumber");
-    private static String SIGNATURE = "FormatNumber(Expression[,NumDigitsAfterDecimal [,IncludeLeadingDigit [,UseParensForNegativeNumbers [,GroupDigits]]]])";
     private static String DESCRIPTION = """
         Returns an expression formatted as a number.""";
 
@@ -44,15 +43,15 @@ public class FormatNumberResolver extends AbstractFunctionDefinitionMultiResolve
             new FunctionParameterR(DataType.INTEGER, "Digits After Decimal"), new FunctionParameterR(DataType.INTEGER, "Include Leading Digit"),
             new FunctionParameterR(DataType.INTEGER, "Use Parens For Negative Numbers"), new FunctionParameterR(DataType.INTEGER, "Group Digits") };
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p2);
-    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p3);
-    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p4);
-    private static FunctionMetaData functionMetaData5 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData5 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p5);
 
     public FormatNumberResolver() {

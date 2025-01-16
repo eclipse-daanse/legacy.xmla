@@ -29,9 +29,8 @@ public class TimerFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Single representing the number of seconds elapsed since
         midnight.""";
-    static String signature = "Timer()";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { });
+            DataType.NUMERIC, new FunctionParameterR[] { });
 
     public TimerFunDef() {
         super(functionMetaData);

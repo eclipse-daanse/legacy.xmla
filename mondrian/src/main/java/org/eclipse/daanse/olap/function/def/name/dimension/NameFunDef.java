@@ -29,15 +29,15 @@ public class NameFunDef extends AbstractFunctionDefinition {
     // <Dimension>.Name
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Name");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the name of a dimension.", "<DIMENSION>.Name", DataType.STRING,
-            new FunctionParameterR[] { new FunctionParameterR( DataType.DIMENSION ) });
+            "Returns the name of a dimension.", DataType.STRING,
+            new FunctionParameterR[] { new FunctionParameterR( DataType.DIMENSION, "Dimension" ) });
 
     public NameFunDef() {
         super(functionMetaData);
     }
 
     @Override
-    public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
+    public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
         final DimensionCalc dimensionCalc = compiler.compileDimension(call.getArg(0));
         return new NameCalc(call.getType(), dimensionCalc);
     }

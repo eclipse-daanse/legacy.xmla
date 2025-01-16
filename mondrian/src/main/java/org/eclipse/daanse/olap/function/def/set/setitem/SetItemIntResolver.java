@@ -27,13 +27,12 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class SetItemIntResolver extends AbstractFunctionDefinitionMultiResolver {
     private static MethodOperationAtom atom = new MethodOperationAtom("Item");
-    private static String SIGNATURE = "<Set>.Item(<Index>)";
     private static String DESCRIPTION = "Returns a tuple from the set specified in <Set>. The tuple to be returned is specified by the zero-based position of the tuple in the set in <Index>.";
     private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC, "Index") };
     // {"mmxn"}
 
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.MEMBER, xn);
 
     public SetItemIntResolver() {

@@ -48,7 +48,7 @@ public class CrossJoinResolver  extends NoExpressionRequiredFunctionResolver {
         }
 
 
-        FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Returns the cross product of two sets.", "Crossjoin(<Set1>, <Set2>[, <Set3>...])",
+        FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Returns the cross product of two sets.",
                 org.eclipse.daanse.olap.api.DataType.SET, Expressions.functionParameterOf(args));
         return new CrossJoinFunDef(functionMetaData);
       }

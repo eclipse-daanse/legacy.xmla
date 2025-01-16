@@ -30,9 +30,8 @@ public class PiFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns the number 3.14159265358979, the mathematical constant pi,
         accurate to 15 digits.""";
-    static String signature = "Pi()";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { });
+            DataType.NUMERIC, new FunctionParameterR[] { });
 
     public PiFunDef() {
         super(functionMetaData);

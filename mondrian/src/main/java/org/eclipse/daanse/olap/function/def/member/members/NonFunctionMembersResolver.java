@@ -24,7 +24,7 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class NonFunctionMembersResolver extends NonFunctionResolver {
     public NonFunctionMembersResolver() {
-        super(new FunctionMetaDataR(new PlainPropertyOperationAtom("Members"), "Returns the set of members in a dimension.", "<DIMENSION>.Members",
-                DataType.SET, new FunctionParameterR[] { new FunctionParameterR(DataType.DIMENSION) }));
+        super(new FunctionMetaDataR(new PlainPropertyOperationAtom("Members"), "Returns the set of members in a dimension.",
+                DataType.SET, new FunctionParameterR[] { new FunctionParameterR(DataType.DIMENSION, "Dimension") }));
     }
 }

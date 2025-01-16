@@ -14,16 +14,15 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class MedianResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Median");
-    private static String SIGNATURE = "Median(<Set>[, <Numeric Expression>])";
     private static String DESCRIPTION = "Returns the median value of a numeric expression evaluated over a set.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC) };
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
+            new FunctionParameterR(DataType.NUMERIC, "Percentile") };
     // {"fnx", "fnxn"}
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, x);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, xn);
 
     public MedianResolver() {

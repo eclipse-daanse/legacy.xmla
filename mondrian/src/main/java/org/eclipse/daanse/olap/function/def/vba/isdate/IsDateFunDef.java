@@ -29,9 +29,8 @@ public class IsDateFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Boolean value indicating whether an expression can be
         converted to a date.""";
-    static String signature = "IsDate(varname)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "expression" ) });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "expression" ) });
 
     public IsDateFunDef() {
         super(functionMetaData);

@@ -30,8 +30,8 @@ public class MemberHierarchyFunDef extends AbstractFunctionDefinition {
     static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Hierarchy");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns a member's hierarchy.", "<MEMBER>.Hierarchy", DataType.HIERARCHY,
-            new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
+            "Returns a member's hierarchy.", DataType.HIERARCHY,
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ,"Member" ) });
 
     public MemberHierarchyFunDef() {
         super(functionMetaData);

@@ -29,8 +29,8 @@ public class LenFunDef extends AbstractFunctionDefinition {
     // Len(<String Expression>)
     static FunctionOperationAtom functionOperationAtom = new FunctionOperationAtom("Len");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionOperationAtom,
-            "Returns the number of characters in a string", "Len(<STRING>)", DataType.NUMERIC,
-            new FunctionParameterR[] { new FunctionParameterR( DataType.STRING ) });
+            "Returns the number of characters in a string", DataType.NUMERIC,
+            new FunctionParameterR[] { new FunctionParameterR( DataType.STRING, "String" ) });
 
     public LenFunDef() {
         super(functionMetaData);

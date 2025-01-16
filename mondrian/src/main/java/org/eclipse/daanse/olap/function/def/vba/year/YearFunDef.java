@@ -30,9 +30,8 @@ public class YearFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Variant (Integer) containing a whole number representing
         the year.""";
-    static String signature = "Year(date)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
+            DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
 
     public YearFunDef() {
         super(functionMetaData);

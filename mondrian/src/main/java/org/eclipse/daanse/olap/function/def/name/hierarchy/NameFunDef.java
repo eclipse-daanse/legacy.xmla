@@ -29,15 +29,15 @@ public class NameFunDef extends AbstractFunctionDefinition {
     // <Hierarchy>.Name
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Name");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the name of a hierarchy.", "<HIERARCHY>.Name", DataType.STRING,
-            new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY ) });
+            "Returns the name of a hierarchy.", DataType.STRING,
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY, "Hierarchy") });
 
     public NameFunDef() {
         super(functionMetaData);
     }
 
     @Override
-    public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
+    public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
         final HierarchyCalc hierarchyCalc = compiler.compileHierarchy(call.getArg(0));
         return new NameCalc(call.getType(), hierarchyCalc);
     }

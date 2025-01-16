@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class WeekdayResolver extends AbstractFunctionDefinitionMultiResolver {
     
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Weekday");
-    private static String SIGNATURE = "Weekday(date[, firstDayOfWeek])";
     private static String DESCRIPTION = """
         Returns a Variant (Integer) containing a whole number representing
         the day of the week.""";
@@ -37,9 +36,9 @@ public class WeekdayResolver extends AbstractFunctionDefinitionMultiResolver {
             new FunctionParameterR( DataType.INTEGER, "First Day Of Week" ) };
 
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p2);
 
     public WeekdayResolver() {

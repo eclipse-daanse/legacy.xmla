@@ -470,12 +470,6 @@ void testResultLimitWithinCrossjoin_1(Context foodMartContext) {
 	public FunctionMetaData getFunctionMetaData() {
 		return new FunctionMetaData() {
 
-		    @Override
-			public String signature() {
-		      throw new UnsupportedOperationException();
-		    }
-
-
 			@Override
 			public OperationAtom operationAtom() {
 
@@ -529,43 +523,39 @@ void testResultLimitWithinCrossjoin_1(Context foodMartContext) {
     }
 
     @Override
-	public Calc compileCall( ResolvedFunCall call, ExpressionCompiler compiler ) {
+	public Calc<?> compileCall( ResolvedFunCall call, ExpressionCompiler compiler ) {
       return null;
     }
 
 	@Override
 	public FunctionMetaData getFunctionMetaData() {
-		return new FunctionMetaData() {
-		    @Override
-			public String signature() {
-		      return "";
-		    }
+        return new FunctionMetaData() {
 
-			@Override
-			public OperationAtom operationAtom() {
-				return new FunctionOperationAtom("");
-			}
+            @Override
+            public OperationAtom operationAtom() {
+                return new FunctionOperationAtom("");
+            }
 
-			    @Override
-				public String description() {
-			      return "";
-			    }
+            @Override
+            public String description() {
+                return "";
+            }
 
-			    @Override
-				public DataType returnCategory() {
-			      return DataType.UNKNOWN;
-			    }
+            @Override
+            public DataType returnCategory() {
+                  return DataType.UNKNOWN;
+            }
 
-			    @Override
-				public DataType[] parameterDataTypes() {
-			      return new DataType[ 0 ];
-			    }
+                @Override
+                public DataType[] parameterDataTypes() {
+                    return new DataType[ 0 ];
+                }
 
-				@Override
-				public FunctionParameter[] parameters() {
-					return new FunctionParameter[0];
-				}
-		};
+                @Override
+                public FunctionParameter[] parameters() {
+                    return new FunctionParameter[0];
+                }
+       };
 	}
   }
 }

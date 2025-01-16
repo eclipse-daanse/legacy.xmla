@@ -32,9 +32,9 @@ public class DateAddFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Variant (Date) containing a date to which a specified time
         interval has been added.""";
-    static String signature = "DateAdd(interval, number, date)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.DATE_TIME, new FunctionParameterR[] { new FunctionParameterR( DataType.STRING, "IntervalName" ), new FunctionParameterR( DataType.NUMERIC, "Number" ), new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
+            DataType.DATE_TIME, new FunctionParameterR[] { new FunctionParameterR( DataType.STRING, "IntervalName" ),
+                    new FunctionParameterR( DataType.NUMERIC, "Number" ), new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
 
     public DateAddFunDef() {
         super(functionMetaData);

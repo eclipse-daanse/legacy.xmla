@@ -14,6 +14,7 @@
 package org.eclipse.daanse.olap.function.def.count;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
@@ -28,16 +29,15 @@ import org.osgi.service.component.annotations.Component;
 public class CountResolver extends AbstractFunctionDefinitionMultiResolver {
     static final List<String> ReservedWords =  List.of( "INCLUDEEMPTY", "EXCLUDEEMPTY" );
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Count");
-    private static String SIGNATURE = "Count(<Set>[, EXCLUDEEMPTY | INCLUDEEMPTY])";
     private static String DESCRIPTION = "Returns the number of tuples in a set, empty cells included unless the optional EXCLUDEEMPTY flag is used.";
     private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
     private static FunctionParameterR[] xy = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.SYMBOL, "PrePost") };
+            new FunctionParameterR(DataType.SYMBOL, "PrePost", Optional.of(ReservedWords)) };
     // {"fnx", "fnxy"}
-    
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, x);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, xy);
 
     public CountResolver() {

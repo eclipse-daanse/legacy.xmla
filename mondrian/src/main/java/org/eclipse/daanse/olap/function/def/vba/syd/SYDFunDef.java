@@ -30,9 +30,8 @@ public class SYDFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Double specifying the sum-of-years' digits depreciation of
         an asset for a specified period.""";
-    static String signature = "SYD(cost, salvage, life, period)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] {
+            DataType.NUMERIC, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.NUMERIC, "Cost" ),
                     new FunctionParameterR( DataType.NUMERIC, "Salvage" ),
                     new FunctionParameterR( DataType.NUMERIC, "Life" ),

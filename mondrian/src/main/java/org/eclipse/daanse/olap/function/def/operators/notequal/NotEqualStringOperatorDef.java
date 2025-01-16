@@ -29,8 +29,8 @@ public class NotEqualStringOperatorDef extends AbstractFunctionDefinition {
     // <String Expression> <> <String Expression>
     static InfixOperationAtom infixOperationAtom = new InfixOperationAtom("<>");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(infixOperationAtom,
-            "Returns whether two expressions are not equal.", "<STRING> <> <STRING>", DataType.LOGICAL,
-            new FunctionParameterR[] { new FunctionParameterR( DataType.STRING ), new FunctionParameterR( DataType.STRING )});
+            "Returns whether two expressions are not equal.", DataType.LOGICAL,
+            new FunctionParameterR[] { new FunctionParameterR( DataType.STRING, "String1" ), new FunctionParameterR( DataType.STRING, "String2"  )});
 
     public NotEqualStringOperatorDef() {
         super(functionMetaData);

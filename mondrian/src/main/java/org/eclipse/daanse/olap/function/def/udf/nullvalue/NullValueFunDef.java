@@ -28,9 +28,8 @@ public class NullValueFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("NullValue");
     static String description = """
         Returns the null value""";
-    static String signature = "NullValue()";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC , new FunctionParameterR[] { });
+            DataType.NUMERIC , new FunctionParameterR[] { });
 
     public NullValueFunDef() {
         super(functionMetaData);

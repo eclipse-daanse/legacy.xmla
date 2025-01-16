@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class RateResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Rate");
-    private static String SIGNATURE = "Rate(nper, pmt, pv[, fv[, type[, guess]]])";
     private static String DESCRIPTION = """
         Returns a Double specifying the interest rate per period for an
         annuity.""";
@@ -46,13 +45,13 @@ public class RateResolver extends AbstractFunctionDefinitionMultiResolver {
             new FunctionParameterR(DataType.NUMERIC, "Fv"), new FunctionParameterR(DataType.LOGICAL, "Due"),
             new FunctionParameterR(DataType.NUMERIC, "Guess")};
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p2);
-    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p3);
-    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p4);
 
     public RateResolver() {

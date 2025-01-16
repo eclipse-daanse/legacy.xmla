@@ -30,9 +30,8 @@ public class HourFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Variant (Integer) specifying a whole number between 0 and
         23, inclusive, representing the hour of the day.""";
-    static String signature = "Hour(time)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
+            DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.DATE_TIME, "Date" ) });
 
     public HourFunDef() {
         super(functionMetaData);

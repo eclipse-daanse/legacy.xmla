@@ -19,7 +19,6 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.DateTimeCalc;
 import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
@@ -33,9 +32,8 @@ public class PVFunDef  extends AbstractFunctionDefinition {
         Returns a Double specifying the present value of an annuity based on
         periodic, fixed payments to be paid in the future and a fixed
         interest rate.""";
-    static String signature = "PV(rate, nper, pmt[, fv[, type]])";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { 
+            DataType.NUMERIC, new FunctionParameterR[] { 
                     new FunctionParameterR( DataType.NUMERIC, "Rate" ),
                     new FunctionParameterR( DataType.NUMERIC, "NPer" ),
                     new FunctionParameterR( DataType.NUMERIC, "Pmt" ),

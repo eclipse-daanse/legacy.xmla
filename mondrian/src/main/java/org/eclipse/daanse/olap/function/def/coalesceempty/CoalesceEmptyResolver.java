@@ -51,7 +51,9 @@ public class CoalesceEmptyResolver implements FunctionResolver {
             }
             if (matchingArgs == args.length) {
 
-                FunctionMetaData functionMetaData=new FunctionMetaDataR( CoalesceEmptyFunDef.functionAtom, "Coalesces an empty cell value to a different value. All of the expressions must be of the same type (number or string).", "CoalesceEmpty(<Value Expression>[, <Value Expression>...])",  type, argTypes);
+                FunctionMetaData functionMetaData=new FunctionMetaDataR( CoalesceEmptyFunDef.functionAtom,
+                    "Coalesces an empty cell value to a different value. All of the expressions must be of the same type (number or string).",
+                    type, argTypes);
                 return new CoalesceEmptyFunDef(functionMetaData);
             }
         }

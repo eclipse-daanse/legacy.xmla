@@ -29,9 +29,8 @@ public class FixFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns an expression that has been converted to a Variant of subtype
         Integer.""";
-    static String signature = "Fix(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "expression" ) });
+            DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "expression" ) });
 
     public FixFunDef() {
         super(functionMetaData);

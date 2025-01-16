@@ -32,7 +32,7 @@ public class IifStringFunDef extends AbstractFunctionDefinition {
     static FunctionParameterR[] params = { new FunctionParameterR(DataType.LOGICAL, "Condition"),
             new FunctionParameterR(DataType.STRING, "String1"), new FunctionParameterR(DataType.STRING, "String2") };
     static FunctionMetaData STRING_INSTANCE_FUNCTION_META_DATA = new FunctionMetaDataR(STRING_INSTANCE_FUNCTION_ATOM,
-            "Returns one of two string values determined by a logical test.", "IIf(<LOGICAL>, <STRING>, <STRING>)",
+            "Returns one of two string values determined by a logical test.",
             DataType.STRING, params);
     // IIf(<Logical Expression>, <String Expression>, <String Expression>)
 

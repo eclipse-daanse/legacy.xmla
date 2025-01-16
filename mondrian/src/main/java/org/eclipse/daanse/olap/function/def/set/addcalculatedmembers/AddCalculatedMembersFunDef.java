@@ -30,7 +30,7 @@ public class AddCalculatedMembersFunDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtom = new FunctionOperationAtom("AddCalculatedMembers");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Adds calculated members to a set.",
-            "", DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.SET ) });
+            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.SET, "Set" ) });
 
     public AddCalculatedMembersFunDef() {
         super(functionMetaData);

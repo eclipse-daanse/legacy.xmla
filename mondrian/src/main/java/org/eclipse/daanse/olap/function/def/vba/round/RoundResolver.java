@@ -28,16 +28,15 @@ import org.osgi.service.component.annotations.Component;
 public class RoundResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Round");
-    private static String SIGNATURE = "Round(number[, numDigitsAfterDecimal])";
     private static String DESCRIPTION = """
         Returns a number rounded to a specified number of decimal places.""";
 
     private static FunctionParameterR[] p1 = { new FunctionParameterR(DataType.NUMERIC, "Number") };
     private static FunctionParameterR[] p2 = { new FunctionParameterR(DataType.NUMERIC, "Number"), new FunctionParameterR(DataType.INTEGER, "Digits After Decimal")};
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p2);
 
     public RoundResolver() {

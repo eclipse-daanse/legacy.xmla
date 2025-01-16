@@ -33,9 +33,8 @@ public class Atan2FunDef  extends AbstractFunctionDefinition {
         line containing the origin (0, 0) and a point with coordinates
         (x_num, y_num). The angle is given in radians between -pi and pi,
         excluding -pi.""";
-    static String signature = "Atan2(x, y)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "x" ), new FunctionParameterR( DataType.NUMERIC, "y" ) });
+            DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "x" ), new FunctionParameterR( DataType.NUMERIC, "y" ) });
 
     public Atan2FunDef() {
         super(functionMetaData);

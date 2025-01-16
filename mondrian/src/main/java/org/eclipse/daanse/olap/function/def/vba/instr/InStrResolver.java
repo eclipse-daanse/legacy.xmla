@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class InStrResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("InStr");
-    private static String SIGNATURE = "InStr([start, ]stringcheck, stringmatch[, compare])";
     private static String DESCRIPTION = """
         Returns a Variant (Long) specifying the position of the first
         occurrence of one string within another.""";
@@ -40,11 +39,11 @@ public class InStrResolver extends AbstractFunctionDefinitionMultiResolver {
             new FunctionParameterR(DataType.STRING, "String Match"),
             new FunctionParameterR(DataType.INTEGER, "Compare") };
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.INTEGER, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.INTEGER, p2);
-    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.INTEGER, p3);
 
     public InStrResolver() {

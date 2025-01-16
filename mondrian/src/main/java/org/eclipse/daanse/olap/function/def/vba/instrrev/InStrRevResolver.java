@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class InStrRevResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("InStrRev");
-    private static String SIGNATURE = "InStrRev(stringcheck, stringmatch[, start[, compare]])";
     private static String DESCRIPTION = """
         Returns the position of an occurrence of one string within another,
         from the end of string.""";
@@ -40,11 +39,11 @@ public class InStrRevResolver extends AbstractFunctionDefinitionMultiResolver {
             new FunctionParameterR(DataType.STRING, "String Match"), new FunctionParameterR(DataType.INTEGER, "Start"),
             new FunctionParameterR(DataType.INTEGER, "Compare") };
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.INTEGER, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.INTEGER, p2);
-    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.INTEGER, p3);
 
     public InStrRevResolver() {

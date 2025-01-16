@@ -29,17 +29,16 @@ import org.osgi.service.component.annotations.Component;
 public class OpeningPeriodResolved extends AbstractFunctionDefinitionMultiResolver {
 
     private static OperationAtom atom = new FunctionOperationAtom("OpeningPeriod");
-    private static String SIGNATURE = "OpeningPeriod([<Level>[, <Member>]])";
     private static String DESCRIPTION = "Returns the first descendant of a member at a level.";
     // {"fm", "fml", "fmlm"}
 
-    private static FunctionMetaData functionMetaDataWithoutParam = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaDataWithoutParam = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.MEMBER, new FunctionParameterR[] {});
-    private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL) });
+    private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL, "Level") });
     private static FunctionMetaData functionMetaDataWithLevelMember = new FunctionMetaDataR(atom, DESCRIPTION,
-            SIGNATURE, DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL),
-                    new FunctionParameterR(DataType.MEMBER) });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL, "Level"),
+                    new FunctionParameterR(DataType.MEMBER, "Member") });
 
     public OpeningPeriodResolved() {
         super(List.of(new OpeningClosingPeriodFunDef(functionMetaDataWithoutParam, true),

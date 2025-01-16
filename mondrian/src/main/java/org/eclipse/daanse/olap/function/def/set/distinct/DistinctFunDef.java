@@ -30,15 +30,15 @@ public class DistinctFunDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtom = new FunctionOperationAtom("Distinct");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
-            "Eliminates duplicate tuples from a set.", "Distinct(<SET>)", DataType.SET,
-            new FunctionParameterR[] { new FunctionParameterR( DataType.SET ) });
+            "Eliminates duplicate tuples from a set.", DataType.SET,
+            new FunctionParameterR[] { new FunctionParameterR( DataType.SET, "Set" ) });
 
     public DistinctFunDef() {
         super(functionMetaData);
     }
 
     @Override
-    public Calc compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
+    public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
         final TupleListCalc tupleListCalc = compiler.compileList(call.getArg(0));
         return new DistinctCalc(call, tupleListCalc);
     }

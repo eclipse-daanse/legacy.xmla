@@ -29,20 +29,19 @@ import org.osgi.service.component.annotations.Component;
 public class ParallelPeriodResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static OperationAtom atom = new FunctionOperationAtom("ParallelPeriod");
-    private static String SIGNATURE = "ParallelPeriod([<Level>[, <Numeric Expression>[, <Member>]]])";
     private static String DESCRIPTION = "Returns a member from a prior period in the same relative position as a specified member.";
     // {"fm", "fml", "fmln", "fmlnm"}
 
-    private static FunctionMetaData functionMetaDataWithoutParam = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaDataWithoutParam = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.MEMBER, new FunctionParameterR[] {});
-    private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL) });
+    private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL, "Level") });
     private static FunctionMetaData functionMetaDataWithLevelNumeric = new FunctionMetaDataR(atom, DESCRIPTION,
-            SIGNATURE, DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL),
-                    new FunctionParameterR(DataType.NUMERIC) });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL, "Level"),
+                    new FunctionParameterR(DataType.NUMERIC, "Numeric") });
     private static FunctionMetaData functionMetaDataWithLevelNumericMember = new FunctionMetaDataR(atom, DESCRIPTION,
-            SIGNATURE, DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL),
-                    new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.MEMBER) });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL, "Level"),
+                    new FunctionParameterR(DataType.NUMERIC, "Numeric"), new FunctionParameterR(DataType.MEMBER, "Member") });
 
     public ParallelPeriodResolver() {
         super(List.of(new ParallelPeriodFunDef(functionMetaDataWithoutParam),

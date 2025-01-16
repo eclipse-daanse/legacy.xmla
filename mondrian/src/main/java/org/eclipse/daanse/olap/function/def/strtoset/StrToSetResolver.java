@@ -72,7 +72,7 @@ public class StrToSetResolver extends NoExpressionRequiredFunctionResolver {
 
     private FunctionMetaData functionMetaDataFor(FunctionParameterR[] argTypes) {
         FunctionMetaData functionMetaData = new FunctionMetaDataR(StrToSetFunDef.functionAtom,
-                "Constructs a set from a string expression.", "<Set> StrToSet(<String>[, <Hierarchy>...])",
+                "Constructs a set from a string expression.",
                  DataType.SET, argTypes);
         return functionMetaData;
     }

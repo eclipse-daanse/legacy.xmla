@@ -30,8 +30,8 @@ public class StrToMemberFunDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtom = new FunctionOperationAtom("StrToMember");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
-            "Returns a member from a unique name String in MDX format.", "StrToMember(<STRING>)", DataType.MEMBER,
-            new FunctionParameterR[] { new FunctionParameterR(DataType.STRING) });
+            "Returns a member from a unique name String in MDX format.", DataType.MEMBER,
+            new FunctionParameterR[] { new FunctionParameterR(DataType.STRING, "String") });
 
     public StrToMemberFunDef() {
         super(functionMetaData);

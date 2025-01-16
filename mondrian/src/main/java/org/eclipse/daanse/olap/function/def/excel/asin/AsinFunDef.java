@@ -31,9 +31,8 @@ public class AsinFunDef  extends AbstractFunctionDefinition {
         Returns the arcsine, or inverse sine, of a number. The arcsine is the
         angle whose sine is Arg1. The returned angle is given in radians in
         the range -pi/2 to pi/2.""";
-    static String signature = "Asin(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
+            DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
 
     public AsinFunDef() {
         super(functionMetaData);

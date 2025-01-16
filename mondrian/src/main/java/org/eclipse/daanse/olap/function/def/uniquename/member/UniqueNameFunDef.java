@@ -30,7 +30,7 @@ public class UniqueNameFunDef extends AbstractFunctionDefinition {
     // <Member>.UniqueName
     static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("UniqueName");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the unique name of a member.",
-            "<MEMBER>.UniqueName", DataType.STRING, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
+            DataType.STRING, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER, "Member" ) });
 
     public UniqueNameFunDef() {
         super(functionMetaData);

@@ -30,9 +30,8 @@ public class RTrimFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Variant (String) containing a copy of a specified string
         without trailing spaces.""";
-    static String signature = "RTrim(string)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.STRING, new FunctionParameterR[] {
+            DataType.STRING, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.STRING, "String" )});
 
     public RTrimFunDef() {

@@ -27,16 +27,15 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class HeadResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Head");
-    private static String SIGNATURE = "Head(<Set>[, < Numeric Expression >])";
     private static String DESCRIPTION = "Returns the first specified number of elements in a set.";
     private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
     private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
             new FunctionParameterR(DataType.NUMERIC, "Numeric Expression") };
     // {"fxx", "fxxn"}
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, x);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, xn);
 
     public HeadResolver() {

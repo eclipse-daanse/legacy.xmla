@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class FormatCurrencyResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("FormatCurrency");
-    private static String SIGNATURE = "FormatCurrency(Expression[,NumDigitsAfterDecimal [,IncludeLeadingDigit [,UseParensForNegativeNumbers [,GroupDigits]]]])";
     private static String DESCRIPTION = """
         Returns an expression formatted as a currency value using the
         currency symbol defined in the system control panel.""";
@@ -46,15 +45,15 @@ public class FormatCurrencyResolver extends AbstractFunctionDefinitionMultiResol
             new FunctionParameterR(DataType.INTEGER, "useParensForNegativeNumbers"), new FunctionParameterR(DataType.INTEGER, "groupDigits") };
 
 
-    private static FunctionMetaData functionMetaData0 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData0 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p0);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p2);
-    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p3);
-    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p4);
 
     public FormatCurrencyResolver() {

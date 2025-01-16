@@ -29,8 +29,8 @@ public class AscendantsFunDef extends AbstractFunctionDefinition {
     // Ascendants(<Member>)
     static FunctionOperationAtom functionAtom = new FunctionOperationAtom("Ascendants");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
-            "Returns the set of the ascendants of a specified member.", "Ascendants(<MEMBER>)", DataType.SET,
-            new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
+            "Returns the set of the ascendants of a specified member.", DataType.SET,
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER, "Member" ) });
 
     public AscendantsFunDef() {
         super(functionMetaData);

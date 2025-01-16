@@ -59,7 +59,7 @@ public class CastResolver extends NoExpressionRequiredFunctionResolver {
 
 
         FunctionMetaData functionMetaData = new FunctionMetaDataR(CastFunDef.functionAtom, "Converts values to another type.",
-                "Cast(<Expression> AS <Type>)", returnCategory, Expressions.functionParameterOf(args));
+                returnCategory, Expressions.functionParameterOf(args));
         return new CastFunDef(functionMetaData);
     }
 

@@ -28,9 +28,8 @@ public class IsArrayFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("IsArray");
     static String description = """
         Returns a Boolean value indicating whether a variable is an array.""";
-    static String signature = "IsArray(varname)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.LOGICAL, new FunctionParameterR[] {
+            DataType.LOGICAL, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.VALUE, "VarName" )});
 
     public IsArrayFunDef() {

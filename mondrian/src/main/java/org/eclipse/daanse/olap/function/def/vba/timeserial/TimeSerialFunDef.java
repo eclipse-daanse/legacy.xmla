@@ -30,9 +30,9 @@ public class TimeSerialFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Variant (Date) containing the time for a specific hour,
         minute, and second.""";
-    static String signature = "TimeSerial(hour, minute, second)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.DATE_TIME, new FunctionParameterR[] { new FunctionParameterR( DataType.INTEGER, "Hour" ), new FunctionParameterR( DataType.INTEGER, "Minute" ), new FunctionParameterR( DataType.INTEGER, "Second" ) });
+            DataType.DATE_TIME, new FunctionParameterR[] { new FunctionParameterR( DataType.INTEGER, "Hour" ),
+                    new FunctionParameterR( DataType.INTEGER, "Minute" ), new FunctionParameterR( DataType.INTEGER, "Second" ) });
 
     public TimeSerialFunDef() {
         super(functionMetaData);

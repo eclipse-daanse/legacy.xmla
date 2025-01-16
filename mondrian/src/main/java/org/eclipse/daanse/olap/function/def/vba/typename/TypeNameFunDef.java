@@ -28,9 +28,8 @@ public class TypeNameFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("TypeName");
     static String description = """
         Returns a String that provides information about a variable.""";
-    static String signature = "TypeName(varname)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.STRING, new FunctionParameterR[] {
+            DataType.STRING, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.VALUE, "VarName" )});
 
     public TypeNameFunDef() {

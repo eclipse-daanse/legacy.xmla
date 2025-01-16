@@ -33,9 +33,8 @@ public class NPerFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Double specifying the number of periods for an annuity
         based on periodic, fixed payments and a fixed interest rate.""";
-    static String signature = "NPer(rate, pmt, pv[, fv[, type]])";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { 
+            DataType.NUMERIC, new FunctionParameterR[] { 
                     new FunctionParameterR( DataType.NUMERIC, "Rate" ),
                     new FunctionParameterR( DataType.NUMERIC, "Pmt" ),
                     new FunctionParameterR( DataType.NUMERIC, "Pv" ),

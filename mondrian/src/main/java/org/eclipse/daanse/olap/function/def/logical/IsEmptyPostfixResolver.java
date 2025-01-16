@@ -15,7 +15,6 @@ package org.eclipse.daanse.olap.function.def.logical;
 
 import java.util.List;
 
-import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.PostfixOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
@@ -33,11 +32,11 @@ public class IsEmptyPostfixResolver extends AbstractFunctionDefinitionMultiResol
 
     private static FunctionMetaData postfixMetaDataMember = new FunctionMetaDataR(pAtom,
         "A shortcut function for the PeriodsToDate function that specifies the level to be Month.",
-        "<Value Expression> IS EMPTY", DataType.LOGICAL, new FunctionParameterR[]{ new FunctionParameterR (DataType.MEMBER )});
+        DataType.LOGICAL, new FunctionParameterR[]{ new FunctionParameterR (DataType.MEMBER, "Member" )});
 
     private static FunctionMetaData postfixMetaDataTuple = new FunctionMetaDataR(pAtom,
         "A shortcut function for the PeriodsToDate function that specifies the level to be Month.",
-        "<Value Expression> IS EMPTY", DataType.LOGICAL, new FunctionParameterR[]{ new FunctionParameterR( DataType.TUPLE)});
+        DataType.LOGICAL, new FunctionParameterR[]{ new FunctionParameterR( DataType.TUPLE, "Tuple")});
 
     public IsEmptyPostfixResolver() {
         super(List.of(new IsEmptyFunDef(postfixMetaDataMember), new IsEmptyFunDef(postfixMetaDataTuple)));

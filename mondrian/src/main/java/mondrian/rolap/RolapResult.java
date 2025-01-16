@@ -334,7 +334,7 @@ public class RolapResult extends ResultBase {
         OperationAtom internalOperationAtom = new InternalOperationAtom("$x");
 
         FunctionMetaData functionMetaData = new FunctionMetaDataR(internalOperationAtom, "x",
-                "$x", DataType.NUMERIC, new FunctionParameterR[] { });
+                DataType.NUMERIC, new FunctionParameterR[] { });
         Expression partialExp =
                 new ResolvedFunCallImpl(
                         new org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition(functionMetaData) {

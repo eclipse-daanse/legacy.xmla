@@ -34,8 +34,8 @@ public class UCaseFunDef extends AbstractFunctionDefinition {
     // UCase(<String Expression>)
     static FunctionOperationAtom functionOperationAtom = new FunctionOperationAtom("UCase");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionOperationAtom,
-            "Returns a string that has been converted to uppercase", "UCase(<STRING>)", DataType.STRING,
-            new FunctionParameterR[] { new FunctionParameterR(  DataType.STRING ) });
+            "Returns a string that has been converted to uppercase", DataType.STRING,
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.STRING, "String" ) });
 
     public UCaseFunDef() {
         super(functionMetaData);

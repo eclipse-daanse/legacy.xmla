@@ -3502,7 +3502,7 @@ public class RolapCube extends CubeBase {
         OperationAtom functionAtom = new FunctionOperationAtom("dummy");
 
         FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, null,
-                "dummy()", DataType.NUMERIC, new FunctionParameterR[] { });
+                DataType.NUMERIC, new FunctionParameterR[] { });
 
         return new ResolvedFunCallImpl(
             new AbstractFunctionDefinition(functionMetaData) {

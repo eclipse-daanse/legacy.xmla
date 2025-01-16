@@ -32,7 +32,8 @@ public class CalculatedChildFunDef extends AbstractFunctionDefinition {
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(methodOperationAtom,
             "Returns an existing calculated child member with name <String> from the specified <Member>.",
-            "<MEMBER>.CalculatedChild(<STRING>)", DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ), new FunctionParameterR( DataType.STRING ) });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER, "Member" ),
+                    new FunctionParameterR( DataType.STRING, "String" ) });
 
     CalculatedChildFunDef() {
         super(functionMetaData);

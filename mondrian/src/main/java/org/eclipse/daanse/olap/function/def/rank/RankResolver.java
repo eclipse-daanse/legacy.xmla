@@ -27,24 +27,24 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class RankResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Rank");
-    private static String SIGNATURE = "Rank(<Tuple>, <Set> [, <Calc Expression>])";
     private static String DESCRIPTION = "Returns the one-based rank of a tuple in a set.";
-    private static FunctionParameterR[] tx = { new FunctionParameterR(DataType.TUPLE), new FunctionParameterR(DataType.SET) };
-    private static FunctionParameterR[] txn = { new FunctionParameterR(DataType.TUPLE), new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC) };
-    private static FunctionParameterR[] mx = { new FunctionParameterR(DataType.MEMBER), new FunctionParameterR(DataType.SET) };
-    private static FunctionParameterR[] mxn = { new FunctionParameterR(DataType.MEMBER), new FunctionParameterR(DataType.SET), new FunctionParameterR(DataType.NUMERIC) };
+    private static FunctionParameterR[] tx = { new FunctionParameterR(DataType.TUPLE, "Tuple"), new FunctionParameterR(DataType.SET, "Set") };
+    private static FunctionParameterR[] txn = { new FunctionParameterR(DataType.TUPLE, "Tuple"), new FunctionParameterR(DataType.SET, "Set"),
+            new FunctionParameterR(DataType.NUMERIC, "Numeric") };
+    private static FunctionParameterR[] mx = { new FunctionParameterR(DataType.MEMBER, "Member"), new FunctionParameterR(DataType.SET, "Set") };
+    private static FunctionParameterR[] mxn = { new FunctionParameterR(DataType.MEMBER, "Member"), new FunctionParameterR(DataType.SET, "Set"),
+            new FunctionParameterR(DataType.NUMERIC, "Numeric") };
 
     // {"fitx", "fitxn", "fimx", "fimxn"}
 
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.INTEGER, tx);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.INTEGER, txn);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.INTEGER, mx);
-    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.INTEGER, mxn);
 
     public RankResolver() {

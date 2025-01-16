@@ -30,9 +30,8 @@ public class LTrimFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Variant (String) containing a copy of a specified string
         without leading spaces.""";
-    static String signature = "LTrim(string)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.STRING, new FunctionParameterR[] {
+            DataType.STRING, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.STRING, "String" )});
 
     public LTrimFunDef() {

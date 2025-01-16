@@ -31,9 +31,8 @@ public class RightFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Variant (String) containing a specified number of
         characters from the right side of a string.""";
-    static String signature = "Right(string, length)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.STRING, new FunctionParameterR[] { 
+            DataType.STRING, new FunctionParameterR[] { 
                     new FunctionParameterR( DataType.STRING, "Sstring" ),
                     new FunctionParameterR( DataType.INTEGER, "Length" ) });
 

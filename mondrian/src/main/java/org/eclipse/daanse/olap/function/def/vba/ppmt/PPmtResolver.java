@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class PPmtResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("PPmt");
-    private static String SIGNATURE = "PPmt(rate, per, nper, pv[, fv[, type]])";
     private static String DESCRIPTION = """
         Returns a Double specifying the principal payment for a given period
         of an annuity based on periodic, fixed payments and a fixed
@@ -45,11 +44,11 @@ public class PPmtResolver extends AbstractFunctionDefinitionMultiResolver {
             new FunctionParameterR(DataType.NUMERIC, "Pv"), new FunctionParameterR(DataType.NUMERIC, "Fv"),
             new FunctionParameterR(DataType.LOGICAL, "due") };
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p2);
-    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p3);
 
     public PPmtResolver() {

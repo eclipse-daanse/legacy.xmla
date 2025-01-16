@@ -31,9 +31,8 @@ public class LeftFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a specified number of characters from the left side of a
         string.""";
-    static String signature = "Left(string, length)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.STRING, new FunctionParameterR[] {
+            DataType.STRING, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.STRING, "String" ), new FunctionParameterR( DataType.INTEGER, "Length" )});
 
     public LeftFunDef() {

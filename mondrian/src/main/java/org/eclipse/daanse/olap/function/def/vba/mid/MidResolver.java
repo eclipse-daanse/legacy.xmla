@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class MidResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Mid");
-    private static String SIGNATURE = "Mid(value, beginIndex[, length])";
     private static String DESCRIPTION = """
         Returns a specified number of characters from a string.""";
 
@@ -37,9 +36,9 @@ public class MidResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionParameterR[] p2 = { new FunctionParameterR(DataType.STRING, "Value"),
             new FunctionParameterR(DataType.INTEGER, "Begin Index"), new FunctionParameterR(DataType.INTEGER, "Length")};
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, p2);
 
     public MidResolver() {

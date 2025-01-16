@@ -23,7 +23,6 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
-import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class IifNumericFunDef extends IifFunDef {
 
@@ -32,7 +31,7 @@ public class IifNumericFunDef extends IifFunDef {
             new FunctionParameterR(DataType.NUMERIC, "Numeric2") };
     static OperationAtom NUMERIC_INSTANCE_FUNCTION_ATOM = new FunctionOperationAtom("IIf");
     static FunctionMetaData NUMERIC_INSTANCE_FUNCTION_META_DATA = new FunctionMetaDataR(NUMERIC_INSTANCE_FUNCTION_ATOM,
-            "Returns one of two numeric values determined by a logical test.", "IIf(<LOGICAL>, <NUMERIC>, <NUMERIC>)",
+            "Returns one of two numeric values determined by a logical test.",
             DataType.NUMERIC, params);
     // IIf(<Logical Expression>, <Numeric Expression>, <Numeric Expression>)
 

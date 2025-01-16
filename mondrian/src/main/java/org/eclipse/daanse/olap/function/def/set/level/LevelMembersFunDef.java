@@ -31,8 +31,8 @@ public class LevelMembersFunDef extends AbstractFunctionDefinition {
     static OperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Members");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the set of members in a level.", "<LEVEL>.Members", DataType.SET,
-            new FunctionParameterR[] { new FunctionParameterR( DataType.LEVEL ) });
+            "Returns the set of members in a level.", DataType.SET,
+            new FunctionParameterR[] { new FunctionParameterR( DataType.LEVEL, "Level" ) });
 
     public static final LevelMembersFunDef INSTANCE = new LevelMembersFunDef();
 

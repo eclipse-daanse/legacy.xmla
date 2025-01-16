@@ -29,7 +29,7 @@ public class MemberCaptionFunDef extends AbstractFunctionDefinition {
     // <Member>.Member_Caption
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Member_Caption");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the caption of a member.", "<MEMBER>.Member_Caption", DataType.STRING,
+            "Returns the caption of a member.", DataType.STRING,
             new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
 
     public MemberCaptionFunDef() {

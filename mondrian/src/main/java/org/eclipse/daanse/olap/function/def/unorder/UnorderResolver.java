@@ -27,12 +27,11 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class UnorderResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Unorder");
-    private static String SIGNATURE = "Unorder(<Set>)";
     private static String DESCRIPTION = "Removes any enforced ordering from a specified set.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
     // {"fxx"}
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, x);
 
     public UnorderResolver() {

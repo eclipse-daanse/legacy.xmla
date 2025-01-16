@@ -27,15 +27,14 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class ThirdQResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("ThirdQ");
-    private static String SIGNATURE = "ThirdQ(<Set>[, <Numeric Expression>])";
     private static String DESCRIPTION = "Returns the 3rd quartile value of a numeric expression evaluated over a set.";
     private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC) };
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC, "Numeric Expression") };
     // {"fnx", "fnxn"}
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, x);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, xn);
 
     public ThirdQResolver() {

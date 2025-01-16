@@ -40,8 +40,8 @@ public class FilterFunDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtom = new FunctionOperationAtom("Filter");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
-            "Returns the set resulting from filtering a set based on a search condition.", "Filter(<SET>, <LOGICAL>)",
-            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.SET ), new FunctionParameterR( DataType.LOGICAL ) });
+            "Returns the set resulting from filtering a set based on a search condition.",
+            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.SET ), new FunctionParameterR( DataType.LOGICAL, "Level" ) });
 
     public FilterFunDef() {
         super(functionMetaData);

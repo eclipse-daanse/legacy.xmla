@@ -18,7 +18,6 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.DimensionCalc;
 import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
@@ -30,7 +29,7 @@ public class UniqueNameFunDef extends AbstractFunctionDefinition {
     // <Hierarchy>.UniqueName
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("UniqueName");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom, "Returns the unique name of a hierarchy.",
-            "<HIERARCHY>.UniqueName", DataType.STRING, new FunctionParameterR[] { new FunctionParameterR( DataType.HIERARCHY ) });
+            DataType.STRING, new FunctionParameterR[] { new FunctionParameterR( DataType.HIERARCHY, "Hierarchy" ) });
 
     public UniqueNameFunDef() {
         super(functionMetaData);

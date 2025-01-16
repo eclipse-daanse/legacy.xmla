@@ -32,11 +32,11 @@ public class WtdMultiResolver extends AbstractFunctionDefinitionMultiResolver {
 	private static OperationAtom atom = new FunctionOperationAtom("Wtd");
 
 	private static FunctionMetaData functionMetaDataWithMember = new FunctionMetaDataR(atom,
-			"A shortcut function for the PeriodsToDate function that specifies the level to be Week.", "Wtd(<Member>)",
-			DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
+			"A shortcut function for the PeriodsToDate function that specifies the level to be Week.",
+			DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER, "Member" ) });
 
 	private static FunctionMetaData functionMetaDataWithoutMember = new FunctionMetaDataR(atom,
-			"A shortcut function for the PeriodsToDate function that specifies the level to be Week.", "Wtd()",
+			"A shortcut function for the PeriodsToDate function that specifies the level to be Week.",
 			DataType.SET, new FunctionParameterR[] { });
 
 	public WtdMultiResolver() {

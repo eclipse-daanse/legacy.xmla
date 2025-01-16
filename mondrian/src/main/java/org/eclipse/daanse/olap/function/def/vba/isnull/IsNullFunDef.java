@@ -29,9 +29,8 @@ public class IsNullFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Boolean value that indicates whether an expression
         contains no valid data (Null).""";
-    static String signature = "IsNull(varname)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.LOGICAL, new FunctionParameterR[] {
+            DataType.LOGICAL, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.VALUE, "VarName" )});
 
     public IsNullFunDef() {

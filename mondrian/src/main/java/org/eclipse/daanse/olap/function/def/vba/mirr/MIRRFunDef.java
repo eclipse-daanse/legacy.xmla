@@ -17,9 +17,7 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAt
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
-import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.DateTimeCalc;
 import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
@@ -32,9 +30,8 @@ public class MIRRFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Double specifying the modified internal rate of return for
         a series of periodic cash flows (payments and receipts).""";
-    static String signature = "MIRR(values(), finance_rate, reinvest_rate)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] {
+            DataType.NUMERIC, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.ARRAY, "ValueArray" ),
                     new FunctionParameterR( DataType.NUMERIC, "FinanceRate" ),
                     new FunctionParameterR( DataType.NUMERIC, "ReinvestRate" ) });

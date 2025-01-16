@@ -18,7 +18,6 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
@@ -31,9 +30,8 @@ public class AscFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns an Integer representing the character code corresponding to
         the first letter in a string.""";
-    static String signature = "Asc(string)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] {
+            DataType.INTEGER, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.STRING, "String" )});
 
     public AscFunDef() {

@@ -29,9 +29,8 @@ public class IntFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns the integer portion of a number. If negative, returns the
         negative number less than or equal to the number.""";
-    static String signature = "Int(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "expression" ) });
+            DataType.INTEGER, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "expression" ) });
 
     public IntFunDef() {
         super(functionMetaData);

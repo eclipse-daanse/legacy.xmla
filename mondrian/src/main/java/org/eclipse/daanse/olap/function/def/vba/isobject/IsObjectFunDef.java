@@ -29,9 +29,8 @@ public class IsObjectFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Boolean value indicating whether an identifier represents
         an object variable.""";
-    static String signature = "IsObject(varname)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.LOGICAL, new FunctionParameterR[] {
+            DataType.LOGICAL, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.VALUE, "VarName" )});
 
     public IsObjectFunDef() {

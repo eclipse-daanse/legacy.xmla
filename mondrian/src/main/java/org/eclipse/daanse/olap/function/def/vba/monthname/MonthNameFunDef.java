@@ -30,9 +30,8 @@ public class MonthNameFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("MonthName");
     static String description = """
         Returns a string indicating the specified month.""";
-    static String signature = "MonthName(month, abbreviate)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.STRING, new FunctionParameterR[] {
+            DataType.STRING, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.INTEGER, "Month" ), new FunctionParameterR( DataType.LOGICAL, "Abbreviate" )});
 
     public MonthNameFunDef() {

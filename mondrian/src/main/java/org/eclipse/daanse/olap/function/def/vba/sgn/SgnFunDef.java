@@ -29,9 +29,8 @@ public class SgnFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("Sgn");
     static String description = """
         Returns a Variant (Integer) indicating the sign of a number.""";
-    static String signature = "Sgn(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.INTEGER, new FunctionParameterR[] {
+            DataType.INTEGER, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.NUMERIC, "Number" )});
 
     public SgnFunDef() {

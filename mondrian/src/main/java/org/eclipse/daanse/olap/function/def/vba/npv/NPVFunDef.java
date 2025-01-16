@@ -31,9 +31,8 @@ public class NPVFunDef  extends AbstractFunctionDefinition {
         Returns a Double specifying the net present value of an investment
         based on a series of periodic cash flows (payments and receipts)
         and a discount rate.""";
-    static String signature = "NPV(rate, values())";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] {
+            DataType.NUMERIC, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.NUMERIC, "R" ),
                     new FunctionParameterR( DataType.ARRAY, "CFS" ) });
 

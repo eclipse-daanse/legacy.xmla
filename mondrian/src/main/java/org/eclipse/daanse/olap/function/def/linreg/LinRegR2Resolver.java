@@ -27,17 +27,16 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class LinRegR2Resolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("LinRegR2");
-    private static String SIGNATURE = "LinRegR2(<Set>, <Numeric Expression>[, <Numeric Expression>])";
     private static String DESCRIPTION = "Calculates the linear regression of a set and returns R2 (the coefficient of determination).";
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC) };
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
+            new FunctionParameterR(DataType.NUMERIC, "Y") };
     private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.NUMERIC) };
+            new FunctionParameterR(DataType.NUMERIC, "Y"), new FunctionParameterR(DataType.NUMERIC, "X") };
     // {"fnxn", "fnxnn"}
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, xn);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, xnn);
 
     public LinRegR2Resolver() {

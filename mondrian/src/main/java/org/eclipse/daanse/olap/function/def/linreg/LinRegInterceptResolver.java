@@ -27,17 +27,16 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class LinRegInterceptResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("LinRegIntercept");
-    private static String SIGNATURE = "LinRegIntercept(<Set>, <Numeric Expression>[, <Numeric Expression>])";
     private static String DESCRIPTION = "Calculates the linear regression of a set and returns the value of b in the regression line y = ax + b.";
     private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC) };
-    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.NUMERIC) };
+            new FunctionParameterR(DataType.NUMERIC, "NumericY") };
+    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET, "Set"),
+            new FunctionParameterR(DataType.NUMERIC, "NumericY"), new FunctionParameterR(DataType.NUMERIC, "NumericX") };
     // {"fnxn", "fnxnn"}
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, xn);
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, xnn);
 
     public LinRegInterceptResolver() {

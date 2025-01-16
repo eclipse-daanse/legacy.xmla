@@ -30,9 +30,8 @@ public class AtanhFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns the inverse hyperbolic tangent of a number. Number
         must be between -1 and 1 (excluding -1 and 1).""";
-    static String signature = "Atanh(number)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
+            DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Number" ) });
 
     public AtanhFunDef() {
         super(functionMetaData);

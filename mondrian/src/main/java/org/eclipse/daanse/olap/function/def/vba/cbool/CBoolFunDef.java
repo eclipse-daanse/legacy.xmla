@@ -28,9 +28,8 @@ public class CBoolFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("CBool");
     static String description = """
         Returns an expression that has been converted to a Variant of subtype Boolean.""";
-    static String signature = "CBool(expression)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "Expression" ) });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR( DataType.VALUE, "Expression" ) });
 
     public CBoolFunDef() {
         super(functionMetaData);

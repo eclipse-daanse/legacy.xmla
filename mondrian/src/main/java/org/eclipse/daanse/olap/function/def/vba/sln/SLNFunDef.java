@@ -30,9 +30,8 @@ public class SLNFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns a Double specifying the straight-line depreciation of an
         asset for a single period.""";
-    static String signature = "SLN(cost, salvage, life)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] {
+            DataType.NUMERIC, new FunctionParameterR[] {
                     new FunctionParameterR( DataType.NUMERIC, "Cost" ),
                     new FunctionParameterR( DataType.NUMERIC, "Salvage" ),
                     new FunctionParameterR( DataType.NUMERIC, "Life" )});

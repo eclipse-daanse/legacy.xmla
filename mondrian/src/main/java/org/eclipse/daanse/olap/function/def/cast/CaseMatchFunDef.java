@@ -35,10 +35,9 @@ class CaseMatchFunDef extends AbstractFunctionDefinition {
     static final OperationAtom functionAtom = new CaseOperationAtom(NAME);
 
     static final String DESCRIPTION = "Evaluates various expressions, and returns the corresponding expression for the first which matches a particular value.";
-    static final String SIGNATURE = "Case <Expression> When <Expression> Then <Expression> [...] [Else <Expression>] End";
 
     public CaseMatchFunDef(DataType returnType, FunctionParameterR[] types) {
-        super(new FunctionMetaDataR(functionAtom, DESCRIPTION, SIGNATURE,
+        super(new FunctionMetaDataR(functionAtom, DESCRIPTION,
                 returnType, types));
     }
 

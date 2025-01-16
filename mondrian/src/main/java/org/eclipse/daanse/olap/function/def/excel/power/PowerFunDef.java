@@ -29,9 +29,8 @@ public class PowerFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("Power");
     static String description = """
         Returns the result of a number raised to a power.""";
-    static String signature = "Power(x, y)";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            signature, DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "x" ), new FunctionParameterR( DataType.NUMERIC, "y" ) });
+            DataType.NUMERIC, new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "x" ), new FunctionParameterR( DataType.NUMERIC, "y" ) });
 
     public PowerFunDef() {
         super(functionMetaData);

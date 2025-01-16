@@ -31,7 +31,7 @@ public class ParentFunDef extends AbstractFunctionDefinition {
     // <Member>.Parent
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Parent");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
-            "Returns the parent of a member.", "<MEMBER>.Parent", DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ) });
+            "Returns the parent of a member.", DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER, "Member" ) });
 
     public ParentFunDef() {
         super(functionMetaData);

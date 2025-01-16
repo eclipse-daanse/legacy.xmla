@@ -28,7 +28,6 @@ import org.osgi.service.component.annotations.Component;
 public class ReplaceResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Replace");
-    private static String SIGNATURE = "Replace(expression, find, replace[, start[, count[, compare]]])";
     private static String DESCRIPTION = """
         Returns a string in which a specified substring has been replaced
         with another substring a specified number of times.""";
@@ -41,13 +40,13 @@ public class ReplaceResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionParameterR[] p4 = { new FunctionParameterR(DataType.STRING, "expression"), new FunctionParameterR(DataType.STRING, "find"), new FunctionParameterR(DataType.STRING, "replace"),
             new FunctionParameterR(DataType.INTEGER, "start"), new FunctionParameterR(DataType.INTEGER, "coun"), new FunctionParameterR(DataType.INTEGER, "compare") }; // compare is currently ignored
 
-    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p1);
-    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p2);
-    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData3 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p3);
-    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
+    private static FunctionMetaData functionMetaData4 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.NUMERIC, p4);
 
     public ReplaceResolver() {

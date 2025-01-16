@@ -32,12 +32,11 @@ import mondrian.olap.ExpCacheDescriptorImpl;
 
 public class CacheFunDef extends AbstractFunctionDefinition {
     public static final String NAME = "Cache";
-    private static final String SIGNATURE_VALUE = "Cache(<<Exp>>)";
     private static final String DESCRIPTION = "Evaluates and returns its sole argument, applying statement-level caching";
     static OperationAtom functionAtom = new FunctionOperationAtom(NAME);
 
     public CacheFunDef(DataType category) {
-        super(new FunctionMetaDataR(functionAtom, DESCRIPTION, SIGNATURE_VALUE, category, new FunctionParameterR[] { new FunctionParameterR(  category )}));
+        super(new FunctionMetaDataR(functionAtom, DESCRIPTION, category, new FunctionParameterR[] { new FunctionParameterR(  category )}));
     }
 
     @Override

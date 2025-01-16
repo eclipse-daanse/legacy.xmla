@@ -28,12 +28,11 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = FunctionResolver.class)
 public class LeadResolver extends AbstractFunctionDefinitionMultiResolver {
     private static OperationAtom atom = new MethodOperationAtom("Lead");
-    private static String SIGNATURE = "<Member>.Lead(<Numeric Expression>)";
     private static String DESCRIPTION = "Returns a member further along the specified member's dimension.";
     //{"mmmn"}
 
-    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ), new FunctionParameterR( DataType.NUMERIC ) });
+    private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER, "Member" ), new FunctionParameterR( DataType.NUMERIC, "Numeric" ) });
 
 
     public LeadResolver() {

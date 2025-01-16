@@ -29,15 +29,14 @@ import org.osgi.service.component.annotations.Component;
 public class AncestorsResolver extends AbstractFunctionDefinitionMultiResolver {
 
     private static String DESCRIPTION = "Returns the set of all ancestors of a specified member at a specified level or at a specified distance from the member";
-    private static String SIGNATURE = "Ancestors(<Member>, {<Level>|<Numeric Expression>})";
     private static OperationAtom atom = new FunctionOperationAtom("Ancestors");
     //{"fxml", "fxmn"}
 
-    private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ), new FunctionParameterR( DataType.LEVEL ) });
+    private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER, "Member" ), new FunctionParameterR( DataType.LEVEL, "Level" ) });
 
-    private static FunctionMetaData functionMetaDataWithNumeric = new FunctionMetaDataR(atom, DESCRIPTION, SIGNATURE,
-            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ), new FunctionParameterR( DataType.NUMERIC ) });
+    private static FunctionMetaData functionMetaDataWithNumeric = new FunctionMetaDataR(atom, DESCRIPTION,
+            DataType.SET, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER, "Member" ), new FunctionParameterR( DataType.NUMERIC, "Numeric" ) });
 
 
     public AncestorsResolver() {
