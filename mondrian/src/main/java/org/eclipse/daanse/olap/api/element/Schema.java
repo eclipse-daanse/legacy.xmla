@@ -48,8 +48,6 @@ public interface Schema extends MetaElement {
      static final Set<Access> memberAllowed =
         EnumSet.of(Access.NONE, Access.ALL);
     
-     public static final String WHILE_PARSING_CATALOG = "while parsing catalog ";
-
     /**
      * Returns the name of this schema.
      * @post return != null
@@ -94,6 +92,7 @@ public interface Schema extends MetaElement {
      *
      * @return Date and time when this schema was last loaded
      */
+    @Deprecated
     Date getSchemaLoadDate();
 
     /**

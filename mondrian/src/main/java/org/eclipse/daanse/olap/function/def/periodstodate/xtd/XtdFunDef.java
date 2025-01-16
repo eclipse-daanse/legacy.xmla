@@ -30,6 +30,9 @@ import java.text.MessageFormat;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
+import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.Dimension;
+import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
@@ -78,24 +81,12 @@ public class XtdFunDef extends AbstractFunctionDefinition {
 		return super.getResultType(validator, args);
 	}
 
-	private Level getLevel(Evaluator evaluator) {
-		switch (levelType) {
-		case TIME_YEARS:
-			return evaluator.getCube().getYearLevel();
-		case TIME_QUARTERS:
-			return evaluator.getCube().getQuarterLevel();
-		case TIME_MONTHS:
-			return evaluator.getCube().getMonthLevel();
-		case TIME_WEEKS:
-			return evaluator.getCube().getWeekLevel();
-		default:
-			throw Util.badValue(levelType);
-		}
-	}
 
 	@Override
 	public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
-		final Level level = getLevel(compiler.getEvaluator());
+		Evaluator evaluator = compiler.getEvaluator();
+		Cube cube= evaluator.getCube();
+		final Level level = getFirstTimeLevel(cube, levelType);
 		switch (call.getArgCount()) {
 		case 0:
 			return new XtdWithoutMemberCalc(call.getType(), level);
@@ -104,5 +95,33 @@ public class XtdFunDef extends AbstractFunctionDefinition {
 			return new XtdWithMemberCalc(call.getType(), memberCalc, level);
 		}
 	}
+	
+    // ------------------------------------------------------------------------
+
+    /**
+     * Returns the first level of a given type in this cube.
+     * 
+     * @param cube Cube
+     * @param levelType Level type
+     * @return First level of given type, or null
+     */
+    private static Level getFirstTimeLevel(Cube cube, LevelType levelType) {
+        for (Dimension dimension : cube.getDimensions()) {
+            if (dimension.getDimensionType() == DimensionType.TIME_DIMENSION) {
+                Hierarchy[] hierarchies = dimension.getHierarchies();
+                for (Hierarchy hierarchy : hierarchies) {
+                    Level[] levels = hierarchy.getLevels();
+                    for (Level level : levels) {
+                        if (level.getLevelType() == levelType) {
+                            return level;
+                        }
+                    }
+                }
+            }
+        }
+        throw Util.badValue(levelType);
+    }
+
+   
 
 }

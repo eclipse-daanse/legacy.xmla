@@ -269,6 +269,7 @@ public class SpySchemaReader implements SchemaReader {
 	}
 
 	@Override
+    @Deprecated
 	public DataSource getDataSource() {
 		return delegate.getDataSource();
 	}
@@ -277,7 +278,7 @@ public class SpySchemaReader implements SchemaReader {
 	public SchemaReader withoutAccessControl() {
 		return delegate.withoutAccessControl();
 	}
-
+    @Deprecated
 	@Override
 	public Cube getCube() {
 		return delegate.getCube();

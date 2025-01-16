@@ -50,7 +50,7 @@ import org.eclipse.daanse.olap.calc.api.Calc;
 import mondrian.rolap.RolapSchema;
 
 /**
- * A <code>SchemaReader</code> queries schema objects ({@link MappingSchema},
+ * A <code>SchemaReader</code> queries schema objects ({@link Schema},
  * {@link Cube}, {@link Dimension}, {@link Hierarchy}, {@link Level},
  * {@link Member}).
  *
@@ -528,6 +528,7 @@ public interface SchemaReader {
      *
      * @return data source
      */
+    @Deprecated
     DataSource getDataSource();
 
     /**
@@ -543,6 +544,7 @@ public interface SchemaReader {
      *
      * @return Default cube
      */
+    @Deprecated
     Cube getCube();
 
     /**

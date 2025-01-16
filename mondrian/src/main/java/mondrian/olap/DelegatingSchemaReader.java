@@ -74,6 +74,8 @@ public abstract class DelegatingSchemaReader implements SchemaReader {
         return schemaReader.getRole();
     }
 
+    @Deprecated
+
     @Override
 	public Cube getCube() {
         return schemaReader.getCube();
@@ -353,6 +355,7 @@ public abstract class DelegatingSchemaReader implements SchemaReader {
     }
 
     @Override
+    @Deprecated
 	public DataSource getDataSource() {
         return schemaReader.getDataSource();
     }

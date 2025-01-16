@@ -555,7 +555,6 @@ public class RolapCell implements Cell {
         final Connection connection = statement.getMondrianConnection();
         int resultSetType = ResultSet.TYPE_SCROLL_INSENSITIVE;
         int resultSetConcurrency = ResultSet.CONCUR_READ_ONLY;
-        final Schema schema = statement.getSchema();
 
         Dialect dialect = execution.getMondrianStatement().getMondrianConnection().getContext().getDialect();
         if (!dialect.supportsResultSetConcurrency(

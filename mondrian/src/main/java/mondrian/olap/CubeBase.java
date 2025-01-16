@@ -1,13 +1,27 @@
 /*
-// This software is subject to the terms of the Eclipse Public License v1.0
-// Agreement, available at the following URL:
-// http://www.eclipse.org/legal/epl-v10.html.
-// You must accept the terms of that agreement to use this software.
-//
-// Copyright (C) 2001-2005 Julian Hyde
-// Copyright (C) 2005-2017 Hitachi Vantara and others
-// All Rights Reserved.
-*/
+ * This software is subject to the terms of the Eclipse Public License v1.0
+ * Agreement, available at the following URL:
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * You must accept the terms of that agreement to use this software.
+ *
+ * Copyright (C) 2001-2005 Julian Hyde
+ * Copyright (C) 2005-2017 Hitachi Vantara and others
+ * All Rights Reserved.
+ * ---- All changes after Fork in 2023 ------------------------
+ *
+ * Project: Eclipse daanse
+ *
+ * Copyright (c) 2025 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors after Fork in 2023:
+ *   SmartCity Jena - initial
+ */
 
 package mondrian.olap;
 
@@ -21,8 +35,6 @@ import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
-import org.eclipse.daanse.olap.api.element.Level;
-import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 /**
@@ -117,10 +129,10 @@ public abstract class CubeBase extends OlapElementBase implements Cube {
     @Override
 	public OlapElement lookupChild(
         SchemaReader schemaReader,
-        Segment s,
+        Segment segment,
         MatchType matchType)
     {
-        Dimension mdxDimension = lookupDimension(s);
+        Dimension mdxDimension = lookupDimension(segment);
         if (mdxDimension != null) {
             return mdxDimension;
         }
@@ -128,7 +140,7 @@ public abstract class CubeBase extends OlapElementBase implements Cube {
         final List<Dimension> dimensionsInner = schemaReader.getCubeDimensions(this);
 
         // Look for hierarchies named '[dimension.hierarchy]'.
-        if (s instanceof NameSegment nameSegment) {
+        if (segment instanceof NameSegment nameSegment) {
             Hierarchy hierarchy = lookupHierarchy(nameSegment, false);
             if (hierarchy != null) {
                 return hierarchy;
@@ -138,7 +150,7 @@ public abstract class CubeBase extends OlapElementBase implements Cube {
         // Try hierarchies, levels and members.
         for (Dimension dimension : dimensionsInner) {
             OlapElement mdxElement = dimension.lookupChild(
-                schemaReader, s, matchType);
+                schemaReader, segment, matchType);
             if (mdxElement != null) {
                 if (mdxElement instanceof Member
                     && schemaReader.getContext().getConfig().needDimensionPrefix())
@@ -173,48 +185,4 @@ public abstract class CubeBase extends OlapElementBase implements Cube {
         return null;
     }
 
-    // ------------------------------------------------------------------------
-
-    /**
-     * Returns the first level of a given type in this cube.
-     *
-     * @param levelType Level type
-     * @return First level of given type, or null
-     */
-    private Level getTimeLevel(LevelType levelType) {
-        for (Dimension dimension : dimensions) {
-            if (dimension.getDimensionType() == DimensionType.TIME_DIMENSION) {
-                Hierarchy[] hierarchies = dimension.getHierarchies();
-                for (Hierarchy hierarchy : hierarchies) {
-                    Level[] levels = hierarchy.getLevels();
-                    for (Level level : levels) {
-                        if (level.getLevelType() == levelType) {
-                            return level;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
-	public Level getYearLevel() {
-        return getTimeLevel(LevelType.TIME_YEARS);
-    }
-
-    @Override
-	public Level getQuarterLevel() {
-        return getTimeLevel(LevelType.TIME_QUARTERS);
-    }
-
-    @Override
-	public Level getMonthLevel() {
-        return getTimeLevel(LevelType.TIME_MONTHS);
-    }
-
-    @Override
-	public Level getWeekLevel() {
-        return getTimeLevel(LevelType.TIME_WEEKS);
-    }
 }
