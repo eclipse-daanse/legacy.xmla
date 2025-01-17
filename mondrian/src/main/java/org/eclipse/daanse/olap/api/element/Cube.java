@@ -31,9 +31,6 @@ import org.eclipse.daanse.olap.api.query.component.Formula;
  */
 public interface Cube extends OlapElement, MetaElement {
 
-    @Override
-	String getName();
-
     Schema getSchema();
 
     /**
@@ -61,35 +58,6 @@ public interface Cube extends OlapElement, MetaElement {
      * columns from <code>this</code>".
      */
     Member[] getMembersForQuery(String query, List<Member> calcMembers);
-
-    /**
-     * Helper method that returns the Year Level or returns null if the Time
-     * Dimension does not exist or if Year is not defined in the Time Dimension.
-     *
-     * @return Level or null.
-     */
-    Level getYearLevel();
-
-    /**
-     * Return Quarter Level or null.
-     *
-     * @return Quarter Level or null.
-     */
-    Level getQuarterLevel();
-
-    /**
-     * Return Month Level or null.
-     *
-     * @return Month Level or null.
-     */
-    Level getMonthLevel();
-
-    /**
-     * Return Week Level or null.
-     *
-     * @return Week Level or null.
-     */
-    Level getWeekLevel();
 
     /**
      * Returns a {@link SchemaReader} for which this cube is the context for
