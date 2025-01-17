@@ -169,13 +169,13 @@
 			<artifactId>org.osgi.util.converter</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.http.jetty12</artifactId>
-			<version>1.0.20-SNAPSHOT</version>
-	        <classifier>light</classifier>
-			<scope>runtime</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.apache.felix</groupId>-->
+<!--			<artifactId>org.apache.felix.http.jetty12</artifactId>-->
+<!--			<version>1.0.20-SNAPSHOT</version>-->
+<!--	        <classifier>light</classifier>-->
+<!--			<scope>runtime</scope>-->
+<!--		</dependency>-->
 
 	</dependencies>
 </project>
