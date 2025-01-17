@@ -29,16 +29,16 @@ public class DescendantsMemberResolver extends AbstractFunctionDefinitionMultiRe
     private static String descFlagDescription = "SELF, AFTER, BEFORE, BEFORE_AND_AFTER, SELF_AND_AFTER, SELF_AND_BEFORE, SELF_BEFORE_AFTER, LEAVES";
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Descendants");
     private static String DESCRIPTION = "Returns the set of descendants of a member at a specified level, optionally including or excluding descendants in other levels.";
-    private static FunctionParameterR[] m = { new FunctionParameterR(DataType.MEMBER, "Member") };
-    private static FunctionParameterR[] ml = { new FunctionParameterR(DataType.MEMBER, "Member"),
-            new FunctionParameterR(DataType.LEVEL, "Level") };
-    private static FunctionParameterR[] mly = { new FunctionParameterR(DataType.MEMBER, "Member"),
-            new FunctionParameterR(DataType.LEVEL, "Level"), new FunctionParameterR(DataType.SYMBOL, "Desc_flag", descFlagDescription) };
-    private static FunctionParameterR[] mn = { new FunctionParameterR(DataType.MEMBER, "Member"),
+    private static FunctionParameterR[] m = { new FunctionParameterR(DataType.MEMBER) };
+    private static FunctionParameterR[] ml = { new FunctionParameterR(DataType.MEMBER),
+            new FunctionParameterR(DataType.LEVEL) };
+    private static FunctionParameterR[] mly = { new FunctionParameterR(DataType.MEMBER),
+            new FunctionParameterR(DataType.LEVEL), new FunctionParameterR(DataType.SYMBOL, "Desc_flag", descFlagDescription) };
+    private static FunctionParameterR[] mn = { new FunctionParameterR(DataType.MEMBER),
             new FunctionParameterR(DataType.NUMERIC) };
-    private static FunctionParameterR[] mny = { new FunctionParameterR(DataType.MEMBER, "Member"),
+    private static FunctionParameterR[] mny = { new FunctionParameterR(DataType.MEMBER),
             new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.SYMBOL, "Desc_flag", descFlagDescription) };
-    private static FunctionParameterR[] mey = { new FunctionParameterR(DataType.MEMBER, "Member"),
+    private static FunctionParameterR[] mey = { new FunctionParameterR(DataType.MEMBER),
             new FunctionParameterR(DataType.EMPTY), new FunctionParameterR(DataType.SYMBOL, "Desc_flag", descFlagDescription) };
     // {"fxm", "fxml", "fxmly", "fxmn", "fxmny", "fxmey"}
 

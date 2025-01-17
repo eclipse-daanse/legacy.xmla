@@ -46,16 +46,16 @@ public class ParameterResolver extends AbstractMetaDataMultiResolver {
             new FunctionParameterR(DataType.SYMBOL, "Type", Optional.of(RESERVED_WORDS)), new FunctionParameterR(DataType.NUMERIC, "DefaultValue") };
 
     private static FunctionParameterR[] ShmS = { new FunctionParameterR(DataType.STRING, "Name"),
-            new FunctionParameterR(DataType.HIERARCHY, "Hierarchy"), new FunctionParameterR(DataType.MEMBER, "DefaultValue"),
+            new FunctionParameterR(DataType.HIERARCHY), new FunctionParameterR(DataType.MEMBER, "DefaultValue"),
             new FunctionParameterR(DataType.STRING, "Description") };
     private static FunctionParameterR[] Shm = { new FunctionParameterR(DataType.STRING, "Name"),
-            new FunctionParameterR(DataType.HIERARCHY, "Hierarchy"), new FunctionParameterR(DataType.MEMBER, "DefaultValue") };
+            new FunctionParameterR(DataType.HIERARCHY), new FunctionParameterR(DataType.MEMBER, "DefaultValue") };
 
     private static FunctionParameterR[] ShxS = { new FunctionParameterR(DataType.STRING, "Name"),
-            new FunctionParameterR(DataType.HIERARCHY, "Hierarchy"), new FunctionParameterR(DataType.SET, "DefaultValue"),
+            new FunctionParameterR(DataType.HIERARCHY), new FunctionParameterR(DataType.SET, "DefaultValue"),
             new FunctionParameterR(DataType.STRING, "Description") };
     private static FunctionParameterR[] Shx = { new FunctionParameterR(DataType.STRING, "Name"),
-            new FunctionParameterR(DataType.HIERARCHY, "Hierarchy"), new FunctionParameterR(DataType.SET, "DefaultValue") };
+            new FunctionParameterR(DataType.HIERARCHY), new FunctionParameterR(DataType.SET, "DefaultValue") };
 
     // {"fSSySS", "fSSyS", "fnSynS", "fnSyn", "fmShmS", "fmShm","fxShxS", "fxShx"}
 

@@ -28,9 +28,9 @@ import org.osgi.service.component.annotations.Component;
 public class StddevPResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("StddevP");
     private static String DESCRIPTION = "Alias for StdevP.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.NUMERIC, "Numeric") };
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.NUMERIC) };
     // {"fnx", "fnxn"}
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,

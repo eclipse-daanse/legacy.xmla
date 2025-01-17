@@ -35,7 +35,7 @@ public class ExistingFunDef extends AbstractFunctionDefinition {
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
             "Forces the set to be evaluated within the current context.", DataType.SET,
-            new FunctionParameterR[] { new FunctionParameterR( DataType.SET, "Set" ) });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.SET ) });
 
     protected ExistingFunDef() {
         super(functionMetaData);

@@ -28,9 +28,9 @@ import org.osgi.service.component.annotations.Component;
 public class TopCountResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("TopCount");
     private static String DESCRIPTION = "Returns a specified number of items from the top of a set, optionally ordering the set first.";
-    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.NUMERIC, "Count"), new FunctionParameterR(DataType.NUMERIC, "Numeric") };
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.NUMERIC, "Count"), new FunctionParameterR(DataType.NUMERIC) };
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "Count") };
     // {"fxxnn", "fxxn"}
 

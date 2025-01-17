@@ -32,7 +32,7 @@ public class TupleToStrFunDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtom = new FunctionOperationAtom("TupleToStr");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Constructs a string from a tuple.",
-            DataType.STRING, new FunctionParameterR[] { new FunctionParameterR(DataType.TUPLE, "Tuple") });
+            DataType.STRING, new FunctionParameterR[] { new FunctionParameterR(DataType.TUPLE) });
 
     static final TupleToStrFunDef instance = new TupleToStrFunDef();
 

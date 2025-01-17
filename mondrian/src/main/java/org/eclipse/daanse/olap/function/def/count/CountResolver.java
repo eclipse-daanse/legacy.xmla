@@ -30,8 +30,8 @@ public class CountResolver extends AbstractFunctionDefinitionMultiResolver {
     static final List<String> ReservedWords =  List.of( "INCLUDEEMPTY", "EXCLUDEEMPTY" );
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Count");
     private static String DESCRIPTION = "Returns the number of tuples in a set, empty cells included unless the optional EXCLUDEEMPTY flag is used.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] xy = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] xy = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.SYMBOL, "PrePost", Optional.of(ReservedWords)) };
     // {"fnx", "fnxy"}
 

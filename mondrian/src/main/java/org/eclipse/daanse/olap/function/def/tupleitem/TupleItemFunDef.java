@@ -35,7 +35,7 @@ public class TupleItemFunDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtom = new MethodOperationAtom("Item");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Returns a member from the tuple specified in <Tuple>. The member to be returned is specified by the zero-based position of the member in the set in <Index>.",
-            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.TUPLE, "Tuple"), new FunctionParameterR(DataType.NUMERIC, "Index") });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.TUPLE), new FunctionParameterR(DataType.NUMERIC, "Index") });
 
     static final TupleItemFunDef instance = new TupleItemFunDef();
 

@@ -31,7 +31,7 @@ public class CovarianceResolver extends AbstractFunctionDefinitionMultiResolver 
     private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC) };
     private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC, "Numeric Expression1"), new FunctionParameterR(DataType.NUMERIC, "Numeric Expression1") };
+            new FunctionParameterR(DataType.NUMERIC, "Numeric Expression1"), new FunctionParameterR(DataType.NUMERIC, "Numeric Expression2") };
     // {"fnxn", "fnxnn"}
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,

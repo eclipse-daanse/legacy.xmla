@@ -28,14 +28,14 @@ import org.osgi.service.component.annotations.Component;
 public class DrilldownLevelBottomResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("DrilldownLevelBottom");
     private static String DESCRIPTION = "Drills down the bottommost members of a set, at a specified level, to one level below.";
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "Count") };
-    private static FunctionParameterR[] xnl = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.NUMERIC, "Count"), new FunctionParameterR(DataType.LEVEL, "Level") };
-    private static FunctionParameterR[] xnln = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xnl = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.NUMERIC, "Count"), new FunctionParameterR(DataType.LEVEL) };
+    private static FunctionParameterR[] xnln = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "Count"), new FunctionParameterR(DataType.LEVEL),
             new FunctionParameterR(DataType.NUMERIC, "Numeric_Expression") };
-    private static FunctionParameterR[] xnen = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xnen = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "Count"), new FunctionParameterR(DataType.EMPTY),
             new FunctionParameterR(DataType.NUMERIC, "Numeric_Expression") };
     // {"fxxn", "fxxnl", "fxxnln", "fxxnen"}

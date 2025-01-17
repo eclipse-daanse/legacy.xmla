@@ -29,7 +29,7 @@ public class ValFunDef  extends AbstractFunctionDefinition {
     static FunctionOperationAtom atom = new FunctionOperationAtom("Val");
     static String description = "VB function Val";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            DataType.NUMERIC , new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Numeric" ) });
+            DataType.NUMERIC , new FunctionParameterR[] { new FunctionParameterR( DataType.NUMERIC, "Value" ) });
 
     public ValFunDef() {
         super(functionMetaData);

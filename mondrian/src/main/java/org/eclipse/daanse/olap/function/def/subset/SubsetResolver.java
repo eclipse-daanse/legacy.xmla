@@ -28,8 +28,8 @@ import org.osgi.service.component.annotations.Component;
 public class SubsetResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Subset");
     private static String DESCRIPTION = "Returns a subset of elements from a set.";
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC, "Start") };
-    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET), new FunctionParameterR(DataType.NUMERIC, "Start") };
+    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "Start"), new FunctionParameterR(DataType.NUMERIC, "Count") };
     // {"fxxn", "fxxnn"}
 

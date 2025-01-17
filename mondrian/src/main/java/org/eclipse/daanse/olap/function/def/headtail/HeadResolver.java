@@ -28,8 +28,8 @@ import org.osgi.service.component.annotations.Component;
 public class HeadResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Head");
     private static String DESCRIPTION = "Returns the first specified number of elements in a set.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "Numeric Expression") };
     // {"fxx", "fxxn"}
 

@@ -46,9 +46,9 @@ public class CurrentDateMemberResolver extends AbstractFunctionDefinitionMultiRe
             namely the Visual Basic format strings.
             See http://www.apostate.com/programming/vb-format.html.""";
 
-    private static FunctionParameterR[] fp = { new FunctionParameterR(DataType.HIERARCHY, "Hierarchy"),
+    private static FunctionParameterR[] fp = { new FunctionParameterR(DataType.HIERARCHY),
             new FunctionParameterR(DataType.STRING, "Format"), new FunctionParameterR(DataType.SYMBOL, "MatchType", Optional.of(reservedWords)) };
-    private static FunctionParameterR[] fp1 = { new FunctionParameterR(DataType.HIERARCHY, "Hierarchy"),
+    private static FunctionParameterR[] fp1 = { new FunctionParameterR(DataType.HIERARCHY),
             new FunctionParameterR(DataType.STRING, "Format") };
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,

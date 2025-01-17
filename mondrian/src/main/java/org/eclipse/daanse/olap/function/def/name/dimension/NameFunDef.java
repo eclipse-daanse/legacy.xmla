@@ -30,7 +30,7 @@ public class NameFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Name");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the name of a dimension.", DataType.STRING,
-            new FunctionParameterR[] { new FunctionParameterR( DataType.DIMENSION, "Dimension" ) });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.DIMENSION ) });
 
     public NameFunDef() {
         super(functionMetaData);

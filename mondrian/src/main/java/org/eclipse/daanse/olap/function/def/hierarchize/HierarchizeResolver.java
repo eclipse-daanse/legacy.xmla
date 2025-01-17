@@ -30,11 +30,11 @@ public class HierarchizeResolver extends AbstractFunctionDefinitionMultiResolver
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Hierarchize");
     private static List<String> reservedWords = List.of( "PRE", "POST" );
     private static String DESCRIPTION = "Orders the members of a set in a hierarchy.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] xy = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] xy = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.SYMBOL, "PrePost", Optional.of(reservedWords)) };
     // {"fxx", "fxxy"}
-    
+
     private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.SET, x);
     private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,

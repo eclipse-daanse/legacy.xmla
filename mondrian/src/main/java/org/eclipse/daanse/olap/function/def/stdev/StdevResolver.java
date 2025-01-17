@@ -15,9 +15,9 @@ import org.osgi.service.component.annotations.Component;
 public class StdevResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Stdev");
     private static String DESCRIPTION = "Returns the standard deviation of a numeric expression evaluated over a set (unbiased).";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.NUMERIC, "Numeric") };
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.NUMERIC) };
     // {"fnx", "fnxn"}
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,

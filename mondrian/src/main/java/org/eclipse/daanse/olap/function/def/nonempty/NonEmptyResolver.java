@@ -28,7 +28,7 @@ import org.osgi.service.component.annotations.Component;
 public class NonEmptyResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("NonEmpty");
     private static String DESCRIPTION = "Returns the set of tuples that are not empty from a specified set, based on the cross product of the specified set with a second set.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
     private static FunctionParameterR[] xx = { new FunctionParameterR(DataType.SET, "Set1"),
             new FunctionParameterR(DataType.SET, "Set2") };
     // {"fxx", "fxxx"}

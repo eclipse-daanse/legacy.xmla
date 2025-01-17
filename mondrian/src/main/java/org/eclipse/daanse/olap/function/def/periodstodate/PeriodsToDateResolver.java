@@ -29,9 +29,9 @@ public class PeriodsToDateResolver extends AbstractFunctionDefinitionMultiResolv
     private static FunctionOperationAtom atom = new FunctionOperationAtom("PeriodsToDate");
     private static String DESCRIPTION = "Returns a set of periods (members) from a specified level starting with the first period and ending with a specified member.";
     private static FunctionParameterR[] p = { };
-    private static FunctionParameterR[] l = { new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] lm = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.NUMERIC, "Numeric") };
+    private static FunctionParameterR[] l = { new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] lm = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.NUMERIC) };
     // {"fx", "fxl", "fxlm"}
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,

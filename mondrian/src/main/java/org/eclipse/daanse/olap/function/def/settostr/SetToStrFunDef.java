@@ -31,7 +31,7 @@ public class SetToStrFunDef extends AbstractFunctionDefinition {
     static OperationAtom functionAtom = new FunctionOperationAtom("SetToStr");
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom, "Constructs a string from a set.",
-            DataType.STRING, new FunctionParameterR[] { new FunctionParameterR(  DataType.SET, "Set" ) });
+            DataType.STRING, new FunctionParameterR[] { new FunctionParameterR(  DataType.SET ) });
 
     public static final AbstractFunctionDefinition instance = new SetToStrFunDef();
 

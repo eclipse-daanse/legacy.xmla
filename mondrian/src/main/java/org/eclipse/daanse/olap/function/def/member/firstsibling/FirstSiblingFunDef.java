@@ -30,7 +30,7 @@ public class FirstSiblingFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("FirstSibling");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the first child of the parent of a member.", DataType.MEMBER,
-            new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER, "Member" ) });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ) });
 
     public FirstSiblingFunDef() {
         super(functionMetaData);

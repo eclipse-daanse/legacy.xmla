@@ -35,10 +35,10 @@ public class OpeningPeriodResolved extends AbstractFunctionDefinitionMultiResolv
     private static FunctionMetaData functionMetaDataWithoutParam = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.MEMBER, new FunctionParameterR[] {});
     private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION,
-            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL, "Level") });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL) });
     private static FunctionMetaData functionMetaDataWithLevelMember = new FunctionMetaDataR(atom, DESCRIPTION,
-            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL, "Level"),
-                    new FunctionParameterR(DataType.MEMBER, "Member") });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL),
+                    new FunctionParameterR(DataType.MEMBER) });
 
     public OpeningPeriodResolved() {
         super(List.of(new OpeningClosingPeriodFunDef(functionMetaDataWithoutParam, true),

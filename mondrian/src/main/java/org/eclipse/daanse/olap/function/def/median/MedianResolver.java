@@ -15,8 +15,8 @@ import org.osgi.service.component.annotations.Component;
 public class MedianResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Median");
     private static String DESCRIPTION = "Returns the median value of a numeric expression evaluated over a set.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "Percentile") };
     // {"fnx", "fnxn"}
 

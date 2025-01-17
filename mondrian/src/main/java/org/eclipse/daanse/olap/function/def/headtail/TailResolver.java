@@ -28,8 +28,8 @@ import org.osgi.service.component.annotations.Component;
 public class TailResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Tail");
     private static String DESCRIPTION = "Returns a subset from the end of a set.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "Count") };
     // {"fxx", "fxxn"}
 

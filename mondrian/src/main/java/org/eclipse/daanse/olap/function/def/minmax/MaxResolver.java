@@ -28,9 +28,9 @@ import org.osgi.service.component.annotations.Component;
 public class MaxResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Max");
     private static String DESCRIPTION = "Returns the maximum value of a numeric expression evaluated over a set.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
     private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
-            new FunctionParameterR(DataType.NUMERIC, "Numeric") };
+            new FunctionParameterR(DataType.NUMERIC) };
     // {"fnx", "fnxn"}
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,

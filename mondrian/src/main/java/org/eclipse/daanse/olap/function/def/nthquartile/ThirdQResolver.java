@@ -28,8 +28,8 @@ import org.osgi.service.component.annotations.Component;
 public class ThirdQResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("ThirdQ");
     private static String DESCRIPTION = "Returns the 3rd quartile value of a numeric expression evaluated over a set.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC, "Numeric Expression") };
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET), new FunctionParameterR(DataType.NUMERIC, "Range") };
     // {"fnx", "fnxn"}
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
@@ -40,6 +40,6 @@ public class ThirdQResolver extends AbstractFunctionDefinitionMultiResolver {
     public ThirdQResolver() {
         super(List.of(new NthQuartileFunDef(functionMetaData), new NthQuartileFunDef(functionMetaData1)));
     }
-    
+
 
 }

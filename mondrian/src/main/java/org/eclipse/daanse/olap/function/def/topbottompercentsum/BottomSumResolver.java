@@ -28,8 +28,8 @@ public class BottomSumResolver extends ParametersCheckingFunctionDefinitionResol
 
     static final OperationAtom atomBottomSum = new FunctionOperationAtom("BottomSum");
     private static String DESCRIPTION = "Sorts a set and returns the bottom N elements whose cumulative total is at least a specified value.";
-    private static FunctionParameterR[] params = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.NUMERIC, "Value"), new FunctionParameterR(DataType.NUMERIC, "Numeric") };
+    private static FunctionParameterR[] params = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.NUMERIC, "Value"), new FunctionParameterR(DataType.NUMERIC) };
 
     static final FunctionMetaData fmdBottomSum = new FunctionMetaDataR(atomBottomSum, DESCRIPTION,
             DataType.SET, params);

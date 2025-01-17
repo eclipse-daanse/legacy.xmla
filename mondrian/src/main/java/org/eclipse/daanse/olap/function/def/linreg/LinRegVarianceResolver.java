@@ -28,8 +28,8 @@ import org.osgi.service.component.annotations.Component;
 public class LinRegVarianceResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("LinRegVariance");
     private static String DESCRIPTION = "Calculates the linear regression of a set and returns the variance associated with the regression line y = ax + b.";
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC, "Y") };
-    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC, "Y"),
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET), new FunctionParameterR(DataType.NUMERIC, "Y") };
+    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET), new FunctionParameterR(DataType.NUMERIC, "Y"),
             new FunctionParameterR(DataType.NUMERIC, "X") };
     // {"fnxn", "fnxnn"}
 

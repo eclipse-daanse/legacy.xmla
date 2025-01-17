@@ -30,7 +30,7 @@ public class NameFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("Name");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the name of a hierarchy.", DataType.STRING,
-            new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY, "Hierarchy") });
+            new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY) });
 
     public NameFunDef() {
         super(functionMetaData);

@@ -28,7 +28,7 @@ import org.osgi.service.component.annotations.Component;
 public class LinRegR2Resolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("LinRegR2");
     private static String DESCRIPTION = "Calculates the linear regression of a set and returns R2 (the coefficient of determination).";
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "Y") };
     private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "Y"), new FunctionParameterR(DataType.NUMERIC, "X") };

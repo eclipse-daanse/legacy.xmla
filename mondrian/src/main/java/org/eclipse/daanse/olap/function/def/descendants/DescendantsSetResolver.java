@@ -30,17 +30,17 @@ public class DescendantsSetResolver extends AbstractFunctionDefinitionMultiResol
     private static String descFlagDescription = "SELF, AFTER, BEFORE, BEFORE_AND_AFTER, SELF_AND_AFTER, SELF_AND_BEFORE, SELF_BEFORE_AFTER, LEAVES";
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Descendants");
     private static String DESCRIPTION = "Returns the set of descendants of a set of members at a specified level, optionally including or excluding descendants in other levels.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] xl = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.LEVEL, "Level") };
-    private static FunctionParameterR[] xly = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.LEVEL, "Level"), new FunctionParameterR(DataType.SYMBOL, Optional.of("Desc_flag"),
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] xl = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.LEVEL) };
+    private static FunctionParameterR[] xly = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.LEVEL), new FunctionParameterR(DataType.SYMBOL, Optional.of("Desc_flag"),
                     Optional.of(descFlagDescription), Optional.of(Flag.asReservedWords())) };
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC) };
-    private static FunctionParameterR[] xny = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xny = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.SYMBOL, "Desc_flag", descFlagDescription) };
-    private static FunctionParameterR[] xey = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xey = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.EMPTY), new FunctionParameterR(DataType.SYMBOL, "Desc_flag", descFlagDescription) };
     // {"fxx", "fxxl", "fxxly", "fxxn", "fxxny", "fxxey"}
 

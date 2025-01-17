@@ -28,9 +28,9 @@ import org.osgi.service.component.annotations.Component;
 public class LinRegSlopeResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("LinRegSlope");
     private static String DESCRIPTION = "Calculates the linear regression of a set and returns the value of a in the regression line y = ax + b.";
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "Y") };
-    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "Y"), new FunctionParameterR(DataType.NUMERIC, "X") };
     // {"fnxn", "fnxnn"}
 

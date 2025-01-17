@@ -29,7 +29,7 @@ public class LastChildFunDef extends AbstractFunctionDefinition {
     static PlainPropertyOperationAtom plainPropertyOperationAtom = new PlainPropertyOperationAtom("LastChild");
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the last child of a member.", DataType.MEMBER,
-            new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER, "Member" ) });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ) });
 
     public LastChildFunDef() {
         super(functionMetaData);

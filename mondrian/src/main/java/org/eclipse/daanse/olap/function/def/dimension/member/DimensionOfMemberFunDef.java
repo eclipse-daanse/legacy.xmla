@@ -31,7 +31,7 @@ public class DimensionOfMemberFunDef extends AbstractFunctionDefinition {
 
 	private static final FunctionMetaData functionMetaData = new FunctionMetaDataR(atom,
 			"Returns the dimension that contains a specified member.", DataType.DIMENSION,
-			new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER, "Member" )});
+			new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER )});
 
 	public DimensionOfMemberFunDef() {
 		super(functionMetaData);

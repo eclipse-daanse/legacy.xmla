@@ -35,7 +35,7 @@ public class NamedSetCurrentFunDef extends AbstractFunctionDefinition {
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(plainPropertyOperationAtom,
             "Returns the current member or tuple of a named set.", DataType.TUPLE,
-            new FunctionParameterR[] { new FunctionParameterR( DataType.SET, "Set" ) });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.SET ) });
 
     public NamedSetCurrentFunDef() {
         super(functionMetaData);

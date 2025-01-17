@@ -32,16 +32,16 @@ public class IsNullResolver extends AbstractFunctionDefinitionMultiResolver {
     private static OperationAtom atom = new PostfixOperationAtom("IS NULL");
 
     private static FunctionMetaData functionMetaDataWithMember = new FunctionMetaDataR(atom, DESCRIPTION,
-            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER, "Member" ) });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ) });
 
     private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION,
-            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL, "Level" ) });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.LEVEL ) });
 
     private static FunctionMetaData functionMetaDataWithHierrchy = new FunctionMetaDataR(atom, DESCRIPTION,
-            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY, "Hierarchy" ) });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.HIERARCHY ) });
 
     private static FunctionMetaData functionMetaDataWithDimension = new FunctionMetaDataR(atom, DESCRIPTION,
-            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.DIMENSION, "Dimension" ) });
+            DataType.LOGICAL, new FunctionParameterR[] { new FunctionParameterR(  DataType.DIMENSION ) });
 
     public IsNullResolver() {
         super(List.of(new IsNullFunDef(functionMetaDataWithMember), new IsNullFunDef(functionMetaDataWithLevel),

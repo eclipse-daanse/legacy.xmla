@@ -31,7 +31,7 @@ public class DistinctFunDef extends AbstractFunctionDefinition {
 
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(functionAtom,
             "Eliminates duplicate tuples from a set.", DataType.SET,
-            new FunctionParameterR[] { new FunctionParameterR( DataType.SET, "Set" ) });
+            new FunctionParameterR[] { new FunctionParameterR( DataType.SET ) });
 
     public DistinctFunDef() {
         super(functionMetaData);

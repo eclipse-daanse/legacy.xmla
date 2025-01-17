@@ -31,7 +31,7 @@ public class InFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns true if the member argument is contained in the set argument.""";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            DataType.LOGICAL , new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER, "Member" ), new FunctionParameterR( DataType.SET, "Set" ) });
+            DataType.LOGICAL , new FunctionParameterR[] { new FunctionParameterR( DataType.MEMBER ), new FunctionParameterR( DataType.SET ) });
 
     public InFunDef() {
         super(functionMetaData);

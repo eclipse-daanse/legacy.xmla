@@ -28,16 +28,16 @@ import org.osgi.service.component.annotations.Component;
 public class GenerateStringResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Generate");
     private static String DESCRIPTION = "Applies a set to a string expression and joins resulting sets by string concatenation.";
-    private static FunctionParameterR[] xS = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xS = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.STRING) };
-    private static FunctionParameterR[] xSS = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.STRING, "String1"), new FunctionParameterR(DataType.STRING, "String2") };
-    private static FunctionParameterR[] xnS = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.NUMERIC, "Numeric"), new FunctionParameterR(DataType.STRING, "String2") };
+    private static FunctionParameterR[] xSS = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.STRING), new FunctionParameterR(DataType.STRING, "Separator") };
+    private static FunctionParameterR[] xnS = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.STRING, "Separator") };
     // {"fSxS", "fSxSS", "fSxnS"}
 
 
-    
+
     private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.STRING, xS);
     private static FunctionMetaData functionMetaData2 = new FunctionMetaDataR(atom, DESCRIPTION,

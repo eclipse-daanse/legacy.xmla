@@ -35,13 +35,13 @@ public class ParallelPeriodResolver extends AbstractFunctionDefinitionMultiResol
     private static FunctionMetaData functionMetaDataWithoutParam = new FunctionMetaDataR(atom, DESCRIPTION,
             DataType.MEMBER, new FunctionParameterR[] {});
     private static FunctionMetaData functionMetaDataWithLevel = new FunctionMetaDataR(atom, DESCRIPTION,
-            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL, "Level") });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL) });
     private static FunctionMetaData functionMetaDataWithLevelNumeric = new FunctionMetaDataR(atom, DESCRIPTION,
-            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL, "Level"),
-                    new FunctionParameterR(DataType.NUMERIC, "Numeric") });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL),
+                    new FunctionParameterR(DataType.NUMERIC) });
     private static FunctionMetaData functionMetaDataWithLevelNumericMember = new FunctionMetaDataR(atom, DESCRIPTION,
-            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL, "Level"),
-                    new FunctionParameterR(DataType.NUMERIC, "Numeric"), new FunctionParameterR(DataType.MEMBER, "Member") });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.LEVEL),
+                    new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.MEMBER) });
 
     public ParallelPeriodResolver() {
         super(List.of(new ParallelPeriodFunDef(functionMetaDataWithoutParam),

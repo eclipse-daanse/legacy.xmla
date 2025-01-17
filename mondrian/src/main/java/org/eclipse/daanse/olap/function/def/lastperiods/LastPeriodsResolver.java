@@ -30,7 +30,7 @@ public class LastPeriodsResolver extends AbstractFunctionDefinitionMultiResolver
     private static String DESCRIPTION = "Returns a set of members prior to and including a specified member.";
     private static FunctionParameterR[] n = { new FunctionParameterR(DataType.NUMERIC, "Index") };
     private static FunctionParameterR[] nm = { new FunctionParameterR(DataType.NUMERIC, "Index"),
-            new FunctionParameterR(DataType.MEMBER, "Member") };
+            new FunctionParameterR(DataType.MEMBER) };
     // {"fxn", "fxnm"}
 
     private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,

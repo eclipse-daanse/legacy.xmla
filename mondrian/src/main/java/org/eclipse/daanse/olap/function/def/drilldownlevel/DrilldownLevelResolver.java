@@ -30,18 +30,18 @@ public class DrilldownLevelResolver extends AbstractFunctionDefinitionMultiResol
     private static FunctionOperationAtom atom = new FunctionOperationAtom("DrilldownLevel");
     private static List<String> RESERVED_WORDS = List.of("INCLUDE_CALC_MEMBERS");
     private static String DESCRIPTION = "Drills down the members of a set, at a specified level, to one level below. Alternatively, drills down on a specified dimension in the set.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] xl = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.LEVEL, "Level") };
-    private static FunctionParameterR[] xen = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] xl = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.LEVEL) };
+    private static FunctionParameterR[] xen = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.EMPTY), new FunctionParameterR(DataType.NUMERIC, "Index") };
-    private static FunctionParameterR[] xeny = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xeny = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.EMPTY), new FunctionParameterR(DataType.NUMERIC, "Index"), new FunctionParameterR(DataType.SYMBOL, "Include members", Optional.of(RESERVED_WORDS))};
-    private static FunctionParameterR[] xeey = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xeey = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.EMPTY), new FunctionParameterR(DataType.EMPTY), new FunctionParameterR(DataType.SYMBOL, "Include members", Optional.of(RESERVED_WORDS)) };
     // {"fxx", "fxxl", "fxxen", "fxxeny", "fxxeey"}
 
-    
+
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION, DataType.SET,
             x);
     private static FunctionMetaData functionMetaData1 = new FunctionMetaDataR(atom, DESCRIPTION,
@@ -58,7 +58,7 @@ public class DrilldownLevelResolver extends AbstractFunctionDefinitionMultiResol
         return RESERVED_WORDS;
     }
 
-    
+
     public DrilldownLevelResolver() {
         super(List.of(new DrilldownLevelFunDef(functionMetaData), new DrilldownLevelFunDef(functionMetaData1),
                 new DrilldownLevelFunDef(functionMetaData2), new DrilldownLevelFunDef(functionMetaData3),

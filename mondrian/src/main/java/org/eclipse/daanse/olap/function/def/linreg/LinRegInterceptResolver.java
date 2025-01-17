@@ -30,7 +30,7 @@ public class LinRegInterceptResolver extends AbstractFunctionDefinitionMultiReso
     private static String DESCRIPTION = "Calculates the linear regression of a set and returns the value of b in the regression line y = ax + b.";
     private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "NumericY") };
-    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET, "Set"),
+    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET),
             new FunctionParameterR(DataType.NUMERIC, "NumericY"), new FunctionParameterR(DataType.NUMERIC, "NumericX") };
     // {"fnxn", "fnxnn"}
 

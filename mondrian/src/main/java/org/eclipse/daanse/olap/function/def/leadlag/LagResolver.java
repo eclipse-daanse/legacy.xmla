@@ -32,7 +32,7 @@ public class LagResolver extends AbstractFunctionDefinitionMultiResolver {
     // {"mmmn"}
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
-            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER , "Member"), new FunctionParameterR( DataType.NUMERIC, "Numeric" ) });
+            DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(  DataType.MEMBER ), new FunctionParameterR( DataType.NUMERIC ) });
 
     public LagResolver() {
         super(List.of(new LeadLagFunDef(functionMetaData)));

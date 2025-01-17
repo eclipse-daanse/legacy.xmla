@@ -22,7 +22,6 @@ import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractFunctionDefinitionMultiResolver;
-import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
 import org.osgi.service.component.annotations.Component;
 
 @Component(service = FunctionResolver.class)

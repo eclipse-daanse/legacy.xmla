@@ -28,8 +28,8 @@ import org.osgi.service.component.annotations.Component;
 public class PercentileResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Percentile");
     private static String DESCRIPTION = "Returns the value of the tuple that is at a given percentile of a set.";
-    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.NUMERIC, "Numeric") };
+    private static FunctionParameterR[] xnn = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.NUMERIC), new FunctionParameterR(DataType.NUMERIC) };
     // {"fnxnn"}
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,

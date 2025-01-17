@@ -28,9 +28,9 @@ import org.osgi.service.component.annotations.Component;
 
 @Component(service = FunctionResolver.class)
 public class NativizeSetResolver  extends AbstractFunctionDefinitionMultiResolver {
-    private static FunctionOperationAtom atom = new FunctionOperationAtom("NativizeSet");    
+    private static FunctionOperationAtom atom = new FunctionOperationAtom("NativizeSet");
     private static String DESCRIPTION = "Tries to natively evaluate <Set>.";
-    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET, "Set") };
+    private static FunctionParameterR[] x = { new FunctionParameterR(DataType.SET) };
     // {"fxx"}
 
     private static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, DESCRIPTION,
@@ -39,7 +39,7 @@ public class NativizeSetResolver  extends AbstractFunctionDefinitionMultiResolve
     public NativizeSetResolver() {
         super(List.of(new NativizeSetFunDef(functionMetaData)));
     }
-    
+
     @Override
     protected FunctionDefinition createFunDef(Expression[] args, FunctionMetaData fmd,
             FunctionMetaData fmdTarget) {

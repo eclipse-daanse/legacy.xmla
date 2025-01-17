@@ -28,12 +28,12 @@ import org.osgi.service.component.annotations.Component;
 public class RankResolver extends AbstractFunctionDefinitionMultiResolver {
     private static FunctionOperationAtom atom = new FunctionOperationAtom("Rank");
     private static String DESCRIPTION = "Returns the one-based rank of a tuple in a set.";
-    private static FunctionParameterR[] tx = { new FunctionParameterR(DataType.TUPLE, "Tuple"), new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] txn = { new FunctionParameterR(DataType.TUPLE, "Tuple"), new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.NUMERIC, "Numeric") };
-    private static FunctionParameterR[] mx = { new FunctionParameterR(DataType.MEMBER, "Member"), new FunctionParameterR(DataType.SET, "Set") };
-    private static FunctionParameterR[] mxn = { new FunctionParameterR(DataType.MEMBER, "Member"), new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.NUMERIC, "Numeric") };
+    private static FunctionParameterR[] tx = { new FunctionParameterR(DataType.TUPLE), new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] txn = { new FunctionParameterR(DataType.TUPLE), new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.NUMERIC) };
+    private static FunctionParameterR[] mx = { new FunctionParameterR(DataType.MEMBER), new FunctionParameterR(DataType.SET) };
+    private static FunctionParameterR[] mxn = { new FunctionParameterR(DataType.MEMBER), new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.NUMERIC) };
 
     // {"fitx", "fitxn", "fimx", "fimxn"}
 

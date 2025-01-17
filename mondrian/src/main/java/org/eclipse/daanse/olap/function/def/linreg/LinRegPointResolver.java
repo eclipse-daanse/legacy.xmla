@@ -29,9 +29,9 @@ public class LinRegPointResolver extends AbstractFunctionDefinitionMultiResolver
     private static FunctionOperationAtom atom = new FunctionOperationAtom("LinRegPoint");
     private static String DESCRIPTION = "Calculates the linear regression of a set and returns the value of y in the regression line y = ax + b.";
     private static FunctionParameterR[] nxn = { new FunctionParameterR(DataType.NUMERIC, "xPoint"),
-            new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC, "Y") };
+            new FunctionParameterR(DataType.SET), new FunctionParameterR(DataType.NUMERIC, "Y") };
     private static FunctionParameterR[] nxnn = { new FunctionParameterR(DataType.NUMERIC, "xPoint"),
-            new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC, "Y"),
+            new FunctionParameterR(DataType.SET), new FunctionParameterR(DataType.NUMERIC, "Y"),
             new FunctionParameterR(DataType.NUMERIC, "X") };
     // {"fnnxn", "fnnxnn"}
 

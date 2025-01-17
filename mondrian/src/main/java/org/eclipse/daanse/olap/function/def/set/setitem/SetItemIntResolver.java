@@ -28,7 +28,7 @@ import org.osgi.service.component.annotations.Component;
 public class SetItemIntResolver extends AbstractFunctionDefinitionMultiResolver {
     private static MethodOperationAtom atom = new MethodOperationAtom("Item");
     private static String DESCRIPTION = "Returns a tuple from the set specified in <Set>. The tuple to be returned is specified by the zero-based position of the tuple in the set in <Index>.";
-    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET, "Set"), new FunctionParameterR(DataType.NUMERIC, "Index") };
+    private static FunctionParameterR[] xn = { new FunctionParameterR(DataType.SET), new FunctionParameterR(DataType.NUMERIC, "Index") };
     // {"mmxn"}
 
 

@@ -30,7 +30,7 @@ public class LastNonEmptyFunDef  extends AbstractFunctionDefinition {
     static String description = """
         Returns the last member of a set whose value is not empty""";
     static FunctionMetaData functionMetaData = new FunctionMetaDataR(atom, description,
-            DataType.MEMBER , new FunctionParameterR[] { new FunctionParameterR( DataType.SET, "Set" ), new FunctionParameterR( DataType.MEMBER, "Member" ) });
+            DataType.MEMBER , new FunctionParameterR[] { new FunctionParameterR( DataType.SET ), new FunctionParameterR( DataType.MEMBER ) });
 
     public LastNonEmptyFunDef() {
         super(functionMetaData);

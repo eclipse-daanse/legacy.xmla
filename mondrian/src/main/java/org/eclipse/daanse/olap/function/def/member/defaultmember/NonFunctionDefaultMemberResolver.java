@@ -29,7 +29,7 @@ public class NonFunctionDefaultMemberResolver extends NonFunctionResolver {
         // implicit cast to hierarchy, and we create a FunInfo for
         // documentation & backwards compatibility.
         super(new FunctionMetaDataR(new PlainPropertyOperationAtom("DefaultMember"), "Returns the default member of a dimension.",
-                DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.DIMENSION, "Dimension") }));
+                DataType.MEMBER, new FunctionParameterR[] { new FunctionParameterR(DataType.DIMENSION) }));
     }
 
 }

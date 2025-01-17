@@ -28,8 +28,8 @@ public class BottomPercentResolver extends ParametersCheckingFunctionDefinitionR
 
     static final OperationAtom atomBottomPercent = new FunctionOperationAtom("BottomPercent");
     private static String DESCRIPTION = "Sorts a set and returns the bottom N elements whose cumulative total is at least a specified percentage.";
-    private static FunctionParameterR[] params = { new FunctionParameterR(DataType.SET, "Set"),
-            new FunctionParameterR(DataType.NUMERIC, "Percentage"), new FunctionParameterR(DataType.NUMERIC, "Numeric") };
+    private static FunctionParameterR[] params = { new FunctionParameterR(DataType.SET),
+            new FunctionParameterR(DataType.NUMERIC, "Percentage"), new FunctionParameterR(DataType.NUMERIC) };
 
     static final FunctionMetaData fmdBottomPercent = new FunctionMetaDataR(atomBottomPercent, DESCRIPTION,
             DataType.SET, params);
