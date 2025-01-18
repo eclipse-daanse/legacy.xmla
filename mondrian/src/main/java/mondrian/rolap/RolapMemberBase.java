@@ -22,10 +22,12 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.api.Calc;
+import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
@@ -198,8 +200,8 @@ public class RolapMemberBase
     // Regular members do not have annotations. Measures and calculated members
     // do, so they override this method.
     @Override
-	public Map<String, Object> getMetadata() {
-        return Map.of();
+	public MetaData getMetaData() {
+        return OlapMetaData.empty();
     }
 
     @Override

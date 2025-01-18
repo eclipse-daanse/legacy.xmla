@@ -46,6 +46,7 @@ import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
 import org.eclipse.daanse.olap.api.type.DecimalType;
 import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.mdx.MdxVisitorImpl;
@@ -307,7 +308,7 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
                     null,
                     exp,
                     false,
-                    Map.of());
+                    OlapMetaData.empty());
         }
     }
 

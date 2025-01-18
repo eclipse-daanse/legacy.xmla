@@ -12,13 +12,14 @@
 */
 package mondrian.rolap;
 
-import java.util.Map;
-
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.element.OlapMetaData;
+import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 import org.slf4j.Logger;
@@ -68,7 +69,7 @@ class RolapDimension extends DimensionBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(RolapDimension.class);
 
     private final Schema schema;
-    private final Map<String, Object> metaData;
+    private final MetaData metaData;
 
     RolapDimension(
         Schema schema,
@@ -77,7 +78,7 @@ class RolapDimension extends DimensionBase {
         boolean visible,
         String description,
         DimensionType dimensionType,
-        Map<String, Object> metadata)
+        MetaData metadata)
     {
         // todo: recognition of a time dimension should be improved
         // allow multiple time dimensions
@@ -111,7 +112,7 @@ class RolapDimension extends DimensionBase {
             mappingCubeDimension.isVisible(),
             mappingDimension != null ? mappingDimension.getDescription() : null,
             DimensionTypeUtil.getDimensionType(mappingDimension),
-            RolapHierarchy.createMetadataMap(mappingDimension != null ? mappingDimension.getAnnotations() : null));
+            RolapMetaData.createMetaData(mappingDimension != null ? mappingDimension.getAnnotations() : null));
 
         Util.assertPrecondition(schema != null);
 
@@ -205,7 +206,7 @@ class RolapDimension extends DimensionBase {
             new RolapHierarchy(
                 this, subName,
                 caption, visible, description, null, hasAll, closureFor,
-                Map.of());
+                OlapMetaData.empty());
         this.hierarchies = Util.append(this.hierarchies, hierarchy);
         return hierarchy;
     }
@@ -227,7 +228,7 @@ class RolapDimension extends DimensionBase {
     }
 
     @Override
-	public Map<String, Object> getMetadata() {
+	public MetaData getMetaData() {
         return metaData;
     }
 

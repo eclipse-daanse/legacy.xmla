@@ -13,7 +13,6 @@
 package mondrian.olap;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.SchemaReader;
@@ -21,6 +20,7 @@ import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -42,7 +42,7 @@ public class SetBase extends OlapElementBase implements NamedSet {
     private static final Logger LOGGER = LoggerFactory.getLogger(SetBase.class);
 
     private String name;
-    private Map<String, Object> metaMap;
+    private MetaData metaData;
     private String description;
     private final String uniqueName;
     private Expression exp;
@@ -57,7 +57,7 @@ public class SetBase extends OlapElementBase implements NamedSet {
      * @param description Description
      * @param exp Expression
      * @param validated Whether has been validated
-     * @param metaMap metaMap
+     * @param metaData 
      */
     SetBase(
         String name,
@@ -65,10 +65,10 @@ public class SetBase extends OlapElementBase implements NamedSet {
         String description,
         Expression exp,
         boolean validated,
-        Map<String, Object> metaMap)
+        MetaData metaData)
     {
         this.name = name;
-        this.metaMap = metaMap;
+        this.metaData = metaData;
         this.caption = caption;
         this.description = description;
         this.exp = exp;
@@ -77,8 +77,8 @@ public class SetBase extends OlapElementBase implements NamedSet {
     }
 
     @Override
-	public Map<String, Object> getMetadata()  {
-        return metaMap;
+	public MetaData getMetaData()  {
+        return metaData;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class SetBase extends OlapElementBase implements NamedSet {
     @Override
 	public Object clone() {
         return new SetBase(
-            name, caption, description, exp.cloneExp(), validated, metaMap);
+            name, caption, description, exp.cloneExp(), validated, metaData);
     }
 
     @Override
@@ -162,8 +162,8 @@ public class SetBase extends OlapElementBase implements NamedSet {
         this.displayFolder = displayFolder;
     }
 
-    public void setMetadata(Map<String, Object> metaData) {
-        this.metaMap = metaData;
+    public void setMetadata(MetaData metaData) {
+        this.metaData = metaData;
     }
 
     @Override

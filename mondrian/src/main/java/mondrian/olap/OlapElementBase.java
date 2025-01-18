@@ -12,8 +12,6 @@
 package mondrian.olap;
 
 import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.element.MetaElement;
@@ -107,48 +105,23 @@ public abstract class OlapElementBase
         return visible;
     }
 
-    @Override
+	@Override
 	public String getLocalized(LocalizedProperty prop, Locale locale) {
-        if (this instanceof MetaElement metaElement) {
-            final Map<String, Object> metaMap = metaElement.getMetadata();
+		if (this instanceof MetaElement metaElement) {
+			Optional<String> optional = metaElement.getMetaData().getLocalized(prop, locale);
+			if (optional.isPresent()) {
+				return optional.get();
+			}
+		}
 
-           final String seek = new StringBuilder(prop.name().toLowerCase()).append(".").append(locale).toString();
-
-            Optional<Entry<String, Object>> o = metaMap.entrySet()
-                    .stream()
-                    .filter(k -> k.getKey()
-                            .startsWith(seek))
-                    .findFirst();
-
-            if (o.isPresent()){
-                return o.get().getValue().toString();
-            }
-
-            // No match for locale. Is there a match for the parent
-            // locale? For example, we've just looked for
-            // 'caption.en_US', now look for 'caption.en'.
-            final int underscore = seek.lastIndexOf('_');
-            if (underscore >= 0) {
-                final String     seek_ = seek.substring(0, underscore - 1);
-                o = metaMap.entrySet()
-                        .stream()
-                        .filter(k -> k.getKey()
-                                .startsWith(seek_))
-                        .findFirst();
-                if (o.isPresent()){
-                    return o.get().getValue().toString();
-                }
-            }
-        }
-
-        // No annotation. Fall back to the default caption/description.
-        switch (prop) {
-        case CAPTION:
-            return getCaption();
-        case DESCRIPTION:
-            return getDescription();
-        default:
-            throw Util.unexpected(prop);
-        }
-    }
+		// No annotation. Fall back to the default caption/description.
+		switch (prop) {
+		case CAPTION:
+			return getCaption();
+		case DESCRIPTION:
+			return getDescription();
+		default:
+			throw Util.unexpected(prop);
+		}
+	}
 }

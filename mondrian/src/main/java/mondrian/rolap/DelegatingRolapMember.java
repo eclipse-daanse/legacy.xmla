@@ -11,13 +11,13 @@
 package mondrian.rolap;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 
@@ -217,8 +217,8 @@ public class DelegatingRolapMember extends RolapMemberBase {
     }
 
     @Override
-	public Map<String, Object> getMetadata()  {
-        return member.getMetadata();
+	public MetaData getMetaData()  {
+        return member.getMetaData();
     }
 
     @Override

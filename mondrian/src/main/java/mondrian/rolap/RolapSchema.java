@@ -65,6 +65,7 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Schema;
@@ -77,6 +78,7 @@ import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCubeGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessDimensionGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessHierarchyGrantMapping;
@@ -189,7 +191,7 @@ public class RolapSchema implements Schema {
      * {@link mondrian.rolap.RolapConnectionProperties#Ignore Ignore}=true.
      */
     private final List<Exception> warningList = new ArrayList<>();
-    private Map<String, Object> metadata;
+    private MetaData metadata;
 
     /**
      * Unique schema instance id that will be used
@@ -373,7 +375,7 @@ public class RolapSchema implements Schema {
     }
 
     @Override
-	public Map<String, Object> getMetadata() {
+	public MetaData getMetaData() {
         return metadata;
     }
 
@@ -385,7 +387,7 @@ public class RolapSchema implements Schema {
         }
 
         this.metadata =
-            RolapHierarchy.createMetadataMap(mappingSchema2.getAnnotations());
+            RolapMetaData.createMetaData(mappingSchema2.getAnnotations());
 
 
 

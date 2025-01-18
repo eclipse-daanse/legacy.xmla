@@ -14,8 +14,8 @@ package mondrian.rolap;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 
 import mondrian.olap.DimensionType;
 import mondrian.olap.HierarchyBase;
@@ -63,8 +63,8 @@ public class RolapCubeDimension extends RolapDimension {
                 : rolapDim.getDescription(),
             null,
             (cubeDim.getDimension() != null && !cubeDim.getDimension().getAnnotations().isEmpty())
-                ? RolapHierarchy.createMetadataMap(cubeDim.getDimension().getAnnotations())
-                : rolapDim.getMetadata());
+                ? RolapMetaData.createMetaData(cubeDim.getDimension().getAnnotations())
+                : rolapDim.getMetaData());
         this.xmlDimension = cubeDim;
         this.rolapDimension = rolapDim;
         this.cubeOrdinal = cubeOrdinal;

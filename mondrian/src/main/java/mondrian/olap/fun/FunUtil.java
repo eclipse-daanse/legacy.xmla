@@ -43,6 +43,7 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
@@ -2050,7 +2051,7 @@ public class FunUtil extends Util {
     }
 
     @Override
-	public Map<String, Object> getMetadata() {
+	public MetaData getMetaData() {
       throw new UnsupportedOperationException();
     }
 

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -47,6 +46,7 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
@@ -62,11 +62,12 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantCalcs;
 import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
+import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateCalc;
-import org.eclipse.daanse.rolap.mapping.api.model.AnnotationMapping;
+import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
@@ -157,7 +158,7 @@ public class RolapHierarchy extends HierarchyBase {
      */
     private RolapMemberBase allMember;
     private static final String ALL_LEVEL_CARDINALITY = "1";
-    private final Map<String, Object> metadata;
+    private final MetaData metaData;
     final RolapHierarchy closureFor;
 
     protected String displayFolder = null;
@@ -181,11 +182,11 @@ public class RolapHierarchy extends HierarchyBase {
         String displayFolder,
         boolean hasAll,
         RolapHierarchy closureFor,
-        Map<String, Object> metadata)
+        MetaData metaData)
     {
         super(dimension, subName, caption, visible, description, hasAll);
         this.displayFolder = displayFolder;
-        this.metadata = metadata;
+        this.metaData = metaData;
         this.allLevelName = "(All)";
         this.allMemberName =
             subName != null
@@ -218,7 +219,7 @@ public class RolapHierarchy extends HierarchyBase {
                     RolapLevel.HideMemberCondition.Never,
                     LevelType.REGULAR,
                     "",
-                    Map.of());
+                    OlapMetaData.empty());
         } else {
             this.levels = new RolapLevel[0];
         }
@@ -247,7 +248,7 @@ public class RolapHierarchy extends HierarchyBase {
                 RolapLevel.HideMemberCondition.Never,
                 LevelType.NULL,
                 "",
-                Map.of());
+                OlapMetaData.empty());
     }
 
     /**
@@ -273,7 +274,7 @@ public class RolapHierarchy extends HierarchyBase {
             xmlHierarchy.getDisplayFolder(),
             xmlHierarchy.isHasAll(),
             null,
-            createMetadataMap(xmlHierarchy.getAnnotations()));
+            RolapMetaData.createMetaData(xmlHierarchy.getAnnotations()));
 
         assert !(this instanceof RolapCubeHierarchy);
 
@@ -334,7 +335,7 @@ public class RolapHierarchy extends HierarchyBase {
                 null,
                 RolapLevel.HideMemberCondition.Never,
                 LevelType.REGULAR, ALL_LEVEL_CARDINALITY,
-                Map.of());
+                OlapMetaData.empty());
         allLevel.init(cubeDimensionMapping);
         this.allMember = new RolapMemberBase(
             null, allLevel, RolapUtil.sqlNullValue,
@@ -410,25 +411,6 @@ public class RolapHierarchy extends HierarchyBase {
             setCaption(xmlHierarchy.getName());
         }
         defaultMemberName = xmlHierarchy.getDefaultMember();
-    }
-
-    public static Map<String, Object> createMetadataMap(
-        List<? extends AnnotationMapping> list)
-    {
-        if (list == null
-            || list.isEmpty())
-        {
-            return Map.of();
-        }
-        // Use linked hash map because it retains order.
-        final Map<String, Object> map =
-            new LinkedHashMap<>();
-        for (AnnotationMapping annotation : list) {
-            final String name = annotation.getName();
-            final String value = annotation.getValue();
-            map.put(name, value);
-        }
-        return map;
     }
 
     @Override
@@ -534,8 +516,8 @@ public class RolapHierarchy extends HierarchyBase {
     }
 
     @Override
-	public Map<String, Object> getMetadata() {
-        return metadata;
+	public MetaData getMetaData() {
+        return metaData;
     }
 
     RolapLevel newMeasuresLevel() {
@@ -561,7 +543,7 @@ public class RolapHierarchy extends HierarchyBase {
                 RolapLevel.HideMemberCondition.Never,
                 LevelType.REGULAR,
                 "",
-                Map.of());
+                OlapMetaData.empty());
         this.levels = Util.append(this.levels, level);
         return level;
     }
@@ -1228,7 +1210,7 @@ public class RolapHierarchy extends HierarchyBase {
             true,
             "Closure dimension for parent-child hierarchy " + getName(),
             DimensionType.STANDARD_DIMENSION,
-            Map.of());
+            OlapMetaData.empty());
 
         // Create a peer hierarchy.
         RolapHierarchy peerHier = peerDimension.newHierarchy(null, true, this);
@@ -1264,7 +1246,7 @@ public class RolapHierarchy extends HierarchyBase {
                 src.getHideMemberCondition(),
                 src.getLevelType(),
                 "",
-                Map.of());
+                OlapMetaData.empty());
         peerHier.levels = Util.append(peerHier.levels, level);
 
         // Create lower level.
@@ -1295,7 +1277,7 @@ public class RolapHierarchy extends HierarchyBase {
             src.getHideMemberCondition(),
             src.getLevelType(),
             "",
-            Map.of());
+            OlapMetaData.empty());
         peerHier.levels = Util.append(peerHier.levels, sublevel);
 
         return peerDimension;

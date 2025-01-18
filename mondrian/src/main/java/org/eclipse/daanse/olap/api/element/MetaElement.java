@@ -12,13 +12,11 @@
 */
 package org.eclipse.daanse.olap.api.element;
 
-import java.util.Map;
-
 public interface MetaElement {
     /**
-     * Returns a Map of metadata.
+     * Returns the {@link MetaData} of Element.
      *
-     * @return Map with additional Metadata for the Element.
+     * @return {@link MetaData} with additional Metadata for the Element.
      */
-    Map<String, Object> getMetadata();
+    MetaData getMetaData();
 }

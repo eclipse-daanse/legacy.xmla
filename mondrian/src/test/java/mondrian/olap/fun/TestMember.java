@@ -10,7 +10,6 @@ package mondrian.olap.fun;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.SchemaReader;
@@ -19,6 +18,7 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -241,7 +241,7 @@ public Dimension getDimension() {
 
 
   @Override
-  public Map<String, Object> getMetadata() {
+  public MetaData getMetaData() {
       throw new UnsupportedOperationException();
 
   }
@@ -322,7 +322,7 @@ public Dimension getDimension() {
     }
 
     @Override
-	public Map<String, Object> getMetadata() {
+	public MetaData getMetaData() {
       throw new UnsupportedOperationException();
     }
 

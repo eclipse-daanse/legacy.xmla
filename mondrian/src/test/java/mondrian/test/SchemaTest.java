@@ -43,6 +43,7 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
@@ -8042,25 +8043,25 @@ class SchemaTest {
             executeQuery(context.getConnection(), "select from [" + salesCubeName + "]");
         final Cube cube = result.getQuery().getCube();
         assertEquals("Cube description", cube.getDescription());
-        checkAnnotations(cube.getMetadata(), "a", "Cube");
+        checkAnnotations(cube.getMetaData(), "a", "Cube");
 
         final Schema schema = cube.getSchema();
-        checkAnnotations(schema.getMetadata(), "a", "Schema", "b", "Xyz");
+        checkAnnotations(schema.getMetaData(), "a", "Schema", "b", "Xyz");
 
         final Dimension dimension = cube.getDimensions()[1];
         assertEquals("Dimension description", dimension.getDescription());
         assertEquals("Store", dimension.getCaption());
-        checkAnnotations(dimension.getMetadata(), "a", "Dimension");
+        checkAnnotations(dimension.getMetaData(), "a", "Dimension");
 
         final Hierarchy hierarchy = dimension.getHierarchies()[0];
         assertEquals("Hierarchy description", hierarchy.getDescription());
         assertEquals("Store", hierarchy.getCaption());
-        checkAnnotations(hierarchy.getMetadata(), "a", "Hierarchy");
+        checkAnnotations(hierarchy.getMetaData(), "a", "Hierarchy");
 
         final Level level = hierarchy.getLevels()[1];
         assertEquals("Level description", level.getDescription());
         assertEquals("Store Country", level.getCaption());
-        checkAnnotations(level.getMetadata(), "a", "Level");
+        checkAnnotations(level.getMetaData(), "a", "Level");
 
         // Caption comes from the CAPTION member property, defaults to name.
         // Description comes from the DESCRIPTION member property.
@@ -8072,7 +8073,7 @@ class SchemaTest {
         assertEquals("Canada", member.getName());
         assertEquals("Canada", member.getCaption());
         assertNull(member.getDescription());
-        checkAnnotations(member.getMetadata());
+        checkAnnotations(member.getMetaData());
 
         // All member. Caption defaults to name; description is null.
         final Member allMember = member.getParentMember();
@@ -8085,7 +8086,7 @@ class SchemaTest {
         assertEquals("(All)", allLevel.getName());
         assertNull(allLevel.getDescription());
         assertEquals(allLevel.getName(), allLevel.getCaption());
-        checkAnnotations(allLevel.getMetadata());
+        checkAnnotations(allLevel.getMetaData());
 
         // the first time dimension overrides the caption and description of the
         // shared time dimension
@@ -8093,7 +8094,7 @@ class SchemaTest {
         assertEquals("Time1", timeDimension.getName());
         assertEquals("Time shared description", timeDimension.getDescription());
         assertEquals("Time1", timeDimension.getCaption());
-        checkAnnotations(timeDimension.getMetadata(), "a", "Time shared");
+        checkAnnotations(timeDimension.getMetaData(), "a", "Time shared");
 
         // Time1 is a usage of a shared dimension Time.
         // Now look at the hierarchy usage within that dimension usage.
@@ -8120,7 +8121,7 @@ class SchemaTest {
             "Time1",
             timeHierarchy.getCaption());
         // No annotations.
-        checkAnnotations(timeHierarchy.getMetadata());
+        checkAnnotations(timeHierarchy.getMetaData());
 
         // the second time dimension does not overrides caption and description
         final Dimension time2Dimension = cube.getDimensions()[3];
@@ -8128,7 +8129,7 @@ class SchemaTest {
         assertEquals(
             "Time shared description", time2Dimension.getDescription());
         assertEquals("Time2", time2Dimension.getCaption());
-        checkAnnotations(time2Dimension.getMetadata(), "a", "Time shared");
+        checkAnnotations(time2Dimension.getMetaData(), "a", "Time shared");
 
         final Hierarchy time2Hierarchy = time2Dimension.getHierarchies()[0];
         // The hierarchy in the shared dimension does not have a name, so the
@@ -8150,7 +8151,7 @@ class SchemaTest {
             "Time2",
             time2Hierarchy.getCaption());
         // No annotations.
-        checkAnnotations(time2Hierarchy.getMetadata());
+        checkAnnotations(time2Hierarchy.getMetaData());
 
         final Dimension measuresDimension = cube.getDimensions()[0];
         final Hierarchy measuresHierarchy =
@@ -8173,7 +8174,7 @@ class SchemaTest {
         assertEquals(
             measure.getCaption(),
             measure.getPropertyValue(Property.MEMBER_CAPTION.name));
-        checkAnnotations(measure.getMetadata(), "a", "Measure");
+        checkAnnotations(measure.getMetaData(), "a", "Measure");
 
         // The implicitly created [Fact Count] measure
         final Member factCountMeasure = measures.get(1);
@@ -8182,7 +8183,7 @@ class SchemaTest {
             false,
             factCountMeasure.getPropertyValue(Property.VISIBLE.name));
         checkAnnotations(
-            factCountMeasure.getMetadata(), "Internal Use",
+            factCountMeasure.getMetaData(), "Internal Use",
             "For internal use");
 
         final Member calcMeasure = measures.get(2);
@@ -8198,19 +8199,19 @@ class SchemaTest {
         assertEquals(
             calcMeasure.getCaption(),
             calcMeasure.getPropertyValue(Property.MEMBER_CAPTION.name));
-        checkAnnotations(calcMeasure.getMetadata(), "a", "Calc member");
+        checkAnnotations(calcMeasure.getMetaData(), "a", "Calc member");
 
         final NamedSet namedSet = cube.getNamedSets()[0];
         assertEquals("Top Periods", namedSet.getName());
         assertEquals("Top Periods", namedSet.getCaption());
         assertEquals("Named set description", namedSet.getDescription());
-        checkAnnotations(namedSet.getMetadata(), "a", "Named set");
+        checkAnnotations(namedSet.getMetaData(), "a", "Named set");
 
         final Result result2 =
             executeQuery(context.getConnection(), "select from [" + virtualCubeName + "]");
         final Cube cube2 = result2.getQuery().getCube();
         assertEquals("Virtual cube description", cube2.getDescription());
-        checkAnnotations(cube2.getMetadata(), "a", "Virtual cube");
+        checkAnnotations(cube2.getMetaData(), "a", "Virtual cube");
 
         final SchemaReader schemaReader2 = cube2.getSchemaReader(null);
         final Dimension measuresDimension2 = cube2.getDimensions()[0];
@@ -8234,21 +8235,22 @@ class SchemaTest {
             measure2.getCaption(),
             measure2.getPropertyValue(Property.MEMBER_CAPTION.name));
         checkAnnotations(
-            measure2.getMetadata(), "a", "Measure");
+            measure2.getMetaData(), "a", "Measure");
     }
 
     private static void checkAnnotations(
-        Map<String, Object> metaMap,
+        MetaData metaData,
         String... nameVal)
     {
-        assertNotNull(metaMap);
+        assertNotNull(metaData);
         assertEquals(0, nameVal.length % 2);
-        assertEquals(nameVal.length / 2, metaMap.size());
+        assertEquals(nameVal.length / 2, metaData.size());
         int i = 0;
-        for (Map.Entry<String, Object> entry : metaMap.entrySet()) {
-            assertEquals(nameVal[i++], entry.getKey());
-            assertEquals(nameVal[i++], entry.getValue());
-        }
+        for (int j = 0; j < metaData.size(); j++) {
+            String key=nameVal[i++];
+            String val=nameVal[i++];
+            assertEquals(val, metaData.get(key));
+         }
     }
 
     @ParameterizedTest
@@ -12099,9 +12101,9 @@ class SchemaTest {
         final RolapSchema schema = schemaReader.getSchema();
         for (RolapCube cube : schema.getCubeList()) {
             Dimension dim = cube.getDimensions()[1];
-            final Map<String, Object> metaMao = dim.getMetadata();
-            assertEquals(1, metaMao.size());
-            assertEquals("bar", metaMao.get("foo"));
+            final MetaData metaData = dim.getMetaData();
+            assertEquals(1, metaData.size());
+            assertEquals("bar", metaData.get("foo"));
         }
     }
 

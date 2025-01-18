@@ -9,8 +9,7 @@
 
 package mondrian.rolap;
 
-import java.util.Map;
-
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 
 /**
@@ -28,13 +27,13 @@ public class RolapVirtualCubeMeasure
      * The measure in the underlying cube.
      */
     private final RolapStoredMeasure cubeMeasure;
-    private final Map<String, Object> metaData;
+    private final MetaData metaData;
 
     public RolapVirtualCubeMeasure(
         RolapMember parentMember,
         RolapLevel level,
         RolapStoredMeasure cubeMeasure,
-        Map<String, Object> metaData)
+        MetaData metaData)
     {
         super(parentMember, level, cubeMeasure.getName());
         this.cubeMeasure = cubeMeasure;
@@ -80,7 +79,7 @@ public class RolapVirtualCubeMeasure
     }
 
     @Override
-	public Map<String, Object> getMetadata() {
+	public MetaData getMetaData() {
         return metaData;
     }
 }

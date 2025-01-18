@@ -12,14 +12,14 @@ package mondrian.rolap;
 import java.text.MessageFormat;
 import java.util.Map;
 
-import mondrian.olap.exceptions.CastInvalidTypeException;
-
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 
 import mondrian.olap.Property;
 import mondrian.olap.StringLiteralImpl;
+import mondrian.olap.exceptions.CastInvalidTypeException;
 import mondrian.spi.CellFormatter;
 
 /**
@@ -55,7 +55,7 @@ public class RolapBaseCubeMeasure
     private final RolapAggregator aggregator;
 
     private final RolapCube cube;
-    private final Map<String, Object> metadata;
+    private final MetaData metadata;
 
     /**
      * Holds the {@link mondrian.rolap.RolapStar.Measure} from which this
@@ -92,7 +92,7 @@ public class RolapBaseCubeMeasure
         SQLExpressionMapping expression,
         String aggregatorName,
         org.eclipse.daanse.rolap.mapping.api.model.enums.DataType datatype,
-        Map<String, Object> metadata)
+        MetaData metadata)
     {
         super(parentMember, level, name, null, MemberType.MEASURE);
         assert metadata != null;
@@ -188,7 +188,7 @@ public class RolapBaseCubeMeasure
     }
 
     @Override
-    public Map<String, Object> getMetadata() {
+    public MetaData getMetaData() {
         return metadata;
     }
 

@@ -61,6 +61,7 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
@@ -74,12 +75,14 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.impl.IdentifierNode;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
 import org.eclipse.daanse.rdb.structure.api.model.Column;
+import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.ActionMappingMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberPropertyMapping;
@@ -151,7 +154,7 @@ public class RolapCube extends CubeBase {
     public static final String BAD_RELATION_TYPE = "bad relation type ";
 
     private final RolapSchema schema;
-    private final Map<String, Object> metadata;
+    private final MetaData metaData;
     private final RolapHierarchy measuresHierarchy;
 
     /** For SQL generator. Fact table. */
@@ -250,7 +253,7 @@ public class RolapCube extends CubeBase {
      * @param caption Caption
      * @param description Description
      * @param fact Definition of fact table*
-     * @param metadata Annotations
+     * @param metaData Annotations
      */
     private RolapCube(
         RolapSchema schema,
@@ -262,7 +265,7 @@ public class RolapCube extends CubeBase {
         boolean isCache,
         RelationalQueryMapping fact,
         List<? extends DimensionConnectorMapping> dimensions,
-        Map<String, Object> metadata,
+        MetaData metaData,
         Context context)
     {
         super(
@@ -272,9 +275,9 @@ public class RolapCube extends CubeBase {
             description,
             new RolapDimension[dimensions.size() + 1]);
 
-        assert metadata != null;
+        assert metaData != null;
         this.schema = schema;
-        this.metadata = metadata;
+        this.metaData = metaData;
         this.caption = caption;
         this.fact = fact;
         this.hierarchyUsages = new ArrayList<>();
@@ -308,7 +311,7 @@ public class RolapCube extends CubeBase {
                 true,
                 null,
                 DimensionType.MEASURES_DIMENSION,
-                Map.of());
+                OlapMetaData.empty());
 
         this.dimensions[0] = measuresDimension;
 
@@ -374,7 +377,7 @@ public class RolapCube extends CubeBase {
             isCached(cubeMapping),
             (RelationalQueryMapping) cubeMapping.getQuery(),
             cubeMapping.getDimensionConnectors(),
-            RolapHierarchy.createMetadataMap(cubeMapping.getAnnotations()), context);
+            RolapMetaData.createMetaData(cubeMapping.getAnnotations()), context);
         schema.addCube(cubeMapping,this);
 
         if (getFact() == null) {
@@ -676,7 +679,7 @@ public class RolapCube extends CubeBase {
                 measureMapping.getName(), measureMapping.getDescription(),
                 measureMapping.getFormatString(), measureExp,
                 aggregator, measureMapping.getDatatype(),
-                RolapHierarchy.createMetadataMap(measureMapping.getAnnotations()));
+                RolapMetaData.createMetaData(measureMapping.getAnnotations()));
 
         FormatterCreateContext formatterContext =
                 new FormatterCreateContext.Builder(measure.getUniqueName())
@@ -767,7 +770,7 @@ public class RolapCube extends CubeBase {
             true,
             null,
             mappingVirtualCube.getDimensionConnectors(),
-            RolapHierarchy.createMetadataMap(mappingVirtualCube.getAnnotations()),
+            RolapMetaData.createMetaData(mappingVirtualCube.getAnnotations()),
             context);
         schema.addCube(mappingVirtualCube, this);
         // Since Measure and VirtualCubeMeasure cannot
@@ -825,7 +828,7 @@ public class RolapCube extends CubeBase {
                                 null,
                                 measuresLevel,
                                 (RolapStoredMeasure) cubeMeasure,
-                                RolapHierarchy.createMetadataMap(
+                                RolapMetaData.createMetaData(
                                     mappingMeasure.getAnnotations()));
 
                         // Set member's visibility, default true.
@@ -1114,8 +1117,8 @@ public class RolapCube extends CubeBase {
     }
 
     @Override
-	public Map<String, Object> getMetadata() {
-        return metadata;
+	public MetaData getMetaData() {
+        return metaData;
     }
 
     public boolean hasAggGroup() {
@@ -1351,7 +1354,7 @@ public class RolapCube extends CubeBase {
         }
 
         namedSet.setMetadata(
-            RolapHierarchy.createMetadataMap(mappingNamedSet.getAnnotations()));
+            RolapMetaData.createMetaData(mappingNamedSet.getAnnotations()));
 
         namedSetList.add(formula);
         formulaList.add(formula);
@@ -1420,7 +1423,7 @@ public class RolapCube extends CubeBase {
 
         final RolapMember member1 = RolapUtil.strip(member);
         ((RolapCalculatedMember) member1).setMetadata(
-            RolapHierarchy.createMetadataMap(mappingCalcMember.getAnnotations()));
+            RolapMetaData.createMetaData(mappingCalcMember.getAnnotations()));
 
         memberList.add(member);
     }
@@ -3464,7 +3467,7 @@ public class RolapCube extends CubeBase {
                         null,
                         measuresLevel,
                         baseMeasure,
-                        Map.of());
+                        OlapMetaData.empty());
                 if (!measuresFound.contains(virtualCubeMeasure)) {
                     measuresFound.add(virtualCubeMeasure);
                 }

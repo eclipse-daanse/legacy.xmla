@@ -24,12 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-
-import mondrian.olap.exceptions.MdxAxisShowSubtotalsNotSupportedException;
-import mondrian.olap.exceptions.ParameterIsNotModifiableException;
-import mondrian.olap.exceptions.UnknownParameterException;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.BracesOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
@@ -55,6 +50,7 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
@@ -90,6 +86,7 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.calc.api.profile.CalculationProfile;
 import org.eclipse.daanse.olap.calc.api.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
+import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.function.def.parameter.ParameterFunDef;
 import org.eclipse.daanse.olap.impl.IdentifierParser;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
@@ -99,6 +96,9 @@ import mondrian.mdx.LevelExpressionImpl;
 import mondrian.mdx.MdxVisitorImpl;
 import mondrian.mdx.MemberExpressionImpl;
 import mondrian.mdx.UnresolvedFunCallImpl;
+import mondrian.olap.exceptions.MdxAxisShowSubtotalsNotSupportedException;
+import mondrian.olap.exceptions.ParameterIsNotModifiableException;
+import mondrian.olap.exceptions.UnknownParameterException;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapEvaluator;
 import mondrian.rolap.RolapHierarchy;
@@ -2200,8 +2200,8 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         }
 
         @Override
-		public Map<String, Object> getMetadata()  {
-            return Map.of();
+		public MetaData getMetaData()  {
+            return OlapMetaData.empty();
         }
 
         @Override

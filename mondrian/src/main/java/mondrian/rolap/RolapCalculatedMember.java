@@ -11,11 +11,10 @@
 */
 package mondrian.rolap;
 
-import java.util.Collections;
-import java.util.Map;
-
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
+import org.eclipse.daanse.olap.element.OlapMetaData;
 
 import mondrian.olap.FormulaImpl;
 import mondrian.olap.Property;
@@ -33,7 +32,7 @@ import mondrian.olap.Util;
  */
 public class RolapCalculatedMember extends RolapMemberBase {
     private final Formula formula;
-    private Map<String, Object> metadata;
+    private MetaData metaData;
     // source cube for a virtual member
     private RolapCube baseCube;
 
@@ -55,7 +54,7 @@ public class RolapCalculatedMember extends RolapMemberBase {
         // overrides MEASURE.
         super(parentMember, level, name, null, MemberType.FORMULA);
         this.formula = formula;
-        this.metadata = Collections.emptyMap();
+        this.metaData = OlapMetaData.empty();
     }
 
     // override RolapMember
@@ -103,13 +102,13 @@ public class RolapCalculatedMember extends RolapMemberBase {
     }
 
     @Override
-    public Map<String, Object> getMetadata() {
-        return metadata;
+    public MetaData getMetaData() {
+        return metaData;
     }
 
-    void setMetadata(Map<String, Object> metadata) {
-        assert metadata != null;
-        this.metadata = metadata;
+    void setMetadata(MetaData metaData) {
+        assert metaData != null;
+        this.metaData = metaData;
     }
 
     public RolapCube getBaseCube() {

@@ -29,7 +29,9 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MemberPropertyMapping;
@@ -110,7 +112,7 @@ public class RolapLevel extends LevelBase {
     /** Condition under which members are hidden. */
     private final HideMemberCondition hideMemberCondition;
     protected final ParentChildLinkMapping xmlClosure;
-    private final Map<String, Object> metadata;
+    private final MetaData metaData;
     private final BestFitColumnType internalType; // may be null
 
     protected LevelMapping levelMapping;
@@ -143,11 +145,11 @@ public class RolapLevel extends LevelBase {
         HideMemberCondition hideMemberCondition,
         LevelType levelType,
         String approxRowCount,
-        Map<String, Object> metadata)
+        MetaData metaData)
     {
         super(
             hierarchy, name, caption, visible, description, depth, levelType);
-        assert metadata != null;
+        assert metaData != null;
         Util.assertPrecondition(properties != null, "properties != null");
         Util.assertPrecondition(
             hideMemberCondition != null,
@@ -157,7 +159,7 @@ public class RolapLevel extends LevelBase {
         if (keyExp instanceof mondrian.rolap.RolapColumn column) {
             checkColumn(column);
         }
-        this.metadata = metadata;
+        this.metaData = metaData;
         this.approxRowCount = loadApproxRowCount(approxRowCount);
         this.flags = flags;
         this.datatype = datatype;
@@ -251,8 +253,8 @@ public class RolapLevel extends LevelBase {
     }
 
     @Override
-	public Map<String, Object> getMetadata() {
-        return metadata;
+	public MetaData getMetaData() {
+        return metaData;
     }
 
     private int loadApproxRowCount(String approxRowCount) {
@@ -378,7 +380,7 @@ public class RolapLevel extends LevelBase {
                     ? "TimeHalfYears"
                     : mappingLevel.getLevelType().getValue()),
             mappingLevel.getApproxRowCount(),
-            RolapHierarchy.createMetadataMap(mappingLevel.getAnnotations()));
+            RolapMetaData.createMetaData(mappingLevel.getAnnotations()));
 
         setLevelInProperties();
         if (!Util.isEmpty(mappingLevel.getName())) {

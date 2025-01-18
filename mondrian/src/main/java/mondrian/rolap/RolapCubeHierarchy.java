@@ -129,7 +129,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
             rolapHierarchy.getDisplayFolder(),
             rolapHierarchy.hasAll(),
             null,
-            rolapHierarchy.getMetadata());
+            rolapHierarchy.getMetaData());
         this.ordinal = ordinal;
         final boolean cubeIsVirtual = cubeDimension.getCube().isVirtual();
         if (!cubeIsVirtual) {
