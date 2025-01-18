@@ -38,7 +38,7 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 
 
 class OrderFunDefTest {
@@ -1064,7 +1064,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
         // been assigned by previous tests.
         // a non-sense cube just to test ordering by order key
 
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
         class TestOrderTupleMultiKeyswithVCubeModifier extends PojoMappingModifier {
 
             public TestOrderTupleMultiKeyswithVCubeModifier(CatalogMapping catalog) {

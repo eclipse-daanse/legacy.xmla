@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ResultShepherd;
+import org.eclipse.daanse.olap.api.SchemaCache;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
@@ -61,6 +62,9 @@ public abstract class AbstractBasicContext implements Context {
 
 	protected AggregationManager aggMgr;
 
+	protected SchemaCache schemaCache;
+
+	
 	private boolean shutdown = false;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBasicContext.class);
@@ -150,6 +154,7 @@ public abstract class AbstractBasicContext implements Context {
 			throw new OlapRuntimeException("Server already shutdown.");
 		}
 		this.shutdown = true;
+		schemaCache.clear();
 		aggMgr.shutdown();
 
 		shepherd.shutdown();
@@ -254,4 +259,9 @@ public abstract class AbstractBasicContext implements Context {
 				.toList();
 	}
 
+
+	@Override
+	public SchemaCache getSchemaCache() {
+		return schemaCache;
+	}
 }

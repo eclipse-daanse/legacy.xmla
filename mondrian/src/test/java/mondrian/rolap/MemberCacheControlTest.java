@@ -91,13 +91,13 @@ class MemberCacheControlTest {
 
 
         SystemWideProperties.instance().EnableRolapCubeMemberCache = false;
-        RolapSchemaPool.instance().clear();
+//        RolapSchemaCache.instance().clear();
     }
 
     @AfterEach
     public void afterEach() {
         SystemWideProperties.instance().populateInitial();
-        RolapSchemaPool.instance().clear();
+//        RolapSchemaCache.instance().clear();
         LocusImpl.pop(locus);
         locus = null;
     }
@@ -304,6 +304,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFilter(Context context) {
+    	context.getSchemaCache().clear();
         prepareTestContext(context);
         final Connection conn = context.getConnection();
         final DiffRepository dr = getDiffRepos();
@@ -323,7 +324,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMemberOpsFailIfCacheEnabled(Context context) {
-
+    	context.getSchemaCache().clear();
         SystemWideProperties.instance().EnableRolapCubeMemberCache = true;
         prepareTestContext(context);
         final Connection conn = context.getConnection();
@@ -348,7 +349,8 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSetPropertyCommandOnLeafMember(Context context) {
-        prepareTestContext(context);
+    	context.getSchemaCache().clear();
+    	prepareTestContext(context);
         final Connection conn = context.getConnection();
         final DiffRepository dr = getDiffRepos();
         final CacheControl cc = conn.getCacheControl(null);
@@ -405,7 +407,8 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSetPropertyCommandOnNonLeafMember(Context context) {
-        prepareTestContext(context);
+    	context.getSchemaCache().clear();
+    	prepareTestContext(context);
         final Connection conn = context.getConnection();
         final DiffRepository dr = getDiffRepos();
         final CacheControl cc = conn.getCacheControl(null);
@@ -471,6 +474,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAddCommand(Context context) {
+    	context.getSchemaCache().clear();
         prepareTestContext(context);
         final Connection conn = context.getConnection();
         final CacheControl cc = conn.getCacheControl(null);
@@ -689,6 +693,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDeleteCommand(Context context) {
+    	context.getSchemaCache().clear();
         prepareTestContext(context);
         final Connection conn = context.getConnection();
         final CacheControl cc = conn.getCacheControl(null);
@@ -764,6 +769,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMoveCommand(Context context) {
+    	context.getSchemaCache().clear();
         prepareTestContext(context);
         final Connection conn = context.getConnection();
         final CacheControl cc = conn.getCacheControl(null);
@@ -851,6 +857,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMoveFailBadLevel(Context context) {
+    	context.getSchemaCache().clear();
         prepareTestContext(context);
         final Connection conn = context.getConnection();
         final CacheControl cc = conn.getCacheControl(null);
@@ -933,6 +940,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAddCommandNegative(Context context) {
+    	context.getSchemaCache().clear();
         prepareTestContext(context);
         final Connection conn = context.getConnection();
         final CacheControl cc = conn.getCacheControl(null);
@@ -1045,6 +1053,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFlushHierarchy(Context context) {
+    	context.getSchemaCache().clear();
         prepareTestContext(context);
         flushCache(context.getConnection());
         final CacheControl cacheControl =

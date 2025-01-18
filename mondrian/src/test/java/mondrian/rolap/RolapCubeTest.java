@@ -125,7 +125,7 @@ class RolapCubeTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGetCalculatedMembersForCaliforniaManager(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         String[] expectedCalculatedMembers = new String[] {
             "[Measures].[Profit]", "[Measures].[Profit last Period]",
             "[Measures].[Profit Growth]"

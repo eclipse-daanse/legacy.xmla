@@ -1,75 +1,24 @@
 /*
-* This software is subject to the terms of the Eclipse Public License v1.0
-* Agreement, available at the following URL:
-* http://www.eclipse.org/legal/epl-v10.html.
-* You must accept the terms of that agreement to use this software.
-*
-* Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
-*/
-
+ * Copyright (c) 2025 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   SmartCity Jena - initial
+ *   Stefan Bischof (bipolis.org) - initial
+ */
 package mondrian.rolap;
 
 import javax.sql.DataSource;
 
-import mondrian.olap.Util;
-import mondrian.util.ByteString;
-import mondrian.util.StringKey;
+public record ConnectionKey(int dataSourceIdentityHashCode, String sessionId) {
 
-/**
- * Globally unique identifier for the definition of a JDBC database connection.
- *
- * <p>Two connections should have the same connection key if and only if their
- * databases have the same content.</p>
- *
- *
- * @author jhyde
- */
-public class ConnectionKey extends StringKey {
-    private ConnectionKey(String s) {
-        super(s);
-    }
+	static ConnectionKey of(DataSource dataSource, String sessionId) {
+		return new ConnectionKey(System.identityHashCode(dataSource), sessionId);
+	}
 
-    static ConnectionKey create(
-        final DataSource dataSource,
-        final String connectionKey,
-        final String sessionId)
-    {
-		String s;
-
-		final StringBuilder buf = new StringBuilder(100);
-		attributeValue(buf, "sessiomId", sessionId);
-		if (dataSource != null) {
-			attributeValue(buf, "jvm", Util.JVM_INSTANCE_UUID);
-			attributeValue(buf, "dataSource", System.identityHashCode(dataSource));
-		} else {
-			attributeValue(buf, "connectionKey", connectionKey);
-		}
-		s = new ByteString(Util.digestSHA(buf.toString())).toString();
-
-		return new ConnectionKey(s);
-    }
-
-    static ConnectionKey create(
-            final DataSource dataSource,
-            final String connectionKey)
-    {
-        return create(
-                dataSource,
-                connectionKey,
-                null);
-    }
-
-    static void attributeValue(
-        StringBuilder buf, String attribute, Object value)
-    {
-        if (value == null) {
-            return;
-        }
-        if (buf.length() > 0) {
-            buf.append(';');
-        }
-        buf.append(attribute)
-            .append('=');
-        Util.quoteForMdx(buf, value.toString());
-    }
 }

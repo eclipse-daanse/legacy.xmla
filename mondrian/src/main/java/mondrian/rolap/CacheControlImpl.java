@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -291,7 +290,7 @@ public class CacheControlImpl implements CacheControl {
 
     @Override
 	public void flushSchemaCache() {
-        RolapSchemaPool.instance().clear();
+    	connection.getContext().getSchemaCache().clear();
         // In some cases, the request might originate from a reference
         // to the schema which isn't in the pool anymore. We must also call
         // the cleanup procedure on the current connection.

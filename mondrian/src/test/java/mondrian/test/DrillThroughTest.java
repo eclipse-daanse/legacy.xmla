@@ -63,7 +63,7 @@ import mondrian.olap.IdImpl;
 import mondrian.olap.SystemWideProperties;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapLevel;
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.SchemaModifiers;
 
@@ -144,7 +144,7 @@ class DrillThroughTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testTrivialCalcMemberDrillThrough(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         Result result = executeQuery(context.getConnection(),
             "WITH MEMBER [Measures].[Formatted Unit Sales]"
             + " AS '[Measures].[Unit Sales]', FORMAT_STRING='$#,###.000'\n"
@@ -310,7 +310,7 @@ class DrillThroughTest {
         // http://jira.pentaho.com/browse/MONDRIAN-1587
         // hsqldb was failing with SQL that included redundant parentheses
         // around IN list items.
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
         Result result = executeQuery(context.getConnection(),
             "select from sales where "
@@ -985,7 +985,7 @@ class DrillThroughTest {
             }
             connection.close();
         }
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
     }
 
     /**
@@ -1258,7 +1258,7 @@ class DrillThroughTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void  testDrillThroughExprs(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         Connection connection = context.getConnection();
         assertCanDrillThrough(connection,
             true,
@@ -1480,7 +1480,7 @@ class DrillThroughTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void  testDrillThroughMultiPositionCompoundSlicer(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
         // A query with a simple multi-position compound slicer
         Result result =
@@ -2036,7 +2036,7 @@ class DrillThroughTest {
             if (rs != null) {
                 rs.close();
             }
-            RolapSchemaPool.instance().clear();
+            context.getSchemaCache().clear();
         }
     }
     /**

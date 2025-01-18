@@ -27,6 +27,7 @@ import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,12 +60,12 @@ public class AggregationManager extends RolapAggregationManager {
 
     public final SegmentCacheManager cacheMgr;
 
-    private Context context;
+    private RolapContext context;
 
     /**
      * Creates the AggregationManager.
      */
-    public AggregationManager(Context context) {
+    public AggregationManager(RolapContext context) {
         this.context = context;
         this.cacheMgr = new SegmentCacheManager(context);
     }

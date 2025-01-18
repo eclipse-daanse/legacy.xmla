@@ -102,7 +102,7 @@ import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapSchema;
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 import mondrian.rolap.RolapUtil;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.server.ExecutionImpl;
@@ -2104,7 +2104,7 @@ public class BasicQueryTest {
 
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier16::new);
     assertQueryReturns( context.getConnection(),mdx, result );
-    RolapSchemaPool.instance().clear();
+    context.getSchemaCache().clear();
   }
 
   @ParameterizedTest
@@ -2160,7 +2160,7 @@ public class BasicQueryTest {
     // check that consistent with fact table
     ((TestConfig)context.getConfig()).setUseAggregates(false);
     ((TestConfig)context.getConfig()).setReadAggregates(false);
-    RolapSchemaPool.instance().clear();
+    context.getSchemaCache().clear();
 
     assertQueryReturns(context.getConnection(), mdx, desiredResultWithoutAgg );
   }
@@ -2953,7 +2953,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testTopmost2(Context context) {
-    RolapSchemaPool.instance().clear();
+    context.getSchemaCache().clear();
     assertQueryReturns( context.getConnection(),"SELECT {Measures.[Unit Sales]} ON COLUMNS,\n" + "  CROSSJOIN(Customers.CHILDREN,\n"
         + "    TOPCOUNT(DESCENDANTS([Store].CURRENTMEMBER, [Store].[Store Name]),\n"
         + "             1, [Measures].[Unit Sales])) ON ROWS\n" + "FROM Sales",
@@ -3460,7 +3460,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void dont_testParallelMutliple(Context context) {
-	  RolapSchemaPool.instance().clear();
+	  context.getSchemaCache().clear();
       ((TestConfig)context.getConfig()).setMaxEvalDepth(MAX_EVAL_DEPTH_VALUE);
     Connection connection = context.getConnection();
     for ( int i = 0; i < 5; i++ ) {
@@ -3486,7 +3486,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void dont_testParallelFlushCache(Context context) {
-	RolapSchemaPool.instance().clear();
+	context.getSchemaCache().clear();
     ((TestConfig)context.getConfig()).setMaxEvalDepth(MAX_EVAL_DEPTH_VALUE);
     runParallelQueries(context.getConnection(), 4, 6, true );
   }
@@ -4051,7 +4051,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNullMember(Context context) {
-    RolapSchemaPool.instance().clear();
+    context.getSchemaCache().clear();
     if ( isDefaultNullMemberRepresentation() ) {
       assertQueryReturns( context.getConnection(),"SELECT \n" + "{[Measures].[Store Cost]} ON columns, \n"
           + "{[Store Size in SQFT].[All Store Size in SQFTs].[#null]} ON rows \n" + "FROM [Sales] \n"
@@ -4185,7 +4185,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testInvalidMembersInQuery(Context context) {
-	RolapSchemaPool.instance().clear();
+	context.getSchemaCache().clear();
     String mdx =
         "select {[Measures].[Unit Sales]} on columns,\n" + " {[Time].[1997].[Q1], [Time].[1997].[QTOO]} on rows\n"
             + "from [Sales]";
@@ -4807,7 +4807,7 @@ public class BasicQueryTest {
                 + "aggregator=\"sum\"/>\n" + "  <Measure name=\"Warehouse Cost\" column=\"warehouse_cost\" "
                 + "aggregator=\"sum\"/>\n" + "</Cube>", null, null, null, null );
        */
-    RolapSchemaPool.instance().clear();
+    context.getSchemaCache().clear();
     CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
     ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.BasicQueryTestModifier27(catalog, "Supply Time Error"));
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
@@ -4830,7 +4830,7 @@ public class BasicQueryTest {
             + "aggregator=\"sum\"/>\n" + "</Cube>", null, null, null, null );
        */
 
-    RolapSchemaPool.instance().clear();
+    context.getSchemaCache().clear();
     CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
     ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.BasicQueryTestModifier27(catalog, "SUPPLY TIME"));
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
@@ -5972,7 +5972,7 @@ public class BasicQueryTest {
             null ));
      */
 
-    RolapSchemaPool.instance().clear();
+    context.getSchemaCache().clear();
     CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
     ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.BasicQueryTestModifier8(catalog, dialect));
 
@@ -6055,7 +6055,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCurrentMemberWithCompoundSlicerIgnoreException(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         ((TestConfig)context.getConfig()).setCurrentMemberWithCompoundSlicerAlert("OFF" );
 
     //final TestContext context = getTestContext().withFreshConnection();
@@ -6077,7 +6077,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCurrentMemberWithCompoundSlicer2(Context context) {
-    RolapSchemaPool.instance().clear();
+    context.getSchemaCache().clear();
     String mdx =
         "with\n" + "member [Measures].[Drink Sales Previous Period] as\n"
             + "'( Time.CurrentMember.lag(1), [Product].[All Products].[Drink]," + " measures.[unit sales] )'\n"
@@ -6097,7 +6097,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCurrentMemberWithCompoundSlicer2IgnoreException(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         ((TestConfig)context.getConfig()).setCurrentMemberWithCompoundSlicerAlert("OFF");
 
     //final TestContext context = getTestContext().withFreshConnection();

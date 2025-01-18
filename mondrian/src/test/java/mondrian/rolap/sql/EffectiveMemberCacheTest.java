@@ -26,7 +26,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 import mondrian.test.SqlPattern;
 
 class EffectiveMemberCacheTest {
@@ -79,7 +79,7 @@ class EffectiveMemberCacheTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCachedChildMembers(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
         Connection connection = context.getConnection();
         clearCache(connection);

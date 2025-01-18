@@ -1,10 +1,10 @@
 package org.eclipse.daanse.olap.api;
 
 import java.lang.ref.SoftReference;
+import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 public interface ConnectionProps {
 
@@ -62,9 +62,7 @@ public interface ConnectionProps {
 	 * <p>
 	 * Defaults to "-1s".
 	 */
-	long pinSchemaTimeout();
-
-	TimeUnit pinSchemaTimeoutUnit();
+	Duration pinSchemaTimeout();
 
 	/**
 	 * The "AggregateScanSchema" property is the name of the database schema to scan

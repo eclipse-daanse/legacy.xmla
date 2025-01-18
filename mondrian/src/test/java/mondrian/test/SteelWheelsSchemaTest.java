@@ -38,7 +38,7 @@ import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
 
 import mondrian.olap.RoleImpl;
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.util.Bug;
 
@@ -968,7 +968,7 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         final String mdx =
             "With\n"
             + "Member [Measures].[*ZERO] as '0', SOLVE_ORDER=0\n"
@@ -2155,6 +2155,6 @@ class SteelWheelsSchemaTest {
             + "Row #3: 96\n"
             + "Row #3: 70,488.44\n"
             + "Row #3: \n");
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
     }
 }

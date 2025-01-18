@@ -12,11 +12,11 @@ package mondrian.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
 
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.eclipse.daanse.olap.api.Connection;
@@ -110,7 +110,7 @@ class I18nTest {
         //context.setProperty(RolapConnectionProperties.Locale.name(), localeName);
         Connection connection = context.getConnection(new RolapConnectionPropsR(
 		List.of(), true, LocaleUtils.toLocale(localeName),
-            -1, TimeUnit.SECONDS, Optional.empty(), Optional.empty()));
+		Duration.ofSeconds(-1), Optional.empty(), Optional.empty()));
 
         Query query = connection.parseQuery(
             "WITH MEMBER [Measures].[Foo] AS ' 12345.67 ',\n"

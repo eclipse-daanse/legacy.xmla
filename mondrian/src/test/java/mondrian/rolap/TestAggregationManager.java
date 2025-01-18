@@ -435,7 +435,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUniqueMembers(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         prepareContext(context);
         // [Store].[Store State] is unique, so we don't expect to see any
         // references to country.
@@ -530,7 +530,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNonEmptyCrossJoinLoneAxis(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         prepareContext(context);
         // Not sure what this test is checking.
         // For now, only run it for derby.
@@ -595,7 +595,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchyInFactTable(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         prepareContext(context);
         Connection connection = context.getConnection();
         CellRequest request = createRequest(connection,
@@ -634,7 +634,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCountDistinctAggMiss(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         prepareContext(context);
         Connection connection = context.getConnection();
         CellRequest request = createRequest(connection,
@@ -737,7 +737,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCountDistinctCannotRollup(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         prepareContext(context);
         // Summary "agg_g_ms_pcat_sales_fact_1997" doesn't match,
         // because we'd need to roll-up the distinct-count measure over
@@ -954,7 +954,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCountDistinctBatchLoading(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         prepareContext(context);
         List<String[]> compoundMembers = new ArrayList<>();
         compoundMembers.add(new String[] {"1997", "Q1", "1"});
@@ -1069,7 +1069,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAggChildMembersOfLeaf(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         prepareContext(context);
         Connection connection = context.getConnection();
         assertQueryReturns(connection,
@@ -1494,7 +1494,7 @@ class TestAggregationManager extends BatchTestCase {
         // cardinality in cache.
         assertQuerySqlOrNot(
             connection, query2, patterns2, false, false, false);
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
     }
 
     /**
@@ -2052,7 +2052,7 @@ class TestAggregationManager extends BatchTestCase {
             + "  </Hierarchy>\n"
             + "</Dimension>", false));
          */
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
         CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.TestAggregationManagerModifier2(catalog, colName));
         assertQueryThrows(context,
@@ -2072,7 +2072,7 @@ class TestAggregationManager extends BatchTestCase {
             + "  </Hierarchy>\n"
             + "</Dimension>", false));
          */
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
         catalog = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.TestAggregationManagerModifier10(catalog, colName));
         assertQueryReturns(context.getConnection(),
@@ -2377,7 +2377,7 @@ class TestAggregationManager extends BatchTestCase {
             true,
             false,
             false);
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
     }
 
     @ParameterizedTest
@@ -2614,7 +2614,7 @@ class TestAggregationManager extends BatchTestCase {
                     sqlMysql.length())
             },
             false, false, true);
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
     }
 
     @ParameterizedTest
@@ -3578,7 +3578,7 @@ class TestAggregationManager extends BatchTestCase {
                     sqlMysqlTooLowSegmentQuery.length())
             },
             false, false, true);
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
     }
 
     @ParameterizedTest
@@ -3859,7 +3859,7 @@ class TestAggregationManager extends BatchTestCase {
                     sqlOra,
                     sqlOra.length())},
             false, false, true);
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
     }
 
     @ParameterizedTest
@@ -3867,7 +3867,7 @@ class TestAggregationManager extends BatchTestCase {
     void testDisabledReadAggregatesIgnoresDefaultRules(Context context)
         throws Exception
     {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         prepareContext(context);
         ((TestConfig)context.getConfig()).setReadAggregates(false);
         ((TestConfig)context.getConfig()).setUseAggregates(true);

@@ -62,7 +62,7 @@ import mondrian.olap.IdImpl;
 import mondrian.olap.SystemProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 
 /**
  * A <code>ParameterTest</code> is a test suite for functionality relating to
@@ -1330,7 +1330,7 @@ class ParameterTest {
         assertExprThrows(context,
             "ParamRef(\"foo\")",
             "Duplicate parameter 'foo' in schema");
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
     }
 
     @Disabled //we not able set bad type. type is enum. this test will delete in future

@@ -24,9 +24,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -38,7 +38,7 @@ import mondrian.server.LocusImpl;
 
 class SegmentCacheManagerTest {
 
-  @Mock private Context context;
+  @Mock private RolapContext context;
   private Locus locus = new LocusImpl( new ExecutionImpl( null, Optional.empty() ), "component", "message" );
   private ExecutorService executor = Executors.newFixedThreadPool( 15 );
 

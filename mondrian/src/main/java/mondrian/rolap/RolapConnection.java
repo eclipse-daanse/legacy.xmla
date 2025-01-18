@@ -67,6 +67,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +98,6 @@ public class RolapConnection extends ConnectionBase {
   private final ConnectionProps rolapConnectionProps;
 
   private Context context = null;
-  private final String catalogName;
   private final RolapSchema schema;
   private SchemaReader schemaReader;
   protected Role role;
@@ -116,7 +116,7 @@ public class RolapConnection extends ConnectionBase {
   /**
    * Creates a RolapConnection.
    *
-   * <p>Only {@link RolapSchemaPool#get} calls this with
+   * <p>Only {@link RolapSchemaCache#get} calls this with
    * schema != null (to create a schema's internal connection).
    * Other uses retrieve a schema from the cache based upon
    * the <code>Catalog</code> property.
@@ -138,7 +138,6 @@ public class RolapConnection extends ConnectionBase {
     assert rolapConnectionProps != null;
 
     this.rolapConnectionProps = rolapConnectionProps;
-	this.catalogName = context.getName();
 
     Role roleInner = null;
 
@@ -157,10 +156,10 @@ public class RolapConnection extends ConnectionBase {
       LocusImpl.push( locus );
       try {
 
-          schema = RolapSchemaPool.instance().get(
-            catalogName,
-            context,
-            rolapConnectionProps );
+			// TODO: switch from schemareader to catalogreader;
+			SchemaMapping schemaMapping = context.getCatalogMapping().getSchemas().getFirst();
+			schema = ((RolapSchemaCache) context.getSchemaCache()).getOrCreateSchema(schemaMapping, rolapConnectionProps,
+					Optional.empty());
 
       } finally {
         LocusImpl.pop( locus );
@@ -245,14 +244,7 @@ public RolapSchema getSchema() {
     return schema;
   }
 
-
-
-  @Override
-public String getCatalogName() {
-    return catalogName;
-  }
-
-  @Override
+@Override
 public Locale getLocale() {
     return locale;
   }

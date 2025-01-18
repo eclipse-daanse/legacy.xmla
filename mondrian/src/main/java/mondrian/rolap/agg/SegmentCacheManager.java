@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -42,16 +43,19 @@ import org.eclipse.daanse.olap.api.monitor.event.EventCommon;
 import org.eclipse.daanse.olap.api.monitor.event.ExecutionEventCommon;
 import org.eclipse.daanse.olap.api.monitor.event.MdxStatementEventCommon;
 import org.eclipse.daanse.olap.api.monitor.event.ServertEventCommon;
+import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.olap.Util;
 import mondrian.rolap.CacheControlImpl;
+import mondrian.rolap.CacheKey;
+import mondrian.rolap.FastBatchingCellReader;
 import mondrian.rolap.RolapSchema;
+import mondrian.rolap.RolapSchemaCache;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.RolapStoredMeasure;
 import mondrian.rolap.RolapUtil;
-import mondrian.rolap.SchemaKey;
 import mondrian.rolap.cache.MemorySegmentCache;
 import mondrian.rolap.cache.SegmentCacheIndex;
 import mondrian.rolap.cache.SegmentCacheIndexImpl;
@@ -274,7 +278,7 @@ public class SegmentCacheManager {
 
   private static final Logger LOGGER =
     LoggerFactory.getLogger( AggregationManager.class );
-  private final Context context;
+  private final RolapContext context;
     private final static String sqlQueryLimitReached = """
     The number of concurrent SQL statements which can be used simultaneously by this Mondrian server instance has been reached. Set ''mondrian.rolap.maxSqlThreads'' to change the current limit.
     """;
@@ -282,7 +286,7 @@ public class SegmentCacheManager {
     The number of concurrent segment cache operations which can be run simultaneously by this Mondrian server instance has been reached. Set ''mondrian.rolap.maxCacheThreads'' to change the current limit.
     """;
 
-    public SegmentCacheManager( Context context ) {
+    public SegmentCacheManager( RolapContext context ) {
     this.context = context;
     this.sqlExecutor = createSqlExecutor(context);
     this.cacheExecutor = createCacheExecutor(context);
@@ -1662,7 +1666,7 @@ public class SegmentCacheManager {
    * The index is based off the checksum of the schema.
    */
   public class SegmentCacheIndexRegistry {
-    private final Map<SchemaKey, SegmentCacheIndex> indexes =
+    private final Map<CacheKey, SegmentCacheIndex> indexes =
       Collections.synchronizedMap(
         new HashMap<>() );
 
@@ -1713,8 +1717,8 @@ public class SegmentCacheManager {
     }
   }
 
-  static RolapStar getStar( SegmentHeader header ) {
-    for ( RolapSchema schema : RolapSchema.getRolapSchemas() ) {
+  RolapStar getStar(SegmentHeader header ) {
+    for ( RolapSchema schema : ((RolapSchemaCache)context.getSchemaCache()).getRolapSchemas() ) {
       if ( !schema.getChecksum().equals( header.schemaChecksum ) ) {
         continue;
       }

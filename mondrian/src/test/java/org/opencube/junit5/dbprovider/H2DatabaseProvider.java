@@ -34,7 +34,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.h2.jdbcx.JdbcDataSource;
 
 import aQute.bnd.annotation.spi.ServiceProvider;
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 
 @ServiceProvider(value = DatabaseProvider.class)
 public class H2DatabaseProvider implements DatabaseProvider {
@@ -76,7 +76,6 @@ public class H2DatabaseProvider implements DatabaseProvider {
 	@Override
 	public Entry<DataSource, Dialect> activate() {
 
-		RolapSchemaPool.instance().clear();
 
 
 		String JDBC_SQLITE_MEMORY = "jdbc:h2:memFS:" + UUID.randomUUID().toString() + ";DATABASE_TO_UPPER=false";

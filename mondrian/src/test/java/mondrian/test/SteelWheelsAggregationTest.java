@@ -55,7 +55,7 @@ import org.opencube.junit5.dataloader.SteelWheelsDataLoader;
 import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
 
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 
 /**
  * @author Andrey Khayrutdinov
@@ -233,7 +233,7 @@ class SteelWheelsAggregationTest {
                         .build())
                 );
 
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
         assertQueryReturns(((TestContext)context).getConnection(List.of("Power User")), QUERY, EXPECTED);
     }
@@ -279,7 +279,7 @@ class SteelWheelsAggregationTest {
                         ))
                         .build())
         	 );
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
         assertQueryReturns(((TestContext)context).getConnection(List.of("Power User")), QUERY, EXPECTED);
     }
@@ -344,7 +344,7 @@ class SteelWheelsAggregationTest {
                      .build()
 
            	));
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
         assertQueryReturns(((TestContext)context).getConnection(List.of("Power User Union")), QUERY, EXPECTED);
     }
@@ -435,7 +435,7 @@ class SteelWheelsAggregationTest {
                      .build()
 
            	));
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
         assertQueryReturns(((TestContext)context).getConnection(List.of("Power User Union")), QUERY, EXPECTED);
     }

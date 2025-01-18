@@ -23,7 +23,7 @@ import org.opencube.junit5.context.TestConfig;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 
 
 class StrToSetFunDefTest {
@@ -109,7 +109,7 @@ class StrToSetFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStrToSetIgnoreInvalidMembers(Context context) {
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
         ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
         assertAxisReturns(context.getConnection(),
             "StrToSet("

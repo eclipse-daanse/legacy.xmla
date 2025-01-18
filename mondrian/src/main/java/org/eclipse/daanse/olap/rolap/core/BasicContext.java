@@ -49,6 +49,7 @@ import aQute.bnd.metatype.annotations.Designate;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapResultShepherd;
+import mondrian.rolap.RolapSchemaCache;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.server.NopEventBus;
 
@@ -60,7 +61,6 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
 
 	public static final String REF_NAME_DIALECT_RESOLVER = "dialectResolver";
 	public static final String REF_NAME_DATA_SOURCE = "dataSource";
-//	public static final String REF_NAME_QUERY_PROVIDER = "queryProvier";
 	public static final String REF_NAME_DB_MAPPING_CATALOG_SUPPLIER = "databaseMappingCatalogSuppier";
     public static final String REF_NAME_ROLAP_CONTEXT_MAPPING_SUPPLIER = "rolapContextMappingSuppliers";
     public static final String REF_NAME_MDX_PARSER_PROVIDER = "mdxParserProvider";
@@ -105,7 +105,7 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
         this.config = configuration;
 		this.monitor = new NopEventBus();
 	
-
+		schemaCache=new RolapSchemaCache(this);
 		queryLimitSemaphore = new Semaphore(config.queryLimit());
 
 		try (Connection connection = dataSource.getConnection()) {
@@ -203,4 +203,5 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
     public MdxParserProvider getMdxParserProvider() {
         return mdxParserProvider;
     }
+
 }

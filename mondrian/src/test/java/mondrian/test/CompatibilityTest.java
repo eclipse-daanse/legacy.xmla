@@ -37,7 +37,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 import mondrian.rolap.SchemaModifiers;
 
 
@@ -635,15 +635,15 @@ class CompatibilityTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testWithNoDimensionPrefix(Context foodMartContext) {
-    	RolapSchemaPool.instance().clear();
-    	Connection connection = foodMartContext.getConnection();
-        ((TestConfig)foodMartContext.getConfig()).setNeedDimensionPrefix(false);
+    void testWithNoDimensionPrefix(Context context) {
+    	context.getSchemaCache().clear();
+    	Connection connection = context.getConnection();
+        ((TestConfig)context.getConfig()).setNeedDimensionPrefix(false);
         TestUtil.assertAxisReturns(connection, "{[M]}", "[Gender].[M]");
         TestUtil.assertAxisReturns(connection, "{M}", "[Gender].[M]");
         TestUtil.assertAxisReturns(connection, "{[USA].[CA]}", "[Store].[USA].[CA]");
         TestUtil.assertAxisReturns(connection, "{USA.CA}", "[Store].[USA].[CA]");
-        ((TestConfig)foodMartContext.getConfig()).setNeedDimensionPrefix(true);
+        ((TestConfig)context.getConfig()).setNeedDimensionPrefix(true);
         TestUtil.assertAxisThrows(
     		connection,
             "{[M]}",

@@ -97,7 +97,7 @@ class RolapSchemaTest {
     }
 
     private RolapSchema createSchema() {
-        SchemaKey key = new SchemaKey(
+        CacheKey key = new CacheKey(
             mock(SchemaContentKey.class), mock(ConnectionKey.class));
 
         //noinspection deprecation

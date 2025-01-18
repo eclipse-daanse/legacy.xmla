@@ -27,7 +27,7 @@ import org.opencube.junit5.context.TestConfig;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 
 
 class StrToTupleFunDefTest {
@@ -52,7 +52,7 @@ class StrToTupleFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStrToTupleIgnoreInvalidMembers(Context context) {
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
         ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
         // If any member is invalid, the whole tuple is null.
         assertAxisReturns(context.getConnection(),

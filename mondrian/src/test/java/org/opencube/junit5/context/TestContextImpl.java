@@ -1,12 +1,12 @@
 package org.opencube.junit5.context;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
@@ -15,6 +15,7 @@ import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.mdx.parser.ccc.MdxParserProviderImpl;
 import org.eclipse.daanse.olap.api.BasicContextConfig;
 import org.eclipse.daanse.olap.api.ConnectionProps;
+import org.eclipse.daanse.olap.api.SchemaCache;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.result.Scenario;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
@@ -301,6 +302,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapResultShepherd;
+import mondrian.rolap.RolapSchemaCache;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.server.NopEventBus;
 
@@ -325,6 +327,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 	    shepherd = new RolapResultShepherd(testConfig.rolapConnectionShepherdThreadPollingInterval(),testConfig.rolapConnectionShepherdThreadPollingIntervalUnit(),
             testConfig.rolapConnectionShepherdNbThreads());
 	    aggMgr = new AggregationManager(this);
+	    schemaCache=new RolapSchemaCache(this);
 	    queryLimimitSemaphore=new Semaphore(testConfig.queryLimit());
 	    functionService.addResolver(new NullReservedWordsResolver());
 	    functionService.addResolver(new AsAliasResolver());
@@ -704,7 +707,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
     public org.eclipse.daanse.olap.api.Connection getConnection(List<String> roles) {
         return getConnection(new RolapConnectionPropsR(roles,
                 true, Locale.getDefault(),
-                -1, TimeUnit.SECONDS, Optional.empty(), Optional.empty()));
+                Duration.ofSeconds(-1), Optional.empty(), Optional.empty()));
     }
 
     @Override

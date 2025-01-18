@@ -46,7 +46,7 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 import mondrian.rolap.SchemaModifiers;
 
 /**
@@ -105,7 +105,7 @@ class Ssas2005CompatibilityTest {
 
     private void runQ(Context context, String s) {
         prepareContext(context);
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
         Result result = TestUtil.executeQuery(context.getConnection(), s);
         TestUtil.toString(result);
 //        discard();
@@ -558,7 +558,7 @@ class Ssas2005CompatibilityTest {
         if (!SystemWideProperties.instance().SsasCompatibleNaming) {
             return;
         }
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
         // [dimension].members for a dimension with multiple hierarchies
         // SSAS2005 gives error:
         //    Query (1, 8) The 'Time' dimension contains more than one

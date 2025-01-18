@@ -48,7 +48,7 @@ import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.transport.DockerHttpClient;
 import com.github.dockerjava.zerodep.ZerodepDockerHttpClient;
 
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 
 public abstract class AbstractDockerBasesDatabaseProvider implements DatabaseProvider{
 
@@ -76,7 +76,7 @@ public abstract class AbstractDockerBasesDatabaseProvider implements DatabasePro
 	public  Entry<DataSource,Dialect> activate() {
 
             port = freePort();
-            RolapSchemaPool.instance().clear();
+
             deregisterDrivers();
 			DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder().build();
 

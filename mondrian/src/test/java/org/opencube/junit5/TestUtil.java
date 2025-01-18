@@ -88,7 +88,7 @@ import mondrian.olap.fun.FunUtil;
 import mondrian.rolap.MemberCacheHelper;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapHierarchy;
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 import mondrian.rolap.RolapUtil;
 import mondrian.rolap.SmartMemberReader;
 import mondrian.server.ExecutionImpl;
@@ -1277,7 +1277,7 @@ public class TestUtil {
 	}
 
 	public static void withSchema(Context context, Function<CatalogMapping, org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier> f) {
-          RolapSchemaPool.instance().clear();
+          context.getSchemaCache().clear();
           CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
           ((TestContext)context).setCatalogMappingSupplier(f.apply(catalogMapping));
     }

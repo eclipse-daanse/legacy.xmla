@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.withSchema;
 
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -162,7 +163,7 @@ TestUtil.flushSchemaCache(conn);
        //foodMartContext.setProperty(RolapConnectionProperties.UseSchemaPool.name(), Boolean.toString(false));
 
         Connection conn = foodMartContext.getConnection(new RolapConnectionPropsR(
-            List.of(), false, Locale.getDefault(), -1, TimeUnit.SECONDS, Optional.empty(), Optional.empty()
+            List.of(), false, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty()
         ));
 
         Result resultWeekly =TestUtil.executeQuery(conn, mdxWeekly);

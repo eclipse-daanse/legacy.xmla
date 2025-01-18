@@ -12,6 +12,7 @@ package mondrian.rolap;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.verifySameNativeAndNot;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -427,7 +428,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
         + "measures.vm on 1 from [warehouse and sales]";
     // first MDX with a fresh query should result in gender query.
     Connection connection = context.getConnection(new RolapConnectionPropsR(
-        List.of(), false, Locale.getDefault(), -1, TimeUnit.SECONDS, Optional.empty(), Optional.empty()
+        List.of(), false, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty()
     ));
     assertQuerySqlOrNot(connection,
         mdx, new SqlPattern[]{ mysqlPattern }, false, false, false);
@@ -447,7 +448,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testTupleQueryShouldBeCachedForVirtualCube(Context context) {
-	  RolapSchemaPool.instance().clear();
+	  context.getSchemaCache().clear();
       ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
     String mySqlMembersQuery =
             "select\n"

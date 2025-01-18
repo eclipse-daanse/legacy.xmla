@@ -37,6 +37,8 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
  */
 public interface Context {
 
+	
+	SchemaCache getSchemaCache();
     /**
      * Gives access to the {@link javax.sql.DataSource} that holds the {@link java.sql.Connection}s to
      * the Database.

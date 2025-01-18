@@ -2137,7 +2137,7 @@ class VirtualCubeTest extends BatchTestCase {
         }
         // we want to make sure a SqlConstraint is used for retrieving
         // [Product Family].members
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
         ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
 
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);

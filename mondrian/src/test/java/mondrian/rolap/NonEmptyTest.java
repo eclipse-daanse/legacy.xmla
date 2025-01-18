@@ -823,7 +823,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testBug1515302(Context context) {
       ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-      RolapSchemaPool.instance().clear();
+      context.getSchemaCache().clear();
       class TestBug1515302Modifier extends PojoMappingModifier {
           public TestBug1515302Modifier(CatalogMapping catalog) {
               super(catalog);
@@ -1128,7 +1128,7 @@ class NonEmptyTest extends BatchTestCase {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testExpandNonNativeResourceLimitFailure(Context context) {
-	RolapSchemaPool.instance().clear();
+	context.getSchemaCache().clear();
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
     ((TestConfig)context.getConfig()).setExpandNonNative(true);
     ((TestConfig)context.getConfig()).setEnableNativeCrossJoin(true);
@@ -1913,7 +1913,7 @@ class NonEmptyTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>" ) );
      */
-      RolapSchemaPool.instance().clear();
+      context.getSchemaCache().clear();
       CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
       ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.NonEmptyTestModifier2(catalog,
     		  HideMemberIfType.IF_BLANK_NAME));
@@ -1951,7 +1951,7 @@ class NonEmptyTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>" ) );
      */
-      RolapSchemaPool.instance().clear();
+      context.getSchemaCache().clear();
       CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
       ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.NonEmptyTestModifier2(catalogMapping,
     		  HideMemberIfType.IF_PARENTS_NAME));
@@ -2056,7 +2056,7 @@ class NonEmptyTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>" ) );
       */
-      RolapSchemaPool.instance().clear();
+      context.getSchemaCache().clear();
       CatalogMapping schema = ((RolapContext) context).getCatalogMapping();
       ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.NonEmptyTestModifier2(schema,
     		  HideMemberIfType.IF_BLANK_NAME));
@@ -3633,7 +3633,7 @@ class NonEmptyTest extends BatchTestCase {
       }
       // Expected
     } finally {
-      RolapSchemaPool.instance().clear();
+      context.getSchemaCache().clear();
       ((TestConfig)context.getConfig())
             .setAlertNativeEvaluationUnsupported("OFF");
       //propSaver.setAtLeast( rolapUtilLogger, org.apache.logging.log4j.Level.WARN );
@@ -3669,7 +3669,7 @@ class NonEmptyTest extends BatchTestCase {
     try {
       checkNotNative(context, 3, mdx );
     } finally {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         ((TestConfig)context.getConfig())
             .setAlertNativeEvaluationUnsupported("OFF");
         //propSaver.setAtLeast( rolapUtilLogger, org.apache.logging.log4j.Level.WARN );
@@ -6400,7 +6400,7 @@ class NonEmptyTest extends BatchTestCase {
         oracleWithFactJoin, oracleWithFactJoin )
     };
 
-    RolapSchemaPool.instance().clear();
+    context.getSchemaCache().clear();
     withSchema(context, SchemaModifiers.NonEmptyTestModifier6::new );
     //withSchema(context, schema );
 
@@ -6610,7 +6610,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNonEmptyAggregateSlicerIsNative(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-	RolapSchemaPool.instance().clear();
+	context.getSchemaCache().clear();
     final String mdx =
       "select NON EMPTY\n"
         + " Crossjoin([Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]\n"

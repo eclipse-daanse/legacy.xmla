@@ -136,7 +136,7 @@ import mondrian.olap.Util;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapSchema;
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 import mondrian.rolap.aggmatcher.AggTableManager;
 import mondrian.spi.PropertyFormatter;
 import mondrian.util.Bug;
@@ -4230,7 +4230,7 @@ class SchemaTest {
             + "Row #2: 901\n"
             + "Row #2: 901\n"
             + "Row #2: 451\n");
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
     }
 
     /**
@@ -7421,7 +7421,7 @@ class SchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBugMondrian355(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         checkBugMondrian355(context, "TimeHalfYears");
 
         // make sure that the deprecated name still works
@@ -7429,7 +7429,7 @@ class SchemaTest {
     }
 
     public void checkBugMondrian355(Context context, String timeHalfYear) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         class CheckBugMondrian355Modifier1 extends PojoMappingModifier {
             public CheckBugMondrian355Modifier1(CatalogMapping catalog) {
                 super(catalog);
@@ -9253,7 +9253,7 @@ class SchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCaptionWithOrdinalColumn(Context context) {
-    	RolapSchemaPool.instance().clear();
+    	context.getSchemaCache().clear();
         class TestCaptionWithOrdinalColumnModifier extends PojoMappingModifier {
 
             public TestCaptionWithOrdinalColumnModifier(CatalogMapping catalog) {
@@ -9792,7 +9792,7 @@ class SchemaTest {
                     null, cubeDef, null, null, null, null);
             withSchema(context, schema);
              */
-            RolapSchemaPool.instance().clear();
+            context.getSchemaCache().clear();
             CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
             TestDimensionUsageVisibilityModifier testDimensionUsageVisibilityModifier =
             		new TestDimensionUsageVisibilityModifier(catalogMapping, testValue);
@@ -9817,7 +9817,7 @@ class SchemaTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchyVisibility(Context context) throws Exception {
         for (Boolean testValue : new Boolean[] {true, false}) {
-        	RolapSchemaPool.instance().clear();
+        	context.getSchemaCache().clear();
             class TestHierarchyVisibilityModifier extends PojoMappingModifier {
 
                 public TestHierarchyVisibilityModifier(CatalogMapping catalogMapping) {
@@ -10013,7 +10013,7 @@ class SchemaTest {
         {
             return;
         }
-        RolapSchemaPool.instance().clear();
+        context.getSchemaCache().clear();
         class TestNonCollapsedAggregateModifier extends PojoMappingModifier {
 
             public TestNonCollapsedAggregateModifier(CatalogMapping catalog) {

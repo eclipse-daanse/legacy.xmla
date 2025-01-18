@@ -106,6 +106,6 @@
 	#tester.names='org.eclipse.daanse.olap.function.def.dimension.DimensionFunctionsTest'
     #tester.names='mondrian.rolap.TestAggregationManager'
     #tester.names='mondrian.rolap.aggmatcher.AggMeasureFactCountTest'
-#-runproperties.tester: \
-	#tester.names='org.eclipse.daanse.olap.function.def.order.OrderFunDefTest'
+-runproperties.tester: \
+	tester.names='mondrian.rolap.FastBatchingCellReaderTest'
 	

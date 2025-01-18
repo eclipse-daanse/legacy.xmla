@@ -82,7 +82,7 @@ import org.slf4j.LoggerFactory;
 import mondrian.olap.QueryTimeoutException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.rolap.RolapSchemaPool;
+import mondrian.rolap.RolapSchemaCache;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.util.Bug;
 

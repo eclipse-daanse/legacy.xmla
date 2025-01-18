@@ -52,13 +52,6 @@ import org.eclipse.daanse.olap.api.result.Scenario;
 public interface Connection {
 
     /**
-     * Get the name of the Catalog associated with this Connection.
-     *
-     * @return the Catalog name (never null).
-     */
-    String getCatalogName();
-
-    /**
      * Get the Schema associated with this Connection.
      *
      * @return the Schema (never null).

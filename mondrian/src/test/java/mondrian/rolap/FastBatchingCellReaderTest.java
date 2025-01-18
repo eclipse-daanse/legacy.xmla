@@ -172,7 +172,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testShouldUseGroupingFunctionOnPropertyTrueAndOnSupportedDB(Context context) {
-    RolapSchemaPool.instance().clear();
+    context.getSchemaCache().clear();
     prepareContext(context);
     ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
     BatchLoader fbcr = createFbcr( true, salesCube );
