@@ -76,7 +76,6 @@ import org.eclipse.daanse.olap.api.type.MemberType;
 import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCubeGrantMapping;
@@ -92,7 +91,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.NamedSetMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.ParameterMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
 import org.slf4j.Logger;
@@ -126,6 +124,8 @@ public class RolapSchema implements Schema {
      * Internal use only.
      */
     private RolapConnection internalConnection;
+
+    private RolapStarRegistry rolapStarRegistry;
 
     /**
      * Holds cubes in this schema.
@@ -226,7 +226,7 @@ public class RolapSchema implements Schema {
     {
         this.id = UUID.randomUUID().toString();
         this.key = key;
-
+        rolapStarRegistry = new RolapStarRegistry(this,context);
         DriverManager.drivers().forEach(System.out::println);
         // the order of the next two lines is important
         this.defaultRole = RoleImpl.createRootRole(this);
@@ -1019,69 +1019,8 @@ System.out.println("RolapSchema.createMemberReader: CONTAINS NAME");
         return internalConnection;
     }
 
- // package-local visibility for testing purposes
-    public RolapStar makeRolapStar(final RelationalQueryMapping fact) {
-        return new RolapStar(this, context, fact);
-    }
-
-    /**
-     * <code>RolapStarRegistry</code> is a registry for {@link RolapStar}s.
-     */
-    public class RolapStarRegistry {
-        private final Map<List<String>, RolapStar> stars =
-            new HashMap<>();
-
-        RolapStarRegistry() {
-        }
-
-        /**
-         * Looks up a {@link RolapStar}, creating it if it does not exist.
-         *
-         * <p> {@link RolapStar.Table#addJoin} works in a similar way.
-         */
-        synchronized RolapStar getOrCreateStar(
-            final RelationalQueryMapping fact)
-        {
-            final List<String> rolapStarKey = RolapUtil.makeRolapStarKey(fact);
-            RolapStar star = stars.get(rolapStarKey);
-            if (star == null) {
-                star = makeRolapStar(fact);
-                stars.put(rolapStarKey, star);
-                // let cache manager load pending segments
-                // from external cache if needed
-                AbstractBasicContext abc = (AbstractBasicContext) internalConnection.getContext();
-                abc.getAggregationManager().getCacheMgr(internalConnection)
-                    .loadCacheForStar(star);
-            }
-            return star;
-        }
-
-        synchronized RolapStar getStar(List<String> starKey) {
-          return stars.get(starKey);
-      }
-
-        synchronized Collection<RolapStar> getStars() {
-            return stars.values();
-        }
-    }
-
-    private RolapStarRegistry rolapStarRegistry = new RolapStarRegistry();
-
     public RolapStarRegistry getRolapStarRegistry() {
         return rolapStarRegistry;
-    }
-
-
-    public RolapStar getStar(final String factTableName) {
-        return getStar(RolapUtil.makeRolapStarKey(factTableName));
-    }
-
-    public RolapStar getStar(final List<String> starKey) {
-      return getRolapStarRegistry().getStar(starKey);
-  }
-
-    public Collection<RolapStar> getStars() {
-        return getRolapStarRegistry().getStars();
     }
 
     RolapNativeRegistry getNativeRegistry() {

@@ -308,7 +308,7 @@ public class AggTableManager {
     }
 
     private Collection<RolapStar> getStars() {
-        return schema.getStars();
+        return schema.getRolapStarRegistry().getStars();
     }
 
     /**

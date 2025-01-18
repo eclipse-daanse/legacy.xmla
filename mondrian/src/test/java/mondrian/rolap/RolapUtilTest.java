@@ -26,7 +26,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.SchemaUtil;
 
 class RolapUtilTest {
 
@@ -50,7 +49,7 @@ class RolapUtilTest {
     				  .withStatement("`TableAlias`.`promotion_id` = 112")
     				  .build())
     		  .build();
-      List<String> polapStarKey = RolapUtil.makeRolapStarKey(FACT_NAME);
+      List<String> polapStarKey = RolapStarRegistry.makeRolapStarKey(FACT_NAME);
       assertNotNull(polapStarKey);
       polapStarKey.add("OneMore");
       fail(
@@ -72,7 +71,7 @@ class RolapUtilTest {
     				  .withStatement("`TableAlias`.`promotion_id` = 112")
     				  .build())
     		  .build();
-    List<String> polapStarKey = RolapUtil.makeRolapStarKey(FACT_NAME);
+    List<String> polapStarKey = RolapStarRegistry.makeRolapStarKey(FACT_NAME);
     assertNotNull(polapStarKey);
     assertEquals(1, polapStarKey.size());
     assertEquals(FACT_NAME, polapStarKey.get(0));

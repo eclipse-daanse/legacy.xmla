@@ -693,14 +693,7 @@ public class RolapUtil {
       return Collections.unmodifiableList(rlStarKey);
     }
 
-    /**Generates rolap star key based on the fact table name.
-     * @param factTableName the fact table name
-     * based on which is generated the rolap star key
-     * @return the rolap star key
-     */
-    public static List<String> makeRolapStarKey(String factTableName) {
-      return Collections.unmodifiableList(Arrays.asList(factTableName));
-    }
+
 
     /**
      * <p>Determines whether the GROUP BY clause is required, based on the

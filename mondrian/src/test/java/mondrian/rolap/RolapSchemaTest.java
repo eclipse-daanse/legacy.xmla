@@ -72,7 +72,6 @@ import mondrian.olap.RoleImpl;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.exceptions.RoleUnionGrantsException;
 import mondrian.olap.exceptions.UnknownRoleException;
-import mondrian.rolap.RolapSchema.RolapStarRegistry;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.agg.SegmentCacheManager;
 import mondrian.rolap.util.RelationUtil;
@@ -298,11 +297,11 @@ class RolapSchemaTest {
       assertSame(expectedStar, actualStar);
       assertEquals(1, rolapStarRegistry.getStars().size());
       assertEquals(expectedStar, rolapStarRegistry.getStar(rolapStarKey));
-      verify(schemaSpy, times(1)).makeRolapStar(fact);
+      verify(rolapStarRegistry, times(1)).makeRolapStar(fact);
       //test that no new rolap star has created,
       //but extracted already existing one from the registry
       RolapStar actualStar2 = rolapStarRegistry.getOrCreateStar(fact);
-      verify(schemaSpy, times(1)).makeRolapStar(fact);
+      verify(rolapStarRegistry, times(1)).makeRolapStar(fact);
       assertSame(expectedStar, actualStar2);
       assertEquals(1, rolapStarRegistry.getStars().size());
       assertEquals(expectedStar, rolapStarRegistry.getStar(rolapStarKey));
@@ -326,7 +325,7 @@ class RolapSchemaTest {
       //Put rolap star to the registry
       rolapStarRegistry.getOrCreateStar(fact);
 
-      RolapStar actualStar = schemaSpy.getStar(rolapStarKey);
+      RolapStar actualStar = rolapStarRegistry.getStar(rolapStarKey);
       assertSame(rlStarMock, actualStar);
     }
 
@@ -344,7 +343,7 @@ class RolapSchemaTest {
       //Put rolap star to the registry
       rolapStarRegistry.getOrCreateStar(fact);
 
-      RolapStar actualStar = schemaSpy.getStar(RelationUtil.getAlias(fact));
+      RolapStar actualStar = schemaSpy.getRolapStarRegistry().getStar(RelationUtil.getAlias(fact));
       assertSame(rlStarMock, actualStar);
     }
 
@@ -355,7 +354,7 @@ class RolapSchemaTest {
       //not to the schemaSpy
       RolapStarRegistry rolapStarRegistry = schemaSpy.getRolapStarRegistry();
       //the star mock
-      doReturn(rlStarMock).when(schemaSpy).makeRolapStar(fact);
+      doReturn(rlStarMock).when(rolapStarRegistry).makeRolapStar(fact);
       //Set the schema spy to be linked with the rolap star registry
       assertTrue(
               replaceRolapSchemaLinkedToStarRegistry(
@@ -364,7 +363,7 @@ class RolapSchemaTest {
               "For testing purpose object this$0 in the inner class "
                       + "should be replaced to the rolap schema spy "
                       + "but this not happend");
-      verify(schemaSpy, times(0)).makeRolapStar(fact);
+      verify(rolapStarRegistry, times(0)).makeRolapStar(fact);
       return rolapStarRegistry;
     }
 

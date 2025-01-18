@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -48,7 +47,6 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.olap.Util;
 import mondrian.rolap.CacheControlImpl;
-import mondrian.rolap.FastBatchingCellReader;
 import mondrian.rolap.RolapSchema;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.RolapStoredMeasure;
@@ -1721,7 +1719,7 @@ public class SegmentCacheManager {
         continue;
       }
       // We have a schema match.
-      return schema.getStar( header.rolapStarFactTableName );
+      return schema.getRolapStarRegistry().getStar( header.rolapStarFactTableName );
     }
     return null;
   }

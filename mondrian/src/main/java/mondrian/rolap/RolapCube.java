@@ -1786,7 +1786,7 @@ public class RolapCube extends CubeBase {
             // base cubes, so we need to iterate through each and flush
             // the ones that should be flushed. Could use a CacheControl
             // method here.
-            for (RolapStar star1 : schema.getStars()) {
+            for (RolapStar star1 : schema.getRolapStarRegistry().getStars()) {
                 // this will only flush the star's aggregate cache if
                 // 1) DisableCaching is true or 2) the star's cube has
                 // cacheAggregations set to false in the schema.
@@ -1805,7 +1805,7 @@ public class RolapCube extends CubeBase {
             if (star != null && star.getFactTable().getRelation().equals(getFact())) {
                 return star;
             }
-            star = schema.makeRolapStar(getFact());
+            star = schema.getRolapStarRegistry().makeRolapStar(getFact());
         }
         return star;
     }

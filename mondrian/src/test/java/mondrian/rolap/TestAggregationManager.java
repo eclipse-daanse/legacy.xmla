@@ -3624,14 +3624,14 @@ class TestAggregationManager extends BatchTestCase {
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier7::new);
         Connection connection = context.getConnection();
         RolapStar star = connection.getSchemaReader()
-            .getSchema().getStar("sales_fact_1997");
+            .getSchema().getRolapStarRegistry().getStar("sales_fact_1997");
         AggStar aggStar1 = getAggStar(star, "agg_c_10_sales_fact_1997");
         AggStar aggStarSpy = spy(
             getAggStar(star, "agg_c_10_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(chooseAggregateByVolume)).thenReturn(0l);
         connection.getSchemaReader()
-            .getSchema().getStar("sales_fact_1997").addAggStar(aggStarSpy);
+            .getSchema().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
         boolean[] rollup = { false };
         AggStar returnedStar = AggregationManager
             .findAgg(
@@ -3704,13 +3704,13 @@ class TestAggregationManager extends BatchTestCase {
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier3::new);
 
         RolapStar star = context.getConnection().getSchemaReader()
-            .getSchema().getStar("sales_fact_1997");
+            .getSchema().getRolapStarRegistry().getStar("sales_fact_1997");
         AggStar aggStarSpy = spy(
             getAggStar(star, "agg_c_special_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(context.getConfig().chooseAggregateByVolume())).thenReturn(0l);
         context.getConnection().getSchemaReader()
-            .getSchema().getStar("sales_fact_1997").addAggStar(aggStarSpy);
+            .getSchema().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
 
         boolean[] rollup = { false };
         AggStar returnedStar = AggregationManager
@@ -3804,13 +3804,13 @@ class TestAggregationManager extends BatchTestCase {
          */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier4::new);
         RolapStar star = context.getConnection().getSchemaReader()
-            .getSchema().getStar("sales_fact_1997");
+            .getSchema().getRolapStarRegistry().getStar("sales_fact_1997");
         AggStar aggStarSpy = spy(
             getAggStar(star, "agg_g_ms_pcat_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(context.getConfig().chooseAggregateByVolume())).thenReturn(0l);
         context.getConnection().getSchemaReader()
-            .getSchema().getStar("sales_fact_1997").addAggStar(aggStarSpy);
+            .getSchema().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
         boolean[] rollup = { false };
         AggStar returnedStar = AggregationManager
             .findAgg(
