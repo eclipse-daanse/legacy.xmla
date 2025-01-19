@@ -57,7 +57,7 @@ class CacheTest {
     void testNQueriesWaitingForSameSegmentRepeat(Context foodMartContext)
         throws ExecutionException, InterruptedException
     {
-		Connection connection = foodMartContext.getConnection();
+		Connection connection = foodMartContext.getConnectionWithDefaultRole();
         final int parallel = 10;
         final ThreadPoolExecutor executor =
             new ThreadPoolExecutor(

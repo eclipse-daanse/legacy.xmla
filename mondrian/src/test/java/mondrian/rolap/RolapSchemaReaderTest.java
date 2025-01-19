@@ -90,7 +90,7 @@ class RolapSchemaReaderTest {
                 "Sales Ragged", "Sales 2", "HR"
         };
 
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         try {
             SchemaReader reader = connection.getSchemaReader().withLocus();
 
@@ -136,7 +136,7 @@ class RolapSchemaReaderTest {
         //    "true");
 
         try {
-        	context.getConnection();
+        	context.getConnectionWithDefaultRole();
             //DriverManager.getConnection(
             //    properties,
             //    null);

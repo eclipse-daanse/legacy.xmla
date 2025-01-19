@@ -32,6 +32,8 @@ import org.eclipse.daanse.olap.xmla.bridge.ContextGroupXmlaServiceConfig;
 import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.xmla.api.PropertyDefinition;
+import org.eclipse.daanse.xmla.api.RequestMetaData;
+import org.eclipse.daanse.xmla.api.UserPrincipal;
 import org.eclipse.daanse.xmla.api.XmlaConstants;
 import org.eclipse.daanse.xmla.api.annotation.Enumerator;
 import org.eclipse.daanse.xmla.api.annotation.Operation;
@@ -139,7 +141,7 @@ public class OtherDiscoverService {
 
     }
 
-    public List<DiscoverDataSourcesResponseRow> dataSources(DiscoverDataSourcesRequest request) {
+    public List<DiscoverDataSourcesResponseRow> dataSources(DiscoverDataSourcesRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         List<DiscoverDataSourcesResponseRow> result = new ArrayList<>();
         List<Context> contexts = this.contextsListSupplyer.get();
         for (Context context : contexts) {
@@ -159,7 +161,7 @@ public class OtherDiscoverService {
         return result;
     }
 
-    public List<DiscoverEnumeratorsResponseRow> discoverEnumerators(DiscoverEnumeratorsRequest request) {
+    public List<DiscoverEnumeratorsResponseRow> discoverEnumerators(DiscoverEnumeratorsRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         List<DiscoverEnumeratorsResponseRow> result = new ArrayList();
         for (Class c : enums) {
             String enumDescription = getEnumDescription(c.getSimpleName());
@@ -201,7 +203,7 @@ public class OtherDiscoverService {
         return result;
     }
 
-    public List<DiscoverKeywordsResponseRow> discoverKeywords(DiscoverKeywordsRequest request) {
+    public List<DiscoverKeywordsResponseRow> discoverKeywords(DiscoverKeywordsRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         List<DiscoverKeywordsResponseRow> result = new ArrayList<>();
 
         for (String keyword : AbstractBasicContext.KEYWORD_LIST) {
@@ -210,7 +212,7 @@ public class OtherDiscoverService {
         return result;
     }
 
-    public List<DiscoverLiteralsResponseRow> discoverLiterals(DiscoverLiteralsRequest request) {
+    public List<DiscoverLiteralsResponseRow> discoverLiterals(DiscoverLiteralsRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         List<DiscoverLiteralsResponseRow> result = new ArrayList<>();
         for (XmlaConstants.Literal anEnum : XmlaConstants.Literal.values()) {
             result.add(new DiscoverLiteralsResponseRowR(DBLITERAL + anEnum.name(),
@@ -223,7 +225,7 @@ public class OtherDiscoverService {
         return result;
     }
 
-    public List<DiscoverPropertiesResponseRow> discoverProperties(DiscoverPropertiesRequest request) {
+    public List<DiscoverPropertiesResponseRow> discoverProperties(DiscoverPropertiesRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         Optional<String> propertyName = request.restrictions()==null? Optional.empty():request.restrictions().propertyName();
         Optional<String> properetyCatalog = request.properties().catalog();
         List<DiscoverPropertiesResponseRow> result = new ArrayList<>();
@@ -272,7 +274,7 @@ public class OtherDiscoverService {
         return result;
     }
 
-    public List<DiscoverSchemaRowsetsResponseRow> discoverSchemaRowsets(DiscoverSchemaRowsetsRequest request) {
+    public List<DiscoverSchemaRowsetsResponseRow> discoverSchemaRowsets(DiscoverSchemaRowsetsRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         Optional<String> schemaName = request.restrictions().schemaName();
         List<DiscoverSchemaRowsetsResponseRow> result = new ArrayList<>();
         for (Class c : classes) {
@@ -309,7 +311,7 @@ public class OtherDiscoverService {
         return result;
     }
 
-    public List<DiscoverXmlMetaDataResponseRow> xmlMetaData(DiscoverXmlMetaDataRequest request) {
+    public List<DiscoverXmlMetaDataResponseRow> xmlMetaData(DiscoverXmlMetaDataRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         List<DiscoverXmlMetaDataResponseRow> result = new ArrayList<>();
         Optional<String> databaseId = request.restrictions().databaseId();
         if (databaseId.isPresent()) {

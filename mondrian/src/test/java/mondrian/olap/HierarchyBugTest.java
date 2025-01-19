@@ -97,7 +97,7 @@ class HierarchyBugTest {
             + "[Store].[All Stores].Children)) ON rows "
             + "from [Sales]";
 
-        Connection conn = foodMartContext.getConnection();
+        Connection conn = foodMartContext.getConnectionWithDefaultRole();
         Query query = conn.parseQuery(queryString);
 
         String failStr = null;
@@ -138,7 +138,7 @@ class HierarchyBugTest {
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
             + "   [Time].[Time].[Year].Members ON ROWS\n"
             + "FROM [Sales]";
-       Connection conn= foodMartContext.getConnection();
+       Connection conn= foodMartContext.getConnectionWithDefaultRole();
 
 
         Result resultTime = TestUtil.executeQuery(conn, mdxTime);
@@ -182,7 +182,7 @@ TestUtil.flushSchemaCache(conn);
             + "   [Time].[Year].Members ON ROWS\n"
             + "FROM [Sales]";
 
-        Connection conn=foodMartContext.getConnection();
+        Connection conn=foodMartContext.getConnectionWithDefaultRole();
         Result resultTime =TestUtil.executeQuery(conn, mdxTime);
         verifyMemberLevelNamesIdentityMeasureAxis(
             resultTime.getAxes()[0], "[Measures]");
@@ -198,7 +198,7 @@ TestUtil.flushSchemaCache(conn);
             + "   [Time.Weekly].[Year].Members ON ROWS\n"
             + "FROM [Sales]";
 
-        Connection conn=foodMartContext.getConnection();
+        Connection conn=foodMartContext.getConnectionWithDefaultRole();
         Result resultWeekly =TestUtil.executeQuery(conn, mdxWeekly);
 
         verifyMemberLevelNamesIdentityMeasureAxis(
@@ -482,7 +482,7 @@ TestUtil.flushSchemaCache(conn);
     private void verifyLevelMemberNamesIdentityOlap4j(
         String mdx, Context context, String expected)
     {
-    Connection connection =	context.getConnection();
+    Connection connection =	context.getConnectionWithDefaultRole();
         org.eclipse.daanse.olap.api.result.CellSet result = connection.createStatement().executeQuery(mdx);
 
         List<Position> positions =
@@ -496,7 +496,7 @@ TestUtil.flushSchemaCache(conn);
         String yearHierarchyName = year.getHierarchy().getUniqueName();
         assertEquals(year1997HierarchyName, yearHierarchyName);
 
-        TestUtil.flushSchemaCache(context.getConnection());
+        TestUtil.flushSchemaCache(context.getConnectionWithDefaultRole());
     }
 
 

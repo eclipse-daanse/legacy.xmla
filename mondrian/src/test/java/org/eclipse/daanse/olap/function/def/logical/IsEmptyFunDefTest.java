@@ -29,7 +29,7 @@ class IsEmptyFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testIsEmptyWithAggregate(Context context) {
-        TestUtil.assertQueryReturns(context.getConnection(),
+        TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [gender].[foo] AS 'isEmpty(Aggregate({[Gender].m}))' "
                 + "SELECT {Gender.foo} on 0 from sales",
             "Axis #0:\n"
@@ -42,7 +42,7 @@ class IsEmptyFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testIsEmpty(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertBooleanExprReturns(connection, "[Gender].[All Gender].Parent IS NULL", true );
 
         // Any functions that return a member from parameters that

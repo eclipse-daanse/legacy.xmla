@@ -68,9 +68,9 @@ public class Checkin_7641 extends CsvDBTestCase {
             + "[Geography].[All Regions].Children)) ON ROWS"
             + " from [ImplicitMember]";
 
-        Result result1 = executeQuery(mdx, context.getConnection());
+        Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
         String resultString1 = TestUtil.toString(result1);
-        Result result2 = executeQuery(mdx, context.getConnection());
+        Result result2 = executeQuery(mdx, context.getConnectionWithDefaultRole());
         String resultString2 = TestUtil.toString(result2);
 
         assertEquals(resultString1, resultString2);

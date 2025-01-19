@@ -61,13 +61,13 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInKeyExpression(Context context) {
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnection()).requiresOrderByAlias())
+        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final StringBuilder colName = getDialect(context.getConnection())
+    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -86,7 +86,7 @@ class OrderByAliasTest extends BatchTestCase {
       CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
       ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1KE(catalog, colName));
 
-      assertQuerySql(context.getConnection(),
+      assertQuerySql(context.getConnectionWithDefaultRole(),
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
@@ -109,13 +109,13 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInNameExpression(Context context) {
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnection()).requiresOrderByAlias())
+        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final StringBuilder colName = getDialect(context.getConnection())
+    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -134,7 +134,7 @@ class OrderByAliasTest extends BatchTestCase {
          CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1NE(catalog, colName));
          assertQuerySql(
-        context.getConnection(),
+        context.getConnectionWithDefaultRole(),
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
@@ -159,13 +159,13 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInCaptionExpression(Context context) {
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnection()).requiresOrderByAlias())
+        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final StringBuilder colName = getDialect(context.getConnection())
+    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -184,7 +184,7 @@ class OrderByAliasTest extends BatchTestCase {
          CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1CE(catalog, colName));
          assertQuerySql(
-        context.getConnection(),
+        context.getConnectionWithDefaultRole(),
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
@@ -209,13 +209,13 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInOrdinalExpression(Context context) {
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnection()).requiresOrderByAlias())
+        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final StringBuilder colName = getDialect(context.getConnection())
+    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -234,7 +234,7 @@ class OrderByAliasTest extends BatchTestCase {
          CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1OE(catalog, colName));         
          assertQuerySql(
-        context.getConnection(),
+        context.getConnectionWithDefaultRole(),
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
@@ -259,13 +259,13 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInParentExpression(Context context) {
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnection()).requiresOrderByAlias())
+        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final StringBuilder colName = getDialect(context.getConnection())
+    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("supervisor_id");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -296,7 +296,7 @@ class OrderByAliasTest extends BatchTestCase {
          CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier2(catalog, colName));         
          assertQuerySql(
-        context.getConnection(),
+        context.getConnectionWithDefaultRole(),
         "select non empty{[Employees].[All Employees].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [HR] "
@@ -333,13 +333,13 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInPropertyExpression(Context context) {
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnection()).requiresOrderByAlias())
+        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    final StringBuilder colName = getDialect(context.getConnection())
+    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -358,7 +358,7 @@ class OrderByAliasTest extends BatchTestCase {
          CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier3(catalog, colName));
          assertQuerySql(
-        context.getConnection(),
+        context.getConnectionWithDefaultRole(),
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
@@ -381,14 +381,14 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInMeasureExpression(Context context) {
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnection()).requiresOrderByAlias())
+        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
-    flushSchemaCache(context.getConnection());
-    final StringBuilder colName = getDialect(context.getConnection())
+    flushSchemaCache(context.getConnectionWithDefaultRole());
+    final StringBuilder colName = getDialect(context.getConnectionWithDefaultRole())
         .quoteIdentifier("promotion_name");
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -408,7 +408,7 @@ class OrderByAliasTest extends BatchTestCase {
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1ME(catalog, colName));
 
         assertQuerySql(
-        context.getConnection(),
+        context.getConnectionWithDefaultRole(),
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
         + "non empty {[Store].[All Stores]} ON columns "
         + "from [Sales] "
@@ -431,14 +431,14 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNonEmptyCrossJoin(Context context) {
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnection()).requiresOrderByAlias())
+        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
     assertQuerySql(
-        context.getConnection(),
+        context.getConnectionWithDefaultRole(),
         "with set necj as\n"
         + "NonEmptyCrossJoin([Customers].[Name].members,[Store].[Store Name].members)\n"
         + "select\n"
@@ -514,15 +514,15 @@ class OrderByAliasTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testVirtualCube(Context context) {
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-    if (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())
+    if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
-        || !getDialect(context.getConnection()).requiresOrderByAlias())
+        || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
     {
       return; // For MySQL 5.7+ only!
     }
     withSchema(context, SchemaModifiers.OrderByAliasTestModifier4::new);
     assertQuerySql(
-        context.getConnection(),
+        context.getConnectionWithDefaultRole(),
         "select non empty crossjoin( product.[product family].members, time.quarter.members) on 0 "
         + "from [warehouse and sales]",
         mysqlPattern(

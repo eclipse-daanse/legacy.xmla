@@ -108,7 +108,7 @@ class MemberCacheControlTest {
     }
 
     private void prepareTestContext(Context context) {
-        final RolapConnection conn = (RolapConnection) context.getConnection();
+        final RolapConnection conn = (RolapConnection) context.getConnectionWithDefaultRole();
         final Statement statement = conn.getInternalStatement();
         final ExecutionImpl execution = new ExecutionImpl(statement, Optional.empty());
         //locus = new Locus(execution, getName(), null);
@@ -306,7 +306,7 @@ class MemberCacheControlTest {
     void testFilter(Context context) {
     	context.getSchemaCache().clear();
         prepareTestContext(context);
-        final Connection conn = context.getConnection();
+        final Connection conn = context.getConnectionWithDefaultRole();
         final DiffRepository dr = getDiffRepos();
         final CacheControl cc = conn.getCacheControl(null);
 
@@ -327,7 +327,7 @@ class MemberCacheControlTest {
     	context.getSchemaCache().clear();
         SystemWideProperties.instance().EnableRolapCubeMemberCache = true;
         prepareTestContext(context);
-        final Connection conn = context.getConnection();
+        final Connection conn = context.getConnectionWithDefaultRole();
         final CacheControl cc = conn.getCacheControl(null);
         final MemberEditCommand command =
             cc.createDeleteCommand(findMember(conn, "Sales", "Retail", "OR"));
@@ -351,7 +351,7 @@ class MemberCacheControlTest {
     void testSetPropertyCommandOnLeafMember(Context context) {
     	context.getSchemaCache().clear();
     	prepareTestContext(context);
-        final Connection conn = context.getConnection();
+        final Connection conn = context.getConnectionWithDefaultRole();
         final DiffRepository dr = getDiffRepos();
         final CacheControl cc = conn.getCacheControl(null);
 
@@ -409,7 +409,7 @@ class MemberCacheControlTest {
     void testSetPropertyCommandOnNonLeafMember(Context context) {
     	context.getSchemaCache().clear();
     	prepareTestContext(context);
-        final Connection conn = context.getConnection();
+        final Connection conn = context.getConnectionWithDefaultRole();
         final DiffRepository dr = getDiffRepos();
         final CacheControl cc = conn.getCacheControl(null);
 
@@ -476,7 +476,7 @@ class MemberCacheControlTest {
     void testAddCommand(Context context) {
     	context.getSchemaCache().clear();
         prepareTestContext(context);
-        final Connection conn = context.getConnection();
+        final Connection conn = context.getConnectionWithDefaultRole();
         final CacheControl cc = conn.getCacheControl(null);
         final RolapCubeMember caCubeMember =
             (RolapCubeMember) findMember(conn, "Sales", "Retail", "CA");
@@ -695,7 +695,7 @@ class MemberCacheControlTest {
     void testDeleteCommand(Context context) {
     	context.getSchemaCache().clear();
         prepareTestContext(context);
-        final Connection conn = context.getConnection();
+        final Connection conn = context.getConnectionWithDefaultRole();
         final CacheControl cc = conn.getCacheControl(null);
         final RolapCubeMember sfCubeMember =
             (RolapCubeMember) findMember(
@@ -771,7 +771,7 @@ class MemberCacheControlTest {
     void testMoveCommand(Context context) {
     	context.getSchemaCache().clear();
         prepareTestContext(context);
-        final Connection conn = context.getConnection();
+        final Connection conn = context.getConnectionWithDefaultRole();
         final CacheControl cc = conn.getCacheControl(null);
         final RolapCubeMember caCubeMember =
             (RolapCubeMember) findMember(conn, "Sales", "Retail", "CA");
@@ -859,7 +859,7 @@ class MemberCacheControlTest {
     void testMoveFailBadLevel(Context context) {
     	context.getSchemaCache().clear();
         prepareTestContext(context);
-        final Connection conn = context.getConnection();
+        final Connection conn = context.getConnectionWithDefaultRole();
         final CacheControl cc = conn.getCacheControl(null);
         final RolapCubeMember caCubeMember =
             (RolapCubeMember) findMember(conn, "Sales", "Retail", "CA");
@@ -942,7 +942,7 @@ class MemberCacheControlTest {
     void testAddCommandNegative(Context context) {
     	context.getSchemaCache().clear();
         prepareTestContext(context);
-        final Connection conn = context.getConnection();
+        final Connection conn = context.getConnectionWithDefaultRole();
         final CacheControl cc = conn.getCacheControl(null);
 
         MemberEditCommand command;
@@ -1055,11 +1055,11 @@ class MemberCacheControlTest {
     void testFlushHierarchy(Context context) {
     	context.getSchemaCache().clear();
         prepareTestContext(context);
-        flushCache(context.getConnection());
+        flushCache(context.getConnectionWithDefaultRole());
         final CacheControl cacheControl =
-            context.getConnection().getCacheControl(null);
+            context.getConnectionWithDefaultRole().getCacheControl(null);
         final Cube salesCube =
-                context.getConnection()
+                context.getConnectionWithDefaultRole()
                 .getSchema().lookupCube("Sales", true);
 
         final Logger logger = RolapUtil.SQL_LOGGER;
@@ -1084,7 +1084,7 @@ class MemberCacheControlTest {
                 };
 
             final Result result =
-                executeQuery(context.getConnection(),
+                executeQuery(context.getConnectionWithDefaultRole(),
                     "select [Store].[Mexico].[Yucatan] on 0 from [Sales]");
             final Member storeYucatanMember =
                 result.getAxes()[0].getPositions().get(0).get(0);
@@ -1106,7 +1106,7 @@ class MemberCacheControlTest {
 					public void run() {
                         // Check that <Member>.Children uses cache when applied
                         // to an 'all' member.
-                        assertAxisReturns(context.getConnection(),
+                        assertAxisReturns(context.getConnectionWithDefaultRole(),
                             "[Store].Children",
                             "[Store].[Canada]\n"
                             + "[Store].[Mexico]\n"
@@ -1120,7 +1120,7 @@ class MemberCacheControlTest {
 					public void run() {
                         // Check that <Member>.Children uses cache when applied
                         // to regular member.
-                        assertAxisReturns(context.getConnection(),
+                        assertAxisReturns(context.getConnectionWithDefaultRole(),
                             "[Store].[USA].[CA].Children",
                             "[Store].[USA].[CA].[Alameda]\n"
                             + "[Store].[USA].[CA].[Beverly Hills]\n"
@@ -1139,7 +1139,7 @@ class MemberCacheControlTest {
 					public void run() {
                         // Check that <Member>.Children uses cache when applied
                         // to regular member.
-                        assertAxisReturns(context.getConnection(),
+                        assertAxisReturns(context.getConnectionWithDefaultRole(),
                             "[Store].[USA].[CA].Children",
                             "[Store].[USA].[CA].[Alameda]\n"
                             + "[Store].[USA].[CA].[Beverly Hills]\n"
@@ -1154,7 +1154,7 @@ class MemberCacheControlTest {
                     @Override
 					public void run() {
                         // Check that <Hierarchy>.Members uses cache.
-                        assertExprReturns(context.getConnection(),
+                        assertExprReturns(context.getConnectionWithDefaultRole(),
                             "Count([Store].Members)", "63");
                     }
                 });
@@ -1163,7 +1163,7 @@ class MemberCacheControlTest {
                     @Override
 					public void run() {
                         // Check that <Level>.Members uses cache.
-                        assertExprReturns(context.getConnection(),
+                        assertExprReturns(context.getConnectionWithDefaultRole(),
                             "Count([Store].[Store Name].Members)", "25");
                     }
                 });
@@ -1192,7 +1192,7 @@ class MemberCacheControlTest {
                     @Override
 					public void run() {
                         // Check that <Level>.Members uses cache.
-                        assertExprReturns(context.getConnection(),
+                        assertExprReturns(context.getConnectionWithDefaultRole(),
                             "Count([Time].[Month].Members)",
                             "24");
                     }
@@ -1203,7 +1203,7 @@ class MemberCacheControlTest {
                     @Override
 					public void run() {
                         // Check that <Level>.Members uses cache.
-                        assertAxisReturns(context.getConnection(),
+                        assertAxisReturns(context.getConnectionWithDefaultRole(),
                             "[Time].[1997].[Q2].Children",
                             "[Time].[1997].[Q2].[4]\n"
                             + "[Time].[1997].[Q2].[5]\n"

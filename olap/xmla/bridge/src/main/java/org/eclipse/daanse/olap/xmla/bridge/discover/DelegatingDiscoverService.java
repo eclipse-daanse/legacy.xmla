@@ -96,7 +96,7 @@ public class DelegatingDiscoverService implements DiscoverService {
 	public List<DiscoverDataSourcesResponseRow> dataSources(DiscoverDataSourcesRequest request,
                                                             RequestMetaData metaData,
                                                             UserPrincipal userPrincipal) {
-		return otherSchemaService.dataSources(request);
+		return otherSchemaService.dataSources(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                               UserPrincipal userPrincipal) {
 
 
-        return dbSchemaService.dbSchemaCatalogs(request);
+        return dbSchemaService.dbSchemaCatalogs(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                             RequestMetaData metaData,
                                                             UserPrincipal userPrincipal) {
 
-		return dbSchemaService.dbSchemaColumns(request);
+		return dbSchemaService.dbSchemaColumns(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                                         RequestMetaData metaData,
                                                                         UserPrincipal userPrincipal) {
 
-		return dbSchemaService.dbSchemaProviderTypes(request);
+		return dbSchemaService.dbSchemaProviderTypes(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -129,7 +129,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                               RequestMetaData metaData,
                                                               UserPrincipal userPrincipal) {
 
-		return dbSchemaService.dbSchemaSchemata(request);
+		return dbSchemaService.dbSchemaSchemata(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -137,7 +137,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                                       RequestMetaData metaData,
                                                                       UserPrincipal userPrincipal) {
 
-		return dbSchemaService.dbSchemaSourceTables(request);
+		return dbSchemaService.dbSchemaSourceTables(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -145,7 +145,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                           RequestMetaData metaData,
                                                           UserPrincipal userPrincipal) {
 
-		return dbSchemaService.dbSchemaTables(request);
+		return dbSchemaService.dbSchemaTables(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                                   RequestMetaData metaData,
                                                                   UserPrincipal userPrincipal) {
 
-		return dbSchemaService.dbSchemaTablesInfo(request);
+		return dbSchemaService.dbSchemaTablesInfo(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -161,7 +161,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                                     RequestMetaData metaData,
                                                                     UserPrincipal userPrincipal) {
 
-		return otherSchemaService.discoverEnumerators(request);
+		return otherSchemaService.discoverEnumerators(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -169,7 +169,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                               RequestMetaData metaData,
                                                               UserPrincipal userPrincipal) {
 
-		return otherSchemaService.discoverKeywords(request);
+		return otherSchemaService.discoverKeywords(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -177,7 +177,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                               RequestMetaData metaData,
                                                               UserPrincipal userPrincipal) {
 
-		return otherSchemaService.discoverLiterals(request);
+		return otherSchemaService.discoverLiterals(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -185,7 +185,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                                   RequestMetaData metaData,
                                                                   UserPrincipal userPrincipal) {
 
-		return otherSchemaService.discoverProperties(request);
+		return otherSchemaService.discoverProperties(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -193,7 +193,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                                         RequestMetaData metaData,
                                                                         UserPrincipal userPrincipal) {
 
-		return otherSchemaService.discoverSchemaRowsets(request);
+		return otherSchemaService.discoverSchemaRowsets(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -201,7 +201,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                             RequestMetaData metaData,
                                                             UserPrincipal userPrincipal) {
 
-		return mdSchemaService.mdSchemaActions(request);
+		return mdSchemaService.mdSchemaActions(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -209,7 +209,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                         RequestMetaData metaData,
                                                         UserPrincipal userPrincipal) {
 
-		return mdSchemaService.mdSchemaCubes(request);
+		return mdSchemaService.mdSchemaCubes(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -217,7 +217,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                                   RequestMetaData metaData,
                                                                   UserPrincipal userPrincipal) {
 
-		return mdSchemaService.mdSchemaDimensions(request);
+		return mdSchemaService.mdSchemaDimensions(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -225,7 +225,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                                 RequestMetaData metaData,
                                                                 UserPrincipal userPrincipal) {
 
-		return mdSchemaService.mdSchemaFunctions(request);
+		return mdSchemaService.mdSchemaFunctions(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -233,7 +233,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                                     RequestMetaData metaData,
                                                                     UserPrincipal userPrincipal) {
 
-		return mdSchemaService.mdSchemaHierarchies(request);
+		return mdSchemaService.mdSchemaHierarchies(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -241,7 +241,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                       RequestMetaData metaData,
                                                       UserPrincipal userPrincipal) {
 
-		return mdSchemaService.mdSchemaKpis(request);
+		return mdSchemaService.mdSchemaKpis(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -249,7 +249,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                           RequestMetaData metaData,
                                                           UserPrincipal userPrincipal) {
 
-		return mdSchemaService.mdSchemaLevels(request);
+		return mdSchemaService.mdSchemaLevels(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -258,7 +258,7 @@ public class DelegatingDiscoverService implements DiscoverService {
             RequestMetaData metaData,
             UserPrincipal userPrincipal) {
 
-		return mdSchemaService.mdSchemaMeasureGroupDimensions(request);
+		return mdSchemaService.mdSchemaMeasureGroupDimensions(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -266,7 +266,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                                         RequestMetaData metaData,
                                                                         UserPrincipal userPrincipal) {
 
-		return mdSchemaService.mdSchemaMeasureGroups(request);
+		return mdSchemaService.mdSchemaMeasureGroups(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -274,7 +274,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                               RequestMetaData metaData,
                                                               UserPrincipal userPrincipal) {
 
-		return mdSchemaService.mdSchemaMeasures(request);
+		return mdSchemaService.mdSchemaMeasures(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -282,7 +282,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                             RequestMetaData metaData,
                                                             UserPrincipal userPrincipal) {
 
-		return mdSchemaService.mdSchemaMembers(request);
+		return mdSchemaService.mdSchemaMembers(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -290,7 +290,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                                   RequestMetaData metaData,
                                                                   UserPrincipal userPrincipal) {
 
-		return mdSchemaService.mdSchemaProperties(request);
+		return mdSchemaService.mdSchemaProperties(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -298,7 +298,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                       RequestMetaData metaData,
                                                       UserPrincipal userPrincipal) {
 
-		return mdSchemaService.mdSchemaSets(request);
+		return mdSchemaService.mdSchemaSets(request, metaData, userPrincipal);
 	}
 
 	@Override
@@ -306,7 +306,7 @@ public class DelegatingDiscoverService implements DiscoverService {
                                                             RequestMetaData metaData,
                                                             UserPrincipal userPrincipal) {
 
-		return otherSchemaService.xmlMetaData(request);
+		return otherSchemaService.xmlMetaData(request, metaData, userPrincipal);
 	}
 
 }

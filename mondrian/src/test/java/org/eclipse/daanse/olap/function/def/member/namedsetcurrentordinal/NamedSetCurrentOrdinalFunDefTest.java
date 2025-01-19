@@ -37,7 +37,7 @@ class NamedSetCurrentOrdinalFunDefTest {
         if ( Util.RETROWOVEN) {
             return;
         }
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with set [Time Regular] as [Time].[Time].Members\n"
                 + " set [Time Reversed] as"
                 + " Order([Time Regular], [Time Regular].CurrentOrdinal, BDESC)\n"
@@ -127,7 +127,7 @@ class NamedSetCurrentOrdinalFunDefTest {
         if ( Util.RETROWOVEN) {
             return;
         }
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             " with set [Time Regular] as [Time].[Time].Members\n"
                 + "set [Every Other Time] as\n"
                 + "  Generate(\n"
@@ -183,7 +183,7 @@ class NamedSetCurrentOrdinalFunDefTest {
         if ( Util.RETROWOVEN) {
             return;
         }
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with set [Time Regular] as [Time].[Time].Members\n"
                 + " set [Time Subset] as "
                 + "   Filter([Time Regular], [Time Regular].CurrentOrdinal = 3"

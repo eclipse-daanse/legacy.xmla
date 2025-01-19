@@ -43,7 +43,7 @@ class MdcUtilTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMdcContext(Context context) throws Exception {
 
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     flushSchemaCache(connection);
 
 //    ThreadContext.put( "sessionName", "hello-world" );
@@ -78,7 +78,7 @@ class MdcUtilTest {
               + "{[Gender].[All Gender]}\n" + "{[Gender].[F]}\n" + "{[Gender].[M]}\n" + "Row #0: 266,773\n"
               + "Row #1: 131,558\n" + "Row #2: 135,215\n";
 
-      assertQueryReturns(context.getConnection(), query, expected );
+      assertQueryReturns(context.getConnectionWithDefaultRole(), query, expected );
       log = writer.toString();
 
     } finally {

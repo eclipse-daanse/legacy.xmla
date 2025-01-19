@@ -66,7 +66,7 @@ class CancellationTest {
         CrossJoinFunDefTester crossJoinFunDef =
                 new CrossJoinFunDefTester(new CrossJoinTest.NullFunDef().getFunctionMetaData());
         Result result =
-            executeQuery(context.getConnection(), "select store.[store name].members on 0 from sales");
+            executeQuery(context.getConnectionWithDefaultRole(), "select store.[store name].members on 0 from sales");
         Evaluator eval = ((RolapResult) result).getEvaluator(new int[]{0});
         TupleList list = new UnaryTupleList();
         for (Position pos : result.getAxes()[0].getPositions()) {
@@ -86,7 +86,7 @@ class CancellationTest {
         // tests that cancellation/timeout is checked in
         // CrossJoinFunDef.mutableCrossJoin
         ((TestConfig)context.getConfig()).setCheckCancelOrTimeoutInterval(1);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         RolapCube salesCube = (RolapCube) cubeByName(
              connection,
             "Sales");

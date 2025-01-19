@@ -70,7 +70,7 @@ class CachedExistsTest{
             + "{[Education Level].[Graduate Degree], [Product].[Food]}\n"
             + "{[Education Level].[Graduate Degree], [Product].[Drink]}\n" + "Row #0: 55,788\n" + "Row #1: 12,580\n"
             + "Row #2: 49,365\n" + "Row #3: 6,423\n" + "Row #4: 11,255\n" + "Row #5: 1,325\n";
-    TestUtil.assertQueryReturns( context.getConnection(), query, expected );
+    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
   }
 
 	@ParameterizedTest
@@ -99,7 +99,7 @@ class CachedExistsTest{
             + "{[Product].[Non-Consumable].[Periodicals]}\n" + "Row #0: 24,597\n" + "Row #1: 50,236\n"
             + "Row #2: 6,838\n" + "Row #3: 13,573\n" + "Row #4: 4,186\n" + "Row #5: 841\n" + "Row #6: 1,779\n"
             + "Row #7: 16,284\n" + "Row #8: 27,038\n" + "Row #9: 4,294\n";
-    TestUtil.assertQueryReturns( context.getConnection(), query, expected );
+    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
   }
 
 	@ParameterizedTest
@@ -134,7 +134,7 @@ class CachedExistsTest{
             + "{[Product].[Non-Consumable].[Periodicals], [Gender].[M]}\n" + "Row #0: 13,573\n" + "Row #1: 4,186\n"
             + "Row #2: 4,294\n" + "Row #3: 17,759\n" + "Row #4: 4,294\n" + "Row #5: 6,776\n" + "Row #6: 6,797\n"
             + "Row #7: 1,987\n" + "Row #8: 2,199\n" + "Row #9: 2,168\n" + "Row #10: 2,126\n";
-    TestUtil.assertQueryReturns( context.getConnection(), query, expected );
+    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
   }
 
 	@ParameterizedTest
@@ -172,7 +172,7 @@ class CachedExistsTest{
             + "Row #1: 11,890\n" + "Row #2: 5,806\n" + "Row #2: 2,934\n" + "Row #2: 2,872\n" + "Row #3: 6,065\n"
             + "Row #3: 3,042\n" + "Row #3: 3,023\n" + "Row #4: 11,997\n" + "Row #4: 6,144\n" + "Row #4: 5,853\n"
             + "Row #5: 12,399\n" + "Row #5: 6,362\n" + "Row #5: 6,037\n";
-    TestUtil.assertQueryReturns( context.getConnection(), query, expected );
+    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
   }
 
 	@ParameterizedTest
@@ -214,7 +214,7 @@ class CachedExistsTest{
             + "Row #3: 3,892\n"
             + "Row #4: 2,607\n"
             + "Row #5: 2,502\n";
-    TestUtil.assertQueryReturns( context.getConnection(), query, expected );
+    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
   }
 
 	@ParameterizedTest
@@ -286,7 +286,7 @@ class CachedExistsTest{
             + "Row #17: 291\n"
             + "Row #18: 47\n"
             + "Row #19: 319\n";
-    TestUtil.assertQueryReturns( context.getConnection(), query, expected );
+    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
   }
 
 	@ParameterizedTest
@@ -316,7 +316,7 @@ class CachedExistsTest{
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Time].[1997], [Measures].[*FORMATTED_MEASURE_0]}\n" + "Axis #2:\n"
             + "{[Product].[Drink], [Education Level].[Bachelors Degree], [Customers].[USA].[WA].[Spokane].[Wildon Cameron]}\n"
             + "Row #0: 47\n";
-    TestUtil.assertQueryReturns( context.getConnection(), query, expected );
+    TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
   }
 
 	@ParameterizedTest
@@ -444,7 +444,7 @@ class CachedExistsTest{
 
 
     // Verifies second arg of CachedExists uses a tuple type
-    	TestUtil.assertQueryReturns(context.getConnection(),
+    	TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
         "WITH\n" +
         "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],[*BASE_MEMBERS__Time.Weekly_])'\n" +
         "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time].CURRENTMEMBER.ORDERKEY,BASC,[Time.Weekly].CURRENTMEMBER.ORDERKEY,BASC)'\n" +
@@ -474,7 +474,7 @@ class CachedExistsTest{
             + "Row #2: 266,773\n");
 
     // Verified second arg of CachedExists uses a member type
-    TestUtil.assertQueryReturns(context.getConnection(),
+    TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
         "WITH\n" +
         "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time.Weekly_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],[*BASE_MEMBERS__Time.Weekly2_]))'\n" +
         "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time.Weekly].CURRENTMEMBER.ORDERKEY,BASC,[Time].CURRENTMEMBER.ORDERKEY,BASC,[Time.Weekly2].CURRENTMEMBER.ORDERKEY,BASC)'\n" +

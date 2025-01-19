@@ -255,7 +255,7 @@ class SegmentBuilderTest {
         // offsets to be incorrect for a Segment rollup.
         // First query loads the cache with a segment that can fulfill the
         // second query.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         executeQuery(connection,
             "select [Store Size in SQFT].[Store Sqft].members * "
             + "gender.gender.members  on 0 from sales");
@@ -297,7 +297,7 @@ class SegmentBuilderTest {
         // columns.  This tests a case where
         // SegmentBuilder.computeAxisMultipliers needs to factor in
         // the null axis flag.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         executeQuery(connection,
             "select [Store Size in SQFT].[Store Sqft].members * "
             + "[store].[store state].members * time.[quarter].members on 0"
@@ -373,7 +373,7 @@ class SegmentBuilderTest {
 
         if (PerformanceTest.LOGGER.isDebugEnabled()) {
             // load the cache with a segment for the subsequent rollup
-            Connection connection = context.getConnection();
+            Connection connection = context.getConnectionWithDefaultRole();
             executeQuery(connection,
                 "select NON EMPTY Crossjoin([Store Type].[Store Type].members, "
                 + "CrossJoin([Promotion Media].[Media Type].members, "
@@ -532,7 +532,7 @@ class SegmentBuilderTest {
         // to cause issues with rollup since one segment body will have
         // 3 values for quarter, the other segment body will have a different
         // set of values.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
         //TestContext context = getTestContext().withFreshConnection();
 
@@ -584,7 +584,7 @@ class SegmentBuilderTest {
         // result in roughly half of the customers having empty results
         // for the 3rd query, since the values of only one of the two
         // segments would be loaded into the AxisInfo.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
         //TestContext context = getTestContext().withFreshConnection();
         final String query = "select customers.[name].members on 0 from sales";
@@ -630,7 +630,7 @@ class SegmentBuilderTest {
             "[Mexico].Guerrero", "[Mexico].Jalisco", "[USA].[OR]",
             "[Mexico].Veracruz", "[USA].WA", "[Mexico].Yucatan",
             "[Mexico].Zacatecas"};
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
         //TestContext context = getTestContext().withFreshConnection();
         final String query =
@@ -671,7 +671,7 @@ class SegmentBuilderTest {
         // capable of being rolled up to fulfill the 3rd query.
         // MONDRIAN-1729 involved the rollup being invalid, causing
         // an infinite loop.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
         //TestContext context = getTestContext().withFreshConnection();
 
@@ -704,9 +704,9 @@ class SegmentBuilderTest {
         // This tests a wildcarded segment (on year) rolled up w/ a seg
         // containing a single val.
         // The resulting segment contains only empty results (for 1998)
-    	context.getConnection().getCacheControl(null).flushSchemaCache();
-    	clearAggregationCache(context.getConnection());
-        runRollupTest(context.getConnection(),
+    	context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
+    	clearAggregationCache(context.getConnectionWithDefaultRole());
+        runRollupTest(context.getConnectionWithDefaultRole(),
             // queries to populate the cache with segments which will be rolled
             // up
             new String[]{
@@ -744,9 +744,9 @@ class SegmentBuilderTest {
         // http://jira.pentaho.com/browse/MONDRIAN-1729
         // Tests a wildcarded segment rolled up w/ a seg containing a single
         // val.  Both segments are associated w/ non empty results.
-    	context.getConnection().getCacheControl(null).flushSchemaCache();
-    	clearAggregationCache(context.getConnection());
-        runRollupTest(context.getConnection(),
+    	context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
+    	clearAggregationCache(context.getConnectionWithDefaultRole());
+        runRollupTest(context.getConnectionWithDefaultRole(),
             new String[]{
                 "select {{[Product].[Drink].[Alcoholic Beverages]},\n"
                 + "{[Product].[Drink].[Beverages]},\n"
@@ -779,7 +779,7 @@ class SegmentBuilderTest {
     void testSameRollupRegardlessOfSegmentOrderNoWildcards(Context context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1729
         // Tests 2 segments, each w/ no wildcarded values.
-        runRollupTest(context.getConnection(),
+        runRollupTest(context.getConnectionWithDefaultRole(),
             new String[]{
                 "select {{[Product].[Drink].[Alcoholic Beverages]},\n"
                 + "{[Product].[Drink].[Beverages]},\n"
@@ -806,9 +806,9 @@ class SegmentBuilderTest {
     void testSameRollupRegardlessOfSegmentOrderThreeSegs(Context context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1729
         // Tests 3 segments, each w/ no wildcarded values.
-    	context.getConnection().getCacheControl(null).flushSchemaCache();
-    	clearAggregationCache(context.getConnection());
-        runRollupTest(context.getConnection(),
+    	context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
+    	clearAggregationCache(context.getConnectionWithDefaultRole());
+        runRollupTest(context.getConnectionWithDefaultRole(),
             new String[]{
                 "select {{[Product].[Drink].[Alcoholic Beverages]},\n"
                 + "{[Product].[Non-Consumable].[Periodicals]}}\n on 0 from sales",
@@ -834,13 +834,13 @@ class SegmentBuilderTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSegmentCreationForBoolean_True(Context context) {
-        doTestSegmentCreationForBoolean(context.getConnection(), true);
+        doTestSegmentCreationForBoolean(context.getConnectionWithDefaultRole(), true);
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSegmentCreationForBoolean_False(Context context) {
-        doTestSegmentCreationForBoolean(context.getConnection(),false);
+        doTestSegmentCreationForBoolean(context.getConnectionWithDefaultRole(),false);
     }
 
     private void doTestSegmentCreationForBoolean(Connection connection, boolean value) {

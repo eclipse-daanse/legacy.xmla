@@ -114,7 +114,7 @@ class SqlQueryTest  extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testToStringForSingleGroupingSetSql(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         if (!isGroupingSetsSupported(connection)) {
             return;
@@ -163,7 +163,7 @@ class SqlQueryTest  extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOrderBy(Context context) throws SQLException {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         // Test with requireAlias = true
         assertEquals(
@@ -218,7 +218,7 @@ class SqlQueryTest  extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testToStringForForcedIndexHint(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         Map<String, String> hints = new HashMap<>();
         hints.put("force_index", "myIndex");
@@ -312,7 +312,7 @@ class SqlQueryTest  extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPredicatesAreOptimizedWhenPropertyIsTrue(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
             // Sql pattner will be different if using aggregate tables.
@@ -358,7 +358,7 @@ class SqlQueryTest  extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTableNameIsIncludedWithParentChildQuery(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         String sql =
             "select `employee`.`employee_id` as `c0`, "
@@ -393,13 +393,13 @@ class SqlQueryTest  extends BatchTestCase {
         SqlPattern[] sqlPatterns = {
             new SqlPattern(DatabaseProduct.ACCESS, sql, sql)
         };
-        assertQuerySql(context.getConnection(), mdx, sqlPatterns);
+        assertQuerySql(context.getConnectionWithDefaultRole(), mdx, sqlPatterns);
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPredicatesAreNotOptimizedWhenPropertyIsFalse(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
             // Sql pattner will be different if using aggregate tables.
@@ -446,7 +446,7 @@ class SqlQueryTest  extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPredicatesAreOptimizedWhenAllTheMembersAreIncluded(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
             // Sql pattner will be different if using aggregate tables.
@@ -499,7 +499,7 @@ class SqlQueryTest  extends BatchTestCase {
 
         try {
             ((TestConfig)context.getConfig()).setOptimizePredicates(optimizePredicatesValue);
-            assertQuerySql(context.getConnection(), inputMdx, sqlPatterns);
+            assertQuerySql(context.getConnectionWithDefaultRole(), inputMdx, sqlPatterns);
         } finally {
             ((TestConfig)context.getConfig()).setOptimizePredicates(intialValueOptimize);
         }
@@ -508,7 +508,7 @@ class SqlQueryTest  extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testToStringForGroupingSetSqlWithEmptyGroup(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         if (!isGroupingSetsSupported(connection)) {
             return;
@@ -560,7 +560,7 @@ class SqlQueryTest  extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testToStringForMultipleGroupingSetsSql(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         if (!isGroupingSetsSupported(connection)) {
             return;
@@ -629,9 +629,9 @@ class SqlQueryTest  extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDoubleInList(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
-        final Dialect dialect = getDialect(context.getConnection());
+        final Dialect dialect = getDialect(context.getConnectionWithDefaultRole());
         if (getDatabaseProduct(dialect.getDialectName()) != DatabaseProduct.LUCIDDB) {
             return;
         }
@@ -772,7 +772,7 @@ class SqlQueryTest  extends BatchTestCase {
         withSchema(context, schema);
          */
         withSchema(context, TestDoubleInListModifier::new);
-        assertQuerySql(context.getConnection(), query, patterns);
+        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
     }
 
     /**
@@ -787,7 +787,7 @@ class SqlQueryTest  extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testInvalidSqlMemberLookup(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         String sqlMySql =
             "select `store`.`store_type` as `c0` from `store` as `store` "
@@ -822,7 +822,7 @@ class SqlQueryTest  extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testApproxRowCountOverridesCount(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         final String cubeSchema =
             "<Cube name=\"ApproxTest\"> \n"
@@ -911,7 +911,7 @@ class SqlQueryTest  extends BatchTestCase {
          */
         withSchema(context, TestApproxRowCountOverridesCountModifier::new);
         assertQuerySqlOrNot(
-        	context.getConnection(),
+        	context.getConnectionWithDefaultRole(),
             mdxQuery,
             patterns,
             true,
@@ -922,7 +922,7 @@ class SqlQueryTest  extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLimitedRollupMemberRetrievableFromCache(Context context) throws Exception {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         final String mdx =
             "select NON EMPTY { [Store].[Store].[Store State].members } on 0 from [Sales]";
@@ -1023,7 +1023,7 @@ class SqlQueryTest  extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAvgAggregator(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
         /*
@@ -1038,7 +1038,7 @@ class SqlQueryTest  extends BatchTestCase {
         withSchema(context, SchemaModifiers.SqlQueryTestModifier::new);
         String mdx = "select measures.[avg sales] on 0 from sales"
                        + " where { time.[1997].q1, time.[1997].q2.[4] }";
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{[Time].[1997].[Q1]}\n"
@@ -1060,7 +1060,7 @@ class SqlQueryTest  extends BatchTestCase {
             + "and `time_by_day`.`the_year` = 1997))";
         SqlPattern mySqlPattern =
             new SqlPattern(DatabaseProduct.MYSQL, sql, sql.length());
-        assertQuerySql(context.getConnection(), mdx, new SqlPattern[]{mySqlPattern});
+        assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[]{mySqlPattern});
     }
 
     private boolean isGroupingSetsSupported(Connection connection) {

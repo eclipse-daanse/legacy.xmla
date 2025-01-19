@@ -1253,7 +1253,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
 
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
-        assertQueryIsReWritten(context.getConnection(),
+        assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
             "SELECT NativizeSet({Gender.M,Gender.F}) on 0 from sales",
             "select "
             + "NativizeSet({[Gender].[M], [Gender].[F]}) "
@@ -1268,7 +1268,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
 
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
-        assertQueryIsReWritten(context.getConnection(),
+        assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
             "select NativizeSet({[Marital Status].[Marital Status].members}) "
             + "on 0 from sales",
             "select NativizeSet({[Marital Status].[Marital Status].Members}) "
@@ -1283,7 +1283,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
 
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
-        assertQueryIsReWritten(context.getConnection(),
+        assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
             "select NativizeSet(CrossJoin({Gender.M,Gender.F},{[Marital Status].[Marital Status].members})) "
             + "on 0 from sales",
             "with member [Marital Status].[_Nativized_Member_Marital Status_Marital Status_] as '[Marital Status].DefaultMember'\n"
@@ -1303,7 +1303,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
 
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
-        assertQueryIsReWritten(context.getConnection(),
+        assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
             "WITH SET [COG_OQP_INT_s4] AS 'CROSSJOIN({[Education Level].[Graduate Degree]},"
             + " [COG_OQP_INT_s3])'"
             + " SET [COG_OQP_INT_s3] AS 'CROSSJOIN({[Marital Status].[S]}, [COG_OQP_INT_s2])'"
@@ -1337,7 +1337,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
 
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
-        assertQueryIsReWritten(context.getConnection(),
+        assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Product].[COG_OQP_INT_umg1] AS "
             + "'IIF([Measures].CURRENTMEMBER IS [Measures].[Unit Sales], ([Product].[COG_OQP_INT_m2], [Measures].[Unit Sales]),"
             + " AGGREGATE({[Product].[Product Name].MEMBERS}))', SOLVE_ORDER = 4 "
@@ -1401,7 +1401,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
         // Use fresh connection -- unique names are baked in when schema is
         // loaded, depending the Ssas setting at that time.
         //Context context = getTestContext().withFreshConnection();
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         try {
             assertQueryIsReWritten(
                 connection,
@@ -1428,7 +1428,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
         // Ssas compatible: [time.weekly].week
-        assertQueryIsReWritten(context.getConnection(),
+        assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
             "select nativizeSet(crossjoin( [time.weekly].week.members, { gender.m })) on 0 "
             + "from sales",
             "with member [Time].[_Nativized_Member_Time_Weekly_Week_] as '[Time].DefaultMember'\n"
@@ -1495,7 +1495,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopCountDoesNotGetTransformed(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
-        assertQueryIsReWritten(context.getConnection(),
+        assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
             "select "
             + "   NativizeSet(Crossjoin([Gender].[Gender].members,"
             + "TopCount({[Marital Status].[Marital Status].members},1,[Measures].[Unit Sales]))"
@@ -1514,7 +1514,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCrossjoinWithFilter(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + "NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS,   \n"
             + "NON EMPTY NativizeSet(Crossjoin({[Time].[1997]}, "
@@ -1549,7 +1549,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
             + "from [Warehouse and Sales] "
             + "where [Marital Status].[Marital Status].[S]";
         assertQuerySqlOrNot(
-            context.getConnection(), mdxQuery, patterns, true, false, true);
+            context.getConnectionWithDefaultRole(), mdxQuery, patterns, true, false, true);
     }
 
     @ParameterizedTest
@@ -1596,7 +1596,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
             + "from [Sales] \n"
             + "where [Time].[1997]";
         assertQuerySqlOrNot(
-            context.getConnection(), query, patterns, true, false, true);
+            context.getConnectionWithDefaultRole(), query, patterns, true, false, true);
     }
 
     @ParameterizedTest
@@ -1706,7 +1706,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
             + " NativizeSet(Crossjoin("
             + "[Gender].[Gender].members,[Marital Status].[Marital Status].members"
             + ")) on 0 from Sales";
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.execute(connection.parseQuery(mdxQuery));
         assertQuerySqlOrNot(
                 connection, mdxQuery, patterns, true, false, false);
@@ -1750,7 +1750,7 @@ class NativizeSetFunDefTest extends BatchTestCase {
             + "\"fname\" || ' ' || \"lname\" ASC NULLS LAST";
         SqlPattern oraclePattern =
             new SqlPattern(DatabaseProduct.ORACLE, sql, sql.length());
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQuerySql(connection, mdx1, new SqlPattern[]{oraclePattern});
         assertQuerySql(connection, mdx2, new SqlPattern[]{oraclePattern});
     }
@@ -1759,13 +1759,13 @@ class NativizeSetFunDefTest extends BatchTestCase {
 
     private void checkNotNative(Context context, String mdx) {
         final String mdx2 = removeNativize(mdx);
-        final Result result = executeQuery(mdx2, context.getConnection());
+        final Result result = executeQuery(mdx2, context.getConnectionWithDefaultRole());
         checkNotNative(context, mdx, result);
     }
 
     private void checkNative(Context context, String mdx) {
         final String mdx2 = removeNativize(mdx);
-        final Result result = executeQuery(mdx2, context.getConnection());
+        final Result result = executeQuery(mdx2, context.getConnectionWithDefaultRole());
         checkNative(context, mdx, result);
     }
 

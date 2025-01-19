@@ -34,7 +34,7 @@ class SetFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSetWithMembersFromDifferentHierarchies(Context context) {
-        assertQueryFailsInSetValidation(context.getConnection(),
+        assertQueryFailsInSetValidation(context.getConnectionWithDefaultRole(),
             "with member store.x as "
             + "'{[Gender].[M],[Store].[USA].[CA]}' "
             + " SELECT store.x on 0, [measures].[customer count] on 1 from sales");
@@ -43,7 +43,7 @@ class SetFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSetWith2TuplesWithDifferentHierarchies(Context context) {
-        assertQueryFailsInSetValidation(context.getConnection(),
+        assertQueryFailsInSetValidation(context.getConnectionWithDefaultRole(),
             "with member store.x as '{([Gender].[M],[Store].[All Stores].[USA].[CA]),"
             + "([Store].[USA].[OR],[Gender].[F])}'\n"
             + " SELECT store.x on 0, [measures].[customer count] on 1 from sales");

@@ -53,7 +53,7 @@ class BatchedFillTest extends ClearViewBase {
                 // If agg tables are enabled, the SQL generated is 'better' than
                 // expected.
             } else {
-                super.assertQuerySql(context.getConnection(), true);
+                super.assertQuerySql(context.getConnectionWithDefaultRole(), true);
             }
             super.runTest(context);
         }

@@ -29,7 +29,7 @@ class PrevMemberFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAll2(Context context) {
         Result result =
-            executeQuery(context.getConnection(), "select {[Gender].PrevMember} ON COLUMNS from Sales" );
+            executeQuery(context.getConnectionWithDefaultRole(), "select {[Gender].PrevMember} ON COLUMNS from Sales" );
         // previous to [Gender].[All] is null, so no members are returned
         assertEquals( 0, result.getAxes()[ 0 ].getPositions().size() );
     }
@@ -38,7 +38,7 @@ class PrevMemberFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBasic(Context context) {
         Result result =
-            executeQuery(context.getConnection(),
+            executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Gender].[M].PrevMember} ON COLUMNS from Sales" );
         assertEquals(
             "F",
@@ -49,7 +49,7 @@ class PrevMemberFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFirstInLevel(Context context) {
         Result result =
-            executeQuery(context.getConnection(),
+            executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Gender].[F].PrevMember} ON COLUMNS from Sales" );
         assertEquals( 0, result.getAxes()[ 0 ].getPositions().size() );
     }
@@ -58,7 +58,7 @@ class PrevMemberFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAll(Context context) {
         Result result =
-            executeQuery(context.getConnection(), "select {[Gender].PrevMember} ON COLUMNS from Sales" );
+            executeQuery(context.getConnectionWithDefaultRole(), "select {[Gender].PrevMember} ON COLUMNS from Sales" );
         // previous to [Gender].[All] is null, so no members are returned
         assertEquals( 0, result.getAxes()[ 0 ].getPositions().size() );
     }

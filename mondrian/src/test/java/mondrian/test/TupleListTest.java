@@ -69,7 +69,7 @@ class TupleListTest {
 
         TupleList list1 = new UnaryTupleList();
         assertEquals(list0, list1);
-        final Member storeUsaMember = xxx(context.getConnection(),"[Store].[USA]");
+        final Member storeUsaMember = xxx(context.getConnectionWithDefaultRole(),"[Store].[USA]");
         list1.add(Collections.singletonList(storeUsaMember));
         assertFalse(list1.isEmpty());
         assertEquals(1, list1.size());
@@ -99,7 +99,7 @@ class TupleListTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testArrayTupleList(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         final Member genderFMember = xxx(connection, "[Gender].[F]");
         final Member genderMMember = xxx(connection,"[Gender].[M]");
 
@@ -182,7 +182,7 @@ class TupleListTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDelegatingTupleList(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         final Member genderFMember = xxx(connection, "[Gender].[F]");
         final Member genderMMember = xxx(connection, "[Gender].[M]");
         final Member storeUsaMember = xxx(connection, "[Store].[USA]");
@@ -210,7 +210,7 @@ class TupleListTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDelegatingTupleListSlice(Context context) {
         // Functional test.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
             "select {[Measures].[Store Sales]} ON COLUMNS, Hierarchize(Except({[Customers].[All Customers], [Customers].[All Customers].Children}, {[Customers].[All Customers]})) ON ROWS from [Sales] ",
             "Axis #0:\n"

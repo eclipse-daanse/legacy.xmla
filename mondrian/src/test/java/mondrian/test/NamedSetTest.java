@@ -72,7 +72,7 @@ class NamedSetTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNamedSet(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "    SET [Top Sellers]\n"
             + "AS \n"
@@ -118,14 +118,14 @@ class NamedSetTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNamedSetOnMember(Context context) {
-        switch (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
         case INFOBRIGHT:
             // Mondrian generates 'select ... sum(warehouse_sales) -
             // sum(warehouse_cost) as c ... order by c4', correctly, but
             // Infobright gives error "'c4' isn't in GROUP BY".
             return;
         }
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "    MEMBER [Measures].[Profit]\n"
             + "AS '[Measures].[Warehouse Sales] - [Measures].[Warehouse Cost] '\n"
@@ -163,7 +163,7 @@ class NamedSetTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNamedSetAsList(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET [ChardonnayChablis] AS\n"
             + "   '{[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Good].[Good Chardonnay],\n"
             + "   [Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Pearl].[Pearl Chardonnay],\n"
@@ -213,7 +213,7 @@ class NamedSetTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testIntrinsic(Context context) {
     	SystemWideProperties.instance().CaseSensitiveMdxInstr = true;
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET [ChardonnayChablis] AS\n"
             + "   'Filter([Product].Members, (InStr(1, [Product].CurrentMember.Name, \"chardonnay\") <> 0) OR (InStr(1, [Product].CurrentMember.Name, \"chablis\") <> 0))'\n"
             + "SELECT\n"
@@ -225,7 +225,7 @@ class NamedSetTest {
             + "Axis #1:\n"
             + "Axis #2:\n"
             + "{[Measures].[Unit Sales]}\n");
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET [BeerMilk] AS\n"
             + "   'Filter([Product].Members, (InStr(1, [Product].CurrentMember.Name, \"Beer\") <> 0) OR (InStr(1, LCase([Product].CurrentMember.Name), \"milk\") <> 0))'\n"
             + "SELECT\n"
@@ -331,7 +331,7 @@ class NamedSetTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNamedSetCrossJoin(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "    SET [Store Types by Country]\n"
             + "AS\n"
@@ -364,7 +364,7 @@ class NamedSetTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     public void _testXxx(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Store Type].[All Store Type].[oNormal] AS 'Aggregate(Filter([Customers].[Name].Members, [Customers].CurrentMember.Properties(\"Member Card\") = \"Normal\") * {[Store Type].[All Store Type]})'\n"
             + "MEMBER [Store Type].[All Store Type].[oBronze] AS 'Aggregate(Filter([Customers].[Name].Members, [Customers].CurrentMember.Properties(\"Member Card\") = \"Bronze\") * {[Store Type].[All Store Type]})'\n"
             + "MEMBER [Store Type].[All Store Type].[oGolden] AS 'Aggregate(Filter([Customers].[Name].Members, [Customers].CurrentMember.Properties(\"Member Card\") = \"Golden\") * {[Store Type].[All Store Type]})'\n"
@@ -381,7 +381,7 @@ class NamedSetTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNamedSetUsedInCrossJoin(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "  SET [TopMedia] AS 'TopCount([Promotion Media].children, 5, [Measures].[Store Sales])' \n"
             + "SELECT {[Time].[1997].[Q1], [Time].[1997].[Q2]} ON COLUMNS,\n"
@@ -443,7 +443,7 @@ class NamedSetTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAggOnCalcMember(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "  SET [TopMedia] AS 'TopCount([Promotion Media].children, 5, [Measures].[Store Sales])' \n"
             + "  MEMBER [Measures].[California sales for Top Media] AS 'Sum([TopMedia], ([Store].[USA].[CA], [Measures].[Store Sales]))'\n"
@@ -472,7 +472,7 @@ class NamedSetTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testContextSensitiveNamedSet(Context context) {
         // For reference.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + "Order([Promotion Media].Children, [Measures].[Unit Sales], DESC) ON ROWS\n"
             + "FROM [Sales]\n"
@@ -513,7 +513,7 @@ class NamedSetTest {
             + "Row #13: 2,454\n");
 
         // For reference.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + "Order([Promotion Media].Children, [Measures].[Unit Sales], DESC) ON ROWS\n"
             + "FROM [Sales]\n"
@@ -557,7 +557,7 @@ class NamedSetTest {
         // The bottom medium in 1997.Q2 is In-Store Coupon, with $35 in sales,
         //  whereas Radio has $40 in sales in 1997.Q2.
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "  SET [Bottom Media] AS 'BottomCount([Promotion Media].children, 1, [Measures].[Unit Sales])' \n"
             + "  MEMBER [Measures].[Unit Sales for Bottom Media] AS 'Sum([Bottom Media], [Measures].[Unit Sales])'\n"
@@ -577,7 +577,7 @@ class NamedSetTest {
             + "Row #0: 2,454\n"
             + "Row #1: 40\n");
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "  SET [TopMedia] AS 'TopCount([Promotion Media].children, 3, [Measures].[Store Sales])' \n"
             + "  MEMBER [Measures].[California sales for Top Media] AS 'Sum([TopMedia], [Measures].[Store Sales])'\n"
@@ -622,7 +622,7 @@ class NamedSetTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOrderedNamedSet(Context context) {
         // From http://www.developersdex.com
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET [SET1] AS\n"
             + "'ORDER ({[Education Level].[Education Level].Members}, [Gender].[All Gender].[F], ASC)'\n"
             + "MEMBER [Gender].[RANK1] AS 'rank([Education Level].currentmember, [SET1])'\n"
@@ -655,7 +655,7 @@ class NamedSetTest {
             + "Row #4: 82,177.11\n"
             + "Row #4: 5\n");
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET [SET1] AS\n"
             + "'ORDER ({[Education Level].[Education Level].Members}, [Gender].[All Gender].[F], ASC)'\n"
             + "MEMBER [Gender].[RANK1] AS 'rank([Education Level].currentmember, [SET1])'\n"
@@ -689,7 +689,7 @@ class NamedSetTest {
             + "Row #4: $0.00\n");
 
         // Solve order fixes the problem.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET [SET1] AS\n"
             + "'ORDER ({[Education Level].[Education Level].Members}, [Gender].[F], ASC)'\n"
             + "MEMBER [Gender].[RANK1] AS 'rank([Education Level].currentmember, [SET1])', \n"
@@ -726,7 +726,7 @@ class NamedSetTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGenerate(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
             + "  member [Measures].[DateName] as \n"
             + "    'Generate({[Time].[1997].[Q1], [Time].[1997].[Q2]}, [Time].[Time].CurrentMember.Name) '\n"
@@ -743,7 +743,7 @@ class NamedSetTest {
             + "Row #0: Q1Q2\n"
             + "Row #1: Q1Q2\n");
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
             + "  member [Measures].[DateName] as \n"
             + "    'Generate({[Time].[1997].[Q1], [Time].[1997].[Q2]}, [Time].[Time].CurrentMember.Name, \" and \") '\n"
@@ -768,7 +768,7 @@ class NamedSetTest {
         withSchema(context,
                 NamedSetsInCubeModifier::new);
         // Set defined against cube, using 'formula' attribute.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + " {[CA Cities]} ON ROWS\n"
@@ -844,7 +844,7 @@ class NamedSetTest {
     	Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         withSchema(context,
         		NamedSetTest.NamedSetsInCubeAndSchemaModifier::new);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
             "SELECT {[Measures].[Store Sales]} on columns,\n"
             + " Intersect([Top CA Cities], [Top USA Stores]) on rows\n"
@@ -908,7 +908,7 @@ class NamedSetTest {
         Result result;
         String queryString;
         String pattern;
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         // Formula for a named set must not be a member.
         queryString =
             "with set [Foo] as ' [Store].CurrentMember  '"
@@ -976,7 +976,7 @@ class NamedSetTest {
 
         withSchema(context,
                 MixedNamedSetSchemaModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {\n"
             + "    [Measures].[Unit Sales],\n"
             + "    [Measures].[CA City Sales]} on columns,\n"
@@ -1032,7 +1032,7 @@ class NamedSetTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNamedSetAndUnion(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with set [Set Education Level] as\n"
             + "   '{([Education Level].[All Education Levels].[Bachelors Degree]),\n"
             + "     ([Education Level].[All Education Levels].[Graduate Degree])}'\n"
@@ -1072,7 +1072,7 @@ class NamedSetTest {
     void testNamedSetDependencies(Context context) {
         withSchema(context,
                 NamedSetsInCubeModifier::new);
-        assertSetExprDependsOn(context.getConnection(), "[Top CA Cities]", "{}");
+        assertSetExprDependsOn(context.getConnectionWithDefaultRole(), "[Top CA Cities]", "{}");
     }
 
     /**
@@ -1082,7 +1082,7 @@ class NamedSetTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchizeNamedSetImmutable(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
         assertQueryReturns(connection,
             "with set necj as\n"
@@ -1111,7 +1111,7 @@ class NamedSetTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCurrentAndCurrentOrdinal(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with set [Gender Marital Status] as\n"
             + " [Gender].members * [Marital Status].members\n"
             + "member [Measures].[GMS Ordinal] as\n"
@@ -1177,7 +1177,7 @@ class NamedSetTest {
             + "'Filter([Customers].[Name].Members, "
             + "measures.[Unit Sales] > 200)' select FilteredNamedSet on 0 from "
             + "sales where {Time.[1997].Q1, TIme.[1997].Q2}";
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{[Time].[1997].[Q1]}\n"
@@ -1199,7 +1199,7 @@ class NamedSetTest {
             + "Row #0: 257\n"
             + "Row #0: 258\n"
             + "Row #0: 227\n");
-        verifySameNativeAndNot(context.getConnection(), mdx, "");
+        verifySameNativeAndNot(context.getConnectionWithDefaultRole(), mdx, "");
     }
 
     /**
@@ -1233,7 +1233,7 @@ class NamedSetTest {
             + "Row #0: 363\n"
             + "Row #0: 344\n"
             + "Row #0: 323\n";
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
             "SELECT\n"
             + "NON EMPTY TopCount([Customers].[Name].Members, 5, [Measures].[Unit Sales]) * [Measures].[Unit Sales] on 0\n"
@@ -1286,7 +1286,7 @@ class NamedSetTest {
     void testMondrian2424(Context context) {
 
         SystemWideProperties.instance().SsasCompatibleNaming = false;
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "WITH SET Gender as '[Gender].[Gender].members' \n" +
                         "select {Gender} ON 0 from [Sales]",
                 "Axis #0:\n" +

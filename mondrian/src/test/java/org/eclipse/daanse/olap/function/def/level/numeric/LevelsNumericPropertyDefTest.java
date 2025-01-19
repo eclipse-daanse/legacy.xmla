@@ -26,7 +26,7 @@ class LevelsNumericPropertyDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelsNumeric(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         TestUtil.assertExprReturns(connection, "[Time].[Time].Levels(2).Name", "Month" );
         TestUtil.assertExprReturns(connection, "[Time].[Time].Levels(0).Name", "Year" );
         TestUtil.assertExprReturns(connection, "[Product].Levels(0).Name", "(All)" );
@@ -35,14 +35,14 @@ class LevelsNumericPropertyDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelsTooSmall(Context context) {
-        TestUtil.assertExprThrows(context.getConnection(),
+        TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(),
             "[Time].[Time].Levels(-1).Name", "Index '-1' out of bounds" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelsTooLarge(Context context) {
-        TestUtil.assertExprThrows(context.getConnection(),
+        TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(),
             "[Time].[Time].Levels(8).Name", "Index '8' out of bounds" );
     }
 

@@ -15,7 +15,6 @@ import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.mdx.parser.ccc.MdxParserProviderImpl;
 import org.eclipse.daanse.olap.api.BasicContextConfig;
 import org.eclipse.daanse.olap.api.ConnectionProps;
-import org.eclipse.daanse.olap.api.SchemaCache;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.result.Scenario;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
@@ -694,7 +693,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 	}
 
 	@Override
-	public org.eclipse.daanse.olap.api.Connection getConnection() {
+	public org.eclipse.daanse.olap.api.Connection getConnectionWithDefaultRole() {
 		return getConnection(new RolapConnectionPropsR());
 	}
 
@@ -711,7 +710,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
     }
 
     @Override
-    public Scenario createScenario() {
+    public Scenario createScenario(List<String> roles) {
         return null;
     }
 

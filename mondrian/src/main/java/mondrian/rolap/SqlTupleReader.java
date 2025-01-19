@@ -579,12 +579,12 @@ public Object getCacheKey() {
   }
 
     private Execution getExecution(Context context) {
-        if (LocusImpl.isEmpty()) {
-            final Statement statement = context.getConnection().getInternalStatement();
-            return new ExecutionImpl(statement, context.getConfig().executeDurationValue());
-        } else {
+//        if (LocusImpl.isEmpty()) {
+//            final Statement statement = context.getConnection().getInternalStatement();
+//            return new ExecutionImpl(statement, context.getConfig().executeDurationValue());
+//        } else {
             return LocusImpl.peek().getExecution();
-        }
+//        }
     }
 
     @Override

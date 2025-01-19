@@ -47,7 +47,7 @@ public abstract class CsvDBTestCase extends BatchTestCase {
             File inputFile = new File(Constants.TESTFILES_DIR + "/mondrian/rolap/agg/" +  getFileName());
 
             CsvDBLoader loader = new CsvDBLoader(context);
-            loader.setConnection(context.getConnection().getDataSource().getConnection());
+            loader.setConnection(context.getConnectionWithDefaultRole().getDataSource().getConnection());
             loader.initialize();
             loader.setInputFile(inputFile);
             DBLoader.Table[] tables = loader.getTables();

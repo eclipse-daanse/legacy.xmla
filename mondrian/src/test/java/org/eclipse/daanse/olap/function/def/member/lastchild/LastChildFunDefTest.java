@@ -30,28 +30,28 @@ class LastChildFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLastChild(Context context) {
-        Member member = executeSingletonAxis(context.getConnection(), "[Gender].LastChild" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].LastChild" );
         assertEquals( "M", member.getName() );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLastChildLastInLevel(Context context) {
-        Member member = executeSingletonAxis(context.getConnection(), "[Time].[1997].[Q4].LastChild" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q4].LastChild" );
         assertEquals( "12", member.getName() );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLastChildAll(Context context) {
-        Member member = executeSingletonAxis(context.getConnection(), "[Gender].[All Gender].LastChild" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[All Gender].LastChild" );
         assertEquals( "M", member.getName() );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLastChildOfChildless(Context context) {
-        Member member = executeSingletonAxis(context.getConnection(), "[Gender].[M].LastChild" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[M].LastChild" );
         assertNull( member );
     }
 

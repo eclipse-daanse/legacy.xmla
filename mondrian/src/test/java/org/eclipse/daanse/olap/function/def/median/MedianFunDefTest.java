@@ -28,12 +28,12 @@ class MedianFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMedian(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "MEDIAN({[Store].[All Stores].[USA].children},"
                 + "[Measures].[Store Sales])",
             "159,167.84" );
         // single value
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "MEDIAN({[Store].[All Stores].[USA]}, [Measures].[Store Sales])",
             "565,238.13" );
     }
@@ -41,7 +41,7 @@ class MedianFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMedian2(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
                 + "   Member [Time].[Time].[1st Half Sales] AS 'Sum({[Time].[1997].[Q1], [Time].[1997].[Q2]})'\n"
                 + "   Member [Time].[Time].[2nd Half Sales] AS 'Sum({[Time].[1997].[Q3], [Time].[1997].[Q4]})'\n"

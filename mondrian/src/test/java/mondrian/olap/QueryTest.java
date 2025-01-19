@@ -46,7 +46,7 @@ class QueryTest {
     {
 
         ConnectionBase connection =
-                (ConnectionBase) context.getConnection();
+                (ConnectionBase) context.getConnectionWithDefaultRole();
         final Statement statement =
                 connection.getInternalStatement();
 

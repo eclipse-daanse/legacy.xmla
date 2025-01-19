@@ -50,7 +50,7 @@ class FilterFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFilterWithSlicer(Context context) {
-        Result result = executeQuery(context.getConnection(),
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
                 + " filter([Customers].[USA].children,\n"
                 + "        [Measures].[Unit Sales] > 20000) on rows\n"
@@ -66,7 +66,7 @@ class FilterFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFilterCompound(Context context) {
-        Result result = executeQuery(context.getConnection(),
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
                 + "  Filter(\n"
                 + "    CrossJoin(\n"
@@ -120,7 +120,7 @@ class FilterFunDefTest {
       TestUtil.withSchema(context, schema);
        */
             withSchema(context, TestFilterWillTimeoutModifier::new);
-            executeAxis(context.getConnection(),
+            executeAxis(context.getConnectionWithDefaultRole(),
                 "Filter("
                     + "Filter(CrossJoin([Customers].[Name].members, [Product].[Product Name].members), SleepUdf([Measures]"
                     + ".[Unit Sales]) > 0),"
@@ -137,10 +137,10 @@ class FilterFunDefTest {
     void testFilterEmpty(Context context) {
         // Unlike "Descendants(<set>, ...)", we do not need to know the precise
         // type of the set, therefore it is OK if the set is empty.
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Filter({}, 1=0)",
             "" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Filter({[Time].[Time].Children}, 1=0)",
             "" );
     }
@@ -149,7 +149,7 @@ class FilterFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFilterCalcSlicer(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Time].[Time].[Date Range] as \n"
                 + "'Aggregate({[Time].[1997].[Q1]:[Time].[1997].[Q3]})'\n"
                 + "select\n"
@@ -169,7 +169,7 @@ class FilterFunDefTest {
                 + "Row #0: 90,131\n"
                 + "Row #0: 76,151.59\n"
                 + "Row #0: 190,776.88\n" );
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Time].[Time].[Date Range] as \n"
                 + "'Aggregate({[Time].[1997].[Q1]:[Time].[1997].[Q3]})'\n"
                 + "select\n"

@@ -28,36 +28,36 @@ class AndOperatorDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAnd(Context context) {
-        assertBooleanExprReturns(context.getConnection(), " 1=1 AND 2=2 ", true );
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), " 1=1 AND 2=2 ", true );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAnd2(Context context) {
-        assertBooleanExprReturns(context.getConnection(), " 1=1 AND 2=0 ", false );
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), " 1=1 AND 2=0 ", false );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOr(Context context) {
-        assertBooleanExprReturns(context.getConnection(), " 1=0 OR 2=0 ", false );
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), " 1=0 OR 2=0 ", false );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBool1(Context context) {
-        assertExprReturns(context.getConnection(), "1=1 AND 1=0", "false" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND 1=0", "false" );
     }
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBool2(Context context) {
-        assertExprReturns(context.getConnection(), "1=1 AND 1=1", "true" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND 1=1", "true" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBool3(Context context) {
-        assertExprReturns(context.getConnection(), "1=1 AND null", "false" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND null", "false" );
     }
 
 }

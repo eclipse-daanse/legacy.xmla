@@ -832,10 +832,10 @@ public class BatchTestCase{
         String mdx,
         String expectedResult)
     {
-        context.getConnection().getCacheControl(null).flushSchemaCache();
+        context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
         //Connection con =
         //    getTestContext().withSchemaPool(false).getConnection();
-        Connection con = context.getConnection();
+        Connection con = context.getConnectionWithDefaultRole();
         RolapNativeRegistry reg = getRegistry(con);
         reg.setListener(
             new Listener() {
@@ -930,7 +930,7 @@ public class BatchTestCase{
             return;
         }
 
-        context.getConnection().getCacheControl(null).flushSchemaCache();
+        context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
         try {
             LoggerFactory.getLogger(getClass()).debug("*** Native: " + mdx);
             boolean reuseConnection = !freshConnection;
@@ -938,7 +938,7 @@ public class BatchTestCase{
             //    getTestContext()
             //        .withSchemaPool(reuseConnection)
             //        .getConnection();
-            Connection con = context.getConnection();
+            Connection con = context.getConnectionWithDefaultRole();
             RolapNativeRegistry reg = getRegistry(con);
             reg.useHardCache(true);
             TestListener listener = new TestListener();
@@ -967,9 +967,9 @@ public class BatchTestCase{
 
             LoggerFactory.getLogger(getClass()).debug("*** Interpreter: " + mdx);
 
-            context.getConnection().getCacheControl(null).flushSchemaCache();
+            context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
             //con = getTestContext().withSchemaPool(false).getConnection();
-            con = context.getConnection();
+            con = context.getConnectionWithDefaultRole();
             reg = getRegistry(con);
             listener.setFoundEvaluator(false);
             reg.setListener(listener);
@@ -1005,7 +1005,7 @@ public class BatchTestCase{
                     + "interpreter; MDX=" + mdx);
             }
         } finally {
-            Connection con = context.getConnection();
+            Connection con = context.getConnectionWithDefaultRole();
             RolapNativeRegistry reg = getRegistry(con);
             reg.setEnabled(true);
             reg.useHardCache(false);

@@ -31,22 +31,22 @@ class AggregateFunDefTest {
     void testAggregateDepends(Context context) {
         // Depends on everything except Measures, Gender
         String s12 = allHiersExcept("[Measures]", "[Gender]" );
-        assertExprDependsOn(context.getConnection(),
+        assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "([Measures].[Unit Sales], [Gender].[F])", s12 );
         // Depends on everything except Customers, Measures, Gender
         String s13 = allHiersExcept( "[Customers]", "[Gender]" );
-        assertExprDependsOn(context.getConnection(),
+        assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "Aggregate([Customers].Members, ([Measures].[Unit Sales], [Gender].[F]))",
             s13 );
         // Depends on everything except Customers
         String s11 = allHiersExcept( "[Customers]" );
-        assertExprDependsOn(context.getConnection(),
+        assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "Aggregate([Customers].Members)",
             s11 );
         // Depends on the current member of the Product dimension, even though
         // [Product].[All Products] is referenced from the expression.
         String s1 = allHiersExcept( "[Customers]" );
-        assertExprDependsOn(context.getConnection(),
+        assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "Aggregate(Filter([Customers].[City].Members, (([Measures].[Unit Sales] / ([Measures].[Unit Sales], [Product]"
                 + ".[All Products])) > 0.1)))",
             s1 );
@@ -55,7 +55,7 @@ class AggregateFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAggregate(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Store].[CA plus OR] AS 'AGGREGATE({[Store].[USA].[CA], [Store].[USA].[OR]})'\n"
                 + "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} ON COLUMNS,\n"
                 + "      {[Store].[USA].[CA], [Store].[USA].[OR], [Store].[CA plus OR]} ON ROWS\n"
@@ -81,7 +81,7 @@ class AggregateFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAggregate2(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
                 + "  Member [Time].[Time].[1st Half Sales] AS 'Aggregate({Time.[1997].[Q1], Time.[1997].[Q2]})'\n"
                 + "  Member [Time].[Time].[2nd Half Sales] AS 'Aggregate({Time.[1997].[Q3], Time.[1997].[Q4]})'\n"
@@ -143,7 +143,7 @@ class AggregateFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAggregateWithIIF(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member store.foo as 'iif(3>1,"
                 + "aggregate({[Store].[All Stores].[USA].[OR]}),"
                 + "aggregate({[Store].[All Stores].[USA].[CA]}))' "
@@ -159,7 +159,7 @@ class AggregateFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAggregate2AllMembers(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
                 + "  Member [Time].[Time].[1st Half Sales] AS 'Aggregate({Time.[1997].[Q1], Time.[1997].[Q2]})'\n"
                 + "  Member [Time].[Time].[2nd Half Sales] AS 'Aggregate({Time.[1997].[Q3], Time.[1997].[Q4]})'\n"
@@ -222,7 +222,7 @@ class AggregateFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAggregateToSimulateCompoundSlicer(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Time].[Time].[1997 H1] as 'Aggregate({[Time].[1997].[Q1], [Time].[1997].[Q2]})'\n"
                 + "  MEMBER [Education Level].[College or higher] as 'Aggregate({[Education Level].[Bachelors Degree], "
                 + "[Education Level].[Graduate Degree]})'\n"

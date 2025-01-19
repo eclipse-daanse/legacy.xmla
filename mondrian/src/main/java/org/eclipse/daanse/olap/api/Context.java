@@ -78,11 +78,13 @@ public interface Context {
 	/*
 	 * Gives access to the {@link Connection}.
 	 */
-	Connection getConnection();
+	Connection getConnectionWithDefaultRole();
+	Connection getConnection(List<String> roles);
 
     Connection getConnection(ConnectionProps props);
+    
 
-    Scenario createScenario();
+    Scenario createScenario(List<String> roles);
 
 	void addConnection(Connection rolapConnection);
 

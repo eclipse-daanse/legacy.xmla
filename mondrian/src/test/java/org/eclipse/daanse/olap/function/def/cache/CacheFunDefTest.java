@@ -30,24 +30,24 @@ class CacheFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCache(Context context) {
         // test various data types: integer, string, member, set, tuple
-        assertExprReturns(context.getConnection(), "Cache(1 + 2)", "3" );
-        assertExprReturns(context.getConnection(), "Cache('foo' || 'bar')", "foobar" );
-        assertAxisReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Cache(1 + 2)", "3" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Cache('foo' || 'bar')", "foobar" );
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "[Gender].Children",
             "[Gender].[F]\n"
                 + "[Gender].[M]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "([Gender].[M], [Marital Status].[S].PrevMember)",
             "{[Gender].[M], [Marital Status].[M]}" );
 
         // inside another expression
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Order(Cache([Gender].Children), Cache(([Measures].[Unit Sales], [Time].[1997].[Q1])), BDESC)",
             "[Gender].[M]\n"
                 + "[Gender].[F]" );
 
         // doesn't work with multiple args
-        assertExprThrows(context.getConnection(),
+        assertExprThrows(context.getConnectionWithDefaultRole(),
             "Cache(1, 2)",
             "No function matches signature 'Cache(<Numeric Expression>, <Numeric Expression>)'" );
     }

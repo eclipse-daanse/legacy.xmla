@@ -30,7 +30,7 @@ class AncestorsFunDefTest {
     void testAncestors(Context context) {
         // Test that we can execute Ancestors by passing a level as
         // the depth argument (PC hierarchy)
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
             "with\n"
                 + "set [*ancestors] as\n"

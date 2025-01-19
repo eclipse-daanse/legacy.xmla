@@ -33,7 +33,7 @@ class UnionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnionAll(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Union({[Gender].[M]}, {[Gender].[F]}, ALL)",
             "[Gender].[M]\n"
                 + "[Gender].[F]" ); // order is preserved
@@ -43,7 +43,7 @@ class UnionFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnionAllTuple(Context context) {
         // With the bug, the last 8 rows are repeated.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
                 + "set [Set1] as 'Crossjoin({[Time].[1997].[Q1]:[Time].[1997].[Q4]},{[Store].[USA].[CA]:[Store].[USA].[OR]})'\n"
                 + "set [Set2] as 'Crossjoin({[Time].[1997].[Q2]:[Time].[1997].[Q3]},{[Store].[Mexico].[DF]:[Store].[Mexico]"
@@ -94,7 +94,7 @@ class UnionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnion(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Union({[Store].[USA], [Store].[USA], [Store].[USA].[OR]}, "
                 + "{[Store].[USA].[CA], [Store].[USA]})",
             "[Store].[USA]\n"
@@ -105,7 +105,7 @@ class UnionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnionEmptyBoth(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Union({}, {})",
             "" );
     }
@@ -113,7 +113,7 @@ class UnionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnionEmptyRight(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Union({[Gender].[M]}, {})",
             "[Gender].[M]" );
     }
@@ -121,7 +121,7 @@ class UnionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnionTuple(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Union({"
                 + " ([Gender].[M], [Marital Status].[S]),"
                 + " ([Gender].[F], [Marital Status].[S])"
@@ -138,7 +138,7 @@ class UnionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnionTupleDistinct(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Union({"
                 + " ([Gender].[M], [Marital Status].[S]),"
                 + " ([Gender].[F], [Marital Status].[S])"
@@ -155,7 +155,7 @@ class UnionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnionQuery(Context context) {
-        Result result = executeQuery(context.getConnection(),
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales], "
                 + "[Measures].[Store Cost], "
                 + "[Measures].[Store Sales]} on columns,\n"

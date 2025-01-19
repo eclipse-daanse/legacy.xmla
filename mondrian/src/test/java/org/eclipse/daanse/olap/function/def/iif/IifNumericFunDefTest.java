@@ -28,14 +28,14 @@ class IifNumericFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testIIfNumeric(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "IIf(([Measures].[Unit Sales],[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]) > 100, 45, 32)",
             "45" );
 
         // Compare two members. The system needs to figure out that they are
         // both numeric, and use the right overloaded version of ">", otherwise
         // we'll get a ClassCastException at runtime.
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "IIf([Measures].[Unit Sales] > [Measures].[Store Sales], 45, 32)",
             "32" );
     }
@@ -43,10 +43,10 @@ class IifNumericFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testIIfWithNullAndNumber(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "IIf(([Measures].[Unit Sales],[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]) > 100, null,20)",
             "" );
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "IIf(([Measures].[Unit Sales],[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]) > 100, 20,null)",
             "20" );
     }
@@ -54,7 +54,7 @@ class IifNumericFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testIifFWithBooleanBooleanAndNumericParameterForReturningTruePart(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT Filter(Store.allmembers, "
                 + "iif(measures.profit < 400000,"
                 + "[store].currentMember.NAME = \"USA\", 0)) on 0 FROM SALES",
@@ -68,7 +68,7 @@ class IifNumericFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testIifWithBooleanBooleanAndNumericParameterForReturningFalsePart(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT Filter([Store].[USA].[CA].[Beverly Hills].children, "
                 + "iif(measures.profit > 400000,"
                 + "[store].currentMember.NAME = \"USA\", 1)) on 0 FROM SALES",
@@ -82,7 +82,7 @@ class IifNumericFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testIIFWithBooleanBooleanAndNumericParameterForReturningZero(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT Filter(Store.allmembers, "
                 + "iif(measures.profit > 400000,"
                 + "[store].currentMember.NAME = \"USA\", 0)) on 0 FROM SALES",

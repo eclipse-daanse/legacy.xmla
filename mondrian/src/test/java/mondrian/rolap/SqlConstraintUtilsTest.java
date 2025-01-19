@@ -401,7 +401,7 @@ class SqlConstraintUtilsTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testReplaceCompoundSlicerPlaceholder(Context context) {
-        final Connection connection = context.getConnection();
+        final Connection connection = context.getConnectionWithDefaultRole();
 
         final String queryText =
             "SELECT {[Measures].[Customer Count]} ON 0 "
@@ -623,7 +623,7 @@ class SqlConstraintUtilsTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExpandSupportedCalculatedMembers2(Context context) {
-      final Connection connection = context.getConnection();
+      final Connection connection = context.getConnectionWithDefaultRole();
 
       final String queryText =
           "SELECT {[Measures].[Customer Count]} ON 0 "

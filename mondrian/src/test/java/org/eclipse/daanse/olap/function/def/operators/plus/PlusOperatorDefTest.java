@@ -30,42 +30,42 @@ class PlusOperatorDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPlus(Context context) {
-        assertExprDependsOn(context.getConnection(), "1 + 2", "{}" );
+        assertExprDependsOn(context.getConnectionWithDefaultRole(), "1 + 2", "{}" );
         String s1 = allHiersExcept( "[Measures]", "[Gender]" );
-        assertExprDependsOn(context.getConnection(),
+        assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "([Measures].[Unit Sales], [Gender].[F]) + 2", s1 );
 
-        assertExprReturns(context.getConnection(), "1+2", "3" );
-        assertExprReturns(context.getConnection(), "5 + " + NullNumericExpr, "5" ); // 5 + null --> 5
-        assertExprReturns(context.getConnection(), NullNumericExpr + " + " + NullNumericExpr, "" );
-        assertExprReturns(context.getConnection(), NullNumericExpr + " + 0", "0" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "1+2", "3" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "5 + " + NullNumericExpr, "5" ); // 5 + null --> 5
+        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " + " + NullNumericExpr, "" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " + 0", "0" );
     }
 
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPlus_NULL_plus_1(Context context) {
-        assertExprReturns(context.getConnection(),  "null + 1", "1" );
+        assertExprReturns(context.getConnectionWithDefaultRole(),  "null + 1", "1" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPlus_NULL_plus_0(Context context) {
-        assertExprReturns(context.getConnection(),  "null + 0", "0" );
+        assertExprReturns(context.getConnectionWithDefaultRole(),  "null + 0", "0" );
     }
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPlus_NULL_plus_NULL(Context context) {
-        assertExprReturns(context.getConnection(),  "null + null", "" );
+        assertExprReturns(context.getConnectionWithDefaultRole(),  "null + null", "" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMinus(Context context) {
-        assertExprReturns(context.getConnection(), "1-3", "-2" );
-        assertExprReturns(context.getConnection(), "5 - " + NullNumericExpr, "5" ); // 5 - null --> 5
-        assertExprReturns(context.getConnection(), NullNumericExpr + " - - 2", "2" );
-        assertExprReturns(context.getConnection(), NullNumericExpr + " - " + NullNumericExpr, "" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "1-3", "-2" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "5 - " + NullNumericExpr, "5" ); // 5 - null --> 5
+        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " - - 2", "2" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " - " + NullNumericExpr, "" );
     }
 
 }

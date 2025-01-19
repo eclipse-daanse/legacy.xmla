@@ -70,7 +70,7 @@ class RolapCubeTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testProcessFormatStringAttributeToIgnoreNullFormatString(Context context) {
         RolapCube cube =
-            (RolapCube) context.getConnection().getSchema().lookupCube("Sales", false);
+            (RolapCube) context.getConnectionWithDefaultRole().getSchema().lookupCube("Sales", false);
         StringBuilder builder = new StringBuilder();
         cube.processFormatStringAttribute(
             CalculatedMemberMappingImpl.builder().build(), builder);
@@ -81,7 +81,7 @@ class RolapCubeTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testProcessFormatStringAttribute(Context context) {
         RolapCube cube =
-            (RolapCube) context.getConnection().getSchema().lookupCube("Sales", false);
+            (RolapCube) context.getConnectionWithDefaultRole().getSchema().lookupCube("Sales", false);
         StringBuilder builder = new StringBuilder();
         CalculatedMemberMappingImpl xmlCalcMember =
         		CalculatedMemberMappingImpl.builder().build();
@@ -102,7 +102,7 @@ class RolapCubeTest {
             "[Measures].[Profit Growth]",
             "[Measures].[Profit Per Unit Shipped]"
         };
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         try {
             Cube warehouseAndSalesCube =
                 cubeByName(connection, "Warehouse and Sales");
@@ -273,7 +273,7 @@ class RolapCubeTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNonJoiningDimensions(Context context) {
 
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
 
         try {
             RolapCube salesCube = (RolapCube) cubeByName(connection, "Sales");
@@ -308,9 +308,9 @@ class RolapCubeTest {
     void testRolapCubeDimensionEquality(Context context) {
 
 
-        Connection connection1 = context.getConnection();
+        Connection connection1 = context.getConnectionWithDefaultRole();
         //withSchema(context, null);
-        Connection connection2 = context.getConnection();
+        Connection connection2 = context.getConnectionWithDefaultRole();
 
         try {
             RolapCube salesCube1 = (RolapCube) cubeByName(connection1, "Sales");
@@ -370,7 +370,7 @@ class RolapCubeTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBasedCubesForVirtualCube(Context context) {
-      Connection connection = context.getConnection();
+      Connection connection = context.getConnectionWithDefaultRole();
       RolapCube cubeSales =
           (RolapCube) connection.getSchema().lookupCube("Sales", false);
       RolapCube cubeWarehouse =
@@ -394,7 +394,7 @@ class RolapCubeTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBasedCubesForNotVirtualCubeIsThisCube(Context context) {
       RolapCube cubeSales =
-          (RolapCube) context.getConnection().getSchema().lookupCube("Sales", false);
+          (RolapCube) context.getConnectionWithDefaultRole().getSchema().lookupCube("Sales", false);
       assertNotNull(cubeSales);
       assertEquals(false, cubeSales.isVirtual());
       List<RolapCube> baseCubes = cubeSales.getBaseCubes();

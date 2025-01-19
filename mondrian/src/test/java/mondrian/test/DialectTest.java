@@ -85,7 +85,7 @@ class DialectTest {
 
 
   protected DataSource getDataSource(Context context) {
-    return context.getConnection().getDataSource();
+    return context.getConnectionWithDefaultRole().getDataSource();
   }
 
   @AfterEach
@@ -715,7 +715,7 @@ class DialectTest {
       withSchema(context, SchemaModifiers.DialectTestModifier1::new);
     // if date literal is incorrect the following query will give the error
     // ORA-01861: literal does not match format string
-    Result result = executeQuery(context.getConnection(),
+    Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select Time.[All Times].FirstChild on 0 from DateLiteralTest" );
     String firstChild =
             result.getAxes()[ 0 ].getPositions().get( 0 ).get( 0 )
@@ -736,7 +736,7 @@ class DialectTest {
       return;
     }
     withSchema(context, SchemaModifiers.DialectTestModifier2::new);
-    Result result = executeQuery(context.getConnection(),
+    Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select StoreSqft.[All StoreSqfts].children on 0 from BigIntTest" );
     RolapMember secondChild =
             (RolapMember) result.getAxes()[ 0 ].getPositions().get( 1 ).get( 0 );
@@ -744,7 +744,7 @@ class DialectTest {
     assertTrue( secondChild.getKey() instanceof Long );
     assertEquals( 2147503966L, ( (Long) secondChild.getKey() ).longValue() );
 
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select StoreSqft.[All StoreSqfts].children on 0, "
                     + "{measures.[Big Unit Sales]} on 1 from BigIntTest",
             "Axis #0:\n"

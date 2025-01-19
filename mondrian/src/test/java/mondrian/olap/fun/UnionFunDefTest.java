@@ -149,7 +149,7 @@ class UnionFunDefTest {
         + "{[Customers].[USA].[WA], [Time].[1997].[Q3], [Gender].[F], [Marital Status].[M]}\n"
         + "{[Customers].[USA].[WA], [Time].[1997].[Q4], [Gender].[F], [Marital Status].[M]}";
 
-    assertAxisReturns(context.getConnection(), "Union( " + tupleSet + ", " + tupleSet + ")", expected);
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Union( " + tupleSet + ", " + tupleSet + ")", expected);
   }
 
   @ParameterizedTest
@@ -164,7 +164,7 @@ class UnionFunDefTest {
         + "{[Customers].[Canada].[BC], [Time].[1997].[Q4], [Education Level].[High School Degree], [Gender].[F], [Marital Status].[M]}\n"
         + "{[Customers].[Canada].[BC], [Time].[1997].[Q4], [Education Level].[Partial College], [Gender].[F], [Marital Status].[M]}\n"
         + "{[Customers].[Canada].[BC], [Time].[1997].[Q4], [Education Level].[Partial High School], [Gender].[F], [Marital Status].[M]}";
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertAxisReturns(connection, tupleSet, expected);
 
     assertAxisReturns(connection, "Union( " + tupleSet + ", " + tupleSet + ")", expected);
@@ -182,7 +182,7 @@ class UnionFunDefTest {
         + "{[Customers].[Canada].[BC], [Time].[1998].[Q1], [Education Level].[Partial College], [Gender].[F], [Marital Status].[M]}\n"
         + "{[Customers].[Canada].[BC], [Time].[1998].[Q1], [Education Level].[Partial High School], [Gender].[F], [Marital Status].[M]}";
 
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertAxisReturns(connection, tupleSet, expected);
 
     assertAxisReturns(connection,
@@ -206,7 +206,7 @@ class UnionFunDefTest {
 
     String tupleSet1Expected =
         "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$90K - $110K], [Gender].[F], [Marital Status].[M]}";
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertAxisReturns(connection, tupleSet1, tupleSet1Expected);
 
     String tupleSet2Expected =
@@ -242,7 +242,7 @@ class UnionFunDefTest {
 
     String tupleSet1Expected =
         "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$90K - $110K], [Gender].[F], [Marital Status].[M]}";
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertAxisReturns(connection, tupleSet1, tupleSet1Expected);
 
     String tupleSet2Expected =

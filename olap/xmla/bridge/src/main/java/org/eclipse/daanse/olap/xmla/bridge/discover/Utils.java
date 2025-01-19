@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import org.eclipse.daanse.mdx.model.api.expression.operation.EmptyOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.InternalOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.ParenthesesOperationAtom;
+import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.DrillThroughAction;
@@ -58,6 +59,8 @@ import org.eclipse.daanse.rolap.mapping.api.model.MeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
+import org.eclipse.daanse.xmla.api.RequestMetaData;
+import org.eclipse.daanse.xmla.api.UserPrincipal;
 import org.eclipse.daanse.xmla.api.VarType;
 import org.eclipse.daanse.xmla.api.XmlaConstants;
 import org.eclipse.daanse.xmla.api.XmlaConstants.DBType;
@@ -396,9 +399,10 @@ public class Utils {
         Optional<String> schemaName,
         Optional<String> cubeName,
         Optional<String> baseCubeName,
-        Optional<CubeSourceEnum> cubeSource
-    ) {
-        List<Schema> schemas = context.getConnection().getSchemas();
+        Optional<CubeSourceEnum> cubeSource,
+        RequestMetaData metaData,
+        UserPrincipal userPrincipal) {
+        List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
         if (schemas != null) {
             return getSchemasWithFilter(schemas, schemaName).stream()
                 .map(s -> getMdSchemaCubesResponseRow(context.getName(), s, cubeName, baseCubeName,
@@ -413,10 +417,12 @@ public class Utils {
         Context c,
         Optional<String> oLibraryName,
         Optional<InterfaceNameEnum> oInterfaceName,
-        Optional<OriginEnum> oOrigin
+        Optional<OriginEnum> oOrigin,
+        RequestMetaData metaData,
+        UserPrincipal userPrincipal
     ) {
         List<MdSchemaFunctionsResponseRow> result = new ArrayList<>();
-        List<FunctionMetaData> fmList = c.getConnection().getContext().getFunctionService().getFunctionMetaDatas();
+        List<FunctionMetaData> fmList = c.getConnection(userPrincipal.roles()).getContext().getFunctionService().getFunctionMetaDatas();
         StringBuilder buf = new StringBuilder(50);
         for (FunctionMetaData fm : fmList) {
 			if (fm.operationAtom() instanceof EmptyOperationAtom//
@@ -579,9 +585,11 @@ public class Utils {
         Context context,
         Optional<String> oTableSchema,
         Optional<String> oTableName,
-        Optional<String> oTableType
+        Optional<String> oTableType,
+        RequestMetaData metaData,
+        UserPrincipal userPrincipal
     ) {
-        List<Schema> schemas = context.getConnection().getSchemas();
+        List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
         List<? extends DatabaseSchema> dbSchemas = ((RolapContext) context).getCatalogMapping().getDbschemas();
         if (schemas != null) {
             return getSchemasWithFilter(schemas, oTableSchema).stream()
@@ -822,9 +830,11 @@ public class Utils {
         Optional<String> oHierarchyUniqueName,
         Optional<String> oLevelName,
         Optional<String> oLevelUniqueName,
-        Optional<VisibilityEnum> oLevelVisibility
+        Optional<VisibilityEnum> oLevelVisibility,
+        RequestMetaData metaData,
+        UserPrincipal userPrincipal
     ) {
-        return getSchemasWithFilter(context.getConnection().getSchemas(), oSchemaName)
+        return getSchemasWithFilter(context.getConnection(userPrincipal.roles()).getSchemas(), oSchemaName)
             .stream()
             .map(s -> getMdSchemaLevelsResponseRow(context.getName(), s, oCubeName, oDimensionUniqueName,
                 oHierarchyUniqueName, oLevelName, oLevelUniqueName, oLevelVisibility))
@@ -839,9 +849,11 @@ public class Utils {
         Optional<String> oDimensionUniqueName,
         Optional<CubeSourceEnum> cubeSource,
         Optional<VisibilityEnum> oDimensionVisibility,
-        Optional<Boolean> deep
+        Optional<Boolean> deep,
+        RequestMetaData metaData,
+        UserPrincipal userPrincipal
     ) {
-        List<Schema> schemas = context.getConnection().getSchemas();
+        List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
         if (schemas != null) {
             return getSchemasWithFilter(schemas, oSchemaName).stream()
                 .map(s -> getMdSchemaDimensionsResponseRow(context.getName(), s, oCubeName
@@ -858,9 +870,11 @@ public class Utils {
         Optional<String> oCubeName,
         Optional<String> oMeasureGroupName,
         Optional<String> oDimensionUniqueName,
-        Optional<VisibilityEnum> oDimensionVisibility
+        Optional<VisibilityEnum> oDimensionVisibility,
+        RequestMetaData metaData,
+        UserPrincipal userPrincipal
     ) {
-        List<Schema> schemas = context.getConnection().getSchemas();
+        List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
         if (schemas != null) {
             return getSchemasWithFilter(schemas, oSchemaName).stream()
                 .map(s -> getMdSchemaMeasureGroupDimensionsResponseRow(context.getName(), s, oCubeName,
@@ -885,9 +899,13 @@ public class Utils {
         Optional<String> oMemberCaption,
         Optional<CubeSourceEnum> oCubeSource,
         Optional<TreeOpEnum> oTreeOp,
-        Optional<Boolean> emitInvisibleMembers
+        Optional<Boolean> emitInvisibleMembers,
+        RequestMetaData metaData,
+        UserPrincipal userPrincipal
     ) {
-        List<Schema> schemas = context.getConnection().getSchemas();
+    	//TODO: move connection one level to the top
+        Connection connection = context.getConnection(userPrincipal.roles());
+		List<Schema> schemas = connection.getSchemas();
         if (schemas != null) {
             return getSchemasWithFilter(schemas, oSchemaName).stream()
                 .map(s -> getMdSchemaMembersResponseRow(context.getName(), s, oCubeName,
@@ -919,9 +937,11 @@ public class Utils {
         Optional<String> oSetName,
         Optional<ScopeEnum> oScope,
         Optional<CubeSourceEnum> oCubeSource,
-        Optional<String> oHierarchyUniqueName
+        Optional<String> oHierarchyUniqueName,
+        RequestMetaData metaData,
+        UserPrincipal userPrincipal
     ) {
-        List<Schema> schemas = context.getConnection().getSchemas();
+        List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
         if (schemas != null) {
             return getSchemasWithFilter(schemas, oSchemaName).stream()
                 .map(s -> getMdSchemaSetsResponseRow(context.getName(), s, oCubeName, oSetName, oScope, oCubeSource,
@@ -1879,9 +1899,11 @@ public class Utils {
         Optional<String> oHierarchyUniqueName,
         Optional<VisibilityEnum> oHierarchyVisibility,
         Optional<Integer> oHierarchyOrigin,
-        Optional<Boolean> deep
+        Optional<Boolean> deep,
+        RequestMetaData requestMetaData,
+        UserPrincipal userPrincipal
     ) {
-        return getSchemasWithFilter(context.getConnection().getSchemas(), oSchemaName)
+        return getSchemasWithFilter(context.getConnection(userPrincipal.roles()).getSchemas(), oSchemaName)
             .stream().map(s -> getMdSchemaHierarchiesResponseRow(
                 context.getName(),
                 s,
@@ -2195,9 +2217,11 @@ oHierarchyName)
         Optional<String> oPropertyName,
         Optional<PropertyOriginEnum> oPropertyOrigin,
         Optional<CubeSourceEnum> oCubeSource,
-        Optional<VisibilityEnum> oPropertyVisibility
+        Optional<VisibilityEnum> oPropertyVisibility,
+        RequestMetaData requestMetaData,
+        UserPrincipal userPrincipal
     ) {
-        return getSchemasWithFilter(context.getConnection().getSchemas(), oSchemaName)
+        return getSchemasWithFilter(context.getConnection(userPrincipal.roles()).getSchemas(), oSchemaName)
             .stream().map(s -> getMdSchemaPropertiesResponseRow(
                 context.getName(),
                 s,
@@ -2428,9 +2452,11 @@ oHierarchyName)
         Optional<String> oMeasureName,
         Optional<String> oMeasureUniqueName,
         Optional<String> oMeasureGroupName,
-        boolean shouldEmitInvisibleMembers
+        boolean shouldEmitInvisibleMembers,
+        RequestMetaData requestMetaData,
+        UserPrincipal userPrincipal
     ) {
-        return getSchemasWithFilter(context.getConnection().getSchemas(), oSchemaName)
+        return getSchemasWithFilter(context.getConnection(userPrincipal.roles()).getSchemas(), oSchemaName)
             .stream().filter(s -> s != null)
             .map(s -> getMdSchemaMeasuresResponseRow(context.getName(), s, oCubeName, oMeasureName,
                 oMeasureUniqueName, oMeasureGroupName, shouldEmitInvisibleMembers))

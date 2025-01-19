@@ -30,7 +30,7 @@ class TopBottomPercentSumFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBottomPercent(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "BottomPercent(Filter({[Store].[All Stores].[USA].[CA].Children, [Store].[All Stores].[USA].[OR].Children, "
                 + "[Store].[All Stores].[USA].[WA].Children}, ([Measures].[Unit Sales] > 0.0)), 100.0, [Measures].[Store "
                 + "Sales])",
@@ -48,7 +48,7 @@ class TopBottomPercentSumFunDefTest {
                 + "[Store].[USA].[WA].[Tacoma]\n"
                 + "[Store].[USA].[OR].[Salem]" );
 
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "BottomPercent({[Promotion Media].[Media Type].members}, 1, [Measures].[Unit Sales])",
             "[Promotion Media].[Radio]\n"
                 + "[Promotion Media].[Sunday Paper, Radio, TV]" );
@@ -59,7 +59,7 @@ class TopBottomPercentSumFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBottomSum(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "BottomSum({[Promotion Media].[Media Type].members}, 5000, [Measures].[Unit Sales])",
             "[Promotion Media].[Radio]\n"
                 + "[Promotion Media].[Sunday Paper, Radio, TV]" );
@@ -72,7 +72,7 @@ class TopBottomPercentSumFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopPercentCrossjoin(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "{TopPercent(Crossjoin([Product].[Product Department].members,\n"
                 + "[Time].[1997].children),10,[Measures].[Store Sales])}",
             "{[Product].[Food].[Produce], [Time].[1997].[Q4]}\n"
@@ -84,7 +84,7 @@ class TopBottomPercentSumFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopPercent(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "TopPercent({[Promotion Media].[Media Type].members}, 70, [Measures].[Unit Sales])",
             "[Promotion Media].[No Media]" );
     }
@@ -94,7 +94,7 @@ class TopBottomPercentSumFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopSum(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "TopSum({[Promotion Media].[Media Type].members}, 200000, [Measures].[Unit Sales])",
             "[Promotion Media].[No Media]\n"
                 + "[Promotion Media].[Daily Paper, Radio, TV]" );
@@ -103,7 +103,7 @@ class TopBottomPercentSumFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopSumEmpty(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "TopSum(Filter({[Promotion Media].[Media Type].members}, 1=0), "
                 + "200000, [Measures].[Unit Sales])",
             "" );
@@ -133,8 +133,8 @@ class TopBottomPercentSumFunDefTest {
                 + " TopPercent([*aaa], 50, [Measures].[Unit Sales]) on columns\n"
                 + "from Sales";
 
-        final Result result = executeQuery(context.getConnection(), queryWithoutAlias );
-        assertQueryReturns(context.getConnection(),
+        final Result result = executeQuery(context.getConnectionWithDefaultRole(), queryWithoutAlias );
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             queryWithAlias,
             TestUtil.toString( result ) );
     }

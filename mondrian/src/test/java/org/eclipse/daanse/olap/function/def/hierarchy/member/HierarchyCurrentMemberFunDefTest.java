@@ -38,7 +38,7 @@ class HierarchyCurrentMemberFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCurrentMember(Context context) {
         // <Dimension>.CurrentMember
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertAxisReturns(connection, "[Gender].CurrentMember", "[Gender].[All Gender]" );
         // <Hierarchy>.CurrentMember
         assertAxisReturns(connection,
@@ -54,7 +54,7 @@ class HierarchyCurrentMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCurrentMemberDepends(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
             "[Gender].CurrentMember",
             "{[Gender]}" );
@@ -81,7 +81,7 @@ class HierarchyCurrentMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCurrentMemberFromSlicer(Context context) {
-        Result result = executeQuery(context.getConnection(),
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as '[Gender].CurrentMember.Name'\n"
                 + "select {[Measures].[Foo]} on columns\n"
                 + "from Sales where ([Gender].[F])" );
@@ -91,7 +91,7 @@ class HierarchyCurrentMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCurrentMemberFromDefaultMember(Context context) {
-        Result result = executeQuery(context.getConnection(),
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as"
                 + " '[Time].[Time].CurrentMember.Name'\n"
                 + "select {[Measures].[Foo]} on columns\n"
@@ -116,7 +116,7 @@ class HierarchyCurrentMemberFunDefTest {
                 + "select {[Measures].[Unit Sales], [Measures].[Foo]} ON COLUMNS,\n"
                 + "  {[Product].[Food].[Dairy]} ON ROWS\n"
                 + "from [Sales]";
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         Result result =
             executeQuery(connection,
                 queryString + " where [Time].[1997]" );
@@ -166,7 +166,7 @@ class HierarchyCurrentMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCurrentMemberFromAxis(Context context) {
-        Result result = executeQuery(context.getConnection(),
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as"
                 + " '[Gender].CurrentMember.Name"
                 + " || [Marital Status].CurrentMember.Name'\n"
@@ -185,7 +185,7 @@ class HierarchyCurrentMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCurrentMemberInCalcMember(Context context) {
-        Result result = executeQuery(context.getConnection(),
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as '[Measures].CurrentMember.Name'\n"
                 + "select {[Measures].[Foo]} on columns\n"
                 + "from Sales" );

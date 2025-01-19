@@ -86,7 +86,7 @@ public class PerformanceTest {
     final Statistician statistician =
       new Statistician( "testBugMondrian550" );
     for ( int i = 0; i < 10; i++ ) {
-      checkBugMondrian550(context.getConnection(), statistician );
+      checkBugMondrian550(context.getConnectionWithDefaultRole(), statistician );
     }
     statistician.printDurations();
   }
@@ -125,7 +125,7 @@ public class PerformanceTest {
     final Statistician statistician =
       new Statistician( "testBugMondrian550Tuple" );
     int n = LOGGER.isDebugEnabled() ? 10 : 2;
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     for ( int i = 0; i < n; i++ ) {
       checkBugMondrian550Tuple(connection, statistician );
     }
@@ -198,7 +198,7 @@ public class PerformanceTest {
     }
     long start = System.currentTimeMillis();
     Result result =
-      executeQuery(context.getConnection(),
+      executeQuery(context.getConnectionWithDefaultRole(),
         "select  non empty  {  crossjoin( customers.[city].members, "
           + "crossjoin( [store type].[store type].members,  "
           + "product.[product name].members)) }"
@@ -266,7 +266,7 @@ public class PerformanceTest {
       new Statistician( "testVeryLargeExplicitSet: Param query" ),
     };
     for ( int i = 0; i < 10; i++ ) {
-      checkVeryLargeExplicitSet(context.getConnection(), statisticians);
+      checkVeryLargeExplicitSet(context.getConnectionWithDefaultRole(), statisticians);
     }
     for ( Statistician statistician : statisticians ) {
       statistician.printDurations();
@@ -359,7 +359,7 @@ public class PerformanceTest {
     final Statistician statistician =
       new Statistician( "testBugMondrian639" );
     for ( int i = 0; i < 20; i++ ) {
-      checkBugMondrian639(context.getConnection(), statistician);
+      checkBugMondrian639(context.getConnectionWithDefaultRole(), statistician);
     }
     statistician.printDurations();
   }
@@ -422,7 +422,7 @@ public class PerformanceTest {
         + "Crossjoin([Customers].[name].members,[Store].[Store Name].members)"
         + " on 1 from sales";
     long start = System.currentTimeMillis();
-    executeQuery(context.getConnection(), mdx);
+    executeQuery(context.getConnectionWithDefaultRole(), mdx);
 
     // jdk1.6 marmalade 3.2 14036  23,588 23,426 ms
     // jdk1.6 marmalade main 14036 26,430 27,045 25,497 ms
@@ -526,7 +526,7 @@ public class PerformanceTest {
         + "from [Sales]\n"
         + "where [Time].[1997].[Q3]";
     final long start = System.currentTimeMillis();
-    assertQueryReturns(context.getConnection(), mdx, result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, result );
     printDuration( "in-memory calc", start );
   }
 
@@ -548,7 +548,7 @@ public class PerformanceTest {
     // jdk1.7 marmite   main 14771    266 ms (as part of suite)
     // jdk1.7 marmite   main 14773    181 ms
     long start = System.currentTimeMillis();
-    executeQuery(context.getConnection(),
+    executeQuery(context.getConnectionWithDefaultRole(),
       "WITH SET [filtered] AS "
         + "FILTER({customers.members, customers.members, customers.members, customers.members, customers.members}, "
         + "[Measures].[Unit Sales] > 100) "
@@ -611,7 +611,7 @@ public class PerformanceTest {
     SystemWideProperties.instance().SsasCompatibleNaming = false;
     withSchema(context, SchemaModifiers.PerformanceTestModifier4::new);
     // original test case for MONDRIAN-1242; ensures correct result
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertQueryReturns(connection,
       "select {[Measures].[Unit Sales]} on COLUMNS,\n"
         + "[Store].[USA].[CA].Children on ROWS\n"

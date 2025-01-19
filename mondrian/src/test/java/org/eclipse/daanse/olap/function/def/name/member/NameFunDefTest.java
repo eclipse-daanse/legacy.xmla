@@ -29,14 +29,14 @@ class NameFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMemberName(Context context) {
-        assertExprReturns(context.getConnection(), "[Time].[1997].Name", "1997" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "[Time].[1997].Name", "1997" );
         // dimension name
-        assertExprReturns(context.getConnection(), "[Store].Name", "Store" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "[Store].Name", "Store" );
         // member name
-        assertExprReturns(context.getConnection(), "[Store].DefaultMember.Name", "All Stores" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "[Store].DefaultMember.Name", "All Stores" );
         if ( isDefaultNullMemberRepresentation() ) {
             // name of null member
-            assertExprReturns(context.getConnection(), "[Store].Parent.Name", "#null" );
+            assertExprReturns(context.getConnectionWithDefaultRole(), "[Store].Parent.Name", "#null" );
         }
     }
 

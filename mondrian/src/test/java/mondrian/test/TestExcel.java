@@ -38,11 +38,11 @@ public class TestExcel {
                 SELECT NON EMPTY CrossJoin(Hierarchize(AddCalculatedMembers({DrilldownLevel({[Store].[All Stores]})})),Hierarchize(AddCalculatedMembers({DrilldownLevel({[Position].[All Position]})}))) DIMENSION PROPERTIES PARENT_UNIQUE_NAME ON COLUMNS  FROM [HR] WHERE ([Measures].[Count]) CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS
                 """;
 
-        QueryComponent queryComponent = context.getConnection().parseStatement(mdxQueryString);
+        QueryComponent queryComponent = context.getConnectionWithDefaultRole().parseStatement(mdxQueryString);
 
         assertThat(queryComponent).isInstanceOf(Query.class);
         if (queryComponent instanceof Query query) {
-            Statement statement = context.getConnection().createStatement();
+            Statement statement = context.getConnectionWithDefaultRole().createStatement();
             CellSet cellSet = statement.executeQuery(query);
 
             System.out.println(cellSet);

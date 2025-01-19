@@ -13,6 +13,16 @@
  */
 package org.eclipse.daanse.olap.action.impl;
 
+import static org.eclipse.daanse.olap.action.impl.DrillThroughUtils.getCoordinateElements;
+import static org.eclipse.daanse.olap.action.impl.DrillThroughUtils.getDrillThroughQuery;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
 import org.eclipse.daanse.olap.action.api.ActionService;
 import org.eclipse.daanse.olap.action.api.ReportAction;
 import org.eclipse.daanse.olap.action.api.UrlAction;
@@ -21,6 +31,8 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DrillThroughAction;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.xmla.api.RequestMetaData;
+import org.eclipse.daanse.xmla.api.UserPrincipal;
 import org.eclipse.daanse.xmla.api.common.enums.ActionTypeEnum;
 import org.eclipse.daanse.xmla.api.common.enums.CoordinateTypeEnum;
 import org.eclipse.daanse.xmla.api.common.enums.CubeSourceEnum;
@@ -32,16 +44,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ServiceScope;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
-import static org.eclipse.daanse.olap.action.impl.DrillThroughUtils.getCoordinateElements;
-import static org.eclipse.daanse.olap.action.impl.DrillThroughUtils.getDrillThroughQuery;
 
 @Component(service = ActionService.class, scope = ServiceScope.SINGLETON, name="actionService", immediate = true)
 public class ActionServiceImpl implements ActionService {
@@ -92,12 +94,15 @@ public class ActionServiceImpl implements ActionService {
         Optional<String> coordinate,
         CoordinateTypeEnum coordinateType,
         InvocationEnum invocation,
-        Optional<CubeSourceEnum> cubeSource
+        Optional<CubeSourceEnum> cubeSource,
+        RequestMetaData metaData,
+        UserPrincipal userPrincipal
     ) {
+    	// TODO: one connection per context not each row
         List<MdSchemaActionsResponseRow> result = new ArrayList<>();
         result.addAll(contexts.stream().map(c ->
             getMdSchemaActionsResponseRow(c, schemaName, cubeName, actionName, actionType, coordinate, coordinateType
-                , invocation, cubeSource)
+                , invocation, cubeSource,metaData,userPrincipal)
         ).flatMap(Collection::stream).toList());
 
         if (CoordinateTypeEnum.CELL.equals(coordinateType)) {
@@ -161,9 +166,11 @@ public class ActionServiceImpl implements ActionService {
         Optional<String> oCoordinate,
         CoordinateTypeEnum coordinateType,
         InvocationEnum invocation,
-        Optional<CubeSourceEnum> oCubeSource
+        Optional<CubeSourceEnum> oCubeSource,
+        RequestMetaData metaData,
+        UserPrincipal userPrincipal
     ) {
-        List<Schema> schemas = context.getConnection().getSchemas();
+        List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
         if (schemas != null) {
             return getSchemasWithFilter(schemas, oSchemaName).stream()
                 .map(schema -> getMdSchemaActionsResponseRow(context.getName(), schema, cubeName, oActionName,

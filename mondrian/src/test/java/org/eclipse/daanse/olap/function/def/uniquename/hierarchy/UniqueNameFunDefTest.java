@@ -28,7 +28,7 @@ class UniqueNameFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchyUniqueName(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Gender].DefaultMember.Hierarchy.UniqueName",
             "[Gender]" );
     }
@@ -36,21 +36,21 @@ class UniqueNameFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTime(Context context) {
-        TestUtil.assertExprReturns(context.getConnection(),
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Time].[1997].[Q1].[1].Hierarchy.UniqueName", "[Time]" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBasic9(Context context) {
-        TestUtil.assertExprReturns(context.getConnection(),
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Gender].[All Gender].[F].Hierarchy.UniqueName", "[Gender]" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFirstInLevel9(Context context) {
-        TestUtil.assertExprReturns(context.getConnection(),
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Education Level].[All Education Levels].[Bachelors Degree].Hierarchy.UniqueName",
             "[Education Level]" );
     }
@@ -58,7 +58,7 @@ class UniqueNameFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchyAll(Context context) {
-        TestUtil.assertExprReturns(context.getConnection(),
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Gender].[All Gender].Hierarchy.UniqueName", "[Gender]" );
     }
 

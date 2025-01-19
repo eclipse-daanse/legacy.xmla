@@ -92,7 +92,7 @@ class NonEmptyPropertyForAllAxisTest {
             + "Row #3: \n"
             + "Row #3: \n"
             + "Row #3: \n";
-        assertQueryReturns(context.getConnection(), MDX_QUERY, EXPECTED_RESULT);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), MDX_QUERY, EXPECTED_RESULT);
     }
 
     @ParameterizedTest
@@ -217,7 +217,7 @@ class NonEmptyPropertyForAllAxisTest {
             + "Row #52: \n"
             + "Row #53: \n"
             + "Row #54: 2\n";
-        assertQueryReturns(context.getConnection(), MDX_QUERY, EXPECTED_RESULT);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), MDX_QUERY, EXPECTED_RESULT);
     }
 
     @ParameterizedTest
@@ -227,7 +227,7 @@ class NonEmptyPropertyForAllAxisTest {
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = true;
         String mdxQuery = "select from [Sales]\n"
             + "where [Time].[1997]\n";
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         Query query = connection.parseQuery(mdxQuery);
         assertEqualsVerbose(mdxQuery, query.toString());
      }

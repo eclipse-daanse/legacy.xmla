@@ -29,7 +29,7 @@ class ToggleDrillStateFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testToggleDrillState(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "ToggleDrillState({[Customers].[USA],[Customers].[Canada]},"
                 + "{[Customers].[USA],[Customers].[USA].[CA]})",
             "[Customers].[USA]\n"
@@ -42,7 +42,7 @@ class ToggleDrillStateFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testToggleDrillState2(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "ToggleDrillState([Product].[Product Department].members, "
                 + "{[Product].[All Products].[Food].[Snack Foods]})",
             "[Product].[Drink].[Alcoholic Beverages]\n"
@@ -74,7 +74,7 @@ class ToggleDrillStateFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testToggleDrillState3(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "ToggleDrillState("
                 + "{[Time].[1997].[Q1],"
                 + " [Time].[1997].[Q2],"
@@ -91,7 +91,7 @@ class ToggleDrillStateFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testToggleDrillStateTuple(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "ToggleDrillState(\n"
                 + "{([Store].[USA].[CA],"
                 + "  [Product].[All Products].[Drink].[Alcoholic Beverages]),\n"

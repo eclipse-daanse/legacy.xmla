@@ -32,7 +32,7 @@ class DemoTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandExpressiveNamesCatalog.class, dataloader = ExpressiveNamesDataLoader.class )
     void testSample0(Context context) {
-        assertQueryReturns(context.getConnection(), sampleQueries[0].query, sampleQueries[0].result );
+        assertQueryReturns(context.getConnectionWithDefaultRole(), sampleQueries[0].query, sampleQueries[0].result );
     }
 
 }

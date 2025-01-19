@@ -34,7 +34,7 @@ class CalculatedChildFunDefTest {
         // Construct calculated children with the same name for both [Drink] and
         // [Non-Consumable].  Then, create a metric to select the calculated
         // child based on current product member.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with\n"
                 + " member [Product].[All Products].[Drink].[Calculated Child] as '[Product].[All Products].[Drink]"
                 + ".[Alcoholic Beverages]'\n"
@@ -55,7 +55,7 @@ class CalculatedChildFunDefTest {
                 + "{[Product].[Non-Consumable]}\n"
                 + "Row #0: 6,838\n" // Calculated child for [Drink]
                 + "Row #1: 841\n" ); // Calculated child for [Non-Consumable]
-        Member member = executeSingletonAxis(context.getConnection(),
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
             "[Product].[All Products].CalculatedChild(\"foobar\")" );
         assertEquals( null, member );
     }
@@ -67,7 +67,7 @@ class CalculatedChildFunDefTest {
         // Construct calculated children with the same name for both [Drink] and
         // [Non-Consumable].  Then, create a metric to select the first
         // calculated child.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with\n"
                 + " member [Product].[All Products].[Drink].[Calculated Child] as '[Product].[All Products].[Drink]"
                 + ".[Alcoholic Beverages]'\n"
@@ -90,7 +90,7 @@ class CalculatedChildFunDefTest {
                 // Note: For [Non-Consumable], the calculated child for [Drink] was
                 // selected!
                 + "Row #1: 6,838\n" );
-        Member member = executeSingletonAxis(context.getConnection(),
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
             "[Product].[All Products].CalculatedChild(\"foobar\")" );
         assertEquals( null, member );
     }
@@ -99,7 +99,7 @@ class CalculatedChildFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCalculatedChildOnMemberWithNoChildren(Context context) {
         Member member =
-            executeSingletonAxis(context.getConnection(),
+            executeSingletonAxis(context.getConnectionWithDefaultRole(),
                 "[Measures].[Store Sales].CalculatedChild(\"foobar\")" );
         assertEquals( null, member );
     }
@@ -108,7 +108,7 @@ class CalculatedChildFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCalculatedChildOnNullMember(Context context) {
         Member member =
-            executeSingletonAxis(context.getConnection(),
+            executeSingletonAxis(context.getConnectionWithDefaultRole(),
                 "[Measures].[Store Sales].parent.CalculatedChild(\"foobar\")" );
         assertEquals( null, member);
     }

@@ -31,20 +31,20 @@ class PeriodsToDateFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPeriodsToDate(Context context) {
-        assertSetExprDependsOn(context.getConnection(), "PeriodsToDate()", "{[Time]}" );
-        assertSetExprDependsOn(context.getConnection(),
+        assertSetExprDependsOn(context.getConnectionWithDefaultRole(), "PeriodsToDate()", "{[Time]}" );
+        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "PeriodsToDate([Time].[Year])",
             "{[Time]}" );
-        assertSetExprDependsOn(context.getConnection(),
+        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "PeriodsToDate([Time].[Year], [Time].[1997].[Q2].[5])", "{}" );
 
         // two args
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "PeriodsToDate([Time].[Quarter], [Time].[1997].[Q2].[5])",
             "[Time].[1997].[Q2].[4]\n" + "[Time].[1997].[Q2].[5]" );
 
         // equivalent to above
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "TopCount("
                 + "  Descendants("
                 + "    Ancestor("
@@ -54,7 +54,7 @@ class PeriodsToDateFunDefTest {
             "[Time].[1997].[Q2].[4]\n" + "[Time].[1997].[Q2].[5]" );
 
         // one arg
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' SetToStr(PeriodsToDate([Time].[Quarter])) '\n"
                 + "select {[Measures].[Foo]} on columns\n"
                 + "from [Sales]\n"
@@ -66,7 +66,7 @@ class PeriodsToDateFunDefTest {
                 + "Row #0: {[Time].[1997].[Q2].[4], [Time].[1997].[Q2].[5]}\n" );
 
         // zero args
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' SetToStr(PeriodsToDate()) '\n"
                 + "select {[Measures].[Foo]} on columns\n"
                 + "from [Sales]\n"
@@ -81,7 +81,7 @@ class PeriodsToDateFunDefTest {
         // The default level is the level above the current member -- so
         // choosing a member at the highest level might trip up the
         // implementation.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' SetToStr(PeriodsToDate()) '\n"
                 + "select {[Measures].[Foo]} on columns\n"
                 + "from [Sales]\n"
@@ -94,7 +94,7 @@ class PeriodsToDateFunDefTest {
 
         // Testcase for bug 1598379, which caused NPE because the args[0].type
         // knew its dimension but not its hierarchy.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Position] as\n"
                 + " 'Sum("
                 + "PeriodsToDate([Time].[Time].Levels(0),"
@@ -129,7 +129,7 @@ class PeriodsToDateFunDefTest {
                 + "Row #1: 89,598.48\n"
                 + "Row #1: 139,628.35\n" );
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
                 + "{[Measures].[Unit Sales]} on columns,\n"
                 + "periodstodate(\n"
@@ -150,7 +150,7 @@ class PeriodsToDateFunDefTest {
 
         // TODO: enable
         if ( false ) {
-            assertExprThrows(context.getConnection(),
+            assertExprThrows(context.getConnectionWithDefaultRole(),
                 "Sum(PeriodsToDate([Time.Weekly].[Year], [Time].CurrentMember), [Measures].[Unit Sales])",
                 "wrong dimension" );
         }

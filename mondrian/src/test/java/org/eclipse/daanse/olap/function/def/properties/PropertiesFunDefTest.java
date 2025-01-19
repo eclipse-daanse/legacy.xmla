@@ -34,7 +34,7 @@ class PropertiesFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPropertiesExpr(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Store Type\")",
             "Gourmet Supermarket" );
     }
@@ -49,17 +49,17 @@ class PropertiesFunDefTest {
     void testPropertiesOnDimension(Context context) {
         // [Store] is a dimension. When called with a property like FirstChild,
         // it is implicitly converted to a member.
-        assertAxisReturns(context.getConnection(), "[Store].FirstChild", "[Store].[Canada]" );
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "[Store].FirstChild", "[Store].[Canada]" );
 
         // The same should happen with the <Member>.Properties(<String>)
         // function; now the bug is fixed, it does. Dimension is implicitly
         // converted to member.
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Store].Properties('MEMBER_UNIQUE_NAME')",
             "[Store].[All Stores]" );
 
         // Hierarchy is implicitly converted to member.
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Store].[USA].Hierarchy.Properties('MEMBER_UNIQUE_NAME')",
             "[Store].[All Stores]" );
     }
@@ -70,7 +70,7 @@ class PropertiesFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPropertiesNonExistent(Context context) {
-        assertExprThrows(context.getConnection(),
+        assertExprThrows(context.getConnectionWithDefaultRole(),
             "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Foo\")",
             "Property 'Foo' is not valid for" );
     }
@@ -78,7 +78,7 @@ class PropertiesFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPropertiesFilter(Context context) {
-        Result result = executeQuery(context.getConnection(),
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "SELECT { [Store Sales] } ON COLUMNS,\n"
                 + " TOPCOUNT(Filter( [Store].[Store Name].Members,\n"
                 + "                   [Store].CurrentMember.Properties(\"Store Type\") = \"Supermarket\"),\n"
@@ -90,7 +90,7 @@ class PropertiesFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPropertyInCalculatedMember(Context context) {
-        Result result = executeQuery(context.getConnection(),
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Store Sales per Sqft]\n"
                 + "AS '[Measures].[Store Sales] / "
                 + "  [Store].CurrentMember.Properties(\"Store Sqft\")'\n"

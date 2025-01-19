@@ -28,7 +28,7 @@ class FormatFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFormatFixed(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Format(12.2, \"#,##0.00\")",
             "12.20" );
     }
@@ -36,7 +36,7 @@ class FormatFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFormatVariable(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Format(1234.5, \"#,#\" || \"#0.00\")",
             "1,234.50" );
     }
@@ -44,7 +44,7 @@ class FormatFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFormatMember(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Format([Store].[USA].[CA], \"#,#\" || \"#0.00\")",
             "74,748.00" );
     }

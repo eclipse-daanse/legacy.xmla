@@ -27,7 +27,7 @@ class NameFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelName(Context context) {
-        assertExprReturns(context.getConnection(), "[Time].[1997].Level.Name", "Year" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "[Time].[1997].Level.Name", "Year" );
     }
 
 }

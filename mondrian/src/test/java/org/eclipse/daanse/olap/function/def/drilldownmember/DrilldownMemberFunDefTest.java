@@ -28,7 +28,7 @@ class DrilldownMemberFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDrilldownMember(Context context) {
         // Expect all children of USA
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "DrilldownMember({[Store].[USA]}, {[Store].[USA]})",
             "[Store].[USA]\n"
                 + "[Store].[USA].[CA]\n"
@@ -36,7 +36,7 @@ class DrilldownMemberFunDefTest {
                 + "[Store].[USA].[WA]" );
 
         // Expect all children of USA.CA and USA.OR
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "DrilldownMember({[Store].[USA].[CA], [Store].[USA].[OR]}, "
                 + "{[Store].[USA].[CA], [Store].[USA].[OR], [Store].[USA].[WA]})",
             "[Store].[USA].[CA]\n"
@@ -51,18 +51,18 @@ class DrilldownMemberFunDefTest {
 
 
         // Second set is empty
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "DrilldownMember({[Store].[USA]}, {})",
             "[Store].[USA]" );
 
         // Drill down a leaf member
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "DrilldownMember({[Store].[All Stores].[USA].[CA].[San Francisco].[Store 14]}, "
                 + "{[Store].[USA].[CA].[San Francisco].[Store 14]})",
             "[Store].[USA].[CA].[San Francisco].[Store 14]" );
 
         // Complex case with option recursive
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "DrilldownMember({[Store].[All Stores].[USA]}, "
                 + "{[Store].[All Stores].[USA], [Store].[All Stores].[USA].[CA], "
                 + "[Store].[All Stores].[USA].[CA].[San Diego], [Store].[All Stores].[USA].[WA]}, "
@@ -86,7 +86,7 @@ class DrilldownMemberFunDefTest {
                 + "[Store].[USA].[WA].[Yakima]" );
 
         // Sets of tuples
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "DrilldownMember({([Store Type].[Supermarket], [Store].[USA])}, {[Store].[USA]})",
             "{[Store Type].[Supermarket], [Store].[USA]}\n"
                 + "{[Store Type].[Supermarket], [Store].[USA].[CA]}\n"

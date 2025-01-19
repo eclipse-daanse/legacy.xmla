@@ -229,7 +229,7 @@ public class TestUtil {
 	public static void assertQueryThrows(Context context, String queryString, String pattern) {
 		Throwable throwable;
 		try {
-			Result result = executeQuery(context.getConnection(), queryString);
+			Result result = executeQuery(context.getConnectionWithDefaultRole(), queryString);
 //			discard(result);
 			throwable = null;
 		} catch (Throwable e) {
@@ -305,7 +305,7 @@ public class TestUtil {
 				cubeName = Util.quoteMdxIdentifier(cubeName);
 			}
 			expression = expression.replace("'", "''");
-			Result result = executeQuery(context.getConnection(), "with member [Measures].[Foo] as '" + expression
+			Result result = executeQuery(context.getConnectionWithDefaultRole(), "with member [Measures].[Foo] as '" + expression
 					+ "' select {[Measures].[Foo]} on columns from " + cubeName);
 			Cell cell = result.getCell(new int[] { 0 });
 			if (cell.isError()) {
@@ -598,7 +598,7 @@ public class TestUtil {
         //TODO
 		//context.setProperty(RolapConnectionProperties.Ignore.name(),
 		//		"true");
-		final Connection connection = context.getConnection();
+		final Connection connection = context.getConnectionWithDefaultRole();
 				//withProperties( propertyList ).getConnection();
 		return connection.getSchema().getWarnings();
 	}
@@ -1828,7 +1828,7 @@ public class TestUtil {
 						+ cookie,
 				info );
 		*/
-		Connection connection = context.getConnection();
+		Connection connection = context.getConnectionWithDefaultRole();
 		//		con.unwrap( OlapConnection.class );
 
         org.eclipse.daanse.olap.api.Statement statement = connection.createStatement();

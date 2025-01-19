@@ -28,7 +28,7 @@ class VarPFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testVarP(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "VARP({[Store].[All Stores].[USA].children},[Measures].[Store Sales])",
             "2,888,660,329.13" );
     }

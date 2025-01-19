@@ -41,7 +41,7 @@ class EffectiveMemberCacheTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCachedLevelMembers(Context context) {
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         clearCache(connection);
         // verify query for specific members can be fulfilled by members cached
         // from a level members query.
@@ -59,7 +59,7 @@ class EffectiveMemberCacheTest {
                 + "group by\n"
                 + "    `product`.`product_name`\n"
                 + "order by\n"
-                + (getDialect(context.getConnection()).requiresOrderByAlias()
+                + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? "    ISNULL(`c0`) ASC, `c0` ASC"
                 : "    ISNULL(`product`.`product_name`) ASC, "
                 + "`product`.`product_name` ASC");
@@ -81,7 +81,7 @@ class EffectiveMemberCacheTest {
     void testCachedChildMembers(Context context) {
     	context.getSchemaCache().clear();
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         clearCache(connection);
         // verify query for specific members can be fulfilled by members cached
         // from a child members query.
@@ -100,7 +100,7 @@ class EffectiveMemberCacheTest {
                 + "group by\n"
                 + "    `product`.`product_name`\n"
                 + "order by\n"
-                + (getDialect(context.getConnection()).requiresOrderByAlias()
+                + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? "    ISNULL(`c0`) ASC, `c0` ASC"
                 : "    ISNULL(`product`.`product_name`) ASC, "
                 + "`product`.`product_name` ASC");
@@ -121,7 +121,7 @@ class EffectiveMemberCacheTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelPreCacheThreshold(Context context) {
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         clearCache(connection);
         // [Store Type] members cardinality falls well below
         // LevelPreCacheThreshold.  All members should be loaded, not
@@ -154,7 +154,7 @@ class EffectiveMemberCacheTest {
         // with LevelPreCacheThreshold set to 0, we should not load
         // all [store type] members, we should only retrieve the 2
         // specified.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         clearCache(connection);
         ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
         String sql = "select\n"
@@ -188,7 +188,7 @@ class EffectiveMemberCacheTest {
         // we should avoid pulling all deg members, regardless of cardinality.
         // The cost of doing full scans of the fact table is assumed
         // to be too high.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         clearCache(connection);
         ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(1000);
         String sql = "select\n"

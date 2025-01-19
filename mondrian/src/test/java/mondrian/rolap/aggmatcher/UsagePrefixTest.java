@@ -41,7 +41,7 @@ class UsagePrefixTest extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
         SystemWideProperties props = SystemWideProperties.instance();
@@ -55,8 +55,8 @@ class UsagePrefixTest extends AggTableTestCase {
                 +   "{ measures.[Amount] } on rows from Cheques";
 
         withSchema(context, SchemaModifiers.UsagePrefixTestModifier1::new);
-        context.getConnection().getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(context.getConnection(),
+        context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             +    "{}\n"
@@ -78,7 +78,7 @@ class UsagePrefixTest extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
@@ -92,8 +92,8 @@ class UsagePrefixTest extends AggTableTestCase {
             +   "{ measures.[Amount] } on rows from Cheques";
 
         withSchema(context, SchemaModifiers.UsagePrefixTestModifier1::new);
-        context.getConnection().getCacheControl(null).flushSchemaCache();
-        assertQueryReturns(context.getConnection(),
+        context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
                 "Axis #0:\n"
                 + "{}\n"

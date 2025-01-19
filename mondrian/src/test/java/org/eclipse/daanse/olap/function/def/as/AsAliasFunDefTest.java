@@ -45,7 +45,7 @@ public class AsAliasFunDefTest {
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAs(Context context) {
-		assertAxisReturns(context.getConnection(), "Filter([Customers].Children as t,\n" + "t.Current.Name = 'USA')",
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Filter([Customers].Children as t,\n" + "t.Current.Name = 'USA')",
 				"[Customers].[USA]");
 	}
 
@@ -54,7 +54,7 @@ public class AsAliasFunDefTest {
 	void testAsWithColon(Context context) {
 		// 'AS' and the ':' operator have similar precedence, so it's worth
 		// checking that they play nice.
-		assertQueryReturns(context.getConnection(), """
+		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				select
 				  filter(
 				    [Time].[1997].[Q1].[2] : [Time].[1997].[Q3].[9] as t,\
@@ -91,7 +91,7 @@ public class AsAliasFunDefTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAsWithSetOfMembers(Context context) {
 		// Set of members. OK.
-		assertQueryReturns(context.getConnection(), """
+		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,\s
 				  {[Time].[1997].Children as t,\s
 				   Descendants(t, [Time].[Month])} on 1\s
@@ -141,7 +141,7 @@ public class AsAliasFunDefTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAsWithAliasMemberImplicitSet(Context context) {
 		// Alias a member. Implicitly becomes set. OK.
-		assertQueryReturns(context.getConnection(), """
+		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  {[Time].[1997] as t,
 				   Descendants(t, [Time].[Month])} on 1
@@ -231,7 +231,7 @@ public class AsAliasFunDefTest {
 		// Named set and alias with same name (t) and a second alias (t2).
 		// Reference to t from within descendants resolves to alias, of type
 		// [Time], because it is nearer.
-		assertQueryReturns(context.getConnection(), """
+		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				with set t as [Gender].Children
 				select
 				  Measures.[Unit Sales] * t on 0,
@@ -249,7 +249,7 @@ public class AsAliasFunDefTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAsWith2AliasesOfSameName(Context context) {
 		// Two aliases with same name. OK.
-		assertQueryReturns(context.getConnection(), """
+		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				select
 				  Measures.[Unit Sales] * [Gender].Children as t on 0,
 				  {[Time].[1997].Children as t,
@@ -267,7 +267,7 @@ public class AsAliasFunDefTest {
 		// Bug MONDRIAN-648 causes 'AS' to have lower precedence than '*'.
 		if (Bug.BugMondrian648Fixed) {
 			// Note that 'as' has higher precedence than '*'.
-			assertQueryReturns(context.getConnection(), """
+			assertQueryReturns(context.getConnectionWithDefaultRole(), """
 					select
 					  Measures.[Unit Sales] * [Gender].Members as t on 0,
 					  {t} on 1
@@ -304,7 +304,7 @@ public class AsAliasFunDefTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAsWithCalcSetCurrMember(Context context) {
 		// Calculated set, CurrentMember
-		assertQueryReturns(context.getConnection(), """
+		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  filter(
 				    (Time.Month.Members * Gender.Members) as s,
@@ -338,7 +338,7 @@ public class AsAliasFunDefTest {
 		// As above, but don't override [Gender] in filter condition. Note that
 		// the filter condition is evaluated in the context created by the
 		// filter set. So, only items with [All Gender] pass the filter.
-		assertQueryReturns(context.getConnection(), """
+		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  filter(
 				    (Time.Month.Members * Gender.Members) as s,
@@ -363,7 +363,7 @@ public class AsAliasFunDefTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAsWithMultiDefOfAliasInSameAxis(Context context) {
 		// Multiple definitions of alias within same axis
-		assertQueryReturns(context.getConnection(), """
+		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  generate(
 				    [Marital Status].Children as s,
@@ -454,7 +454,7 @@ public class AsAliasFunDefTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAsWithFailingSetAsString(Context context) {
 		// 'set AS string' is invalid
-		assertQueryThrows(context.getConnection(), """
+		assertQueryThrows(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  filter(
 				    (Time.Month.Members * Gender.Members) as 'foo',
@@ -467,7 +467,7 @@ public class AsAliasFunDefTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAsWithFailingSetAsNumeric(Context context) {
 		// 'set AS numeric' is invalid
-		assertQueryThrows(context.getConnection(), """
+		assertQueryThrows(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  filter(
 				    (Time.Month.Members * Gender.Members) as 1234,
@@ -480,7 +480,7 @@ public class AsAliasFunDefTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAsWithFailingNumericAsIdentifier(Context context) {
 		// 'numeric AS identifier' is invalid
-		assertQueryThrows(context.getConnection(), """
+		assertQueryThrows(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
 				  filter(
 				    123 * 456 as s,

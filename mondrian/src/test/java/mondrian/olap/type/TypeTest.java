@@ -64,7 +64,7 @@ class TypeTest {
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testConversions(Context foodMartContext) {
-        final Connection connection = foodMartContext.getConnection();
+        final Connection connection = foodMartContext.getConnectionWithDefaultRole();
         Cube salesCube =
             getCubeWithName("Sales", connection.getSchema().getCubes());
         assertTrue(salesCube != null);
@@ -195,7 +195,7 @@ class TypeTest {
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testCommonTypeWhenSetTypeHavingMemberTypeAndTupleType(Context foodMartContext) {
-        Connection connection=	foodMartContext.getConnection();
+        Connection connection=	foodMartContext.getConnectionWithDefaultRole();
         MemberType measureMemberType =
             getMemberTypeHavingMeasureInIt(getUnitSalesMeasure(connection));
 
@@ -226,7 +226,7 @@ class TypeTest {
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testCommonTypeOfMemberandTupleTypeIsTupleType(Context foodMartContext) {
-        Connection connection=	foodMartContext.getConnection();
+        Connection connection=	foodMartContext.getConnectionWithDefaultRole();
         MemberType measureMemberType =
             getMemberTypeHavingMeasureInIt(getUnitSalesMeasure(connection));
 
@@ -252,7 +252,7 @@ class TypeTest {
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testCommonTypeBetweenTuplesOfDifferentSizesIsATupleType(Context foodMartContext) {
-    Connection connection=	foodMartContext.getConnection();
+    Connection connection=	foodMartContext.getConnectionWithDefaultRole();
         MemberType measureMemberType =
             getMemberTypeHavingMeasureInIt(getUnitSalesMeasure(connection));
 

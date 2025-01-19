@@ -118,7 +118,7 @@ class TestAggregationManager extends BatchTestCase {
 
     private void prepareContext(Context context) {
         final Statement statement =
-            ((Connection) context.getConnection())
+            ((Connection) context.getConnectionWithDefaultRole())
                 .getInternalStatement();
         execution = new ExecutionImpl(statement, Optional.empty());
         aggMgr =
@@ -133,7 +133,7 @@ class TestAggregationManager extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFemaleUnitSales(Context context) {
         prepareContext(context);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         final FastBatchingCellReader fbcr =
             new FastBatchingCellReader(execution, getCube(connection,"Sales"), aggMgr);
         CellRequest request = createRequest(connection,
@@ -152,9 +152,9 @@ class TestAggregationManager extends BatchTestCase {
     void  testFemaleCustomerCount(Context context) {
         prepareContext(context);
         final FastBatchingCellReader fbcr =
-            new FastBatchingCellReader(execution, getCube(context.getConnection(), "Sales"), aggMgr);
+            new FastBatchingCellReader(execution, getCube(context.getConnectionWithDefaultRole(), "Sales"), aggMgr);
         CellRequest request =
-            createRequest(context.getConnection(),
+            createRequest(context.getConnectionWithDefaultRole(),
                 "Sales", "[Measures].[Customer Count]",
                 "customer", "gender", "F");
         Object value = aggMgr.getCellFromCache(request);
@@ -179,7 +179,7 @@ class TestAggregationManager extends BatchTestCase {
         List<String[]> Q1M1Q2M5 = new ArrayList<> ();
         Q1M1Q2M5.add(new String[] {"1997", "Q1", "1"});
         Q1M1Q2M5.add(new String[] {"1997", "Q2", "5"});
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 =
             createRequest(connection,
                 "Sales", "[Measures].[Customer Count]",
@@ -236,7 +236,7 @@ class TestAggregationManager extends BatchTestCase {
         {
             return;
         }
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request = createRequest(connection,
             "Sales", "[Measures].[Unit Sales]", "customer", "gender", "F");
 
@@ -262,7 +262,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     private void _testFemaleUnitSalesSql_withAggs(Context context) {
         prepareContext(context);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request = createRequest(connection,
             "Sales", "[Measures].[Unit Sales]", "customer", "gender", "F");
 
@@ -297,7 +297,7 @@ class TestAggregationManager extends BatchTestCase {
         {
             return;
         }
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest[] requests = new CellRequest[] {
             createRequest(connection,
                 "Sales",
@@ -349,7 +349,7 @@ class TestAggregationManager extends BatchTestCase {
     @SuppressWarnings("java:S5810")
     private void _testMultipleMeasures_withAgg(Context context) {
         prepareContext(context);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest[] requests = new CellRequest[] {
             createRequest(connection,
                 "Sales",
@@ -401,7 +401,7 @@ class TestAggregationManager extends BatchTestCase {
         String table = "store";
         String column = "store_state";
         String value = "CA";
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         final boolean fail = true;
         Cube salesCube = connection.getSchema().lookupCube(cube, fail);
         Member storeSqftMeasure =
@@ -518,7 +518,7 @@ class TestAggregationManager extends BatchTestCase {
                     DatabaseProduct.DERBY, derbySql, derbySql)
             };
         }
-        assertQuerySql(context.getConnection(), mdxQuery, patterns);
+        assertQuerySql(context.getConnectionWithDefaultRole(), mdxQuery, patterns);
     }
 
     /**
@@ -534,7 +534,7 @@ class TestAggregationManager extends BatchTestCase {
         prepareContext(context);
         // Not sure what this test is checking.
         // For now, only run it for derby.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         final Dialect dialect = getDialect(connection);
         if (getDatabaseProduct(dialect.getDialectName()) != DatabaseProduct.DERBY) {
             return;
@@ -597,7 +597,7 @@ class TestAggregationManager extends BatchTestCase {
     void testHierarchyInFactTable(Context context) {
     	context.getSchemaCache().clear();
         prepareContext(context);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request = createRequest(connection,
             "Store",
             "[Measures].[Store Sqft]",
@@ -636,7 +636,7 @@ class TestAggregationManager extends BatchTestCase {
     void testCountDistinctAggMiss(Context context) {
     	context.getSchemaCache().clear();
         prepareContext(context);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request = createRequest(connection,
             "Sales",
             "[Measures].[Customer Count]",
@@ -708,7 +708,7 @@ class TestAggregationManager extends BatchTestCase {
         {
             return;
         }
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request = createRequest(connection,
             "Sales", "[Measures].[Customer Count]",
             new String[] { "time_by_day", "time_by_day", "time_by_day" },
@@ -742,7 +742,7 @@ class TestAggregationManager extends BatchTestCase {
         // Summary "agg_g_ms_pcat_sales_fact_1997" doesn't match,
         // because we'd need to roll-up the distinct-count measure over
         // "month_of_year".
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request = createRequest(connection,
             "Sales", "[Measures].[Customer Count]",
             new String[] { "time_by_day", "time_by_day", "product_class" },
@@ -848,7 +848,7 @@ class TestAggregationManager extends BatchTestCase {
         //
         // Because [Gender] and [Marital Status] come from the [Customer]
         // table (the same as the distinct-count measure), we can roll up.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request = createRequest(connection,
             "Sales", "[Measures].[Customer Count]",
             new String[] {
@@ -900,7 +900,7 @@ class TestAggregationManager extends BatchTestCase {
         {
             return;
         }
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request = createRequest(connection,
             "Sales", "[Measures].[Customer Count]",
             new String[] {
@@ -962,7 +962,7 @@ class TestAggregationManager extends BatchTestCase {
 
         CellRequestConstraint aggConstraint =
             makeConstraintYearQuarterMonth(compoundMembers);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             "Sales", "[Measures].[Customer Count]",
             new String[] {"product_class"},
@@ -1050,7 +1050,7 @@ class TestAggregationManager extends BatchTestCase {
                 + "group by `store`.`store_country` "
                 + "order by ISNULL(`store`.`store_country`) ASC, `store`.`store_country` ASC",
                 26)};
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQuerySql(connection,
             "select NON EMPTY {[Customers].[USA]} ON COLUMNS,\n"
             + "       NON EMPTY Crossjoin(Hierarchize(Union({[Store].[All Stores]},\n"
@@ -1071,7 +1071,7 @@ class TestAggregationManager extends BatchTestCase {
     void testAggChildMembersOfLeaf(Context context) {
     	context.getSchemaCache().clear();
         prepareContext(context);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
             "select NON EMPTY {[Time].[1997]} ON COLUMNS,\n"
             + "       NON EMPTY Crossjoin(Hierarchize(Union({[Store].[All Stores]},\n"
@@ -1111,7 +1111,7 @@ class TestAggregationManager extends BatchTestCase {
             + "</Dimension>"));
          */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier1::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
             + "Filter ({ "
             + "[Store2].[All Stores].[USA].[CA].[Beverly Hills], "
@@ -1174,7 +1174,7 @@ class TestAggregationManager extends BatchTestCase {
             };
 
         //final TestContext context = getTestContext().withFreshConnection();
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         try {
             // This MDX gets the [Product].[Product Family] cardinality
             // from the DB.
@@ -1484,7 +1484,7 @@ class TestAggregationManager extends BatchTestCase {
         withSchema(context, TestKeyExpressionCardinalityCacheModifier::new);
         // This query causes "store"."store_country" cardinality to be
         // retrieved.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         executeQuery(query, connection);
 
         // Query1 will find the "store"."store_country" cardinality in cache.
@@ -1536,7 +1536,7 @@ class TestAggregationManager extends BatchTestCase {
 
         List<String[]> compoundMembers = new ArrayList<> ();
         compoundMembers.add(new String[] {"1997", "Q1", "1"});
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request = createRequest(connection,
             "Sales", "[Measures].[Customer Count]",
             new String[] { "product_class", "product_class", "product_class" },
@@ -1595,7 +1595,7 @@ class TestAggregationManager extends BatchTestCase {
         if (!(context.getConfig().enableNativeCrossJoin())) {
             return;
         }
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
         /*
         String cube = "<Cube name=\"Sales_Prod_Ord\">\n"
@@ -1801,9 +1801,9 @@ class TestAggregationManager extends BatchTestCase {
         };
 
         assertQuerySqlOrNot(
-            context.getConnection(), query, patterns, false, false, false);
+            context.getConnectionWithDefaultRole(), query, patterns, false, false, false);
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             query,
             "Axis #0:\n"
             + "{}\n"
@@ -1813,7 +1813,7 @@ class TestAggregationManager extends BatchTestCase {
             + "{[Product].[Food].[Deli].[Meat], [Gender].[M]}\n"
             + "Row #0: 4,705\n");
 
-        Result result = executeQuery(query, context.getConnection());
+        Result result = executeQuery(query, context.getConnectionWithDefaultRole());
         // this verifies that the caption for meat is Food
         assertEquals(
             "Meat",
@@ -1828,7 +1828,7 @@ class TestAggregationManager extends BatchTestCase {
             + "non empty [Product].[Food].[Deli].Children on rows "
             + "from [Sales_Prod_Ord] ";
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             query,
             "Axis #0:\n"
             + "{}\n"
@@ -1855,7 +1855,7 @@ class TestAggregationManager extends BatchTestCase {
             return;
         }
         // flush cache, to be sure sql is executed
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
 
         // This first query verifies that simple collapsed levels in aggregate
@@ -1969,7 +1969,7 @@ class TestAggregationManager extends BatchTestCase {
         if (!(context.getConfig().enableNativeCrossJoin())) {
             return;
         }
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         // flush cache to be sure sql is executed
         flushSchemaCache(connection);
 
@@ -2016,7 +2016,7 @@ class TestAggregationManager extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelKeyAsSqlExpWithAgg(Context context) {
         prepareContext(context);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         final boolean p;
         switch (getDatabaseProduct(getDialect(connection).getDialectName())) {
         case POSTGRES:
@@ -2075,7 +2075,7 @@ class TestAggregationManager extends BatchTestCase {
         context.getSchemaCache().clear();
         catalog = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.TestAggregationManagerModifier10(catalog, colName));
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select non empty{[Promotions].[All Promotions].Children} ON rows, "
             + "non empty {[Store].[All Stores]} ON columns "
             + "from [Sales] "
@@ -2362,7 +2362,7 @@ class TestAggregationManager extends BatchTestCase {
         // If the approxRowcount is used, there should not be
         // a query like : select count(*) from agg_pl_01_sales_fact_1997
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             mdxQuery,
             new SqlPattern[] {
                 new SqlPattern(
@@ -2601,7 +2601,7 @@ class TestAggregationManager extends BatchTestCase {
         final String sqlMysql =
             "select `product_class`.`product_family` as `c0`, sum(`agg_l_05_sales_fact_1997`.`unit_sales`) as `m0` from `product_class` as `product_class`, `product` as `product`, `agg_l_05_sales_fact_1997` as `agg_l_05_sales_fact_1997` where `agg_l_05_sales_fact_1997`.`product_id` = `product`.`product_id` and `product`.`product_class_id` = `product_class`.`product_class_id` group by `product_class`.`product_family`";
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             mdx,
             new SqlPattern[] {
                 new SqlPattern(
@@ -2678,7 +2678,7 @@ class TestAggregationManager extends BatchTestCase {
             + "[Product].[Product Family].members } on rows, "
             + "{[Measures].[Unit Sales]} on columns from [Foo]";
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             +    "{}\n"
@@ -2694,7 +2694,7 @@ class TestAggregationManager extends BatchTestCase {
         final String sqlMysql =
             "select `product_class`.`product_family` as `c0`, sum(`agg_l_05_sales_fact_1997`.`unit_sales`) as `m0` from `product_class` as `product_class`, `product` as `product`, `agg_l_05_sales_fact_1997` as `agg_l_05_sales_fact_1997` where `agg_l_05_sales_fact_1997`.`product_id` = `product`.`product_id` and `product`.`product_class_id` = `product_class`.`product_class_id` group by `product_class`.`product_family`";
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             mdx,
             new SqlPattern[] {
                 new SqlPattern(
@@ -2761,7 +2761,7 @@ class TestAggregationManager extends BatchTestCase {
             + "{ "
             + "[Promotions].[Media Type].members } on rows, {[Measures].[Unit Sales]} on columns from [Foo]";
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -2799,7 +2799,7 @@ class TestAggregationManager extends BatchTestCase {
         final String sqlMysql =
             "select `promotion`.`media_type` as `c0`, sum(`agg_c_special_sales_fact_1997`.`unit_sales_sum`) as `m0` from `promotion` as `promotion`, `agg_c_special_sales_fact_1997` as `agg_c_special_sales_fact_1997` where `agg_c_special_sales_fact_1997`.`promotion_id` = `promotion`.`promotion_id` group by `promotion`.`media_type`";
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             mdx,
             new SqlPattern[] {
                 new SqlPattern(
@@ -3125,7 +3125,7 @@ class TestAggregationManager extends BatchTestCase {
             + "    `product_class`.`product_family`,\n"
             + "    `agg_l_05_sales_fact_1997`.`store_id`";
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             mdx,
             new SqlPattern[] {
                 new SqlPattern(
@@ -3276,7 +3276,7 @@ class TestAggregationManager extends BatchTestCase {
                 + "    `agg_c_14_sales_fact_1997`.`month_of_year`,\n"
                 + "    `store`.`store_country`\n"
                 + "order by\n"
-                + (getDialect(context.getConnection()).requiresOrderByAlias()
+                + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                     ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
                     + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
                     + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
@@ -3287,7 +3287,7 @@ class TestAggregationManager extends BatchTestCase {
                     + "    ISNULL(`store`.`store_country`) ASC, `store`.`store_country` ASC");
 
             assertQuerySqlOrNot(
-                context.getConnection(),
+                context.getConnectionWithDefaultRole(),
                 mdx,
                 new SqlPattern[] {
                     new SqlPattern(
@@ -3297,7 +3297,7 @@ class TestAggregationManager extends BatchTestCase {
                 },
                 false, false, true);
         }
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -3437,7 +3437,7 @@ class TestAggregationManager extends BatchTestCase {
             + "    `time_by_day`.`the_year`,\n"
             + "    `store`.`store_country`\n"
             + "order by\n"
-            + (getDialect(context.getConnection()).requiresOrderByAlias()
+            + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
                 + "    ISNULL(`c1`) ASC, `c1` ASC"
                 : "    ISNULL(`time_by_day`.`the_year`) ASC, `time_by_day`.`the_year` ASC,\n"
@@ -3484,7 +3484,7 @@ class TestAggregationManager extends BatchTestCase {
             + "    `time_by_day`.`day_of_month`,\n"
             + "    `store`.`store_country`\n"
             + "order by\n"
-            + (getDialect(context.getConnection()).requiresOrderByAlias()
+            + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
                 ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
                 + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
                 + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
@@ -3520,7 +3520,7 @@ class TestAggregationManager extends BatchTestCase {
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier6::new);
 
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             mdx,
             new SqlPattern[] {
                 new SqlPattern(
@@ -3531,7 +3531,7 @@ class TestAggregationManager extends BatchTestCase {
             false, false, true);
 
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             mdx,
             new SqlPattern[] {
                 new SqlPattern(
@@ -3543,7 +3543,7 @@ class TestAggregationManager extends BatchTestCase {
 
         // Because we have caused a many-to-many relation between the agg table
         // and the dim table, we expect retarded numbers here.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -3558,7 +3558,7 @@ class TestAggregationManager extends BatchTestCase {
         // Make sure that queries on lower levels don't trigger a
         // false positive with the agg matcher.
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             mdxTooLowForAgg,
             new SqlPattern[] {
                 new SqlPattern(
@@ -3569,7 +3569,7 @@ class TestAggregationManager extends BatchTestCase {
             false, false, true);
 
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             mdxTooLowForAgg,
             new SqlPattern[] {
                 new SqlPattern(
@@ -3622,7 +3622,7 @@ class TestAggregationManager extends BatchTestCase {
                 + "</Schema>");
          */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier7::new);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         RolapStar star = connection.getSchemaReader()
             .getSchema().getRolapStarRegistry().getStar("sales_fact_1997");
         AggStar aggStar1 = getAggStar(star, "agg_c_10_sales_fact_1997");
@@ -3664,7 +3664,7 @@ class TestAggregationManager extends BatchTestCase {
             + "group by\n"
             + "    \"agg_c_10_sales_fact_1997\".\"the_year\"";
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             "select Time.[1997] on 0 from sales",
             new SqlPattern[]{
                 new SqlPattern(
@@ -3703,13 +3703,13 @@ class TestAggregationManager extends BatchTestCase {
         */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier3::new);
 
-        RolapStar star = context.getConnection().getSchemaReader()
+        RolapStar star = context.getConnectionWithDefaultRole().getSchemaReader()
             .getSchema().getRolapStarRegistry().getStar("sales_fact_1997");
         AggStar aggStarSpy = spy(
             getAggStar(star, "agg_c_special_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(context.getConfig().chooseAggregateByVolume())).thenReturn(0l);
-        context.getConnection().getSchemaReader()
+        context.getConnectionWithDefaultRole().getSchemaReader()
             .getSchema().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
 
         boolean[] rollup = { false };
@@ -3747,7 +3747,7 @@ class TestAggregationManager extends BatchTestCase {
             + "group by\n"
             + "    `customer`.`gender`";
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             "select gender.gender.members on 0 from sales",
             new SqlPattern[]{
                 new SqlPattern(
@@ -3803,13 +3803,13 @@ class TestAggregationManager extends BatchTestCase {
                 + "</Schema>");
          */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier4::new);
-        RolapStar star = context.getConnection().getSchemaReader()
+        RolapStar star = context.getConnectionWithDefaultRole().getSchemaReader()
             .getSchema().getRolapStarRegistry().getStar("sales_fact_1997");
         AggStar aggStarSpy = spy(
             getAggStar(star, "agg_g_ms_pcat_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(context.getConfig().chooseAggregateByVolume())).thenReturn(0l);
-        context.getConnection().getSchemaReader()
+        context.getConnectionWithDefaultRole().getSchemaReader()
             .getSchema().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
         boolean[] rollup = { false };
         AggStar returnedStar = AggregationManager
@@ -3846,7 +3846,7 @@ class TestAggregationManager extends BatchTestCase {
             + "group by\n"
             + "    `time_by_day`.`the_year`";
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             "select Time.[1997] on 0 from sales where "
             + "measures.[Customer Count]",
             new SqlPattern[]{
@@ -3874,7 +3874,7 @@ class TestAggregationManager extends BatchTestCase {
         String sql =
             "select count(*) as `c0` from `agg_c_10_sales_fact_1997` as `agg_c_10_sales_fact_1997`";
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             "select from sales",
             new SqlPattern[]{
                 new SqlPattern(

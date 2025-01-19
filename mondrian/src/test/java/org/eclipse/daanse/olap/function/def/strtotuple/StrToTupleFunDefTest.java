@@ -37,12 +37,12 @@ class StrToTupleFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStrToTuple(Context context) {
         // single dimension yields member
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "{StrToTuple(\"[Time].[1997].[Q2]\", [Time])}",
             "[Time].[1997].[Q2]" );
 
         // multiple dimensions yield tuple
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "{StrToTuple(\"([Gender].[F], [Time].[1997].[Q2])\", [Gender], [Time])}",
             "{[Gender].[F], [Time].[1997].[Q2]}" );
 
@@ -55,7 +55,7 @@ class StrToTupleFunDefTest {
         context.getSchemaCache().clear();
         ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
         // If any member is invalid, the whole tuple is null.
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "StrToTuple(\"([Gender].[M], [Marital Status].[Separated])\","
                 + " [Gender], [Marital Status])",
             "" );
@@ -64,7 +64,7 @@ class StrToTupleFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStrToTupleDuHierarchiesFails(Context context) {
-        assertAxisThrows(context.getConnection(),
+        assertAxisThrows(context.getConnectionWithDefaultRole(),
             "{StrToTuple(\"([Gender].[F], [Time].[1997].[Q2], [Gender].[M])\", [Gender], [Time], [Gender])}",
             "Tuple contains more than one member of hierarchy '[Gender]'." );
     }
@@ -72,7 +72,7 @@ class StrToTupleFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStrToTupleDupHierInSameDimensions(Context context) {
-        assertAxisThrows(context.getConnection(),
+        assertAxisThrows(context.getConnectionWithDefaultRole(),
             "{StrToTuple("
                 + "\"([Gender].[F], "
                 + "[Time].[1997].[Q2], "
@@ -86,20 +86,20 @@ class StrToTupleFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStrToTupleDepends(Context context) {
-        assertMemberExprDependsOn(context.getConnection(),
+        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
             "StrToTuple(\"[Time].[1997].[Q2]\", [Time])",
             "{}" );
 
         // converted to scalar, depends set is larger
-        assertExprDependsOn(context.getConnection(),
+        assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "StrToTuple(\"[Time].[1997].[Q2]\", [Time])",
             allHiersExcept( "[Time]" ) );
 
-        assertMemberExprDependsOn(context.getConnection(),
+        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
             "StrToTuple(\"[Time].[1997].[Q2], [Gender].[F]\", [Time], [Gender])",
             "{}" );
 
-        assertExprDependsOn(context.getConnection(),
+        assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "StrToTuple(\"[Time].[1997].[Q2], [Gender].[F]\", [Time], [Gender])",
             allHiersExcept( "[Time]", "[Gender]" ) );
     }

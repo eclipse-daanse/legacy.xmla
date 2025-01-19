@@ -29,7 +29,7 @@ class MinMaxFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMax(Context context) {
-        FunctionTest.assertExprReturns(context.getConnection(),
+        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
             "MAX({[Store].[All Stores].[USA].children},[Measures].[Store Sales])",
             "263,793.22" );
     }
@@ -38,7 +38,7 @@ class MinMaxFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMaxNegative(Context context) {
         // Bug 1771928, "Max() works incorrectly with negative values"
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
                 + "  member [Customers].[Neg] as '-1'\n"
                 + "  member [Customers].[Min] as 'Min({[Customers].[Neg]})'\n"
@@ -59,7 +59,7 @@ class MinMaxFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMin(Context context) {
-        FunctionTest.assertExprReturns(context.getConnection(),
+        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
             "MIN({[Store].[All Stores].[USA].children},[Measures].[Store Sales])",
             "142,277.07" );
     }
@@ -67,7 +67,7 @@ class MinMaxFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMinTuple(Context context) {
-        FunctionTest.assertExprReturns(context.getConnection(),
+        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
             "Min([Customers].[All Customers].[USA].Children, ([Measures].[Unit Sales], [Gender].[All Gender].[F]))",
             "33,036" );
     }

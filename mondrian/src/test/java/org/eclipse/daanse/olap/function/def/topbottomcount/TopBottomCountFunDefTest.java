@@ -38,7 +38,7 @@ class TopBottomCountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBottomCount(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "BottomCount({[Promotion Media].[Media Type].members}, 2, [Measures].[Unit Sales])",
             "[Promotion Media].[Radio]\n"
                 + "[Promotion Media].[Sunday Paper, Radio, TV]" );
@@ -47,7 +47,7 @@ class TopBottomCountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBottomCountUnordered(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "BottomCount({[Promotion Media].[Media Type].members}, 2)",
             "[Promotion Media].[Sunday Paper, Radio, TV]\n"
                 + "[Promotion Media].[TV]" );
@@ -58,7 +58,7 @@ class TopBottomCountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopCount(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "TopCount({[Promotion Media].[Media Type].members}, 2, [Measures].[Unit Sales])",
             "[Promotion Media].[No Media]\n"
                 + "[Promotion Media].[Daily Paper, Radio, TV]" );
@@ -67,7 +67,7 @@ class TopBottomCountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopCountUnordered(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "TopCount({[Promotion Media].[Media Type].members}, 2)",
             "[Promotion Media].[Bulk Mail]\n"
                 + "[Promotion Media].[Cash Register Handout]" );
@@ -76,7 +76,7 @@ class TopBottomCountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopCountTuple(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "TopCount([Customers].[Name].members,2,(Time.[1997].[Q1],[Measures].[Store Sales]))",
             "[Customers].[USA].[WA].[Spokane].[Grace McLaughlin]\n"
                 + "[Customers].[USA].[WA].[Spokane].[Matt Bellah]" );
@@ -85,7 +85,7 @@ class TopBottomCountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopCountEmpty(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "TopCount(Filter({[Promotion Media].[Media Type].members}, 1=0), 2, [Measures].[Unit Sales])",
             "" );
     }
@@ -93,7 +93,7 @@ class TopBottomCountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopCountDepends(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         checkTopBottomCountPercentDepends(connection, "TopCount" );
         checkTopBottomCountPercentDepends(connection, "TopPercent" );
         checkTopBottomCountPercentDepends(connection, "TopSum" );
@@ -146,10 +146,10 @@ class TopBottomCountFunDefTest {
                 + "Row #1: 199.46\n"
                 + "Row #2: 191.90\n";
         long now = System.currentTimeMillis();
-        assertQueryReturns(context.getConnection(), query, desiredResult );
+        assertQueryReturns(context.getConnectionWithDefaultRole(), query, desiredResult );
         LOGGER.info( "first query took " + ( System.currentTimeMillis() - now ) );
         now = System.currentTimeMillis();
-        assertQueryReturns(context.getConnection(), query, desiredResult );
+        assertQueryReturns(context.getConnectionWithDefaultRole(), query, desiredResult );
         LOGGER.info( "second query took " + ( System.currentTimeMillis() - now ) );
     }
 
@@ -175,8 +175,8 @@ class TopBottomCountFunDefTest {
                 + "0\n"
                 + "FROM [Sales]\n"
                 + "WHERE [Time].[1997].[Q1].[1]:[Time].[1997].[Q3].[8]";
-        final Result result = executeQuery(context.getConnection(), queryWithoutAlias );
-        assertQueryReturns(context.getConnection(),
+        final Result result = executeQuery(context.getConnectionWithDefaultRole(), queryWithoutAlias );
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             queryWithAlias,
             TestUtil.toString(result));
     }

@@ -29,17 +29,17 @@ class UnorderFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnorder(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Unorder([Gender].members)",
             "[Gender].[All Gender]\n"
                 + "[Gender].[F]\n"
                 + "[Gender].[M]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Unorder(Order([Gender].members, -[Measures].[Unit Sales]))",
             "[Gender].[All Gender]\n"
                 + "[Gender].[M]\n"
                 + "[Gender].[F]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Unorder(Crossjoin([Gender].members, [Marital Status].Children))",
             "{[Gender].[All Gender], [Marital Status].[M]}\n"
                 + "{[Gender].[All Gender], [Marital Status].[S]}\n"
@@ -49,17 +49,17 @@ class UnorderFunDefTest {
                 + "{[Gender].[M], [Marital Status].[S]}" );
 
         // implicitly convert member to set
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Unorder([Gender].[M])",
             "[Gender].[M]" );
 
-        assertAxisThrows(context.getConnection(),
+        assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Unorder(1 + 3)",
             "No function matches signature 'Unorder(<Numeric Expression>)'" );
-        assertAxisThrows(context.getConnection(),
+        assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Unorder([Gender].[M], 1 + 3)",
             "No function matches signature 'Unorder(<Member>, <Numeric Expression>)'" );
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Store Sales], [Measures].[Unit Sales]} on 0,\n"
                 + "  Unorder([Gender].Members) on 1\n"
                 + "from [Sales]",

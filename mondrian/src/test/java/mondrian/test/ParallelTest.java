@@ -39,7 +39,7 @@ class ParallelTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testParallelSchemaFlush(Context context) {
         // 5 threads, 8 cycles each, flush cache 1/10 of the time
-        checkSchemaFlush(context.getConnection(), 5, 8, 10);
+        checkSchemaFlush(context.getConnectionWithDefaultRole(), 5, 8, 10);
     }
 
     /**

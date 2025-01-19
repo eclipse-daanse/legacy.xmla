@@ -52,7 +52,7 @@ class DeadlockTest {
             new Runnable() {
             @Override
 			public void run() {
-                executeQuery(context.getConnection(),
+                executeQuery(context.getConnectionWithDefaultRole(),
                     "With\n"
                     + "Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Store],NonEmptyCrossJoin([*BASE_MEMBERS_Product],[*BASE_MEMBERS_Time]))'\n"
                     + "Set [*BASE_MEMBERS_Product] as '[Product].[Product Subcategory].Members'\n"

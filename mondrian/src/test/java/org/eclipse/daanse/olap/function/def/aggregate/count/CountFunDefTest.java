@@ -31,32 +31,32 @@ class CountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCount(Context context) {
-        assertExprDependsOn(context.getConnection(),
+        assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "count(Crossjoin([Store].[All Stores].[USA].Children, {[Gender].children}), INCLUDEEMPTY)",
             "{[Gender]}" );
 
         String s1 = allHiersExcept( "[Store]" );
-        assertExprDependsOn(context.getConnection(),
+        assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "count(Crossjoin([Store].[All Stores].[USA].Children, "
                 + "{[Gender].children}), EXCLUDEEMPTY)",
             s1 );
 
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "count({[Promotion Media].[Media Type].members})", "14" );
 
         // applied to an empty set
-        assertExprReturns(context.getConnection(), "count({[Gender].Parent}, IncludeEmpty)", "0" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "count({[Gender].Parent}, IncludeEmpty)", "0" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCountExcludeEmpty(Context context) {
         String s1 = allHiersExcept( "[Store]" );
-        assertExprDependsOn(context.getConnection(),
+        assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "count(Crossjoin([Store].[USA].Children, {[Gender].children}), EXCLUDEEMPTY)",
             s1 );
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Promo Count] as \n"
                 + " ' Count(Crossjoin({[Measures].[Unit Sales]},\n"
                 + " {[Promotion Media].[Media Type].members}), EXCLUDEEMPTY)'\n"
@@ -86,7 +86,7 @@ class CountFunDefTest {
                 + "Row #4: 12\n" );
 
         // applied to an empty set
-        assertExprReturns(context.getConnection(), "count({[Gender].Parent}, ExcludeEmpty)", "0" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "count({[Gender].Parent}, ExcludeEmpty)", "0" );
     }
 
     /**
@@ -99,7 +99,7 @@ class CountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCountExcludeEmptyNull(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Foo] AS\n"
                 + "    Iif("
                 + hierarchyName( "Time", "Time" )
@@ -163,7 +163,7 @@ class CountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCountExcludeEmptyOnCubeWithNoCountFacts(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH "
                 + "  MEMBER [Measures].[count] AS '"
                 + "    COUNT([Store Type].[Store Type].MEMBERS, EXCLUDEEMPTY)'"
@@ -180,7 +180,7 @@ class CountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCountExcludeEmptyOnVirtualCubeWithNoCountFacts(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH "
                 + "  MEMBER [Measures].[count] AS '"
                 + "    COUNT([Store].MEMBERS, EXCLUDEEMPTY)'"

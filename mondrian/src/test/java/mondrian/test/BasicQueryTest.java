@@ -297,37 +297,37 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSample0(Context context) {
-    assertQueryReturns(context.getConnection(), sampleQueries[0].query, sampleQueries[0].result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), sampleQueries[0].query, sampleQueries[0].result );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSample1(Context context) {
-    assertQueryReturns(context.getConnection(), sampleQueries[1].query, sampleQueries[1].result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), sampleQueries[1].query, sampleQueries[1].result );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSample2(Context context) {
-    assertQueryReturns(context.getConnection(), sampleQueries[2].query, sampleQueries[2].result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), sampleQueries[2].query, sampleQueries[2].result );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSample3(Context context) {
-    assertQueryReturns(context.getConnection(), sampleQueries[3].query, sampleQueries[3].result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), sampleQueries[3].query, sampleQueries[3].result );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSample4(Context context) {
-    assertQueryReturns(context.getConnection(), sampleQueries[4].query, sampleQueries[4].result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), sampleQueries[4].query, sampleQueries[4].result );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSample5(Context context) {
-    assertQueryReturns(context.getConnection(),  sampleQueries[5].query, sampleQueries[5].result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(),  sampleQueries[5].query, sampleQueries[5].result );
   }
 
   @ParameterizedTest
@@ -335,7 +335,7 @@ public class BasicQueryTest {
   void testSample5Snowflake(Context context) {
     SystemWideProperties.instance().FilterChildlessSnowflakeMembers = false;
     //final TestContext context = getTestContext().withFreshConnection();
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     try {
       assertQueryReturns(connection, sampleQueries[5].query, "Axis #0:\n" + "{[Time].[1997]}\n" + "Axis #1:\n"
           + "{[Measures].[Store Cost]}\n" + "{[Measures].[Store Sales]}\n" + "{[Measures].[Store Profit Rate]}\n"
@@ -377,19 +377,19 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSample6(Context context) {
-    assertQueryReturns(context.getConnection(), sampleQueries[6].query, sampleQueries[6].result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), sampleQueries[6].query, sampleQueries[6].result );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSample7(Context context) {
-    assertQueryReturns(context.getConnection(), sampleQueries[7].query, sampleQueries[7].result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), sampleQueries[7].query, sampleQueries[7].result );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSample8(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     if (getDatabaseProduct(TestUtil.getDialect(connection).getDialectName()) == DatabaseProduct.INFOBRIGHT ) {
       // Skip this test on Infobright, because [Promotion Sales] is
       // defined wrong.
@@ -401,7 +401,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testGoodComments(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertQueryReturns(connection, "SELECT {} ON ROWS, {} ON COLUMNS FROM [Sales]/* trailing comment*/", EmptyResult );
 
     String[] comments = { "-- a basic comment\n",
@@ -536,7 +536,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testBadComments(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     // Comments cannot appear inside identifiers.
     assertQueryThrows(connection, "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n" + " {[Gender].MEMBERS} ON ROWS\n"
         + "FROM [Sales]\n" + "WHERE {[/***an illegal comment****/Marital Status].[S]}", "Failed to parse query" );
@@ -557,7 +557,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testBothAxesEmpty(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertQueryReturns(connection, "SELECT {} ON ROWS, {} ON COLUMNS FROM [Sales]", EmptyResult );
 
     // expression which evaluates to empty set
@@ -576,7 +576,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCompoundSlicer(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     // two tuples
     assertQueryReturns(connection, "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n" + " {[Gender].MEMBERS} ON ROWS\n"
         + "FROM [Sales]\n" + "WHERE {([Marital Status].[S]),\n" + "       ([Marital Status].[M])}", "Axis #0:\n"
@@ -689,7 +689,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCompoundSlicerNonEmpty(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     // With MONDRIAN-814, cell totals would be about a factor of 4 smaller,
     // and the number of rows returned would be the same (1220) if 21, 22
     // and 23 were removed from the slicer.
@@ -711,7 +711,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testEmptyTupleSlicerFails(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertQueryThrows(connection, "select [Measures].[Unit Sales] on 0,\n" + "[Product].Children on 1\n"
         + "from [Warehouse and Sales]\n" + "where ()", "Encountered an error at (or somewhere around) input:4:8" );
   }
@@ -724,7 +724,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testBigQuery(Context context) {
     Result result =
-        executeQuery( context.getConnection(), "SELECT {[Measures].[Unit Sales]} on columns,\n" + " {[Product].members} on rows\n"
+        executeQuery( context.getConnectionWithDefaultRole(), "SELECT {[Measures].[Unit Sales]} on columns,\n" + " {[Product].members} on rows\n"
             + "from Sales" );
     final int rowCount = result.getAxes()[1].getPositions().size();
     assertEquals( SystemWideProperties.instance().FilterChildlessSnowflakeMembers ? 2256 : 2266, rowCount );
@@ -741,7 +741,7 @@ public class BasicQueryTest {
       return;
     }
     Result result =
-        executeQuery(context.getConnection(), "select [Gender].Members on 0,\n" + "[Time].[Weekly].[1997].[6].Children on 1\n"
+        executeQuery(context.getConnectionWithDefaultRole(), "select [Gender].Members on 0,\n" + "[Time].[Weekly].[1997].[6].Children on 1\n"
             + "from [Sales]\n" + "where [Marital Status].[S]" );
     final Cell cell = result.getCell( new int[] { 0, 0 } );
     final Map<String, Hierarchy> hierarchyMap = new HashMap<>();
@@ -763,7 +763,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNonEmpty1(Context context) {
-    assertSize(context.getConnection(), "select\n" + "  NON EMPTY CrossJoin({[Product].[All Products].[Drink].Children},\n"
+    assertSize(context.getConnectionWithDefaultRole(), "select\n" + "  NON EMPTY CrossJoin({[Product].[All Products].[Drink].Children},\n"
         + "    {[Customers].[All Customers].[USA].[WA].[Bellingham]}) on rows,\n" + "  CrossJoin(\n"
         + "    {[Measures].[Unit Sales], [Measures].[Store Sales]},\n"
         + "    { [Promotion Media].[All Media].[Radio],\n" + "      [Promotion Media].[All Media].[TV],\n"
@@ -775,7 +775,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNonEmpty2(Context context) {
-    assertSize(context.getConnection(), "select\n" + "  NON EMPTY CrossJoin(\n" + "    {[Product].[All Products].Children},\n"
+    assertSize(context.getConnectionWithDefaultRole(), "select\n" + "  NON EMPTY CrossJoin(\n" + "    {[Product].[All Products].Children},\n"
         + "    {[Customers].[All Customers].[USA].[WA].[Bellingham]}) on rows,\n" + "  NON EMPTY CrossJoin(\n"
         + "    {[Measures].[Unit Sales]},\n" + "    { [Promotion Media].[All Media].[Cash Register Handout],\n"
         + "      [Promotion Media].[All Media].[Sunday Paper],\n"
@@ -787,7 +787,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testOneDimensionalQueryWithTupleAsSlicer(Context context) {
     Result result =
-        executeQuery(context.getConnection(), "select\n" + "  [Product].[All Products].[Drink].children on columns\n" + "from Sales\n"
+        executeQuery(context.getConnectionWithDefaultRole(), "select\n" + "  [Product].[All Products].[Drink].children on columns\n" + "from Sales\n"
             + "where ([Measures].[Unit Sales], [Promotion Media].[All Media].[Street Handout], [Time].[1997])" );
     assertTrue( result.getAxes().length == 1 );
     assertTrue( result.getAxes()[0].getPositions().size() == 3 );
@@ -799,7 +799,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSlicerIsEvaluatedBeforeAxes(Context context) {
     // about 10 products exceeded 20000 units in 1997, only 2 for Q1
-    assertSize(context.getConnection(), "SELECT {[Measures].[Unit Sales]} on columns,\n"
+    assertSize(context.getConnectionWithDefaultRole(), "SELECT {[Measures].[Unit Sales]} on columns,\n"
         + " filter({[Product].members}, [Measures].[Unit Sales] > 20000) on rows\n" + "FROM Sales\n"
         + "WHERE [Time].[1997].[Q1]", 1, 2 );
   }
@@ -807,7 +807,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSlicerWithCalculatedMembers(Context context) {
-    assertSize(context.getConnection(), "WITH Member [Time].[Time].[1997].[H1] as ' Aggregate({[Time].[1997].[Q1], [Time].[1997].[Q2]})' \n"
+    assertSize(context.getConnectionWithDefaultRole(), "WITH Member [Time].[Time].[1997].[H1] as ' Aggregate({[Time].[1997].[Q1], [Time].[1997].[Q2]})' \n"
         + "  MEMBER [Measures].[Store Margin] as '[Measures].[Store Sales] - [Measures].[Store Cost]'\n"
         + "SELECT {[Gender].members} on columns,\n" + " filter({[Product].members}, [Gender].[F] > 10000) on rows\n"
         + "FROM Sales\n" + "WHERE ([Time].[1997].[H1], [Measures].[Store Margin])", 3, 6 );
@@ -818,14 +818,14 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void _testEver(Context context) {
-    assertQueryReturns(context.getConnection(), "select\n" + " {[Measures].[Unit Sales], [Measures].[Ever]} on columns,\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "select\n" + " {[Measures].[Unit Sales], [Measures].[Ever]} on columns,\n"
         + " [Gender].members on rows\n" + "from Sales", "xxx" );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void _testDairy(Context context) {
-    assertQueryReturns(context.getConnection(), "with\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "with\n"
         + "  member [Product].[Non dairy] as '[Product].[All Products] - [Product].[Food].[Dairy]'\n"
         + "  member [Measures].[Dairy ever] as 'sum([Time].members, ([Measures].[Unit Sales],[Product].[Food]"
         + ".[Dairy]))'\n"
@@ -843,7 +843,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSolveOrder(Context context) {
-    assertQueryReturns(context.getConnection(), "WITH\n" + "   MEMBER [Measures].[StoreType] AS \n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH\n" + "   MEMBER [Measures].[StoreType] AS \n"
         + "   '[Store].CurrentMember.Properties(\"Store Type\")',\n" + "   SOLVE_ORDER = 2\n"
         + "   MEMBER [Measures].[ProfitPct] AS \n"
         + "   '(Measures.[Store Sales] - Measures.[Store Cost]) / Measures.[Store Sales]',\n"
@@ -881,7 +881,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSolveOrderNonMeasure(Context context) {
-    assertQueryReturns(context.getConnection(), "WITH\n" + "   MEMBER [Product].[ProdCalc] as '1', SOLVE_ORDER=1\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH\n" + "   MEMBER [Product].[ProdCalc] as '1', SOLVE_ORDER=1\n"
         + "   MEMBER [Measures].[MeasuresCalc] as '2', SOLVE_ORDER=2\n"
         + "   Member [Time].[Time].[1997].[TimeCalc] as '3', SOLVE_ORDER=3\n" + "SELECT\n"
         + "   { [Product].[ProdCalc] } ON columns,\n" + "   {([Time].[1997].[TimeCalc],\n"
@@ -894,7 +894,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSolveOrderNonMeasure2(Context context) {
-    assertQueryReturns(context.getConnection(), "WITH\n" + "   MEMBER [Store].[StoreCalc] as '0', SOLVE_ORDER=0\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH\n" + "   MEMBER [Store].[StoreCalc] as '0', SOLVE_ORDER=0\n"
         + "   MEMBER [Product].[ProdCalc] as '1', SOLVE_ORDER=1\n" + "SELECT\n"
         + "   { [Product].[ProdCalc] } ON columns,\n" + "   { [Store].[StoreCalc] } ON rows\n" + "FROM Sales",
 
@@ -913,7 +913,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSolveOrderAmbiguous1(Context context) {
-    assertQueryReturns(context.getConnection(), "WITH\n" + "   MEMBER [Promotions].[Calc] AS '1'\n" + "   MEMBER [Customers].[Calc] AS '2'\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH\n" + "   MEMBER [Promotions].[Calc] AS '1'\n" + "   MEMBER [Customers].[Calc] AS '2'\n"
         + "SELECT\n" + "   { [Promotions].[Calc] } ON COLUMNS,\n" + "   {  [Customers].[Calc] } ON ROWS\n"
         + "FROM Sales",
 
@@ -927,7 +927,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSolveOrderAmbiguous2(Context context) {
-    assertQueryReturns(context.getConnection(), "WITH\n" + "   MEMBER [Promotions].[Calc] AS '1'\n" + "   MEMBER [Product].[Calc] AS '2'\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH\n" + "   MEMBER [Promotions].[Calc] AS '1'\n" + "   MEMBER [Product].[Calc] AS '2'\n"
         + "SELECT\n" + "   { [Promotions].[Calc] } ON COLUMNS,\n" + "   { [Product].[Calc] } ON ROWS\n" + "FROM Sales",
 
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Promotions].[Calc]}\n" + "Axis #2:\n" + "{[Product].[Calc]}\n"
@@ -937,7 +937,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCalculatedMemberWhichIsNotAMeasure(Context context) {
-    assertQueryReturns(context.getConnection(), "WITH MEMBER [Product].[BigSeller] AS\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH MEMBER [Product].[BigSeller] AS\n"
         + "  'IIf([Product].[Drink].[Alcoholic Beverages].[Beer and Wine] > 100, \"Yes\",\"No\")'\n"
         + "SELECT {[Product].[BigSeller],[Product].children} ON COLUMNS,\n"
         + "   {[Store].[USA].[CA].children} ON ROWS\n" + "FROM Sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
@@ -954,7 +954,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testMultipleCalculatedMembersWhichAreNotMeasures(Context context) {
-    assertQueryReturns(context.getConnection(), "WITH\n" + "  MEMBER [Store].[x] AS '1'\n" + "  MEMBER [Product].[x] AS '1'\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH\n" + "  MEMBER [Store].[x] AS '1'\n" + "  MEMBER [Product].[x] AS '1'\n"
         + "SELECT {[Store].[x]} ON COLUMNS\n" + "FROM Sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Store].[x]}\n"
             + "Row #0: 1\n" );
   }
@@ -971,7 +971,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testMultipleCalculatedMembersWhichAreNotMeasures2(Context context) {
-    assertQueryReturns( context.getConnection(),"WITH\n" + "  MEMBER [Product].[x] AS '1'\n" + "  MEMBER [Store].[x] AS '1'\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH\n" + "  MEMBER [Product].[x] AS '1'\n" + "  MEMBER [Store].[x] AS '1'\n"
         + "SELECT {[Store].[x]} ON COLUMNS\n" + "FROM Sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Store].[x]}\n"
             + "Row #0: 1\n" );
   }
@@ -983,7 +983,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testMultipleCalculatedMembersWhichAreNotMeasures3(Context context) {
-    assertQueryReturns( context.getConnection(),"WITH\n" + "  MEMBER [Product].[x] AS '1'\n" + "  MEMBER [Store].[x] AS '1'\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH\n" + "  MEMBER [Product].[x] AS '1'\n" + "  MEMBER [Store].[x] AS '1'\n"
         + "SELECT {[Store].[x]} ON COLUMNS\n" + "FROM Sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Store].[x]}\n"
             + "Row #0: 1\n" );
   }
@@ -991,21 +991,21 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testConstantString(Context context) {
-    String s = executeExpr(context.getConnection(), " \"a string\" " );
+    String s = executeExpr(context.getConnectionWithDefaultRole(), " \"a string\" " );
     assertEquals( "a string", s );
   }
 
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testConstantNumber(Context context) {
-    String s = executeExpr(context.getConnection(), " 1234 " );
+    String s = executeExpr(context.getConnectionWithDefaultRole(), " 1234 " );
     assertEquals( "1,234", s );
   }
 
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCyclicalCalculatedMembers(Context context) {
-     executeQuery(context.getConnection(), "WITH\n" + "   MEMBER [Product].[X] AS '[Product].[Y]'\n"
+     executeQuery(context.getConnectionWithDefaultRole(), "WITH\n" + "   MEMBER [Product].[X] AS '[Product].[Y]'\n"
         + "   MEMBER [Product].[Y] AS '[Product].[X]'\n" + "SELECT\n" + "   {[Product].[X]} ON COLUMNS,\n"
         + "   {Store.[Store Name].Members} ON ROWS\n" + "FROM Sales" ) ;
   }
@@ -1018,7 +1018,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCycle(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     if ( false ) {
       assertExprThrows(connection, "[Time].[1997].[Q4]", "infinite loop" );
     } else {
@@ -1030,7 +1030,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testHalfYears(Context context) {
-    executeQuery(context.getConnection(), "WITH MEMBER [Measures].[ProfitPercent] AS\n"
+    executeQuery(context.getConnectionWithDefaultRole(), "WITH MEMBER [Measures].[ProfitPercent] AS\n"
         + "     '([Measures].[Store Sales]-[Measures].[Store Cost])/([Measures].[Store Cost])',\n"
         + " FORMAT_STRING = '#.00%', SOLVE_ORDER = 1\n"
         + " Member [Time].[Time].[1997].[First Half] AS  '[Time].[1997].[Q1] + [Time].[1997].[Q2]'\n"
@@ -1041,7 +1041,7 @@ public class BasicQueryTest {
   }
 
   public void _testHalfYearsTrickyCase(Context context) {
-    executeQuery(context.getConnection(), "WITH MEMBER MEASURES.ProfitPercent AS\n"
+    executeQuery(context.getConnectionWithDefaultRole(), "WITH MEMBER MEASURES.ProfitPercent AS\n"
         + "     '([Measures].[Store Sales]-[Measures].[Store Cost])/([Measures].[Store Cost])',\n"
         + " FORMAT_STRING = '#.00%', SOLVE_ORDER = 1\n"
         + " Member [Time].[Time].[First Half 97] AS  '[Time].[1997].[Q1] + [Time].[1997].[Q2]'\n"
@@ -1054,7 +1054,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testAsSample7ButUsingVirtualCube(Context context) {
-    executeQuery(context.getConnection(), "with member [Measures].[Accumulated Sales] as 'Sum(YTD(),[Measures].[Store Sales])'\n"
+    executeQuery(context.getConnectionWithDefaultRole(), "with member [Measures].[Accumulated Sales] as 'Sum(YTD(),[Measures].[Store Sales])'\n"
         + "select\n" + "    {[Measures].[Store Sales],[Measures].[Accumulated Sales]} on columns,\n"
         + "    {Descendants([Time].[1997],[Time].[Month])} on rows\n" + "from [Warehouse and Sales]" );
   }
@@ -1062,7 +1062,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testVirtualCube(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         // Note that Unit Sales is independent of Warehouse.
         "select CrossJoin(\n" + "  {[Warehouse].DefaultMember, [Warehouse].[USA].children},\n"
             + "  {[Measures].[Unit Sales], [Measures].[Store Sales], [Measures].[Units Shipped]}) on columns,\n"
@@ -1094,17 +1094,17 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testUseDimensionAsShorthandForMember(Context context) {
- executeQuery(context.getConnection(), "select {[Measures].[Unit Sales]} on columns,\n"
+ executeQuery(context.getConnectionWithDefaultRole(), "select {[Measures].[Unit Sales]} on columns,\n"
         + " {[Store], [Store].children} on rows\n" + "from [Sales]" ) ;
   }
 
   public void _testMembersFunction(Context context) {
-    executeQuery(context.getConnection(), "select {[Measures].[Unit Sales]} on columns,\n"
+    executeQuery(context.getConnectionWithDefaultRole(), "select {[Measures].[Unit Sales]} on columns,\n"
         + " {[Customers].members(0)} on rows\n" + "from [Sales]" ) ;
   }
 
   public void _testProduct2(Context context) {
-    final Axis axis = executeAxis(context.getConnection(), "{[Product2].members}" );
+    final Axis axis = executeAxis(context.getConnectionWithDefaultRole(), "{[Product2].members}" );
     System.out.println( TestUtil.toString( axis.getPositions() ) );
   }
 
@@ -1362,44 +1362,44 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testTaglib0(Context context) {
-    assertQueryReturns( context.getConnection(),taglibQueries.get( 0 ).query, taglibQueries.get( 0 ).result );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),taglibQueries.get( 0 ).query, taglibQueries.get( 0 ).result );
   }
 
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testTaglib1(Context context) {
-    assertQueryReturns( context.getConnection(),taglibQueries.get( 1 ).query, taglibQueries.get( 1 ).result );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),taglibQueries.get( 1 ).query, taglibQueries.get( 1 ).result );
   }
 
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testTaglib2(Context context) {
-    assertQueryReturns( context.getConnection(),taglibQueries.get( 2 ).query, taglibQueries.get( 2 ).result );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),taglibQueries.get( 2 ).query, taglibQueries.get( 2 ).result );
   }
 
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testTaglib3(Context context) {
-    assertQueryReturns( context.getConnection(),taglibQueries.get( 3 ).query, taglibQueries.get( 3 ).result );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),taglibQueries.get( 3 ).query, taglibQueries.get( 3 ).result );
   }
 
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testTaglib4(Context context) {
-    assertQueryReturns( context.getConnection(),taglibQueries.get( 4 ).query, taglibQueries.get( 4 ).result );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),taglibQueries.get( 4 ).query, taglibQueries.get( 4 ).result );
   }
 
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testTaglib5(Context context) {
-    assertQueryReturns( context.getConnection(),taglibQueries.get( 5 ).query, taglibQueries.get( 5 ).result );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),taglibQueries.get( 5 ).query, taglibQueries.get( 5 ).result );
   }
 
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCellValue(Context context) {
     Result result =
-        executeQuery(context.getConnection(), "select {[Measures].[Unit Sales],[Measures].[Store Sales]} on columns,\n"
+        executeQuery(context.getConnectionWithDefaultRole(), "select {[Measures].[Unit Sales],[Measures].[Store Sales]} on columns,\n"
             + " {[Gender].[M]} on rows\n" + "from Sales" );
     Cell cell = result.getCell( new int[] { 0, 0 } );
     Object value = cell.getValue();
@@ -1415,7 +1415,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testDynamicFormat(Context context) {
-    assertQueryReturns( context.getConnection(),"with member [Measures].[USales] as [Measures].[Unit Sales],\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member [Measures].[USales] as [Measures].[Unit Sales],\n"
         + "  format_string = iif([Measures].[Unit Sales] > 50000, \"\\<b\\>#.00\\<\\/b\\>\", \"\\<i\\>#"
         + ".00\\<\\/i\\>\")\n" + "select \n" + "  {[Measures].[USales]} on columns,\n"
         + "  {[Store Type].members} on rows\n" + "from Sales",
@@ -1432,7 +1432,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testFormatOfNulls(Context context) {
-    assertQueryReturns( context.getConnection(),"with member [Measures]._Foo as '([Measures].[Store Sales])',\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member [Measures]._Foo as '([Measures].[Store Sales])',\n"
         + " format_string = '$#,##0.00;($#,##0.00);ZERO;NULL;Nil'\n" + "select\n"
         + " {[Measures].[_Foo]} on columns,\n" + " {[Customers].[Country].members} on rows\n" + "from Sales",
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[_Foo]}\n" + "Axis #2:\n" + "{[Customers].[Canada]}\n"
@@ -1440,7 +1440,7 @@ public class BasicQueryTest {
             + "Row #2: $565,238.13\n" );
 
     // explicit null value
-    assertQueryReturns( context.getConnection(),"with member [Measures].[Foo] as null,\n" + " format_string = 'a;b;c;d'\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member [Measures].[Foo] as null,\n" + " format_string = 'a;b;c;d'\n"
         + "select {[Measures].[Foo]} on columns\n" + "from Sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Measures].[Foo]}\n" + "Row #0: d\n" );
   }
@@ -1452,7 +1452,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testFormatOfNil(Context context) {
-    assertQueryReturns( context.getConnection(),"with member measures.formatTest as '0.000001',\n" + " FORMAT_STRING='#.##;(#.##)' \n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member measures.formatTest as '0.000001',\n" + " FORMAT_STRING='#.##;(#.##)' \n"
         + "select { measures.formatTest } on 0 from sales ", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Measures].[formatTest]}\n" + "Row #0: .\n" );
   }
@@ -1465,7 +1465,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testBugMondrian14(Context context) {
-    assertQueryReturns( context.getConnection(),"with member [Measures].[USales] as '[Measures].[Unit Sales]',\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member [Measures].[USales] as '[Measures].[Unit Sales]',\n"
         + " format_string = iif([Measures].[Sales Count] > 30, \"#.00 good\",\"#.00 bad\")\n"
         + "select {[Measures].[USales], [Measures].[Store Cost], [Measures].[Store Sales]} ON columns,\n"
         + " Crossjoin({[Promotion Media].[All Media].[Radio], [Promotion Media].[All Media].[TV], [Promotion Media]. "
@@ -1504,7 +1504,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testBugMondrian34(Context context) {
-    assertQueryReturns( context.getConnection(),"with member [Measures].[xxx] as '[Measures].[Store Sales]',\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member [Measures].[xxx] as '[Measures].[Store Sales]',\n"
         + " format_string = IIf([Measures].[Unit Sales] > 100000, \"AAA######.00\",\"BBB###.00\")\n"
         + "select {[Measures].[xxx]} ON columns,\n" + " {[Product].children} ON rows\n"
         + "from [Sales] where [Time].[1997]",
@@ -1521,7 +1521,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testBugMondrian36(Context context) {
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales]} ON columns,\n" + " {[Gender].Children} ON rows\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales]} ON columns,\n" + " {[Gender].Children} ON rows\n"
         + "from [Sales]\n" + "where ([Time].[1997], [Customers])", "Axis #0:\n"
             + "{[Time].[1997], [Customers].[All Customers]}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n" + "{[Gender].[F]}\n" + "{[Gender].[M]}\n" + "Row #0: 131,558\n" + "Row #1: 135,215\n" );
@@ -1534,8 +1534,8 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testBugMondrian46(Context context) {
-    TestUtil.flushSchemaCache(context.getConnection());
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Customer Count]} ON columns,\n"
+    TestUtil.flushSchemaCache(context.getConnectionWithDefaultRole());
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Customer Count]} ON columns,\n"
         + "  {([Promotion Media].[All Media], [Product].[All Products])} ON rows\n" + "from [Sales]\n"
         + "where [Time].[1997]", "Axis #0:\n" + "{[Time].[1997]}\n" + "Axis #1:\n" + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n" + "{[Promotion Media].[All Media], [Product].[All Products]}\n" + "Row #0: 5,581\n" );
@@ -1551,7 +1551,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testStoreCube(Context context) {
-    assertQueryReturns( context.getConnection(),"select {[Measures].members} on columns,\n" + " {[Store Type].members} on rows\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].members} on columns,\n" + " {[Store Type].members} on rows\n"
         + "from [Store]" + "where [Store].[USA].[CA]",
 
         "Axis #0:\n" + "{[Store].[USA].[CA]}\n" + "Axis #1:\n" + "{[Measures].[Store Sqft]}\n"
@@ -1620,7 +1620,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testBugMondrian8(Context context) {
     // minimal test case
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales]} ON columns,\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales]} ON columns,\n"
         + "{[Product].[All Products].[Drink].[Beverages].[Drinks].[Flavored Drinks].children} ON rows\n"
         + "from [Sales]",
 
@@ -1633,7 +1633,7 @@ public class BasicQueryTest {
             + "Row #1: 469\n" + "Row #2: 506\n" + "Row #3: 466\n" + "Row #4: 560\n" );
 
     // shorter test case
-    executeQuery(context.getConnection(), "select {[Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales]} ON columns,"
+    executeQuery(context.getConnectionWithDefaultRole(), "select {[Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales]} ON columns,"
         + "ToggleDrillState({"
         + "([Promotion Media].[All Media].[Radio], [Product].[All Products].[Drink].[Beverages].[Drinks].[Flavored "
         + "Drinks])" + "}, {[Product].[All Products].[Drink].[Beverages].[Drinks].[Flavored Drinks]}) ON rows "
@@ -1647,7 +1647,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testBug636687(Context context) {
-    executeQuery(context.getConnection(), "select {[Measures].[Unit Sales], [Measures].[Store Cost],[Measures].[Store Sales]} ON columns, "
+    executeQuery(context.getConnectionWithDefaultRole(), "select {[Measures].[Unit Sales], [Measures].[Store Cost],[Measures].[Store Sales]} ON columns, "
         + "Order(" + "{([Store].[All Stores].[USA].[CA], [Product].[All Products].[Drink].[Alcoholic Beverages]), "
         + "([Store].[All Stores].[USA].[CA], [Product].[All Products].[Drink].[Beverages]), "
         + "Crossjoin({[Store].[All Stores].[USA].[CA].Children}, {[Product].[All Products].[Drink].[Beverages]}), "
@@ -1659,7 +1659,7 @@ public class BasicQueryTest {
         + "([Store].[All Stores].[USA].[WA], [Product].[All Products].[Drink].[Beverages]), "
         + "([Store].[All Stores].[USA].[WA], [Product].[All Products].[Drink].[Dairy])}, "
         + "[Measures].[Store Cost], BDESC) ON rows " + "from [Sales] " + "where ([Time].[1997])" );
-    executeQuery(context.getConnection(), "select {[Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales]} ON columns, "
+    executeQuery(context.getConnectionWithDefaultRole(), "select {[Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales]} ON columns, "
         + "Order(" + "{([Store].[All Stores].[USA].[WA], [Product].[All Products].[Drink].[Beverages]), "
         + "([Store].[All Stores].[USA].[CA], [Product].[All Products].[Drink].[Beverages]), "
         + "([Store].[All Stores].[USA].[OR], [Product].[All Products].[Drink].[Beverages]), "
@@ -1684,7 +1684,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testBug769114(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         "select {[Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales]} ON columns,\n"
             + " Order(TopCount({[Product].[Product Category].Members}, 10.0, [Measures].[Unit Sales]), [Measures].[Store "
             + "Sales], ASC) ON rows\n" + "from [Sales]\n" + "where [Time].[1997]", "Axis #0:\n" + "{[Time].[1997]}\n"
@@ -1719,7 +1719,7 @@ public class BasicQueryTest {
       return;
     }
     final long start = System.currentTimeMillis();
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     final String queryString =
         "select {[Measures].[Unit Sales],\n" + " [Measures].[Store Cost],\n"
             + " [Measures].[Store Sales]} ON columns,\n"
@@ -1817,7 +1817,7 @@ public class BasicQueryTest {
                 + "</Dimension>", null ));
      */
         withSchema(context, SchemaModifiers.BasicQueryTestModifier1::new);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
     if ( !TestUtil.getDialect(connection).allowsFromQuery() ) {
       return;
     }
@@ -1854,7 +1854,7 @@ public class BasicQueryTest {
           "ProdAmbiguousLevelName.[All ProdAmbiguousLevelNames].Drink.calc" };
     for ( String withMemberName : alternateReferences ) {
       for ( String queryMemberName : alternateReferences ) {
-        assertQueryReturns(context.getConnection(),"with member " + withMemberName + " as '1' " + " select " + queryMemberName
+        assertQueryReturns(context.getConnectionWithDefaultRole(),"with member " + withMemberName + " as '1' " + " select " + queryMemberName
             + " on 0 from sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
                 + "{[ProdAmbiguousLevelName].[Drink].[Drink].[calc]}\n" + "Row #0: 1\n" );
       }
@@ -1873,7 +1873,7 @@ public class BasicQueryTest {
     if ( context.getConfig().readAggregates() ) {
       return;
     }
-    if ( TestUtil.getDialect(context.getConnection()).allowsFromQuery() ) {
+    if ( TestUtil.getDialect(context.getConnectionWithDefaultRole()).allowsFromQuery() ) {
       return;
     }
             /*
@@ -1919,7 +1919,7 @@ public class BasicQueryTest {
              */
         withSchema(context, SchemaModifiers.BasicQueryTestModifier3::new);
 
-        assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales]} on columns,\n"
+        assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales]} on columns,\n"
         + " {[ProductView].[Drink].[Beverages].children} on rows\n" + "from Sales",
 
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
@@ -1933,7 +1933,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCountDistinct(Context context) {
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales], [Measures].[Customer Count]} on columns,\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales], [Measures].[Customer Count]} on columns,\n"
         + " {[Gender].members} on rows\n" + "from Sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n" + "{[Measures].[Customer Count]}\n" + "Axis #2:\n"
             + "{[Gender].[All Gender]}\n" + "{[Gender].[F]}\n" + "{[Gender].[M]}\n" + "Row #0: 266,773\n"
@@ -1953,7 +1953,7 @@ public class BasicQueryTest {
     // turn off caching
         ((TestConfig)context.getConfig()).setDisableCaching(true);
 
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales], [Measures].[Customer Count]} on rows,\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales], [Measures].[Customer Count]} on rows,\n"
         + "NON EMPTY {[Time].[1997].[Q1].[1]} ON COLUMNS\n" + "from Sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Time].[1997].[Q1].[1]}\n" + "Axis #2:\n" + "{[Measures].[Unit Sales]}\n"
             + "{[Measures].[Customer Count]}\n" + "Row #0: 21,628\n" + "Row #1: 1,396\n" );
@@ -1964,7 +1964,7 @@ public class BasicQueryTest {
       ((TestConfig)context.getConfig()).setUseAggregates(true);
     }
 
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales], [Measures].[Customer Count]} on rows,\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales], [Measures].[Customer Count]} on rows,\n"
         + "NON EMPTY {[Time].[1997].[Q1].[1]} ON COLUMNS\n" + "from Sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Time].[1997].[Q1].[1]}\n" + "Axis #2:\n" + "{[Measures].[Unit Sales]}\n"
             + "{[Measures].[Customer Count]}\n" + "Row #0: 21,628\n" + "Row #1: 1,396\n" );
@@ -2005,7 +2005,7 @@ public class BasicQueryTest {
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier14::new);
     ((TestConfig)context.getConfig()).setUseAggregates(true);
     ((TestConfig)context.getConfig()).setReadAggregates(true);
-    executeQuery(context.getConnection(), mdx);
+    executeQuery(context.getConnectionWithDefaultRole(), mdx);
   }
 
     @ParameterizedTest
@@ -2043,7 +2043,7 @@ public class BasicQueryTest {
     ((TestConfig)context.getConfig()).setReadAggregates(true);
 
     // no exception is thrown
-    executeQuery(context.getConnection(), mdx);
+    executeQuery(context.getConnectionWithDefaultRole(), mdx);
   }
 
     @ParameterizedTest
@@ -2103,7 +2103,7 @@ public class BasicQueryTest {
 
 
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier16::new);
-    assertQueryReturns( context.getConnection(),mdx, result );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),mdx, result );
     context.getSchemaCache().clear();
   }
 
@@ -2155,14 +2155,14 @@ public class BasicQueryTest {
                 + "{[Time].[1997].[Q1]}\n" + "{[Time].[1997].[Q2]}\n" + "{[Time].[1997].[Q3]}\n" + "{[Time].[1997].[Q4]}\n"
                 + "Row #0: 66,291\n" + "Row #1: 62,610\n" + "Row #2: 65,848\n" + "Row #3: 72,024\n";
 
-    assertQueryReturns( context.getConnection(),mdx, desiredResult );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),mdx, desiredResult );
 
     // check that consistent with fact table
     ((TestConfig)context.getConfig()).setUseAggregates(false);
     ((TestConfig)context.getConfig()).setReadAggregates(false);
     context.getSchemaCache().clear();
 
-    assertQueryReturns(context.getConnection(), mdx, desiredResultWithoutAgg );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, desiredResultWithoutAgg );
   }
 
     @ParameterizedTest
@@ -2208,7 +2208,7 @@ public class BasicQueryTest {
             + "{[Time].[1997].[Q1]}\n" + "{[Time].[1997].[Q2]}\n" + "{[Time].[1997].[Q3]}\n" + "{[Time].[1997].[Q4]}\n"
             + "Row #0: 478,334,320\n" + "Row #1: 425,292,956\n" + "Row #2: 472,759,506\n" + "Row #3: 570,911,254\n";
 
-    assertQueryReturns( context.getConnection(),mdx, desiredResult );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),mdx, desiredResult );
   }
 
     @ParameterizedTest
@@ -2253,7 +2253,7 @@ public class BasicQueryTest {
             + "{[Time].[1997].[Q1]}\n" + "{[Time].[1997].[Q2]}\n" + "{[Time].[1997].[Q3]}\n" + "{[Time].[1997].[Q4]}\n"
             + "Row #0: 22,157.417\n" + "Row #1: 20,880.448\n" + "Row #2: 22,036.988\n" + "Row #3: 24,368.758\n";
 
-    assertQueryReturns( context.getConnection(),mdx, desiredResult );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),mdx, desiredResult );
   }
 
   /**
@@ -2293,7 +2293,7 @@ public class BasicQueryTest {
     if ( !isDefaultNullMemberRepresentation() ) {
       return;
     }
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     Result result =
         executeQuery(connection,  "select {[Measures].[Unit Sales]} on columns,\n" + "{[Store Size in SQFT].members} on rows\n"
             + "from Sales" );
@@ -2346,7 +2346,7 @@ public class BasicQueryTest {
   void testCrossjoinWithDescendantsAndUnknownMember(Context context) {
     ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
     ((TestConfig)context.getConfig()).setIgnoreInvalidMembers(true);
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales]} on columns,\n" + "NON EMPTY CrossJoin(\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales]} on columns,\n" + "NON EMPTY CrossJoin(\n"
         + " Descendants([Product].[All Products], [Product].[Product Family]),\n"
         + " Descendants([Store].[All Stores].[Foo], [Store].[Store State])) on rows\n" + "from [Sales]", "Axis #0:\n"
             + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n" );
@@ -2359,7 +2359,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSlicerOverride(Context context) {
-    assertQueryReturns( context.getConnection(),"with member [Measures].[Radio Unit Sales] as \n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member [Measures].[Radio Unit Sales] as \n"
         + " '([Measures].[Unit Sales], [Promotion Media].[Radio])'\n"
         + "select {[Measures].[Unit Sales], [Measures].[Radio Unit Sales]} on columns,\n"
         + " filter([Product].[Product Department].members, [Promotion Media].[Radio] > 50) on rows\n" + "from Sales\n"
@@ -2373,7 +2373,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testMembersOfLargeDimensionTheHardWay(Context context) {
-    final Connection connection = context.getConnection();
+    final Connection connection = context.getConnectionWithDefaultRole();
     // Avoid this test if memory is scarce.
     if ( Bug.avoidMemoryOverflow( getDialect(connection), context.getConfig().memoryMonitor() ) ) {
       return;
@@ -2389,7 +2389,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testUnparse(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     Query query =
         connection.parseQuery( "with member [Measures].[Rendite] as \n"
             + " '(([Measures].[Store Sales] - [Measures].[Store Cost])) / [Measures].[Store Cost]',\n"
@@ -2418,7 +2418,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testUnparse2(Context context) {
-      Connection connection = context.getConnection();
+      Connection connection = context.getConnectionWithDefaultRole();
       Query query =
         connection.parseQuery( "with member [Measures].[Foo] as '1', " + "format_string='##0.00', "
             + "funny=IIf(1=1,\"x\"\"y\",\"foo\") " + "select {[Measures].[Foo]} on columns from Sales" );
@@ -2452,7 +2452,7 @@ public class BasicQueryTest {
    * from the Sales cube, presenting it side by side with the budget information from the Budget cube.
    */
   public void _testLookupCube(Context context) {
-    assertQueryReturns( context.getConnection(),"WITH MEMBER Measures.[Store Unit Sales] AS \n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH MEMBER Measures.[Store Unit Sales] AS \n"
         + " 'LookupCube(\"Sales\", \"(\" + MemberToStr(Store.CurrentMember) + \", Measures.[Unit Sales])\")'\n"
         + "SELECT\n" + " {Measures.Amount, Measures.[Store Unit Sales]} ON COLUMNS,\n" + " Store.CA.CHILDREN ON ROWS\n"
         + "FROM Budget", "" );
@@ -2484,7 +2484,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testBasketAnalysis(Context context) {
-    assertQueryReturns( context.getConnection(),"WITH MEMBER [Measures].[Qualified Count] AS\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH MEMBER [Measures].[Qualified Count] AS\n"
         + " 'COUNT(FILTER(DESCENDANTS(Customers.CURRENTMEMBER, [Customers].[Name]),\n"
         + "               ([Measures].[Store Sales]) > 10000 OR ([Measures].[Unit Sales]) > 10))'\n"
         + "MEMBER [Measures].[Qualified Sales] AS\n"
@@ -2518,7 +2518,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testBasketAnalysisAfterFlush(Context context) {
-    flushSchemaCache(context.getConnection());
+    flushSchemaCache(context.getConnectionWithDefaultRole());
     testBasketAnalysis(context);
   }
 
@@ -2548,7 +2548,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testStringComparisons(Context context) {
-    assertQueryReturns( context.getConnection(),"SELECT {Measures.[Unit Sales]} ON COLUMNS,\n" + "  FILTER([Product].[Product Name].MEMBERS,\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"SELECT {Measures.[Unit Sales]} ON COLUMNS,\n" + "  FILTER([Product].[Product Name].MEMBERS,\n"
         + "         INSTR(LCASE([Product].CURRENTMEMBER.NAME), \"fruit\") <> 0) ON ROWS \n" + "FROM Sales",
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
             + "{[Product].[Food].[Canned Products].[Fruit].[Canned Fruit].[Applause].[Applause Canned Mixed Fruit]}\n"
@@ -2593,7 +2593,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testMid(Context context) {
-    assertQueryReturns( context.getConnection(),"with\n" + "member measures.x as 'Mid(\"yahoo\",5, 1)'\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with\n" + "member measures.x as 'Mid(\"yahoo\",5, 1)'\n"
         + "select {measures.x} ON COLUMNS from [Sales] ", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[x]}\n"
             + "Row #0: o\n" );
   }
@@ -2619,7 +2619,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testPercentagesAsMeasures(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         // todo: "Store.[USA].[CA]" should be "Store.CA"
         "WITH MEMBER Measures.[Unit Sales Percent] AS\n" + "  '((Store.CURRENTMEMBER, Measures.[Unit Sales]) /\n"
             + "    (Store.CURRENTMEMBER.PARENT, Measures.[Unit Sales])) ',\n" + "  FORMAT_STRING = 'Percent'\n"
@@ -2676,7 +2676,7 @@ public class BasicQueryTest {
    * satisfy the needs of this query.
    */
   public void _testCumlativeSums(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         // todo: "[Store].[USA].[CA]" should be "Store.CA"; implement "AS"
         "WITH MEMBER Measures.[Cumulative No of Employees] AS\n"
             + "  'SUM(HEAD(ORDER({[Store].Siblings}, [Measures].[Number of Employees], BDESC) AS OrderedSiblings,\n"
@@ -2723,7 +2723,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testLogicalOps(Context context) {
-    assertQueryReturns(context.getConnection(),"WITH MEMBER [Product].[Food OR Drink] AS\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(),"WITH MEMBER [Product].[Food OR Drink] AS\n"
         + "  '([Product].[Food], Measures.[Unit Sales]) + ([Product].[Drink], Measures.[Unit Sales])'\n"
         + "SELECT {Measures.[Unit Sales]} ON COLUMNS,\n"
         + "  DESCENDANTS(Time.[1997], [Quarter], SELF_AND_BEFORE) ON ROWS\n" + "FROM Sales\n"
@@ -2745,7 +2745,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testLogicalAnd(Context context) {
-    assertQueryReturns(context.getConnection(),"SELECT {Measures.[Unit Sales]} ON COLUMNS,\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(),"SELECT {Measures.[Unit Sales]} ON COLUMNS,\n"
         + "  DESCENDANTS([Time].[1997], [Quarter], SELF_AND_BEFORE) ON ROWS\n" + "FROM Sales\n"
         + "WHERE ([Product].[Drink], [Store].USA)",
 
@@ -2769,7 +2769,7 @@ public class BasicQueryTest {
    * sold both Good products and Pearl products.
    */
   public void _testSet(Context context) {
-    assertQueryReturns(context.getConnection(),"WITH SET [Good AND Pearl Stores] AS\n" + "  'FILTER(Store.Members,\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(),"WITH SET [Good AND Pearl Stores] AS\n" + "  'FILTER(Store.Members,\n"
         + "          ([Product].[Good], Measures.[Unit Sales]) > 0 AND \n"
         + "          ([Product].[Pearl], Measures.[Unit Sales]) > 0)'\n"
         + "SELECT DESCENDANTS([Time].[1997], [Quarter], SELF_AND_BEFORE) ON COLUMNS,\n"
@@ -2794,7 +2794,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCustomMemberProperties(Context context) {
-    assertQueryReturns( context.getConnection(),"SELECT {[Measures].[Units Shipped], [Measures].[Units Ordered]} ON COLUMNS,\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"SELECT {[Measures].[Units Shipped], [Measures].[Units Ordered]} ON COLUMNS,\n"
         + "  NON EMPTY [Store].[Store Name].MEMBERS\n"
         + "    DIMENSION PROPERTIES [Store].[Store Name].[Store Sqft] ON ROWS\n" + "FROM Warehouse", "Axis #0:\n"
             + "{}\n" + "Axis #1:\n" + "{[Measures].[Units Shipped]}\n" + "{[Measures].[Units Ordered]}\n"
@@ -2832,7 +2832,7 @@ public class BasicQueryTest {
    * readily apparent and easily accessible in client applications that do not support member properties.
    */
   public void _testMemberPropertyAsCalcMember(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         // todo: implement <member>.PROPERTIES
         "WITH MEMBER Measures.[Store SqFt] AS '[Store].CURRENTMEMBER.PROPERTIES(\"Store SQFT\")'\n"
             + "SELECT { [Measures].[Store SQFT], [Measures].[Units Shipped], [Measures].[Units Ordered] }  ON "
@@ -2885,7 +2885,7 @@ public class BasicQueryTest {
    * determine the order of the members.
    */
   public void _testDrillingDownMoreThanOneLevel(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         // todo: implement "GENERATE"
         "SELECT  {[Measures].[Unit Sales]} ON COLUMNS,\n" + "  EXCEPT(GENERATE([Customers].[Country].MEMBERS,\n"
             + "                  {DESCENDANTS([Customers].CURRENTMEMBER, [Customers].[City], SELF_AND_BEFORE)}),\n"
@@ -2916,7 +2916,7 @@ public class BasicQueryTest {
    * stores in unit sales for each country.
    */
   public void _testTopmost(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         // todo: implement "GENERATE"
         "WITH MEMBER Measures.[Country Name] AS \n" + "  'Ancestor(Store.CurrentMember, [Store Country]).Name'\n"
             + "SELECT {Measures.[Country Name], Measures.[Unit Sales]} ON COLUMNS,\n"
@@ -2954,7 +2954,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testTopmost2(Context context) {
     context.getSchemaCache().clear();
-    assertQueryReturns( context.getConnection(),"SELECT {Measures.[Unit Sales]} ON COLUMNS,\n" + "  CROSSJOIN(Customers.CHILDREN,\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"SELECT {Measures.[Unit Sales]} ON COLUMNS,\n" + "  CROSSJOIN(Customers.CHILDREN,\n"
         + "    TOPCOUNT(DESCENDANTS([Store].CURRENTMEMBER, [Store].[Store Name]),\n"
         + "             1, [Measures].[Unit Sales])) ON ROWS\n" + "FROM Sales",
 
@@ -2991,7 +2991,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testRank(Context context) {
-    assertQueryReturns( context.getConnection(),"SELECT {[Measures].[Unit Sales]} ON COLUMNS, \n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"SELECT {[Measures].[Unit Sales]} ON COLUMNS, \n"
         + "  ORDER([Store].[Store Name].MEMBERS, (Measures.[Unit Sales]), BDESC) ON ROWS\n" + "FROM Sales\n"
         + "WHERE [Product].[Non-Consumable]", "Axis #0:\n" + "{[Product].[Non-Consumable]}\n" + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n" + "{[Store].[USA].[OR].[Salem].[Store 13]}\n"
@@ -3039,7 +3039,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testDifferentCalculationsForDifferentLevels(Context context) {
-    assertQueryReturns(context.getConnection(),"WITH MEMBER Measures.[Average Units Ordered] AS\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(),"WITH MEMBER Measures.[Average Units Ordered] AS\n"
         + "  'AVG(DESCENDANTS([Store].CURRENTMEMBER, [Store].[Store Name]), [Measures].[Units Ordered])',\n"
         + "  FORMAT_STRING='#.00'\n"
         + "SELECT {[Measures].[Units ordered], Measures.[Average Units Ordered]} ON COLUMNS,\n"
@@ -3065,7 +3065,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testDifferentCalculations2(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         // todo: "[Store].[USA].[CA]" should be "[Store].CA",
         // "[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
         // should be "[Product].[Beer]"
@@ -3116,7 +3116,7 @@ public class BasicQueryTest {
    * query.
    */
   public void _testDifferentCalculationsForDifferentDimensions(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         // todo: implement "NONEMPTYCROSSJOIN"
         "WITH MEMBER [Measures].[Avg Units Shipped] AS\n" + "  '[Measures].[Units Shipped] / \n"
             + "    COUNT(DESCENDANTS([Time].CURRENTMEMBER, [Time].[Month], SELF))'\n"
@@ -3137,7 +3137,7 @@ public class BasicQueryTest {
    * query.
    */
   public void _testDifferentCalculationsForDifferentDimensions2(Context context) {
-    assertQueryReturns( context.getConnection(),"WITH MEMBER Measures.[Closing Balance] AS\n" + "  '([Measures].[Units Ordered], \n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH MEMBER Measures.[Closing Balance] AS\n" + "  '([Measures].[Units Ordered], \n"
         + "    CLOSINGPERIOD([Time].[Month], [Time].CURRENTMEMBER)) -\n" + "   ([Measures].[Units Shipped], \n"
         + "    CLOSINGPERIOD([Time].[Month], [Time].CURRENTMEMBER))'\n"
         + "SELECT {[Measures].[Closing Balance]} ON COLUMNS,\n" + "  Product.MEMBERS ON ROWS\n" + "FROM Warehouse",
@@ -3178,7 +3178,7 @@ public class BasicQueryTest {
    * and nine-month total, two calculated members are created in the following MDX query.
    */
   public void _testDateRange(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         // todo: implement "AddCalculatedMembers"
         "WITH Member [Time].[Time].[1997].[Six Month] AS\n" + "  'SUM([Time].[1]:[Time].[6])'\n"
             + "Member [Time].[Time].[1997].[Nine Month] AS\n" + "  'SUM([Time].[1]:[Time].[9])'\n"
@@ -3211,7 +3211,7 @@ public class BasicQueryTest {
    * current period.
    */
   public void _testRolling(Context context) {
-    assertQueryReturns(context.getConnection(),"WITH SET Rolling12 AS\n" + "  'LASTPERIODS(12, TAIL(FILTER([Time].[Month].MEMBERS, \n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(),"WITH SET Rolling12 AS\n" + "  'LASTPERIODS(12, TAIL(FILTER([Time].[Month].MEMBERS, \n"
         + "    ([Customers].[All Customers], \n" + "    [Education Level].[All Education Level],\n"
         + "    [Gender].[All Gender],\n" + "    [Marital Status].[All Marital Status],\n"
         + "    [Product].[All Products], \n" + "    [Promotion Media].[All Media],\n"
@@ -3245,7 +3245,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testDifferentCalcsForDifferentTimePeriods(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         // note: "[Product].[Drink Forecast - Standard]"
         // was "[Drink Forecast - Standard]"
         "WITH MEMBER [Product].[Drink Forecast - Standard] AS\n" + "  '[Product].[All Products].[Drink] * 2'\n"
@@ -3303,7 +3303,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void _testDc4dtp2(Context context) {
-    assertQueryReturns(context.getConnection(),"WITH MEMBER [Product].[Drink Forecast - Standard] AS\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(),"WITH MEMBER [Product].[Drink Forecast - Standard] AS\n"
         + "  '[Product].[All Products].[Drink] * 2'\n" + "MEMBER [Product].[Drink Forecast - Dynamic] AS \n"
         + "  '[Product].[All Products].[Drink] * \n"
         + "   [Time].CURRENTMEMBER.PROPERTIES(\"Dynamic Forecast Multiplier\")'\n"
@@ -3396,7 +3396,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void _testWarehouseProfit(Context context) {
-    assertQueryReturns( context.getConnection(),"select \n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select \n"
         + "{[Measures].[Warehouse Cost], [Measures].[Warehouse Sales], [Measures].[Warehouse Profit]}\n"
         + " ON COLUMNS from [Warehouse]",
         "Axis #0:\n"
@@ -3431,7 +3431,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void _testYtdGrowth(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         // todo: implement "ParallelPeriod"
         "WITH MEMBER [Measures].[YTD Unit Sales] AS\n" + "  'COALESCEEMPTY(SUM(YTD(), [Measures].[Unit Sales]), 0)'\n"
             + "MEMBER [Measures].[Previous YTD Unit Sales] AS\n"
@@ -3462,7 +3462,7 @@ public class BasicQueryTest {
   public void dont_testParallelMutliple(Context context) {
 	  context.getSchemaCache().clear();
       ((TestConfig)context.getConfig()).setMaxEvalDepth(MAX_EVAL_DEPTH_VALUE);
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     for ( int i = 0; i < 5; i++ ) {
       runParallelQueries(connection, 1, 1, false );
       runParallelQueries(connection, 3, 2, false );
@@ -3474,13 +3474,13 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void dont_testParallelNot(Context context) {
-    runParallelQueries(context.getConnection(), 1, 1, false );
+    runParallelQueries(context.getConnectionWithDefaultRole(), 1, 1, false );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void dont_testParallelSomewhat(Context context) {
-    runParallelQueries(context.getConnection(), 3, 2, false );
+    runParallelQueries(context.getConnectionWithDefaultRole(), 3, 2, false );
   }
 
   @ParameterizedTest
@@ -3488,14 +3488,14 @@ public class BasicQueryTest {
   public void dont_testParallelFlushCache(Context context) {
 	context.getSchemaCache().clear();
     ((TestConfig)context.getConfig()).setMaxEvalDepth(MAX_EVAL_DEPTH_VALUE);
-    runParallelQueries(context.getConnection(), 4, 6, true );
+    runParallelQueries(context.getConnectionWithDefaultRole(), 4, 6, true );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void dont_testParallelVery(Context context) {
       ((TestConfig)context.getConfig()).setMaxEvalDepth( MAX_EVAL_DEPTH_VALUE);
-    runParallelQueries(context.getConnection(), 6, 10, false );
+    runParallelQueries(context.getConnectionWithDefaultRole(), 6, 10, false );
   }
 
   private void runParallelQueries(final Connection connection, final int threadCount, final int iterationCount, final boolean flush ) {
@@ -3540,7 +3540,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testDependsOn(Context context) {
-    assertQueryReturns(context.getConnection(),"with member [Customers].[my] as \n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(),"with member [Customers].[my] as \n"
         + "  'Aggregate(Filter([Customers].[City].Members, (([Measures].[Unit Sales] / ([Measures].[Unit Sales], "
         + "[Product].[All Products])) > 0.1)))' \n" + "select  \n" + "  {[Measures].[Unit Sales]} ON columns, \n"
         + "  {[Product].[All Products].[Food].[Deli], [Product].[All Products].[Food].[Frozen Foods]} ON rows \n"
@@ -3590,15 +3590,15 @@ public class BasicQueryTest {
     // With bug 1755778, the following test below fails because it returns
     // only row that have a null value (see "wrongResultWithFilter").
     // It should return the "expectedResultWithFilter" value.
-    assertQueryReturns( context.getConnection(),queryWithFilter, expectedResultWithFilter );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),queryWithFilter, expectedResultWithFilter );
 
     // To see the test case return the correct result comment out the line
     // above and uncomment out the lines below following. If a similar
     // query without the filter is executed (queryWithoutFilter) prior to
     // running the query with the filter then the correct result set is
     // returned
-    assertQueryReturns( context.getConnection(),queryWithoutFilter, expectedResultWithoutFilter );
-    assertQueryReturns( context.getConnection(),queryWithFilter, expectedResultWithFilter );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),queryWithoutFilter, expectedResultWithoutFilter );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),queryWithFilter, expectedResultWithFilter );
   }
 
   /**
@@ -3608,7 +3608,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testFilteredCrossJoin(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     flushSchemaCache(connection);
     Result result =
         executeQuery(connection, "select {[Measures].[Store Sales]} on columns,\n" + "  NON EMPTY Crossjoin(\n"
@@ -3631,7 +3631,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNonEmptyCrossJoin(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     if ( !context.getConfig().enableNativeCrossJoin() ) {
       // If we try to evaluate the crossjoin in memory we run out of
       // memory.
@@ -3655,7 +3655,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNonEmptyNonEmptyCrossJoin1(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     flushSchemaCache(connection);
     Result result =
         executeQuery(connection, "select {[Education Level].[All Education Levels].[Graduate Degree]} on columns,\n"
@@ -3669,7 +3669,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNonEmptyNonEmptyCrossJoin2(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     flushSchemaCache(connection);
     Result result =
         executeQuery(connection, "select {[Education Level].[All Education Levels].[Graduate Degree]} on columns,\n"
@@ -3683,7 +3683,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNonEmptyNonEmptyCrossJoin3(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     flushSchemaCache(connection);
     Result result =
         executeQuery(connection, "select {[Education Level].[All Education Levels].[Graduate Degree]} on columns,\n"
@@ -3697,7 +3697,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNonEmptyNonEmptyCrossJoin4(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     flushSchemaCache(connection);
     Result result =
         executeQuery(connection, "select {[Education Level].[All Education Levels].[Graduate Degree]} on columns,\n"
@@ -3716,7 +3716,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testHierDifferentKeyClass(Context context) {
-      Connection connection = context.getConnection();
+      Connection connection = context.getConnectionWithDefaultRole();
     Result result =
         executeQuery(connection, "with member [Time].[Time].[1997].[Q1].[xxx] as\n"
             + "'Aggregate({[Time].[1997].[Q1].[1], [Time].[1997].[Q1].[2]})'\n"
@@ -3734,7 +3734,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testOverlappingCalculatedMembers(Context context) {
-    assertQueryReturns( context.getConnection(),"WITH MEMBER [Store].[Total] AS 'SUM([Store].[Store Country].MEMBERS)' "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH MEMBER [Store].[Total] AS 'SUM([Store].[Store Country].MEMBERS)' "
         + "MEMBER [Store Type].[Total] AS 'SUM([Store Type].[Store Type].MEMBERS)' "
         + "MEMBER [Gender].[Total] AS 'SUM([Gender].[Gender].MEMBERS)' "
         + "MEMBER [Measures].[x] AS '[Measures].[Store Sales]' " + "SELECT {[Measures].[x]} ON COLUMNS , "
@@ -3750,7 +3750,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testEmptyProperty(Context context) {
-    assertQueryReturns( context.getConnection(),"select     {[Measures].[Unit Sales]} on columns, " + "filter([Store].[Store Name].members,"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select     {[Measures].[Unit Sales]} on columns, " + "filter([Store].[Store Name].members,"
         + "[Store].currentmember.properties(\"Store Manager\")=\"Smith\") on rows" + " from Sales", "Axis #0:\n"
             + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
             + "{[Store].[USA].[WA].[Bellingham].[Store 2]}\n" + "Row #0: 2,237\n" );
@@ -3764,7 +3764,7 @@ public class BasicQueryTest {
     // Create a second usage of the "Store" shared dimension called "Other
     // Store". Attach it to the "unit_sales" column (which has values [1,
     // 6] whereas store has values [1, 24].
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube( "Sales",
             "<DimensionUsage name=\"Other Store\" source=\"Store\" foreignKey=\"unit_sales\" />" ));
@@ -3859,7 +3859,7 @@ public class BasicQueryTest {
             + "  </CalculatedMember>\n" + "</Cube>", null, null, null, null );
      */
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier20::new);
-    SchemaReader scr = context.getConnection().getSchema().lookupCube( cubeName, true ).getSchemaReader( null );
+    SchemaReader scr = context.getConnectionWithDefaultRole().getSchema().lookupCube( cubeName, true ).getSchemaReader( null );
     Member member = scr.getMemberByUniqueName( IdImpl.toList( "Measures", "Unit Sales" ), true );
     Object visible = member.getPropertyValue( Property.VISIBLE.name );
     assertEquals( Boolean.FALSE, visible );
@@ -3888,7 +3888,7 @@ public class BasicQueryTest {
     withSchema(context, SchemaModifiers.BasicQueryTestModifier5::new);
 
     String mdx = "select {[Gender3].[All Gender]} on columns from Sales";
-    Result result = executeQuery(context.getConnection(), mdx);
+    Result result = executeQuery(context.getConnectionWithDefaultRole(), mdx);
     Axis axis0 = result.getAxes()[0];
     Position pos0 = axis0.getPositions().get( 0 );
     Member allGender = pos0.get( 0 );
@@ -3909,7 +3909,7 @@ public class BasicQueryTest {
        */
         withSchema(context, SchemaModifiers.BasicQueryTestModifier10::new);
         String mdx = "select {[Gender4].[All Gender]} on columns from Sales";
-    Result result = executeQuery(context.getConnection(), mdx );
+    Result result = executeQuery(context.getConnectionWithDefaultRole(), mdx );
     Axis axis0 = result.getAxes()[0];
     Position pos0 = axis0.getPositions().get( 0 );
     Member allGender = pos0.get( 0 );
@@ -3952,7 +3952,7 @@ public class BasicQueryTest {
     */
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier21::new);
     //withCube( "Sales_DimWithoutAll" );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     // the default member of the Gender dimension is the first member
     assertExprReturns(connection, "Sales_DimWithoutAll", "[Gender].CurrentMember.Name", "F" );
     assertExprReturns(connection, "Sales_DimWithoutAll", "[Product].CurrentMember.Name", "Drink" );
@@ -3980,7 +3980,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testMemberOnAxis(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         "select [Measures].[Sales Count] on 0, non empty [Store].[Store State].members on 1 from [Sales]", "Axis #0:\n"
             + "{}\n" + "Axis #1:\n" + "{[Measures].[Sales Count]}\n" + "Axis #2:\n" + "{[Store].[USA].[CA]}\n"
             + "{[Store].[USA].[OR]}\n" + "{[Store].[USA].[WA]}\n" + "Row #0: 24,442\n" + "Row #1: 21,611\n"
@@ -3990,7 +3990,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testScalarOnAxisFails(Context context) {
-    assertQueryThrows(context.getConnection(),
+    assertQueryThrows(context.getConnectionWithDefaultRole(),
         "select [Measures].[Sales Count] + 1 on 0, non empty [Store].[Store State].members on 1 from [Sales]",
         "Axis 'COLUMNS' expression is not a set" );
   }
@@ -4001,7 +4001,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testSameDimOnTwoAxesFails(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertQueryThrows(connection, "select {[Measures].[Unit Sales]} on columns,\n" + " {[Measures].[Store Sales]} on rows\n"
         + "from [Sales]", "Hierarchy '[Measures]' appears in more than one independent axis" );
 
@@ -4029,14 +4029,14 @@ public class BasicQueryTest {
   }
 
   public void _testSetArgToTupleFails(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertQueryThrows(connection, "select CrossJoin(\n" + "    {[Product].children},\n"
         + "    {[Measures].[Unit Sales]}) on columns,\n" + "    {([Product],\n" + "      [Store].members)} on rows\n"
         + "from [Sales]", "Dimension '[Product]' appears in more than one independent axis" );
   }
 
   public void _badArgsToTupleFails(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     // clash within slicer
     assertQueryThrows(connection, "select {[Measures].[Unit Sales]} on columns,\n" + " {[Store].Members} on rows\n"
         + "from [Sales]\n" + "where ([Time].[1997].[Q1], [Product], [Time].[1997].[Q2])",
@@ -4053,7 +4053,7 @@ public class BasicQueryTest {
   void testNullMember(Context context) {
     context.getSchemaCache().clear();
     if ( isDefaultNullMemberRepresentation() ) {
-      assertQueryReturns( context.getConnection(),"SELECT \n" + "{[Measures].[Store Cost]} ON columns, \n"
+      assertQueryReturns( context.getConnectionWithDefaultRole(),"SELECT \n" + "{[Measures].[Store Cost]} ON columns, \n"
           + "{[Store Size in SQFT].[All Store Size in SQFTs].[#null]} ON rows \n" + "FROM [Sales] \n"
           + "WHERE [Time].[1997]", "Axis #0:\n" + "{[Time].[1997]}\n" + "Axis #1:\n" + "{[Measures].[Store Cost]}\n"
               + "Axis #2:\n" + "{[Store Size in SQFT].[#null]}\n" + "Row #0: 33,307.69\n" );
@@ -4064,7 +4064,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNullMemberWithOneNonNull(Context context) {
     if ( isDefaultNullMemberRepresentation() ) {
-      assertQueryReturns( context.getConnection(),"SELECT \n" + "{[Measures].[Store Cost]} ON columns, \n"
+      assertQueryReturns( context.getConnectionWithDefaultRole(),"SELECT \n" + "{[Measures].[Store Cost]} ON columns, \n"
           + "{[Store Size in SQFT].[All Store Size in SQFTs].[#null],"
           + "[Store Size in SQFT].[ALL Store Size in SQFTs].[39696]} ON rows \n" + "FROM [Sales] \n"
           + "WHERE [Time].[1997]", "Axis #0:\n" + "{[Time].[1997]}\n" + "Axis #1:\n" + "{[Measures].[Store Cost]}\n"
@@ -4111,7 +4111,7 @@ public class BasicQueryTest {
             + "      formatString=\"#,###.00\"/>\n" + "</Cube>", null, null, null, null );
        */
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier22::new);
-    assertQueryReturns(context.getConnection(),"select {\n" + " [Customers].[All Customers].[USA],\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(),"select {\n" + " [Customers].[All Customers].[USA],\n"
         + " [Customers].[All Customers].[USA].[OR],\n" + " [Customers].[All Customers].[USA].[CA],\n"
         + " [Customers].[All Customers].[USA].[CA].[Altadena],\n"
         + " [Customers].[All Customers].[USA].[CA].[Burbank],\n"
@@ -4127,7 +4127,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testOverrideDimension(Context context) {
-    assertQueryReturns( context.getConnection(),"with member  [Gender].[test] as '\n" + "  aggregate(\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member  [Gender].[test] as '\n" + "  aggregate(\n"
         + "  filter (crossjoin( [Gender].[Gender].members, [Time].[Time].members), \n"
         + "      [time].[Time].CurrentMember = [Time].[1997].[Q1]   AND\n" + "[measures].[unit sales] > 50) )\n"
         + "'\n" + "select \n" + "  { [time].[year].members } on 0,\n" + "  { [gender].[test] }\n" + " on 1  \n"
@@ -4148,7 +4148,7 @@ public class BasicQueryTest {
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier23::new);
     Throwable throwable = null;
     try {
-      assertSimpleQuery(context.getConnection());
+      assertSimpleQuery(context.getConnectionWithDefaultRole());
     } catch ( Throwable e ) {
       throwable = e;
     }
@@ -4173,7 +4173,7 @@ public class BasicQueryTest {
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier24::new);
     Throwable throwable = null;
     try {
-      assertSimpleQuery(context.getConnection());
+      assertSimpleQuery(context.getConnectionWithDefaultRole());
     } catch ( Throwable e ) {
       throwable = e;
     }
@@ -4196,7 +4196,7 @@ public class BasicQueryTest {
             + "from [Sales]";
 
     String mdx3 = "select {[Measures].[Unit Sales]} on columns\n" + "from [Sales]\n" + "where ([Time].[1997].[QTOO])";
-      Connection connection = context.getConnection();
+      Connection connection = context.getConnectionWithDefaultRole();
     // By default, reference to invalid member should cause
     // query failure.
     assertQueryThrows(connection, mdx, "MDX object '[Time].[1997].[QTOO]' not found in cube 'Sales'" );
@@ -4207,11 +4207,11 @@ public class BasicQueryTest {
 
     ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
 
-    assertQueryReturns( context.getConnection(),mdx, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),mdx, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
         + "{[Time].[1997].[Q1]}\n" + "Row #0: 66,291\n" );
 
     // Illegal member in slicer
-    assertQueryReturns( context.getConnection(),mdx3, "Axis #0:\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Row #0: \n" );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),mdx3, "Axis #0:\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Row #0: \n" );
 
     // Verify that invalid members in query do NOT prevent
     // usage of native NECJ (LER-5165).
@@ -4219,7 +4219,7 @@ public class BasicQueryTest {
         ((TestConfig)context.getConfig())
             .setAlertNativeEvaluationUnsupported("ERROR");
 
-        assertQueryReturns( context.getConnection(),mdx2, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
+        assertQueryReturns( context.getConnectionWithDefaultRole(),mdx2, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
         + "{[Time].[1997].[Q1], [Customers].[USA].[CA]}\n" + "{[Time].[1997].[Q1], [Customers].[USA].[OR]}\n"
         + "{[Time].[1997].[Q1], [Customers].[USA].[WA]}\n" + "Row #0: 16,890\n" + "Row #1: 19,287\n"
         + "Row #2: 30,114\n" );
@@ -4265,13 +4265,13 @@ public class BasicQueryTest {
         // Use a fresh connection to make sure bad member ordinals haven't
     // been assigned by previous tests.
     //final TestContext context = testContext.withFreshConnection().withCube( "HR" );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
 
     try {
       // After running of MDX1
       // members cache will contain items
       // for [Position].[Position Title].members
-      assertQueryReturns( context.getConnection(),  MDX1, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[0]}\n" + "Axis #2:\n"
+      assertQueryReturns( context.getConnectionWithDefaultRole(),  MDX1, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[0]}\n" + "Axis #2:\n"
           + "{[Store Type].[Mid-Size Grocery], [Position].[Store Full Time Staf].[Store Permanent Checker]}\n"
           + "{[Store Type].[Mid-Size Grocery], [Position].[Store Full Time Staf].[Store Temporary Checker]}\n"
           + "{[Store Type].[Mid-Size Grocery], [Position].[Store Full Time Staf].[Store Permanent Stocker]}\n"
@@ -4299,7 +4299,7 @@ public class BasicQueryTest {
 
       // Run MDX2 - all [Position].[Position Title].Members should be sorted
       // correctly by ordinalColumn inside Management Role groups
-      assertQueryReturns( context.getConnection(), MDX2, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[0]}\n" + "Axis #2:\n"
+      assertQueryReturns( context.getConnectionWithDefaultRole(), MDX2, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[0]}\n" + "Axis #2:\n"
           + "{[Position].[Middle Management].[HQ Information Systems]}\n"
           + "{[Position].[Middle Management].[HQ Marketing]}\n"
           + "{[Position].[Middle Management].[HQ Human Resources]}\n"
@@ -4333,7 +4333,7 @@ public class BasicQueryTest {
     // Use a fresh connection to make sure bad member ordinals haven't
     // been assigned by previous tests.
     //final TestContext context = getTestContext().withFreshConnection();
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     try {
       tryMemberOrdinalCaching( connection );
     } finally {
@@ -4397,7 +4397,7 @@ public class BasicQueryTest {
             + SleepUdf.class.getName() + "\"/>", null );
      */
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier25::new);
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
 
     final Query query = connection.parseQuery( queryString );
     final Throwable[] throwables = { null };
@@ -4505,7 +4505,7 @@ public class BasicQueryTest {
     throws Exception {
     // avoid cache to ensure sql executes
     //TestContext context = getTestContext().withFreshConnection();
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     flushSchemaCache(connection);
 
     RolapConnection conn = (RolapConnection) connection;
@@ -4611,7 +4611,7 @@ public class BasicQueryTest {
     Throwable throwable = null;
     ((TestConfig)context.getConfig()).setQueryTimeout(2);
     try {
-    	executeQueryTimeoutTest(context.getConnection(), query);
+    	executeQueryTimeoutTest(context.getConnectionWithDefaultRole(), query);
     } catch ( Throwable ex ) {
       throwable = ex;
     }
@@ -4621,7 +4621,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testFormatInheritance(Context context) {
-    assertQueryReturns( context.getConnection(),"with member measures.foo as 'measures.bar' " + "member measures.bar as "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member measures.foo as 'measures.bar' " + "member measures.bar as "
         + "'measures.profit' select {measures.foo} on 0 from sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Measures].[foo]}\n" + "Row #0: $339,610.90\n" );
   }
@@ -4629,7 +4629,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testFormatInheritanceWithIIF(Context context) {
-    assertQueryReturns( context.getConnection(),"with member measures.foo as 'measures.bar' " + "member measures.bar as "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member measures.foo as 'measures.bar' " + "member measures.bar as "
         + "'iif(not isempty(measures.profit),measures.profit,null)' " + "select from sales where measures.foo",
         "Axis #0:\n" + "{[Measures].[foo]}\n" + "$339,610.90" );
   }
@@ -4641,7 +4641,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testFormatInheritanceWorksWithFirstFormatItFinds(Context context) {
-    assertQueryReturns( context.getConnection(),"with member measures.foo as 'measures.bar' " + "member measures.bar as "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member measures.foo as 'measures.bar' " + "member measures.bar as "
         + "'iif(measures.profit>3000,measures.[unit sales],measures.[Customer Count])' "
         + "select {[Store].[All Stores].[USA].[WA].children} on 0 " + "from sales where measures.foo", "Axis #0:\n"
             + "{[Measures].[foo]}\n" + "Axis #1:\n" + "{[Store].[USA].[WA].[Bellingham]}\n"
@@ -4660,15 +4660,15 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testFormatStringAppliedToStringValue(Context context) {
     // "23" as an integer value
-    assertQueryReturns( context.getConnection(),"with member [Measures].[Test] as '23', FORMAT_STRING = '|<|arrow=\"up\"'\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member [Measures].[Test] as '23', FORMAT_STRING = '|<|arrow=\"up\"'\n"
         + "select [Measures].[Test] on 0\n" + "from [Sales]", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Measures].[Test]}\n" + "Row #0: |23|arrow=up\n" );
     // "23" as a string value: converted to lower case
-    assertQueryReturns( context.getConnection(),"with member [Measures].[Test] as '\"23\"', FORMAT_STRING = '|<|arrow=\"up\"'\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member [Measures].[Test] as '\"23\"', FORMAT_STRING = '|<|arrow=\"up\"'\n"
         + "select [Measures].[Test] on 0\n" + "from [Sales]", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Measures].[Test]}\n" + "Row #0: |23|arrow=up\n" );
     // string value "Foo Bar" -- converted to lower case
-    assertQueryReturns( context.getConnection(),"with member [Measures].[Test] as '\"Foo \" || \"Bar\"', FORMAT_STRING = '|<|arrow=\"up\"'\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member [Measures].[Test] as '\"Foo \" || \"Bar\"', FORMAT_STRING = '|<|arrow=\"up\"'\n"
         + "select [Measures].[Test] on 0\n" + "from [Sales]", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Measures].[Test]}\n" + "Row #0: |foo bar|arrow=up\n" );
   }
@@ -4679,7 +4679,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testAvgCastProblem(Context context) {
-    assertQueryReturns( context.getConnection(),"with member measures.bar as "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member measures.bar as "
         + "'iif(measures.profit>3000,min([Education Level].[Education Level].Members),min([Education Level]"
         + ".[Education Level].Members))' " + "select {[Store].[All Stores].[USA].[WA].children} on 0 "
         + "from sales where measures.bar", "Axis #0:\n" + "{[Measures].[bar]}\n" + "Axis #1:\n"
@@ -4696,7 +4696,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testFormatInheritanceUseSecondIfFirstHasNoFormat(Context context) {
-    assertQueryReturns( context.getConnection(),"with member measures.foo as 'measures.bar+measures.blah'" + " member measures.bar as '10'"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member measures.foo as 'measures.bar+measures.blah'" + " member measures.bar as '10'"
         + " member measures.blah as '20',format_string='$##.###.00' " + "select from sales where measures.foo",
         "Axis #0:\n" + "{[Measures].[foo]}\n" + "$30.00" );
   }
@@ -4708,7 +4708,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testFormatInheritanceUseFirstValid(Context context) {
-    assertQueryReturns( context.getConnection(),"with member measures.foo as '13+31*measures.[Unit Sales]/"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member measures.foo as '13+31*measures.[Unit Sales]/"
         + "iif(measures.profit>0,measures.profit,measures.[Customer Count])'"
         + " select {[Store].[All Stores].[USA].[CA].children} on 0 " + "from sales where measures.foo", "Axis #0:\n"
             + "{[Measures].[foo]}\n" + "Axis #1:\n" + "{[Store].[USA].[CA].[Alameda]}\n"
@@ -4741,7 +4741,7 @@ public class BasicQueryTest {
     ((TestConfig)context.getConfig()).setIterationLimit(11);
 
     Throwable throwable = null;
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     try {
       Query query = connection.parseQuery( queryString );
       query.setResultStyle( ResultStyle.LIST );
@@ -4760,7 +4760,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testGetCaptionUsingMemberDotCaption(Context context) {
-    assertQueryReturns( context.getConnection(),"SELECT Filter(Store.allmembers, "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"SELECT Filter(Store.allmembers, "
         + "[store].currentMember.caption = \"USA\") on 0 FROM SALES", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Store].[USA]}\n" + "Row #0: 266,773\n" );
   }
@@ -4768,7 +4768,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testGetCaptionUsingMemberDotPropertiesCaption(Context context) {
-    assertQueryReturns( context.getConnection(),"SELECT Filter(Store.allmembers, "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"SELECT Filter(Store.allmembers, "
         + "[store].currentMember.properties(\"caption\") = \"USA\") " + "on 0 FROM SALES", "Axis #0:\n" + "{}\n"
             + "Axis #1:\n" + "{[Store].[USA]}\n" + "Row #0: 266,773\n" );
   }
@@ -4790,7 +4790,7 @@ public class BasicQueryTest {
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
     String queryWithDeflaultMeasureFilter =
         "select store.members on 0 " + "from DefaultMeasureTesting where [measures].[Supply Time]";
-    assertQueriesReturnSimilarResults(context.getConnection(), queryWithoutFilter, queryWithDeflaultMeasureFilter);
+    assertQueriesReturnSimilarResults(context.getConnectionWithDefaultRole(), queryWithoutFilter, queryWithDeflaultMeasureFilter);
   }
 
     @ParameterizedTest
@@ -4813,7 +4813,7 @@ public class BasicQueryTest {
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
     String queryWithFirstMeasure =
         "select store.members on 0 " + "from DefaultMeasureTesting where [measures].[Store Invoice]";
-    assertQueriesReturnSimilarResults(context.getConnection(), queryWithoutFilter, queryWithFirstMeasure);
+    assertQueriesReturnSimilarResults(context.getConnectionWithDefaultRole(), queryWithoutFilter, queryWithFirstMeasure);
   }
 
     @ParameterizedTest
@@ -4838,7 +4838,7 @@ public class BasicQueryTest {
         "select store.members on 0 " + "from DefaultMeasureTesting where [measures].[Store Invoice]";
     String queryWithDefaultMeasureFilter =
         "select store.members on 0 " + "from DefaultMeasureTesting where [measures].[Supply Time]";
-      Connection connection = context.getConnection();
+      Connection connection = context.getConnectionWithDefaultRole();
     if ( SystemWideProperties.instance().CaseSensitive ) {
       assertQueriesReturnSimilarResults(connection, queryWithoutFilter, queryWithFirstMeasure);
     } else {
@@ -4852,7 +4852,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNumericToLogicalConversion(Context context) {
-    assertQueryReturns(context.getConnection(),"select " + "{[Measures].[Unit Sales]} on columns, " + "Filter(Descendants("
+    assertQueryReturns(context.getConnectionWithDefaultRole(),"select " + "{[Measures].[Unit Sales]} on columns, " + "Filter(Descendants("
         + "[Product].[Food].[Baked Goods].[Bread]), " + "Count([Product].currentMember.children)) on Rows "
         + "from [Sales]", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
             + "{[Product].[Food].[Baked Goods].[Bread]}\n" + "{[Product].[Food].[Baked Goods].[Bread].[Bagels]}\n"
@@ -4882,7 +4882,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testRollupQuery(Context context) {
-    assertQueryReturns( context.getConnection(),"SELECT {[Product].[Product Department].MEMBERS} ON AXIS(0),\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"SELECT {[Product].[Product Department].MEMBERS} ON AXIS(0),\n"
         + "{{[Gender].[Gender].MEMBERS}, {[Gender].[All Gender]}} ON AXIS(1)\n"
         + "FROM [Sales 2] WHERE {[Measures].[Unit Sales]}", "Axis #0:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #1:\n"
             + "{[Product].[Drink].[Alcoholic Beverages]}\n" + "{[Product].[Drink].[Beverages]}\n"
@@ -4936,7 +4936,7 @@ public class BasicQueryTest {
         withSchema(context, SchemaModifiers.BasicQueryTestModifier11::new);
 
     Result result =
-        executeQuery(context.getConnection(), "WITH SET [#DataSet#] AS "
+        executeQuery(context.getConnectionWithDefaultRole(), "WITH SET [#DataSet#] AS "
             + "   'NonEmptyCrossjoin({Descendants([Customer_2].[All Customers], 2)}, "
             + "   {[Product].[All Products]})' "
             + "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} on columns, "
@@ -4957,11 +4957,11 @@ public class BasicQueryTest {
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
             + "{[Product].[All Products], [Time].[1997].[Q2].[5]}\n" + "Row #0: 21,081\n";
 
-    assertQueryReturns( context.getConnection(),"select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS,\n" + "NON EMPTY Crossjoin("
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS,\n" + "NON EMPTY Crossjoin("
         + "  {Product.[All Products]},\n" + "  Filter(" + "    Descendants(Time.[Time], [Time].[Month]), "
         + "    Time.[Time].CurrentMember.Name = '5')) ON ROWS\n" + "from [Sales] ", desiredResult );
 
-    assertQueryReturns( context.getConnection(),"select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS,\n" + "NON EMPTY Filter("
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS,\n" + "NON EMPTY Filter("
         + "  Crossjoin(" + "    {Product.[All Products]},\n" + "    Descendants(Time.[Time], [Time].[Month])),"
         + "  Time.[Time].CurrentMember.Name = '5') ON ROWS\n" + "from [Sales] ", desiredResult );
   }
@@ -4969,14 +4969,14 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testDuplicateAxisFails(Context context) {
-    assertQueryThrows(context.getConnection(), "select [Gender].Members on columns," + " [Measures].Members on columns " + "from [Sales]",
+    assertQueryThrows(context.getConnectionWithDefaultRole(), "select [Gender].Members on columns," + " [Measures].Members on columns " + "from [Sales]",
         "Duplicate axis name 'COLUMNS'." );
   }
 
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testInvalidAxisFails(Context context) {
-      Connection connection = context.getConnection();
+      Connection connection = context.getConnectionWithDefaultRole();
     assertQueryThrows(connection, "select [Gender].Members on 0," + " [Measures].Members on 10 " + "from [Sales]",
         "Axis numbers specified in a query must be sequentially specified,"
             + " and cannot contain gaps. Axis 1 (ROWS) is missing." );
@@ -5003,7 +5003,7 @@ public class BasicQueryTest {
             + "{[Gender].[F]}\n" + "{[Gender].[M]}\n" + "Row #0: 131,558\n" + "Row #0: 36,759\n" + "Row #1: 135,215\n"
             + "Row #1: 37,989\n";
 
-    assertQueryReturns( context.getConnection(),"with member [Measures].[Sum Sqft] as '" + "sum("
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member [Measures].[Sum Sqft] as '" + "sum("
         + "  Descendants([Store].CurrentMember, [Store].Levels(5)),"
         + "  [Store].CurrentMember.Properties(\"Store Sqft\")) '\n"
         + "select {[Store].[USA], [Store].[USA].[CA]} on 0,\n" + " [Gender].Children on 1\n" + "from [Sales]",
@@ -5011,14 +5011,14 @@ public class BasicQueryTest {
 
     // same query, except get level by name not ordinal, should give same
     // result
-    assertQueryReturns( context.getConnection(),"with member [Measures].[Sum Sqft] as '" + "sum("
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member [Measures].[Sum Sqft] as '" + "sum("
         + "  Descendants([Store].CurrentMember, [Store].Levels(\"Store Name\")),"
         + "  [Store].CurrentMember.Properties(\"Store Sqft\")) '\n"
         + "select {[Store].[USA], [Store].[USA].[CA]} on 0,\n" + " [Gender].Children on 1\n" + "from [Sales]",
         expected );
 
     // same query, except level is hard-coded; same result again
-    assertQueryReturns( context.getConnection(),"with member [Measures].[Sum Sqft] as '" + "sum("
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member [Measures].[Sum Sqft] as '" + "sum("
         + "  Descendants([Store].CurrentMember, [Store].[Store Name]),"
         + "  [Store].CurrentMember.Properties(\"Store Sqft\")) '\n"
         + "select {[Store].[USA], [Store].[USA].[CA]} on 0,\n" + " [Gender].Children on 1\n" + "from [Sales]",
@@ -5026,7 +5026,7 @@ public class BasicQueryTest {
 
     // same query, except using the level-less form of the DESCENDANTS
     // function; same result again
-    assertQueryReturns( context.getConnection(),"with member [Measures].[Sum Sqft] as '" + "sum("
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"with member [Measures].[Sum Sqft] as '" + "sum("
         + "  Descendants([Store].CurrentMember, , LEAVES)," + "  [Store].CurrentMember.Properties(\"Store Sqft\")) '\n"
         + "select {[Store].[USA], [Store].[USA].[CA]} on 0,\n" + " [Gender].Children on 1\n" + "from [Sales]",
         expected );
@@ -5035,7 +5035,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testIifWithTupleFirstAndMemberNextWithMeasure(Context context) {
-    assertQueryReturns( context.getConnection(),"WITH\n" + "MEMBER [Gender].agg "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH\n" + "MEMBER [Gender].agg "
         + "AS 'IIF(1=1, ([Gender].[All Gender],measures.[unit sales])," + "([Gender].[All Gender]))', SOLVE_ORDER = 4 "
         + "SELECT {[Measures].[unit sales]} ON 0, " + "{{[Gender].[Gender].MEMBERS},{([Gender].agg)}} on 1 FROM sales",
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n" + "{[Gender].[F]}\n"
@@ -5046,7 +5046,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testIifWithMemberFirstAndTupleNextWithMeasure(Context context) {
-    assertQueryReturns( context.getConnection(),"WITH\n" + "MEMBER [Gender].agg " + "AS 'IIF(1=1, ([Gender].[All Gender]),"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH\n" + "MEMBER [Gender].agg " + "AS 'IIF(1=1, ([Gender].[All Gender]),"
         + "([Gender].[All Gender],measures.[unit sales]))', SOLVE_ORDER = 4 "
         + "SELECT {[Measures].[unit sales]} ON 0, " + "{{[Gender].[Gender].MEMBERS},{([Gender].agg)}} on 1 FROM sales",
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n" + "{[Gender].[F]}\n"
@@ -5057,7 +5057,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testIifWithMemberFirstAndTupleNextWithoutMeasure(Context context) {
-    assertQueryReturns( context.getConnection(),"WITH\n" + "MEMBER [Gender].agg " + "AS 'IIF(1=1, ([Gender].[All Gender]),"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH\n" + "MEMBER [Gender].agg " + "AS 'IIF(1=1, ([Gender].[All Gender]),"
         + "([Gender].[All Gender],[Time].[1997]))', SOLVE_ORDER = 4 " + "SELECT {[Measures].[unit sales]} ON 0, "
         + "{{[Gender].[Gender].MEMBERS},{([Gender].agg)}} on 1 FROM sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n" + "{[Gender].[F]}\n" + "{[Gender].[M]}\n"
@@ -5067,7 +5067,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testIifWithTupleFirstAndMemberNextWithoutMeasure(Context context) {
-    assertQueryReturns( context.getConnection(),"WITH\n" + "MEMBER [Gender].agg " + "AS 'IIF(1=1, "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH\n" + "MEMBER [Gender].agg " + "AS 'IIF(1=1, "
         + "([Store].[All Stores].[USA], [Gender].[All Gender]), " + "([Gender].[All Gender]))', " + "SOLVE_ORDER = 4 "
         + "SELECT {[Measures].[unit sales]} ON 0, " + "{([Gender].agg)} on 1 FROM sales", "Axis #0:\n" + "{}\n"
             + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n" + "{[Gender].[agg]}\n"
@@ -5077,7 +5077,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testIifWithTuplesOfUnequalSizes(Context context) {
-    assertQueryReturns( context.getConnection(),"WITH\n" + "MEMBER [Gender].agg "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH\n" + "MEMBER [Gender].agg "
         + "AS 'IIF(Measures.currentMember is [Measures].[Unit Sales], "
         + "([Store].[All Stores],[Gender].[All Gender],measures.[unit sales]),"
         + "([Store].[All Stores],[Gender].[All Gender]))', SOLVE_ORDER = 4 "
@@ -5090,7 +5090,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testIifWithTuplesOfUnequalSizesAndOrder(Context context) {
-    assertQueryReturns( context.getConnection(),"WITH\n" + "MEMBER [Gender].agg "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH\n" + "MEMBER [Gender].agg "
         + "AS 'IIF(Measures.currentMember is [Measures].[Unit Sales], "
         + "([Store].[All Stores],[Gender].[M],measures.[unit sales]),"
         + "([Gender].[M],[Store].[All Stores]))', SOLVE_ORDER = 4 " + "SELECT {[Measures].[unit sales]} ON 0, "
@@ -5103,7 +5103,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testEmptyAggregationListDueToFilterDoesNotThrowException(Context context) {
     ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
-    assertQueryReturns( context.getConnection(),"WITH \n" + "MEMBER [GENDER].[AGG] "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH \n" + "MEMBER [GENDER].[AGG] "
         + "AS 'AGGREGATE(FILTER([S1], (NOT ISEMPTY([MEASURES].[STORE SALES]))))' " + "SET [S1] "
         + "AS 'CROSSJOIN({[GENDER].[GENDER].MEMBERS},{[STORE].[CANADA].CHILDREN})' " + "SELECT\n"
         + "{[MEASURES].[STORE SALES]} ON COLUMNS,\n" + "{[GENDER].[AGG]} ON ROWS\n" + "FROM [WAREHOUSE AND SALES]",
@@ -5121,18 +5121,18 @@ public class BasicQueryTest {
     final String expectedResult =
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
             + "{[Store].[All Stores], [Product].[All Products], [Customers].[All Customers]}\n" + "Row #0: 266,773\n";
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales]} ON COLUMNS, " + "NON EMPTY Crossjoin({[Store].[All Stores]}"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales]} ON COLUMNS, " + "NON EMPTY Crossjoin({[Store].[All Stores]}"
         + ", Crossjoin({[Product].[All Products]}, {[Customers].[All Customers]})) ON ROWS " + "from [Sales]",
         expectedResult );
     // without NON EMPTY
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales]} ON COLUMNS, " + "  Crossjoin({[Store].[All Stores]}"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales]} ON COLUMNS, " + "  Crossjoin({[Store].[All Stores]}"
         + ", Crossjoin({[Product].[All Products]}, {[Customers].[All Customers]})) ON ROWS " + "from [Sales]",
         expectedResult );
     // using * operator
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales]} ON COLUMNS, " + "NON EMPTY [Store].[All Stores] "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales]} ON COLUMNS, " + "NON EMPTY [Store].[All Stores] "
         + " * [Product].[All Products]" + " * [Customers].[All Customers] ON ROWS " + "from [Sales]", expectedResult );
     // combining tuple
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales]} ON COLUMNS, " + "NON EMPTY [Store].[All Stores] "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales]} ON COLUMNS, " + "NON EMPTY [Store].[All Stores] "
         + " * {([Product].[All Products]," + "     [Customers].[All Customers])} ON ROWS " + "from [Sales]",
         expectedResult );
     // combining two members with tuple
@@ -5140,13 +5140,13 @@ public class BasicQueryTest {
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
             + "{[Store].[All Stores], [Product].[All Products], [Customers].[All Customers], [Gender].[All Gender]}\n"
             + "Row #0: 266,773\n";
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales]} ON COLUMNS, " + "NON EMPTY [Store].[All Stores] "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales]} ON COLUMNS, " + "NON EMPTY [Store].[All Stores] "
         + " * [Product].[All Products]" + " * {([Customers].[All Customers], [Gender].[All Gender])} ON ROWS "
         + "from [Sales]", expectedResult4 );
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales]} ON COLUMNS, " + "NON EMPTY [Store].[All Stores] "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales]} ON COLUMNS, " + "NON EMPTY [Store].[All Stores] "
         + " * {([Product].[All Products], [Customers].[All Customers])}" + " * [Gender].[All Gender] ON ROWS "
         + "from [Sales]", expectedResult4 );
-    assertQueryReturns( context.getConnection(),"select {[Measures].[Unit Sales]} ON COLUMNS, "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales]} ON COLUMNS, "
         + "NON EMPTY {([Store].[All Stores], [Product].[All Products])}" + " * [Customers].[All Customers]"
         + " * [Gender].[All Gender] ON ROWS " + "from [Sales]", expectedResult4 );
   }
@@ -5158,7 +5158,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testHeterogeneousAxis(Context context) {
-      Connection connection = context.getConnection();
+      Connection connection = context.getConnectionWithDefaultRole();
     // SSAS2005 gives error:
     // Query (1, 8) Two sets specified in the function have different
     // dimensionality.
@@ -5172,7 +5172,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testQueryWithNullMember(Context context) {
     // https://jira.pentaho.com/browse/MONDRIAN-2643
-    assertQueryReturns( context.getConnection(),"WITH\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH\n"
         + " SET [*NATIVE_CJ_SET] AS 'FILTER( FILTER([Store Size in SQFT].[Store Sqft].MEMBERS,\n" + "\n"
         + "CASE WHEN ([Store Size in SQFT].CURRENTMEMBER  IS NULL )\n" + "THEN 1=0 ELSE\n"
         + "CAST([Store Size in SQFT].CURRENTMEMBER.CAPTION AS NUMERIC)  > 3500\n" + "END\n" + "\n"
@@ -5202,7 +5202,7 @@ public class BasicQueryTest {
     if ( !SystemWideProperties.instance().SsasCompatibleNaming ) {
       return;
     }
-    assertQueryReturns( context.getConnection(),"select [Time].[Year].Members on columns,\n" + "[Time].[Weekly].[1997].[6].Children on rows\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select [Time].[Year].Members on columns,\n" + "[Time].[Weekly].[1997].[6].Children on rows\n"
         + "from [Sales]", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Time].[1997]}\n" + "{[Time].[1998]}\n"
             + "Axis #2:\n" + "{[Time].[Weekly].[1997].[6].[1]}\n" + "{[Time].[Weekly].[1997].[6].[26]}\n"
             + "{[Time].[Weekly].[1997].[6].[27]}\n" + "{[Time].[Weekly].[1997].[6].[28]}\n"
@@ -5225,10 +5225,10 @@ public class BasicQueryTest {
             + "  </SQL></MeasureExpression></Measure>", null, null ));
        */
       withSchema(context, SchemaModifiers.BasicQueryTestModifier12::new);
-      assertQueryReturns(context.getConnection(),"select " + "Crossjoin([Gender].[Gender].Members, [Measures].[zero]) ON COLUMNS\n"
+      assertQueryReturns(context.getConnectionWithDefaultRole(),"select " + "Crossjoin([Gender].[Gender].Members, [Measures].[zero]) ON COLUMNS\n"
         + "from [Sales] " + "  \n", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Gender].[F], [Measures].[zero]}\n"
             + "{[Gender].[M], [Measures].[zero]}\n" + "Row #0: 0\n" + "Row #0: 0\n" );
-    assertQueryReturns( context.getConnection(),"select [Measures].[zero] ON COLUMNS,\n" + "  {[Gender].[All Gender]}  ON ROWS\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"select [Measures].[zero] ON COLUMNS,\n" + "  {[Gender].[All Gender]}  ON ROWS\n"
         + "from [Sales] " + " ", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[zero]}\n" + "Axis #2:\n"
             + "{[Gender].[All Gender]}\n" + "Row #0: 0\n" );
   }
@@ -5248,10 +5248,10 @@ public class BasicQueryTest {
             null, null, null );
        */
       TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier28::new);
-      assertQueryReturns( context.getConnection(),"select " + "Crossjoin([Gender].[Gender].Members, [Measures].[zero]) ON COLUMNS\n"
+      assertQueryReturns( context.getConnectionWithDefaultRole(),"select " + "Crossjoin([Gender].[Gender].Members, [Measures].[zero]) ON COLUMNS\n"
         + "from [FooBarZerOneAnything] ", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Gender].[F], [Measures].[zero]}\n"
             + "{[Gender].[M], [Measures].[zero]}\n" + "Row #0: 0\n" + "Row #0: 0\n" );
-      assertQueryReturns( context.getConnection(),"select [Measures].[zero] ON COLUMNS,\n" + "  {[Gender].[All Gender]}  ON ROWS\n"
+      assertQueryReturns( context.getConnectionWithDefaultRole(),"select [Measures].[zero] ON COLUMNS,\n" + "  {[Gender].[All Gender]}  ON ROWS\n"
         + "from [FooBarZerOneAnything] ", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[zero]}\n" + "Axis #2:\n"
             + "{[Gender].[All Gender]}\n" + "Row #0: 0\n" );
   }
@@ -5361,7 +5361,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testHighCardSqlTupleReaderLeakingConnections(Context context) {
-    assertQueryReturns( context.getConnection(),"WITH MEMBER [Measures].[NegativeSales] AS '- [Measures].[Store Sales]' "
+    assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH MEMBER [Measures].[NegativeSales] AS '- [Measures].[Store Sales]' "
         + "MEMBER [Product].[SameName] AS 'Aggregate(Filter("
         + "[Product].[Product Name].members,([Measures].[Store Sales] > 0)))' " + "MEMBER [Measures].[SameName] AS "
         + "'([Measures].[Store Sales],[Product].[SameName])' "
@@ -5384,7 +5384,7 @@ public class BasicQueryTest {
             + "      [Store].[All Stores].[USA].[WA].[Seattle].[Store 15],"
             + "      [Time.Weekly].[All Time.Weeklys].[1997].[24].[3]" + "  )" + "  }" + "  on 0,"
             + "  [Measures].[units shipped] on 1" + " from warehouse";
-    assertQueryReturns( context.getConnection(),mdx, "Axis #0:\n" + "{}\n" + "Axis #1:\n"
+    assertQueryReturns( context.getConnectionWithDefaultRole(),mdx, "Axis #0:\n" + "{}\n" + "Axis #1:\n"
         + "{[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables]" + ".[Tell Tale].[Tell Tale Tomatos], "
         + "[Warehouse].[USA].[WA].[Seattle].[Quality Warehousing and " + "Trucking], "
         + "[Store].[USA].[WA].[Seattle].[Store 15], " + "[Time.Weekly].[1997].[24].[3]}\n" + "Axis #2:\n"
@@ -5400,7 +5400,7 @@ public class BasicQueryTest {
                 + "<Formula>([Gender].LastChild)</Formula>" + "</CalculatedMember>" ));
      */
       withSchema(context, SchemaModifiers.BasicQueryTestModifier9::new);
-      assertQueryReturns( context.getConnection(),"select {[Gender].[M]} on 0 from sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
+      assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Gender].[M]} on 0 from sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
         + "{[Gender].[M]}\n" + "Row #0: 135,215\n" );
   }
 
@@ -5411,7 +5411,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testConcurrentStatementRun(Context context) throws Exception {
-    final Connection connection = context.getConnection();
+    final Connection connection = context.getConnectionWithDefaultRole();
 
     final String mdxQuery =
         "select {TopCount([Customers].Members, 10, [Measures].[Unit Sales])} on columns from [Sales]";
@@ -5453,28 +5453,28 @@ public class BasicQueryTest {
   void testRollup(Context context) {
     switch ( 2 ) {
       case 0:
-        assertQueryReturns( context.getConnection(),"select [Gender].Children * [Product].Children on 0\n" + "from [Sales]", "Axis #0:\n"
+        assertQueryReturns( context.getConnectionWithDefaultRole(),"select [Gender].Children * [Product].Children on 0\n" + "from [Sales]", "Axis #0:\n"
             + "{}\n" + "Axis #1:\n" + "{[Gender].[F], [Product].[Drink]}\n" + "{[Gender].[F], [Product].[Food]}\n"
             + "{[Gender].[F], [Product].[Non-Consumable]}\n" + "{[Gender].[M], [Product].[Drink]}\n"
             + "{[Gender].[M], [Product].[Food]}\n" + "{[Gender].[M], [Product].[Non-Consumable]}\n"
             + "Row #0: 12,202\n" + "Row #0: 94,814\n" + "Row #0: 24,542\n" + "Row #0: 12,395\n" + "Row #0: 97,126\n"
             + "Row #0: 25,694\n" );
         // now, should be able to answer this one by rolling up gender
-        assertQueryReturns( context.getConnection(),"select [Product].Children on 0\n" + "from [Sales]", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
+        assertQueryReturns( context.getConnectionWithDefaultRole(),"select [Product].Children on 0\n" + "from [Sales]", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Product].[Drink]}\n" + "{[Product].[Food]}\n" + "{[Product].[Non-Consumable]}\n" + "Row #0: 24,597\n"
             + "Row #0: 191,940\n" + "Row #0: 50,236\n" );
         break;
       case 1:
-        assertQueryReturns( context.getConnection(),"select [Gender].[M] * [Product].Children on 0\n" + "from [Sales]", "Axis #0:\n" + "{}\n"
+        assertQueryReturns( context.getConnectionWithDefaultRole(),"select [Gender].[M] * [Product].Children on 0\n" + "from [Sales]", "Axis #0:\n" + "{}\n"
             + "Axis #1:\n" + "{[Gender].[M], [Product].[Drink]}\n" + "{[Gender].[M], [Product].[Food]}\n"
             + "{[Gender].[M], [Product].[Non-Consumable]}\n" + "Row #0: 12,395\n" + "Row #0: 97,126\n"
             + "Row #0: 25,694\n" );
-        assertQueryReturns( context.getConnection(),"select [Gender].[F] * [Product].Children on 0\n" + "from [Sales]", "Axis #0:\n" + "{}\n"
+        assertQueryReturns( context.getConnectionWithDefaultRole(),"select [Gender].[F] * [Product].Children on 0\n" + "from [Sales]", "Axis #0:\n" + "{}\n"
             + "Axis #1:\n" + "{[Gender].[F], [Product].[Drink]}\n" + "{[Gender].[F], [Product].[Food]}\n"
             + "{[Gender].[F], [Product].[Non-Consumable]}\n" + "Row #0: 12,202\n" + "Row #0: 94,814\n"
             + "Row #0: 24,542\n" );
         // now, should be able to answer this one by rolling up gender
-        assertQueryReturns( context.getConnection(),"select [Product].Children on 0\n" + "from [Sales]", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
+        assertQueryReturns( context.getConnectionWithDefaultRole(),"select [Product].Children on 0\n" + "from [Sales]", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Product].[Drink]}\n" + "{[Product].[Food]}\n" + "{[Product].[Non-Consumable]}\n" + "Row #0: 24,597\n"
             + "Row #0: 191,940\n" + "Row #0: 50,236\n" );
         break;
@@ -5483,12 +5483,12 @@ public class BasicQueryTest {
         String[] states = { "USA", "Canada", "Mexico" };
         for ( String state : states ) {
           for ( String gender : genders ) {
-            executeQuery(context.getConnection(), "select [Gender].[" + gender + "] * [Store].[" + state
+            executeQuery(context.getConnectionWithDefaultRole(), "select [Gender].[" + gender + "] * [Store].[" + state
                 + "] * [Product].Children on 0\n" + "from [Sales]" );
           }
         }
         // now, should be able to answer this one by rolling up gender
-        assertQueryReturns( context.getConnection(),"select [Product].Children on 0\n" + "from [Sales]", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
+        assertQueryReturns( context.getConnectionWithDefaultRole(),"select [Product].Children on 0\n" + "from [Sales]", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Product].[Drink]}\n" + "{[Product].[Food]}\n" + "{[Product].[Non-Consumable]}\n" + "Row #0: 24,597\n"
             + "Row #0: 191,940\n" + "Row #0: 50,236\n" );
         break;
@@ -5509,7 +5509,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testStatistics(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     final String product = getDialect(connection).getDialectName();
     final String dialectClassName = getDialect(connection).getClass().getName();
 
@@ -5554,7 +5554,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testResultLimit(Context context) throws Exception {
     SystemWideProperties.instance().ResultLimit = 1000;
-    assertAxisThrows(context.getConnection(), "CrossJoin([Product].[Brand Name].Members, [Gender].[Gender].Members)",
+    assertAxisThrows(context.getConnectionWithDefaultRole(), "CrossJoin([Product].[Brand Name].Members, [Gender].[Gender].Members)",
         "result (1,001) exceeded limit (1,000)" );
   }
 
@@ -5562,7 +5562,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testResultLimitWithinLimit(Context context) {
     SystemWideProperties.instance().ResultLimit = 5000;
-    executeQuery(context.getConnection(),
+    executeQuery(context.getConnectionWithDefaultRole(),
         "select CrossJoin([Product].[Brand Name].Members, [Gender].[Gender].Members) on columns from [Sales]" );
   }
 
@@ -5603,13 +5603,13 @@ public class BasicQueryTest {
     Future<Result> task1 = es.submit( new Callable<Result>() {
       @Override
 	public Result call() throws Exception {
-        return executeQuery(context.getConnection(), query );
+        return executeQuery(context.getConnectionWithDefaultRole(), query );
       }
     } );
     Future<Result> task2 = es.submit( new Callable<Result>() {
       @Override
 	public Result call() throws Exception {
-        return executeQuery(context.getConnection(), query );
+        return executeQuery(context.getConnectionWithDefaultRole(), query );
       }
     } );
 
@@ -5637,14 +5637,14 @@ public class BasicQueryTest {
     String[] equivalentMemberNames =
         { "gender.gender.F", "gender.gender.f", "gender.[All gender].F", "gender.[All gender].f" };
     for ( String memberName : equivalentMemberNames ) {
-      assertQueryReturns(context.getConnection(),"select " + memberName + " on 0 from sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
+      assertQueryReturns(context.getConnectionWithDefaultRole(),"select " + memberName + " on 0 from sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
           + "{[Gender].[F]}\n" + "Row #0: 131,558\n" );
     }
     // also verify case.sensitive=true is honored
     SystemWideProperties.instance().CaseSensitive = true;
     String[] wrongCase = { "gender.gender.f", "gender.[All gender].f" };
     for ( String memberName : wrongCase ) {
-      assertExprThrows(context.getConnection(), "select " + memberName + " on 0 from sales", "Failed to parse query" );
+      assertExprThrows(context.getConnectionWithDefaultRole(), "select " + memberName + " on 0 from sales", "Failed to parse query" );
     }
     SystemWideProperties.instance().CaseSensitive = false;
   }
@@ -5677,7 +5677,7 @@ public class BasicQueryTest {
       @Override
 	public void run( ExecutorService exec, Query q1, AtomicBoolean fail, AtomicBoolean success, Runnable r1,
           Runnable r2 ) throws Exception {
-        flushSchemaCache(context.getConnection());
+        flushSchemaCache(context.getConnectionWithDefaultRole());
 
         // Run the first query
         exec.submit( r1 );
@@ -5719,7 +5719,7 @@ public class BasicQueryTest {
       @Override
 	public void run( ExecutorService exec, Query q1, AtomicBoolean fail, AtomicBoolean success, Runnable r1,
           Runnable r2 ) throws Exception {
-        flushSchemaCache(context.getConnection());
+        flushSchemaCache(context.getConnectionWithDefaultRole());
 
         // Run the first query
         exec.submit( r1 );
@@ -5756,7 +5756,7 @@ public class BasicQueryTest {
   }
 
   private void runMondrian1506(Context context, Mondrian1506Lambda lambda ) throws Exception {
-    if ( getDatabaseProduct(getDialect(context.getConnection()).getDialectName()) != DatabaseProduct.MYSQL ) {
+    if ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName()) != DatabaseProduct.MYSQL ) {
       // This only works on MySQL because of Sleep()
       return;
     }
@@ -5782,7 +5782,7 @@ public class BasicQueryTest {
         } );
 
     // We are testing the old Query API.
-    final Connection connection = context.getConnection();
+    final Connection connection = context.getConnectionWithDefaultRole();
     final Query q1 = connection.parseQuery( mdx );
     final Query q2 = connection.parseQuery( mdx );
 
@@ -5836,7 +5836,7 @@ public class BasicQueryTest {
             null ));
      */
 	  withSchema(context, SchemaModifiers.BasicQueryTestModifier7::new);
-      Connection connection = context.getConnection();
+      Connection connection = context.getConnectionWithDefaultRole();
     executeQuery(connection, "select " + "Crossjoin([Gender].[Gender].Members, [Measures].[zero]) ON COLUMNS\n"
         + "from [Sales] " + " \n" );
     // Some DBs return 0 when we ask for null. Like Oracle.
@@ -5849,7 +5849,7 @@ public class BasicQueryTest {
         returnedValue = "";
     }
 
-    assertQueryReturns(context.getConnection(),"select [Measures].[zero] ON COLUMNS,\n" + " {[Gender].[All Gender]} ON ROWS\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(),"select [Measures].[zero] ON COLUMNS,\n" + " {[Gender].[All Gender]} ON ROWS\n"
         + "from [Sales] " + " ", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[zero]}\n" + "Axis #2:\n"
             + "{[Gender].[All Gender]}\n" + "Row #0: " + returnedValue + "\n" );
   }
@@ -5933,7 +5933,7 @@ public class BasicQueryTest {
             + "{[Yearly Income].[*TOTAL_MEMBER_SEL~SUM]}), {([Gender].[*DEFAULT_MEMBER], [Education Level]"
             + ".[*DEFAULT_MEMBER])}), [*SORTED_ROW_AXIS])))))) ON ROWS\n" + "from [Sales]\n"
             + "where [*CJ_SLICER_AXIS]\n";
-    executeQuery(context.getConnection(), mdx);
+    executeQuery(context.getConnectionWithDefaultRole(), mdx);
   }
 
   /**
@@ -5943,7 +5943,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNameExpressionSnowflake(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     Dialect dialect = getDialect(connection);
     /*
       ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube( "Sales",
@@ -5976,7 +5976,7 @@ public class BasicQueryTest {
     CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
     ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.BasicQueryTestModifier8(catalog, dialect));
 
-        connection = context.getConnection();
+        connection = context.getConnectionWithDefaultRole();
     assertAxisReturns(connection, "[Example.Example Hierarchy].[Non-Zero]",
         "[Example.Example Hierarchy].[Non-Zero]" );
     assertAxisReturns(connection, "[Example.Example Hierarchy].[Non-Zero].Children",
@@ -6031,7 +6031,7 @@ public class BasicQueryTest {
             + "Row #2: 107,366.33\n";
     //TestContext testContext = TestContext.instance().withFreshConnection().withSchema( schema );
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier31::new);
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertQueryReturns(connection, mdxWithoutBug, expectedResultInNoBugCube );
     assertQueryReturns(connection, mdxWithBug, expectedResultInBugCube );
   }
@@ -6044,7 +6044,7 @@ public class BasicQueryTest {
             + "select [Measures].[Gender Current Member] on 0\n" + "from [Sales]\n"
             + "where { [Gender].[M], [Gender].[F] }";
     try {
-      executeQuery(context.getConnection(), mdx );
+      executeQuery(context.getConnectionWithDefaultRole(), mdx );
       fail( "MondrianException is expected" );
     } catch ( OlapRuntimeException e ) {
       assertEquals( "The " + "MDX function CURRENTMEMBER failed "
@@ -6065,7 +6065,7 @@ public class BasicQueryTest {
             + "where { [Gender].[M], [Gender].[F] }";
 
     try {
-      assertQueryReturns(context.getConnection(), mdx, "Axis #0:\n" + "{[Gender].[M]}\n" + "{[Gender].[F]}\n" + "Axis #1:\n"
+      assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, "Axis #0:\n" + "{[Gender].[M]}\n" + "{[Gender].[F]}\n" + "Axis #1:\n"
           + "{[Measures].[Gender Current Member]}\n" + "Row #0: #null\n" );
     } catch ( OlapRuntimeException e ) {
       fail( "MondrianException is not expected" );
@@ -6086,7 +6086,7 @@ public class BasicQueryTest {
             + "{ [Measures].[Drink Sales Current Period]," + " [Measures].[Drink Sales Current Period] } on 0\n"
             + "from [Sales]\n" + "where { [Time].[1997].[Q4],[Time].[1997].[Q3] }\n";
     try {
-      executeQuery(context.getConnection(), mdx);
+      executeQuery(context.getConnectionWithDefaultRole(), mdx);
       fail( "MondrianException is expected" );
     } catch ( OlapRuntimeException e ) {
       assertEquals( "The " + "MDX function CURRENTMEMBER failed "
@@ -6110,7 +6110,7 @@ public class BasicQueryTest {
             + "from [Sales]\n" + "where { [Time].[1997].[Q4],[Time].[1997].[Q3] }\n";
 
     try {
-      assertQueryReturns(context.getConnection(), mdx, "Axis #0:\n" + "{[Time].[1997].[Q4]}\n" + "{[Time].[1997].[Q3]}\n"
+      assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, "Axis #0:\n" + "{[Time].[1997].[Q4]}\n" + "{[Time].[1997].[Q3]}\n"
           + "Axis #1:\n" + "{[Measures].[Drink Sales Current Period]}\n"
           + "{[Measures].[Drink Sales Current Period]}\n" + "Row #0: \n" + "Row #0: \n" );
     } catch ( OlapRuntimeException e ) {
@@ -6123,7 +6123,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testMondrian625(Context context) {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertQueriesReturnSimilarResults(connection, "select\n" + "    {[Measures].[Unit Sales]} ON COLUMNS,\n"
         + "    {Descendants([Customers].[All Customers], 4)} ON ROWS\n" + "from\n" + "    [Sales]\n" + "where\n"
         + "    ([Time].[1997].[Q4].[12])", "select\n" + "    {[Measures].[Unit Sales]} ON COLUMNS,\n"
@@ -6186,7 +6186,7 @@ public class BasicQueryTest {
             + "Row #5: 41,580\n" + "Row #6: 2,237\n" + "Row #7: 23,591\n" + "Row #8: 35,257\n" + "Row #9: 24,576\n";
 
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier32::new);
-    assertQueryReturns( context.getConnection(),mdx, result );
+    assertQueryReturns( context.getConnectionWithDefaultRole(),mdx, result );
   }
 
   /**

@@ -91,7 +91,7 @@ class RolapResultTest extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
@@ -104,7 +104,7 @@ class RolapResultTest extends AggTableTestCase {
             + " ON ROWS "
             + "from FTAll";
 
-        assertQueryReturns(context.getConnection(), mdx, RESULTS_ALL);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, RESULTS_ALL);
 /*
         Result result = getCubeTestContext().executeQuery(mdx);
         String resultString = TestContext.toString(result);
@@ -120,7 +120,7 @@ class RolapResultTest extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
         String mdx =
@@ -133,7 +133,7 @@ class RolapResultTest extends AggTableTestCase {
             + "from FT1";
 
         //getCubeTestContext().assertQueryReturns(mdx, RESULTS);
-        Result result = executeQuery(mdx, context.getConnection());
+        Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
         String resultString = TestUtil.toString(result);
 //System.out.println(resultString);
 /*
@@ -155,7 +155,7 @@ Axis #2:
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
         String mdx =
@@ -167,7 +167,7 @@ Axis #2:
             + " ON ROWS "
             + "from FT2";
 
-        assertQueryReturns(context.getConnection(), mdx, RESULTS);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, RESULTS);
 /*
         Result result = getCubeTestContext().executeQuery(mdx);
         String resultString = TestContext.toString(result);
@@ -192,7 +192,7 @@ Axis #2:
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
@@ -206,7 +206,7 @@ Axis #2:
             + "from FT2Extra";
 
         //getCubeTestContext().assertQueryReturns(mdx, RESULTS);
-        Result result = executeQuery(mdx, context.getConnection());
+        Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
         String resultString = TestUtil.toString(result);
         assertTrue(resultString.equals(RESULTS));
     }
@@ -236,7 +236,7 @@ Axis #2:
             + "</Dimension>"));
          */
         withSchema(context, SchemaModifiers.RolapResultTestModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Promotion2 Name].[Price Winners], [Promotion2 Name].[Sale Winners]} * {Tail([Time].[Year].Members,3)} ON COLUMNS, "
             + "NON EMPTY Crossjoin({[Store].CurrentMember.Children},  {[Store Type].[All Store Types].Children}) ON ROWS "
             + "from [Sales]",

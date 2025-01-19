@@ -41,7 +41,7 @@ class LinRegFunDefTest {
         //   [Time].CurrentMember.Lag(9) : [Time].CurrentMember
         // is equivalent to
         //   LastPeriods(10)
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER \n"
                 + "[Measures].[Intercept] AS \n"
                 + "  'LinRegIntercept([Time].CurrentMember.Lag(10) : [Time].CurrentMember, [Measures].[Unit Sales], "
@@ -110,7 +110,7 @@ class LinRegFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLinRegPointMonth(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER \n"
                 + "[Measures].[Test] as \n"
                 + "  'LinRegPoint(\n"
@@ -170,7 +170,7 @@ class LinRegFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLinRegIntercept(Context context) {
-        FunctionTest.assertExprReturns(context.getConnection(),
+        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
             "LinRegIntercept([Time].[Month].members,"
                 + " [Measures].[Unit Sales], [Measures].[Store Sales])",
             -126.65,
@@ -205,7 +205,7 @@ Intel platforms):
         // Mondrian can not return "missing data" value -1.#IND
         // empty set
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegIntercept({[Time].Parent},"
                     + " [Measures].[Unit Sales], [Measures].[Store Sales])",
                 "-1.#IND" ); // MSAS returns -1.#IND (whatever that means)
@@ -213,14 +213,14 @@ Intel platforms):
 
         // first expr constant
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegIntercept([Time].[Month].members,"
                     + " 7, [Measures].[Store Sales])",
                 "$7.00" );
         }
 
         // format does not add '$'
-        FunctionTest.assertExprReturns(context.getConnection(),
+        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
             "LinRegIntercept([Time].[Month].members,"
                 + " 7, [Measures].[Store Sales])",
             7.00,
@@ -229,7 +229,7 @@ Intel platforms):
         // Mondrian can not return "missing data" value -1.#IND
         // second expr constant
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegIntercept([Time].[Month].members,"
                     + " [Measures].[Unit Sales], 4)",
                 "-1.#IND" ); // MSAS returns -1.#IND (whatever that means)
@@ -240,7 +240,7 @@ Intel platforms):
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLinRegSlope(Context context) {
-        FunctionTest.assertExprReturns(context.getConnection(),
+        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
             "LinRegSlope([Time].[Month].members,"
                 + " [Measures].[Unit Sales], [Measures].[Store Sales])",
             0.4746,
@@ -249,7 +249,7 @@ Intel platforms):
         // Mondrian can not return "missing data" value -1.#IND
         // empty set
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegSlope({[Time].Parent},"
                     + " [Measures].[Unit Sales], [Measures].[Store Sales])",
                 "-1.#IND" ); // MSAS returns -1.#IND (whatever that means)
@@ -257,7 +257,7 @@ Intel platforms):
 
         // first expr constant
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegSlope([Time].[Month].members,"
                     + " 7, [Measures].[Store Sales])",
                 "$7.00" );
@@ -265,7 +265,7 @@ Intel platforms):
         // ^^^^
         // copy and paste error
 
-        FunctionTest.assertExprReturns(context.getConnection(),
+        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
             "LinRegSlope([Time].[Month].members,"
                 + " 7, [Measures].[Store Sales])",
             0.00,
@@ -274,7 +274,7 @@ Intel platforms):
         // Mondrian can not return "missing data" value -1.#IND
         // second expr constant
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegSlope([Time].[Month].members,"
                     + " [Measures].[Unit Sales], 4)",
                 "-1.#IND" ); // MSAS returns -1.#IND (whatever that means)
@@ -286,7 +286,7 @@ Intel platforms):
     void testLinRegPoint(Context context) {
         // NOTE: mdx does not parse
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegPoint([Measures].[Unit Sales],"
                     + " [Time].CurrentMember[Time].[Month].members,"
                     + " [Measures].[Unit Sales], [Measures].[Store Sales])",
@@ -296,7 +296,7 @@ Intel platforms):
         // Mondrian can not return "missing data" value -1.#IND
         // empty set
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegPoint([Measures].[Unit Sales],"
                     + " {[Time].Parent},"
                     + " [Measures].[Unit Sales], [Measures].[Store Sales])",
@@ -306,7 +306,7 @@ Intel platforms):
         // Expected value is wrong
         // zeroth expr constant
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegPoint(-1,"
                     + " [Time].[Month].members,"
                     + " 7, [Measures].[Store Sales])", "-127.124" );
@@ -314,14 +314,14 @@ Intel platforms):
 
         // first expr constant
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegPoint([Measures].[Unit Sales],"
                     + " [Time].[Month].members,"
                     + " 7, [Measures].[Store Sales])", "$7.00" );
         }
 
         // format does not add '$'
-        FunctionTest.assertExprReturns(context.getConnection(),
+        FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
             "LinRegPoint([Measures].[Unit Sales],"
                 + " [Time].[Month].members,"
                 + " 7, [Measures].[Store Sales])",
@@ -331,7 +331,7 @@ Intel platforms):
         // Mondrian can not return "missing data" value -1.#IND
         // second expr constant
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegPoint([Measures].[Unit Sales],"
                     + " [Time].[Month].members,"
                     + " [Measures].[Unit Sales], 4)",
@@ -345,7 +345,7 @@ Intel platforms):
     void _testLinRegR2(Context context) {
         // Why would R2 equal the slope
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegR2([Time].[Month].members,"
                     + " [Measures].[Unit Sales], [Measures].[Store Sales])",
                 "0.4746" );
@@ -354,14 +354,14 @@ Intel platforms):
         // Mondrian can not return "missing data" value -1.#IND
         // empty set
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegR2({[Time].Parent},"
                     + " [Measures].[Unit Sales], [Measures].[Store Sales])",
                 "-1.#IND" ); // MSAS returns -1.#IND (whatever that means)
         }
 
         // first expr constant
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "LinRegR2([Time].[Month].members,"
                 + " 7, [Measures].[Store Sales])",
             "$7.00" );
@@ -369,7 +369,7 @@ Intel platforms):
         // Mondrian can not return "missing data" value -1.#IND
         // second expr constant
         if ( false ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "LinRegR2([Time].[Month].members,"
                     + " [Measures].[Unit Sales], 4)",
                 "-1.#IND" ); // MSAS returns -1.#IND (whatever that means)
@@ -381,25 +381,25 @@ Intel platforms):
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void _testLinRegVariance(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "LinRegVariance([Time].[Month].members,"
                 + " [Measures].[Unit Sales], [Measures].[Store Sales])",
             "0.4746" );
 
         // empty set
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "LinRegVariance({[Time].Parent},"
                 + " [Measures].[Unit Sales], [Measures].[Store Sales])",
             "-1.#IND" ); // MSAS returns -1.#IND (whatever that means)
 
         // first expr constant
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "LinRegVariance([Time].[Month].members,"
                 + " 7, [Measures].[Store Sales])",
             "$7.00" );
 
         // second expr constant
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "LinRegVariance([Time].[Month].members,"
                 + " [Measures].[Unit Sales], 4)",
             "-1.#IND" ); // MSAS returns -1.#IND (whatever that means)

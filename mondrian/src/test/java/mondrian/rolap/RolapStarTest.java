@@ -81,7 +81,7 @@ class RolapStarTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCloneRelationWithFilteredTable(Context context) {
-      RolapStarForTests rs = getStar(context.getConnection(), "sales");
+      RolapStarForTests rs = getStar(context.getConnectionWithDefaultRole(), "sales");
       TableQueryMappingImpl original = TableQueryMappingImpl.builder()
     		  .withTable(((Builder) PhysicalTableImpl.builder().withName("TestTable")
     				  .withsSchema(DatabaseSchemaImpl.builder().withName("Sechema").build())).build())

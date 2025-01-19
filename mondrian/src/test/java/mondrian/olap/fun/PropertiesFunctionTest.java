@@ -137,7 +137,7 @@ class PropertiesFunctionTest {
   }
 
   private void verifyMemberCaptionPropertyFunction(Context context, String propertyQuery, DataType expectedCategory, Type expectedReturnType, String expectedResult ) {
-	connection = context.getConnection();
+	connection = context.getConnectionWithDefaultRole();
     query = connection.parseQuery( generateQueryString( propertyQuery ) );
     assertNotNull( query );
     resolvedFun = query.getFormulas()[0].getExpression();
@@ -146,13 +146,13 @@ class PropertiesFunctionTest {
     assertEquals( expectedCategory, resolvedFun.getCategory() );
     assertEquals( expectedReturnType, resolvedFun.getType() );
 
-    result = context.getConnection().execute( query );
+    result = context.getConnectionWithDefaultRole().execute( query );
     assertNotNull( result );
     assertEquals( expectedResult, result.getCell( ZERO_POS ).getFormattedValue() );
   }
 
   private void verifyGenerateWithMemberCaptionPropertyFunction( Context context,  String functionQuery, DataType expectedCategory, Type expectedReturnType, String expectedResult ) {
-    connection = context.getConnection();
+    connection = context.getConnectionWithDefaultRole();
     try {
       query = connection.parseQuery( generateQueryString( functionQuery ) );
     } catch ( OlapRuntimeException e ) {
@@ -166,7 +166,7 @@ class PropertiesFunctionTest {
     assertEquals( expectedCategory, resolvedFun.getCategory() );
     assertEquals( expectedReturnType, resolvedFun.getType() );
 
-    result = context.getConnection().execute( query );
+    result = context.getConnectionWithDefaultRole().execute( query );
     assertNotNull( result );
     assertEquals( expectedResult, result.getCell( ZERO_POS ).getFormattedValue() );
   }

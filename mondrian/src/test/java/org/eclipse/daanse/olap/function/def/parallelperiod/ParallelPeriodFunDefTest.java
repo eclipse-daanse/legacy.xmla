@@ -58,7 +58,7 @@ class ParallelPeriodFunDefTest {
             + "Row #1: \n"
             + "Row #2: \n"
             + "Row #3: \n";
-        TestUtil.assertQueryReturns(context.getConnection(), query, expected);
+        TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(), query, expected);
     }
 
     /**
@@ -67,7 +67,7 @@ class ParallelPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testParallelPeriodWithSlicer(Context context) {
-      TestUtil.assertQueryReturns(context.getConnection(),
+      TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
         "With "
           + "Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Time],[*BASE_MEMBERS_Product])' "
           + "Set [*BASE_MEMBERS_Measures] as '{[Measures].[*FORMATTED_MEASURE_0], [Measures].[*FORMATTED_MEASURE_1]}' "
@@ -100,7 +100,7 @@ class ParallelPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testParallelperiodOnLevelsString(Context context) {
-      TestUtil.assertQueryReturns(context.getConnection(),
+      TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
         "with member Measures.[Prev Unit Sales] as 'parallelperiod(Levels(\"[Time].[Month]\"))'\n"
           + "select {[Measures].[Unit Sales], Measures.[Prev Unit Sales]} ON COLUMNS,\n"
           + "[Gender].members ON ROWS\n"
@@ -126,7 +126,7 @@ class ParallelPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testParallelperiodOnStrToMember(Context context) {
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
         "with member Measures.[Prev Unit Sales] as 'parallelperiod(strToMember(\"[Time].[1997].[Q2]\"))'\n"
           + "select {[Measures].[Unit Sales], Measures.[Prev Unit Sales]} ON COLUMNS,\n"
           + "[Gender].members ON ROWS\n"
@@ -148,7 +148,7 @@ class ParallelPeriodFunDefTest {
           + "Row #2: 10,545\n"
           + "Row #2: 10,691\n" );
 
-      assertQueryThrows(context.getConnection(),
+      assertQueryThrows(context.getConnectionWithDefaultRole(),
         "with member Measures.[Prev Unit Sales] as 'parallelperiod(strToMember(\"[Time].[Quarter]\"))'\n"
           + "select {[Measures].[Unit Sales], Measures.[Prev Unit Sales]} ON COLUMNS,\n"
           + "[Gender].members ON ROWS\n"
@@ -161,34 +161,34 @@ class ParallelPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testParallelPeriod(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "parallelperiod([Time].[Quarter], 1, [Time].[1998].[Q1])",
             "[Time].[1997].[Q4]" );
 
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "parallelperiod([Time].[Quarter], -1, [Time].[1997].[Q1])",
             "[Time].[1997].[Q2]" );
 
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "parallelperiod([Time].[Year], 1, [Time].[1998].[Q1])",
             "[Time].[1997].[Q1]" );
 
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "parallelperiod([Time].[Year], 1, [Time].[1998].[Q1].[1])",
             "[Time].[1997].[Q1].[1]" );
 
         // No args, therefore finds parallel period to [Time].[1997], which
         // would be [Time].[1996], except that that doesn't exist, so null.
-        assertAxisReturns(context.getConnection(), "ParallelPeriod()", "" );
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "ParallelPeriod()", "" );
 
         // Parallel period to [Time].[1997], which would be [Time].[1996],
         // except that that doesn't exist, so null.
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "ParallelPeriod([Time].[Year], 1, [Time].[1997])", "" );
 
         // one parameter, level 2 above member
         if ( isDefaultNullMemberRepresentation() ) {
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "WITH MEMBER [Measures].[Foo] AS \n"
                     + " ' ParallelPeriod([Time].[Year]).UniqueName '\n"
                     + "SELECT {[Measures].[Foo]} ON COLUMNS\n"
@@ -202,7 +202,7 @@ class ParallelPeriodFunDefTest {
         }
 
         // one parameter, level 1 above member
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Foo] AS \n"
                 + " ' ParallelPeriod([Time].[Quarter]).UniqueName '\n"
                 + "SELECT {[Measures].[Foo]} ON COLUMNS\n"
@@ -215,7 +215,7 @@ class ParallelPeriodFunDefTest {
                 + "Row #0: [Time].[1997].[Q2].[5]\n" );
 
         // one parameter, level same as member
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Foo] AS \n"
                 + " ' ParallelPeriod([Time].[Month]).UniqueName '\n"
                 + "SELECT {[Measures].[Foo]} ON COLUMNS\n"
@@ -229,7 +229,7 @@ class ParallelPeriodFunDefTest {
 
         //  one parameter, level below member
         if ( isDefaultNullMemberRepresentation() ) {
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "WITH MEMBER [Measures].[Foo] AS \n"
                     + " ' ParallelPeriod([Time].[Month]).UniqueName '\n"
                     + "SELECT {[Measures].[Foo]} ON COLUMNS\n"
@@ -255,27 +255,27 @@ class ParallelPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testParallelPeriodDepends(Context context) {
-        assertMemberExprDependsOn(context.getConnection(),
+        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
             "ParallelPeriod([Time].[Quarter], 2.0)", "{[Time]}" );
-        assertMemberExprDependsOn(context.getConnection(),
+        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
             "ParallelPeriod([Time].[Quarter], 2.0, [Time].[1997].[Q3])", "{}" );
-        assertMemberExprDependsOn(context.getConnection(),
+        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
             "ParallelPeriod()",
             "{[Time]}" );
-        assertMemberExprDependsOn(context.getConnection(),
+        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
             "ParallelPeriod([Product].[Food])", "{[Product]}" );
         // [Gender].[M] is used here as a numeric expression!
         // The numeric expression DOES depend upon [Product].
         // The expression as a whole depends upon everything except [Gender].
         String s1 = allHiersExcept( "[Gender]" );
-        assertMemberExprDependsOn(context.getConnection(),
+        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
             "ParallelPeriod([Product].[Product Family], [Gender].[M], [Product].[Food])",
             s1 );
         // As above
         String s11 = allHiersExcept( "[Gender]" );
-        assertMemberExprDependsOn(context.getConnection(),
+        assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
             "ParallelPeriod([Product].[Product Family], [Gender].[M])", s11 );
-        assertSetExprDependsOn(context.getConnection(),
+        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "parallelperiod([Time].[Time].CurrentMember)",
             "{[Time]}" );
     }
@@ -283,7 +283,7 @@ class ParallelPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testParallelPeriodLevelLag(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Prev Unit Sales] as "
                 + "        '([Measures].[Unit Sales], parallelperiod([Time].[Quarter], 2))' "
                 + "select "
@@ -310,7 +310,7 @@ class ParallelPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testParallelPeriodLevel(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with "
                 + "    member [Measures].[Prev Unit Sales] as "
                 + "        '([Measures].[Unit Sales], parallelperiod([Time].[Quarter]))' "

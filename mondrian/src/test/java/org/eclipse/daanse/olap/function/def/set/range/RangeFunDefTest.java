@@ -29,7 +29,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRange(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "[Time].[1997].[Q1].[2] : [Time].[1997].[Q2].[5]",
             "[Time].[1997].[Q1].[2]\n"
                 + "[Time].[1997].[Q1].[3]\n"
@@ -37,7 +37,7 @@ class RangeFunDefTest {
                 + "[Time].[1997].[Q2].[5]" ); // not parents
 
         // testcase for bug XXXXX: braces required
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with set [Set1] as '[Product].[Drink]:[Product].[Food]' \n"
                 + "\n"
                 + "select [Set1] on columns, {[Measures].defaultMember} on rows \n"
@@ -60,7 +60,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNullRange(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "[Time].[1997].[Q1].[2] : NULL", //[Time].[1997].[Q2].[5]
             "" ); // Empty Set
     }
@@ -71,7 +71,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTwoNullRange(Context context) {
-        assertAxisThrows(context.getConnection(),
+        assertAxisThrows(context.getConnectionWithDefaultRole(),
             "NULL : NULL",
             "Failed to parse query 'select {NULL : NULL} on columns from Sales'" );
     }
@@ -82,7 +82,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeLarge(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "[Customers].[USA].[CA].[San Francisco] : [Customers].[USA].[WA].[Bellingham]",
             "[Customers].[USA].[CA].[San Francisco]\n"
                 + "[Customers].[USA].[CA].[San Gabriel]\n"
@@ -112,7 +112,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeStartEqualsEnd(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "[Time].[1997].[Q3].[7] : [Time].[1997].[Q3].[7]",
             "[Time].[1997].[Q3].[7]" );
     }
@@ -120,7 +120,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeStartEqualsEndLarge(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "[Customers].[USA].[CA] : [Customers].[USA].[CA]",
             "[Customers].[USA].[CA]" );
     }
@@ -128,7 +128,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeEndBeforeStart(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "[Time].[1997].[Q3].[7] : [Time].[1997].[Q2].[5]",
             "[Time].[1997].[Q2].[5]\n"
                 + "[Time].[1997].[Q2].[6]\n"
@@ -138,7 +138,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeEndBeforeStartLarge(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "[Customers].[USA].[WA] : [Customers].[USA].[CA]",
             "[Customers].[USA].[CA]\n"
                 + "[Customers].[USA].[OR]\n"
@@ -148,7 +148,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeBetweenDifferentLevelsIsError(Context context) {
-        assertAxisThrows(context.getConnection(),
+        assertAxisThrows(context.getConnectionWithDefaultRole(),
             "[Time].[1997].[Q2] : [Time].[1997].[Q2].[5]",
             "Members must belong to the same level" );
     }
@@ -156,7 +156,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeBoundedByAll(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "[Gender] : [Gender]",
             "[Gender].[All Gender]" );
     }
@@ -164,7 +164,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeBoundedByAllLarge(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "[Customers].DefaultMember : [Customers]",
             "[Customers].[All Customers]" );
     }
@@ -172,7 +172,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeBoundedByNull(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "[Gender].[F] : [Gender].[M].NextMember",
             "" );
     }
@@ -180,7 +180,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeBoundedByNullLarge(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "[Customers].PrevMember : [Customers].[USA].[OR]",
             "" );
     }
@@ -215,7 +215,7 @@ class RangeFunDefTest {
                 + "Row #3: 1,237\n"
                 + "Row #4: 394\n"
                 + "Row #5: 1,277\n";
-        assertQueryReturns(context.getConnection(), query, expectedResult );
+        assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
     }
 
     @ParameterizedTest
@@ -249,7 +249,7 @@ class RangeFunDefTest {
                 + "Row #3: 1,237\n"
                 + "Row #4: 394\n"
                 + "Row #5: 1,277\n";
-        assertQueryReturns(context.getConnection(), query, expectedResult );
+        assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
     }
 
     @ParameterizedTest
@@ -271,7 +271,7 @@ class RangeFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[Customer Count]}\n"
                 + "Row #0: 1,671\n";
-        assertQueryReturns(context.getConnection(), query, expectedResult );
+        assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );
     }
 
 }

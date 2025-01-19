@@ -30,7 +30,7 @@ class NextMemberFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBasic2(Context context) {
         Result result =
-            executeQuery(context.getConnection(),
+            executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Gender].[F].NextMember} ON COLUMNS from Sales" );
         assertEquals(
             "M",
@@ -41,7 +41,7 @@ class NextMemberFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFirstInLevel2(Context context) {
         Result result =
-            executeQuery(context.getConnection(),
+            executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Gender].[M].NextMember} ON COLUMNS from Sales" );
         assertEquals( 0, result.getAxes()[ 0 ].getPositions().size() );
     }

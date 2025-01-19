@@ -109,12 +109,12 @@ class SpeciesNonCollapsedAggTest extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
         // If agg table is not used, cell values will be very different.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT \n"
             + " { [Measures].[Population] } ON COLUMNS,\n"
             + " { [Animal.Animals].[Family].Members } ON ROWS\n"

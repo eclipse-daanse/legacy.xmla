@@ -14,6 +14,8 @@
 package org.eclipse.daanse.olap.action.api;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.xmla.api.RequestMetaData;
+import org.eclipse.daanse.xmla.api.UserPrincipal;
 import org.eclipse.daanse.xmla.api.common.enums.ActionTypeEnum;
 import org.eclipse.daanse.xmla.api.common.enums.CoordinateTypeEnum;
 import org.eclipse.daanse.xmla.api.common.enums.CubeSourceEnum;
@@ -34,6 +36,8 @@ public interface ActionService {
         Optional<String> coordinate,
         CoordinateTypeEnum coordinateType,
         InvocationEnum invocation,
-        Optional<CubeSourceEnum> cubeSource
+        Optional<CubeSourceEnum> cubeSource,
+        RequestMetaData metaData,
+        UserPrincipal userPrincipal
     );
 }

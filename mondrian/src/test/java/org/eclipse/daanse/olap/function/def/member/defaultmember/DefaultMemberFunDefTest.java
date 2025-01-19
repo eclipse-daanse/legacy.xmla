@@ -51,7 +51,7 @@ class DefaultMemberFunDefTest {
         // [Time] has no default member and no all, so the default member is
         // the first member of the first level.
         Result result =
-            executeQuery(context.getConnection(),
+            executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Time].[Time].DefaultMember} on columns\n"
                     + "from Sales" );
         assertEquals(
@@ -60,7 +60,7 @@ class DefaultMemberFunDefTest {
 
         // [Time].[Weekly] has an all member and no explicit default.
         result =
-            executeQuery(context.getConnection(),
+            executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Time.Weekly].DefaultMember} on columns\n"
                     + "from Sales" );
         assertEquals(
@@ -188,7 +188,7 @@ class DefaultMemberFunDefTest {
         // In this variant of the schema, Time2.Weekly has an explicit default
         // member.
         result =
-            executeQuery(context.getConnection(),
+            executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Time2.Weekly].DefaultMember} on columns\n"
                     + "from Sales" );
         assertEquals(
@@ -199,7 +199,7 @@ class DefaultMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionDefaultMember(Context context) {
-      Member member = executeSingletonAxis(context.getConnection(), "[Measures].DefaultMember" );
+      Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Measures].DefaultMember" );
       assertEquals( "Unit Sales", member.getName() );
     }
 

@@ -32,6 +32,8 @@ import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.olap.xmla.bridge.ContextGroupXmlaServiceConfig;
 import org.eclipse.daanse.olap.xmla.bridge.ContextsSupplyerImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.xmla.api.RequestMetaData;
+import org.eclipse.daanse.xmla.api.UserPrincipal;
 import org.eclipse.daanse.xmla.api.discover.Properties;
 import org.eclipse.daanse.xmla.api.discover.discover.datasources.DiscoverDataSourcesRequest;
 import org.eclipse.daanse.xmla.api.discover.discover.datasources.DiscoverDataSourcesResponseRow;
@@ -77,6 +79,13 @@ class OtherDiscoverServiceTest {
     private Connection connection;
     @Mock
     private ContextGroup contextGroup;
+    
+    @Mock
+    private RequestMetaData requestMetaData;
+    @Mock
+    private UserPrincipal userPrincipal;
+    
+    
 
     private OtherDiscoverService service;
 
@@ -104,7 +113,7 @@ class OtherDiscoverServiceTest {
         when(context2.getDescription()).thenReturn(Optional.of("fooDescription"));
         when(context2.getDataSource()).thenReturn(dataSource);
 
-        List<DiscoverDataSourcesResponseRow> rows = service.dataSources(request);
+		List<DiscoverDataSourcesResponseRow> rows = service.dataSources(request, requestMetaData, userPrincipal);
         verify(context1, times(1)).getName();
         verify(context2, times(1)).getName();
         assertThat(rows).isNotNull().hasSize(2);
@@ -133,7 +142,7 @@ class OtherDiscoverServiceTest {
     void discoverEnumerators() {
         DiscoverEnumeratorsRequest request = mock(DiscoverEnumeratorsRequest.class);
 
-        List<DiscoverEnumeratorsResponseRow> rows = service.discoverEnumerators(request);
+        List<DiscoverEnumeratorsResponseRow> rows = service.discoverEnumerators(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(15)
             .extracting(DiscoverEnumeratorsResponseRow::enumName)
             .containsAnyOf(
@@ -147,7 +156,7 @@ class OtherDiscoverServiceTest {
     @Test
     void discoverKeywords() {
         DiscoverKeywordsRequest request = mock(DiscoverKeywordsRequest.class);
-        List<DiscoverKeywordsResponseRow> rows = service.discoverKeywords(request);
+        List<DiscoverKeywordsResponseRow> rows = service.discoverKeywords(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(256)
             .extracting(DiscoverKeywordsResponseRow::keyword)
             .containsExactlyInAnyOrder(
@@ -200,7 +209,7 @@ class OtherDiscoverServiceTest {
         DiscoverLiteralsRequest request = mock(DiscoverLiteralsRequest.class);
         DiscoverLiteralsRestrictions restrictions = mock(DiscoverLiteralsRestrictions.class);       
 
-        List<DiscoverLiteralsResponseRow> rows = service.discoverLiterals(request);
+        List<DiscoverLiteralsResponseRow> rows = service.discoverLiterals(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(17);
     }
 
@@ -213,7 +222,7 @@ class OtherDiscoverServiceTest {
         when(request.restrictions()).thenReturn(restrictions);
         when(request.properties()).thenReturn(properties);
 
-        List<DiscoverPropertiesResponseRow> rows = service.discoverProperties(request);
+        List<DiscoverPropertiesResponseRow> rows = service.discoverProperties(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(29)
             .extracting(DiscoverPropertiesResponseRow::propertyName)
             .containsExactlyInAnyOrder(
@@ -255,7 +264,7 @@ class OtherDiscoverServiceTest {
         DiscoverSchemaRowsetsRestrictions restrictions = mock(DiscoverSchemaRowsetsRestrictions.class);
         when(request.restrictions()).thenReturn(restrictions);
 
-        List<DiscoverSchemaRowsetsResponseRow> rows = service.discoverSchemaRowsets(request);
+        List<DiscoverSchemaRowsetsResponseRow> rows = service.discoverSchemaRowsets(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(27)
             .extracting(DiscoverSchemaRowsetsResponseRow::schemaName)
             .containsExactlyInAnyOrder(
@@ -296,7 +305,7 @@ class OtherDiscoverServiceTest {
         when(restrictions.schemaName()).thenReturn(Optional.of("DISCOVER_SCHEMA_ROWSETS"));
         when(request.restrictions()).thenReturn(restrictions);
 
-        List<DiscoverSchemaRowsetsResponseRow> rows = service.discoverSchemaRowsets(request);
+        List<DiscoverSchemaRowsetsResponseRow> rows = service.discoverSchemaRowsets(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(1);
         assertThat(rows.get(0)).isNotNull();
         assertThat(rows.get(0).schemaName()).isEqualTo("DISCOVER_SCHEMA_ROWSETS");
@@ -310,7 +319,7 @@ class OtherDiscoverServiceTest {
         DiscoverXmlMetaDataRestrictions restrictions = mock(DiscoverXmlMetaDataRestrictions.class);        
         when(restrictions.databaseId()).thenReturn(Optional.of("foo"));
         when(request.restrictions()).thenReturn(restrictions);
-        List<DiscoverXmlMetaDataResponseRow> rows = service.xmlMetaData(request);
+        List<DiscoverXmlMetaDataResponseRow> rows = service.xmlMetaData(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(2);
         assertThat(rows.get(0)).isNotNull();
         assertThat(rows.get(0).metaData()).isEmpty();

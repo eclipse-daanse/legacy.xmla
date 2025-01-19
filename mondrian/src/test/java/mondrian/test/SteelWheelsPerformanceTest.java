@@ -88,7 +88,7 @@ class SteelWheelsPerformanceTest {
             + "from [SteelWheelsSales]\n"
             + "where ([Time].[*SLICER_MEMBER], [Order Status].[*SLICER_MEMBER])\n";
         long start = System.currentTimeMillis();
-        executeQuery(context.getConnection(), query);
+        executeQuery(context.getConnectionWithDefaultRole(), query);
         printDuration("Complex filters query performance", start);
     }
 

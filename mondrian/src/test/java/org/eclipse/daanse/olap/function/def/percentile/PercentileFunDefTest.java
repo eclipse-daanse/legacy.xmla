@@ -28,27 +28,27 @@ class PercentileFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPercentile(Context context) {
         // same result as median
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Percentile({[Store].[All Stores].[USA].children}, [Measures].[Store Sales], 50)",
             "159,167.84" );
         // same result as min
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Percentile({[Store].[All Stores].[USA].children}, [Measures].[Store Sales], 0)",
             "142,277.07" );
         // same result as max
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Percentile({[Store].[All Stores].[USA].children}, [Measures].[Store Sales], 100)",
             "263,793.22" );
         // check some real percentile cases
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Percentile({[Store].[All Stores].[USA].[WA].children}, [Measures].[Store Sales], 50)",
             "49,634.46" );
         // the next two results correspond to MS Excel 2013.
         // See MONDRIAN-2343 jira issue.
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Percentile({[Store].[All Stores].[USA].[WA].children}, [Measures].[Store Sales], 100/7*2)",
             "18,732.09" );
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Percentile({[Store].[All Stores].[USA].[WA].children}, [Measures].[Store Sales], 95)",
             "68,259.66" );
     }
@@ -61,13 +61,13 @@ class PercentileFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPercentileBugMondrian1045(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Percentile({[Store].[All Stores].[USA]}, [Measures].[Store Sales], 50)",
             "565,238.13" );
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Percentile({[Store].[All Stores].[USA]}, [Measures].[Store Sales], 40)",
             "565,238.13" );
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Percentile({[Store].[All Stores].[USA]}, [Measures].[Store Sales], 95)",
             "565,238.13" );
     }

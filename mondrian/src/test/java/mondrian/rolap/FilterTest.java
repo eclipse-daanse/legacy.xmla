@@ -461,7 +461,7 @@ class FilterTest extends BatchTestCase {
         + "(('Q1', 1997), ('Q3', 1998))) or (`time_by_day`.`quarter` is null or "
         + "`time_by_day`.`the_year` is null)) "
         + "group by `customer`.`country`, `time_by_day`.`the_year`, `time_by_day`.`quarter` "
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "order by ISNULL(`c0`) ASC, "
         + "`c0` ASC, ISNULL(`c1`) ASC, "
         + "`c1` ASC, ISNULL(`c2`) ASC, "
@@ -478,7 +478,7 @@ class FilterTest extends BatchTestCase {
         DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql )
     };
 
-    assertQuerySql(context.getConnection(), query, patterns );
+    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
   }
 
   /**
@@ -534,7 +534,7 @@ class FilterTest extends BatchTestCase {
         + "(`time_by_day`.`quarter` is null)) or (not "
         + "(`time_by_day`.`the_year` = 1997) or (`time_by_day`.`the_year` "
         + "is null))) group by `customer`.`country`, `time_by_day`.`the_year`, `time_by_day`.`quarter` "
-        + (getDialect(context.getConnection()).requiresOrderByAlias()
+        + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "order by ISNULL(`c0`) ASC, "
         + "`c0` ASC, ISNULL(`c1`) ASC, "
         + "`c1` ASC, ISNULL(`c2`) ASC, "
@@ -551,7 +551,7 @@ class FilterTest extends BatchTestCase {
         DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql )
     };
 
-    assertQuerySql(context.getConnection(), query, patterns );
+    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
   }
 
   /**
@@ -766,7 +766,7 @@ class FilterTest extends BatchTestCase {
     withSchema(context, schema);
     */
       withSchema(context, TestNotInMultiLevelMemberConstraintMixedNullNonNullParentModifier::new);
-      assertQuerySql(context.getConnection(), query, patterns );
+      assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
   }
 
   /**
@@ -973,7 +973,7 @@ class FilterTest extends BatchTestCase {
     withSchema(context, schema);
     */
       withSchema(context, TestNotInMultiLevelMemberConstraintSingleNullParentModifier::new);
-      assertQuerySql(context.getConnection(), query, patterns);
+      assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
   }
 
   @ParameterizedTest
@@ -1171,7 +1171,7 @@ class FilterTest extends BatchTestCase {
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     //final TestContext context = getTestContext().withFreshConnection();
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     try {
       assertQueryReturns(connection,
         "select Filter([Store].[Store Name].members, "
@@ -1289,7 +1289,7 @@ class FilterTest extends BatchTestCase {
         + ".`store_name`, `store`.`store_type`, `store`.`store_manager`, `store`.`store_sqft`, `store`"
         + ".`grocery_sqft`, `store`.`frozen_sqft`, `store`.`meat_sqft`, `store`.`coffee_bar`, `store`"
         + ".`store_street_address` having NOT((sum(`store`.`store_sqft`) is null)) "
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "order by ISNULL(`c0`) ASC, `c0` ASC, "
         + "ISNULL(`c1`) ASC, `c1` ASC, "
         + "ISNULL(`c2`) ASC, `c2` ASC, "
@@ -1304,7 +1304,7 @@ class FilterTest extends BatchTestCase {
         + "('CA', 'OR')) and ((`store`.`store_id`, `store`.`store_city`, `store`.`store_state`) in ((11, 'Portland', "
         + "'OR'), (14, 'San Francisco', 'CA'))) group by `store`.`store_country`, `store`.`store_state`, `store`"
         + ".`store_city`, `store`.`store_id`, `store`.`store_name` having NOT((sum(`store`.`store_sqft`) is null)) "
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? " order by ISNULL(`c0`) ASC, `c0` ASC, "
         + "ISNULL(`c1`) ASC, `c1` ASC, "
         + "ISNULL(`c2`) ASC, `c2` ASC, "
@@ -1367,10 +1367,10 @@ class FilterTest extends BatchTestCase {
           + "  </Dimension>\n" ));
      */
     withSchema(context, SchemaModifiers.FilterTestModifier::new);
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertQuerySqlOrNot(connection, mdx, badPatterns, true, true, true );
     TestUtil.flushSchemaCache(connection);
-    assertQuerySqlOrNot(context.getConnection(), mdx, goodPatterns, false, true, true );
+    assertQuerySqlOrNot(context.getConnectionWithDefaultRole(), mdx, goodPatterns, false, true, true );
     assertQueryReturns(connection,
       mdx,
       "Axis #0:\n"
@@ -1456,8 +1456,8 @@ class FilterTest extends BatchTestCase {
         + "Row #15: 6,884\n"
         + "Row #16: 5,262\n";
 
-    assertQueryReturns(context.getConnection(), query1, expectedResult1);
-    assertQueryReturns(context.getConnection(), query2, expectedResult2);
+    assertQueryReturns(context.getConnectionWithDefaultRole(), query1, expectedResult1);
+    assertQueryReturns(context.getConnectionWithDefaultRole(), query2, expectedResult2);
   }
 
   /**
@@ -1478,7 +1478,7 @@ class FilterTest extends BatchTestCase {
     }
 
     String sql;
-    if ( !getDialect(context.getConnection()).supportsMultiValueInExpr() ) {
+    if ( !getDialect(context.getConnectionWithDefaultRole()).supportsMultiValueInExpr() ) {
       sql = "select `agg_g_ms_pcat_sales_fact_1997`.`product_family` "
         + "as `c0`,"
         + " `agg_g_ms_pcat_sales_fact_1997`.`product_department` as "
@@ -1550,7 +1550,7 @@ class FilterTest extends BatchTestCase {
       + "   gender.gender.members\n"
       + ")\n"
       + "on 0 from sales\n";
-    assertQuerySql(context.getConnection(),
+    assertQuerySql(context.getConnectionWithDefaultRole(),
       mdx,
       new SqlPattern[] {
         new SqlPattern( DatabaseProduct.MYSQL, sql, null )

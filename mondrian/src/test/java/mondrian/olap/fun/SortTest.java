@@ -78,7 +78,7 @@ class SortTest {
   void testOrderDesc(Context context) {
     // In MSAS, NULLs collate last (or almost last, along with +inf and
     // NaN) whereas in Mondrian NULLs collate least (that is, before -inf).
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with"
         + "   member [Measures].[Foo] as '\n"
         + "      Iif([Promotion Media].CurrentMember IS [Promotion Media].[TV], 1.0 / 0.0,\n"
@@ -127,7 +127,7 @@ class SortTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testOrderAndRank(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with "
         + "   member [Measures].[Foo] as '\n"
         + "      Iif([Promotion Media].CurrentMember IS [Promotion Media].[TV], 1.0 / 0.0,\n"
@@ -196,7 +196,7 @@ class SortTest {
   void testListTuplesExceedsCellEvalLimit(Context context) {
     // cell eval performed within the sort, so cycles to retrieve all cells.
       ((TestConfig)(context.getConfig())).setCellBatchSize(2);
-    assertAxisReturns(context.getConnection(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(),
       "ORDER(GENERATE(CROSSJOIN({[Customers].[USA].[WA].Children},{[Product].[Food]}),\n"
         + "{([Customers].CURRENTMEMBER,[Product].CURRENTMEMBER)}), [Measures].[Store Sales], BASC, [Customers]"
         + ".CURRENTMEMBER.ORDERKEY,BASC)",
@@ -229,7 +229,7 @@ class SortTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNonBreakingAscendingComparator(Context context) {
     // more than one non-breaking sortkey, where first is ascending
-    assertAxisReturns(context.getConnection(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(),
       "ORDER(GENERATE(CROSSJOIN({[Customers].[USA].[WA].Children},{[Product].[Food]}),\n"
         + "{([Customers].CURRENTMEMBER,[Product].CURRENTMEMBER)}), [Measures].[Unit Sales], DESC, [Measures].[Store "
         + "Sales], ASC)",
@@ -262,7 +262,7 @@ class SortTest {
   void testMultiLevelBrkSort(Context context) {
     // first 2 sort keys depend on Customers hierarchy only.
     // 3rd requires both Customer and Product
-    assertQueryReturns(context.getConnection(), "WITH\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH\n"
       + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Customers_],[*BASE_MEMBERS__Product_])'\n"
       + "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Customers].CURRENTMEMBER.ORDERKEY,BASC,ANCESTOR"
       + "([Customers].CURRENTMEMBER,[Customers].[City]).ORDERKEY,BASC,[Measures].[*SORTED_MEASURE],BASC)'\n"
@@ -313,7 +313,7 @@ class SortTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAttributesWithShowsRowsColumnsWithMeasureData(Context context) {
     // Sort on Attributes with Shows rows/columns with measure data.   Most common use case.
-    assertQueryReturns(context.getConnection(), "WITH\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH\n"
       + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Store_],NONEMPTYCROSSJOIN"
       + "([*BASE_MEMBERS__Education Level_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Product_],NONEMPTYCROSSJOIN"
       + "([*BASE_MEMBERS__Yearly Income_],[*BASE_MEMBERS__Store Type_]))))'\n"
@@ -377,7 +377,7 @@ class SortTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testSortOnMeasureWithShowRowsColumnsWithMeasureData(Context context) {
-    assertQueryReturns(context.getConnection(), "WITH\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH\n"
       + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],NONEMPTYCROSSJOIN"
       + "([*BASE_MEMBERS__Product_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Yearly Income_],NONEMPTYCROSSJOIN"
       + "([*BASE_MEMBERS__Store_],[*BASE_MEMBERS__Store Type_]))))'\n"
@@ -445,7 +445,7 @@ class SortTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testSortOnAttributesWithShowsRowsColumnsWithMeasureAndCalculatedMeasureData(Context context) {
-    assertQueryReturns(context.getConnection(), "WITH\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH\n"
       + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS '[*BASE_MEMBERS__Store Type_]'\n"
       + "SET [*NATIVE_CJ_SET] AS 'CROSSJOIN([*BASE_MEMBERS__Education Level_],CROSSJOIN([*BASE_MEMBERS__Product_],"
       + "[*BASE_MEMBERS__Yearly Income_]))'\n"
@@ -496,7 +496,7 @@ class SortTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testSortOnMeasureWithShowsRowsColumnsWithShowAllEvenBlank(Context context) {
-    assertQueryReturns(context.getConnection(), "WITH\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH\n"
       + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS '[*BASE_MEMBERS__Store Type_]'\n"
       + "SET [*NATIVE_CJ_SET] AS 'CROSSJOIN([*BASE_MEMBERS__Education Level_],CROSSJOIN([*BASE_MEMBERS__Product_],"
       + "[*BASE_MEMBERS__Yearly Income_]))'\n"

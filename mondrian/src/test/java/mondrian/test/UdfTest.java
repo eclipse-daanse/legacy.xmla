@@ -135,7 +135,7 @@ public class UdfTest {
     void testSanity(Context context) {
         // sanity check, make sure the schema is loading correctly
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Store Sqft]} ON COLUMNS, {[Store Type]} ON ROWS FROM [Store]",
             "Axis #0:\n"
             + "{}\n"
@@ -151,7 +151,7 @@ public class UdfTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFun(Context context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Sqft Plus One] AS 'PlusOne([Measures].[Store Sqft])'\n"
             + "SELECT {[Measures].[Sqft Plus One]} ON COLUMNS, \n"
             + "  {[Store Type].children} ON ROWS \n"
@@ -194,7 +194,7 @@ public class UdfTest {
         Statement statement = null;
         CellSet x = null;
         try {
-            connection = context.getConnection();
+            connection = context.getConnectionWithDefaultRole();
             statement = connection.createStatement();
             x = statement.executeQuery(
                 "SELECT { CurrentDateMember([Time].[Time], "
@@ -210,7 +210,7 @@ public class UdfTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLastNonEmpty(Context context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Last Unit Sales] AS \n"
             + " '([Measures].[Unit Sales], \n"
             + "   LastNonEmpty(Descendants([Time].[Time]), [Measures].[Unit Sales]))'\n"
@@ -288,7 +288,7 @@ public class UdfTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLastNonEmptyBig(Context context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with\n"
             + "     member\n"
             + "     [Measures].[Last Sale] as ([Measures].[Unit Sales],\n"
@@ -318,7 +318,7 @@ public class UdfTest {
             + "\"/>\n");
          */
         try {
-            executeQuery(context.getConnection(), "SELECT {} ON COLUMNS FROM [Sales]");
+            executeQuery(context.getConnectionWithDefaultRole(), "SELECT {} ON COLUMNS FROM [Sales]");
             fail("Expected exception");
         } catch (Exception e) {
             final String s = e.getMessage();
@@ -342,8 +342,8 @@ public class UdfTest {
             + PlusOrMinusOneUdf.class.getName()
             + "\"/>\n");
          */
-        assertExprReturns(context.getConnection(), "GenericPlusOne(3)", "4");
-        assertExprReturns(context.getConnection(), "GenericMinusOne(3)", "2");
+        assertExprReturns(context.getConnectionWithDefaultRole(), "GenericPlusOne(3)", "4");
+        assertExprReturns(context.getConnectionWithDefaultRole(), "GenericMinusOne(3)", "2");
     }
 
     @Disabled //TODO: UserDefinedFunction
@@ -351,7 +351,7 @@ public class UdfTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testComplexFun(Context context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[InverseNormal] AS 'InverseNormal([Measures].[Grocery Sqft] / [Measures].[Store Sqft])', FORMAT_STRING = \"0.000\"\n"
             + "SELECT {[Measures].[InverseNormal]} ON COLUMNS, \n"
             + "  {[Store Type].children} ON ROWS \n"
@@ -381,7 +381,7 @@ public class UdfTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testException(Context context) {
         prepareContext(context);
-        Result result = executeQuery(context.getConnection(),
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[InverseNormal] "
             + " AS 'InverseNormal([Measures].[Store Sqft] / [Measures].[Grocery Sqft])',"
             + " FORMAT_STRING = \"0.000000\"\n"
@@ -411,7 +411,7 @@ public class UdfTest {
     void testCurrentDateString(Context context)
     {
         prepareContext(context);
-        String actual = executeExpr(context.getConnection(), "CurrentDateString(\"Ddd mmm dd yyyy\")");
+        String actual = executeExpr(context.getConnectionWithDefaultRole(), "CurrentDateString(\"Ddd mmm dd yyyy\")");
         Date currDate = new Date();
         String dateString = currDate.toString();
         String expected =
@@ -424,7 +424,7 @@ public class UdfTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCurrentDateMemberBefore(Context context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT { CurrentDateMember([Time].[Time], "
             + "\"[Ti\\me]\\.[yyyy]\\.[Qq]\\.[m]\", BEFORE)} "
             + "ON COLUMNS FROM [Sales]",
@@ -440,7 +440,7 @@ public class UdfTest {
     void testCurrentDateMemberBeforeUsingQuotes(Context context)
     {
         prepareContext(context);
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             SystemWideProperties.instance().SsasCompatibleNaming
             ? "CurrentDateMember([Time].[Time], "
             + "'\"[Time].[Time].[\"yyyy\"].[Q\"q\"].[\"m\"]\"', BEFORE)"
@@ -456,7 +456,7 @@ public class UdfTest {
         prepareContext(context);
         // CurrentDateMember will return null member since the latest date in
         // FoodMart is from '98
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT { CurrentDateMember([Time].[Time], "
             + "\"[Ti\\me]\\.[yyyy]\\.[Qq]\\.[m]\", AFTER)} "
             + "ON COLUMNS FROM [Sales]",
@@ -473,7 +473,7 @@ public class UdfTest {
         // CurrentDateMember will return null member since the latest date in
         // FoodMart is from '98; apply a function on the return value to
         // ensure null member instead of null is returned
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT { CurrentDateMember([Time].[Time], "
             + "\"[Ti\\me]\\.[yyyy]\\.[Qq]\\.[m]\", EXACT).lag(1)} "
             + "ON COLUMNS FROM [Sales]",
@@ -489,7 +489,7 @@ public class UdfTest {
         prepareContext(context);
         // CurrentDateMember will return null member since the latest date in
         // FoodMart is from '98
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT { CurrentDateMember([Time].[Time], "
             + "\"[Ti\\me]\\.[yyyy]\\.[Qq]\\.[m]\", EXACT)} "
             + "ON COLUMNS FROM [Sales]",
@@ -510,7 +510,7 @@ public class UdfTest {
                 : "SELECT { CurrentDateMember([Time.Weekly], "
                   + "\"[Ti\\me\\.Weekl\\y]\\.[All Ti\\me\\.Weekl\\y\\s]\\.[yyyy]\\.[ww]\", BEFORE)} "
                   + "ON COLUMNS FROM [Sales]";
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             query,
             "Axis #0:\n"
             + "{}\n"
@@ -526,7 +526,7 @@ public class UdfTest {
         // CurrentDateMember will return null member since the latest date in
         // FoodMart is from '98; note that first arg is a hierarchy rather
         // than a dimension
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT { CurrentDateMember([Time.Weekly], "
             + "\"[Ti\\me]\\.[yyyy]\\.[Qq]\\.[m]\", EXACT)} "
             + "ON COLUMNS FROM [Sales]",
@@ -542,7 +542,7 @@ public class UdfTest {
         // omit formatting characters from the format so the current date
         // is hard-coded to actual value in the database so we can test the
         // after logic
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT { CurrentDateMember([Time].[Time], "
             + "\"[Ti\\me]\\.[1996]\\.[Q4]\", after)} "
             + "ON COLUMNS FROM [Sales]",
@@ -560,7 +560,7 @@ public class UdfTest {
         // omit formatting characters from the format so the current date
         // is hard-coded to actual value in the database so we can test the
         // exact logic
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT { CurrentDateMember([Time].[Time], "
             + "\"[Ti\\me]\\.[1997]\", EXACT)} "
             + "ON COLUMNS FROM [Sales]",
@@ -578,7 +578,7 @@ public class UdfTest {
         // omit formatting characters from the format so the current date
         // is hard-coded to actual value in the database so we can test the
         // exact logic
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT { CurrentDateMember([Time].[Time], "
             + "\"[Ti\\me]\\.[1997]\\.[Q2]\\.[5]\", EXACT)} "
             + "ON COLUMNS FROM [Sales]",
@@ -594,7 +594,7 @@ public class UdfTest {
     void testCurrentDateMemberPrev(Context context) {
         prepareContext(context);
         // apply a function on the result of the UDF
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT { CurrentDateMember([Time].[Time], "
             + "\"[Ti\\me]\\.[yyyy]\\.[Qq]\\.[m]\", BEFORE).PrevMember} "
             + "ON COLUMNS FROM [Sales]",
@@ -611,7 +611,7 @@ public class UdfTest {
         prepareContext(context);
         // Also, try a different style of quoting, because single quote followed
         // by double quote (used in other examples) is difficult to read.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT\n"
             + "    { [Measures].[Unit Sales] } ON COLUMNS,\n"
             + "    { CurrentDateMember([Time].[Time], '[\"Time\"]\\.[yyyy]\\.[\"Q\"q]\\.[m]', BEFORE).Lag(3) : "
@@ -636,7 +636,7 @@ public class UdfTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMatches(Context context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Org Salary]} ON COLUMNS, "
             + "Filter({[Employees].MEMBERS}, "
             + "[Employees].CurrentMember.Name MATCHES '(?i)sam.*') ON ROWS "
@@ -666,7 +666,7 @@ public class UdfTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNotMatches(Context context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Store Sales]} ON COLUMNS, "
             + "Filter({[Store Type].MEMBERS}, "
             + "[Store Type].CurrentMember.Name NOT MATCHES "
@@ -693,7 +693,7 @@ public class UdfTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testIn(Context context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS, "
             + "FILTER([Product].[Product Family].MEMBERS, "
             + "[Product].[Product Family].CurrentMember IN "
@@ -715,7 +715,7 @@ public class UdfTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNotIn(Context context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Unit Sales]} ON COLUMNS, "
             + "FILTER([Product].[Product Family].MEMBERS, "
             + "[Product].[Product Family].CurrentMember NOT IN "
@@ -735,7 +735,7 @@ public class UdfTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testChildMemberIn(Context context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Store Sales]} ON COLUMNS, "
             + "{[Store].[Store Name].MEMBERS} ON ROWS "
             + "FROM [Sales]",
@@ -797,7 +797,7 @@ public class UdfTest {
 
         // test when the member arg is at a different level
         // from the set argument
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Store Sales]} ON COLUMNS, "
             + "Filter({[Store].[Store Name].MEMBERS}, "
             + "[Store].[Store Name].CurrentMember IN "
@@ -830,7 +830,7 @@ public class UdfTest {
         updateTestContext(context, SchemaModifiers.UdfTestModifier15::new);
         // The default implementation of getResultType would assume that
         // StringMult(int, string) returns an int, whereas it returns a string.
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "StringMult(5, 'foo') || 'bar'", "foofoofoofoofoobar");
     }
 
@@ -850,7 +850,7 @@ public class UdfTest {
             + "\"/>\n");
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier15::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[ABC] as StringMult(1, 'A')\n"
             + "member [Measures].[Unit Sales Formatted] as\n"
             + "  [Measures].[Unit Sales],\n"
@@ -885,7 +885,7 @@ public class UdfTest {
             + AnotherMemberErrorUdf.class.getName() + "\"/>");
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier16::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Test] AS "
             + "'([Measures].[Store Sales],[Product].[Food],AnotherMemberError([Product].[Drink],[Time].[Time]))'\n"
             + "SELECT {[Measures].[Test]} ON COLUMNS, \n"
@@ -906,7 +906,7 @@ public class UdfTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCachingCurrentDate(Context context) {
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {filter([Time].[Month].Members, "
             + "[Time].[Time].CurrentMember in {CurrentDateMember([Time]"
             + ".[Time], '[\"Time\"]\\.[yyyy]\\.[\"Q\"q]\\.[m]', "
@@ -968,7 +968,7 @@ public class UdfTest {
             + "Row #0: 131,558\n"
             + "Row #0: 266,773\n";
         // UDF called directly in axis expression.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
             "select Reverse([Gender].Members) on 0\n"
             + "from [Sales]",
@@ -1021,7 +1021,7 @@ public class UdfTest {
             + "\"/>\n");
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier19::new);
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "MemberName([Gender].[F])", "F");
     }
 
@@ -1037,7 +1037,7 @@ public class UdfTest {
             "<UserDefinedFunction name='StringMult'/>\n");
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier20::new);
-        assertQueryThrows(context.getConnection(),
+        assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select from [Sales]",
             "Must specify either className attribute or Script element");
     }
@@ -1057,7 +1057,7 @@ public class UdfTest {
             + "</UserDefinedFunction>");
         */
         updateTestContext(context, SchemaModifiers.UdfTestModifier21::new);
-        assertQueryThrows(context.getConnection(),
+        assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select from [Sales]",
             "Must not specify both className attribute and Script element");
     }
@@ -1076,7 +1076,7 @@ public class UdfTest {
             + "</UserDefinedFunction>");
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier22::new);
-        assertQueryThrows(context.getConnection(),
+        assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select from [Sales]",
             "Invalid script language 'bad'");
     }
@@ -1114,7 +1114,7 @@ public class UdfTest {
             + "</UserDefinedFunction>\n");
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier23::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[ABC] as StringMult(1, 'A')\n"
             + "member [Measures].[Unit Sales Formatted] as\n"
             + "  [Measures].[Unit Sales],\n"
@@ -1162,7 +1162,7 @@ public class UdfTest {
             + "</UserDefinedFunction>\n");
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier24::new);
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Factorial(4 + 2)",
             "720");
     }
@@ -1198,7 +1198,7 @@ public class UdfTest {
             + "</UserDefinedFunction>\n");
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier25::new);
-        final Cell cell = executeExprRaw(context.getConnection(), "Factorial(4 + 2)");
+        final Cell cell = executeExprRaw(context.getConnectionWithDefaultRole(), "Factorial(4 + 2)");
         assertMatchesVerbose(
             Pattern.compile(
                 "(?s).*ReferenceError: \"factorial_xx\" is not defined..*"),
@@ -1224,7 +1224,7 @@ public class UdfTest {
             + "'/>");
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier1::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales],\n"
             + "      [Measures].[Unit Sales Foo Bar]} on 0\n"
             + "from [Sales]",
@@ -1259,7 +1259,7 @@ public class UdfTest {
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier1::new);
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales],\n"
             + "      [Measures].[Unit Sales Foo Bar]} on 0\n"
             + "from [Sales]",
@@ -1295,7 +1295,7 @@ public class UdfTest {
         // Note that the result is slightly different to above (a missing ".0").
         // Not a great concern -- in fact it proves that the scripted UDF is
         // being used.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales],\n"
             + "      [Measures].[Unit Sales Foo Bar]} on 0\n"
             + "from [Sales]",
@@ -1328,7 +1328,7 @@ public class UdfTest {
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier3::new);
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales],\n"
             + "      [Measures].[Unit Sales Foo Bar]} on 0\n"
             + "from [Sales]",
@@ -1361,7 +1361,7 @@ public class UdfTest {
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier4::new);
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales],\n"
             + "      [Measures].[Unit Sales Foo Bar]} on 0\n"
             + "from [Sales]",
@@ -1398,7 +1398,7 @@ public class UdfTest {
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier5::new);
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales],\n"
             + "      [Measures].[Unit Sales Foo Bar]} on 0\n"
             + "from [Sales]",
@@ -1433,7 +1433,7 @@ public class UdfTest {
             + "  </Dimension>"));
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier6::new);
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Promotion Media2].FirstChild.Caption",
             "fooBulk Mailbar");
     }
@@ -1462,7 +1462,7 @@ public class UdfTest {
             + "  </Dimension>"));
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier6::new);
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Promotion Media2].FirstChild.Caption",
             "fooBulk Mailbar");
     }
@@ -1493,7 +1493,7 @@ public class UdfTest {
             + "  </Dimension>"));
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier7::new);
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Promotion Media2].FirstChild.Caption",
             "fooBulk Mailbar");
     }
@@ -1524,7 +1524,7 @@ public class UdfTest {
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier8::new);
         final CellSet result =
-            executeOlap4jQuery(context.getConnection(),
+            executeOlap4jQuery(context.getConnectionWithDefaultRole(),
                 "select [Promotions2].Children on 0\n"
                 + "from [Sales]");
         final Member member =
@@ -1565,7 +1565,7 @@ public class UdfTest {
         updateTestContext(context, SchemaModifiers.UdfTestModifier9::new);
 
         final CellSet result =
-            executeOlap4jQuery(context.getConnection(),
+            executeOlap4jQuery(context.getConnectionWithDefaultRole(),
                 "select [Promotions2].Children on 0\n"
                 + "from [Sales]");
         final Member member =
@@ -1611,7 +1611,7 @@ public class UdfTest {
         updateTestContext(context, SchemaModifiers.UdfTestModifier10::new);
 
         final CellSet result =
-            executeOlap4jQuery(context.getConnection(),
+            executeOlap4jQuery(context.getConnectionWithDefaultRole(),
                 "select [Promotions2].Children on 0\n"
                 + "from [Sales]");
         final Member member =

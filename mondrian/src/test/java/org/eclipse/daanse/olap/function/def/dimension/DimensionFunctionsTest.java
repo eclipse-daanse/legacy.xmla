@@ -37,19 +37,19 @@ public class DimensionFunctionsTest {
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testDimensionHierarchy(Context context) {
-		TestUtil.assertExprReturns(context.getConnection(), "[Time].Dimension.Name", "Time");
+		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "[Time].Dimension.Name", "Time");
 	}
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testLevelDimension(Context context) {
-		TestUtil.assertExprReturns(context.getConnection(), "[Time].[Year].Dimension.UniqueName", "[Time]");
+		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "[Time].[Year].Dimension.UniqueName", "[Time]");
 	}
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testMemberDimension(Context context) {
-		TestUtil.assertExprReturns(context.getConnection(), "[Time].[1997].[Q2].Dimension.UniqueName", "[Time]");
+		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q2].Dimension.UniqueName", "[Time]");
 	}
 
 

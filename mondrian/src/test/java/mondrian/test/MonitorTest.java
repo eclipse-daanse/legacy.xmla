@@ -59,7 +59,7 @@ class MonitorTest {
             + "where [Time].[1997].[Q3].[9]";
 
         final Statement statement =
-            context.getConnection().createStatement();
+            context.getConnectionWithDefaultRole().createStatement();
         CellSet cellSet = statement.executeQuery(queryString);
         StringWriter stringWriter = new StringWriter();
         new RectangularCellSetFormatter(true).format(

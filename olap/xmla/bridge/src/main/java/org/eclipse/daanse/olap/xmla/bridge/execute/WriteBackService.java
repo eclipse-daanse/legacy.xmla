@@ -82,7 +82,7 @@ public class WriteBackService {
                     sql.append(writebackTable.getColumns().stream().map(c -> c.getColumn().getName())
                         .collect(Collectors.joining(", ")));
                     sql.append(", ID");
-                    if (userPrincipal != null && userPrincipal.getUserId() != null) {
+                    if (userPrincipal != null && userPrincipal.userId() != null) {
                         sql.append(", USER");
                     }
                     sql.append(") values (");
@@ -97,9 +97,9 @@ public class WriteBackService {
                     }
                     sql.append(", ");
                     dialect.quote(sql, UUID.randomUUID(), Datatype.STRING);
-                    if (userPrincipal != null && userPrincipal.getUserId() != null) {
+                    if (userPrincipal != null && userPrincipal.userId() != null) {
                         sql.append(", ");
-                        dialect.quote(sql, userPrincipal.getUserId(), Datatype.STRING);
+                        dialect.quote(sql, userPrincipal.userId(), Datatype.STRING);
                     }
                     sql.append(")");
                     statement.execute(sql.toString());

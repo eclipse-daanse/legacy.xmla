@@ -72,7 +72,7 @@ class ExplainPlanTest {
   void testExplain(Context context) throws SQLException {
 //    Level originalLevel = RolapUtil.PROFILE_LOGGER.getLevel();
     //Util.setLevel( RolapUtil.PROFILE_LOGGER, Level.OFF ); // Must turn off in case test environment has enabled profiling
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     final Statement statement = connection.createStatement();
     final ResultSet resultSet =
         statement.executeQuery( "explain plan for\n" + "select [Measures].[Unit Sales] on 0,\n"
@@ -112,7 +112,7 @@ mondrian.olap.fun.FilterFunDef$ImmutableIterCalc(type=SetType<MemberType<hierarc
 //    Level originalLevel = RolapUtil.PROFILE_LOGGER.getLevel();
 		// Util.setLevel( RolapUtil.PROFILE_LOGGER, Level.OFF );; // Must turn off in
 		// case test environment has enabled profiling
-		Connection connection = context.getConnection();
+		Connection connection = context.getConnectionWithDefaultRole();
 		final Statement statement = connection.createStatement();
 		final String mdx = """
 				with member [Time].[Time].[1997].[H1] as
@@ -228,7 +228,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testExplainInvalid(Context context) throws SQLException {
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     final Statement statement = connection.createStatement();
     try {
       final ResultSet resultSet =
@@ -414,7 +414,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
 
   private ArrayList<String> executeQuery(Context context, String mdx ) throws SQLException {
 
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     final CacheControl cacheControl = connection.getCacheControl( null );
 
     // Flush the entire cache.

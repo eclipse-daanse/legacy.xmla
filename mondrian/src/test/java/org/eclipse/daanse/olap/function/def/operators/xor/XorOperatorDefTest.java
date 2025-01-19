@@ -79,14 +79,14 @@ class XorOperatorDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testXor(Context context) {
-        assertBooleanExprReturns(context.getConnection(), " 1=1 XOR 2=2 ", false );
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), " 1=1 XOR 2=2 ", false );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testXorAssociativity(Context context) {
         // Would give 'false' if XOR were stronger than AND (wrong!)
-        assertBooleanExprReturns(context.getConnection(), " 1 = 1 AND 1 = 1 XOR 1 = 0 ", true );
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), " 1 = 1 AND 1 = 1 XOR 1 = 0 ", true );
     }
 
 }

@@ -55,7 +55,7 @@ class OrderKeyOneToOneCheckTest {
   public void prepareContext(Context context) {
     //TestContext testContext = super.getTestContext()
     //        .withFreshConnection();
-    flushSchemaCache(context.getConnection());
+    flushSchemaCache(context.getConnectionWithDefaultRole());
     /*
     withSchema(context,
             ""
@@ -91,7 +91,7 @@ class OrderKeyOneToOneCheckTest {
                     + "[Time].[1997] on 1 \n"
                     + "from [Sales]";
     prepareContext(context);
-    executeQuery(context.getConnection(), mdx);
+    executeQuery(context.getConnectionWithDefaultRole(), mdx);
     fail("need slf4j implementation");
     //TODO need slf4j implementation
     //assertEquals(
@@ -112,7 +112,7 @@ class OrderKeyOneToOneCheckTest {
             + "from [Sales]";
 
     prepareContext(context);
-    executeQuery(context.getConnection(), mdx);
+    executeQuery(context.getConnectionWithDefaultRole(), mdx);
     fail("need slf4j implementation");
     //TODO need slf4j implementation
     //assertEquals(

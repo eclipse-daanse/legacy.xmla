@@ -747,7 +747,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 + "Row #2: 3\n";
 
         withSchema(context, getAggSchema(aggExcludes, aggTables));
-        assertQueryReturns(context.getConnection(), QUERY, result);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), QUERY, result);
     }
 
     @ParameterizedTest
@@ -848,10 +848,10 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     private void verifySameAggAndNot(Context context, String query, Function<CatalogMapping, PojoMappingModifier> mf) {
         withSchema(context, mf);
         Result resultWithAgg =
-                executeQuery(query, context.getConnection());
+                executeQuery(query, context.getConnectionWithDefaultRole());
         ((TestConfig)context.getConfig()).setUseAggregates(false);
         ((TestConfig)context.getConfig()).setReadAggregates(false);
-        Result result = executeQuery(query, context.getConnection());
+        Result result = executeQuery(query, context.getConnectionWithDefaultRole());
 
         String resultStr = TestUtil.toString(result);
         String resultWithAggStr = TestUtil.toString(resultWithAgg);
@@ -877,7 +877,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         withSchema(context, mf);
         //withFreshConnection();
         assertQuerySql
-                (context.getConnection(), query, new SqlPattern[]
+                (context.getConnectionWithDefaultRole(), query, new SqlPattern[]
                         {
                                 new SqlPattern
                                         (DatabaseProduct.MYSQL,

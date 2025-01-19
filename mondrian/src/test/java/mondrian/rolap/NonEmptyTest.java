@@ -141,7 +141,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testBugCantRestrictSlicerToCalcMember(Context context) throws Exception {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH Member [Time].[Time].[Aggr] AS 'Aggregate({[Time].[1998].[Q1], [Time].[1998].[Q2]})' "
         + "SELECT {[Measures].[Store Sales]} ON COLUMNS, "
         + "NON EMPTY Order(TopCount([Customers].[Name].Members,3,[Measures].[Store Sales]),[Measures].[Store Sales],"
@@ -173,7 +173,7 @@ class NonEmptyTest extends BatchTestCase {
     mondrianProperties.EnableNativeNonEmpty = false;
     mondrianProperties.ResultLimit = 5000000;
 
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Education Level], NonEmptyCrossJoin"
         + "([*BASE_MEMBERS_Product], NonEmptyCrossJoin([*BASE_MEMBERS_Customers], [*BASE_MEMBERS_Time])))' "
         + "set [*METRIC_CJ_SET] as 'Filter([*NATIVE_CJ_SET], ([Measures].[*TOP_Unit Sales_SEL~SUM] <= 2.0))' "
@@ -632,7 +632,7 @@ class NonEmptyTest extends BatchTestCase {
 @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testBug1961163(Context context) throws Exception {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member [Measures].[AvgRevenue] as 'Avg([Store].[Store Name].Members, [Measures].[Store Sales])' "
         + "select NON EMPTY {[Measures].[Store Sales], [Measures].[AvgRevenue]} ON COLUMNS, "
         + "NON EMPTY Filter([Store].[Store Name].Members, ([Measures].[AvgRevenue] < [Measures].[Store Sales])) ON "
@@ -679,7 +679,7 @@ class NonEmptyTest extends BatchTestCase {
   void testTopCountWithCalcMemberInSlicer(Context context) {
     // Internal error: can not restrict SQL to calculated Members
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member [Time].[Time].[First Term] as 'Aggregate({[Time].[1997].[Q1], [Time].[1997].[Q2]})' "
         + "select {[Measures].[Unit Sales]} ON COLUMNS, "
         + "TopCount([Product].[Product Subcategory].Members, 3, [Measures].[Unit Sales]) ON ROWS "
@@ -706,7 +706,7 @@ class NonEmptyTest extends BatchTestCase {
      * be part of the cache key
      */
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select {[Measures].[Unit Sales]} ON COLUMNS, "
         + "TopCount([Product].[Product Subcategory].Members, 2, [Measures].[Unit Sales]) ON ROWS "
         + "from [Sales]",
@@ -720,7 +720,7 @@ class NonEmptyTest extends BatchTestCase {
         + "Row #0: 20,739\n"
         + "Row #1: 11,767\n" );
     // run again with different count
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select {[Measures].[Unit Sales]} ON COLUMNS, "
         + "TopCount([Product].[Product Subcategory].Members, 3, [Measures].[Unit Sales]) ON ROWS "
         + "from [Sales]",
@@ -810,7 +810,7 @@ class NonEmptyTest extends BatchTestCase {
     withSchema(context, schema);
      */
       withSchema(context, TestStrMeasureModifier::new);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select {[Measures].[Media]} on columns " + "from [StrMeasure]",
       "Axis #0:\n"
         + "{}\n"
@@ -945,7 +945,7 @@ class NonEmptyTest extends BatchTestCase {
     withSchema(context, schema);
      */
     withSchema(context, TestBug1515302Modifier::new);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select {[Measures].[Unit Sales]} on columns, "
         + "non empty crossjoin({[Promotions].[Big Promo]}, "
         + "Descendants([Customers].[USA], [City], "
@@ -1005,7 +1005,7 @@ class NonEmptyTest extends BatchTestCase {
     if ( context.getConfig().testExpDependencies() > 0 ) {
       return;
     }
-    TestCase c = new TestCase(context.getConnection(),
+    TestCase c = new TestCase(context.getConnectionWithDefaultRole(),
       99,
       3,
       "select NON EMPTY {[Measures].[Unit Sales], [Measures].[Warehouse Sales]} ON COLUMNS, "
@@ -1022,7 +1022,7 @@ class NonEmptyTest extends BatchTestCase {
       return;
     }
     // ok to use native sql optimization for members on a virtual cube
-    TestCase c = new TestCase(context.getConnection(),
+    TestCase c = new TestCase(context.getConnectionWithDefaultRole(),
       6,
       3,
       "select NON EMPTY {[Measures].[Unit Sales], [Measures].[Warehouse Sales]} ON COLUMNS, "
@@ -1138,7 +1138,7 @@ class NonEmptyTest extends BatchTestCase {
       executeQuery(
         "select "
           + "NonEmptyCrossJoin({[Gender].Children, [Gender].[F]}, {[Store].Children, [Store].[Mexico]}) on columns "
-          + "from [Sales]", context.getConnection() );
+          + "from [Sales]", context.getConnectionWithDefaultRole() );
       fail( "Expected error did not occur" );
     } catch ( Throwable e ) {
       String expectedErrorMsg =
@@ -1462,7 +1462,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testExpandWithTwoEmptyInputs(Context context) {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    context.getConnection().getCacheControl( null ).flushSchemaCache();
+    context.getConnectionWithDefaultRole().getCacheControl( null ).flushSchemaCache();
     ((TestConfig)context.getConfig()).setExpandNonNative(true);
     // Query should return empty result.
     checkNotNative(context,
@@ -1659,7 +1659,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeTopCount(Context context) {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    switch ( getDatabaseProduct(getDialect(context.getConnection()).getDialectName()) ) {
+    switch ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName()) ) {
       case INFOBRIGHT:
         // Hits same Infobright bug as NamedSetTest.testNamedSetOnMember.
         return;
@@ -1689,7 +1689,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCmNativeTopCount(Context context) {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    switch ( getDatabaseProduct(getDialect(context.getConnection()).getDialectName()) ) {
+    switch ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName()) ) {
       case INFOBRIGHT:
         // Hits same Infobright bug as NamedSetTest.testNamedSetOnMember.
         return;
@@ -1715,7 +1715,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMeasureAndAggregateInSlicer(Context context) {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member [Store Type].[All Store Types].[All Types] as 'Aggregate({[Store Type].[All Store Types].[Deluxe "
         + "Supermarket],  "
         + "[Store Type].[All Store Types].[Gourmet Supermarket],  "
@@ -1748,7 +1748,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMeasureInSlicer(Context context) {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select NON EMPTY {[Time].[1997]} ON COLUMNS,   "
         + "NON EMPTY [Store].[All Stores].[USA].[CA].Children ON ROWS  "
         + "from [Sales]  "
@@ -1803,7 +1803,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCmInSlicerResults(Context context) {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member [Time].[Time].[Jan] as  "
         + "'Aggregate({[Time].[1998].[Q1].[1], [Time].[1997].[Q1].[1]})'  "
         + "select NON EMPTY {[Measures].[Unit Sales]} ON columns,  "
@@ -1826,7 +1826,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testSetInSlicerResults(Context context) {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select NON EMPTY {[Measures].[Unit Sales]} ON columns,  "
         + "NON EMPTY [Product].Children ON rows from [Sales] "
         + "where {[Time].[1998].[Q1].[1], [Time].[1997].[Q1].[1]} ",
@@ -2204,7 +2204,7 @@ class NonEmptyTest extends BatchTestCase {
       return;
     }
 
-    TestCase c = new TestCase(context.getConnection(),
+    TestCase c = new TestCase(context.getConnectionWithDefaultRole(),
       8,
       5,
       "select {[Measures].[Unit Sales]} ON COLUMNS, "
@@ -2380,7 +2380,7 @@ class NonEmptyTest extends BatchTestCase {
         + "and (`product_class`.`product_family` = 'Food') "
         + "group by `store`.`store_country`, `store`.`store_state`, `store`.`store_city`, `product_class`"
         + ".`product_family` order by "
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "ISNULL(`c0`) ASC, `c0` ASC, ISNULL(`c1`) ASC, `c1` ASC, "
         + "ISNULL(`c2`) ASC, `c2` ASC, ISNULL(`c3`) ASC, `c3` ASC"
         :
@@ -2424,7 +2424,7 @@ class NonEmptyTest extends BatchTestCase {
         DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql )
     };
 
-    assertQuerySql(context.getConnection(), query, patterns );
+    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
   }
 
   /**
@@ -2501,7 +2501,7 @@ class NonEmptyTest extends BatchTestCase {
         + "    `warehouse`.`warehouse_name`,\n"
         + "    `product_class`.`product_family`\n"
         + "order by\n"
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
         + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
@@ -2608,7 +2608,7 @@ class NonEmptyTest extends BatchTestCase {
         DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql )
     };
 
-    assertQuerySql( context.getConnection(), query, patterns );
+    assertQuerySql( context.getConnectionWithDefaultRole(), query, patterns );
   }
 
   /**
@@ -2685,7 +2685,7 @@ class NonEmptyTest extends BatchTestCase {
         + "    `warehouse`.`warehouse_name`,\n"
         + "    `product_class`.`product_family`\n"
         + "order by\n"
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
         + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
@@ -2784,7 +2784,7 @@ class NonEmptyTest extends BatchTestCase {
         DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql )
     };
 
-    assertQuerySql(context.getConnection(), query, patterns );
+    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
   }
 
   /**
@@ -2863,7 +2863,7 @@ class NonEmptyTest extends BatchTestCase {
         + "(`product_class`.`product_family` = 'Food') "
         + "group by `warehouse`.`wa_address3`, `warehouse`.`wa_address2`, `warehouse`.`warehouse_fax`, "
         + "`product_class`.`product_family` "
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "order by ISNULL(`c0`) ASC, `c0` ASC, ISNULL(`c1`) ASC, "
         + "`c1` ASC, ISNULL(`c2`) ASC, `c2` ASC, "
         + "ISNULL(`c3`) ASC, `c3` ASC"
@@ -2969,7 +2969,7 @@ class NonEmptyTest extends BatchTestCase {
         DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql )
     };
 
-    assertQuerySql( context.getConnection(), query, patterns );
+    assertQuerySql( context.getConnectionWithDefaultRole(), query, patterns );
   }
 
   @ParameterizedTest
@@ -2989,7 +2989,7 @@ class NonEmptyTest extends BatchTestCase {
         + "       Crossjoin(\n"
         + "         [Customers].[All Customers].[USA].children,\n"
         + "         [Product].[All Products].children) ) )) on rows\n"
-        + "from Sales where ([Time].[1997])", context.getConnection());
+        + "from Sales where ([Time].[1997])", context.getConnectionWithDefaultRole());
     final Axis rowsAxis = result.getAxes()[ 1 ];
     assertEquals( 21, rowsAxis.getPositions().size() );
   }
@@ -3010,12 +3010,12 @@ class NonEmptyTest extends BatchTestCase {
 
     // there currently isn't a cube member to children cache, only
     // a shared cache so use the shared smart member reader
-    SmartMemberReader smr = getSmartMemberReader(context.getConnection(), "Store" );
+    SmartMemberReader smr = getSmartMemberReader(context.getConnectionWithDefaultRole(), "Store" );
     MemberCacheHelper smrch = smr.cacheHelper;
     MemberCacheHelper rcsmrch =
       ( (RolapCubeHierarchy.RolapCubeHierarchyMemberReader) smr )
         .getRolapCubeMemberCacheHelper();
-    SmartMemberReader ssmr = getSharedSmartMemberReader(context.getConnection(), "Store" );
+    SmartMemberReader ssmr = getSharedSmartMemberReader(context.getConnectionWithDefaultRole(), "Store" );
     MemberCacheHelper ssmrch = ssmr.cacheHelper;
     clearAndHardenCache( smrch );
     clearAndHardenCache( rcsmrch );
@@ -3023,7 +3023,7 @@ class NonEmptyTest extends BatchTestCase {
 
     RolapResult result =
       (RolapResult) executeQuery(
-        "select {[Store].[All Stores].[USA].[CA].[San Francisco]} on columns from [Sales]", context.getConnection() );
+        "select {[Store].[All Stores].[USA].[CA].[San Francisco]} on columns from [Sales]", context.getConnectionWithDefaultRole() );
     assertTrue(
       ssmrch.mapKeyToMember.size() <= 5, "no additional members should be read:"
                     + ssmrch.mapKeyToMember.size());
@@ -3056,7 +3056,7 @@ class NonEmptyTest extends BatchTestCase {
     // ok if no exception occurs
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
     executeQuery(
-      "SELECT DESCENDANTS([Time].[1997], [Month]) ON COLUMNS FROM [Sales]", context.getConnection() );
+      "SELECT DESCENDANTS([Time].[1997], [Month]) ON COLUMNS FROM [Sales]", context.getConnectionWithDefaultRole() );
   }
 
 
@@ -3076,7 +3076,7 @@ class NonEmptyTest extends BatchTestCase {
     executeQuery(
       "select non empty CrossJoin([Customers].[Name].Members, "
         + "{[Promotions].[All Promotions].[Fantastic Discounts]}) "
-        + "ON COLUMNS FROM [Sales]", context.getConnection());
+        + "ON COLUMNS FROM [Sales]", context.getConnectionWithDefaultRole());
     SystemWideProperties.instance().EnableNativeNonEmpty =
       oldEnableNativeNonEmpty;
   }
@@ -3090,7 +3090,7 @@ class NonEmptyTest extends BatchTestCase {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
     // ok if no exception occurs
     executeQuery(
-      "select {[Store].[USA].[Washington]} on columns from [Sales Ragged]", context.getConnection());
+      "select {[Store].[USA].[Washington]} on columns from [Sales Ragged]", context.getConnectionWithDefaultRole());
   }
 
   /**
@@ -3101,7 +3101,7 @@ class NonEmptyTest extends BatchTestCase {
   void testCalcMemberWithNonEmptyCrossJoin(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
     //etCacheControl( null );
-    flushSchemaCache(context.getConnection());
+    flushSchemaCache(context.getConnectionWithDefaultRole());
     Result result = executeQuery(
       "with member [Measures].[CustomerCount] as \n"
         + "'Count(CrossJoin({[Product].[All Products]}, [Customers].[Name].Members))'\n"
@@ -3110,7 +3110,7 @@ class NonEmptyTest extends BatchTestCase {
         + "NON EMPTY{[Product].[All Products]} ON rows\n"
         + "from [Sales]\n"
         + "where ([Store].[All Stores].[USA].[CA].[San Francisco].[Store 14], [Time].[1997].[Q1].[1])",
-            context.getConnection());
+            context.getConnectionWithDefaultRole());
     Cell c = result.getCell( new int[] { 0, 0 } );
     // we expect 10281 customers, although there are only 20 non-empty ones
     // @see #testLevelMembers
@@ -3126,7 +3126,7 @@ class NonEmptyTest extends BatchTestCase {
       // test.
       return;
     }
-    SmartMemberReader smr = getSmartMemberReader(context.getConnection(), "Customers" );
+    SmartMemberReader smr = getSmartMemberReader(context.getConnectionWithDefaultRole(), "Customers" );
     // use the RolapCubeHierarchy's member cache for levels
     MemberCacheHelper smrch =
       ( (RolapCubeHierarchy.CacheRolapCubeHierarchyMemberReader) smr )
@@ -3136,11 +3136,11 @@ class NonEmptyTest extends BatchTestCase {
     clearAndHardenCache( smrich );
 
     // use the shared member cache for mapMemberToChildren
-    SmartMemberReader ssmr = getSharedSmartMemberReader(context.getConnection(), "Customers" );
+    SmartMemberReader ssmr = getSharedSmartMemberReader(context.getConnectionWithDefaultRole(), "Customers" );
     MemberCacheHelper ssmrch = ssmr.cacheHelper;
     clearAndHardenCache( ssmrch );
 
-    TestCase c = new TestCase(context.getConnection(),
+    TestCase c = new TestCase(context.getConnectionWithDefaultRole(),
       50,
       21,
       "select \n"
@@ -3190,8 +3190,8 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testLevelMembersWithoutNonEmpty(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-	context.getConnection().getCacheControl(null).flushSchemaCache();
-    SmartMemberReader smr = getSmartMemberReader(context.getConnection(), "Customers" );
+	context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
+    SmartMemberReader smr = getSmartMemberReader(context.getConnectionWithDefaultRole(), "Customers" );
 
     MemberCacheHelper smrch =
       ( (RolapCubeHierarchy.CacheRolapCubeHierarchyMemberReader) smr )
@@ -3201,7 +3201,7 @@ class NonEmptyTest extends BatchTestCase {
     MemberCacheHelper smrich = smr.cacheHelper;
     clearAndHardenCache( smrich );
 
-    SmartMemberReader ssmr = getSharedSmartMemberReader(context.getConnection(), "Customers" );
+    SmartMemberReader ssmr = getSharedSmartMemberReader(context.getConnectionWithDefaultRole(), "Customers" );
     MemberCacheHelper ssmrch = ssmr.cacheHelper;
     clearAndHardenCache( ssmrch );
 
@@ -3210,7 +3210,7 @@ class NonEmptyTest extends BatchTestCase {
         + "{[Measures].[Unit Sales]} ON columns,\n"
         + "{[Customers].[All Customers], [Customers].[Name].Members} ON rows\n"
         + "from [Sales]\n"
-        + "where ([Store].[All Stores].[USA].[CA].[San Francisco].[Store 14], [Time].[1997].[Q1].[1])", context.getConnection() );
+        + "where ([Store].[All Stores].[USA].[CA].[San Francisco].[Store 14], [Time].[1997].[Q1].[1])", context.getConnectionWithDefaultRole() );
     Level[] levels = smr.getHierarchy().getLevels();
     Level nameLevel = levels[ levels.length - 1 ];
 
@@ -3262,7 +3262,7 @@ class NonEmptyTest extends BatchTestCase {
     // No query should return more than 20 rows. (1 row at 'all' level,
     // 1 row at nation level, 1 at state level, 20 at city level, and 11
     // at customers level = 34.)
-    TestCase c = new TestCase(context.getConnection(),
+    TestCase c = new TestCase(context.getConnectionWithDefaultRole(),
       34,
       34,
       "select \n"
@@ -3280,7 +3280,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMemberChildrenOfRolapMember(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    TestCase c = new TestCase(context.getConnection(),
+    TestCase c = new TestCase(context.getConnectionWithDefaultRole(),
       50,
       4,
       "select \n"
@@ -3298,7 +3298,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMemberChildrenOfAllMember(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    TestCase c = new TestCase(context.getConnection(),
+    TestCase c = new TestCase(context.getConnectionWithDefaultRole(),
       50,
       14,
       "select {[Measures].[Unit Sales]} ON columns,\n"
@@ -3333,7 +3333,7 @@ class NonEmptyTest extends BatchTestCase {
     //        `promotion`.`promotion_name`
 
     TestCase c =
-      new TestCase(context.getConnection(),
+      new TestCase(context.getConnectionWithDefaultRole(),
         50,
         48,
         "select {[Measures].[Unit Sales]} ON columns,\n"
@@ -3354,7 +3354,7 @@ class NonEmptyTest extends BatchTestCase {
     if ( context.getConfig().testExpDependencies() > 0 ) {
       return;
     }
-    TestCase c = new TestCase(context.getConnection(),
+    TestCase c = new TestCase(context.getConnectionWithDefaultRole(),
       3,
       1,
       "select "
@@ -3383,7 +3383,7 @@ class NonEmptyTest extends BatchTestCase {
     }
 
     TestCase c =
-      new TestCase(context.getConnection(),
+      new TestCase(context.getConnectionWithDefaultRole(),
         45,
         4,
         "select \n"
@@ -3410,7 +3410,7 @@ class NonEmptyTest extends BatchTestCase {
       return;
     }
 
-    Connection con = context.getConnection();
+    Connection con = context.getConnectionWithDefaultRole();
     SmartMemberReader smr = getSmartMemberReader( con, "Customers" );
     MemberCacheHelper smrch = smr.cacheHelper;
     clearAndHardenCache( smrch );
@@ -3483,7 +3483,7 @@ class NonEmptyTest extends BatchTestCase {
   void testBug1412384(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
     // Bug 1412384 causes a NPE in SqlConstraintUtils.
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select NON EMPTY {[Time].[1997]} ON COLUMNS,\n"
         + "NON EMPTY Hierarchize(Union({[Customers].[All Customers]},\n"
         + "[Customers].[All Customers].Children)) ON ROWS\n"
@@ -3547,7 +3547,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNotNativeVirtualCubeCrossJoin1(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    switch ( getDatabaseProduct(getDialect(context.getConnection()).getDialectName()) ) {
+    switch ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName()) ) {
       case INFOBRIGHT:
         // Hits same Infobright bug as NamedSetTest.testNamedSetOnMember.
         return;
@@ -3584,7 +3584,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNotNativeVirtualCubeCrossJoinUnsupported(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    switch ( getDatabaseProduct(getDialect(context.getConnection()).getDialectName()) ) {
+    switch ( getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName()) ) {
       case INFOBRIGHT:
         // Hits same Infobright bug as NamedSetTest.testNamedSetOnMember.
         return;
@@ -3924,7 +3924,7 @@ class NonEmptyTest extends BatchTestCase {
       withSchema(context, SchemaModifiers.NonEmptyTestModifier4::new);
     // Check that the grand total is different than when [Time].[1997] is
     // the default member.
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select from [Sales]",
       "Axis #0:\n"
         + "{}\n"
@@ -3933,7 +3933,7 @@ class NonEmptyTest extends BatchTestCase {
     // Results of this query agree with MSAS 2000 SP1.
     // The query gives the same results if the default member of [Time]
     // is [Time].[1997] or [Time].[1997].[Q1].[1].
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select\n"
         + "NON EMPTY Crossjoin({[Time].[1997].[Q2].[4]}, [Customers].[Country].members) on columns,\n"
         + "NON EMPTY [Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]"
@@ -4098,7 +4098,7 @@ class NonEmptyTest extends BatchTestCase {
     // join will try evaluating the calculated member (when it shouldn't)
     // and the calculated member references the cross join, resulting
     // in the loop
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "With "
         + "Set [*NATIVE_CJ_SET] as "
         + "'NonEmptyCrossJoin([*BASE_MEMBERS_Store], [*BASE_MEMBERS_Products])' "
@@ -4160,7 +4160,7 @@ class NonEmptyTest extends BatchTestCase {
     }
 
     // calculated measure contains a calculated member
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "With Set [*NATIVE_CJ_SET] as "
         + "'NonEmptyCrossJoin([*BASE_MEMBERS_Dates], [*BASE_MEMBERS_Stores])' "
         + "Set [*BASE_MEMBERS_Dates] as '{[Time].[1997].[Q1], [Time].[1997].[Q2]}' "
@@ -4231,7 +4231,7 @@ class NonEmptyTest extends BatchTestCase {
     //
     // A measures member is referenced in the IsEmpty() function.  This
     // shouldn't prevent native cross join from being used.
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with "
         + "set BM_PRODUCT as {[Product].[All Products].[Drink]} "
         + "set BM_EDU as [Education Level].[Education Level].Members "
@@ -4387,7 +4387,7 @@ class NonEmptyTest extends BatchTestCase {
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     //final TestContext context = getTestContext().withFreshConnection();
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     try {
       assertQueryReturns(connection,
         "with set [p] as '[Product].[Product Family].members' "
@@ -4419,7 +4419,7 @@ class NonEmptyTest extends BatchTestCase {
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     //final TestContext context = getTestContext().withFreshConnection();
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     try {
       assertQueryReturns(connection,
         "with set [p] as '[Product].[Product Family].members' "
@@ -4445,7 +4445,7 @@ class NonEmptyTest extends BatchTestCase {
     // Get a fresh connection; Otherwise the mondrian property setting
     // is not refreshed for this parameter.
     //final TestContext context = getTestContext().withFreshConnection();
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     try {
       assertQueryReturns(connection,
         "with set [p] as '[Product].[Product Family].members' "
@@ -4476,7 +4476,7 @@ class NonEmptyTest extends BatchTestCase {
     //   With NON EMPTY (mondrian.rolap.nonempty) behavior set to true
     //   the following mdx return no result. The same mdx returns valid
     // result when NON EMPTY is turned off.
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH \n"
         + "MEMBER Measures.Calc AS '[Measures].[Profit] * 2', SOLVE_ORDER=1000\n"
         + "MEMBER Product.Conditional as 'Iif (Measures.CurrentMember IS Measures.[Calc], "
@@ -4580,7 +4580,7 @@ class NonEmptyTest extends BatchTestCase {
     try {
       SystemWideProperties.instance().EnableNativeNonEmpty = false;
       SystemWideProperties.instance().EnableNonEmptyOnAllAxis = true;
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
         "WITH MEMBER [Measures].[One] AS '1' "
           + "SELECT "
           + "NON EMPTY {[Measures].[One], [Measures].[Store Sales]} ON rows, "
@@ -4625,7 +4625,7 @@ class NonEmptyTest extends BatchTestCase {
 
       if ( Bug.BugMondrian446Fixed ) {
         SystemWideProperties.instance().EnableNativeNonEmpty = true;
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
           "WITH MEMBER [Measures].[One] AS '1' "
             + "SELECT "
             + "NON EMPTY {[Measures].[One], [Measures].[Store Sales]} ON rows, "
@@ -4683,7 +4683,7 @@ class NonEmptyTest extends BatchTestCase {
     // This unit test was failing with a NullPointerException in JPivot
     // after the highcardinality feature was added, I've included it
     // here to make sure it continues to work.
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select NON EMPTY {[Measures].[Unit Sales], [Measures].[Store Cost]} ON columns, "
         + "NON EMPTY Filter([Product].[Brand Name].Members, ([Measures].[Unit Sales] > 100000.0)) ON rows "
         + "from [Sales] where [Time].[1997]",
@@ -4701,7 +4701,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testBugMondrian412(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member [Measures].[AvgRevenue] as 'Avg([Store].[Store Name].Members, [Measures].[Store Sales])' "
         + "select NON EMPTY {[Measures].[Store Sales], [Measures].[AvgRevenue]} ON COLUMNS, "
         + "NON EMPTY Filter([Store].[Store Name].Members, ([Measures].[AvgRevenue] < [Measures].[Store Sales])) ON "
@@ -4746,7 +4746,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNonEmpyOnVirtualCubeWithNonJoiningDimension(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select non empty {[Warehouse].[Warehouse name].members} on 0,"
         + "{[Measures].[Units Shipped],[Measures].[Unit Sales]} on 1"
         + " from [Warehouse and Sales]",
@@ -4801,7 +4801,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNonEmptyOnNonJoiningValidMeasure(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member [Measures].[vm] as 'ValidMeasure([Measures].[Unit Sales])'"
         + "select non empty {[Warehouse].[Warehouse name].members} on 0,"
         + "{[Measures].[Units Shipped],[Measures].[vm]} on 1"
@@ -4862,7 +4862,7 @@ class NonEmptyTest extends BatchTestCase {
     // Warehouse to the [All] level when evaluating the [vm] measure,
     // the results should include each [warehouse name] member intersected
     // with the non-empty Gender members.
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member [Measures].[vm] as 'ValidMeasure([Measures].[Unit Sales])'\n"
         + "select non empty Crossjoin([Warehouse].[Warehouse Name].members, [Gender].[Gender].members) on 0,\n"
         + "{[Measures].[Units Shipped],[Measures].[vm]} on 1\n"
@@ -4957,7 +4957,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCrossjoinWithOneDimensionThatDoesNotJoinToBothBaseCubes(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member [Measures].[vm] as 'ValidMeasure([Measures].[Units Shipped])'"
         + "select non empty Crossjoin([Store].[Store Name].members, [Gender].[Gender].members) on 0,"
         + "{[Measures].[Unit Sales],[Measures].[vm]} on 1"
@@ -5109,7 +5109,7 @@ class NonEmptyTest extends BatchTestCase {
         + "  [Store Size in SQFT].[All Store Size in SQFTs].[~Missing ]";
 
     // run an mdx query with the default NullMemberRepresentation
-    executeQuery(preMdx, context.getConnection());
+    executeQuery(preMdx, context.getConnectionWithDefaultRole());
 
 
     SystemWideProperties.instance().NullMemberRepresentation =
@@ -5117,7 +5117,7 @@ class NonEmptyTest extends BatchTestCase {
 
     SystemWideProperties.instance().EnableNonEmptyOnAllAxis =
       true;
-    executeQuery(mdx, context.getConnection());
+    executeQuery(mdx, context.getConnectionWithDefaultRole());
   }
 
   /**
@@ -5128,7 +5128,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testBugMondrian321(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH SET [#DataSet#] AS 'Crossjoin({Descendants([Customers].[All Customers], 2)}, {[Product].[All Products]})'"
         + " \n"
         + "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} on columns, \n"
@@ -5149,7 +5149,7 @@ class NonEmptyTest extends BatchTestCase {
         + "Row #2: 124,366\n"
         + "Row #2: 263,793.22\n" );
 
-    verifySameNativeAndNot(context.getConnection(),
+    verifySameNativeAndNot(context.getConnectionWithDefaultRole(),
       "WITH SET [#DataSet#] AS 'Crossjoin({Descendants([Customers].[All Customers], 2)}, {[Product].[All Products]})'"
         + " \n"
         + "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} on columns, \n"
@@ -5221,7 +5221,7 @@ class NonEmptyTest extends BatchTestCase {
         + "    \"time_by_day\".\"the_year\" ASC NULLS LAST,\n"
         + "    \"promotion\".\"promotion_name\" ASC NULLS LAST",
       611 );
-    assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { oraclePattern } );
+    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { oraclePattern } );
   }
 
   @ParameterizedTest
@@ -5269,7 +5269,7 @@ class NonEmptyTest extends BatchTestCase {
         + "order by\n"
         + "    \"promotion\".\"promotion_name\" ASC NULLS LAST",
       347 );
-    assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { oraclePattern } );
+    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { oraclePattern } );
   }
 
   @ParameterizedTest
@@ -5335,7 +5335,7 @@ class NonEmptyTest extends BatchTestCase {
         + "    \"time_by_day\".\"the_year\" ASC NULLS LAST,\n"
         + "    \"promotion\".\"promotion_name\" ASC NULLS LAST",
       611 );
-    assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { pattern } );
+    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { pattern } );
   }
 
   @ParameterizedTest
@@ -5403,7 +5403,7 @@ class NonEmptyTest extends BatchTestCase {
         + "    \"time_by_day\".\"the_year\" ASC NULLS LAST,\n"
         + "    \"promotion\".\"promotion_name\" ASC NULLS LAST",
       611 );
-    assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { pattern } );
+    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { pattern } );
   }
 
   @ParameterizedTest
@@ -5445,7 +5445,7 @@ class NonEmptyTest extends BatchTestCase {
         + "\"customer\".\"gender\", \"customer\".\"marital_status\", \"customer\".\"education\", \"customer\""
         + ".\"yearly_income\" order by \"customer\".\"country\" ASC NULLS LAST, \"customer\".\"state_province\" ASC "
         + "NULLS LAST, \"customer\".\"city\" ASC NULLS LAST, \"fname\" || ' ' || \"lname\" ASC NULLS LAST";
-    assertQuerySql(context.getConnection(),
+    assertQuerySql(context.getConnectionWithDefaultRole(),
       mdx,
       new SqlPattern[] {
         new SqlPattern(
@@ -5512,7 +5512,7 @@ class NonEmptyTest extends BatchTestCase {
       DatabaseProduct.ORACLE,
       sqlOracle,
       sqlOracle.length() );
-    assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { pattern } );
+    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { pattern } );
   }
 
   @ParameterizedTest
@@ -5562,7 +5562,7 @@ class NonEmptyTest extends BatchTestCase {
         + " \"customer\".\"city\" ASC NULLS LAST, "
         + "\"fname\" || ' ' || \"lname\" ASC NULLS LAST",
       852 );
-    assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { pattern } );
+    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { pattern } );
   }
 
   @ParameterizedTest
@@ -5593,7 +5593,7 @@ class NonEmptyTest extends BatchTestCase {
       sqlOracle,
       sqlOracle.length() );
     assertQuerySqlOrNot(
-      context.getConnection(), mdx, new SqlPattern[] { pattern }, true, false, true );
+      context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { pattern }, true, false, true );
   }
 
   @ParameterizedTest
@@ -5613,7 +5613,7 @@ class NonEmptyTest extends BatchTestCase {
         + "  non empty "
         + "  [Marital Status].[Marital Status].members on rows"
         + " from sales";
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{}\n"
@@ -5712,7 +5712,7 @@ class NonEmptyTest extends BatchTestCase {
         + " NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, "
         + " NON EMPTY {[Gender].[Gender].Members} ON ROWS "
         + " from [onlyGender] ";
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{}\n"
@@ -5910,7 +5910,7 @@ class NonEmptyTest extends BatchTestCase {
           + "</Schema>" );
        */
     withSchema(context, TestCalculatedDefaultMeasureOnVirtualCubeNoThrowExceptionModifier::new);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select "
         + " [Measures].[Unit Sales] on COLUMNS, "
         + " NON EMPTY {[Store].[Store State].Members} ON ROWS "
@@ -5948,7 +5948,7 @@ class NonEmptyTest extends BatchTestCase {
         + "Level].[All Education Levels], [Gender].[All Gender], [Marital Status].[All Marital Status], [Yearly "
         + "Income].[All Yearly Incomes])}) ON ROWS"
         + " from [Sales]";
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{}\n"
@@ -6077,7 +6077,7 @@ class NonEmptyTest extends BatchTestCase {
       return;
     }
     // children across a snowflake boundary
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select [Product].[Drink].[Baking Goods].[Dry Goods].[Coffee].Children on 0\n"
         + "from [Sales]",
       "Axis #0:\n"
@@ -6097,14 +6097,14 @@ class NonEmptyTest extends BatchTestCase {
         "select `product_class`.`product_family` as `c0` "
           + "from `product_class` as `product_class` "
           + "group by `product_class`.`product_family` "
-          + ( getDialect(context.getConnection()).requiresOrderByAlias()
+          + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
           ? "order by ISNULL(`c0`) ASC,"
           + " `c0` ASC"
           : "order by ISNULL(`product_class`.`product_family`) ASC,"
           + " `product_class`.`product_family` ASC" ),
         null )
     };
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     try {
       assertQuerySql(
               connection,
@@ -6202,7 +6202,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testBugMondrian897DoubleNamedSetDefinitions(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH SET [CustomerSet] as {[Customers].[Canada].[BC].[Burnaby].[Alexandra Wellington], [Customers].[USA].[WA]"
         + ".[Tacoma].[Eric Coleman]} "
         + "SET [InterestingCustomers] as [CustomerSet] "
@@ -6314,7 +6314,7 @@ class NonEmptyTest extends BatchTestCase {
         + "having\n"
         + "    c1 IS NOT NULL AND UPPER(c1) REGEXP '.*CA.*'\n"
         + "order by\n"
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC"
         : "    ISNULL(`store`.`store_country`) ASC, `store`.`store_country` ASC,\n"
@@ -6340,7 +6340,7 @@ class NonEmptyTest extends BatchTestCase {
         + "having\n"
         + "    c1 IS NOT NULL AND UPPER(c1) REGEXP '.*CA.*'\n"
         + "order by\n"
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC"
         : "    ISNULL(`store`.`store_country`) ASC, `store`.`store_country` ASC,\n"
@@ -6405,7 +6405,7 @@ class NonEmptyTest extends BatchTestCase {
     //withSchema(context, schema );
 
     // The filter condition does not require a join to the fact table.
-    assertQuerySql(context.getConnection(), query, patterns );
+    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
     assertQuerySql(((TestContext)context).getConnection(List.of("Role1")), query, patterns );
 
     // in a non-empty context where a role is in effect, the query
@@ -6508,7 +6508,7 @@ class NonEmptyTest extends BatchTestCase {
         + "having\n"
         + "    c1 IS NOT NULL AND UPPER(c1) REGEXP '.*CA.*'\n"
         + "order by\n"
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC"
         : "    ISNULL(`store`.`store_country`) ASC, `store`.`store_country` ASC,\n"
@@ -6531,7 +6531,7 @@ class NonEmptyTest extends BatchTestCase {
         + "having\n"
         + "    c1 IS NOT NULL AND UPPER(c1) REGEXP '.*CA.*'\n"
         + "order by\n"
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC"
         : "    ISNULL(`store`.`store_country`) ASC, `store`.`store_country` ASC,\n"
@@ -6591,7 +6591,7 @@ class NonEmptyTest extends BatchTestCase {
     withSchema(context, SchemaModifiers.NonEmptyTestModifier6::new );
 
     // The filter condition does not require a join to the fact table.
-    assertQuerySql(context.getConnection(), query, patterns );
+    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
     assertQuerySql(((TestContext)context).getConnection(List.of("Role1")), query, patterns );
 
     // in a non-empty context where a role is in effect, the query
@@ -6746,7 +6746,7 @@ class NonEmptyTest extends BatchTestCase {
         mysqlNativeCrossJoinQuery,
         triggerSql );
 
-    assertQuerySql(context.getConnection(),  mdx, new SqlPattern[] { mysqlPattern } );
+    assertQuerySql(context.getConnectionWithDefaultRole(),  mdx, new SqlPattern[] { mysqlPattern } );
 
     checkNative(context,
       20,
@@ -6803,7 +6803,7 @@ class NonEmptyTest extends BatchTestCase {
         + "{[Gender].[F], [Time].[1997].[Q2]}\n"
         + "Row #0: 33,381\n"
         + "Row #1: 30,992\n";
-    assertQueryReturns(context.getConnection(), mdx, expected );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, expected );
   }
 
   @ParameterizedTest
@@ -6824,7 +6824,7 @@ class NonEmptyTest extends BatchTestCase {
     };
 
     for ( String timeMember : referencesToTimeMember ) {
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
         "with member [Measures].[YTD Unit Sales] as "
           + "'Sum(Ytd(" + timeMember + "), [Measures].[Unit Sales])'\n"
           + "select\n"
@@ -6861,7 +6861,7 @@ class NonEmptyTest extends BatchTestCase {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
     // the [overrideContext] measure should have a value for the tuple
     // on rows, given it overrides the time member on the axis.
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH  member measures.[overrideContext] as '( measures.[unit sales], Time.[1997].Q1 )'\n"
         + "SELECT measures.[overrideContext] on 0, \n"
         + "NON EMPTY crossjoin( Time.[1998].Q1, [Marital Status].[M]) on 1\n"
@@ -6874,7 +6874,7 @@ class NonEmptyTest extends BatchTestCase {
         + "{[Time].[1998].[Q1], [Marital Status].[M]}\n"
         + "Row #0: 33,101\n" );
     // same thing w/ nonemptycrossjoin().
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH  member measures.[overrideContext] as '( measures.[unit sales], Time.[1997].Q1 )'\n"
         + "SELECT measures.[overrideContext] on 0, \n"
         + "NonEmptyCrossjoin( Time.[1998].Q1, [Marital Status].[M]) on 1\n"
@@ -6900,7 +6900,7 @@ class NonEmptyTest extends BatchTestCase {
     // In this case it would result in
     //    (year = 1997 AND year = 1998)
     // if potential conflicts aren't removed.
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH  member measures.[overrideContext] as '( measures.[unit sales], Time.[1997].Q1 )'\n"
         + "SELECT measures.[overrideContext] on 0, \n"
         + "NON EMPTY [Marital Status].[Marital Status].members on 1,\n"
@@ -6924,7 +6924,7 @@ class NonEmptyTest extends BatchTestCase {
   void testMondrian2202WithAggTopCountSet(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
     // in slicer
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member measures.top5Prod as "
         + "'aggregate(topcount("
         + "crossjoin( {time.[1997]}, product.[product name].members), 5, measures.[unit sales]), measures.[unit "
@@ -6941,7 +6941,7 @@ class NonEmptyTest extends BatchTestCase {
         + "Row #0: 398\n"
         + "Row #1: 385\n" );
     // in CJ
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member measures.top5Prod as "
         + "'aggregate(topcount("
         + "crossjoin( {time.[1997]}, product.[product name].members), 5, measures.[unit sales]), measures.[unit "
@@ -6963,7 +6963,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMondrian2202WithParameter(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH "
         + "member measures.[overrideContext] as "
         + "'( measures.[unit sales], "
@@ -6978,7 +6978,7 @@ class NonEmptyTest extends BatchTestCase {
         + "Axis #2:\n"
         + "{[Time].[1998].[Q1], [Marital Status].[M]}\n"
         + "Row #0: 33,101\n" );
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH member Time.param as 'Parameter(\"timeParam\",[Time],[Time].[1997].[Q1],\"?\")' "
         + "member measures.[overrideContext] as '( measures.[unit sales], Time.param )'\n"
         + "SELECT measures.[overrideContext] on 0, \n"
@@ -7001,7 +7001,7 @@ class NonEmptyTest extends BatchTestCase {
     // overriden by the filter condition.
     // (This worked before the fix for MONDRIAN-2202, since
     // RolapNativeSql cannot nativize tuple calculations.)
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH  member measures.[overrideContext] as "
         + " '( measures.[unit sales], Time.[1997].Q1 )'\n"
         + "SELECT measures.[overrideContext] on 0, \n"
@@ -7027,7 +7027,7 @@ class NonEmptyTest extends BatchTestCase {
     // overriden by the filter condition.
     // (This worked before the fix for MONDRIAN-2202, since
     // RolapNativeSql cannot nativize tuple calculations.)
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH  member measures.[overrideContext] as "
         + " '( measures.[unit sales], Time.[1997].Q1 )'\n"
         + "SELECT measures.[overrideContext] on 0, \n"
@@ -7051,7 +7051,7 @@ class NonEmptyTest extends BatchTestCase {
   void testMondrian2202WithMeasureContainingCJ(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
     // NECJ nested within a measure expression
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with  "
         + " member gender.agg as 'aggregate(NonEmptyCrossJoin({Gender.F}, {[Marital Status].[Marital Status]"
         + ".members}))' "
@@ -7075,7 +7075,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMon2202RunningSum(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH\n"
         + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],NONEMPTYCROSSJOIN"
         + "([*BASE_MEMBERS__Education Level_],[*BASE_MEMBERS__Customers_])))'\n"
@@ -7177,7 +7177,7 @@ class NonEmptyTest extends BatchTestCase {
         + "CROSSJOIN([*SORTED_COL_AXIS],[*BASE_MEMBERS__Measures_]) ON COLUMNS\n"
         + ",[*SORTED_ROW_AXIS] ON ROWS\n"
         + "FROM [Sales]\n"
-        + "WHERE ([*CJ_SLICER_AXIS])", context.getConnection());
+        + "WHERE ([*CJ_SLICER_AXIS])", context.getConnectionWithDefaultRole());
   }
 
   @ParameterizedTest
@@ -7186,7 +7186,7 @@ class NonEmptyTest extends BatchTestCase {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
       ((TestConfig)context.getConfig())
           .setAlertNativeEvaluationUnsupported("ERROR");
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH\n"
         + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],NONEMPTYCROSSJOIN"
         + "([*BASE_MEMBERS__Product_],[*BASE_MEMBERS__Time_]))'\n"
@@ -7260,7 +7260,7 @@ class NonEmptyTest extends BatchTestCase {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
       ((TestConfig)context.getConfig())
           .setAlertNativeEvaluationUnsupported("ERROR");
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH\n"
         + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],NONEMPTYCROSSJOIN"
         + "([*BASE_MEMBERS__Product_],[*BASE_MEMBERS__Time_]))'\n"
@@ -7344,7 +7344,7 @@ class NonEmptyTest extends BatchTestCase {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
       ((TestConfig)context.getConfig())
           .setAlertNativeEvaluationUnsupported("ERROR");
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH\n"
         + "SET [*NATIVE_CJ_SET] AS 'FILTER(NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],NONEMPTYCROSSJOIN"
         + "([*BASE_MEMBERS__Product_],[*BASE_MEMBERS__Time_])), NOT ISEMPTY ([Measures].[Unit Sales]))'\n"
@@ -7438,7 +7438,7 @@ class NonEmptyTest extends BatchTestCase {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
       ((TestConfig)context.getConfig())
           .setAlertNativeEvaluationUnsupported("ERROR");
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH\n"
         + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Promotion Media_],NONEMPTYCROSSJOIN"
         + "([*BASE_MEMBERS__Store_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],NONEMPTYCROSSJOIN"
@@ -7517,7 +7517,7 @@ class NonEmptyTest extends BatchTestCase {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
       ((TestConfig)context.getConfig())
           .setAlertNativeEvaluationUnsupported("ERROR");
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
       "WITH\n"
         + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Promotion Media_],NONEMPTYCROSSJOIN"
         + "([*BASE_MEMBERS__Product_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Gender_],[*BASE_MEMBERS__Time_])))'\n"
@@ -7608,7 +7608,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNonEmptyCrossJoinCalcMember(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(), new StringBuilder()
+    assertQueryReturns(context.getConnectionWithDefaultRole(), new StringBuilder()
         .append( "WITH \n" )
         .append( "MEMBER Measures.Calc AS '[Measures].[Profit] * 2', SOLVE_ORDER=1000\n" )
         .append( "MEMBER Product.Conditional as 'Iif(Measures.CurrentMember IS Measures.[Calc], + Measures.CurrentMember, " )
@@ -7643,7 +7643,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCrossJoinCalcMember(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    assertQueryReturns(context.getConnection(), String.format(
+    assertQueryReturns(context.getConnectionWithDefaultRole(), String.format(
       "WITH \nMEMBER Measures.Calc AS '[Measures].[Profit] * 2', SOLVE_ORDER=1000\nMEMBER Product.Conditional as 'Iif"
         + "(Measures.CurrentMember IS Measures.[Calc], + Measures.CurrentMember, null)', SOLVE_ORDER=2000\nSET [S2] AS "
         + "'{[Store].MEMBERS}' \nSET [S1] AS 'CROSSJOIN({[Customers].[All Customers]},{Product.Conditional})' \nSELECT "
@@ -7690,7 +7690,7 @@ class NonEmptyTest extends BatchTestCase {
         + "  </Dimension>" ));
      */
       withSchema(context, SchemaModifiers.NonEmptyTestModifier5::new);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member measures.one as '1' select non empty store2.usa.[OR].children on 0, measures.one on 1 from sales",
       "Axis #0:\n"
         + "{}\n"
@@ -7701,7 +7701,7 @@ class NonEmptyTest extends BatchTestCase {
         + "{[Measures].[one]}\n"
         + "Row #0: 1\n"
         + "Row #0: 1\n" );
-    assertQueryReturns(context.getConnection(), "with member measures.one as '1' "
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "with member measures.one as '1' "
         + "select store2.usa.[OR].children on 0, measures.one on 1 from sales",
       "Axis #0:\n"
         + "{}\n"
@@ -7759,7 +7759,7 @@ class NonEmptyTest extends BatchTestCase {
           + "</Schema>" );
      */
       withSchema(context,  SchemaModifiers.NonEmptyTestModifier7::new);
-      verifySameNativeAndNot(context.getConnection(),
+      verifySameNativeAndNot(context.getConnectionWithDefaultRole(),
       "select "
         + " [Measures].[dummyMeasure2] on COLUMNS, "
         + " NON EMPTY CrossJoin([Store].[Store State].Members, Time.[Year].members) ON ROWS "

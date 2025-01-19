@@ -1322,7 +1322,7 @@ class ConcurrentMdxTest {
                             // Throttle a bit (randomly)
                             Thread.sleep(random.nextInt(50));
                             Connection connection =
-                                    context.getConnection();
+                                    context.getConnectionWithDefaultRole();
                             statement = connection.createStatement();
                             statements.add(statement);
                             statement.executeQuery(mdxQuery.query);

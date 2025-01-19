@@ -14,6 +14,7 @@
 package org.eclipse.daanse.olap.rolap.core;
 
 import java.sql.Connection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Semaphore;
@@ -165,8 +166,12 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
 	}
 
 	@Override
-	public org.eclipse.daanse.olap.api.Connection getConnection() {
+	public org.eclipse.daanse.olap.api.Connection getConnectionWithDefaultRole() {
 		return getConnection(new RolapConnectionPropsR());
+	}
+	@Override
+	public org.eclipse.daanse.olap.api.Connection getConnection(List<String> roles) {
+		return getConnection(new RolapConnectionPropsR(roles));
 	}
 
 	@Override
@@ -175,8 +180,8 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
 	}
 
 	@Override
-	public Scenario createScenario() {
-        return getConnection().createScenario();
+	public Scenario createScenario(List<String> roles) {
+        return getConnection(roles).createScenario();
 	}
 
 	@Override

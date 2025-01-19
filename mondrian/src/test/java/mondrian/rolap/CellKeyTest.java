@@ -482,7 +482,7 @@ class CellKeyTest  {
             }
         }
         withSchema(context, TestCellLookupModifier::new);
-        assertQueryReturns(context.getConnection(), query, result);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), query, result);
     }
 
     void testSize() {

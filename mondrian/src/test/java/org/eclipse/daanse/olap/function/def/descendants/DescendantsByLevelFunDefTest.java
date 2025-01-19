@@ -41,7 +41,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsM(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997].[Q1])",
             "[Time].[1997].[Q1]\n"
                 + "[Time].[1997].[Q1].[1]\n"
@@ -52,7 +52,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsDepends(Context context) {
-        assertSetExprDependsOn(context.getConnection(),
+        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[Time].CurrentMember)",
             "{[Time]}" );
     }
@@ -60,7 +60,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsML(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], [Time].[Month])",
             months );
     }
@@ -68,7 +68,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMLSelf(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], [Time].[Quarter], SELF)",
             quarters );
     }
@@ -76,17 +76,17 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMLLeaves(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], [Time].[Year], LEAVES)",
             "[Time].[1997]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], [Time].[Quarter], LEAVES)",
             "[Time].[1997].[Q1]\n" + "[Time].[1997].[Q2]\n" + "[Time].[1997].[Q3]\n" + "[Time].[1997].[Q4]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], [Time].[Month], LEAVES)",
             months );
 
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Gender], [Gender].[Gender], leaves)",
             "[Gender].[F]\n" + "[Gender].[M]" );
     }
@@ -97,19 +97,19 @@ class DescendantsByLevelFunDefTest {
         // no cities are at leaf level
         //final TestContext raggedContext =
         //  getTestContext().withCube( "[Sales Ragged]" );
-        assertAxisReturns(context.getConnection(), "[Sales Ragged]",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "[Sales Ragged]",
             "Descendants([Store].[Israel], [Store].[Store City], leaves)",
             "[Store].[Israel].[Israel].[Haifa]\n" + "[Store].[Israel].[Israel].[Tel Aviv]" );
 
         // all cities are leaves
-        assertAxisReturns(context.getConnection(), "[Sales Ragged]",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "[Sales Ragged]",
             "Descendants([Geography].[Israel], [Geography].[City], leaves)",
             "[Geography].[Israel].[Israel].[Haifa]\n"
                 + "[Geography].[Israel].[Israel].[Tel Aviv]" );
 
         // No state is a leaf (not even Israel, which is both a country and a
         // a state, or Vatican, with is a country/state/city)
-        assertAxisReturns(context.getConnection(), "[Sales Ragged]",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "[Sales Ragged]",
             "Descendants([Geography], [Geography].[State], leaves)",
             "[Geography].[Canada].[BC]\n" +
                 "[Geography].[Mexico].[DF]\n" +
@@ -130,30 +130,30 @@ class DescendantsByLevelFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMNLeaves(Context context) {
         // leaves at depth 0 returns the member itself
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997].[Q2].[4], 0, Leaves)",
             "[Time].[1997].[Q2].[4]" );
 
         // leaves at depth > 0 returns the member itself
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997].[Q2].[4], 100, Leaves)",
             "[Time].[1997].[Q2].[4]" );
 
         // leaves at depth < 0 returns all descendants
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997].[Q2], -1, Leaves)",
             "[Time].[1997].[Q2].[4]\n"
                 + "[Time].[1997].[Q2].[5]\n"
                 + "[Time].[1997].[Q2].[6]" );
 
         // leaves at depth 0 returns the member itself
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997].[Q2], 0, Leaves)",
             "[Time].[1997].[Q2].[4]\n"
                 + "[Time].[1997].[Q2].[5]\n"
                 + "[Time].[1997].[Q2].[6]" );
 
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997].[Q2], 3, Leaves)",
             "[Time].[1997].[Q2].[4]\n"
                 + "[Time].[1997].[Q2].[5]\n"
@@ -163,7 +163,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMLSelfBefore(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], [Time].[Quarter], SELF_AND_BEFORE)",
             year1997 + "\n" + quarters );
     }
@@ -171,7 +171,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMLSelfBeforeAfter(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], [Time].[Quarter], SELF_BEFORE_AFTER)",
             hierarchized1997 );
     }
@@ -179,14 +179,14 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMLBefore(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], [Time].[Quarter], BEFORE)", year1997 );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMLBeforeAfter(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], [Time].[Quarter], BEFORE_AND_AFTER)",
             year1997 + "\n" + months );
     }
@@ -194,56 +194,56 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMLAfter(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], [Time].[Quarter], AFTER)", months );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMLAfterEnd(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], [Time].[Month], AFTER)", "" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsM0(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], 0)", year1997 );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsM2(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], 2)", months );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsM2Self(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], 2, Self)", months );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsM2Leaves(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], 2, Leaves)", months );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMFarLeaves(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], 10000, Leaves)", months );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMEmptyLeaves(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], , Leaves)",
             months );
     }
@@ -251,7 +251,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMEmptyLeavesFail(Context context) {
-        assertAxisThrows(context.getConnection(),
+        assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997],)",
             "No function matches signature 'Descendants(<Member>, <Empty>)" );
     }
@@ -259,7 +259,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMEmptyLeavesFail2(Context context) {
-        assertAxisThrows(context.getConnection(),
+        assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], , AFTER)",
             "depth must be specified unless DESC_FLAG is LEAVES" );
     }
@@ -267,7 +267,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMFarSelf(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], 10000, Self)",
             "" );
     }
@@ -275,7 +275,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsMNY(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], 1, BEFORE_AND_AFTER)",
             year1997 + "\n" + months );
     }
@@ -283,7 +283,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendants2ndHier(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time.Weekly].[1997].[10], [Time.Weekly].[Day])",
             "[Time].[Weekly].[1997].[10].[1]\n"
                 + "[Time].[Weekly].[1997].[10].[23]\n"
@@ -298,7 +298,7 @@ class DescendantsByLevelFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsParentChild(Context context) {
         //getTestContext().withCube( "HR" ).
-        assertAxisReturns(context.getConnection(), "HR",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Descendants([Employees], 2)",
             "[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
                 + "[Employees].[Sheri Nowmer].[Michael Spence]\n"
@@ -312,7 +312,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsParentChildBefore(Context context) {
-        assertAxisReturns(context.getConnection(), "HR",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Descendants([Employees], 2, BEFORE)",
             "[Employees].[All Employees]\n"
                 + "[Employees].[Sheri Nowmer]" );
@@ -323,13 +323,13 @@ class DescendantsByLevelFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsParentChildLeaves(Context context) {
         //final TestContext testContext = getTestContext().withCube( "HR" );
-        DataSource dataSource = context.getConnection().getDataSource();
+        DataSource dataSource = context.getConnectionWithDefaultRole().getDataSource();
         if (Bug.avoidSlowTestOnLucidDB( context.getDialect())) {
             return;
         }
 
         // leaves, restricted by level
-        assertAxisReturns(context.getConnection(), "HR",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Descendants([Employees].[All Employees].[Sheri Nowmer].[Michael Spence], [Employees].[Employee Id], LEAVES)",
             "[Employees].[Sheri Nowmer].[Michael Spence].[Daniel Wolter].[Michael John Troyer].[Mary Sandidge].[John "
                 + "Brooks]\n"
@@ -492,9 +492,9 @@ class DescendantsByLevelFunDefTest {
                 + "[Employees].[Sheri Nowmer].[Michael Spence].[Dianne Collins].[Lawrence Hurkett].[Carol Ann Rockne]" );
 
         // leaves, restricted by depth
-        assertAxisReturns(context.getConnection(), "HR",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Descendants([Employees], 1, LEAVES)", "" );
-        assertAxisReturns(context.getConnection(), "HR",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Descendants([Employees], 2, LEAVES)",
             "[Employees].[Sheri Nowmer].[Roberta Damstra].[Jennifer Cooper]\n"
                 + "[Employees].[Sheri Nowmer].[Roberta Damstra].[Peggy Petty]\n"
@@ -513,7 +513,7 @@ class DescendantsByLevelFunDefTest {
                 + "[Employees].[Sheri Nowmer].[Donna Arnold].[Howard Bechard]\n"
                 + "[Employees].[Sheri Nowmer].[Donna Arnold].[Doris Carter]" );
 
-        assertAxisReturns(context.getConnection(), "HR",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Descendants([Employees], 3, LEAVES)",
             "[Employees].[Sheri Nowmer].[Roberta Damstra].[Jennifer Cooper]\n"
                 + "[Employees].[Sheri Nowmer].[Roberta Damstra].[Peggy Petty]\n"
@@ -533,7 +533,7 @@ class DescendantsByLevelFunDefTest {
                 + "[Employees].[Sheri Nowmer].[Donna Arnold].[Doris Carter]" );
 
         // note that depth is RELATIVE to the starting member
-        assertAxisReturns(context.getConnection(), "HR",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Descendants([Employees].[Sheri Nowmer].[Roberta Damstra], 1, LEAVES)",
             "[Employees].[Sheri Nowmer].[Roberta Damstra].[Jennifer Cooper]\n"
                 + "[Employees].[Sheri Nowmer].[Roberta Damstra].[Peggy Petty]\n"
@@ -541,26 +541,26 @@ class DescendantsByLevelFunDefTest {
                 + "[Employees].[Sheri Nowmer].[Roberta Damstra].[Phyllis Burchett]" );
 
         // Howard Bechard is a leaf member -- appears even at depth 0
-        assertAxisReturns(context.getConnection(), "HR",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Descendants([Employees].[All Employees].[Sheri Nowmer].[Donna Arnold].[Howard Bechard], 0, LEAVES)",
             "[Employees].[Sheri Nowmer].[Donna Arnold].[Howard Bechard]" );
-        assertAxisReturns(context.getConnection(), "HR",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Descendants([Employees].[All Employees].[Sheri Nowmer].[Donna Arnold].[Howard Bechard], 1, LEAVES)",
             "[Employees].[Sheri Nowmer].[Donna Arnold].[Howard Bechard]" );
 
-        TestUtil.assertExprReturns(context.getConnection(), "HR",
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "HR",
             "Count(Descendants([Employees], 2, LEAVES))", "16" );
-        TestUtil.assertExprReturns(context.getConnection(), "HR",
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "HR",
             "Count(Descendants([Employees], 3, LEAVES))", "16" );
-        TestUtil.assertExprReturns(context.getConnection(), "HR",
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "HR",
             "Count(Descendants([Employees], 4, LEAVES))", "63" );
-        TestUtil.assertExprReturns(context.getConnection(), "HR",
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "HR",
             "Count(Descendants([Employees], 999, LEAVES))", "1,044" );
 
         // Negative depth acts like +infinity (per MSAS).  Run the test several
         // times because we had a non-deterministic bug here.
         for ( int i = 0; i < 100; ++i ) {
-            TestUtil.assertExprReturns(context.getConnection(), "HR",
+            TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "HR",
                 "Count(Descendants([Employees], -1, LEAVES))", "1,044" );
         }
     }
@@ -568,7 +568,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsSBA(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], 1, SELF_BEFORE_AFTER)",
             hierarchized1997 );
     }
@@ -576,7 +576,7 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsSet(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants({[Time].[1997].[Q4], [Time].[1997].[Q2]}, 1)",
             "[Time].[1997].[Q4].[10]\n"
                 + "[Time].[1997].[Q4].[11]\n"
@@ -584,7 +584,7 @@ class DescendantsByLevelFunDefTest {
                 + "[Time].[1997].[Q2].[4]\n"
                 + "[Time].[1997].[Q2].[5]\n"
                 + "[Time].[1997].[Q2].[6]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants({[Time].[1997]}, [Time].[Month], LEAVES)",
             months );
     }
@@ -592,10 +592,10 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendantsSetEmpty(Context context) {
-        assertAxisThrows(context.getConnection(),
+        assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Descendants({}, 1)",
             "Cannot deduce type of set" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "Descendants(Filter({[Time].[Time].Members}, 1=0), 1)",
             "" );
     }
@@ -603,15 +603,15 @@ class DescendantsByLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testItemMember(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], [Time].[Month]).Item(1).Item(0).UniqueName",
             "[Time].[1997].[Q1].[2]" );
 
         // Access beyond the list yields the Null member.
         if ( isDefaultNullMemberRepresentation() ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "[Time].[1997].Children.Item(6).UniqueName", "[Time].[#null]" );
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "[Time].[1997].Children.Item(-1).UniqueName", "[Time].[#null]" );
         }
     }

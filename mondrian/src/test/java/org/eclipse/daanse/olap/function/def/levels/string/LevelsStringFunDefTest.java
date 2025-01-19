@@ -25,7 +25,7 @@ class LevelsStringFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelsStringFail(Context context) {
-        TestUtil.assertExprThrows(context.getConnection(),
+        TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(),
             "Levels(\"nonexistent\").UniqueName",
             "Level 'nonexistent' not found" );
     }
@@ -33,7 +33,7 @@ class LevelsStringFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelsString(Context context) {
-      TestUtil.assertExprReturns(context.getConnection(),
+      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
         "Levels(\"[Time].[Year]\").UniqueName",
         "[Time].[Year]" );
     }

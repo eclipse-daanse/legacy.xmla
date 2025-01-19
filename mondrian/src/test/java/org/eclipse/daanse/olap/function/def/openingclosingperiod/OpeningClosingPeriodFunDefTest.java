@@ -51,7 +51,7 @@ class OpeningClosingPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testClosingPeriodNoArgs(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
             "ClosingPeriod()", "{[Time]}" );
         // MSOLAP returns [1997].[Q4], because [Time].CurrentMember =
@@ -63,7 +63,7 @@ class OpeningClosingPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testClosingPeriodLevel(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
             "ClosingPeriod([Time].[Year])", "{[Time]}" );
         assertMemberExprDependsOn(connection,
@@ -160,7 +160,7 @@ class OpeningClosingPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testClosingPeriodLevelNotInTimeFails(Context context) {
-        assertAxisThrows(context.getConnection(),
+        assertAxisThrows(context.getConnectionWithDefaultRole(),
             "ClosingPeriod([Store].[Store City])",
             "The <level> and <member> arguments to ClosingPeriod must be from "
                 + "the same hierarchy. The level was from '[Store]' but the member "
@@ -174,7 +174,7 @@ class OpeningClosingPeriodFunDefTest {
             // This test is mistaken. Valid forms are ClosingPeriod(<level>)
             // and ClosingPeriod(<level>, <member>), but not
             // ClosingPeriod(<member>)
-            Member member = executeSingletonAxis( context.getConnection(),"ClosingPeriod([USA])" );
+            Member member = executeSingletonAxis( context.getConnectionWithDefaultRole(),"ClosingPeriod([USA])" );
             assertEquals( "WA", member.getName() );
         }
     }
@@ -187,11 +187,11 @@ class OpeningClosingPeriodFunDefTest {
             // This test is mistaken. Valid forms are ClosingPeriod(<level>)
             // and ClosingPeriod(<level>, <member>), but not
             // ClosingPeriod(<member>)
-            member = executeSingletonAxis(context.getConnection(),
+            member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
                 "ClosingPeriod([Time].[1997].[Q3].[8])" );
             assertNull( member );
         } else if ( isDefaultNullMemberRepresentation() ) {
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "with member [Measures].[Foo] as ClosingPeriod().uniquename\n"
                     + "select {[Measures].[Foo]} on columns,\n"
                     + "  {[Time].[1997],\n"
@@ -217,7 +217,7 @@ class OpeningClosingPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testClosingPeriod(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
             "ClosingPeriod([Time].[Month], [Time].[Time].CurrentMember)",
             "{[Time]}" );
@@ -310,7 +310,7 @@ class OpeningClosingPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testClosingPeriodBelow(Context context) {
-        Member member = executeSingletonAxis(context.getConnection(),
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
             "ClosingPeriod([Quarter],[1997].[Q3].[8])" );
         assertNull( member );
     }
@@ -319,49 +319,49 @@ class OpeningClosingPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOpeningPeriod(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "OpeningPeriod([Time].[Month], [Time].[1997].[Q3])",
             "[Time].[1997].[Q3].[7]" );
 
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "OpeningPeriod([Time].[Quarter], [Time].[1997])",
             "[Time].[1997].[Q1]" );
 
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "OpeningPeriod([Time].[Year], [Time].[1997])", "[Time].[1997]" );
 
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "OpeningPeriod([Time].[Month], [Time].[1997])",
             "[Time].[1997].[Q1].[1]" );
 
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "OpeningPeriod([Product].[Product Name], [Product].[All Products].[Drink])",
             "[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Imported Beer]" );
 
         //getTestContext().withCube( "[Sales Ragged]" ).
-        assertAxisReturns(context.getConnection(), "[Sales Ragged]",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "[Sales Ragged]",
             "OpeningPeriod([Store].[Store City], [Store].[All Stores].[Israel])",
             "[Store].[Israel].[Israel].[Haifa]" );
 
         //getTestContext().withCube( "[Sales Ragged]" ).
-        assertAxisReturns(context.getConnection(), "[Sales Ragged]",
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "[Sales Ragged]",
             "OpeningPeriod([Store].[Store State], [Store].[All Stores].[Israel])",
             "" );
 
         // Default member is [Time].[1997].
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "OpeningPeriod([Time].[Month])", "[Time].[1997].[Q1].[1]" );
 
-        assertAxisReturns(context.getConnection(), "OpeningPeriod()", "[Time].[1997].[Q1]" );
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "OpeningPeriod()", "[Time].[1997].[Q1]" );
 
         //TestContext testContext = getTestContext().withCube( "[Sales Ragged]" );
-        assertAxisThrows(context.getConnection(),
+        assertAxisThrows(context.getConnectionWithDefaultRole(),
             "OpeningPeriod([Time].[Year], [Store].[All Stores].[Israel])",
             "The <level> and <member> arguments to OpeningPeriod must be "
                 + "from the same hierarchy. The level was from '[Time]' but "
                 + "the member was from '[Store]'.", "[Sales Ragged]");
 
-        assertAxisThrows(context.getConnection(),
+        assertAxisThrows(context.getConnectionWithDefaultRole(),
             "OpeningPeriod([Store].[Store City])",
             "The <level> and <member> arguments to OpeningPeriod must be "
                 + "from the same hierarchy. The level was from '[Store]' but "
@@ -374,7 +374,7 @@ class OpeningClosingPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOpeningPeriodNull(Context context) {
-        assertAxisThrows(context.getConnection(),
+        assertAxisThrows(context.getConnectionWithDefaultRole(),
             "OpeningPeriod([Time].[Month], NULL)",
             "Failed to parse query 'select {OpeningPeriod([Time].[Month], NULL)} on columns from Sales'" );
     }

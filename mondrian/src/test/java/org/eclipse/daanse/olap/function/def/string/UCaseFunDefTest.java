@@ -34,7 +34,7 @@ class UCaseFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUCaseWithNonEmptyString(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select filter([Store].MEMBERS, "
                 + " UCase([Store].CURRENTMEMBER.Name) = \"BELLINGHAM\") "
                 + "on 0 from sales",
@@ -48,7 +48,7 @@ class UCaseFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUCaseWithEmptyString(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select filter([Store].MEMBERS, "
                 + " UCase(\"\") = \"\" "
                 + "And [Store].CURRENTMEMBER.Name = \"Bellingham\") "
@@ -63,7 +63,7 @@ class UCaseFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUCaseWithNullString(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select filter([Store].MEMBERS, "
                 + " UCase(\"NULL\") = \"\" "
                 + "And [Store].CURRENTMEMBER.Name = \"Bellingham\") "
@@ -77,7 +77,7 @@ class UCaseFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUCaseWithNull(Context context) {
         try {
-            executeQuery(context.getConnection(),
+            executeQuery(context.getConnectionWithDefaultRole(),
                 "select filter([Store].MEMBERS, "
                     + " UCase(NULL) = \"\" "
                     + "And [Store].CURRENTMEMBER.Name = \"Bellingham\") "

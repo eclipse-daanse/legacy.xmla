@@ -27,7 +27,7 @@ class SumFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSumNoExp(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "SUM({[Promotion Media].[Media Type].members})", "266,773" );
     }
 

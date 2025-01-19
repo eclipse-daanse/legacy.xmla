@@ -24,7 +24,7 @@ class RolapEvaluatorTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testGetSlicerPredicateInfo(Context context) throws Exception {
-        RolapResult result = (RolapResult) executeQuery(context.getConnection(),
+        RolapResult result = (RolapResult) executeQuery(context.getConnectionWithDefaultRole(),
             "select  from sales "
             + "WHERE {[Time].[1997].Q1, [Time].[1997].Q2} "
             + "* { Store.[USA].[CA], Store.[USA].[WA]}");
@@ -57,7 +57,7 @@ class RolapEvaluatorTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testListColumnPredicateInfo(Context context) throws Exception {
-      RolapResult result = (RolapResult) executeQuery(context.getConnection(),
+      RolapResult result = (RolapResult) executeQuery(context.getConnectionWithDefaultRole(),
           "select  from sales "
           + "WHERE {[Product].[Drink],[Product].[Non-Consumable]} ");
       RolapEvaluator evalulator = (RolapEvaluator) result.getRootEvaluator();
@@ -72,7 +72,7 @@ class RolapEvaluatorTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testOrPredicateInfo(Context context) throws Exception {
-      RolapResult result = (RolapResult) executeQuery(context.getConnection(),
+      RolapResult result = (RolapResult) executeQuery(context.getConnectionWithDefaultRole(),
           "select  from sales "
           + "WHERE {[Product].[Drink].[Beverages],[Product].[Food].[Produce],[Product].[Non-Consumable]} ");
       RolapEvaluator evalulator = (RolapEvaluator) result.getRootEvaluator();

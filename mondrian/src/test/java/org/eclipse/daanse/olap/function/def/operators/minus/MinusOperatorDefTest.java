@@ -28,7 +28,7 @@ class MinusOperatorDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMinus_bug1234759(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Customers].[USAMinusMexico]\n"
                 + "AS '([Customers].[All Customers].[USA] - [Customers].[All Customers].[Mexico])'\n"
                 + "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
@@ -54,7 +54,7 @@ class MinusOperatorDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMinusAssociativity(Context context) {
         // right-associative would give 11-(7-5) = 9, which is wrong
-        assertExprReturns(context.getConnection(), "11-7-5", "-1" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "11-7-5", "-1" );
     }
 
 }

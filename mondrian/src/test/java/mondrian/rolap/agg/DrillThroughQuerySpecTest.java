@@ -150,7 +150,7 @@ class DrillThroughQuerySpecTest {
         + "FROM [Warehouse] " + "WHERE ([*CJ_SLICER_AXIS]) "
         + "RETURN [Product].[Product Department]";
 
-    Connection connection = foodMartContext.getConnection();
+    Connection connection = foodMartContext.getConnectionWithDefaultRole();
     ResultSet resultSet = connection.createStatement().executeQuery(drillThroughMdx, Optional.empty(), Optional.empty(), null);
 
     assertEquals(1, resultSet.getMetaData().getColumnCount());

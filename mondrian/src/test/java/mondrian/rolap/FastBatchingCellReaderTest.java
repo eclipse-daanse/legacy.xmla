@@ -103,7 +103,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   }
 
   private void prepareContext(Context context) {
-    connection = context.getConnection();
+    connection = context.getConnectionWithDefaultRole();
     connection.getCacheControl( null ).flushSchemaCache();
     final Statement statement = ((Connection) connection).getInternalStatement();
     e = new ExecutionImpl( statement, Optional.empty() );
@@ -131,7 +131,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMissingSubtotalBugMetricFilter(Context context) {
     prepareContext(context);
-    assertQueryReturns(context.getConnection(), "With " + "Set [*NATIVE_CJ_SET] as " + "'NonEmptyCrossJoin({[Time].[Year].[1997]},"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "With " + "Set [*NATIVE_CJ_SET] as " + "'NonEmptyCrossJoin({[Time].[Year].[1997]},"
         + "                   NonEmptyCrossJoin({[Product].[All Products].[Drink]},{[Education Level].[All Education Levels].[Bachelors Degree]}))' "
         + "Set [*METRIC_CJ_SET] as 'Filter([*NATIVE_CJ_SET],[Measures].[*Unit Sales_SEL~SUM] > 1000.0)' "
         + "Set [*METRIC_MEMBERS_Education Level] as 'Generate([*METRIC_CJ_SET], {[Education Level].CurrentMember})' "
@@ -150,7 +150,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMissingSubtotalBugMultiLevelMetricFilter(Context context) {
     prepareContext(context);
-    assertQueryReturns(context.getConnection(), "With "
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "With "
         + "Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Product],[*BASE_MEMBERS_Education Level])' "
         + "Set [*METRIC_CJ_SET] as 'Filter([*NATIVE_CJ_SET],[Measures].[*Store Cost_SEL~SUM] > 1000.0)' "
         + "Set [*BASE_MEMBERS_Product] as '{[Product].[All Products].[Drink].[Beverages],[Product].[All Products].[Food].[Baked Goods]}' "
@@ -210,7 +210,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testDoesDBSupportGroupingSets(Context context) {
     prepareContext(context);
-    final Dialect dialect = getDialect(context.getConnection());
+    final Dialect dialect = getDialect(context.getConnectionWithDefaultRole());
     FastBatchingCellReader fbcr = new FastBatchingCellReader( e, salesCube, aggMgr ) {
       @Override
 	Dialect getDialect() {
@@ -237,7 +237,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testGroupBatchesForNonGroupableBatchesWithSorting(Context context) {
     prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch genderBatch =
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F" ) );
     BatchLoader.Batch maritalStatusBatch =
@@ -260,7 +260,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     compoundMembers.add( new String[] { "USA", "CA" } );
     compoundMembers.add( new String[] { "Canada", "BC" } );
     CellRequestConstraint constraint = makeConstraintCountryState( compoundMembers );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch genderBatch =
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F", constraint ) );
     BatchLoader.Batch maritalStatusBatch =
@@ -280,7 +280,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testGroupBatchesForGroupableBatches(Context context) {
     prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch genderBatch =
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F" ) ) {
           @Override
@@ -310,7 +310,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testGroupBatchesForGroupableBatchesAndNonGroupableBatches(Context context) {
     prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     final BatchLoader.Batch group1Agg2 =
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F" ) ) {
           @Override
@@ -378,7 +378,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     String tableWarehouse = "warehouse";
 
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch batch1RollupOnGender =
         createBatch(connection, fbcr, new String[] { tableTime, tableStore, tableProductClass }, new String[] { fieldYear,
           fieldStoreType, fieldProductFamily }, new String[][] { fieldValuesYear, fieldValuesStoreType,
@@ -451,7 +451,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testAddToCompositeBatchForBothBatchesNotPartOfCompositeBatch(Context context) {
     prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch batch1 =
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, "customer", "country", "F" ) );
     BatchLoader.Batch batch2 =
@@ -472,7 +472,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
 	prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
     prepareContext(context);
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch detailedBatch =
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, "customer", "country", "F" ) );
     BatchLoader.Batch aggBatch1 =
@@ -500,7 +500,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testAddToCompositeBatchForAggregationBatchAlreadyPartOfACompositeBatch(Context context) {
     prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch detailedBatch =
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, "customer", "country", "F" ) );
     BatchLoader.Batch aggBatchToAddToDetailedBatch =
@@ -528,7 +528,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testAddToCompositeBatchForBothBatchAlreadyPartOfACompositeBatch(Context context) {
     prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch detailedBatch =
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, "customer", "country", "F" ) );
     BatchLoader.Batch aggBatchToAddToDetailedBatch =
@@ -568,7 +568,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testCanBatchForSuperSet(Context context) {
     prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch aggregationBatch =
         createBatch(connection, fbcr, new String[] { tableTime, tableProductClass, tableProductClass }, new String[] { fieldYear,
           fieldProductFamily, fieldProductDepartment }, new String[][] { fieldValuesYear, fieldValuesProductFamily,
@@ -593,7 +593,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     compoundMembers.add( new String[] { "USA", "CA" } );
     compoundMembers.add( new String[] { "Canada", "BC" } );
     CellRequestConstraint constraint = makeConstraintCountryState( compoundMembers );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch aggregationBatch =
         createBatch(connection, fbcr, new String[] { tableTime, tableProductClass, tableProductClass }, new String[] { fieldYear,
           fieldProductFamily, fieldProductDepartment }, new String[][] { fieldValuesYear, fieldValuesProductFamily,
@@ -614,7 +614,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testCanBatchForBatchWithConstraint2(Context context) {
     prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     List<String[]> compoundMembers1 = new ArrayList<>();
     compoundMembers1.add( new String[] { "USA", "CA" } );
     compoundMembers1.add( new String[] { "Canada", "BC" } );
@@ -649,7 +649,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
       return;
     }
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch aggregationBatch =
         createBatch(connection, fbcr, new String[] { tableTime, tableProductClass, tableProductClass }, new String[] { fieldYear,
           fieldProductFamily, fieldProductDepartment }, new String[][] { fieldValuesYear, fieldValuesProductFamily,
@@ -672,7 +672,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
       return;
     }
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch aggregationBatch =
         createBatch(connection, fbcr, new String[] { tableTime, tableProductClass, tableProductClass }, new String[] { fieldYear,
           fieldProductFamily, fieldProductDepartment }, new String[][] { fieldValuesYear, fieldValuesProductFamily,
@@ -695,7 +695,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
       return;
     }
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch aggregationBatch =
         createBatch(connection, fbcr, new String[] { tableTime }, new String[] { fieldYear }, new String[][] { fieldValuesYear },
             cubeNameSales, "[Measures].[Customer Count]" );
@@ -718,7 +718,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testNonSuperSet(Context context) {
     prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch aggregationBatch =
         createBatch(connection, fbcr, new String[] { tableTime, tableProductClass, tableProductClass }, new String[] { fieldYear,
           fieldProductFamily, fieldProductDepartment }, new String[][] { fieldValuesYear, fieldValuesProductFamily,
@@ -742,7 +742,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testSuperSetAndNotAllValues(Context context) {
     prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch aggregationBatch =
         createBatch(connection, fbcr, new String[] { tableTime, tableProductClass, tableProductClass }, new String[] { fieldYear,
           fieldProductFamily, fieldProductDepartment }, new String[][] { fieldValuesYear, fieldValuesProductFamily,
@@ -763,7 +763,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testCanBatchForBatchesFromSameAggregationButDifferentRollupOption(Context context) {
     prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch batch1 =
         createBatch(connection, fbcr, new String[] { tableTime }, new String[] { fieldYear }, new String[][] { fieldValuesYear },
             cubeNameSales, measureUnitSales );
@@ -796,7 +796,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testSuperSetDifferentValues(Context context) {
     prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch aggregationBatch =
         createBatch(connection, fbcr, new String[] { tableTime, tableProductClass, tableProductClass }, new String[] { fieldYear,
           fieldProductFamily, fieldProductDepartment }, new String[][] { new String[] { "1997" },
@@ -816,7 +816,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCanBatchForBatchWithDifferentAggregationTable(Context context) {
     prepareContext(context);
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     final Dialect dialect = getDialect(connection);
     final DatabaseProduct product = getDatabaseProduct(dialect.getDialectName());
     switch ( product ) {
@@ -851,7 +851,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testCannotBatchTwoBatchesAtTheSameLevel(Context context) {
     prepareContext(context);
     final BatchLoader fbcr = createFbcr( null, salesCube );
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     BatchLoader.Batch firstBatch =
         createBatch(connection, fbcr, new String[] { tableTime, tableProductClass, tableProductClass }, new String[] { fieldYear,
           fieldProductFamily, fieldProductDepartment }, new String[][] { fieldValuesYear, new String[] { "Food" },
@@ -870,7 +870,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCompositeBatchLoadAggregation(Context context) throws Exception {
     prepareContext(context);
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     if ( !getDialect(connection).supportsGroupingSets() ) {
       return;
     }
@@ -949,7 +949,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     prepareContext(context);
     // Some databases cannot handle scalar subqueries inside
     // count(distinct).
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     final Dialect dialect = getDialect(connection);
     switch ( getDatabaseProduct(dialect.getDialectName()) ) {
       case ORACLE:
@@ -1112,7 +1112,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             + "Row #4: 4\n" + "Row #5: 0\n" + "Row #5: 1\n" + "Row #5: 3\n" + "Row #5: 8\n" + "Row #5: 8\n"
             + "Row #5: 8\n";
 
-    assertQueryReturns(context.getConnection(), query, desiredResult );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), query, desiredResult );
 
     String loadCountDistinct_luciddb1 =
         "select " + "\"store\".\"store_type\" as \"c0\", " + "count(distinct "
@@ -1172,7 +1172,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
 
           new SqlPattern( DatabaseProduct.MYSQL, load_mysql, load_mysql ), };
 
-    assertQuerySql(context.getConnection(), query, patterns );
+    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
   }
 
   @ParameterizedTest
@@ -1181,7 +1181,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     prepareContext(context);
     // solve_order=1 says to aggregate [CA] and [OR] before computing their
     // sums
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         "WITH MEMBER [Time].[Time].[1997 Q1 plus Q2] AS 'AGGREGATE({[Time].[1997].[Q1], [Time].[1997].[Q2]})', solve_order=1\n"
             + "SELECT {[Measures].[Customer Count]} ON COLUMNS,\n"
             + "      {[Time].[1997].[Q1], [Time].[1997].[Q2], [Time].[1997 Q1 plus Q2]} ON ROWS\n" + "FROM Sales\n"
@@ -1199,7 +1199,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAggregateDistinctCount2(Context context) {
     prepareContext(context);
-    assertQueryReturns(context.getConnection(), "WITH MEMBER [Time].[Time].[1997 Q1 plus July] AS\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH MEMBER [Time].[Time].[1997 Q1 plus July] AS\n"
         + " 'AGGREGATE({[Time].[1997].[Q1], [Time].[1997].[Q3].[7]})', solve_order=1\n"
         + "SELECT {[Measures].[Unit Sales], [Measures].[Customer Count]} ON COLUMNS,\n"
         + "      {[Time].[1997].[Q1],\n" + "       [Time].[1997].[Q2],\n" + "       [Time].[1997].[Q3].[7],\n"
@@ -1221,7 +1221,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAggregateDistinctCount3(Context context) {
     prepareContext(context);
-    assertQueryReturns(context.getConnection(), "WITH\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "WITH\n"
         + "  MEMBER [Promotion Media].[TV plus Radio] AS 'AGGREGATE({[Promotion Media].[TV], [Promotion Media].[Radio]})', solve_order=1\n"
         + "  MEMBER [Time].[Time].[1997 Q1 plus July] AS 'AGGREGATE({[Time].[1997].[Q1], [Time].[1997].[Q3].[7]})', solve_order=1\n"
         + "SELECT {[Promotion Media].[TV plus Radio],\n" + "        [Promotion Media].[TV],\n"
@@ -1283,7 +1283,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             + "\"promotion\".\"media_type\" in ('Radio', 'TV') " + "group by "
             + "\"time_by_day\".\"the_year\", \"time_by_day\".\"quarter\", " + "\"promotion\".\"media_type\"";
 
-    assertQuerySql(context.getConnection(), "WITH\n"
+    assertQuerySql(context.getConnectionWithDefaultRole(), "WITH\n"
         + "  MEMBER [Promotion Media].[TV plus Radio] AS 'AGGREGATE({[Promotion Media].[TV], [Promotion Media].[Radio]})', solve_order=1\n"
         + "  MEMBER [Time].[Time].[1997 Q1 plus July] AS 'AGGREGATE({[Time].[1997].[Q1], [Time].[1997].[Q3].[7]})', solve_order=1\n"
         + "SELECT {[Promotion Media].[TV plus Radio],\n" + "        [Promotion Media].[TV],\n"
@@ -1322,7 +1322,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             + "Row #0: 3,505\n" + "Row #0: 112,347\n" + "Row #1: 1,386\n" + "Row #1: 22,293\n" + "Row #2: 3,505\n"
             + "Row #2: 90,054\n" + "Row #3: 2,981\n" + "Row #3: 83,181\n" + "Row #4: 1,462\n" + "Row #4: 29,166\n";
 
-    assertQueryReturns(context.getConnection(), mdxQuery, result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), mdxQuery, result );
   }
 
   /**
@@ -1364,7 +1364,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
         { new SqlPattern( DatabaseProduct.DERBY, derbySql, derbySql ), new SqlPattern(
             DatabaseProduct.MYSQL, mysqlSql, mysqlSql ) };
 
-     assertQuerySql(context.getConnection(), query, patterns );
+     assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
   }
 
   // Test for multiple members on different levels within the same hierarchy.
@@ -1393,7 +1393,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             + "Row #0: 3,753\n" + "Row #0: 229,496\n" + "Row #1: 1,877\n" + "Row #1: 36,177\n" + "Row #2: 845\n"
             + "Row #2: 13,123\n" + "Row #3: 2,073\n" + "Row #3: 37,789\n" + "Row #4: 3,753\n" + "Row #4: 142,407\n";
 
-    assertQueryReturns(context.getConnection(), mdxQuery, result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), mdxQuery, result );
   }
 
   /**
@@ -1415,7 +1415,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             + "NonEmptyCrossJoin([*BASE_MEMBERS_Store],{([Product].[*CTX_MEMBER_SEL~SUM])})\n" + "on rows\n"
             + "From [Sales]\n" + "where ([Time].[1997])";
 
-    assertQueryReturns(context.getConnection(), query, "Axis #0:\n" + "{[Time].[1997]}\n" + "Axis #1:\n" + "{[Measures].[Customer Count]}\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), query, "Axis #0:\n" + "{[Time].[1997]}\n" + "Axis #1:\n" + "{[Measures].[Customer Count]}\n"
         + "Axis #2:\n" + "{[Store].[USA].[WA], [Product].[*CTX_MEMBER_SEL~SUM]}\n" + "Row #0: 889\n" );
 
     String mysqlSql =
@@ -1462,7 +1462,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             DatabaseProduct.DERBY, derbySql, derbySql ), new SqlPattern( DatabaseProduct.MYSQL,
                 mysqlSql, mysqlSql ) };
 
-     assertQuerySql(context.getConnection(), query, patterns );
+     assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
   }
 
   @ParameterizedTest
@@ -1474,7 +1474,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             + "member [Measures].[foo] as '([Product].[x],[Measures].[Customer Count])'\n"
             + "select Filter([Gender].members,(Not IsEmpty([Measures].[foo]))) on 0 " + "from Sales";
 
-    assertQueryReturns(context.getConnection(), query, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Gender].[All Gender]}\n" + "{[Gender].[F]}\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), query, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Gender].[All Gender]}\n" + "{[Gender].[F]}\n"
         + "{[Gender].[M]}\n" + "Row #0: 266,773\n" + "Row #0: 131,558\n" + "Row #0: 135,215\n" );
 
     String mysqlSql =
@@ -1502,7 +1502,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             DatabaseProduct.DERBY, derbySql, derbySql ), new SqlPattern( DatabaseProduct.MYSQL,
                 mysqlSql, mysqlSql ) };
 
-    assertQuerySql(context.getConnection(), query, patterns );
+    assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
   }
 
   @ParameterizedTest
@@ -1602,13 +1602,13 @@ class FastBatchingCellReaderTest extends BatchTestCase{
         "with member Store.agg as " + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]}, "
             + "           measures.[Customer Count])'" + " select Store.agg on 0 from [2CountDistincts] where "
             + "measures.[Unit Sales] ";
-    assertQueriesReturnSimilarResults(context.getConnection(), queryStoreCountInContext, queryUnitSalesInContext);
+    assertQueriesReturnSimilarResults(context.getConnectionWithDefaultRole(), queryStoreCountInContext, queryUnitSalesInContext);
 
     final String queryCAORRollup =
         "with member measures.agg as " + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]}, "
             + "           measures.[Customer Count])'" + " select {measures.agg, measures.[Customer Count]} on 0,  "
             + " [Product].[All Products].children on 1 " + "from [2CountDistincts] ";
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     assertQueryReturns(connection, queryCAORRollup, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[agg]}\n"
         + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Product].[Drink]}\n" + "{[Product].[Food]}\n"
         + "{[Product].[Non-Consumable]}\n" + "Row #0: 2,243\n" + "Row #0: 3,485\n" + "Row #1: 3,711\n"
@@ -1638,7 +1638,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     // the evaluator is restored. The query below would return
     // the [Unit Sales] value instead of [Store Sales] if context was
     // not restored.
-    assertQueryReturns(context.getConnection(), "with \n" + "member Store.cond as 'iif( \n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), "with \n" + "member Store.cond as 'iif( \n"
         + "aggregate({[Store].[All Stores].[USA]}, measures.[unit sales])\n"
         + " > 70000, (Store.[All Stores], measures.currentMember), 0)'\n" + "select Store.cond on 0 from sales\n"
         + "where measures.[store sales]\n", "Axis #0:\n" + "{[Measures].[Store Sales]}\n" + "Axis #1:\n"
@@ -1656,7 +1656,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             + "Filter([States], not IsEmpty([Measures].[Customer Count])) on rows, "
             + "{[Measures].[Customer Count]} on columns " + "From [Sales] " + "Where ([Product].[Selected Products])";
 
-    assertQueryReturns(context.getConnection(), query, "Axis #0:\n" + "{[Product].[Selected Products]}\n" + "Axis #1:\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), query, "Axis #0:\n" + "{[Product].[Selected Products]}\n" + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Store].[USA].[CA]}\n" + "{[Store].[USA].[OR]}\n"
         + "Row #0: 2,692\n" + "Row #1: 1,036\n" );
 
@@ -1692,7 +1692,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
         { new SqlPattern( DatabaseProduct.DERBY, derbySql, derbySql ), new SqlPattern(
             DatabaseProduct.MYSQL, mysqlSql, mysqlSql ) };
 
-     assertQuerySql(context.getConnection(), query, patterns );
+     assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
   }
 
   public static class MyDelegatingInvocationHandler extends DelegatingInvocationHandler {

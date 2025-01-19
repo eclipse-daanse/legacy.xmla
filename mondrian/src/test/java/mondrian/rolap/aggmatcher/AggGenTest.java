@@ -71,7 +71,7 @@ class AggGenTest {
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         ((TestConfig)context.getConfig()).setGenerateAggregateSql(true);
 
-        final RolapConnection rolapConn = (RolapConnection) context.getConnection();
+        final RolapConnection rolapConn = (RolapConnection) context.getConnectionWithDefaultRole();
         QueryImpl query =
             rolapConn.parseQuery(
                 "select {[Measures].[Count]} on columns from [HR]");

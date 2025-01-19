@@ -58,7 +58,7 @@ class DrillThroughFieldListTest {
         + "[Measures].[Unit Sales] ON COLUMNS,\n"
         + "[Time].[Quarter].[Q1] ON ROWS\n"
         + "FROM [Sales]";
-    Result result = executeQuery(context.getConnection(), mdx);
+    Result result = executeQuery(context.getConnectionWithDefaultRole(), mdx);
 
     RolapCell rCell = (RolapCell)result.getCell(new int[] { 0, 0 });
 
@@ -73,7 +73,7 @@ class DrillThroughFieldListTest {
         .asList(returnMeasureAttribute, returnLevelAttribute);
 
     String expectedSql;
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     switch (getDatabaseProduct(getDialect(connection).getDialectName())) {
     case MARIADB:
     case MYSQL:
@@ -130,7 +130,7 @@ class DrillThroughFieldListTest {
         + "{[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS,\n"
         + "[Time].[Quarter].[Q1] ON ROWS\n"
         + "FROM [Sales]";
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     Result result = executeQuery(connection, mdx);
 
     RolapCell rCell = (RolapCell)result.getCell(new int[] { 0, 0 });
@@ -207,7 +207,7 @@ class DrillThroughFieldListTest {
         + "NONEMPTYCROSSJOIN({[Time].[Quarter].[Q1]},"
         + " {[Product].[Product Name].[Good Imported Beer]}) ON ROWS\n"
         + "FROM [Sales]";
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     Result result = executeQuery(connection, mdx);
 
     RolapCell rCell = (RolapCell)result.getCell(new int[] { 0, 0 });
@@ -290,7 +290,7 @@ class DrillThroughFieldListTest {
     String mdx = "SELECT\n"
         + "Measures.[Store Sqft] on COLUMNS\n"
         + "FROM [Store]";
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     Result result = executeQuery(connection, mdx);
 
     RolapCell rCell = (RolapCell)result.getCell(new int[] { 0 });
@@ -338,7 +338,7 @@ class DrillThroughFieldListTest {
         + " [Measures].[Unit Sales] ON COLUMNS\n"
         + " FROM [Warehouse and Sales]\n"
         + " WHERE [Gender].[F]";
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     Result result = executeQuery(connection, mdx);
 
     RolapCell rCell = (RolapCell)result.getCell(new int[] { 0 });

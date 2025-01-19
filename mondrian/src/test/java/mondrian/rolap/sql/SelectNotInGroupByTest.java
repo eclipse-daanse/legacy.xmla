@@ -163,7 +163,7 @@ class SelectNotInGroupByTest extends BatchTestCase {
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
         // Property group by should be skipped only if dialect supports it
         String sqlpat;
-        if (dialectAllowsSelectNotInGroupBy(context.getConnection())) {
+        if (dialectAllowsSelectNotInGroupBy(context.getConnectionWithDefaultRole())) {
             sqlpat = sqlWithLevelGroupBy;
         } else {
             sqlpat = sqlWithAllGroupBy;
@@ -185,7 +185,7 @@ class SelectNotInGroupByTest extends BatchTestCase {
         withSchema(context, schema);
          */
         withSchema(context, SchemaModifiers.SelectNotInGroupByTestModifier1::new);
-        assertQuerySqlOrNot(context.getConnection(), queryCubeA, sqlPatterns, false, false, true);
+        assertQuerySqlOrNot(context.getConnectionWithDefaultRole(), queryCubeA, sqlPatterns, false, false, true);
     }
 
     @ParameterizedTest
@@ -212,7 +212,7 @@ class SelectNotInGroupByTest extends BatchTestCase {
         withSchema(context, schema);
          */
         withSchema(context, SchemaModifiers.SelectNotInGroupByTestModifier2::new);
-        assertQuerySqlOrNot(context.getConnection(), queryCubeA, sqlPatterns, false, false, true);
+        assertQuerySqlOrNot(context.getConnectionWithDefaultRole(), queryCubeA, sqlPatterns, false, false, true);
     }
 
     @ParameterizedTest
@@ -241,7 +241,7 @@ class SelectNotInGroupByTest extends BatchTestCase {
         withSchema(context, schema);
          */
         withSchema(context, SchemaModifiers.SelectNotInGroupByTestModifier3::new);
-        assertQuerySqlOrNot(context.getConnection(), queryCubeA, sqlPatterns, false, false, true);
+        assertQuerySqlOrNot(context.getConnectionWithDefaultRole(), queryCubeA, sqlPatterns, false, false, true);
     }
 
     @ParameterizedTest
@@ -268,7 +268,7 @@ class SelectNotInGroupByTest extends BatchTestCase {
         withSchema(context, schema);
         */
         withSchema(context, SchemaModifiers.SelectNotInGroupByTestModifier4::new);
-        assertQuerySqlOrNot(context.getConnection(), queryCubeA, sqlPatterns, false, false, true);
+        assertQuerySqlOrNot(context.getConnectionWithDefaultRole(), queryCubeA, sqlPatterns, false, false, true);
     }
 
     private boolean dialectAllowsSelectNotInGroupBy(Connection connection) {

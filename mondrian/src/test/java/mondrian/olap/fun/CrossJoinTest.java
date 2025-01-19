@@ -185,7 +185,7 @@ public class CrossJoinTest {
   void testCrossJoinIterCalc_IterationCancellationOnForward(Context foodMartContext) {
    ((TestConfig)foodMartContext.getConfig()).setCheckCancelOrTimeoutInterval(1);
     // Get product members as TupleList
-   Connection con= foodMartContext.getConnection();
+   Connection con= foodMartContext.getConnectionWithDefaultRole();
     RolapCube salesCube =
       (RolapCube) TestUtil.cubeByName( con, SALES_CUBE );
     SchemaReader salesCubeSchemaReader =
@@ -395,7 +395,7 @@ void testResultLimitWithinCrossjoin_1(Context foodMartContext) {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testResultLimitWithinCrossjoin(Context foodMartContext) {
    SystemWideProperties.instance().ResultLimit = 1000;
-   Connection connection= foodMartContext.getConnection();
+   Connection connection= foodMartContext.getConnectionWithDefaultRole();
     TestUtil.assertAxisThrows(connection, "Hierarchize(Crossjoin(Union({[Gender].CurrentMember}, [Gender].Children), "
         + "Union({[Product].CurrentMember}, [Product].[Brand Name].Members)))",
       "result (1,539) exceeded limit (1,000)","Sales" );

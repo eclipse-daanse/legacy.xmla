@@ -68,7 +68,7 @@ class GroupingSetQueryTest extends BatchTestCase{
         //
         // ACCESS
         // ORACLE
-        final Dialect dialect = getDialect(context.getConnection());
+        final Dialect dialect = getDialect(context.getConnectionWithDefaultRole());
         if (context.getConfig().warnIfNoPatternForDialect().equals("ANY")
                 || getDatabaseProduct(dialect.getDialectName()) == DatabaseProduct.ACCESS
                 || getDatabaseProduct(dialect.getDialectName()) == DatabaseProduct.ORACLE)
@@ -87,7 +87,7 @@ class GroupingSetQueryTest extends BatchTestCase{
     void testGroupingSetsWithAggregateOverDefaultMember(Context context) {
         pripareContext(context);
         // testcase for MONDRIAN-705
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         if (getDialect(connection).supportsGroupingSets()) {
             ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
         }
@@ -116,7 +116,7 @@ class GroupingSetQueryTest extends BatchTestCase{
     void testGroupingSetForSingleColumnConstraint(Context context) {
         pripareContext(context);
         ((TestConfig)context.getConfig()).setDisableCaching(false);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales2, measureUnitSales, tableCustomer, fieldGender, "M");
 
@@ -172,7 +172,7 @@ class GroupingSetQueryTest extends BatchTestCase{
         };
 
         ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
-        connection = context.getConnection();
+        connection = context.getConnectionWithDefaultRole();
 
         if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
             assertRequestSql(connection,
@@ -206,7 +206,7 @@ class GroupingSetQueryTest extends BatchTestCase{
             return;
         }
 
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales,
             measureUnitSales, tableCustomer, fieldGender, "M");
@@ -237,7 +237,7 @@ class GroupingSetQueryTest extends BatchTestCase{
                 + "group by \"agg_g_ms_pcat_sales_fact_1997\".\"gender\"",
                 26)
         };
-        assertRequestSql(context.getConnection(),
+        assertRequestSql(context.getConnectionWithDefaultRole(),
             new CellRequest[] {request3, request1, request2},
             patternsWithoutGsets);
     }
@@ -249,7 +249,7 @@ class GroupingSetQueryTest extends BatchTestCase{
         if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
             return;
         }
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
         CellRequest request1 = createRequest(connection,
             cubeNameSales2,
@@ -300,7 +300,7 @@ class GroupingSetQueryTest extends BatchTestCase{
             return;
         }
         ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales2,
             measureUnitSales, tableCustomer, fieldGender, "M");
@@ -368,7 +368,7 @@ class GroupingSetQueryTest extends BatchTestCase{
             return;
         }
         ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales2,
             measureUnitSales, tableCustomer, fieldGender, "M");
@@ -441,7 +441,7 @@ class GroupingSetQueryTest extends BatchTestCase{
             return;
         }
         ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales2,
             measureUnitSales, new String[]{tableCustomer, tableTime},
@@ -529,7 +529,7 @@ class GroupingSetQueryTest extends BatchTestCase{
         compoundMembers.add(new String[] {"CANADA", "BC"});
         CellRequestConstraint constraint =
             makeConstraintCountryState(compoundMembers);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales2,
             measureCustomerCount, new String[]{tableCustomer, tableTime},
@@ -585,7 +585,7 @@ class GroupingSetQueryTest extends BatchTestCase{
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBug2004202(Context context) {
         pripareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member store.allbutwallawalla as\n"
             + " 'aggregate(\n"
             + "    except(\n"

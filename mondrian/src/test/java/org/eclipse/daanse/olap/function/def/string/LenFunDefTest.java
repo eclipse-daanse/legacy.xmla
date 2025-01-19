@@ -29,7 +29,7 @@ class LenFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLenFunctionWithNullString(Context context) {
         // SSAS2005 returns 0
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' NULL '\n"
                 + " member [Measures].[Bar] as ' len([Measures].[Foo]) '\n"
                 + "select [Measures].[Bar] on 0\n"
@@ -40,7 +40,7 @@ class LenFunDefTest {
                 + "{[Measures].[Bar]}\n"
                 + "Row #0: 0\n" );
         // same, but inline
-        assertExprReturns(context.getConnection(), "len(null)", 0, 0 );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "len(null)", 0, 0 );
     }
 
 }

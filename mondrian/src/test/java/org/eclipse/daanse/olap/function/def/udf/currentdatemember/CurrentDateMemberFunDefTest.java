@@ -47,7 +47,7 @@ class CurrentDateMemberFunDefTest {
         withSchema(context, schema);
          */
         withSchema(context, SchemaModifiers.CurrentDateMemberUdfTestModifier1::new);
-        TestUtil.assertQueryReturns(context.getConnection(),
+        TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT NON EMPTY {[Measures].[Org Salary]} ON COLUMNS, "
             + "NON EMPTY {MockCurrentDateMember([Time].[Time], \"[yyyy]\")} ON ROWS "
             + "FROM [HR] ",
@@ -69,7 +69,7 @@ class CurrentDateMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testGetReturnType(Context context) {
-        Connection connection=context.getConnection();
+        Connection connection=context.getConnectionWithDefaultRole();
         String query = "WITH MEMBER [Time].[YTD] AS SUM( YTD(CurrentDateMember"
              + "([Time], '[\"Time\"]\\.[yyyy]\\.[Qq].[m]', EXACT)), Measures.[Unit Sales]) SELECT Time.YTD on 0 FROM sales";
         String expected = "Axis #0:\n" + "{}\n" + "Axis #1:\n"

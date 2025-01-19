@@ -49,7 +49,7 @@ class DefaultRecognizerTest {
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
         /*
         final String cube =
@@ -103,7 +103,7 @@ class DefaultRecognizerTest {
             + "    `agg_c_10_sales_fact_1997`.`month_of_year` in (1, 2, 3)";
 
         withSchema(context, SchemaModifiers.DefaultRecognizerTestModifier::new);
-        assertQuerySqlOrNot(context.getConnection(),
+        assertQuerySqlOrNot(context.getConnectionWithDefaultRole(),
             query,
             mysqlPattern(expectedSql),
             false, true, true);
@@ -117,7 +117,7 @@ class DefaultRecognizerTest {
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
         // Validates that if a distinct count measure is in context
         // SqlTupleReader is able to find an appropriate agg table, if

@@ -261,7 +261,7 @@ protected void assertQuerySql(Connection connection,
         + "NON EMPTY {[Measures].[Store Sales], Measures.x1, Measures.x2, Measures.x3} ON 0\n"
         + "FROM [Sales] where [Time.Weekly].x";
 
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
     SqlPattern mysqlPattern = useAgg
       ? new SqlPattern(
@@ -273,9 +273,9 @@ protected void assertQuerySql(Connection connection,
       NativeTopCountWithAgg.getMysql(connection),
       NativeTopCountWithAgg.getMysql(connection));
     if ( context.getConfig().enableNativeTopCount() ) {
-      assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { mysqlPattern } );
+      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
-    assertQueryReturns(context.getConnection(), mdx, NativeTopCountWithAgg.result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, NativeTopCountWithAgg.result );
   }
 
   /**
@@ -298,7 +298,7 @@ protected void assertQuerySql(Connection connection,
         + " SELECT NON EMPTY products ON 1,\n"
         + "NON EMPTY {[Measures].[Store Sales], Measures.x1, Measures.x2, Measures.x3} ON 0\n"
         + "FROM [Sales] where [Time.Weekly].x";
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
     SqlPattern mysqlPattern = useAgg ? new SqlPattern(
       DatabaseProduct.MYSQL,
@@ -310,16 +310,16 @@ protected void assertQuerySql(Connection connection,
       NativeTopCountWithAgg.getMysql(connection));
     if ( context.getConfig().enableNativeTopCount()
       && SystemWideProperties.instance().EnableNativeNonEmpty ) {
-      assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { mysqlPattern } );
+      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
-    assertQueryReturns(context.getConnection(), mdx, NativeTopCountWithAgg.result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, NativeTopCountWithAgg.result );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeFilterWithAggDescendants(Context context) {
 	  context.getSchemaCache().clear();
-	  context.getConnection().getCacheControl(null).flushSchemaCache();
+	  context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
     final boolean useAgg =
       context.getConfig().useAggregates()
         && context.getConfig().readAggregates();
@@ -380,7 +380,7 @@ protected void assertQuerySql(Connection connection,
         + ( useAgg ? "    (sum(`agg_c_14_sales_fact_1997`.`store_sales`) > 700)\n"
         : "    (sum(`sales_fact_1997`.`store_sales`) > 700)\n" )
         + "order by\n"
-        + (getDialect(context.getConnection()).requiresOrderByAlias()
+        + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
         + "    ISNULL(`c2`) ASC, `c2` ASC,\n"
@@ -402,9 +402,9 @@ protected void assertQuerySql(Connection connection,
         mysqlQuery );
     if ( context.getConfig().enableNativeFilter()
       && SystemWideProperties.instance().EnableNativeNonEmpty ) {
-      assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { mysqlPattern } );
+      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Time].[x]}\n"
@@ -493,7 +493,7 @@ protected void assertQuerySql(Connection connection,
         + "    `product_class`.`product_department`,\n"
         + "    `product_class`.`product_category`\n"
         + "order by\n"
-        + (getDialect(context.getConnection()).requiresOrderByAlias()
+        + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    `c3` DESC,\n"
         + "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
@@ -513,9 +513,9 @@ protected void assertQuerySql(Connection connection,
         mysqlQuery,
         mysqlQuery.indexOf( "(" ) );
     if ( context.getConfig().enableNativeTopCount() ) {
-      assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { mysqlPattern } );
+      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Time].[Slicer], [Store Type].[Slicer]}\n"
@@ -598,7 +598,7 @@ protected void assertQuerySql(Connection connection,
         + "    `product_class`.`product_department`,\n"
         + "    `product_class`.`product_category`\n"
         + "order by\n"
-        + (getDialect(context.getConnection()).requiresOrderByAlias()
+        + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    `c3` DESC,\n"
         + "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
@@ -618,10 +618,10 @@ protected void assertQuerySql(Connection connection,
         mysqlQuery,
         mysqlQuery.indexOf( "(" ) );
     if ( context.getConfig().enableNativeTopCount() ) {
-      context.getConnection().getCacheControl(null).flushSchemaCache();
-      assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { mysqlPattern } );
+      context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
+      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Time].[Slicer], [Store Type].[Slicer]}\n"
@@ -704,7 +704,7 @@ protected void assertQuerySql(Connection connection,
         + "    `product_class`.`product_department`,\n"
         + "    `product_class`.`product_category`\n"
         + "order by\n"
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    `c3` DESC,\n"
         + "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
@@ -724,9 +724,9 @@ protected void assertQuerySql(Connection connection,
           DatabaseProduct.MYSQL,
           mysqlQuery,
           mysqlQuery.indexOf( "(" ) );
-      assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { mysqlPattern } );
+      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Time].[Slicer], [Store Type].[Slicer]}\n"
@@ -752,7 +752,7 @@ protected void assertQuerySql(Connection connection,
         + "  SELECT NON EMPTY [Measures].[Unit Sales] on 0,\n"
         + "    TC ON 1 \n"
         + "  FROM [Sales] WHERE [Store Type].[Slicer]\n";
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Store Type].[Slicer]}\n"
@@ -772,7 +772,7 @@ protected void assertQuerySql(Connection connection,
 
       // native should be used and Canada/Mexico should be returned
     // even though Canada and Mexico have no associated data.
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select TopCount(Customers.Country.members, 2) "
         + "on 0 from Sales",
       "Axis #0:\n"
@@ -783,7 +783,7 @@ protected void assertQuerySql(Connection connection,
         + "Row #0: \n"
         + "Row #0: \n" );
     // TopCount should return in natural order, not order of measure val
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select TopCount(Product.Drink.Children, 2) "
         + "on 0 from Sales",
       "Axis #0:\n"
@@ -805,7 +805,7 @@ protected void assertQuerySql(Connection connection,
       ((TestConfig)context.getConfig())
           .setAlertNativeEvaluationUnsupported("ERROR");
 
-      Connection connection = context.getConnection();
+      Connection connection = context.getConnectionWithDefaultRole();
     try {
       executeQuery(
         "select TopCount( CrossJoin(Gender.Gender.members, Product.Drink.Children), 2) "
@@ -827,7 +827,7 @@ protected void assertQuerySql(Connection connection,
       ((TestConfig)context.getConfig())
           .setAlertNativeEvaluationUnsupported("ERROR");
 
-      Connection connection = context.getConnection();
+      Connection connection = context.getConnectionWithDefaultRole();
     try {
       executeQuery(
         "with member Gender.foo as '1'"
@@ -857,7 +857,7 @@ protected void assertQuerySql(Connection connection,
         + "SELECT NON EMPTY [Measures].[Unit Sales] on 0,\n"
         + "  NON EMPTY TOP_COUNTRY ON 1 \n"
         + "FROM [Sales] WHERE [Product].[Top Drinks]";
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Product].[Top Drinks]}\n"
@@ -892,7 +892,7 @@ protected void assertQuerySql(Connection connection,
         + "  SELECT NON EMPTY [Measures].[Unit Sales] on 0,\n"
         + "    TC ON 1 \n"
         + "  FROM [Sales] where [Time].[Slicer]\n";
-    assertQueryThrows(context.getConnection(), mdx, "evaluating itself" );
+    assertQueryThrows(context.getConnectionWithDefaultRole(), mdx, "evaluating itself" );
   }
 
   /**
@@ -926,7 +926,7 @@ protected void assertQuerySql(Connection connection,
         + "Row #0: 372.36\n"
         + "Row #1: 365.20\n";
 
-    assertQueryReturns(context.getConnection(), mdx, result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, result );
   }
 
   /**
@@ -967,7 +967,7 @@ protected void assertQuerySql(Connection connection,
         + "Row #0: 460.02\n"
         + "Row #1: 420.74\n";
 
-    assertQueryReturns(context.getConnection(), mdx, result );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, result );
   }
 
   /**
@@ -1017,7 +1017,7 @@ protected void assertQuerySql(Connection connection,
         + "    `product_class`.`product_family`,\n"
         + "    `product_class`.`product_department`\n"
         + "order by\n"
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    `c2` DESC,\n"
         + "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC"
@@ -1032,11 +1032,11 @@ protected void assertQuerySql(Connection connection,
         mysql );
 
     if ( context.getConfig().enableNativeTopCount() ) {
-      context.getConnection().getCacheControl(null).flushSchemaCache();
-      assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { mysqlPattern } );
+      context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
+      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
 
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Time.Weekly].[x]}\n"
@@ -1223,7 +1223,7 @@ protected void assertQuerySql(Connection connection,
     withSchema(context, schema);
      */
       withSchema(context, TestMultipleAllWithInExprModifier::new);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       result );
   }
@@ -1275,7 +1275,7 @@ protected void assertQuerySql(Connection connection,
         + "    `customer`.`education`,\n"
         + "    `customer`.`yearly_income`\n"
         + "order by\n"
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    ISNULL(`c1`) ASC, `c1` ASC"
         :
         "    ISNULL(CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)) ASC, CONCAT(`customer`.`fname`, ' ', "
@@ -1287,10 +1287,10 @@ protected void assertQuerySql(Connection connection,
         mysql );
 
     if ( SystemWideProperties.instance().EnableNativeNonEmpty ) {
-      assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { mysqlPattern } );
+      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
 
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Time].[1997].[Q1]}\n"
@@ -1367,7 +1367,7 @@ protected void assertQuerySql(Connection connection,
         + "    `customer`.`education`,\n"
         + "    `customer`.`yearly_income`\n"
         + "order by\n"
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    `c10` DESC,\n"
         + "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
@@ -1386,10 +1386,10 @@ protected void assertQuerySql(Connection connection,
         mysql );
 
     if ( context.getConfig().enableNativeTopCount() ) {
-      assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { mysqlPattern } );
+      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
 
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Time].[1997], [Product].[Drink]}\n"
@@ -1458,7 +1458,7 @@ protected void assertQuerySql(Connection connection,
         + "    `customer`.`education`,\n"
         + "    `customer`.`yearly_income`\n"
         + "order by\n"
-        + ( getDialect(context.getConnection()).requiresOrderByAlias()
+        + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
         ? "    `c10` DESC,\n"
         + "    ISNULL(`c0`) ASC, `c0` ASC,\n"
         + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
@@ -1477,10 +1477,10 @@ protected void assertQuerySql(Connection connection,
         mysql );
 
     if ( context.getConfig().enableNativeTopCount() ) {
-      assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { mysqlPattern } );
+      assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
 
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Time.Weekly].[1997].[48].[17]}\n"
@@ -1504,7 +1504,7 @@ protected void assertQuerySql(Connection connection,
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testConstraintCacheIncludesMultiPositionSlicer(Context context) {
     // MONDRIAN-2081
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select non empty [Customers].[USA].[WA].[Spokane].children  on 0, "
         + "Time.[1997].[Q1].[1] * [Store].[USA].[WA].[Spokane] * Gender.F * [Marital Status].M on 1 from sales where\n"
         + "{[Product].[Food].[Snacks].[Candy].[Gum].[Atomic].[Atomic Bubble Gum],\n"
@@ -1519,7 +1519,7 @@ protected void assertQuerySql(Connection connection,
         + "{[Time].[1997].[Q1].[1], [Store].[USA].[WA].[Spokane], [Gender].[F], [Marital Status].[M]}\n"
         + "Row #0: 4\n"
         + "Row #0: 3\n" );
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select non empty [Customers].[USA].[WA].[Spokane].children on 0, "
         + "Time.[1997].[Q1].[1] * [Store].[USA].[WA].[Spokane] * Gender.F *"
         + "[Marital Status].M on 1 from sales where "
@@ -1811,7 +1811,7 @@ protected void assertQuerySql(Connection connection,
         + "> 1000))'\n"
         + "SELECT [Measures].[TotalVal] ON 0, [Product].[All Products].Children on 1 \n"
         + "FROM [Sales] WHERE {[Time].[1997].[Q1],[Time].[1997].[Q2]}";
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Time].[1997].[Q1]}\n"
@@ -1825,7 +1825,7 @@ protected void assertQuerySql(Connection connection,
         + "Row #0: 10,152\n"
         + "Row #1: 90,413\n"
         + "Row #2: 23,813\n" );
-    context.getConnection().getCacheControl(null).flushSchemaCache();
+    context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
     if ( !context.getConfig().enableNativeFilter() ) {
       return;
     }
@@ -1862,7 +1862,7 @@ protected void assertQuerySql(Connection connection,
       + "having\n"
       + "    (sum(`sales_fact_1997`.`unit_sales`) > 1000)\n"
       + "order by\n"
-      + ( getDialect(context.getConnection()).requiresOrderByAlias()
+      + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
       ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
       + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
       + "    ISNULL(`c2`) ASC, `c2` ASC"
@@ -1897,7 +1897,7 @@ protected void assertQuerySql(Connection connection,
       + "having\n"
       + "    (sum(`agg_c_14_sales_fact_1997`.`unit_sales`) > 1000)\n"
       + "order by\n"
-      + ( getDialect(context.getConnection()).requiresOrderByAlias()
+      + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
       ? "    ISNULL(`c0`) ASC, `c0` ASC,\n"
       + "    ISNULL(`c1`) ASC, `c1` ASC,\n"
       + "    ISNULL(`c2`) ASC, `c2` ASC"
@@ -1906,7 +1906,7 @@ protected void assertQuerySql(Connection connection,
       + "    ISNULL(`store`.`store_city`) ASC, `store`.`store_city` ASC" );
     SqlPattern mysqlPattern =
       new SqlPattern( DatabaseProduct.MYSQL, mysql, null );
-    assertQuerySql(context.getConnection(), mdx, new SqlPattern[] { mysqlPattern } );
+    assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
   }
 
   /**
@@ -1924,7 +1924,7 @@ protected void assertQuerySql(Connection connection,
         + "WHERE {([Product].[Non-Consumable], [Time].[1997].[Q1]),([Product].[Drink], [Time].[1997].[Q2])}";
 
     //TestContext context = getTestContext().withFreshConnection();
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Product].[Non-Consumable], [Time].[1997].[Q1]}\n"
@@ -1948,7 +1948,7 @@ protected void assertQuerySql(Connection connection,
         + "Gender].[SomeSlicer]} on 1 from [Sales]\n"
         + "WHERE {([Product].[Non-Consumable], [Time].[1997].[Q1]),([Product].[Drink], [Time].[1997].[Q2])}";
 
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Product].[Non-Consumable], [Time].[1997].[Q1]}\n"
@@ -1974,7 +1974,7 @@ protected void assertQuerySql(Connection connection,
         + "SELECT [Measures].[TotalVal] ON 0, [Gender].[All Gender].Children on 1 \n"
         + "FROM [Sales]\n"
         + "WHERE CrossJoin({ [Product].[Non-Consumable], [Product].[Drink] }, {[Time].[1997].[Q1],[Time].[1997].[Q2]})";
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Product].[Non-Consumable], [Time].[1997].[Q1]}\n"
@@ -1999,7 +1999,7 @@ protected void assertQuerySql(Connection connection,
       "SELECT [Measures].[Unit Sales] ON 0,\n"
         + " Filter({[Store].[Store City].members},[Measures].[Unit Sales] > 10000) on 1 \n"
         + "FROM [Sales] WHERE {[Time].[1997].[Q1], [Time].[1997].[Q2].[4]}";
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
         + "{[Time].[1997].[Q1]}\n"
@@ -2016,7 +2016,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeFilterWithCompoundSlicer2049(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member measures.avgQtrs as 'avg( filter( time.quarter.members, measures.[unit sales] < 200))' "
         + "select measures.avgQtrs * gender.members on 0 from sales where head( product.[product name].members, 3)",
       "Axis #0:\n"
@@ -2039,7 +2039,7 @@ protected void assertQuerySql(Connection connection,
     // tuples where not all combinations of their members are present to
     // fail when nativized.
     // MondrianProperties.instance().EnableNativeFilter.set(true);
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select [Measures].[Unit Sales] on columns, Filter([Time].[1997].Children, [Measures].[Unit Sales] < 12335) on "
         + "rows from [Sales] where {([Product].[Drink],[Store].[USA].[CA]),([Product].[Food],[Store].[USA].[OR])}",
       "Axis #0:\n"
@@ -2084,7 +2084,7 @@ protected void assertQuerySql(Connection connection,
       + "having\n"
       + "    (sum(`sales_fact_1997`.`unit_sales`) > 0)\n"
       + "order by\n"
-      + ( getDialect(context.getConnection()).requiresOrderByAlias()
+      + ( getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
       ? "    ISNULL(`c0`) ASC, `c0` ASC"
       : "    ISNULL(`customer`.`gender`) ASC, `customer`.`gender` ASC" );
 
@@ -2094,7 +2094,7 @@ protected void assertQuerySql(Connection connection,
         DatabaseProduct.MYSQL,
         query,
         null );
-    Result rest = executeQuery( mdx, context.getConnection());
+    Result rest = executeQuery( mdx, context.getConnectionWithDefaultRole());
     RolapCube cube = (RolapCube) rest.getQuery().getCube();
     RolapConnection con = (RolapConnection) rest.getQuery().getConnection();
     CacheControl cacheControl = con.getCacheControl( null );
@@ -2107,7 +2107,7 @@ protected void assertQuerySql(Connection connection,
     }
     SqlPattern[] patterns = new SqlPattern[] { mysqlPattern };
     if ( context.getConfig().enableNativeFilter() ) {
-      assertQuerySqlOrNot(context.getConnection(),
+      assertQuerySqlOrNot(context.getConnectionWithDefaultRole(),
         mdx, patterns, false, false, false );
     }
   }
@@ -2123,7 +2123,7 @@ protected void assertQuerySql(Connection connection,
       + " where customers.agg";
     final String message =
       "The results of native and non-native evaluations should be equal";
-    verifySameNativeAndNot(context.getConnection(), query, message);
+    verifySameNativeAndNot(context.getConnectionWithDefaultRole(), query, message);
   }
 
   @ParameterizedTest
@@ -2140,7 +2140,7 @@ protected void assertQuerySql(Connection connection,
 
     final String message =
       "The results of native and non-native evaluations should be equal";
-    verifySameNativeAndNot(context.getConnection(), query, message);
+    verifySameNativeAndNot(context.getConnectionWithDefaultRole(), query, message);
   }
 
   @ParameterizedTest
@@ -2155,7 +2155,7 @@ protected void assertQuerySql(Connection connection,
 
     final String message =
       "The results of native and non-native evaluations should be equal";
-    verifySameNativeAndNot(context.getConnection(), query, message);
+    verifySameNativeAndNot(context.getConnectionWithDefaultRole(), query, message);
   }
 
   @ParameterizedTest
@@ -2172,7 +2172,7 @@ protected void assertQuerySql(Connection connection,
       + "with member Measures.q1Sales as '([PurchaseDate].[1997].[Q1], Measures.[Unit Sales])'\n"
       + "select NonEmptyCrossjoin([PurchaseDate].[1997].[Q1], Gender.Gender.members) on 0 \n"
       + "from Sales where Measures.q1Sales";
-    Result result = executeQuery(mdx, context.getConnection());
+    Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
 
     checkNative(context, mdx, result);
     context.getSchemaCache().clear();
@@ -2185,7 +2185,7 @@ protected void assertQuerySql(Connection connection,
       + "with member Measures.q1Sales as '([Time].[1997].[Q1], Measures.[Unit Sales])'\n"
       + "select NonEmptyCrossjoin( [Time].[1997].[Q1], Gender.Gender.members) on 0 \n"
       + "from Sales where Measures.q1Sales";
-    Connection connection = context.getConnection();
+    Connection connection = context.getConnectionWithDefaultRole();
     Result result = executeQuery(mdx, connection);
 
     checkNative(context, mdx, result );
@@ -2194,7 +2194,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMondrian2575(Context context) {
-    assertQueriesReturnSimilarResults(context.getConnection(),
+    assertQueriesReturnSimilarResults(context.getConnectionWithDefaultRole(),
       String.format(
         "WITH member [Customers].[AggregatePageMembers] AS \n'Aggregate({[Customers].[USA].[CA].[Altadena].[Amy "
           + "Petranoff], [Customers].[USA].[CA].[Altadena].[Arvid Duran]})'\nmember [Measures].[test set] AS "
@@ -2213,7 +2213,7 @@ protected void assertQuerySql(Connection connection,
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testResultLimitInNativeCJ(Context context) {
     SystemWideProperties.instance().ResultLimit = 400;
-    assertAxisThrows(context.getConnection(), "NonEmptyCrossjoin({[Product].[All Products].Children}, "
+    assertAxisThrows(context.getConnectionWithDefaultRole(), "NonEmptyCrossjoin({[Product].[All Products].Children}, "
         + "{ [Customers].[Name].members})",
       "exceeded limit (400)" );
   }

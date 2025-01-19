@@ -64,7 +64,7 @@ class SegmentCacheTest {
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 2,716\n";
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         assertQueryReturns(connection, query, result);
         assertQueryReturns(connection, query2, result2);
@@ -79,7 +79,7 @@ class SegmentCacheTest {
 
         // Flush the cache before we start. Wait a second for the cache
         // flush to propagate.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         final CacheControl cc =
                 connection.getCacheControl(null);

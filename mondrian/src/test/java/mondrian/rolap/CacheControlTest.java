@@ -254,7 +254,7 @@ class CacheControlTest {
     void testCreateCellRegion(Context context) {
         // Execute a query.
         final RolapConnection connection =
-            ((RolapConnection) context.getConnection());
+            ((RolapConnection) context.getConnectionWithDefaultRole());
         final CacheControl cacheControl = new CacheControlImpl(connection);
         final CellRegion region =
             createCellRegion(connection, cacheControl);
@@ -268,7 +268,7 @@ class CacheControlTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNormalize2(Context context) {
         // Execute a query.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         final CacheControl cacheControl = connection.getCacheControl(null);
 
         final CellRegion region =
@@ -296,7 +296,7 @@ class CacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFlush(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
             "SELECT {[Product].[Product Department].MEMBERS} ON AXIS(0),\n"
             + "{{[Gender].[Gender].MEMBERS}, {[Gender].[All Gender]}} ON AXIS(1)\n"
@@ -450,7 +450,7 @@ class CacheControlTest {
         if (context.getConfig().disableCaching()) {
             return;
         }
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         flushCache(connection);
 
         // Execute a query.
@@ -519,7 +519,7 @@ class CacheControlTest {
             return;
         }
 
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         final StringWriter sw = new StringWriter();
         final PrintWriter pw = new PrintWriter(sw);
         final CacheControl cacheControl =
@@ -557,7 +557,7 @@ class CacheControlTest {
             return;
         }
 
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         flushCache(connection);
 
         // Execute a query.
@@ -871,7 +871,7 @@ class CacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNegative(Context context) {
-        final Connection connection = context.getConnection();
+        final Connection connection = context.getConnectionWithDefaultRole();
         final Cube salesCube = connection.getSchema().lookupCube("Sales", true);
         final SchemaReader schemaReader = salesCube.getSchemaReader(null);
         final CacheControl cacheControl = connection.getCacheControl(null);
@@ -1017,7 +1017,7 @@ class CacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCrossjoin(Context context) {
-        final Connection connection = context.getConnection();
+        final Connection connection = context.getConnectionWithDefaultRole();
         final Cube salesCube = connection.getSchema().lookupCube("Sales", true);
         final CacheControl cacheControl = connection.getCacheControl(null);
 
@@ -1143,7 +1143,7 @@ class CacheControlTest {
         //          [Gender].[F])
         //       [Time].[1997].[Q1])
         //
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         final CacheControl cacheControl =
             new CacheControlImpl(
                 (RolapConnection) connection);
@@ -1199,7 +1199,7 @@ class CacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFlushNonPrimedContent(Context context) throws Exception {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         flushCache(connection);
         final CacheControl cacheControl = connection.getCacheControl(null);
         final Cube cube =
@@ -1223,7 +1223,7 @@ class CacheControlTest {
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "NON EMPTY {[Store].[All Stores].Children} ON ROWS \n"
             + "from [Sales] \n";
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         flushCache(connection);
 
         assertQueryReturns(connection,

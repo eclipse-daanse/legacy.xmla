@@ -27,7 +27,7 @@ class OrStringOperatorDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStringConcat(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             " \"foo\" || \"bar\"  ",
             "foobar" );
     }
@@ -35,7 +35,7 @@ class OrStringOperatorDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStringConcat2(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             " \"foo\" || [Gender].[M].Name || \"\" ",
             "fooM" );
     }

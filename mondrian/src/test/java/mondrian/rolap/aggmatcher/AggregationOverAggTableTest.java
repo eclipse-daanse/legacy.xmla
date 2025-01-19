@@ -90,7 +90,7 @@ class AggregationOverAggTableTest extends AggTableTestCase {
             + "non empty CrossJoin({[TimeExtra].[1997].[Q1].Children},{[Gender].[M]}) on rows "
             + "from [ExtraCol]";
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             query,
             "Axis #0:\n"
             + "{}\n"
@@ -105,7 +105,7 @@ class AggregationOverAggTableTest extends AggTableTestCase {
             + "Row #2: 3\n");
 
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             query,
             mysqlPattern(
                 "select\n"

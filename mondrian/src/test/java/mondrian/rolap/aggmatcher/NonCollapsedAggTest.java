@@ -298,7 +298,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
     	super.prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
@@ -308,7 +308,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
 
 
         // We expect the correct cell value + 1 if the agg table is used.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -327,7 +327,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
@@ -337,7 +337,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
 
 
         // We expect the correct cell value + 1 if the agg table is used.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -352,7 +352,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
         final String mdx2 =
             "select {[Measures].[Unit Sales]} on columns, {[dimension.network].[line class].Members} on rows from [foo]";
         // We expect the correct cell value + 1 if the agg table is used.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx2,
             "Axis #0:\n"
             + "{}\n"
@@ -372,14 +372,14 @@ class NonCollapsedAggTest extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
         // We expect the correct cell value + 2 if the agg table is used.
         final String mdx =
             "select {[Measures].[Unit Sales]} on columns, {[dimension.distributor].[line class].Members} on rows from [foo2]";
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -394,7 +394,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
         final String mdx2 =
             "select {[Measures].[Unit Sales]} on columns, {[dimension.network].[line class].Members} on rows from [foo2]";
         // We expect the correct cell value + 2 if the agg table is used.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx2,
             "Axis #0:\n"
             + "{}\n"
@@ -794,7 +794,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
 
         final String mdx =
                 "select {[Measures].[Unit Sales]} on columns, {[dimension].[tenant].[tenant].Members} on rows from [testSsas]";
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -861,7 +861,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
         withSchema(context, TestMondrian1325Modifier::new);
 
 
-        executeQuery(query2, context.getConnection());
+        executeQuery(query2, context.getConnectionWithDefaultRole());
     }
 
     protected Function<CatalogMapping, PojoMappingModifier> getModifierFunction(){

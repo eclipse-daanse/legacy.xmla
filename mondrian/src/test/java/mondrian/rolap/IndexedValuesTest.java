@@ -45,7 +45,7 @@ class IndexedValuesTest {
             + "{[Employees].[Sheri Nowmer]}\n"
             + "Row #0: $39,431.67\n"
             + "Row #0: 7,392\n";
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         // Query using name
         assertQueryReturns(connection,
             "SELECT {[Measures].[Org Salary], [Measures].[Count]} "

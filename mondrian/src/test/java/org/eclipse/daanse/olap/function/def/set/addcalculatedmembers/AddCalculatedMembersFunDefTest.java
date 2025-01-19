@@ -32,7 +32,7 @@ class AddCalculatedMembersFunDefTest {
         // AddCalculatedMembers: Calc member in dimension based on level
         // included
         //----------------------------------------------------
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
             "WITH MEMBER [Store].[USA].[CA plus OR] AS 'AGGREGATE({[Store].[USA].[CA], [Store].[USA].[OR]})' "
                 + "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} ON COLUMNS,"

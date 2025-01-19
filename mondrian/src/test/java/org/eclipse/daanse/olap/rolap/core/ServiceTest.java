@@ -143,7 +143,7 @@ class ServiceTest {
         assertThat(saContext).isNotNull()
                 .extracting(ServiceAware::size)
                 .isEqualTo(1);
-        assertThat(ctx.getConnection()).isNotNull();
+        assertThat(ctx.getConnectionWithDefaultRole()).isNotNull();
         assertThat(ctx).satisfies(x -> {
             assertThat(x.getName()).isEqualTo(theName);
             assertThat(x.getDescription()

@@ -19,6 +19,8 @@ import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
+import org.eclipse.daanse.xmla.api.RequestMetaData;
+import org.eclipse.daanse.xmla.api.UserPrincipal;
 import org.eclipse.daanse.xmla.api.XmlaConstants;
 import org.eclipse.daanse.xmla.api.common.enums.ColumnOlapTypeEnum;
 import org.eclipse.daanse.xmla.api.common.enums.LevelDbTypeEnum;
@@ -62,7 +64,7 @@ public class DBSchemaDiscoverService {
         this.contextsListSupplyer = contextsListSupplyer;
     }
 
-    public List<DbSchemaCatalogsResponseRow> dbSchemaCatalogs(DbSchemaCatalogsRequest request) {
+    public List<DbSchemaCatalogsResponseRow> dbSchemaCatalogs(DbSchemaCatalogsRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
 
         Optional<String> oName = request.restrictions().catalogName();
         if (oName.isPresent()) {
@@ -111,7 +113,7 @@ public class DBSchemaDiscoverService {
         return schemas.stream().flatMap(s -> s.getAccessRoles().stream()).toList();
     }
 
-    public List<DbSchemaColumnsResponseRow> dbSchemaColumns(DbSchemaColumnsRequest request) {
+    public List<DbSchemaColumnsResponseRow> dbSchemaColumns(DbSchemaColumnsRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         Optional<String> oCatalog = request.restrictions().tableCatalog();
         Optional<String> oTableSchema = request.restrictions().tableSchema();
         Optional<String> oTableName = request.restrictions().tableName();
@@ -134,7 +136,7 @@ public class DBSchemaDiscoverService {
         return result;
     }
 
-    public List<DbSchemaProviderTypesResponseRow> dbSchemaProviderTypes(DbSchemaProviderTypesRequest request) {
+    public List<DbSchemaProviderTypesResponseRow> dbSchemaProviderTypes(DbSchemaProviderTypesRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         List<DbSchemaProviderTypesResponseRow> result = new ArrayList<>();
         Optional<LevelDbTypeEnum> oLevelDbType = request.restrictions().dataType();
 
@@ -303,7 +305,7 @@ public class DBSchemaDiscoverService {
         return result;
     }
 
-    public List<DbSchemaSchemataResponseRow> dbSchemaSchemata(DbSchemaSchemataRequest request) {
+    public List<DbSchemaSchemataResponseRow> dbSchemaSchemata(DbSchemaSchemataRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         String catalogName = request.restrictions().catalogName();
         String schemaName = request.restrictions().schemaName();
         String schemaOwner = request.restrictions().schemaOwner();
@@ -322,7 +324,7 @@ public class DBSchemaDiscoverService {
         return result;
     }
 
-    public List<DbSchemaSourceTablesResponseRow> dbSchemaSourceTables(DbSchemaSourceTablesRequest request) {
+    public List<DbSchemaSourceTablesResponseRow> dbSchemaSourceTables(DbSchemaSourceTablesRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         Optional<String> oCatalogName = request.restrictions().catalogName();
         Optional<String> oSchemaName = request.restrictions().schemaName();
         String tableName = request.restrictions().tableName();
@@ -342,7 +344,7 @@ public class DBSchemaDiscoverService {
     }
 
 
-    public List<DbSchemaTablesResponseRow> dbSchemaTables(DbSchemaTablesRequest request) {
+    public List<DbSchemaTablesResponseRow> dbSchemaTables(DbSchemaTablesRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         Optional<String> oTableCatalog = request.restrictions().tableCatalog();
         Optional<String> oTableSchema = request.restrictions().tableSchema();
         Optional<String> oTableName = request.restrictions().tableName();
@@ -355,17 +357,18 @@ public class DBSchemaDiscoverService {
         if (oTableCatalog.isPresent()) {
             Optional<Context> oContext = oTableCatalog.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
             if (oContext.isPresent()) {
-                return getDbSchemaTablesResponseRow(oContext.get(), oTableSchema, oTableName, oTableType);
+                return getDbSchemaTablesResponseRow(oContext.get(), oTableSchema, oTableName, oTableType, metaData, userPrincipal);
             }
         } else {
             return contextsListSupplyer.get().stream()
-                .map(c -> getDbSchemaTablesResponseRow(c, oTableSchema, oTableName, oTableType))
+					.map(c -> getDbSchemaTablesResponseRow(c, oTableSchema, oTableName, oTableType, metaData,
+							userPrincipal))
                 .flatMap(Collection::stream).toList();
         }
         return List.of();
     }
 
-    public List<DbSchemaTablesInfoResponseRow> dbSchemaTablesInfo(DbSchemaTablesInfoRequest request) {
+    public List<DbSchemaTablesInfoResponseRow> dbSchemaTablesInfo(DbSchemaTablesInfoRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         Optional<String> oCatalogName = request.restrictions().catalogName();
         Optional<String> oSchemaName = request.restrictions().schemaName();
         String tableName = request.restrictions().tableName();

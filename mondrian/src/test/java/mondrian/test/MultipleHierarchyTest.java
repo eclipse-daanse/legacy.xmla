@@ -42,7 +42,7 @@ class MultipleHierarchyTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testWeekly(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         if (SystemWideProperties.instance().SsasCompatibleNaming) {
             // [Time.Weekly] has an 'all' member, but [Time] does not.
             assertAxisReturns(connection,
@@ -67,7 +67,7 @@ class MultipleHierarchyTest {
     void testWeekly2(Context context) {
         // When the context is one hierarchy,
         // the current member of other hierarchy must be its default member.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with\n"
             + "  member [Measures].[Foo] as ' "
             + timeWeekly + ".CurrentMember.UniqueName '\n"
@@ -105,7 +105,7 @@ class MultipleHierarchyTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMultipleMembersOfSameDimensionInSlicerFails(Context context) {
-        assertQueryThrows(context.getConnection(),
+        assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
             + " {[Store].children} on rows\n"
             + "from [Sales]\n"
@@ -116,7 +116,7 @@ class MultipleHierarchyTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMembersOfHierarchiesInSameDimensionInSlicer(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
             + " {[Store].children} on rows\n"
             + "from [Sales]\n"
@@ -139,7 +139,7 @@ class MultipleHierarchyTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCalcMember(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
             "with member [Measures].[Sales to Date] as \n"
             + " ' Sum(PeriodsToDate([Time].[Year], [Time].[Time].CurrentMember), [Measures].[Unit Sales])'\n"
@@ -225,7 +225,7 @@ class MultipleHierarchyTest {
         withSchema(context, SchemaModifiers.MultipleHierarchyTestModifier1::new);
 
         final String nuStore = hierarchyName("NuStore", "NuStore");
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Store level] as '" + nuStore
             + ".CurrentMember.Level.Name'\n"
             + "member [Measures].[Store type] as 'IIf((" + nuStore
@@ -335,7 +335,7 @@ class MultipleHierarchyTest {
             + "  [Time].Children.Count\n"
             + "select [Measures].[Time Child Count] on 0\n"
             + "from [Sales]";
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         if (SystemWideProperties.instance().SsasCompatibleNaming) {
             assertQueryThrows(connection,
                 query,
@@ -381,7 +381,7 @@ class MultipleHierarchyTest {
         withSchema(context, SchemaModifiers.MultipleHierarchyTestModifier2::new);
         final String nuStore = hierarchyName("NuStore", "NuStore");
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with set [*NATIVE_CJ_SET] as '[*BASE_MEMBERS_NuStore]' "
             + "set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS], "
             + nuStore + ".CurrentMember.OrderKey, BASC)' "
@@ -419,7 +419,7 @@ class MultipleHierarchyTest {
             + "UPPER('Time.Weekly') group by `store`.`store_country` order by"
             + " ISNULL(`store`.`store_country`) ASC, "
             + "`store`.`store_country` ASC";
-        TestUtil.assertNoQuerySql(context.getConnection(),
+        TestUtil.assertNoQuerySql(context.getConnectionWithDefaultRole(),
             "with member [Time.Weekly].blah as '1' select from sales",
             new SqlPattern[]{
                 new SqlPattern(

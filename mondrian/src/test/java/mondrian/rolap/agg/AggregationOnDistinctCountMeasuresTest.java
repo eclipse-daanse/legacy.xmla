@@ -151,7 +151,7 @@ class AggregationOnDistinctCountMeasuresTest {
         withSchema(context, schema);
          */
         withSchema(context, SchemaModifiers.AggregationOnDistinctCountMeasuresTestModifier::new);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
 
         schemaReader =
                 connection.getSchemaReader().withLocus();
@@ -168,7 +168,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testTupleWithAllLevelMembersOnly(Context context) {
       prepareContext(context);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER GENDER.X AS 'AGGREGATE({([GENDER].DEFAULTMEMBER,\n"
             + "[STORE].DEFAULTMEMBER)})'\n"
             + "SELECT GENDER.X ON 0, [MEASURES].[CUSTOMER COUNT] ON 1 FROM SALES",
@@ -185,7 +185,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCrossJoinOfAllMembers(Context context) {
       prepareContext(context);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER GENDER.X AS 'AGGREGATE({CROSSJOIN({[GENDER].DEFAULTMEMBER},\n"
             + "{[STORE].DEFAULTMEMBER})})'\n"
             + "SELECT GENDER.X ON 0, [MEASURES].[CUSTOMER COUNT] ON 1 FROM SALES",
@@ -218,7 +218,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 2,716\n";
 
-      assertQueryReturns(context.getConnection(), query, result);
+      assertQueryReturns(context.getConnectionWithDefaultRole(), query, result);
 
         // Check aggregate loading sql pattern
         String mysqlSql =
@@ -246,7 +246,7 @@ class AggregationOnDistinctCountMeasuresTest {
                 DatabaseProduct.TERADATA, oraTeraSql, oraTeraSql),
         };
 
-        assertQuerySql(context.getConnection(), query, patterns);
+        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
     }
 
   @ParameterizedTest
@@ -270,7 +270,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 2,716\n";
 
-      assertQueryReturns(context.getConnection(), query, result);
+      assertQueryReturns(context.getConnectionWithDefaultRole(), query, result);
 
         // Check aggregate loading sql pattern.  Note Derby does not support
         // multicolumn IN list, so the predicates remain in AND/OR form.
@@ -311,14 +311,14 @@ class AggregationOnDistinctCountMeasuresTest {
                 DatabaseProduct.TERADATA, oraTeraSql, oraTeraSql),
         };
 
-        assertQuerySql(context.getConnection(), query, patterns);
+        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
     }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCrossJoinParticularMembersFromTwoDimensions(Context context) {
       prepareContext(context);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER GENDER.X AS 'AGGREGATE({[GENDER].M} * "
             + "{[STORE].[ALL STORES].[USA].[CA]})', solve_order=100 "
             + "SELECT GENDER.X ON 0, [MEASURES].[CUSTOMER COUNT] ON 1 FROM SALES",
@@ -335,7 +335,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testDistinctCountOnSetOfMembersFromOneDimension(Context context) {
       prepareContext(context);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER GENDER.X AS 'AGGREGATE({[GENDER].[GENDER].members})'"
             + "SELECT GENDER.X ON 0, [MEASURES].[CUSTOMER COUNT] ON 1 FROM SALES",
             "Axis #0:\n"
@@ -351,7 +351,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testDistinctCountWithAMeasureAsPartOfTuple(Context context) {
       prepareContext(context);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT [STORE].[ALL STORES].[USA].[CA] ON 0, "
             + "([MEASURES].[CUSTOMER COUNT], [Gender].[m]) ON 1 FROM SALES",
             "Axis #0:\n"
@@ -367,7 +367,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testDistinctCountOnSetOfMembers(Context context) {
       prepareContext(context);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER STORE.X as 'Aggregate({[STORE].[ALL STORES].[USA].[CA],"
             + "[STORE].[ALL STORES].[USA].[WA]})'"
             + "SELECT STORE.X  ON ROWS, "
@@ -401,16 +401,16 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #2:\n"
             + "{[Warehouse].[X]}\n"
             + "Row #0: \n";
-      assertQueryReturns(context.getConnection(), mdx, expectedResult);
+      assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, expectedResult);
       ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
-      assertQueryReturns(context.getConnection() ,mdx, expectedResult);
+      assertQueryReturns(context.getConnectionWithDefaultRole() ,mdx, expectedResult);
     }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAggregationListOptimizationForChildren(Context context) {
       prepareContext(context);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER GENDER.X AS 'AGGREGATE({[GENDER].[GENDER].members} * "
             + "{[STORE].[ALL STORES].[USA].[CA], [STORE].[ALL STORES].[USA].[OR], "
             + "[STORE].[ALL STORES].[USA].[WA], [Store].[All Stores].[Canada]})' "
@@ -429,7 +429,7 @@ class AggregationOnDistinctCountMeasuresTest {
   void testDistinctCountOnMembersWithNonJoiningDimensionNotAtAllLevel(Context context)
     {
       prepareContext(context);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER WAREHOUSE.X as "
             + "'Aggregate({WAREHOUSE.[STATE PROVINCE].MEMBERS})'"
             + "SELECT WAREHOUSE.X  ON ROWS, "
@@ -448,7 +448,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNonJoiningDimensionWithAllMember(Context context) {
       prepareContext(context);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER WAREHOUSE.X as 'Aggregate({WAREHOUSE.MEMBERS})'"
             + "SELECT WAREHOUSE.X  ON ROWS, "
             + "{[MEASURES].[CUSTOMER COUNT]} ON COLUMNS\n"
@@ -466,7 +466,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCrossJoinOfJoiningAndNonJoiningDimensionWithAllMember(Context context) {
       prepareContext(context);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER WAREHOUSE.X AS "
             + "'AGGREGATE({GENDER.GENDER.MEMBERS} * {WAREHOUSE.MEMBERS})'"
             + "SELECT WAREHOUSE.X  ON ROWS, "
@@ -480,7 +480,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "{[Warehouse].[X]}\n"
             + "Row #0: 5,581\n");
 
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER WAREHOUSE.X AS "
             + "'AGGREGATE({GENDER.GENDER.MEMBERS} * {WAREHOUSE.MEMBERS})'"
             + "SELECT WAREHOUSE.X  ON ROWS, "
@@ -499,7 +499,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCrossJoinOfJoiningAndNonJoiningDimension(Context context) {
       prepareContext(context);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER WAREHOUSE.X AS "
             + "'AGGREGATE({GENDER.GENDER.MEMBERS} * {WAREHOUSE.[STATE PROVINCE].MEMBERS})'"
             + "SELECT WAREHOUSE.X  ON ROWS, "
@@ -513,7 +513,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "{[Warehouse].[X]}\n"
             + "Row #0: \n");
 
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER WAREHOUSE.X AS "
             + "'AGGREGATE({GENDER.GENDER.MEMBERS} * {WAREHOUSE.[STATE PROVINCE].MEMBERS})'"
             + "SELECT WAREHOUSE.X  ON ROWS, "
@@ -537,10 +537,10 @@ class AggregationOnDistinctCountMeasuresTest {
 
         // LucidDB has no limit on the size of IN list
         final boolean isLuciddb =
-            getDatabaseProduct(getDialect(context.getConnection()).getDialectName())
+            getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
             == DatabaseProduct.LUCIDDB;
 
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             makeQuery("[MEASURES].[CUSTOMER COUNT]"),
             isLuciddb
             ? "Axis #0:\n"
@@ -560,7 +560,7 @@ class AggregationOnDistinctCountMeasuresTest {
               + "Aggregation is not supported over a list with more than 7 predicates (see property MaxConstraints)\n");
 
         // aggregation over a non-distinct-count measure is OK
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             makeQuery("[Measures].[Store Sales]"),
             "Axis #0:\n"
             + "{}\n"
@@ -573,7 +573,7 @@ class AggregationOnDistinctCountMeasuresTest {
         // aggregation over a non-distinct-count measure in slicer should be
         // OK. Before bug MONDRIAN-1122 was fixed, a large set in the slicer
         // would cause an error even if there was not a distinct-count measure.
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].[Store Sales]} ON COLUMNS\n"
             + "FROM [WAREHOUSE AND SALES2]\n"
             + "WHERE {\n"
@@ -631,7 +631,7 @@ class AggregationOnDistinctCountMeasuresTest {
         }
 
         SystemWideProperties.instance().MaxConstraints = 5;
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT\n"
             + "  Measures.[Unit Sales] on columns,\n"
             + "  Product.[Product Family].Members on rows\n"
@@ -806,7 +806,7 @@ class AggregationOnDistinctCountMeasuresTest {
                 DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql)
         };
 
-        assertQuerySql(context.getConnection(), query, patterns);
+        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
     }
 
   @ParameterizedTest
@@ -932,7 +932,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "{[Warehouse2].[TwoMembers]}\n"
             + "Row #0: 220\n";
 
-        assertQueryReturns(context.getConnection(), query, result);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), query, result);
     }
 
   @ParameterizedTest
@@ -1057,7 +1057,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "{[Warehouse2].[TwoMembers]}\n"
             + "Row #0: 220\n";
       withSchema(context, TestMultiLevelsMixedNullNonNullChildModifier::new);
-      assertQueryReturns(context.getConnection(), query, result);
+      assertQueryReturns(context.getConnectionWithDefaultRole(), query, result);
     }
 
   @ParameterizedTest
@@ -1088,7 +1088,7 @@ class AggregationOnDistinctCountMeasuresTest {
             new SqlPattern(
                 DatabaseProduct.TERADATA, oraTeraSql, oraTeraSql),
         };
-        assertQuerySql(context.getConnection(),
+        assertQuerySql(context.getConnectionWithDefaultRole(),
             "WITH \n"
             + "SET [COG_OQP_INT_s2] AS 'CROSSJOIN({[Store].[Store].MEMBERS}, "
             + "{{[Gender].[Gender].MEMBERS}, "
@@ -1181,8 +1181,8 @@ class AggregationOnDistinctCountMeasuresTest {
                 oraTeraSqlForDetail),
         };
 
-      assertQueryReturns(context.getConnection(), mdxQueryWithFewMembers, desiredResult);
-        assertQuerySql(context.getConnection(), mdxQueryWithFewMembers, patterns);
+      assertQueryReturns(context.getConnectionWithDefaultRole(), mdxQueryWithFewMembers, desiredResult);
+        assertQuerySql(context.getConnectionWithDefaultRole(), mdxQueryWithFewMembers, patterns);
     }
 
 
@@ -1265,8 +1265,8 @@ class AggregationOnDistinctCountMeasuresTest {
                 oraTeraSqlForDistinctCountAgg),
         };
 
-      assertQueryReturns(context.getConnection(), mdxQueryWithFewMembers, desiredResult);
-        assertQuerySql(context.getConnection(), mdxQueryWithFewMembers, patterns);
+      assertQueryReturns(context.getConnectionWithDefaultRole(), mdxQueryWithFewMembers, desiredResult);
+        assertQuerySql(context.getConnectionWithDefaultRole(), mdxQueryWithFewMembers, patterns);
     }
 
   @ParameterizedTest
@@ -1326,10 +1326,10 @@ class AggregationOnDistinctCountMeasuresTest {
                 DatabaseProduct.TERADATA, oraTeraSql, oraTeraSql),
         };
 
-      assertQueryReturns(context.getConnection(), mdxQueryWithMembers, desiredResult);
-        assertQuerySql(context.getConnection(), mdxQueryWithMembers, patterns);
-      assertQueryReturns(context.getConnection(), mdxQueryWithDefaultMember, desiredResult);
-        assertQuerySql(context.getConnection(), mdxQueryWithDefaultMember, patterns);
+      assertQueryReturns(context.getConnectionWithDefaultRole(), mdxQueryWithMembers, desiredResult);
+        assertQuerySql(context.getConnectionWithDefaultRole(), mdxQueryWithMembers, patterns);
+      assertQueryReturns(context.getConnectionWithDefaultRole(), mdxQueryWithDefaultMember, desiredResult);
+        assertQuerySql(context.getConnectionWithDefaultRole(), mdxQueryWithDefaultMember, patterns);
     }
 
   @ParameterizedTest
@@ -1349,7 +1349,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 5,581\n";
-      assertQueryReturns(context.getConnection(), query, expected);
+      assertQueryReturns(context.getConnectionWithDefaultRole(), query, expected);
 
         String derbySql =
             "select \"time_by_day\".\"the_year\" as \"c0\", "
@@ -1385,7 +1385,7 @@ class AggregationOnDistinctCountMeasuresTest {
                 DatabaseProduct.LUCIDDB, luciddbSql, luciddbSql),
         };
 
-        assertQuerySql(context.getConnection(), query, patterns);
+        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
     }
 
   @ParameterizedTest
@@ -1416,7 +1416,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 421\n";
-      assertQueryReturns(context.getConnection(), query, expected);
+      assertQueryReturns(context.getConnectionWithDefaultRole(), query, expected);
         String derbySql =
             "select \"time_by_day\".\"the_year\" as \"c0\", "
             + "count(distinct \"sales_fact_1997\".\"customer_id\") as \"m0\" "
@@ -1475,7 +1475,7 @@ class AggregationOnDistinctCountMeasuresTest {
             new SqlPattern(
                 DatabaseProduct.ACCESS, accessSql, accessSql)};
 
-        assertQuerySql(context.getConnection(), query, patterns);
+        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
     }
 
   @ParameterizedTest
@@ -1514,7 +1514,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 189\n";
-      assertQueryReturns(context.getConnection(), query, expected);
+      assertQueryReturns(context.getConnectionWithDefaultRole(), query, expected);
     }
 
   @ParameterizedTest
@@ -1733,7 +1733,7 @@ class AggregationOnDistinctCountMeasuresTest {
       prepareContext(context);
       ((TestConfig) context.getConfig()).setEnableGroupingSets(true);
 
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH "
             + "MEMBER GENDER.AGG AS 'AGGREGATE({ GENDER.[F] })' "
             + "MEMBER GENDER.AGG2 AS 'AGGREGATE({ GENDER.[M] })' "
@@ -1760,7 +1760,7 @@ class AggregationOnDistinctCountMeasuresTest {
   void testDistinctCountForAggregatesAtTheSameLevel(Context context) {
       prepareContext(context);
       ((TestConfig) context.getConfig()).setEnableGroupingSets(true);
-      assertQueryReturns(context.getConnection(),
+      assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH "
             + "MEMBER GENDER.AGG AS 'AGGREGATE({ GENDER.[F], GENDER.[M] })' "
             + "SELECT "
@@ -1915,7 +1915,7 @@ class AggregationOnDistinctCountMeasuresTest {
       withSchema(context, schema);
        */
       withSchema(context, TestMondrian906Modifier::new);
-      Connection connection = context.getConnection();
+      Connection connection = context.getConnectionWithDefaultRole();
 
       schemaReader =
               connection.getSchemaReader().withLocus();
@@ -2264,7 +2264,7 @@ class AggregationOnDistinctCountMeasuresTest {
         /*
         withSchema(context, simpleSchema);
         */
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             query,
             "Axis #0:\n"
             + "{}\n"
@@ -2292,7 +2292,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "and\n"
             + "    `agg_c_10_sales_fact_1997`.`month_of_year` in (1, 2, 3)";
         assertQuerySqlOrNot(
-            context.getConnection(),
+            context.getConnectionWithDefaultRole(),
             monthsQuery,
             new SqlPattern[]{
                 new SqlPattern(
@@ -2316,7 +2316,7 @@ class AggregationOnDistinctCountMeasuresTest {
   void testCachedAggregate(Context context) {
         prepareContext(context);
     Result result =
-        executeQuery(context.getConnection(), " WITH\r\n"
+        executeQuery(context.getConnectionWithDefaultRole(), " WITH\r\n"
             + " SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Gender_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Store Type_],[*BASE_MEMBERS__Product_]))'\r\n"
             + " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Gender].CURRENTMEMBER,[Store Type].CURRENTMEMBER)})'\r\n"
             + " SET [*BASE_MEMBERS__Store Type_] AS '{[Store Type].[All Store Types].[Gourmet Supermarket],[Store Type].[All Store Types].[Supermarket]}'\r\n"
@@ -2351,7 +2351,7 @@ class AggregationOnDistinctCountMeasuresTest {
   void testCachedCompoundSlicer(Context context) {
         prepareContext(context);
     Result result =
-        executeQuery(context.getConnection(), " WITH\r\n"
+        executeQuery(context.getConnectionWithDefaultRole(), " WITH\r\n"
             + " SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Gender_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Store Type_],[*BASE_MEMBERS__Product_]))'\r\n"
             + " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Gender].CURRENTMEMBER,[Store Type].CURRENTMEMBER)})'\r\n"
             + " SET [*BASE_MEMBERS__Store Type_] AS '{[Store Type].[All Store Types].[Gourmet Supermarket],[Store Type].[All Store Types].[Supermarket]}'\r\n"
@@ -2389,7 +2389,7 @@ class AggregationOnDistinctCountMeasuresTest {
   void testExpCacheHit(Context context) {
         prepareContext(context);
     Result result =
-        executeQuery(context.getConnection(), "WITH\r\n"
+        executeQuery(context.getConnectionWithDefaultRole(), "WITH\r\n"
             + " SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Gender_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Store Type_],[*BASE_MEMBERS__Product_]))'\r\n"
             + " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Gender].CURRENTMEMBER,[Store Type].CURRENTMEMBER)})'\r\n"
             + " SET [*METRIC_CJ_SET] AS 'FILTER([*NATIVE_CJ_SET],[Gender].CURRENTMEMBER IN [*METRIC_CACHE_SET])'\r\n"
@@ -2425,7 +2425,7 @@ class AggregationOnDistinctCountMeasuresTest {
   void testExpCacheHit2(Context context) {
     prepareContext(context);
     Result result =
-        executeQuery(context.getConnection(), "WITH\r\n" +
+        executeQuery(context.getConnectionWithDefaultRole(), "WITH\r\n" +
             " SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Customers_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Product_],[*BASE_MEMBERS__Promotion Media_]))))'\r\n" +
             " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Customers].CURRENTMEMBER,[Education Level].CURRENTMEMBER,[Time].CURRENTMEMBER)})'\r\n" +
             " SET [*METRIC_CJ_SET] AS 'FILTER([*NATIVE_CJ_SET],[Customers].CURRENTMEMBER IN [*METRIC_CACHE_SET])'\r\n" +

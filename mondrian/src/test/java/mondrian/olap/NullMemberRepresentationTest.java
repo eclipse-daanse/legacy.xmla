@@ -34,7 +34,7 @@ class NullMemberRepresentationTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testClosingPeriodMemberLeafWithCustomNullRepresentation(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' ClosingPeriod().uniquename '\n"
             + "select {[Measures].[Foo]} on columns,\n"
             + "  {[Time].[1997],\n"
@@ -62,7 +62,7 @@ class NullMemberRepresentationTest {
     void testItemMemberWithCustomNullMemberRepresentation(Context context)
         throws IOException
     {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertExprReturns(connection,
             "[Time].[1997].Children.Item(6).UniqueName",
             "[Time].[" + getNullMemberRepresentation() + "]");
@@ -72,7 +72,7 @@ class NullMemberRepresentationTest {
     }
 
     void testNullMemberWithCustomRepresentation(Context context) throws IOException {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertExprReturns(connection,
             "[Gender].[All Gender].Parent.UniqueName",
             "[Gender].[" + getNullMemberRepresentation() + "]");

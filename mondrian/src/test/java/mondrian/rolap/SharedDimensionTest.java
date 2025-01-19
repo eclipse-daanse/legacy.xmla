@@ -346,7 +346,7 @@ class SharedDimensionTest  {
         // Query from the first cube.
         getTestContextForSharedDimCubeACubeB(context);
 
-        assertQueryReturns(context.getConnection(), queryCubeA, resultCubeA);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), queryCubeA, resultCubeA);
     }
 
     @ParameterizedTest
@@ -357,7 +357,7 @@ class SharedDimensionTest  {
         // Query from the second cube.
         getTestContextForSharedDimCubeACubeB(context);
 
-        assertQueryReturns(context.getConnection(), queryCubeB, resultCubeB);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), queryCubeB, resultCubeB);
     }
 
     @ParameterizedTest
@@ -380,7 +380,7 @@ class SharedDimensionTest  {
         */
         withSchema(context, SchemaModifiers.SharedDimensionTestModifier::new);
 
-        assertQueryReturns(context.getConnection(), queryVirtualCube, resultVirtualCube);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), queryVirtualCube, resultVirtualCube);
     }
 
     @ParameterizedTest
@@ -391,7 +391,7 @@ class SharedDimensionTest  {
         // Query from the second cube.
         getTestContextForSharedDimCubeACubeB(context);
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             queryNECJMemberList,
             resultNECJMemberList);
     }
@@ -406,7 +406,7 @@ class SharedDimensionTest  {
         // but also produces incorrect result.
         getTestContextForSharedDimCubeACubeB(context);
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             queryNECJMultiLevelMemberList,
             resultNECJMultiLevelMemberList);
     }
@@ -420,14 +420,14 @@ class SharedDimensionTest  {
     void testBugMondrian286(Context context) {
         // Test for sourceforge.net bug 1711865 (MONDRIAN-286).
         // Use the default FoodMart schema
-        assertQueryReturns(context.getConnection(), querySF1711865, resultSF1711865);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), querySF1711865, resultSF1711865);
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStoreCube(Context context) {
         // Use the default FoodMart schema
-        assertQueryReturns(context.getConnection(), queryStoreCube, resultStoreCube);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), queryStoreCube, resultStoreCube);
     }
 
     /**
@@ -439,7 +439,7 @@ class SharedDimensionTest  {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBugMondrian1243WrongAlias(Context context) {
         getTestContextForSharedDimCubeAltSales(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             queryIssue1243,
             resultIssue1243);
     }
@@ -448,7 +448,7 @@ class SharedDimensionTest  {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMemberUniqueNameForSharedWithChangedName(Context context) {
         getTestContextForSharedDimCubeAltSales(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with "
             + " member [BuyerTwo].[Mexico].[calc] as '[BuyerTwo].[Mexico]' "
             + "select [BuyerTwo].[Mexico].[calc] on 0 from [Alternate Sales]",

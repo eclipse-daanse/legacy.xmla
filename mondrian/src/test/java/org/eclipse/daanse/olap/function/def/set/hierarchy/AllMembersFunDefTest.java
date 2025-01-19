@@ -31,7 +31,7 @@ class AllMembersFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAllMembers(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         // <Level>.allmembers
         assertAxisReturns(connection,
             "{[Customers].[Country].allmembers}",
@@ -113,7 +113,7 @@ class AllMembersFunDefTest {
                 // defined wrong.
                 break;
             default:
-                assertQueryReturns(context.getConnection(),
+                assertQueryReturns(context.getConnectionWithDefaultRole(),
                     "WITH MEMBER [Measures].[Unit to Sales ratio] as\n"
                         + " '[Measures].[Unit Sales] / [Measures].[Store Sales]', FORMAT_STRING='0.0%' "
                         + "SELECT {[Measures].AllMembers} ON COLUMNS,"
@@ -176,7 +176,7 @@ class AllMembersFunDefTest {
                 // defined wrong.
                 break;
             default:
-                assertQueryReturns(context.getConnection(),
+                assertQueryReturns(context.getConnectionWithDefaultRole(),
                     "WITH MEMBER [Measures].[Unit to Sales ratio] as '[Measures].[Unit Sales] / [Measures].[Store Sales]', "
                         + "FORMAT_STRING='0.0%' "
                         + "SELECT {[Measures].AllMembers} ON COLUMNS,"
@@ -239,7 +239,7 @@ class AllMembersFunDefTest {
                 // defined wrong.
                 break;
             default:
-                assertQueryReturns(context.getConnection(),
+                assertQueryReturns(context.getConnectionWithDefaultRole(),
                     "WITH MEMBER [Measures].[Unit to Sales ratio] as '[Measures].[Unit Sales] / [Measures].[Store Sales]', "
                         + "FORMAT_STRING='0.0%' "
                         + "SELECT {[Measures].Members} ON COLUMNS,"
@@ -280,7 +280,7 @@ class AllMembersFunDefTest {
         }
 
         // Calc member in dimension based on level
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Store].[USA].[CA plus OR] AS 'AGGREGATE({[Store].[USA].[CA], [Store].[USA].[OR]})' "
                 + "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} ON COLUMNS,"
                 + "non empty({[Store].[Store State].AllMembers}) ON ROWS "
@@ -306,7 +306,7 @@ class AllMembersFunDefTest {
                 + "Row #3: 76,345.49\n" );
 
         // Calc member in dimension based on level not seen
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Store].[USA].[CA plus OR] AS 'AGGREGATE({[Store].[USA].[CA], [Store].[USA].[OR]})' "
                 + "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} ON COLUMNS,"
                 + "non empty({[Store].[Store Country].AllMembers}) ON ROWS "

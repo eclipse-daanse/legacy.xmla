@@ -86,14 +86,14 @@ class ValidMeasureFunDefTest {
         + "{[Measures].[TestValid]}\n" + "Axis #2:\n"
         + "{[Product.BrandOnly].[ADJ]}\n" + "Row #0: 266,773\n";
 
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         query, expected);
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testValidMeasureWithNullTuple(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         "with member measures.vm as "
         + "'ValidMeasure((Measures.[Unit Sales], Store.[All Stores].Parent))' "
         + "select measures.vm on 0 from [warehouse and sales]",

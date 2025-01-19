@@ -27,7 +27,7 @@ class ExistingFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExisting(Context context) {
         // basic test
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
                 + "  member measures.ExistingCount as\n"
                 + "  count(Existing [Product].[Product Subcategory].Members)\n"
@@ -46,7 +46,7 @@ class ExistingFunDefTest {
                 + "Row #1: 62\n"
                 + "Row #2: 32\n" );
         // same as exists+currentMember
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member measures.StaticCount as\n"
                 + "  count([Product].[Product Subcategory].Members)\n"
                 + "  member measures.WithExisting as\n"
@@ -81,7 +81,7 @@ class ExistingFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistingCalculatedMeasure(Context context) {
         // sorry about the mess, this came from Analyzer
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH \n"
                 + "SET [*NATIVE_CJ_SET] AS 'FILTER({[Time.Weekly].[All Time.Weeklys].[1997].[2],[Time.Weekly].[All Time"
                 + ".Weeklys].[1997].[24]}, NOT ISEMPTY ([Measures].[Store Sales]) OR NOT ISEMPTY ([Measures]"
@@ -118,7 +118,7 @@ class ExistingFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistingCalculatedMeasureCompoundSlicer(Context context) {
         // basic test
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
                 + "  member measures.subcategorystring as SetToStr( EXISTING [Product].[Product Subcategory].Members)\n"
                 + "  select { measures.subcategorystring } on 0\n"
@@ -131,7 +131,7 @@ class ExistingFunDefTest {
                 + "Row #0: {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Drink].[Alcoholic "
                 + "Beverages].[Beer and Wine].[Wine]}\n" );
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with MEMBER [Measures].[*CALCULATED_MEASURE_1] AS 'SetToStr( EXISTING [Product].[Product Category].Members )'\n"
                 + " SELECT {[Measures].[*CALCULATED_MEASURE_1]} ON COLUMNS\n"
                 + " FROM [Sales]\n"
@@ -150,7 +150,7 @@ class ExistingFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistingAggSet(Context context) {
         // aggregate simple set
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Edible Sales] AS \n"
                 + "Aggregate( Existing {[Product].[Drink], [Product].[Food]}, Measures.[Unit Sales] )\n"
                 + "SELECT {Measures.[Unit Sales], Measures.[Edible Sales]} ON 0,\n"
@@ -180,7 +180,7 @@ class ExistingFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistingGenerateAgg(Context context) {
         // generate overrides existing context
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET BestOfFamilies AS\n"
                 + "  Generate( [Product].[Product Family].Members,\n"
                 + "            TopCount( Existing [Product].[Brand Name].Members, 10, Measures.[Unit Sales]) ) \n"
@@ -214,7 +214,7 @@ class ExistingFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistingGenerateOverrides(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER Measures.[StaticSumNC] AS\n"
                 + " 'Sum(Generate([Product].[Non-Consumable],"
                 + "    Existing [Product].[Product Department].Members), Measures.[Unit Sales])'\n"
@@ -236,7 +236,7 @@ class ExistingFunDefTest {
                 + "Row #1: 191,940\n"
                 + "Row #2: 50,236\n"
                 + "Row #2: 50,236\n" );
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER Measures.[StaticSumNC] AS\n"
                 + " 'Sum(Generate([Product].[Product Family].Members,"
                 + "    Existing [Product].[Product Department].Members), Measures.[Unit Sales])'\n"
@@ -259,7 +259,7 @@ class ExistingFunDefTest {
     void testExistingVirtualCube(Context context) {
         // this should ideally return 14 for both,
         // but being coherent with exists is good enough
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Count Exists] AS Count(exists( [Time.Weekly].[Week].Members, [Time.Weekly]"
                 + ".CurrentMember ) )\n"
                 + " MEMBER [Measures].[Count Existing] AS Count(existing [Time.Weekly].[Week].Members)\n"

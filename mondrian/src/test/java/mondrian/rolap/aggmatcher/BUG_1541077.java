@@ -41,7 +41,7 @@ public class BUG_1541077 extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
@@ -50,12 +50,12 @@ public class BUG_1541077 extends AggTableTestCase {
 
         String mdx =
             "select {[Measures].[Store Count]} on columns from Cheques";
-        Result result = executeQuery(mdx, context.getConnection());
+        Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v = result.getCell(new int[]{0}).getValue();
 
         ((TestConfig)context.getConfig()).setUseAggregates(true);
 
-        Result result1 = executeQuery(mdx, context.getConnection());
+        Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v1 = result1.getCell(new int[]{0}).getValue();
 
         assertTrue(v.equals(v1));
@@ -67,7 +67,7 @@ public class BUG_1541077 extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
@@ -76,12 +76,12 @@ public class BUG_1541077 extends AggTableTestCase {
 
         String mdx =
             "select {[Measures].[Sales Count]} on columns from Cheques";
-        Result result = executeQuery(mdx, context.getConnection());
+        Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v = result.getCell(new int[]{0}).getValue();
 
         ((TestConfig)context.getConfig()).setUseAggregates(true);
 
-        Result result1 = executeQuery(mdx, context.getConnection());
+        Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v1 = result1.getCell(new int[]{0}).getValue();
 
         assertTrue(v.equals(v1));
@@ -93,7 +93,7 @@ public class BUG_1541077 extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
@@ -102,12 +102,12 @@ public class BUG_1541077 extends AggTableTestCase {
 
         String mdx =
             "select {[Measures].[Total Amount]} on columns from Cheques";
-        Result result = executeQuery(mdx, context.getConnection());
+        Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v = result.getCell(new int[]{0}).getValue();
 
         ((TestConfig)context.getConfig()).setUseAggregates(false);
 
-        Result result1 = executeQuery(mdx, context.getConnection());
+        Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v1 = result1.getCell(new int[]{0}).getValue();
 
         assertTrue(v.equals(v1));
@@ -119,7 +119,7 @@ public class BUG_1541077 extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setUseAggregates(true);
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
-        if (!isApplicable(context.getConnection())) {
+        if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
@@ -128,13 +128,13 @@ public class BUG_1541077 extends AggTableTestCase {
 
         String mdx = "select {[Measures].[Avg Amount]} on columns from Cheques";
 
-        Result result = executeQuery(mdx, context.getConnection());
+        Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v = result.getCell(new int[]{0}).getFormattedValue();
 
         // get value with aggregates
         ((TestConfig)context.getConfig()).setUseAggregates(true);
 
-        Result result1 = executeQuery(mdx, context.getConnection());
+        Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v1 = result1.getCell(new int[]{0}).getFormattedValue();
 
         assertTrue(v.equals(v1));

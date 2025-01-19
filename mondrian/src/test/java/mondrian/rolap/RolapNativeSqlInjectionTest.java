@@ -47,7 +47,7 @@ class RolapNativeSqlInjectionTest {
             + "from [Sales]";
 
         //TestContext context = getTestContext().withFreshConnection();
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         try {
             executeQuery(connection, mdxQuery);
         } catch (OlapRuntimeException e) {

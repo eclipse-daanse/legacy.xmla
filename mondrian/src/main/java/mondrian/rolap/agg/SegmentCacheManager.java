@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -50,7 +49,6 @@ import org.slf4j.LoggerFactory;
 import mondrian.olap.Util;
 import mondrian.rolap.CacheControlImpl;
 import mondrian.rolap.CacheKey;
-import mondrian.rolap.FastBatchingCellReader;
 import mondrian.rolap.RolapSchema;
 import mondrian.rolap.RolapSchemaCache;
 import mondrian.rolap.RolapStar;
@@ -593,12 +591,12 @@ public class SegmentCacheManager {
    */
   public SegmentWithData peek( final CellRequest request ) {
     Locus locus = null;
-    try {
+//    try {
         locus = LocusImpl.peek();
-    } catch (Exception e) {
-        locus = new LocusImpl( new ExecutionImpl(getContext().getConnection().getInternalStatement(), getContext().getConfig().executeDurationValue()), null, "Loading cells" );
-        LocusImpl.push( locus );
-    }
+//    } catch (Exception e) {
+//        locus = new LocusImpl( new ExecutionImpl(getContext().getConnection().getInternalStatement(), getContext().getConfig().executeDurationValue()), null, "Loading cells" );
+//        LocusImpl.push( locus );
+//    }
     final SegmentCacheManager.PeekResponse response =
       execute(
         new PeekCommand( request, locus ) );

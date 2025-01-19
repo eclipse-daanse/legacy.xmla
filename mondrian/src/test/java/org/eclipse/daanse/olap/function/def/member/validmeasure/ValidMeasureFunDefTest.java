@@ -32,7 +32,7 @@ class ValidMeasureFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testValidMeasure(Context context) {
-        TestUtil.assertQueryReturns(context.getConnection(),
+        TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with\n"
                 + "member measures.[with VM] as 'validmeasure([measures].[unit sales])'\n"
                 + "select { measures.[with VM]} on 0,\n"
@@ -55,7 +55,7 @@ class ValidMeasureFunDefTest {
     void _testValidMeasureNonEmpty(Context context) {
         // Note that [with VM2] is NULL where it needs to be - and therefore
         // does not prevent NON EMPTY from eliminating empty rows.
-        TestUtil.assertQueryReturns(context.getConnection(),
+        TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with set [Foo] as ' Crossjoin({[Time].Children}, {[Measures].[Warehouse Sales]}) '\n"
                 + " member [Measures].[with VM] as 'ValidMeasure([Measures].[Unit Sales])'\n"
                 + " member [Measures].[with VM2] as 'Iif(Count(Filter([Foo], not isempty([Measures].CurrentMember))) > 0, "
@@ -102,7 +102,7 @@ class ValidMeasureFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testValidMeasureTupleHasAnotherMember(Context context) {
-        TestUtil.assertQueryReturns(context.getConnection(),
+        TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with\n"
                 + "member measures.[with VM] as 'validmeasure(([measures].[unit sales],[customers].[all customers]))'\n"
                 + "select { measures.[with VM]} on 0,\n"
@@ -123,7 +123,7 @@ class ValidMeasureFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testValidMeasureDepends(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         String s12 = FunctionTest.allHiersExcept( "[Measures]" );
         TestUtil.assertExprDependsOn(connection,
             "ValidMeasure([Measures].[Unit Sales])", s12 );
@@ -144,7 +144,7 @@ class ValidMeasureFunDefTest {
     void testValidMeasureNonVirtualCube(Context context) {
         // verify ValidMeasure used outside of a virtual cube
         // is effectively a no-op.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         TestUtil.assertQueryReturns(connection,
             "with member measures.vm as 'ValidMeasure(measures.[Store Sales])'"
                 + " select measures.[vm] on 0 from Sales",
@@ -182,7 +182,7 @@ class ValidMeasureFunDefTest {
             "The function ValidMeasure cannot be used with the measure '[Measures].[calc]' because it is a calculated "
                 + "member." );
         // Check the working version
-        TestUtil.assertQueryReturns(context.getConnection(),
+        TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
                 + "member measures.vm as 'ValidMeasure(measures.[warehouse sales])' \n"
                 + "select from [warehouse and sales] where (measures.vm, gender.f) \n",

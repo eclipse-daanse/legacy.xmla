@@ -272,7 +272,7 @@ class SchemaTest {
 
         }
         withSchema(context, TestSolveOrderInCalculatedMemberModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[QuantumProfit]} on 0, {(Gender.foo)} on 1 from sales",
             "Axis #0:\n"
             + "{}\n"
@@ -337,7 +337,7 @@ class SchemaTest {
             + "  </Dimension>"));
         */
         withSchema(context, TestHierarchyDefaultMemberModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Gender with default]} on columns from [Sales]",
             "Axis #0:\n"
             + "{}\n"
@@ -434,7 +434,7 @@ class SchemaTest {
         */
         // note that default member name has no 'all' and has a name not an id
         withSchema(context, TestDefaultMemberNameModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Product with no all]} on columns from [Sales]",
             "Axis #0:\n"
             + "{}\n"
@@ -497,7 +497,7 @@ class SchemaTest {
             + "  </Dimension>"));
         */
         withSchema(context, TestHierarchyAbbreviatedDefaultMemberModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Gender with default]} on columns from [Sales]",
             "Axis #0:\n"
             + "{}\n"
@@ -655,7 +655,7 @@ class SchemaTest {
             "<Measure name=\"Fact Count\" aggregator=\"count\"/>\n"));
         */
         withSchema(context, TestCountMeasureModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Fact Count], [Measures].[Unit Sales]} on 0,\n"
             + "[Gender].members on 1\n"
             + "from [Sales]",
@@ -737,7 +737,7 @@ class SchemaTest {
         */
         // FIXME: This should validate the schema, and fail.
         withSchema(context, TestHierarchyTableNotFoundModifier::new);
-        assertSimpleQuery(context.getConnection());
+        assertSimpleQuery(context.getConnectionWithDefaultRole());
         // FIXME: Should give better error.
         assertQueryThrows(context,
             "select [Yearly Income3].Children on 0 from [Sales]",
@@ -985,7 +985,7 @@ class SchemaTest {
             + "</Dimension>"));
         */
         withSchema(context, TestDuplicateTableAliasModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Yearly Income2]} on columns, {[Measures].[Unit Sales]} on rows from [Sales]",
             "Axis #0:\n"
             + "{}\n"
@@ -1051,7 +1051,7 @@ class SchemaTest {
             + "  </Hierarchy>\n"
             + "</Dimension>")); */
         withSchema(context, TestDuplicateTableAliasSameForeignKeyModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select from [Sales]",
             "Axis #0:\n"
             + "{}\n"
@@ -1059,7 +1059,7 @@ class SchemaTest {
 
         // NonEmptyCrossJoin Fails
         if (false) {
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select NonEmptyCrossJoin({[Yearly Income2].[All Yearly Income2s]},{[Customers].[All Customers]}) on rows,"
                 + "NON EMPTY {[Measures].[Unit Sales]} on columns"
                 + " from [Sales]",
@@ -1125,7 +1125,7 @@ class SchemaTest {
         */
 
         withSchema(context, TestDimensionsShareTableModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Yearly Income].[$10K - $30K]} on columns,"
             + "{[Yearly Income2].[$150K +]} on rows from [Sales]",
             "Axis #0:\n"
@@ -1136,7 +1136,7 @@ class SchemaTest {
             + "{[Yearly Income2].[$150K +]}\n"
             + "Row #0: 918\n");
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + "NON EMPTY Crossjoin({[Yearly Income].[All Yearly Incomes].Children},\n"
             + "                     [Yearly Income2].[All Yearly Income2s].Children) ON ROWS\n"
@@ -1331,7 +1331,7 @@ class SchemaTest {
             + "</Dimension>"));
         */
         withSchema(context, TestDimensionsShareTableNativeNonEmptyCrossJoinModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select NonEmptyCrossJoin({[Yearly Income2].[All Yearly Income2s]},{[Customers].[All Customers]}) on rows,"
             + "NON EMPTY {[Measures].[Unit Sales]} on columns"
             + " from [Sales]",
@@ -1399,7 +1399,7 @@ class SchemaTest {
             + "</Dimension>"));
         */
         withSchema(context, TestDimensionsShareTableSameForeignKeysModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Yearly Income].[$10K - $30K]} on columns,"
             + "{[Yearly Income2].[$150K +]} on rows from [Sales]",
             "Axis #0:\n"
@@ -1410,7 +1410,7 @@ class SchemaTest {
             + "{[Yearly Income2].[$150K +]}\n"
             + "Row #0: \n");
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + "NON EMPTY Crossjoin({[Yearly Income].[All Yearly Incomes].Children},\n"
             + "                     [Yearly Income2].[All Yearly Income2s].Children) ON ROWS\n"
@@ -1703,7 +1703,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestSnowflakeHierarchyValidationNotNeededModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select  {[Store.MyHierarchy].[Mexico]} on rows,"
             + "{[Customers].[USA].[South West]} on columns"
             + " from "
@@ -1996,7 +1996,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestSnowflakeHierarchyValidationNotNeeded2Modifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select  {[Store.MyHierarchy].[USA].[South West]} on rows,"
             + "{[Customers].[USA].[South West]} on columns"
             + " from "
@@ -2213,7 +2213,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestDimensionsShareJoinTableModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select  {[Store].[USA].[South West]} on rows,"
             + "{[Customers].[USA].[South West]} on columns"
             + " from "
@@ -2432,7 +2432,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestDimensionsShareJoinTableOneAliasModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select  {[Store].[USA].[South West]} on rows,"
             + "{[Customers].[USA].[South West]} on columns"
             + " from "
@@ -2650,7 +2650,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestDimensionsShareJoinTableTwoAliasesModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select  {[Store].[USA].[South West]} on rows,"
             + "{[Customers].[USA].[South West]} on columns"
             + " from "
@@ -2825,7 +2825,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestTwoAliasesDimensionsShareTableModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[StoreA].[USA]} on rows,"
             + "{[StoreB].[USA]} on columns"
             + " from "
@@ -2986,7 +2986,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestTwoAliasesDimensionsShareTableSameForeignKeysModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[StoreA].[USA]} on rows,"
             + "{[StoreB].[USA]} on columns"
             + " from "
@@ -3089,7 +3089,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestMultipleDimensionUsagesModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Time2].[1997]} on columns,\n"
             + " {[Time].[1997].[Q3]} on rows\n"
@@ -3202,7 +3202,7 @@ class SchemaTest {
             + " {[Time].[1997].[Q3]} on rows\n"
             + "From [Sales Two Dimensions]";
 
-        Result result = executeQuery(context.getConnection(), query);
+        Result result = executeQuery(context.getConnectionWithDefaultRole(), query);
 
         // Time2.1997 Member
         Member member1 =
@@ -3281,7 +3281,7 @@ class SchemaTest {
         }
         withSchema(context, TestDimensionCreationModifier::new);
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + "NON EMPTY {[Store].[All Stores].children} on columns \n"
             + "From [Sales Create Dimension]",
@@ -3291,7 +3291,7 @@ class SchemaTest {
             + "{[Store].[USA]}\n"
             + "Row #0: 266,773\n");
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + "NON EMPTY {[Store].[All Stores].children} on columns, \n"
             + "{[Time].[1997].[Q1]} on rows \n"
@@ -3370,7 +3370,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestDimensionUsageLevelModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Store].[Store State].members} on columns \n"
             + "From [Customer Usage Level]",
@@ -3401,7 +3401,7 @@ class SchemaTest {
         // BC.children should return an empty list, considering that we've
         // joined Store at the State level.
         if (false) {
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select\n"
                 + " {[Store].[All Stores].[Canada].[BC].children} on columns \n"
                 + "From [Customer Usage Level]",
@@ -3522,7 +3522,7 @@ class SchemaTest {
                 ? "[Store2].[All Stores]"
                 : "[Store2].[All Store2s]";
         withSchema(context, TestAllMemberMultipleDimensionUsagesModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Store].[Store].[All Stores]} on columns,\n"
             + " {" + store2AllMember + "} on rows\n"
@@ -3535,7 +3535,7 @@ class SchemaTest {
             + "{[Store2].[Store].[All Stores]}\n"
             + "Row #0: 266,773\n");
 
-        final Result result = executeQuery(context.getConnection(),
+        final Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select ([Store].[All Stores], " + store2AllMember + ") on 0\n"
             + "from [Sales Two Sales Dimensions]");
         final Axis axis = result.getAxes()[0];
@@ -3632,7 +3632,7 @@ class SchemaTest {
         } else {
             // In new behavior, resolves to the hierarchy name [Time] even if
             // not qualified by dimension name [Time2].
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 query,
                 "Axis #0:\n"
                 + "{}\n"
@@ -3815,7 +3815,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestViewDegenerateDimsModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + " NON EMPTY {[Time].[1997], [Time].[1997].[Q3]} on columns,\n"
             + " NON EMPTY {[Store].[USA].Children} on rows\n"
@@ -3988,7 +3988,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestViewFactTableModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Time].[1997], [Time].[1997].[Q3]} on columns,\n"
             + " {[Store].[USA].Children} on rows\n"
@@ -4130,7 +4130,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestViewFactTable2Modifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Store Type].Children} on columns from [Store2]",
             "Axis #0:\n"
             + "{}\n"
@@ -4199,7 +4199,7 @@ class SchemaTest {
             }
         }
         withSchema(context, TestDeprecatedDistinctCountAggregatorModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales],"
             + "    [Measures].[Customer Count], "
             + "    [Measures].[Customer Count2], "
@@ -4491,7 +4491,7 @@ class SchemaTest {
                 + "</Schema>");
          */
             withSchema(context, TestUnknownUsagesModifier::new);
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select from [Sales Degen]",
                 "Axis #0:\n"
                 + "{}\n"
@@ -4749,7 +4749,7 @@ class SchemaTest {
                 + "</Schema>");
              */
             withSchema(context, TestUnknownUsages1Modifier::new);
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select from [Denormalized Sales]",
                 "Axis #0:\n"
                 + "{}\n"
@@ -4836,7 +4836,7 @@ class SchemaTest {
          */
         try {
             withSchema(context, TestPropertyFormatterModifier::new);
-            assertSimpleQuery(context.getConnection());
+            assertSimpleQuery(context.getConnectionWithDefaultRole());
             fail("expected exception");
         } catch (RuntimeException e) {
             checkThrowable(
@@ -4925,10 +4925,10 @@ class SchemaTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 266,773\n";
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures]} on 0 from [Sales2]",
             expected);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures]} on 0 from [Sales]",
             expected);
     }
@@ -5013,7 +5013,7 @@ class SchemaTest {
         withSchema(context, TestBugMondrian303Modifier::new);
         // In the query below Mondrian (prior to the fix) would
         // return the store name instead of the store type.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "   MEMBER [Measures].[StoreType] AS \n"
             + "   '[Store2].CurrentMember.Properties(\"Store Type\")'\n"
@@ -5149,7 +5149,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestCubeWithOneDimensionOneMeasureModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Promotion Media]} on columns from [OneDim]",
             "Axis #0:\n"
             + "{}\n"
@@ -5216,7 +5216,7 @@ class SchemaTest {
         withSchema(context, schema);
         */
         withSchema(context, TestCubeWithOneDimensionUsageOneMeasureModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Product].Children} on columns from [OneDimUsage]",
             "Axis #0:\n"
             + "{}\n"
@@ -5261,7 +5261,7 @@ class SchemaTest {
         withSchema(context, TestCubeHasFactModifier::new);
         Throwable throwable = null;
         try {
-            assertSimpleQuery(context.getConnection());
+            assertSimpleQuery(context.getConnectionWithDefaultRole());
         } catch (Throwable e) {
             throwable = e;
         }
@@ -5324,7 +5324,7 @@ class SchemaTest {
          */
         withSchema(context, TestCubeCaptionModifier::new);
         final Cube[] cubes =
-            context.getConnection().getSchema().getCubes();
+            context.getConnectionWithDefaultRole().getSchema().getCubes();
         Optional<Cube> optionalCube1 = Arrays.stream(cubes).filter(c -> "Cube with caption".equals(c.getName())).findFirst();
         final Cube cube = optionalCube1.orElseThrow(() -> new RuntimeException("Cube with name \"Cube with caption\" is absent"));
         assertEquals("Cube with caption", cube.getCaption());
@@ -5367,7 +5367,7 @@ class SchemaTest {
             }
         }
         withSchema(context, TestCubeWithNoDimensionsModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns from [NoDim]",
             "Axis #0:\n"
             + "{}\n"
@@ -5454,7 +5454,7 @@ class SchemaTest {
         // Does not fail with
         //    "Hierarchy '[Measures]' is invalid (has no members)"
         // because of the implicit [Fact Count] measure.
-        assertSimpleQuery(context.getConnection());
+        assertSimpleQuery(context.getConnectionWithDefaultRole());
     }
 
     @ParameterizedTest
@@ -5536,7 +5536,7 @@ class SchemaTest {
         // Because there are no explicit stored measures, the default measure is
         // the implicit stored measure, [Fact Count]. Stored measures, even
         // non-visible ones, come before calculated measures.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures]} on columns from [OneCalcMeasure]\n"
             + "where [Promotion Media].[TV]",
             "Axis #0:\n"
@@ -5597,7 +5597,7 @@ class SchemaTest {
         // Because there are no explicit stored measures, the default measure is
         // the implicit stored measure, [Fact Count]. Stored measures, even
         // non-visible ones, come before calculated measures.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Store].[USA].[CA].[SF and LA]} on columns from [Sales]",
             "Axis #0:\n"
             + "{}\n"
@@ -5608,7 +5608,7 @@ class SchemaTest {
         // Now access the same member using a path that is not its unique name.
         // Only works with new name resolver (if ssas = true).
         if (SystemWideProperties.instance().SsasCompatibleNaming) {
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
                 + "{}\n"
@@ -5661,7 +5661,7 @@ class SchemaTest {
              */
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestCalcMemberInCubeModifier2::new);
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
                 + "{}\n"
@@ -5719,7 +5719,7 @@ class SchemaTest {
              */
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestCalcMemberInCubeModifier3::new);
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
                 + "{}\n"
@@ -5774,7 +5774,7 @@ class SchemaTest {
              */
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestCalcMemberInCubeModifier4::new);
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
                 + "{}\n"
@@ -5830,7 +5830,7 @@ class SchemaTest {
              */
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestCalcMemberInCubeModifier5::new);
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
                 + "{}\n"
@@ -5889,7 +5889,7 @@ class SchemaTest {
              */
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestCalcMemberInCubeModifier6::new);
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
                 + "{}\n"
@@ -5947,7 +5947,7 @@ class SchemaTest {
              */
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestCalcMemberInCubeModifier7::new);
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
                 + "{}\n"
@@ -6041,7 +6041,7 @@ class SchemaTest {
             withSchema(context, schema);
              */
             withSchema(context, TestAggTableSupportOfSharedDimsModifier::new);
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select\n"
                 + " {[Time2].[1997]} on columns,\n"
                 + " {[Time].[1997].[Q3]} on rows\n"
@@ -6200,11 +6200,11 @@ class SchemaTest {
          */
 
         withSchema(context, TestLevelTableAttributeAsViewModifier::new);
-        if (!getDialect(context.getConnection()).allowsFromQuery()) {
+        if (!getDialect(context.getConnectionWithDefaultRole()).allowsFromQuery()) {
             return;
         }
 
-        Result result = executeQuery(context.getConnection(),
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select {[Gender2].members} on columns from [GenderCube]");
 
         assertEqualsVerbose(
@@ -6315,7 +6315,7 @@ class SchemaTest {
         }
 
         withSchema(context, TestAllMemberNoStringReplaceModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select [TIME.CALENDAR].[All TIME(CALENDAR)] on columns\n"
             + "from [Sales Special Time]",
             "Axis #0:\n"
@@ -6516,7 +6516,7 @@ class SchemaTest {
             + "formula=\"EXCEPT({[Store].[Store Country].[USA].children},{[Store].[Store Country].[USA].[CA]})\"/>"));
          */
         withSchema(context, TestVirtualCubeNamedSetSupportInSchemaModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH "
             + "SET [Non CA State Stores] AS 'EXCEPT({[Store].[Store Country].[USA].children},"
             + "{[Store].[Store Country].[USA].[CA]})'\n"
@@ -6534,7 +6534,7 @@ class SchemaTest {
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 266,773\n"
             + "Row #0: 192,025\n");
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH "
             + "MEMBER "
             + "[Store].[Total Non CA State] AS \n"
@@ -6581,7 +6581,7 @@ class SchemaTest {
 
         try {
             withSchema(context, TestVirtualCubeNamedSetSupportInSchemaErrorModifier::new);
-            assertQueryReturns(context.getConnection(),
+            assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "WITH "
                 + "SET [Non CA State Stores] AS 'EXCEPT({[Store].[Store Country].[USA].children},"
                 + "{[Store].[Store Country].[USA].[CA]})'\n"
@@ -6704,7 +6704,7 @@ class SchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBinaryLevelKey(Context context) {
-        switch (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
         case DERBY:
         case MARIADB:
         case MYSQL:
@@ -6817,7 +6817,7 @@ class SchemaTest {
          */
 
         withSchema(context, TestBinaryLevelKeyModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Binary].members} on 0 from [Sales]",
             "Axis #0:\n"
             + "{}\n"
@@ -6832,7 +6832,7 @@ class SchemaTest {
             + "Row #0: \n"
             + "Row #0: \n"
             + "Row #0: \n");
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select hierarchize({[Binary].members}) on 0 from [Sales]",
             "Axis #0:\n"
             + "{}\n"
@@ -6952,7 +6952,7 @@ class SchemaTest {
             + "  </Dimension>\n"));
          */
         withSchema(context, TestLevelInternalTypeModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Big numbers].members} on 0 from [Sales]",
             "Axis #0:\n"
             + "{}\n"
@@ -7071,7 +7071,7 @@ class SchemaTest {
     void _testAttributeHierarchy(Context context) {
         // from email from peter tran dated 2008/9/8
         // TODO: schema syntax to create attribute hierarchy
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH \n"
             + " MEMBER\n"
             + "  Measures.SalesPerWorkingDay AS \n"
@@ -7166,7 +7166,7 @@ class SchemaTest {
                 }
         }
         withSchema(context, TestScdJoinModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select non empty {[Measures].[Unit Sales]} on 0,\n"
             + " non empty Filter({[Product truncated].Members}, [Measures].[Unit Sales] > 10000) on 1\n"
             + "from [Sales]",
@@ -7258,7 +7258,7 @@ class SchemaTest {
         withSchema(context, TestNonUniqueAliasModifier::new);
         Throwable throwable = null;
         try {
-            assertSimpleQuery(context.getConnection());
+            assertSimpleQuery(context.getConnectionWithDefaultRole());
         } catch (Throwable e) {
             throwable = e;
         }
@@ -7278,7 +7278,7 @@ class SchemaTest {
         // until bug MONDRIAN-495, "Table filter concept does not support
         // dialects." is fixed, this test case only works on MySQL
         if (!Bug.BugMondrian495Fixed
-            && getDatabaseProduct(getDialect(context.getConnection()).getDialectName())
+            && getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
             != MYSQL)
         {
             return;
@@ -7378,7 +7378,7 @@ class SchemaTest {
             + "SELECT {[Measures].[Unit Sales]} on columns, "
             + "NON EMPTY Hierarchize({[#DataSet#]}) on rows FROM [Sales2]";
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             query1,
             "Axis #0:\n"
             + "{}\n"
@@ -7396,7 +7396,7 @@ class SchemaTest {
             + "SELECT {[Measures].[Unit Sales]} on columns, "
             + "NON EMPTY Hierarchize({[#DataSet#]}) on rows FROM [Sales2]";
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             query2,
             "Axis #0:\n"
             + "{}\n"
@@ -7534,7 +7534,7 @@ class SchemaTest {
             "Sales", xml, false));
          */
         withSchema(context, CheckBugMondrian355Modifier1::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select Head([Time2].[Quarter hours].Members, 3) on columns\n"
             + "from [Sales]",
             "Axis #0:\n"
@@ -7548,7 +7548,7 @@ class SchemaTest {
             + "Row #0: 589\n");
 
         // Check that can apply ParallelPeriod to a TimeUndefined level.
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertAxisReturns(connection,
             "PeriodsToDate([Time2].[Quarter hours], [Time2].[1997].[Q1].[1].[368])",
             "[Time2].[1997].[Q1].[1].[368]");
@@ -7565,7 +7565,7 @@ class SchemaTest {
                 xml.replace("TimeUndefined", "TimeUnspecified"), false));
             */
         	withSchema(context, CheckBugMondrian355Modifier2::new);
-            assertSimpleQuery(context.getConnection());
+            assertSimpleQuery(context.getConnectionWithDefaultRole());
             fail("expected error");
         } catch (Throwable e) {
             //((TestContext)context).setDatabaseMappingSchemaProviders(
@@ -8040,7 +8040,7 @@ class SchemaTest {
          */
         withSchema(context, TestCaptionDescriptionAndAnnotationModifier::new);
         final Result result =
-            executeQuery(context.getConnection(), "select from [" + salesCubeName + "]");
+            executeQuery(context.getConnectionWithDefaultRole(), "select from [" + salesCubeName + "]");
         final Cube cube = result.getQuery().getCube();
         assertEquals("Cube description", cube.getDescription());
         checkAnnotations(cube.getMetaData(), "a", "Cube");
@@ -8208,7 +8208,7 @@ class SchemaTest {
         checkAnnotations(namedSet.getMetaData(), "a", "Named set");
 
         final Result result2 =
-            executeQuery(context.getConnection(), "select from [" + virtualCubeName + "]");
+            executeQuery(context.getConnectionWithDefaultRole(), "select from [" + virtualCubeName + "]");
         final Cube cube2 = result2.getQuery().getCube();
         assertEquals("Virtual cube description", cube2.getDescription());
         checkAnnotations(cube2.getMetaData(), "a", "Virtual cube");
@@ -8310,7 +8310,7 @@ class SchemaTest {
         withSchema(context, TestCaptionModifier::new);
 
 
-        switch (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
         case POSTGRES:
             // Postgres fails with:
             //   Internal error: while building member cache; sql=[select
@@ -8325,7 +8325,7 @@ class SchemaTest {
             // shouldn't be so picky, and people shouldn't be so daft.
             return;
         }
-        Result result = executeQuery(context.getConnection(),
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select {[Gender2].Children} on columns from [Sales]");
         assertEquals(
             "foobar",
@@ -8360,7 +8360,7 @@ class SchemaTest {
         // Test case requires a pecular inline view, and it works on dialects
         // that scalar subqery, viz oracle. I believe that the mondrian code
         // being works in all dialects.
-        switch (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
         case ORACLE:
             break;
         default:
@@ -8620,7 +8620,7 @@ class SchemaTest {
         final String x = !Bug.BugMondrian747Fixed
             ? "1,379,620"
             : "266,773";
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select non empty {[Measures].[unitsales2]} on 0,\n"
             + " non empty [Store].members on 1\n"
             + "from [cube2]",
@@ -8640,7 +8640,7 @@ class SchemaTest {
             + "Row #3: 135,318\n"
             + "Row #4: 870,562\n");
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select non empty {[Measures].[unitsales1]} on 0,\n"
             + " non empty [Store].members on 1\n"
             + "from [cube1]",
@@ -8686,7 +8686,7 @@ class SchemaTest {
             + "Row #16: 2,203\n"
             + "Row #17: 11,491\n");
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select non empty {[Measures].[unitsales2], [Measures].[unitsales1]} on 0,\n"
             + " non empty [Store].members on 1\n"
             + "from [virtual_cube]",
@@ -9086,7 +9086,7 @@ class SchemaTest {
     }
 
     private void checkBugMondrian463(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select [Measures] on 0,\n"
             + " head([Product3].members, 10) on 1\n"
             + "from [Sales]",
@@ -9238,7 +9238,7 @@ class SchemaTest {
          */
         try {
             withSchema(context, TestLeftDeepJoinFailsModifier::new);
-            assertSimpleQuery(context.getConnection());
+            assertSimpleQuery(context.getConnectionWithDefaultRole());
             fail("expected error");
         } catch (OlapRuntimeException e) {
             assertEquals(
@@ -9314,7 +9314,7 @@ class SchemaTest {
             "WITH SET [#DataSet#] as '{Descendants([Position].[All Position], 2)}' "
             + "SELECT {[Measures].[Org Salary]} on columns, "
             + "NON EMPTY Hierarchize({[#DataSet#]}) on rows FROM [HR]";
-        Result result = executeQuery(context.getConnection(), mdxQuery);
+        Result result = executeQuery(context.getConnectionWithDefaultRole(), mdxQuery);
         Axis[] axes = result.getAxes();
         List<Position> positions = axes[1].getPositions();
         Member mall = positions.get(0).get(0);
@@ -9403,13 +9403,13 @@ class SchemaTest {
          */
         withSchema(context, TestBugMondrian923Modifier::new);
         for (Cube cube
-                : context.getConnection().getSchemaReader().getCubes())
+                : context.getConnectionWithDefaultRole().getSchemaReader().getCubes())
         {
             if (cube.getName().equals("Warehouse and Sales")) {
                 for (Dimension dim : cube.getDimensions()) {
                     if (dim.isMeasures()) {
                         List<Member> members =
-                            context.getConnection()
+                            context.getConnectionWithDefaultRole()
                                 .getSchemaReader().getLevelMembers(
                                     dim.getHierarchy().getLevels()[0],
                                     true);
@@ -9508,7 +9508,7 @@ class SchemaTest {
              */
             withSchema(context, TestCubesVisibilityModifier::new);
             final Cube cube =
-                context.getConnection().getSchema()
+                context.getConnectionWithDefaultRole().getSchema()
                     .lookupCube("Foo", true);
             assertTrue(testValue.equals(cube.isVisible()));
         }
@@ -9562,7 +9562,7 @@ class SchemaTest {
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestVirtualCubesVisibilityModifier::new);
             final Cube cube =
-                context.getConnection().getSchema()
+                context.getConnectionWithDefaultRole().getSchema()
                     .lookupCube("Foo", true);
             assertTrue(testValue.equals(cube.isVisible()));
         }
@@ -9642,7 +9642,7 @@ class SchemaTest {
              */
             withSchema(context, TestDimensionVisibilityModifier::new);
             final Cube cube =
-                context.getConnection().getSchema()
+                context.getConnectionWithDefaultRole().getSchema()
                     .lookupCube("Foo", true);
             Dimension dim = null;
             for (Dimension dimCheck : cube.getDimensions()) {
@@ -9702,7 +9702,7 @@ class SchemaTest {
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestVirtualDimensionVisibilityModifier::new);
             final Cube cube =
-                context.getConnection().getSchema()
+                context.getConnectionWithDefaultRole().getSchema()
                     .lookupCube("Foo", true);
             Dimension dim = null;
             for (Dimension dimCheck : cube.getDimensions()) {
@@ -9799,7 +9799,7 @@ class SchemaTest {
             ((TestContext)context).setCatalogMappingSupplier(testDimensionUsageVisibilityModifier);
 
             final Cube cube =
-                context.getConnection().getSchema()
+                context.getConnectionWithDefaultRole().getSchema()
                     .lookupCube("Foo", true);
 
             Dimension dim = null;
@@ -9891,7 +9891,7 @@ class SchemaTest {
              */
             withSchema(context, TestHierarchyVisibilityModifier::new);
             final Cube cube =
-                context.getConnection().getSchema()
+                context.getConnectionWithDefaultRole().getSchema()
                     .lookupCube("Foo", true);
             Dimension dim = null;
             for (Dimension dimCheck : cube.getDimensions()) {
@@ -9983,7 +9983,7 @@ class SchemaTest {
              */
             withSchema(context, TestLevelVisibilityModifier::new);
             final Cube cube =
-                context.getConnection().getSchema()
+                context.getConnectionWithDefaultRole().getSchema()
                     .lookupCube("Foo", true);
             Dimension dim = null;
             for (Dimension dimCheck : cube.getDimensions()) {
@@ -10194,7 +10194,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestNonCollapsedAggregateModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Product].[Product Family].Members} on rows, {[Measures].[Unit Sales]} on columns from [Foo]",
             "Axis #0:\n"
             + "{}\n"
@@ -10659,7 +10659,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestTwoNonCollapsedAggregateModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {Crossjoin([Product].[Product Family].Members, [Store].[Store Id].Members)} on rows, {[Measures].[Unit Sales]} on columns from [Foo]",
             "Axis #0:\n"
             + "{}\n"
@@ -11023,7 +11023,7 @@ class SchemaTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBugMondrian1047(Context context) {
         // Test case only works under MySQL, due to how columns are quoted.
-        switch (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
         case MARIADB:
         case MYSQL:
             break;
@@ -11096,7 +11096,7 @@ class SchemaTest {
                     + "</Dimension>"),
                 null, false));
          */
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select from [HR]",
             "Axis #0:\n"
             + "{}\n"
@@ -11113,7 +11113,7 @@ class SchemaTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBugMondrian1065(Context context) {
         // Test case only works under Oracle
-        switch (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
         case ORACLE:
             break;
         default:
@@ -11236,7 +11236,7 @@ class SchemaTest {
          */
 
         withSchema(context, TestBugMondrian1065Modifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select non empty crossjoin({[PandaSteak].[Level3].[level 3 - 1], [PandaSteak].[Level3].[level 3 - 2]}, {[Measures].[Unit Sales], [Measures].[Store Cost]}) on columns, {[Product].[Product Family].Members} on rows from [Sales]",
             "Axis #0:\n"
             + "{}\n"
@@ -11274,7 +11274,7 @@ class SchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMondrian1390(Context context) throws Exception {
-        Schema schema = context.getConnection().getSchema();
+        Schema schema = context.getConnectionWithDefaultRole().getSchema();
         Cube salesCube = schema.lookupCube("Sales", true);
         SchemaReader sr = salesCube.getSchemaReader(null).withLocus();
         List<Member> members = sr.getLevelMembers(
@@ -11695,7 +11695,7 @@ class SchemaTest {
                 + "</Schema>");
          */
         withSchema(context, TestMondrian1499Modifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Org Salary]} on columns,\n"
             + "{[Store].[Store Country].Members} on rows from [HR]",
             "Axis #0:\n"
@@ -11817,7 +11817,7 @@ class SchemaTest {
         withSchema(context, schema);
         */
         withSchema(context, TestMondrian1073Modifier::new);
-        assertQueryReturns(context.getConnection(), "CubeB",
+        assertQueryReturns(context.getConnectionWithDefaultRole(), "CubeB",
             "SELECT [Measures].[Fantastic Count for Different Types of Promotion] ON COLUMNS\n"
             + "FROM [CubeB]",
             "Axis #0:\n"
@@ -11866,7 +11866,7 @@ class SchemaTest {
                 schemaFile.getAbsolutePath());
          */
         withSchema(context, TestMultiByteSchemaReadFromFile::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select [Gender].members on 0 from sales",
             "Axis #0:\n"
             + "{}\n"
@@ -12096,7 +12096,7 @@ class SchemaTest {
                                         + "</Schema>\n");
         */
         withSchema(context, TestMondrian1275Modifier::new);
-        final RolapConnection rolapConn = (RolapConnection) context.getConnection();
+        final RolapConnection rolapConn = (RolapConnection) context.getConnectionWithDefaultRole();
         final SchemaReader schemaReader = rolapConn.getSchemaReader();
         final RolapSchema schema = schemaReader.getSchema();
         for (RolapCube cube : schema.getCubeList()) {

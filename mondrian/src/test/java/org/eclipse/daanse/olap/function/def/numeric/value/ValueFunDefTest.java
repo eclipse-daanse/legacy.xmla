@@ -33,22 +33,22 @@ class ValueFunDefTest {
     void testValue(Context context) {
         // VALUE is usually a cell property, not a member property.
         // We allow it because MS documents it as a function, <Member>.VALUE.
-        TestUtil.assertExprReturns(context.getConnection(), "[Measures].[Store Sales].VALUE", "565,238.13" );
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "[Measures].[Store Sales].VALUE", "565,238.13" );
 
         // Depends upon almost everything.
         String s1 = FunctionTest.allHiersExcept( "[Measures]" );
-        assertExprDependsOn(context.getConnection(),
+        assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "[Measures].[Store Sales].VALUE", s1 );
 
         // We do not allow FORMATTED_VALUE.
-        assertExprThrows(context.getConnection(),
+        assertExprThrows(context.getConnectionWithDefaultRole(),
             "[Measures].[Store Sales].FORMATTED_VALUE",
             "MDX object '[Measures].[Store Sales].FORMATTED_VALUE' not found in cube 'Sales'" );
 
-        TestUtil.assertExprReturns(context.getConnection(), "[Measures].[Store Sales].NAME", "Store Sales" );
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "[Measures].[Store Sales].NAME", "Store Sales" );
         // MS says that ID and KEY are standard member properties for
         // OLE DB for OLAP, but not for XML/A. We don't support them.
-        assertExprThrows(context.getConnection(),
+        assertExprThrows(context.getConnectionWithDefaultRole(),
             "[Measures].[Store Sales].ID",
             "MDX object '[Measures].[Store Sales].ID' not found in cube 'Sales'" );
 
@@ -60,11 +60,11 @@ class ValueFunDefTest {
         // "<MEMBER>.KEY" syntax because there is not function defined. For
         // other builtin properties, such as NAME, CAPTION there is a builtin
         // function.
-        assertExprThrows(context.getConnection(),
+        assertExprThrows(context.getConnectionWithDefaultRole(),
             "[Measures].[Store Sales].KEY",
             "No function matches signature '<Member>.KEY'" );
 
-        TestUtil.assertExprReturns(context.getConnection(), "[Measures].[Store Sales].CAPTION", "Store Sales" );
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "[Measures].[Store Sales].CAPTION", "Store Sales" );
     }
 
 }

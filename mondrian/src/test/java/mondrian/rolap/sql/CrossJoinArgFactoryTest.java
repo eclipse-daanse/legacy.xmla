@@ -55,6 +55,6 @@ class CrossJoinArgFactoryTest {
                 + "Row #0: 15,941.98\n"
                 + "Row #1: 16,598.87\n"
                 + "Row #1: 15,649.64\n";
-        assertQueryReturns(context.getConnection(), query, expected);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), query, expected);
     }
 }

@@ -31,7 +31,7 @@ class FirstChildFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFirstChildFirstInLevel(Context context) {
-        Member member = executeSingletonAxis(context.getConnection(), "[Time].[1997].[Q4].FirstChild" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q4].FirstChild" );
         assertEquals( "10", member.getName() );
     }
 
@@ -39,7 +39,7 @@ class FirstChildFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFirstChildAll(Context context) {
         Member member =
-            executeSingletonAxis(context.getConnection(), "[Gender].[All Gender].FirstChild" );
+            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[All Gender].FirstChild" );
         assertEquals( "F", member.getName() );
     }
 
@@ -47,7 +47,7 @@ class FirstChildFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFirstChildOfChildless(Context context) {
         Member member =
-            executeSingletonAxis(context.getConnection(), "[Gender].[All Gender].[F].FirstChild" );
+            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[All Gender].[F].FirstChild" );
         assertNull( member );
     }
 

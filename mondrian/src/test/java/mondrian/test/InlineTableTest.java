@@ -181,7 +181,7 @@ class InlineTableTest {
         withSchema(context, schema);
          */
         withSchema(context, TestInlineTableModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Alternative Promotion].[All Alternative Promotions].children} ON COLUMNS\n"
             + "from [" + cubeName + "] ",
             "Axis #0:\n"
@@ -325,7 +325,7 @@ class InlineTableTest {
         withSchema(context, schema);
         */
         withSchema(context, TestInlineTableInSharedDimModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Shared Alternative Promotion].[All Shared Alternative Promotions].children} ON COLUMNS\n"
             + "from [" + cubeName + "] ",
             "Axis #0:\n"
@@ -340,7 +340,7 @@ class InlineTableTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testInlineTableSnowflake(Context context) {
-        if (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())
+        if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
             == DatabaseProduct.INFOBRIGHT)
         {
             // Infobright has a bug joining an inline table. Gives error
@@ -516,7 +516,7 @@ class InlineTableTest {
         withSchema(context, schema);
          */
         withSchema(context, TestInlineTableSnowflakeModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Store].children} ON COLUMNS\n"
             + "from [" + cubeName + "] ",
             "Axis #0:\n"
@@ -696,7 +696,7 @@ class InlineTableTest {
             return;
         }
         withSchema(context, TestInlineTableDateModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Alternative Promotion].Members} ON COLUMNS\n"
             + "from [" + cubeName + "] ",
             "Axis #0:\n"

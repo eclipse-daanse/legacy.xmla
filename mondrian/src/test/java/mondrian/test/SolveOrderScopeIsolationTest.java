@@ -158,7 +158,7 @@ class SolveOrderScopeIsolationTest {
             + "from sales";
 
         setSolveOrderMode(context, SolveOrderMode.ABSOLUTE);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -191,7 +191,7 @@ class SolveOrderScopeIsolationTest {
             + "from sales";
 
         setSolveOrderMode(context, SolveOrderMode.SCOPED);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -220,7 +220,7 @@ class SolveOrderScopeIsolationTest {
     public void _future_testOverrideCubeMemberHappensWithScopeIsolation(Context context) {
     	prepareContext(context);
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with\n"
             + "member gender.maleMinusFemale as 'Gender.M - gender.f', "
             + "SOLVE_ORDER=3000, FORMAT_STRING='#.##'\n"
@@ -262,7 +262,7 @@ class SolveOrderScopeIsolationTest {
             + " {[Measures].[Store Sales], [Measures].[Store Cost], [Measures].[ProfitSolveOrder3000]} ON 1 "
             + "FROM SALES\n";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -297,7 +297,7 @@ class SolveOrderScopeIsolationTest {
             + "FROM SALES\n"
             + "WHERE ProfitSolveOrder3000";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{[Measures].[ProfitSolveOrder3000]}\n"
@@ -324,7 +324,7 @@ class SolveOrderScopeIsolationTest {
             + "{gender.override, gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -357,7 +357,7 @@ class SolveOrderScopeIsolationTest {
             + "{gender.override, gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -391,7 +391,7 @@ class SolveOrderScopeIsolationTest {
             + "{[Gender].[override], gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -425,7 +425,7 @@ class SolveOrderScopeIsolationTest {
             + "{[Gender].[override], gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -459,7 +459,7 @@ class SolveOrderScopeIsolationTest {
             + "{[Gender].[override], gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -493,7 +493,7 @@ class SolveOrderScopeIsolationTest {
             + "{[Gender].[override], gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -537,7 +537,7 @@ class SolveOrderScopeIsolationTest {
             + "{Time.Total, Time.Total1, [Time].[1997].[Q1], [Time].[1997].[Q2]} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -582,7 +582,7 @@ class SolveOrderScopeIsolationTest {
             + "{Time.Total, Time.Total1, [Time].[1997].[Q1], [Time].[1997].[Q2]} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -633,7 +633,7 @@ class SolveOrderScopeIsolationTest {
             + "{Time.Total, Time.Total1, [Time].[1997].[Q1], [Time].[1997].[Q2]} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -677,7 +677,7 @@ class SolveOrderScopeIsolationTest {
             + "{Time.Total, Time.Total1, [Time].[1997].[Q1], [Time].[1997].[Q2]} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -729,7 +729,7 @@ class SolveOrderScopeIsolationTest {
             + "{Time.Total, [Time].[1997].[Q1], [Time].[1997].[Q2]} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -770,7 +770,7 @@ class SolveOrderScopeIsolationTest {
             + "{Time.Total, [Time].[1997].[Q1], [Time].[1997].[Q2]} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -809,7 +809,7 @@ class SolveOrderScopeIsolationTest {
             + "{gender.override1, gender.override2, gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, ABSOLUTE);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"
@@ -852,7 +852,7 @@ class SolveOrderScopeIsolationTest {
             + "{gender.override1, gender.override2, gender.maleMinusFemale} on 1\n"
             + "from sales";
         setSolveOrderMode(context, SCOPED);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
             + "{}\n"

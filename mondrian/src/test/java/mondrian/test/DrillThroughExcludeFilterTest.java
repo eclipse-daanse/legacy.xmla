@@ -76,7 +76,7 @@ class DrillThroughExcludeFilterTest {
 
         withSchema(context, SchemaModifiers.DrillThroughExcludeFilterTestModifier::new);
 
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         Result result = executeQuery(connection,
             "WITH"
             + "   SET [*NATIVE_CJ_SET_WITH_SLICER] "

@@ -34,7 +34,7 @@ class ParentFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testParent(Context context) {
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
             "[Gender].Parent",
             "{[Gender]}" );
@@ -51,7 +51,7 @@ class ParentFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testParentPC(Context context) {
         //final Context testContext = getContext().withCube( "HR" );
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertAxisReturns(connection, "HR",
             "[Employees].Parent",
             "" );
@@ -91,7 +91,7 @@ class ParentFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBasic5(Context context) {
         Result result =
-            executeQuery(context.getConnection(),
+            executeQuery(context.getConnectionWithDefaultRole(),
                 "select{ [Product].[All Products].[Drink].Parent} on columns "
                     + "from Sales" );
         assertEquals(
@@ -103,7 +103,7 @@ class ParentFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFirstInLevel5(Context context) {
         Result result =
-            executeQuery(context.getConnection(),
+            executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Time].[1997].[Q2].[4].Parent} on columns,"
                     + "{[Gender].[M]} on rows from Sales" );
         assertEquals(
@@ -115,7 +115,7 @@ class ParentFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAll5(Context context) {
         Result result =
-            executeQuery(context.getConnection(),
+            executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Time].[1997].[Q2].Parent} on columns,"
                     + "{[Gender].[M]} on rows from Sales" );
         // previous to [Gender].[All] is null, so no members are returned

@@ -133,7 +133,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     @Override
     public void createDocumentation(Context ctx, Path path) throws Exception {
     	RolapContext context=(RolapContext) ctx;
-        metaInfo = databaseService.createMetaInfo(context.getConnection().getDataSource());
+        metaInfo = databaseService.createMetaInfo(context.getConnectionWithDefaultRole().getDataSource());
         File file = path.toFile();
 
         if (file.exists()) {

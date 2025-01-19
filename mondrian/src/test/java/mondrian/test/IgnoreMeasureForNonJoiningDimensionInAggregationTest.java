@@ -55,7 +55,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     void testNoTotalsForCompdMeasureWithComponentsHavingNonJoiningDims(Context context)
     {
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         assertQueryReturns(connection,
             "with member [Measures].[Total Sales] as "
@@ -76,7 +76,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testNonJoiningDimsWhenAggFunctionIsUsedOrNotUsed(Context context) {
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         final String query = "WITH\n"
                              + "MEMBER [Measures].[Total Sales] AS "
@@ -126,7 +126,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testNonJoiningDimForAMemberDefinedOnJoiningDim(Context context) {
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         assertQueryReturns(connection,
             "WITH\n"
@@ -155,7 +155,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testNonJoiningDimWithNumericIif(Context context) {
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         assertQueryReturns(connection,
             "WITH\n"
@@ -190,7 +190,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testNonJoiningDimAtMemberValueCalcMultipleScenarios(Context context) {
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         assertQueryReturns(connection,
             "WITH\n"
@@ -238,7 +238,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testNonJoiningDimAtTupleValueCalcMultipleScenarios(Context context) {
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         assertQueryReturns(connection,
             "WITH\n"
@@ -299,7 +299,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testNoTotalsForCompoundMeasureWithNonJoiningDimAtAllLevel(Context context) {
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         assertQueryReturns(connection,
             "with member [Measures].[Total Sales] as "
@@ -321,7 +321,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testNoTotalForMeasureWithCrossJoinOfJoiningAndNonJoiningDims(Context context) {
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         assertQueryReturns(connection,
             "with member [Product].x as "
@@ -338,7 +338,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testShouldTotalAMeasureWithAllJoiningDimensions(Context context) {
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         assertQueryReturns(connection,
             "with member [Product].x as "
@@ -360,7 +360,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testShouldNotTotalAMeasureWithANonJoiningDimension(Context context) {
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         assertQueryReturns(connection,
             "with member [Gender].x as 'sum({Gender.members})'"
@@ -379,7 +379,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testGetMeasureCubeForCalcMeasureDoesNotThrowCastException(Context context) {
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         connection.getCacheControl(null).flushSchemaCache();
         assertQueryReturns(connection,
             "WITH MEMBER [Measures].[My Profit] AS "

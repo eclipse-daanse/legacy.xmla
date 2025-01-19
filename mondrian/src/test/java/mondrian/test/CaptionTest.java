@@ -43,7 +43,7 @@ class CaptionTest{
     void testMeasureCaption(Context context) {
         withSchema(context, MyFoodmartModifier::new);
         final Connection monConnection =
-                context.getConnection();
+                context.getConnectionWithDefaultRole();
         String mdxQuery =
                 "SELECT {[Measures].[Unit Sales]} ON COLUMNS, "
                         + "{[Time].[1997].[Q1]} ON ROWS FROM [Sales]";
@@ -64,7 +64,7 @@ class CaptionTest{
     void testDimCaption(Context context) {
         withSchema(context, MyFoodmartModifier::new);
         final Connection monConnection =
-                context.getConnection();
+                context.getConnectionWithDefaultRole();
         String mdxQuery =
                 "SELECT {[Measures].[Unit Sales]} ON COLUMNS, "
                         + "{[Promotion Media].[All Media]} ON ROWS FROM [Sales]";
@@ -90,7 +90,7 @@ class CaptionTest{
                         + "FROM [Sales]";
         withSchema(context, MyFoodmartModifier::new);
         final Connection monConnection =
-                context.getConnection();
+                context.getConnectionWithDefaultRole();
         Query monQuery = monConnection.parseQuery(mdxQuery);
         Result monResult = monConnection.execute(monQuery);
         Axis[] axes = monResult.getAxes();
@@ -114,7 +114,7 @@ class CaptionTest{
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testLevelCaptionExpression(Context context) {
 
-        switch (getDatabaseProduct(getDialect(context.getConnection()).getDialectName())) {
+        switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
             case ACCESS:
             case ORACLE:
             case MARIADB:
@@ -127,7 +127,7 @@ class CaptionTest{
         }
         withSchema(context, MyFoodmartModifier::new);
         final Connection monConnection =
-                context.getConnection();
+                context.getConnectionWithDefaultRole();
         String mdxQuery =
                 "SELECT {[Measures].[Unit Sales]} ON COLUMNS, "
                         + "{[Time].[Year].Members} ON ROWS FROM [Sales]";

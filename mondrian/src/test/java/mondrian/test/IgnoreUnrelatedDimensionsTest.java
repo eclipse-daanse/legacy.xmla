@@ -138,7 +138,7 @@ class IgnoreUnrelatedDimensionsTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testTotalingOnCrossJoinOfJoiningAndNonJoiningDimensions(Context context) {
     	prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Unit Sales VM] AS "
             + "'ValidMeasure([Measures].[Unit Sales])', SOLVE_ORDER = 3000 "
             + "MEMBER Gender.G AS 'AGGREGATE(CROSSJOIN({[Gender].[Gender].MEMBERS},"
@@ -160,7 +160,7 @@ class IgnoreUnrelatedDimensionsTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testVMShouldNotPushUpAggMemberDefinedOnNonJoiningDimension(Context context) {
     	prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Total Sales] AS "
             + "'ValidMeasure(Measures.[Warehouse Sales]) + [Measures].[Unit Sales]',"
             + "SOLVE_ORDER = 3000 "
@@ -191,7 +191,7 @@ class IgnoreUnrelatedDimensionsTest {
         withSchema(context, schema);
          */
     	withSchema(context, SchemaModifiers.IgnoreUnrelatedDimensionsTestModifier1::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Total Sales] AS "
             + "'ValidMeasure(Measures.[Warehouse Sales]) + [Measures].[Unit Sales]',"
             + "SOLVE_ORDER = 3000 "
@@ -225,7 +225,7 @@ class IgnoreUnrelatedDimensionsTest {
         withSchema(context, schema);
          */
         withSchema(context, SchemaModifiers.IgnoreUnrelatedDimensionsTestModifier1::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT "
             + "{[Measures].[Warehouse Sales]} ON 0"
             + " FROM [WAREHOUSE AND SALES 3] where ([Gender].[M])",
@@ -249,7 +249,7 @@ class IgnoreUnrelatedDimensionsTest {
         withSchema(context, schema);
          */
         withSchema(context, SchemaModifiers.IgnoreUnrelatedDimensionsTestModifier1::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT "
             + "{[Measures].[Warehouse Sales]} ON 0"
             + " FROM [WAREHOUSE AND SALES 3] where "
@@ -275,7 +275,7 @@ class IgnoreUnrelatedDimensionsTest {
         withSchema(context, schema);
          */
         withSchema(context, SchemaModifiers.IgnoreUnrelatedDimensionsTestModifier1::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT "
             + "{[Measures].[Warehouse Sales]} ON 0"
             + " FROM [WAREHOUSE AND SALES 3] where "
@@ -307,7 +307,7 @@ class IgnoreUnrelatedDimensionsTest {
         // Should equal the [Unit Sales] of [Graduate Degree] and
         // [High School Degree] (with default Gender.F),
         //  plus the total [warehouse sales].
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member measures.bothCubes as "
             + "'measures.[unit sales] + measures.[warehouse sales]'"
             + " SELECT "
@@ -324,7 +324,7 @@ class IgnoreUnrelatedDimensionsTest {
         // [Sales] does not ignoreUnrelatedDimensions, so the [Unit Sales]
         // part of the formula below should result in NULL given the
         // [Warehouse] dim in the slicer.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member measures.bothCubes as "
             + "'measures.[unit sales] + measures.[warehouse sales]'"
             + " SELECT "
@@ -349,7 +349,7 @@ class IgnoreUnrelatedDimensionsTest {
         // MONDRIAN-2072
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             " SELECT "
             + " FROM [WAREHOUSE AND SALES2] where "
             + "crossjoin( measures.[warehouse sales], "
@@ -365,7 +365,7 @@ class IgnoreUnrelatedDimensionsTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testTotalingForValidAndNonValidMeasuresWithJoiningDimensions(Context context) {
     	prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Unit Sales VM] AS "
             + "'ValidMeasure([Measures].[Unit Sales])',"
             + "SOLVE_ORDER = 3000 "
@@ -389,7 +389,7 @@ class IgnoreUnrelatedDimensionsTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testTotalingWhenIgnoreUnrelatedDimensionsPropertyIsTrue(Context context) {
     	prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Unit Sales VM] AS "
             + "'ValidMeasure([Measures].[Unit Sales])', SOLVE_ORDER = 3000 "
             + "MEMBER [Gender].[COG_OQP_USR_Aggregate(Gender SET)] AS "
@@ -448,7 +448,7 @@ class IgnoreUnrelatedDimensionsTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testTotalingOnNonJoiningDimension(Context context) {
     	prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Unit Sales VM] AS "
             + "'ValidMeasure([Measures].[Unit Sales])', SOLVE_ORDER =3000"
             + "MEMBER MEASURES.[VirtualMeasure] AS "
@@ -528,7 +528,7 @@ class IgnoreUnrelatedDimensionsTest {
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
 
         prepareContext(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "MEMBER [Measures].[Total Sales] AS '[Measures].[Store Sales] + "
             + "[Measures].[Warehouse Sales]'\n"

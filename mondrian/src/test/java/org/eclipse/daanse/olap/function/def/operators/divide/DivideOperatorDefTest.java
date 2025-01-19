@@ -29,9 +29,9 @@ class DivideOperatorDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDivide(Context context) {
-        assertExprReturns(context.getConnection(), "10 / 5", "2" );
-        assertExprReturns(context.getConnection(), NullNumericExpr + " / - 2", "" );
-        assertExprReturns(context.getConnection(), NullNumericExpr + " / " + NullNumericExpr, "" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "10 / 5", "2" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " / - 2", "" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " / " + NullNumericExpr, "" );
 
         boolean origNullDenominatorProducesNull =
             context.getConfig().nullDenominatorProducesNull();
@@ -39,24 +39,24 @@ class DivideOperatorDefTest {
             // default behavior
             ((TestConfig)context.getConfig()).setNullDenominatorProducesNull(false);
 
-            assertExprReturns(context.getConnection(), "-2 / " + NullNumericExpr, "Infinity" );
-            assertExprReturns(context.getConnection(), "0 / 0", "NaN" );
-            assertExprReturns(context.getConnection(), "-3 / (2 - 2)", "-Infinity" );
+            assertExprReturns(context.getConnectionWithDefaultRole(), "-2 / " + NullNumericExpr, "Infinity" );
+            assertExprReturns(context.getConnectionWithDefaultRole(), "0 / 0", "NaN" );
+            assertExprReturns(context.getConnectionWithDefaultRole(), "-3 / (2 - 2)", "-Infinity" );
 
-            assertExprReturns(context.getConnection(), "NULL/1", "" );
-            assertExprReturns(context.getConnection(), "NULL/NULL", "" );
-            assertExprReturns(context.getConnection(), "1/NULL", "Infinity" );
+            assertExprReturns(context.getConnectionWithDefaultRole(), "NULL/1", "" );
+            assertExprReturns(context.getConnectionWithDefaultRole(), "NULL/NULL", "" );
+            assertExprReturns(context.getConnectionWithDefaultRole(), "1/NULL", "Infinity" );
 
             // when NullOrZeroDenominatorProducesNull is set to true
             ((TestConfig)context.getConfig()).setNullDenominatorProducesNull( true );
 
-            assertExprReturns(context.getConnection(), "-2 / " + NullNumericExpr, "" );
-            assertExprReturns(context.getConnection(), "0 / 0", "NaN" );
-            assertExprReturns(context.getConnection(), "-3 / (2 - 2)", "-Infinity" );
+            assertExprReturns(context.getConnectionWithDefaultRole(), "-2 / " + NullNumericExpr, "" );
+            assertExprReturns(context.getConnectionWithDefaultRole(), "0 / 0", "NaN" );
+            assertExprReturns(context.getConnectionWithDefaultRole(), "-3 / (2 - 2)", "-Infinity" );
 
-            assertExprReturns(context.getConnection(), "NULL/1", "" );
-            assertExprReturns(context.getConnection(), "NULL/NULL", "" );
-            assertExprReturns(context.getConnection(), "1/NULL", "" );
+            assertExprReturns(context.getConnectionWithDefaultRole(), "NULL/1", "" );
+            assertExprReturns(context.getConnectionWithDefaultRole(), "NULL/NULL", "" );
+            assertExprReturns(context.getConnectionWithDefaultRole(), "1/NULL", "" );
         } finally {
             ((TestConfig)context.getConfig()).setNullDenominatorProducesNull( origNullDenominatorProducesNull );
         }
@@ -65,7 +65,7 @@ class DivideOperatorDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDividePrecedence(Context context) {
-        assertExprReturns(context.getConnection(), "24 / 4 / 2 * 10 - -1", "31" );
+        assertExprReturns(context.getConnectionWithDefaultRole(), "24 / 4 / 2 * 10 - -1", "31" );
     }
 
 }

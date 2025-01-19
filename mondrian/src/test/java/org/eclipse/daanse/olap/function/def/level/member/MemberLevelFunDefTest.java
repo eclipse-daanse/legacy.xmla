@@ -24,7 +24,7 @@ class MemberLevelFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMemberLevel(Context context) {
-        TestUtil.assertExprReturns(context.getConnection(),
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Time].[1997].[Q1].[1].Level.UniqueName",
             "[Time].[Month]" );
     }

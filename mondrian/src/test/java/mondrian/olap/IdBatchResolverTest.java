@@ -451,12 +451,12 @@ class IdBatchResolverTest  {
     }
 
     public IdBatchResolver makeTestBatchResolver(Context context,String mdx) {
-    	TestUtil.flushSchemaCache(context.getConnection());
+    	TestUtil.flushSchemaCache(context.getConnectionWithDefaultRole());
         FactoryImpl factoryImpl = new FactoryImplTestWrapper();
         //MdxParserValidator parser = new JavaccParserValidatorImpl(factoryImpl);
 
         RolapConnection conn = (RolapConnection) spy(
-        		context.getConnection());
+        		context.getConnectionWithDefaultRole());
         when(conn.getQueryProvider()).thenReturn(new QueryProviderWrapper());
         //when(conn.createParser()).thenReturn(parser);
 

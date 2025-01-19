@@ -29,8 +29,8 @@ class LessOperatorDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLt(Context context) {
-        assertBooleanExprReturns(context.getConnection(), " 2 < 1.0 + 1.0 ", false );
-        checkNullOp(context.getConnection(), "<" );
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), " 2 < 1.0 + 1.0 ", false );
+        checkNullOp(context.getConnectionWithDefaultRole(), "<" );
     }
 
 }

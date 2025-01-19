@@ -28,7 +28,7 @@ class SiblingsFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSiblingsA(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "{[Time].[1997].Siblings}",
             "[Time].[1997]\n"
                 + "[Time].[1998]" );
@@ -37,7 +37,7 @@ class SiblingsFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSiblingsB(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "{[Store].Siblings}",
             "[Store].[All Stores]" );
     }
@@ -45,7 +45,7 @@ class SiblingsFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSiblingsC(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "{[Store].[USA].[CA].Siblings}",
             "[Store].[USA].[CA]\n"
                 + "[Store].[USA].[OR]\n"
@@ -56,9 +56,9 @@ class SiblingsFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSiblingsD(Context context) {
         // The null member has no siblings -- not even itself
-        assertAxisReturns(context.getConnection(), "{[Gender].Parent.Siblings}", "" );
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "{[Gender].Parent.Siblings}", "" );
 
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "count ([Gender].parent.siblings, includeempty)", "0" );
     }
 

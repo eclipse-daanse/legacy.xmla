@@ -130,7 +130,7 @@ class VirtualCubeTest extends BatchTestCase {
         withSchema(context, schema);
          */
         withSchema(context, TestNoTimeDimensionModifier::new);
-        checkXxx(context.getConnection());
+        checkXxx(context.getConnectionWithDefaultRole());
     }
 
     @ParameterizedTest
@@ -189,7 +189,7 @@ class VirtualCubeTest extends BatchTestCase {
         String query1 = "select from [Sales vs Warehouse]";
         String query2 =
             "select from [Sales vs Warehouse] where measures.profit";
-        assertQueriesReturnSimilarResults(context.getConnection(), query1, query2);
+        assertQueriesReturnSimilarResults(context.getConnectionWithDefaultRole(), query1, query2);
     }
 
     @ParameterizedTest
@@ -249,7 +249,7 @@ class VirtualCubeTest extends BatchTestCase {
         String query2 =
             "select from [Sales vs Warehouse] "
             + "where measures.[Warehouse Sales]";
-        assertQueriesReturnSimilarResults(context.getConnection(), query1, query2);
+        assertQueriesReturnSimilarResults(context.getConnectionWithDefaultRole(), query1, query2);
     }
 
     @Disabled // cube name not a string. we use reference to cube. we not able to set "Bad cube". this test will delete in future
@@ -366,7 +366,7 @@ class VirtualCubeTest extends BatchTestCase {
             "select from [Sales vs Warehouse] "
             + "where measures.[Profit]";
 
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         if (SystemWideProperties.instance().CaseSensitive) {
             assertQueriesReturnSimilarResults(connection,
                 queryWithoutFilter, queryWithFirstMeasure);
@@ -429,7 +429,7 @@ class VirtualCubeTest extends BatchTestCase {
         withSchema(context, schema);
          */
         withSchema(context, TestWithTimeDimensionModifier::new);
-        checkXxx(context.getConnection());
+        checkXxx(context.getConnectionWithDefaultRole());
     }
 
 
@@ -464,7 +464,7 @@ class VirtualCubeTest extends BatchTestCase {
         // that does not have ALL as its default member.
         createContextWithNonDefaultAllMember(context);
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Warehouse].defaultMember} on columns, "
             + "{[Measures].[Warehouse Cost]} on rows from [Warehouse (Default USA)]",
             "Axis #0:\n"
@@ -477,7 +477,7 @@ class VirtualCubeTest extends BatchTestCase {
 
         // There is a value for [USA] -- because it is the default member and
         // the hierarchy has no all member -- but not for [USA].[CA].
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Warehouse].defaultMember, [Warehouse].[USA].[CA]} on columns, "
             + "{[Measures].[Warehouse Cost], [Measures].[Sales Count]} on rows "
             + "from [Warehouse (Default USA) and Sales]",
@@ -499,7 +499,7 @@ class VirtualCubeTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNonDefaultAllMember2(Context context) {
         createContextWithNonDefaultAllMember(context);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select { measures.[unit sales] } on 0 \n"
             + "from [warehouse (Default USA) and Sales]",
             "Axis #0:\n"
@@ -764,7 +764,7 @@ class VirtualCubeTest extends BatchTestCase {
             + " [Measures].[Profit],\n"
             + " [Measures].[Profit last Period],\n"
             + " [Measures].[Average Warehouse Sale]} on columns\n"
-            + "from [Warehouse and Sales Member Visibility]", context.getConnection());
+            + "from [Warehouse and Sales Member Visibility]", context.getConnectionWithDefaultRole());
         assertVisibility(result, 0, "Sales Count", true); // explicitly visible
         assertVisibility(
             result, 1, "Store Cost", true); // explicitly invisible
@@ -777,13 +777,13 @@ class VirtualCubeTest extends BatchTestCase {
 
         // check that visibilities in the base cubes are still the same
         result = executeQuery(
-          "select {[Measures].[Profit last Period]} on columns from [Sales]", context.getConnection());
+          "select {[Measures].[Profit last Period]} on columns from [Sales]", context.getConnectionWithDefaultRole());
         assertVisibility(result, 0, "Profit last Period", true); // explicitly visible in base cube
 
         result = executeQuery(
           "select {[Measures].[Units Shipped],\n"
             + " [Measures].[Average Warehouse Sale]} on columns\n"
-            + " from [Warehouse]", context.getConnection());
+            + " from [Warehouse]", context.getConnectionWithDefaultRole());
         assertVisibility(result, 0, "Units Shipped", true); // implicitly visible in base cube
         assertVisibility(result, 1, "Average Warehouse Sale", true); // implicitly visible in base cube
     }
@@ -925,7 +925,7 @@ class VirtualCubeTest extends BatchTestCase {
         withSchema(context, schema);
          */
         withSchema(context, TestFormatStringExpressionCubeNoCacheModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Profit Per Unit Shipped]} ON COLUMNS, "
             + "{[Store].[All Stores].[USA].[CA], [Store].[All Stores].[USA].[OR], [Store].[All Stores].[USA].[WA]} ON ROWS "
             + "from [Warehouse and Sales Format Expression Cube No Cache] "
@@ -947,7 +947,7 @@ class VirtualCubeTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCalculatedMeasure(Context context) {
         // calculated measures reference measures defined in the base cube
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + "{[Measures].[Profit Growth], "
             + "[Measures].[Profit], "
@@ -968,7 +968,7 @@ class VirtualCubeTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLostData(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Time].[Time].Members} on columns,\n"
             + " {[Product].Children} on rows\n"
             + "from [Sales]",
@@ -1115,7 +1115,7 @@ class VirtualCubeTest extends BatchTestCase {
             + "Row #2: \n"
             + "Row #2: \n"
             + "Row #2: \n");
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Measures].[Unit Sales]} on 0,\n"
             + " {[Product].Children} on 1\n"
@@ -1140,7 +1140,7 @@ class VirtualCubeTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCalculatedMeasureAcrossCubes(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Shipped per Ordered] as ' [Measures].[Units Shipped] / [Measures].[Unit Sales] ', format_string='#.00%'\n"
             + " member [Measures].[Profit per Unit Shipped] as ' [Measures].[Profit] / [Measures].[Units Shipped] '\n"
             + "select\n"
@@ -1236,7 +1236,7 @@ class VirtualCubeTest extends BatchTestCase {
             + "  </CalculatedMember>\n"));
          */
         withSchema(context, SchemaModifiers.VirtualCubeTestModifier1::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + " {[Measures].[Unit Sales], \n"
             + "  [Measures].[Shipped per Ordered]} on 0,\n"
@@ -1291,7 +1291,7 @@ class VirtualCubeTest extends BatchTestCase {
     void testAllMeasureMembers(Context context) {
         // result should exclude measures that are not explicitly defined
         // in the virtual cube (e.g., [Profit last Period])
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + "{[Measures].allMembers} on columns\n"
             + "from [Warehouse and Sales]",
@@ -1380,7 +1380,7 @@ class VirtualCubeTest extends BatchTestCase {
         withSchema(context, schema);
          */
         withSchema(context, TestOrdinalColumnModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Org Salary]} on columns, "
             + "non empty "
             + "crossjoin([Store].[Store Country].members, [Position].[Store Management].children) "
@@ -1469,7 +1469,7 @@ class VirtualCubeTest extends BatchTestCase {
         String queryWithDeflaultMeasureFilter =
             "select "
             + "from [Sales vs Warehouse] where measures.[Unit Sales]";
-        assertQueriesReturnSimilarResults(context.getConnection(),
+        assertQueriesReturnSimilarResults(context.getConnectionWithDefaultRole(),
             queryWithoutFilter, queryWithDeflaultMeasureFilter);
     }
 
@@ -1483,7 +1483,7 @@ class VirtualCubeTest extends BatchTestCase {
     void testNativeSetCaching(Context context) {
         // Only need to run this against one db to verify caching
         // behavior is correct.
-        final Dialect dialect = getDialect(context.getConnection());
+        final Dialect dialect = getDialect(context.getConnectionWithDefaultRole());
         if (getDatabaseProduct(dialect.getDialectName()) != DatabaseProduct.DERBY) {
             return;
         }
@@ -1586,12 +1586,12 @@ class VirtualCubeTest extends BatchTestCase {
 
         // Run query 1 with cleared cache;
         // Make sure NECJ 1 is evaluated natively.
-        assertQuerySql(context.getConnection(), query1, patterns1, true);
+        assertQuerySql(context.getConnectionWithDefaultRole(), query1, patterns1, true);
 
         // Now run query 2 with warm cache;
         // Make sure NECJ 2 does not reuse the cache result from NECJ 1, and
         // NECJ 2 is evaluated natively.
-        assertQuerySql(context.getConnection(), query2, patterns2, false);
+        assertQuerySql(context.getConnectionWithDefaultRole(), query2, patterns2, false);
     }
 
     /**
@@ -1665,7 +1665,7 @@ class VirtualCubeTest extends BatchTestCase {
 //       See the next test case for a constraint that does not contain
 //       AllLevel member and hence cannot be satisfied. The cell should be
 //       empty.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Warehouse].[x] as 'Aggregate([Warehouse].members)'\n"
             + "member [Measures].[foo] AS '([Warehouse].[x],[Measures].[Customer Count])'\n"
             + "select {[Measures].[foo]} on 0 from [Warehouse And Sales2]",
@@ -1731,7 +1731,7 @@ class VirtualCubeTest extends BatchTestCase {
         withSchema(context, schema);
          */
         withSchema(context, TestBugMondrian322aModifier::new);
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Warehouse].[x] as 'Aggregate({[Warehouse].[Canada], [Warehouse].[USA]})'\n"
             + "member [Measures].[foo] AS '([Warehouse].[x],[Measures].[Customer Count])'\n"
             + "select {[Measures].[foo]} on 0 from [Warehouse And Sales2]",
@@ -1841,7 +1841,7 @@ class VirtualCubeTest extends BatchTestCase {
         Result result = executeQuery(
             "select {[Measures].[Store Sqft]} ON COLUMNS,"
             + "{[HCB]} ON ROWS "
-            + "from [VirtualTestStore]", context.getConnection());
+            + "from [VirtualTestStore]", context.getConnectionWithDefaultRole());
 
         Axis[] axes = result.getAxes();
         List<Position> positions = axes[0].getPositions();
@@ -1877,7 +1877,7 @@ class VirtualCubeTest extends BatchTestCase {
             + "Set [*BASE_MEMBERS_Measures] as '{[Measures].[*FORMATTED_MEASURE_0]}' Member [Measures].[*FORMATTED_MEASURE_0] as '[Measures].[Warehouse Sales]', FORMAT_STRING = '#,##0', SOLVE_ORDER=400 "
             + "Select [*BASE_MEMBERS_Measures] on columns, Non Empty Generate([*NATIVE_CJ_SET], {([Warehouse].currentMember,[Time].[Time].currentMember)}) on rows From [Warehouse and Sales]";
 
-        executeQuery(query1, context.getConnection());
+        executeQuery(query1, context.getConnectionWithDefaultRole());
 
         /* The query with the filter should now succeed without NPE */
         String result =
@@ -1909,7 +1909,7 @@ class VirtualCubeTest extends BatchTestCase {
             + "Row #9: 15,356\n"
             + "Row #10: 13,948\n";
 
-        assertQueryReturns(context.getConnection(), query2, result);
+        assertQueryReturns(context.getConnectionWithDefaultRole(), query2, result);
     }
 
     /**
@@ -2119,7 +2119,7 @@ class VirtualCubeTest extends BatchTestCase {
             + "Row #11: 9,705.561\n"
             + "Row #11: 41,484.40\n";
 
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQuerySql(connection, query, mysqlPattern, true);
         assertQueryReturns(connection, query, result);
     }
@@ -2255,7 +2255,7 @@ class VirtualCubeTest extends BatchTestCase {
                 DatabaseProduct.MYSQL, mysqlSQL, mysqlSQL)
         };
 
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         assertQuerySql(connection, query, mysqlPattern, true);
         assertQueryReturns(connection, query, result);
     }
@@ -2277,7 +2277,7 @@ class VirtualCubeTest extends BatchTestCase {
             + "NON EMPTY CrossJoin(\n"
             + "  [Promotions].[Promotion Name].Members,\n"
             + "  [Marital Status].[Marital Status].Members) ON ROWS\n"
-            + "FROM [Warehouse and Sales]", context.getConnection());
+            + "FROM [Warehouse and Sales]", context.getConnectionWithDefaultRole());
         assertEquals(
             "[[Education Level].[Bachelors Degree], [Product].[Drink], [Store].[USA].[CA]]",
             result.getAxes()[0].getPositions().get(0).toString());
@@ -2369,7 +2369,7 @@ class VirtualCubeTest extends BatchTestCase {
         + "Row #0: 72,024\n"
         + "Row #0: 72,024\n"
         + "Row #0: 72,024\n";
-      assertQueryReturns(context.getConnection(), query, expected);
+      assertQueryReturns(context.getConnectionWithDefaultRole(), query, expected);
     }
 
     @ParameterizedTest
@@ -2385,7 +2385,7 @@ class VirtualCubeTest extends BatchTestCase {
          */
         withSchema(context, SchemaModifiers.VirtualCubeTestModifier2::new);
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH member measures.ratio as 'measures.[Store Cost]/measures.[warehouse cost]' "
             + " member [marital status].agg as 'aggregate({[marital status].M})' "
             + " select non empty [Warehouse].[USA] "

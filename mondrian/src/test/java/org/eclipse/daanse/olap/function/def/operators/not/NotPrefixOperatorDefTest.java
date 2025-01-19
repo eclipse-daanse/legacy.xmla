@@ -92,19 +92,19 @@ class NotPrefixOperatorDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNot(Context context) {
-        assertBooleanExprReturns(context.getConnection(), " NOT 1=1 ", false );
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), " NOT 1=1 ", false );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNotNot(Context context) {
-        assertBooleanExprReturns(context.getConnection(), " NOT NOT 1=1 ", true );
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), " NOT NOT 1=1 ", true );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNotAssociativity(Context context) {
-        assertBooleanExprReturns(context.getConnection(), " 1=1 AND NOT 1=1 OR NOT 1=1 AND 1=1 ", false );
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), " 1=1 AND NOT 1=1 OR NOT 1=1 AND 1=1 ", false );
     }
 
 }

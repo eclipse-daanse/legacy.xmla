@@ -28,7 +28,7 @@ class ExistsFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistsMembersLevel2(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists(\n"
                 + "  {[Customers].[All Customers],\n"
                 + "   [Customers].[Country].Members,\n"
@@ -53,7 +53,7 @@ class ExistsFunDefTest {
         // the tuple in the second arg in this case should implicitly
         // contain [Customers].[All Customers], so the whole tuple list
         // from the first arg should be returned.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select non empty exists(\n"
                 + "  {[Customers].[All Customers],\n"
                 + "   [Customers].[All Customers].Children,\n"
@@ -74,7 +74,7 @@ class ExistsFunDefTest {
                 + "Row #0: 67,659\n"
                 + "Row #0: 124,366\n" );
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( "
                 + "[Customers].[USA].[CA], (Store.[USA], Gender.[F])) "
                 + "on 0 from sales",
@@ -89,7 +89,7 @@ class ExistsFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistsWithMultipleHierarchies(Context context) {
         // tests queries w/ a multi-hierarchy dim in either or both args.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( "
                 + "crossjoin( time.[1997], {[Time.Weekly].[1997].[16]}), "
                 + " { Gender.F } ) on 0 from sales",
@@ -99,7 +99,7 @@ class ExistsFunDefTest {
                 + "{[Time].[1997], [Time.Weekly].[1997].[16]}\n"
                 + "Row #0: 3,839\n" );
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( "
                 + "time.[1997].[Q1], {[Time.Weekly].[1997].[4]}) "
                 + " on 0 from sales",
@@ -109,7 +109,7 @@ class ExistsFunDefTest {
                 + "{[Time].[1997].[Q1]}\n"
                 + "Row #0: 66,291\n" );
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( "
                 + "{ Gender.F }, "
                 + "crossjoin( time.[1997], {[Time.Weekly].[1997].[16]})  ) "
@@ -120,7 +120,7 @@ class ExistsFunDefTest {
                 + "{[Gender].[F]}\n"
                 + "Row #0: 131,558\n" );
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( "
                 + "{ time.[1998] }, "
                 + "crossjoin( time.[1997], {[Time.Weekly].[1997].[16]})  ) "
@@ -136,7 +136,7 @@ class ExistsFunDefTest {
         // default mem for Time is 1997
 
         // non-all default on right side.
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( [Time].[1998].[Q1], Gender.[All Gender]) on 0 from sales",
             "Axis #0:\n"
                 + "{}\n"
@@ -144,7 +144,7 @@ class ExistsFunDefTest {
 
         // switching to an explicit member on the hierarchy chain should return
         // 1998.Q1
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( [Time].[1998].[Q1], ([Time].[1998], Gender.[All Gender])) on 0 from sales",
             "Axis #0:\n"
                 + "{}\n"
@@ -154,7 +154,7 @@ class ExistsFunDefTest {
 
 
         // non-all default on left side
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( "
                 + "Gender.[All Gender], (Gender.[F], [Time].[1998].[Q1])) "
                 + "on 0 from sales",
@@ -162,7 +162,7 @@ class ExistsFunDefTest {
                 + "{}\n"
                 + "Axis #1:\n" );
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( "
                 + "(Time.[1998].[Q1].[1], Gender.[All Gender]), (Gender.[F], [Time].[1998].[Q1])) "
                 + "on 0 from sales",
@@ -176,7 +176,7 @@ class ExistsFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistsMembers2Hierarchies(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists(\n"
                 + "  {[Customers].[All Customers],\n"
                 + "   [Customers].[All Customers].Children,\n"
@@ -210,7 +210,7 @@ class ExistsFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistsTuplesAll(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists(\n"
                 + "  crossjoin({[Product].[All Products]},{[Customers].[All Customers]}),\n"
                 + "  {[Customers].[All Customers]})\n"
@@ -225,7 +225,7 @@ class ExistsFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistsTuplesLevel2(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists(\n"
                 + "  crossjoin({[Product].[All Products]},{[Customers].[All Customers].Children}),\n"
                 + "  {[Customers].[All Customers].[USA]})\n"
@@ -240,7 +240,7 @@ class ExistsFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistsTuplesLevel23(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists(\n"
                 + "  crossjoin({[Customers].[State Province].Members}, {[Product].[All Products]}),\n"
                 + "  {[Customers].[All Customers].[USA]})\n"
@@ -259,7 +259,7 @@ class ExistsFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistsTuples2Dim(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists(\n"
                 + "  crossjoin({[Customers].[State Province].Members}, {[Product].[Product Family].Members}),\n"
                 + "  {([Product].[Product Department].[Dairy],[Customers].[All Customers].[USA])})\n"
@@ -278,7 +278,7 @@ class ExistsFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistsTuplesDiffDim(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists(\n"
                 + "  crossjoin(\n"
                 + "    crossjoin({[Customers].[State Province].Members},\n"
@@ -302,7 +302,7 @@ class ExistsFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExistsMembersAll(Context context) {
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists(\n"
                 + "  {[Customers].[All Customers],\n"
                 + "   [Customers].[Country].Members,\n"

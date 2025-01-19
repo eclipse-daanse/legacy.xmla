@@ -27,43 +27,43 @@ class LastPeriodsFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLastPeriods(Context context) {
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(0, [Time].[1998])", "" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(1, [Time].[1998])", "[Time].[1998]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(-1, [Time].[1998])", "[Time].[1998]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(2, [Time].[1998])",
             "[Time].[1997]\n" + "[Time].[1998]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(-2, [Time].[1997])",
             "[Time].[1997]\n" + "[Time].[1998]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(5000, [Time].[1998])",
             "[Time].[1997]\n" + "[Time].[1998]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(-5000, [Time].[1997])",
             "[Time].[1997]\n" + "[Time].[1998]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(2, [Time].[1998].[Q2])",
             "[Time].[1998].[Q1]\n" + "[Time].[1998].[Q2]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(4, [Time].[1998].[Q2])",
             "[Time].[1997].[Q3]\n"
                 + "[Time].[1997].[Q4]\n"
                 + "[Time].[1998].[Q1]\n"
                 + "[Time].[1998].[Q2]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(-2, [Time].[1997].[Q2])",
             "[Time].[1997].[Q2]\n" + "[Time].[1997].[Q3]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(-4, [Time].[1997].[Q2])",
             "[Time].[1997].[Q2]\n"
                 + "[Time].[1997].[Q3]\n"
                 + "[Time].[1997].[Q4]\n"
                 + "[Time].[1998].[Q1]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(5000, [Time].[1998].[Q2])",
             "[Time].[1997].[Q1]\n"
                 + "[Time].[1997].[Q2]\n"
@@ -71,16 +71,16 @@ class LastPeriodsFunDefTest {
                 + "[Time].[1997].[Q4]\n"
                 + "[Time].[1998].[Q1]\n"
                 + "[Time].[1998].[Q2]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(-5000, [Time].[1998].[Q2])",
             "[Time].[1998].[Q2]\n"
                 + "[Time].[1998].[Q3]\n"
                 + "[Time].[1998].[Q4]" );
 
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(2, [Time].[1998].[Q2].[5])",
             "[Time].[1998].[Q2].[4]\n" + "[Time].[1998].[Q2].[5]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(12, [Time].[1998].[Q2].[5])",
             "[Time].[1997].[Q2].[6]\n"
                 + "[Time].[1997].[Q3].[7]\n"
@@ -94,10 +94,10 @@ class LastPeriodsFunDefTest {
                 + "[Time].[1998].[Q1].[3]\n"
                 + "[Time].[1998].[Q2].[4]\n"
                 + "[Time].[1998].[Q2].[5]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(-2, [Time].[1998].[Q2].[4])",
             "[Time].[1998].[Q2].[4]\n" + "[Time].[1998].[Q2].[5]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(-12, [Time].[1997].[Q2].[6])",
             "[Time].[1997].[Q2].[6]\n"
                 + "[Time].[1997].[Q3].[7]\n"
@@ -111,15 +111,15 @@ class LastPeriodsFunDefTest {
                 + "[Time].[1998].[Q1].[3]\n"
                 + "[Time].[1998].[Q2].[4]\n"
                 + "[Time].[1998].[Q2].[5]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(2, [Gender].[M])",
             "[Gender].[F]\n" + "[Gender].[M]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(-2, [Gender].[F])",
             "[Gender].[F]\n" + "[Gender].[M]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(2, [Gender])", "[Gender].[All Gender]" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "LastPeriods(2, [Gender].Parent)", "" );
     }
 

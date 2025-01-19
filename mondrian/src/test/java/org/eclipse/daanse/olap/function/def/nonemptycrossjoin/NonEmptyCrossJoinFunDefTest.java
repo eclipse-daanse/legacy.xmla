@@ -33,10 +33,10 @@ class NonEmptyCrossJoinFunDefTest {
         // NonEmptyCrossJoin needs to evaluate measures to find out whether
         // cells are empty, so it implicitly depends upon all dimensions.
         String s1 = allHiersExcept( "[Store]" );
-        assertSetExprDependsOn(context.getConnection(),
+        assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "NonEmptyCrossJoin([Store].[USA].Children, [Gender].Children)", s1 );
 
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "NonEmptyCrossJoin("
                 + "[Customers].[All Customers].[USA].[CA].Children, "
                 + "[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].Children)",
@@ -78,16 +78,16 @@ class NonEmptyCrossJoinFunDefTest {
                 + ".[Good].[Good Imported Beer]}" );
 
         // empty set
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "NonEmptyCrossJoin({Gender.Parent}, {Store.Parent})", "" );
-        assertAxisReturns(context.getConnection(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(),
             "NonEmptyCrossJoin({Store.Parent}, Gender.Children)", "" );
-        assertAxisReturns(context.getConnection(), "NonEmptyCrossJoin(Store.Members, {})", "" );
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "NonEmptyCrossJoin(Store.Members, {})", "" );
 
         // same dimension twice
         // todo: should throw
         if ( false ) {
-            assertAxisThrows(context.getConnection(),
+            assertAxisThrows(context.getConnectionWithDefaultRole(),
                 "NonEmptyCrossJoin({Store.[USA]}, {Store.[USA].[CA]})",
                 "xxx" );
         }

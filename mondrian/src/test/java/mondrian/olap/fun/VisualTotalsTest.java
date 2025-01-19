@@ -96,7 +96,7 @@ class VisualTotalsTest {
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testDrillthroughVisualTotal(Context foodMartContext) throws SQLException {
-        Connection conn = foodMartContext.getConnection();
+        Connection conn = foodMartContext.getConnectionWithDefaultRole();
         CellSet cellSet =
     		TestUtil.executeQueryWithCellSetResult(conn,
                 "select {[Measures].[Unit Sales]} on columns, "
@@ -136,7 +136,7 @@ class VisualTotalsTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testVisualTotalCaptionBug(Context foodMartContext) throws SQLException {
         CellSet cellSet =
-    		TestUtil.executeQueryWithCellSetResult(foodMartContext.getConnection(),
+    		TestUtil.executeQueryWithCellSetResult(foodMartContext.getConnectionWithDefaultRole(),
                 "select {[Measures].[Unit Sales]} on columns, "
                 + "VisualTotals("
                 + "    {[Product].[Food].[Baked Goods].[Bread],"
@@ -164,7 +164,7 @@ class VisualTotalsTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testVisualTotalsAggregatedMemberBug(Context foodMartContext) throws SQLException {
         CellSet cellSet =
-    		TestUtil.executeQueryWithCellSetResult(foodMartContext.getConnection(),
+    		TestUtil.executeQueryWithCellSetResult(foodMartContext.getConnectionWithDefaultRole(),
                 " with  member [Gender].[YTD] as 'AGGREGATE(YTD(),[Gender].[M])'"
             	+ "  select "
             	+ " {[Time].[1997],"

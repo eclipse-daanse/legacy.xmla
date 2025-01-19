@@ -100,7 +100,7 @@ class AccessControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testSchemaReader(Context foodMartContext) {
-        final Connection connection = foodMartContext.getConnection();
+        final Connection connection = foodMartContext.getConnectionWithDefaultRole();
         Schema schema = connection.getSchema();
         final boolean fail = true;
         Cube cube = schema.lookupCube("Sales", fail);
@@ -115,7 +115,7 @@ class AccessControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testGrantDimensionNone(Context foodMartContext) {
-        final Connection connection = foodMartContext.getConnection();
+        final Connection connection = foodMartContext.getConnectionWithDefaultRole();
         RoleImpl role = ((RoleImpl) connection.getRole()).makeMutableClone();
         Schema schema = connection.getSchema();
         Cube salesCube = schema.lookupCube("Sales", true);
@@ -140,7 +140,7 @@ class AccessControlTest {
         TestUtil.withSchema(foodMartContext, SchemaModifiers.AccessControlTestModifier31::new);
 
         ConnectionProps props = new RolapConnectionPropsR(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
-    	Connection connection = foodMartContext.getConnection();
+    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
 
         TestUtil.assertQueryReturns(
     		connection,
@@ -849,7 +849,7 @@ class AccessControlTest {
             + "Row #1: 187\n");
 
         TestUtil.assertQueryReturns(
-        	foodMartContext.getConnection(),
+        	foodMartContext.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "  NON EMPTY TopCount([Store].[USA].[CA].Children, 10, "
             + "           [Measures].[Unit Sales]) ON ROWS \n"
@@ -894,7 +894,7 @@ class AccessControlTest {
             + "Row #1: 337\n");
 
         TestUtil.assertQueryReturns(
-        	foodMartContext.getConnection(),
+        	foodMartContext.getConnectionWithDefaultRole(),
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "  NON EMPTY TopCount([Store].[USA].[CA].Children, 10, "
             + "           [Measures].[Unit Sales]) ON ROWS \n"
@@ -979,7 +979,7 @@ class AccessControlTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     public void _testSharedObjectsInGrantMappingsBug(Context foodMartContext) {
         boolean mustGet = true;
-        Connection connection = foodMartContext.getConnection();
+        Connection connection = foodMartContext.getConnectionWithDefaultRole();
         Schema schema = connection.getSchema();
         Cube salesCube = schema.lookupCube("Sales", mustGet);
         Cube warehouseCube = schema.lookupCube("Warehouse", mustGet);
@@ -1029,7 +1029,7 @@ class AccessControlTest {
      * @return restricted connection
      */
     private Connection getRestrictedConnection(Context foodMartContext, boolean restrictCustomers) {
-        Connection connection = foodMartContext.getConnection();
+        Connection connection = foodMartContext.getConnectionWithDefaultRole();
         RoleImpl role = new RoleImpl();
         Schema schema = connection.getSchema();
         final boolean fail = true;
@@ -1196,7 +1196,7 @@ class AccessControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testUnusedAccessControlledDimension(Context foodMartContext) {
-        Connection connection = foodMartContext.getConnection();
+        Connection connection = foodMartContext.getConnectionWithDefaultRole();
         TestUtil.assertQueryReturns(
     		connection,
             "select [Gender].Children on 0 from [Sales]",
@@ -1533,7 +1533,7 @@ class AccessControlTest {
             + "{[Customers].[USA].Children,\n"
             + " [Customers].[USA].[OR].Children}) on 0\n"
             + "from [Sales]";
-        connection = foodMartContext.getConnection();
+        connection = foodMartContext.getConnectionWithDefaultRole();
         TestUtil.assertQueryReturns(
     		connection,
             mdx,
@@ -2011,7 +2011,7 @@ class AccessControlTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testParentChildUserDefinedRole(Context foodMartContext)
     {
-        final Connection connection = foodMartContext.getConnection();
+        final Connection connection = foodMartContext.getConnectionWithDefaultRole();
         final Role savedRole = connection.getRole();
         try {
             // Run queries as top-level employee.
@@ -2420,7 +2420,7 @@ class AccessControlTest {
         StringBuilder buf = new StringBuilder();
         StringBuilder buf2 = new StringBuilder();
         final String cubeName = "Sales with multiple customers";
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         final Result result = TestUtil.executeQuery(
     		connection,
             "select [Customers].[City].Members on 0 from [Sales]");
@@ -2564,7 +2564,7 @@ class AccessControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testCalcMemberLevel(Context foodMartContext) {
-    	Connection connection = foodMartContext.getConnection();
+    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         checkCalcMemberLevel(connection);
         TestUtil.withSchema(foodMartContext, SchemaModifiers.AccessControlTestModifier16::new);
         ConnectionProps props = new RolapConnectionPropsR(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
@@ -3119,7 +3119,7 @@ class AccessControlTest {
             + "From [Sales]\n";
 
         TestUtil.withSchema(foodMartContext, SchemaModifiers.AccessControlTestModifier24::new);
-        Connection connection = foodMartContext.getConnection();
+        Connection connection = foodMartContext.getConnectionWithDefaultRole();
 
         // Control
         TestUtil

@@ -29,7 +29,7 @@ class UniqueNameFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMemberUniqueName(Context context) {
-        assertExprReturns(context.getConnection(),
+        assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Gender].DefaultMember.UniqueName",
             "[Gender].[All Gender]" );
     }
@@ -38,7 +38,7 @@ class UniqueNameFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMemberUniqueNameOfNull(Context context) {
         if ( isDefaultNullMemberRepresentation() ) {
-            assertExprReturns(context.getConnection(),
+            assertExprReturns(context.getConnectionWithDefaultRole(),
                 "[Measures].[Unit Sales].FirstChild.UniqueName",
                 "[Measures].[#null]" ); // MSOLAP gives "" here
         }

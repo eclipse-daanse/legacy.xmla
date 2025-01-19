@@ -307,7 +307,7 @@ Does not work without the notify on add feature.
 //System.out.println("allready notified");
                 return;
             }
-            Connection conn = context.getConnection();
+            Connection conn = context.getConnectionWithDefaultRole();
 
             final int MAX = 100;
 

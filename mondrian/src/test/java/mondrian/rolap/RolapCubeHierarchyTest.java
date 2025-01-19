@@ -37,7 +37,7 @@ class RolapCubeHierarchyTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testMONDRIAN2535(Context context) {
-    assertQueryReturns(context.getConnection(),
+    assertQueryReturns(context.getConnectionWithDefaultRole(),
         "Select\n"
         + "  [Customers].children on rows,\n"
         + "  [Gender].children on columns\n "

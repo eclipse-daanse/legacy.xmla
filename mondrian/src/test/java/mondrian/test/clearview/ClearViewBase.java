@@ -113,7 +113,7 @@ import mondrian.test.SqlPattern;
 
             String mdx = diffRepos.expand(null, "${mdx}");
             String result = Util.NL + TestUtil.toString(
-                    executeQuery(mdx, context.getConnection()));
+                    executeQuery(mdx, context.getConnectionWithDefaultRole()));
             diffRepos.assertEquals("result", "${result}", result);
     }
 

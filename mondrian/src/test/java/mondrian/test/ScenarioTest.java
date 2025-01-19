@@ -54,7 +54,7 @@ class ScenarioTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCreateScenario(Context context) throws SQLException {
         final Connection connection =
-            context.getConnection();
+            context.getConnectionWithDefaultRole();
         try {
             assertNull(connection.getScenario());
             final Scenario scenario = connection.createScenario();
@@ -78,7 +78,7 @@ class ScenarioTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSetCell(Context context) throws SQLException {
         final Connection connection =
-            context.getConnection();
+            context.getConnectionWithDefaultRole();
         try {
             assertNull(connection.getScenario());
             final Scenario scenario = connection.createScenario();
@@ -100,7 +100,7 @@ class ScenarioTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSetCellWithoutScenarioFails(Context context) throws SQLException {
         final Connection connection =
-            context.getConnection();
+            context.getConnectionWithDefaultRole();
         try {
             assertNull(connection.getScenario());
             final Statement pstmt = connection.createStatement();
@@ -127,7 +127,7 @@ class ScenarioTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSetCellCalcError(Context context) throws SQLException {
-        final Connection connection = context.getConnection();
+        final Connection connection = context.getConnectionWithDefaultRole();
         connection.setScenario(connection.createScenario());
         Statement pstmt = connection.createStatement();
         CellSet cellSet = pstmt.executeQuery(
@@ -177,7 +177,7 @@ class ScenarioTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnsupportedAllocationPolicyFails(Context context) throws SQLException {
-        final Connection connection = context.getConnection();
+        final Connection connection = context.getConnectionWithDefaultRole();
         connection.setScenario(connection.createScenario());
         final Statement pstmt = connection.createStatement();
         final CellSet cellSet = pstmt.executeQuery(
@@ -254,7 +254,7 @@ class ScenarioTest {
         */
         withSchema(context,  SchemaModifiers.ScenarioTestModifier1::new);
 
-        final Connection connection = context.getConnection();
+        final Connection connection = context.getConnectionWithDefaultRole();
         connection.setScenario(connection.createScenario());
         final Scenario scenario = connection.getScenario();
         String id = scenario.getId();
@@ -272,7 +272,7 @@ class ScenarioTest {
         final Cell cell = cellSet.getCell(Arrays.asList(0, 0));
         cell.setValue(connection.getScenario(),23597, allocationPolicy);
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on 0,\n"
             + "{[Product].[Drink]} on 1\n"
             + "from [Sales]"
@@ -285,7 +285,7 @@ class ScenarioTest {
             + "{[Product].[Drink]}\n"
             + "Row #0: 23,597\n");
 
-        assertQueryReturns(context.getConnection(),
+        assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on 0,\n"
             + "{[Product].Children,\n"
             + " [Product].[Drink].Children,\n"
@@ -441,7 +441,7 @@ class ScenarioTest {
          */
         withSchema(context,  SchemaModifiers.ScenarioTestModifier1::new);
 
-        final Connection connection = context.getConnection();
+        final Connection connection = context.getConnectionWithDefaultRole();
         connection.setScenario(connection.createScenario());
         final Scenario scenario = connection.createScenario();
         connection.setScenario(scenario);
@@ -514,7 +514,7 @@ class ScenarioTest {
         // looking up the $scenario property for a non ScenarioCalc member
         // causes class cast exception
         // http://jira.pentaho.com/browse/MONDRIAN-1496
-        Result result = executeQuery(context.getConnection(),
+        Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select {[Gender].[Gender].members} on columns from Sales");
 
         // non calc member, should return null
@@ -522,7 +522,7 @@ class ScenarioTest {
             .getPropertyValue("$scenario");
         assertEquals(null, o);
 
-        result = executeQuery(context.getConnection(),
+        result = executeQuery(context.getConnectionWithDefaultRole(),
             "with member gender.cal as '1' "
             + "select {[Gender].cal} on 0 from Sales");
         // calc member, should return null

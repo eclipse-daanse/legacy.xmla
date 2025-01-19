@@ -32,7 +32,7 @@ class OrdinalFunDefTest {
     void testOrdinal(Context context) {
         //final Context testContext =
         //  getContext().withCube( "Sales Ragged" );
-        Connection connection = context.getConnection();
+        Connection connection = context.getConnectionWithDefaultRole();
         Cell cell =
             executeExprRaw(connection, "Sales Ragged",
                 "[Store].[All Stores].[Vatican].ordinal" );
