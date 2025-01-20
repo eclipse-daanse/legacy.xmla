@@ -160,8 +160,9 @@ public class Utils {
 
         List<? extends SchemaMapping> schemas =
             getDatabaseMappingSchemaProviderWithFilter(((RolapContext) context).getCatalogMapping(), oTableSchema);
+        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         return schemas.stream().map(schema -> {
-            return getDbSchemaColumnsResponseRow(context.getName(), schema, oTableName, oColumnName, oColumnOlapType
+            return getDbSchemaColumnsResponseRow(catalog.getName(), schema, oTableName, oColumnName, oColumnOlapType
                 );
         }).flatMap(Collection::stream).toList();
     }
@@ -368,7 +369,7 @@ public class Utils {
         CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         if (catalog != null) {
             return getDatabaseMappingSchemaProviderWithFilter(catalog, schemaName).stream()
-                .map(s -> getDbSchemaSchemataResponseRow(context.getName(), s, schemaOwner)).toList();
+                .map(s -> getDbSchemaSchemataResponseRow(catalog.getName(), s, schemaOwner)).toList();
         }
         return List.of();
     }
@@ -404,8 +405,9 @@ public class Utils {
         UserPrincipal userPrincipal) {
         List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
         if (schemas != null) {
+            CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
             return getSchemasWithFilter(schemas, schemaName).stream()
-                .map(s -> getMdSchemaCubesResponseRow(context.getName(), s, cubeName, baseCubeName,
+                .map(s -> getMdSchemaCubesResponseRow(catalog.getName(), s, cubeName, baseCubeName,
                     cubeSource))
                 .flatMap(Collection::stream)
                 .toList();
@@ -592,8 +594,9 @@ public class Utils {
         List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
         List<? extends DatabaseSchema> dbSchemas = ((RolapContext) context).getCatalogMapping().getDbschemas();
         if (schemas != null) {
+            CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
             return getSchemasWithFilter(schemas, oTableSchema).stream()
-                .map(s -> getDbSchemaTablesResponseRow(context.getName(), s, dbSchemas, oTableName, oTableType))
+                .map(s -> getDbSchemaTablesResponseRow(catalog.getName(), s, dbSchemas, oTableName, oTableType))
                 .flatMap(Collection::stream).toList();
         }
         return List.of();
@@ -776,9 +779,10 @@ public class Utils {
         String tableName,
         TableTypeEnum tableType
     ) {
+        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         return getDatabaseMappingSchemaProviderWithFilter(((RolapContext) context).getCatalogMapping(), oSchemaName)
             .stream()
-            .map(s -> getDbSchemaTablesInfoResponseRow(context.getName(), s, tableName, tableType))
+            .map(s -> getDbSchemaTablesInfoResponseRow(catalog.getName(), s, tableName, tableType))
             .flatMap(Collection::stream).toList();
     }
 
@@ -834,9 +838,10 @@ public class Utils {
         RequestMetaData metaData,
         UserPrincipal userPrincipal
     ) {
+        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         return getSchemasWithFilter(context.getConnection(userPrincipal.roles()).getSchemas(), oSchemaName)
             .stream()
-            .map(s -> getMdSchemaLevelsResponseRow(context.getName(), s, oCubeName, oDimensionUniqueName,
+            .map(s -> getMdSchemaLevelsResponseRow(catalog.getName(), s, oCubeName, oDimensionUniqueName,
                 oHierarchyUniqueName, oLevelName, oLevelUniqueName, oLevelVisibility))
             .flatMap(Collection::stream).toList();
     }
@@ -855,8 +860,9 @@ public class Utils {
     ) {
         List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
         if (schemas != null) {
+            CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
             return getSchemasWithFilter(schemas, oSchemaName).stream()
-                .map(s -> getMdSchemaDimensionsResponseRow(context.getName(), s, oCubeName
+                .map(s -> getMdSchemaDimensionsResponseRow(catalog.getName(), s, oCubeName
                     , oDimensionName, oDimensionUniqueName, cubeSource, oDimensionVisibility, deep))
                 .flatMap(Collection::stream)
                 .toList();
@@ -876,8 +882,9 @@ public class Utils {
     ) {
         List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
         if (schemas != null) {
+            CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
             return getSchemasWithFilter(schemas, oSchemaName).stream()
-                .map(s -> getMdSchemaMeasureGroupDimensionsResponseRow(context.getName(), s, oCubeName,
+                .map(s -> getMdSchemaMeasureGroupDimensionsResponseRow(catalog.getName(), s, oCubeName,
                     oMeasureGroupName, oDimensionUniqueName, oDimensionVisibility))
                 .flatMap(Collection::stream)
                 .toList();
@@ -907,8 +914,9 @@ public class Utils {
         Connection connection = context.getConnection(userPrincipal.roles());
 		List<Schema> schemas = connection.getSchemas();
         if (schemas != null) {
+            CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
             return getSchemasWithFilter(schemas, oSchemaName).stream()
-                .map(s -> getMdSchemaMembersResponseRow(context.getName(), s, oCubeName,
+                .map(s -> getMdSchemaMembersResponseRow(catalog.getName(), s, oCubeName,
                     oDimensionUniqueName, oHierarchyUniqueName, oLevelUniqueName, oLevelNumber,
                     oMemberName, oMemberUniqueName, oMemberType, oCubeSource, oTreeOp, emitInvisibleMembers))
                 .flatMap(Collection::stream)
@@ -925,8 +933,9 @@ public class Utils {
     ) {
         List<? extends SchemaMapping> schemas =
             getDatabaseMappingSchemaProviderWithFilter(((RolapContext) context).getCatalogMapping(), oSchemaName);
+        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         return schemas.stream().map(schema -> {
-            return getMdSchemaKpisResponseRow(context.getName(), schema, oCubeName, oKpiName);
+            return getMdSchemaKpisResponseRow(catalog.getName(), schema, oCubeName, oKpiName);
         }).flatMap(Collection::stream).toList();
     }
 
@@ -943,8 +952,9 @@ public class Utils {
     ) {
         List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
         if (schemas != null) {
+            CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
             return getSchemasWithFilter(schemas, oSchemaName).stream()
-                .map(s -> getMdSchemaSetsResponseRow(context.getName(), s, oCubeName, oSetName, oScope, oCubeSource,
+                .map(s -> getMdSchemaSetsResponseRow(catalog.getName(), s, oCubeName, oSetName, oScope, oCubeSource,
                     oHierarchyUniqueName))
                 .flatMap(Collection::stream)
                 .toList();
@@ -1903,9 +1913,10 @@ public class Utils {
         RequestMetaData requestMetaData,
         UserPrincipal userPrincipal
     ) {
+        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         return getSchemasWithFilter(context.getConnection(userPrincipal.roles()).getSchemas(), oSchemaName)
             .stream().map(s -> getMdSchemaHierarchiesResponseRow(
-                context.getName(),
+                catalog.getName(),
                 s,
                 oCubeName,
                 oCubeSource,
@@ -2123,9 +2134,10 @@ oHierarchyName)
         Optional<String> oCubeName,
         Optional<String> oMeasureGroupName
     ) {
-        return getDatabaseMappingSchemaProviderWithFilter(((RolapContext) context).getCatalogMapping(), oSchemaName)
+        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
+        return getDatabaseMappingSchemaProviderWithFilter(catalog, oSchemaName)
             .stream()
-            .map(s -> getMdSchemaMeasureGroupsResponseRow(context.getName(), s, oCubeName,
+            .map(s -> getMdSchemaMeasureGroupsResponseRow(catalog.getName(), s, oCubeName,
                 oMeasureGroupName))
             .flatMap(Collection::stream).toList();
 
@@ -2221,9 +2233,10 @@ oHierarchyName)
         RequestMetaData requestMetaData,
         UserPrincipal userPrincipal
     ) {
+        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         return getSchemasWithFilter(context.getConnection(userPrincipal.roles()).getSchemas(), oSchemaName)
             .stream().map(s -> getMdSchemaPropertiesResponseRow(
-                context.getName(),
+                catalog.getName(),
                 s,
                 oCubeName,
                 oDimensionUniqueName,
@@ -2456,9 +2469,10 @@ oHierarchyName)
         RequestMetaData requestMetaData,
         UserPrincipal userPrincipal
     ) {
+        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         return getSchemasWithFilter(context.getConnection(userPrincipal.roles()).getSchemas(), oSchemaName)
             .stream().filter(s -> s != null)
-            .map(s -> getMdSchemaMeasuresResponseRow(context.getName(), s, oCubeName, oMeasureName,
+            .map(s -> getMdSchemaMeasuresResponseRow(catalog.getName(), s, oCubeName, oMeasureName,
                 oMeasureUniqueName, oMeasureGroupName, shouldEmitInvisibleMembers))
             .flatMap(Collection::stream).toList();
 

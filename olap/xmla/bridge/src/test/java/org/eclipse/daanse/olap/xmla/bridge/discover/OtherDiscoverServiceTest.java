@@ -22,6 +22,8 @@ import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +34,7 @@ import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.olap.xmla.bridge.ContextGroupXmlaServiceConfig;
 import org.eclipse.daanse.olap.xmla.bridge.ContextsSupplyerImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;
 import org.eclipse.daanse.xmla.api.discover.Properties;
@@ -58,7 +61,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 
 @ExtendWith(MockitoExtension.class)
 class OtherDiscoverServiceTest {
@@ -84,8 +89,12 @@ class OtherDiscoverServiceTest {
     private RequestMetaData requestMetaData;
     @Mock
     private UserPrincipal userPrincipal;
-    
-    
+
+    @Mock
+    private SchemaMapping schema1;
+
+    @Mock
+    private SchemaMapping schema2;
 
     private OtherDiscoverService service;
 
@@ -207,7 +216,7 @@ class OtherDiscoverServiceTest {
     @Test
     void discoverLiterals() {
         DiscoverLiteralsRequest request = mock(DiscoverLiteralsRequest.class);
-        DiscoverLiteralsRestrictions restrictions = mock(DiscoverLiteralsRestrictions.class);       
+        DiscoverLiteralsRestrictions restrictions = mock(DiscoverLiteralsRestrictions.class);
 
         List<DiscoverLiteralsResponseRow> rows = service.discoverLiterals(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(17);
@@ -315,8 +324,9 @@ class OtherDiscoverServiceTest {
     void xmlMetaData() {
         when(cls.tryGetFirstByName(any())).thenReturn(Optional.of(context1));
         when(context1.getCatalogMapping()).thenReturn(catalog);
+        when(catalog.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
         DiscoverXmlMetaDataRequest request = mock(DiscoverXmlMetaDataRequest.class);
-        DiscoverXmlMetaDataRestrictions restrictions = mock(DiscoverXmlMetaDataRestrictions.class);        
+        DiscoverXmlMetaDataRestrictions restrictions = mock(DiscoverXmlMetaDataRestrictions.class);
         when(restrictions.databaseId()).thenReturn(Optional.of("foo"));
         when(request.restrictions()).thenReturn(restrictions);
         List<DiscoverXmlMetaDataResponseRow> rows = service.xmlMetaData(request, requestMetaData, userPrincipal);
@@ -328,4 +338,15 @@ class OtherDiscoverServiceTest {
 
     }
 
+    private static <N> Answer<List<N>> setupDummyListAnswer(N... values) {
+        final List<N> someList = new ArrayList<>(Arrays.asList(values));
+
+        Answer<List<N>> answer = new Answer<>() {
+            @Override
+            public List<N> answer(InvocationOnMock invocation) throws Throwable {
+                return someList;
+            }
+        };
+        return answer;
+    }
 }

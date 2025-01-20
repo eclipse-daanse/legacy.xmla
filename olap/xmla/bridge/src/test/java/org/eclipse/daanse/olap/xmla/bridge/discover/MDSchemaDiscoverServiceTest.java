@@ -127,7 +127,10 @@ class MDSchemaDiscoverServiceTest {
     private RolapContext context2;
 
     @Mock
-    private CatalogMapping catalog;
+    private CatalogMapping catalog1;
+
+    @Mock
+    private CatalogMapping catalog2;
 
     @Mock
     private SchemaMapping mappingSchema1;
@@ -221,9 +224,15 @@ class MDSchemaDiscoverServiceTest {
     void mdSchemaActions() {
         MdSchemaActionsRequest request = mock(MdSchemaActionsRequest.class);
         MdSchemaActionsRestrictions restrictions = mock(MdSchemaActionsRestrictions.class);
-
+        when(request.restrictions()).thenReturn(restrictions);
+        when(restrictions.catalogName()).thenReturn(Optional.of("foo"));
+        when(cls.get()).thenReturn(List.of(context1, context2));
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
         List<MdSchemaActionsResponseRow> rows = service.mdSchemaActions(request, requestMetaData, userPrincipal);
-        assertThat(rows).isNull();
+        assertThat(rows).isNotNull();
     }
 
     @Test
@@ -253,13 +262,15 @@ class MDSchemaDiscoverServiceTest {
         when(schema1.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
         when(schema2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
 
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
 
         when(context2.getConnection(anyList())).thenReturn(con);
 
         List<MdSchemaCubesResponseRow> rows = service.mdSchemaCubes(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
+        verify(catalog1, times(1)).getName();
         assertThat(rows).isNotNull().hasSize(3);
         MdSchemaCubesResponseRow row = rows.get(0);
         assertThat(row).isNotNull();
@@ -331,15 +342,17 @@ class MDSchemaDiscoverServiceTest {
 
         when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
         //when(context1.getConnection()).thenReturn(connection);
         when(context2.getConnection(anyList())).thenReturn(connection);
 
         //when(context2.getDatabaseMappingSchemaProviders()).thenAnswer(setupDummyListAnswer(dmsp1, dmsp2));
 
         List<MdSchemaDimensionsResponseRow> rows = service.mdSchemaDimensions(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
+        verify(catalog1, times(1)).getName();
         //verify(context2, times(1)).getName();
         assertThat(rows).isNotNull().hasSize(8);
         checkMdSchemaDimensionsResponseRow(rows.get(0), "foo",
@@ -491,14 +504,16 @@ class MDSchemaDiscoverServiceTest {
 
         when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
 
         when(context2.getConnection(anyList())).thenReturn(connection);
 
         List<MdSchemaHierarchiesResponseRow> rows = service.mdSchemaHierarchies(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
-        verify(context2, times(3)).getName();
+        verify(catalog1, times(1)).getName();
+        verify(catalog2, times(3)).getName();
         assertThat(rows).isNotNull().hasSize(16);
 
         checkMdSchemaHierarchiesResponseRow(rows.get(0), "foo", "schema1Name", "cube1Name",
@@ -566,16 +581,16 @@ class MDSchemaDiscoverServiceTest {
         when(request.restrictions()).thenReturn(restrictions);
         when(restrictions.catalogName()).thenReturn(Optional.of("foo"));
 
-        when(context2.getCatalogMapping()).thenReturn(catalog);
+        when(context2.getCatalogMapping()).thenReturn(catalog1);
 
 
-        when(catalog.getSchemas()).thenAnswer(setupDummyListAnswer(mappingSchema1, mappingSchema2));        
+        when(catalog2.getSchemas()).thenAnswer(setupDummyListAnswer(mappingSchema1, mappingSchema2));
         when(mappingSchema1.getName()).thenReturn("schema1Name");
         when(mappingSchema2.getName()).thenReturn("schema2Name");
 
 
-        when(mappingSchema1.getCubes()).thenAnswer(setupDummyListAnswer(mappingCube1, mappingCube2));
-        when(mappingSchema2.getCubes()).thenAnswer(setupDummyListAnswer(mappingCube1, mappingCube2));       
+        when(mappingSchema1.getCubes()).thenAnswer(setupDummyListAnswer(mappingCube1, mappingCube2, mappingVirtualCube1));
+        when(mappingSchema2.getCubes()).thenAnswer(setupDummyListAnswer(mappingCube1, mappingCube2));
 
         when(mappingCube1.getName()).thenReturn("cube1Name");
         when(mappingCube2.getName()).thenReturn("cube2Name");
@@ -618,19 +633,21 @@ class MDSchemaDiscoverServiceTest {
         when(mappingKpi2.getCurrentTimeMember()).thenReturn("kpi2CurrentTimeMember");
         when(mappingKpi2.getParentKpiID()).thenReturn("kpi2ParentKpiID");
 
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
 
 
         List<MdSchemaKpisResponseRow> rows = service.mdSchemaKpis(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
-        verify(context2, times(3)).getName();
+        verify(catalog1, times(1)).getName();
+        verify(catalog2, times(3)).getName();
         assertThat(rows).isNotNull().hasSize(10);
         checkMdSchemaKpisResponseRow(rows.get(0),
             "foo", "schema1Name", "cube1Name",
             "cube1Name",
             "kpi1Name",
-            "kpi1Caption",
+            "kpi1Name",
             "kpi1Description",
             "kpi1DisplayFolder",
             "kpi1Value",
@@ -697,14 +714,16 @@ class MDSchemaDiscoverServiceTest {
 
         when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
 
         when(context2.getConnection(anyList())).thenReturn(connection);
 
         List<MdSchemaLevelsResponseRow> rows = service.mdSchemaLevels(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
-        verify(context2, times(3)).getName();
+        verify(catalog1, times(1)).getName();
+        verify(catalog2, times(3)).getName();
         assertThat(rows).isNotNull().hasSize(32);
         checkMdSchemaLevelsResponseRow(rows.get(0),
             "foo", "schema1Name", "cube1Name",
@@ -758,13 +777,15 @@ class MDSchemaDiscoverServiceTest {
 
         when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
         when(context2.getConnection(anyList())).thenReturn(connection);
 
         List<MdSchemaMeasureGroupDimensionsResponseRow> rows = service.mdSchemaMeasureGroupDimensions(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
-        verify(context2, times(3)).getName();
+        verify(catalog1, times(1)).getName();
+        verify(catalog2, times(3)).getName();
         assertThat(rows).isNotNull().hasSize(8);
         checkMdSchemaMeasureGroupDimensionsResponseRow(rows.get(0),
             "foo", "schema1Name", "cube1Name",
@@ -798,15 +819,17 @@ class MDSchemaDiscoverServiceTest {
         when(mappingSchema1.getCubes()).thenAnswer(setupDummyListAnswer(mappingCube1, mappingCube2));
         when(mappingSchema2.getCubes()).thenAnswer(setupDummyListAnswer(mappingCube1, mappingCube2));
 
-        when(catalog.getSchemas()).thenAnswer(setupDummyListAnswer(mappingSchema1, mappingSchema2));        
+        when(catalog2.getSchemas()).thenAnswer(setupDummyListAnswer(mappingSchema1, mappingSchema2));
 
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
-        when(context2.getCatalogMapping()).thenReturn(catalog);
+        when(catalog1.getName()).thenReturn("bar");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(catalog2.getName()).thenReturn("foo");
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        
 
         List<MdSchemaMeasureGroupsResponseRow> rows = service.mdSchemaMeasureGroups(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
-        verify(context2, times(3)).getName();
+        verify(catalog1, times(1)).getName();
+        verify(catalog2, times(3)).getName();
         assertThat(rows).isNotNull().hasSize(4);
         checkMdSchemaMeasureGroupsResponseRow(rows.get(0), "foo", "schema1Name", "cube1Name",
             "", false);
@@ -861,14 +884,16 @@ class MDSchemaDiscoverServiceTest {
 
         when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
 
         when(context2.getConnection(anyList())).thenReturn(connection);
 
         List<MdSchemaMeasuresResponseRow> rows = service.mdSchemaMeasures(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
-        verify(context2, times(3)).getName();
+        verify(catalog1, times(1)).getName();
+        verify(catalog2, times(3)).getName();
         assertThat(rows).isNotNull().hasSize(8);
         checkMdSchemaMeasuresResponseRow(rows.get(0),
             "foo", "schema1Name", "cube1Name", "measure1Name",
@@ -968,15 +993,17 @@ class MDSchemaDiscoverServiceTest {
         when(schema2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
 
         when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
-
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
 
         when(context2.getConnection(anyList())).thenReturn(connection);
 
         List<MdSchemaMembersResponseRow> rows = service.mdSchemaMembers(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
-        verify(context2, times(3)).getName();
+        verify(catalog1, times(1)).getName();
+        verify(catalog2, times(3)).getName();
         assertThat(rows).isNotNull().hasSize(32);
         checkMdSchemaMembersResponseRow(rows.get(0), "foo",
             "schema1Name", "cube1Name", "dimension1UniqueName",
@@ -1052,14 +1079,16 @@ class MDSchemaDiscoverServiceTest {
 
         when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
 
         when(context2.getConnection(anyList())).thenReturn(connection);
 
         List<MdSchemaPropertiesResponseRow> rows = service.mdSchemaProperties(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
-        verify(context2, times(3)).getName();
+        verify(catalog1, times(1)).getName();
+        verify(catalog2, times(3)).getName();
         assertThat(rows).isNotNull().hasSize(64);
         checkMdSchemaPropertiesResponseRow(rows.get(0), "foo", "schema1Name", "cube1Name",
             "dimension1UniqueName", "hierarchy1UniqueName", "level1UniqueName", PropertyTypeEnum.PROPERTY_MEMBER,
@@ -1109,14 +1138,16 @@ class MDSchemaDiscoverServiceTest {
 
         when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
 
         when(context2.getConnection(anyList())).thenReturn(connection);
 
         List<MdSchemaSetsResponseRow> rows = service.mdSchemaSets(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
-        verify(context2, times(3)).getName();
+        verify(catalog1, times(1)).getName();
+        verify(catalog2, times(3)).getName();
         assertThat(rows).isNotNull().hasSize(8);
         checkMdSchemaSetsResponseRow(rows.get(0), "foo", "schema1Name", "cube1Name",
             "set1Name", ScopeEnum.GLOBAL, "set1Description", Optional.empty(),

@@ -239,17 +239,7 @@ public class OtherDiscoverService {
                 List<String> catalogs = new ArrayList<>();
                 for (Context context : contextsListSupplyer.get()) {
                     catalogs.add(((RolapContext) context).getCatalogMapping().getName());
-                	//try {
-                	//	Connection connection = context.getConnection();
-                	//	if (connection != null && connection.getCatalogName() != null) {
-                	//		catalogs.add(connection.getCatalogName());
-                	//	}
-                	//} catch (Exception e) {
-                	//	LOGGER.error("connection error.", e);
-                	//}
                 }
-                //List<String> catalogs = contextsListSupplyer.get().stream()
-                //    .map(c -> c.getConnection().getCatalogName()).toList();
                 if (properetyCatalog.isPresent()) {
                     for (String catalog : catalogs) {
                         if (catalog.equals(properetyCatalog.get())) {
@@ -318,7 +308,7 @@ public class OtherDiscoverService {
             Optional<Context> oContext = contextsListSupplyer.tryGetFirstByName(databaseId.get());
             if (oContext.isPresent()) {
                 Context context = oContext.get();
-                for (SchemaMapping schema : ((RolapContext) context).getCatalogMapping().getSchemas()) {                    
+                for (SchemaMapping schema : ((RolapContext) context).getCatalogMapping().getSchemas()) {
                     //SerializerModifier serializerModifier = new SerializerModifier(schema);
                     //try {
                         result.add(new DiscoverXmlMetaDataResponseRowR(""));

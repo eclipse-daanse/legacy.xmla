@@ -30,7 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import org.eclipse.daanse.olap.api.Context;
+import javax.sql.DataSource;
+
 import org.eclipse.daanse.olap.api.ContextGroup;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -41,7 +42,6 @@ import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.olap.xmla.bridge.ContextsSupplyerImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
@@ -84,8 +84,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import javax.sql.DataSource;
-
 @ExtendWith(MockitoExtension.class)
 class DbSchemaDiscoverServiceTest {
 
@@ -96,7 +94,10 @@ class DbSchemaDiscoverServiceTest {
     private RolapContext context2;
 
     @Mock
-    private CatalogMapping catalog;
+    private CatalogMapping catalog1;
+
+    @Mock
+    private CatalogMapping catalog2;
 
     @Mock
     private SchemaMapping schema1;
@@ -203,39 +204,29 @@ class DbSchemaDiscoverServiceTest {
         when(request.restrictions()).thenReturn(restrictions);
         when(restrictions.catalogName()).thenReturn(Optional.of("foo"));
 
-        when(schema1.getDescription()).thenReturn("schema1Description");
-
-        when(schema2.getDescription()).thenReturn("schema2Description");
+        when(catalog2.getDescription()).thenReturn("schema2Description");
 
         when(role1.getName()).thenReturn("role1");
         when(role2.getName()).thenReturn("role2");
 
-        when(schema1.getAccessRoles()).thenAnswer(setupDummyListAnswer(role1, role2));
-        when(schema2.getAccessRoles()).thenAnswer(setupDummyListAnswer(role1, role2));
+        when(schema1.getAccessRoles()).thenAnswer(setupDummyListAnswer(role1));
+        when(schema2.getAccessRoles()).thenAnswer(setupDummyListAnswer(role2));
 
-        when(catalog.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
-        
-
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
-        when(context2.getCatalogMapping()).thenReturn(catalog);
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
+        when(catalog2.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
         List<DbSchemaCatalogsResponseRow> rows = service.dbSchemaCatalogs(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
-        verify(context2, times(3)).getName();
-        assertThat(rows).isNotNull().hasSize(2);
+        verify(catalog1, times(1)).getName();
+        verify(catalog2, times(2)).getName();
+        assertThat(rows).isNotNull().hasSize(1);
         DbSchemaCatalogsResponseRow row = rows.get(0);
-        assertThat(row).isNotNull();
-        assertThat(row.catalogName()).contains("foo");
-        assertThat(row.description()).contains("schema1Description");
-        assertThat(row.roles()).contains("role1,role2");
-
-        row = rows.get(1);
         assertThat(row).isNotNull();
         assertThat(row.catalogName()).contains("foo");
         assertThat(row.description()).contains("schema2Description");
         assertThat(row.roles()).contains("role1,role2");
-
     }
 
     @Test
@@ -258,9 +249,12 @@ class DbSchemaDiscoverServiceTest {
         when(dimension1.getHierarchies()).thenAnswer(setupDummyListAnswer(hierarchy1, hierarchy2));
 
         when(measure.getName()).thenReturn("measureName");
+        when(measureGroup.getMeasures()).thenAnswer(setupDummyListAnswer(measure));
 
         when(cube1.getName()).thenReturn("cube1Name");
-        when(cube1.getDimensionConnectors()).thenAnswer(setupDummyListAnswer(dimensionConnector1, dimensionConnector2));        
+        when(cube1.getDimensionConnectors()).thenAnswer(setupDummyListAnswer(dimensionConnector1, dimensionConnector2));
+        when(dimensionConnector1.getDimension()).thenReturn(dimension1);
+        when(dimensionConnector2.getDimension()).thenReturn(dimension1);
         when(cube1.getMeasureGroups()).thenAnswer(setupDummyListAnswer(measureGroup));
 
         when(cube2.getName()).thenReturn("cube2Name");
@@ -270,16 +264,16 @@ class DbSchemaDiscoverServiceTest {
         when(schema1.getCubes()).thenAnswer(setupDummyListAnswer(cube1, cube2));
         when(schema2.getCubes()).thenAnswer(setupDummyListAnswer(cube1, cube2));
 
-        when(catalog.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
+        when(catalog2.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
+
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
         
-
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
-        when(context2.getCatalogMapping()).thenReturn(catalog);
-
         List<DbSchemaColumnsResponseRow> rows = service.dbSchemaColumns(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
-        assertThat(rows).isNotNull().hasSize(20);
+        verify(catalog1, times(1)).getName();
+        assertThat(rows).isNotNull().hasSize(36);
         DbSchemaColumnsResponseRow row = rows.get(0);
         assertThat(row).isNotNull();
         assertThat(row.tableCatalog()).contains("foo");
@@ -394,15 +388,18 @@ class DbSchemaDiscoverServiceTest {
 
         when(schema2.getName()).thenReturn("schema2Name");
 
-        when(catalog.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
-        
+        when(catalog2.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
-        when(context2.getCatalogMapping()).thenReturn(catalog);;
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
+        when(catalog2.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
         List<DbSchemaSchemataResponseRow> rows = service.dbSchemaSchemata(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
+        verify(catalog1, times(1)).getName();
+        verify(catalog2, times(3)).getName();
+        
         assertThat(rows).isNotNull().hasSize(2);
         DbSchemaSchemataResponseRow row = rows.get(0);
         assertThat(row).isNotNull();
@@ -438,12 +435,15 @@ class DbSchemaDiscoverServiceTest {
         when(connection.getMetaData()).thenReturn(metaData);
         when(dataSource.getConnection()).thenReturn(connection);
 
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
         when(context2.getDataSource()).thenReturn(dataSource);
 
         List<DbSchemaSourceTablesResponseRow> rows = service.dbSchemaSourceTables(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
+        verify(catalog1, times(1)).getName();
         assertThat(rows).isNotNull().hasSize(2);
         DbSchemaSourceTablesResponseRow row = rows.get(0);
         assertThat(row).isNotNull();
@@ -483,13 +483,14 @@ class DbSchemaDiscoverServiceTest {
 
         when(cub2.getName()).thenReturn("cube2Name");
         when(cub2.getDimensions()).thenAnswer(setupDummyArrayAnswer(dim1, dim2));
-
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
         when(context2.getConnection(anyList())).thenReturn(con);
 
         List<DbSchemaTablesResponseRow> rows = service.dbSchemaTables(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
+        verify(catalog1, times(1)).getName();
         assertThat(rows).isNotNull().hasSize(10);
         checkDbSchemaTablesResponseRow(rows.get(0), "foo", "schema2Name", "cube1Name", "TABLE", "foo - cube1Name Cube");
         checkDbSchemaTablesResponseRow(rows.get(1), "foo", "schema2Name", "cube1Name:hierarchy1Name:level1Name",
@@ -536,12 +537,14 @@ class DbSchemaDiscoverServiceTest {
 
         when(cub2.getName()).thenReturn("cube2Name");
         when(cub2.getDimensions()).thenAnswer(setupDummyArrayAnswer(dim1, dim2));
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
         when(context2.getConnection(anyList())).thenReturn(con);
 
         List<DbSchemaTablesResponseRow> rows = service.dbSchemaTables(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
+        verify(catalog1, times(1)).getName();
         assertThat(rows).isNotNull().hasSize(10);
         checkDbSchemaTablesResponseRow(rows.get(0), "foo", "schema2Name", "cube1Name", "TABLE", "foo - cube1Name Cube");
         checkDbSchemaTablesResponseRow(rows.get(1), "foo", "schema2Name", "cube1Name:hierarchy1Name:level1Name",
@@ -578,15 +581,16 @@ class DbSchemaDiscoverServiceTest {
 
 
 
-
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
 
 
         when(context2.getConnection(anyList())).thenReturn(con);
 
         List<DbSchemaTablesResponseRow> rows = service.dbSchemaTables(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
+        verify(catalog1, times(1)).getName();
         assertThat(rows).isNotNull().hasSize(2);
         checkDbSchemaTablesResponseRow(rows.get(0), "foo", "schema2Name", "cube1Name", "TABLE", "foo - cube1Name Cube");
         checkDbSchemaTablesResponseRow(rows.get(1), "foo", "schema2Name", "cube2Name", "TABLE", "foo - cube2Name Cube");
@@ -609,14 +613,17 @@ class DbSchemaDiscoverServiceTest {
 
         when(cube2.getName()).thenReturn("cube2Name");
 
-        when(catalog.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
+        when(catalog2.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
 
-        when(context1.getName()).thenReturn("bar");
-        when(context2.getName()).thenReturn("foo");
-        when(context2.getCatalogMapping()).thenReturn(catalog);
+        when(catalog1.getName()).thenReturn("bar");
+        when(catalog2.getName()).thenReturn("foo");
+        when(context1.getCatalogMapping()).thenReturn(catalog1);
+        when(context2.getCatalogMapping()).thenReturn(catalog2);
 
         List<DbSchemaTablesInfoResponseRow> rows = service.dbSchemaTablesInfo(request, requestMetaData, userPrincipal);
-        verify(context1, times(1)).getName();
+        verify(catalog1, times(1)).getName();
         assertThat(rows).isNotNull().hasSize(2);
         checkDbSchemaTablesInfoResponseRow(rows.get(0), "foo", "schema2Name", "cube1Name", false,
             TableTypeEnum.TABLE.name(), 1000000l, "foo - cube1Name Cube");
