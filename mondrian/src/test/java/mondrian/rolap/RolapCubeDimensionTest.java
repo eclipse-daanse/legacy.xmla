@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.element.Hierarchy;
+import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
@@ -35,9 +36,10 @@ class RolapCubeDimensionTest {
     RolapCube cube = mock(RolapCube.class);
     doReturn(virtualCube).when(cube).isVirtual();
 
-    RolapDimension rolapDim = mock(TestPublicRolapDimension.class);
+    RolapDimension rolapDim = mock(TestPublicRolapDimension.class);    
     Hierarchy[] rolapDim_hierarchies = new Hierarchy[]{};
     doReturn(rolapDim_hierarchies).when(rolapDim).getHierarchies();
+    doReturn(OlapMetaData.empty()).when(rolapDim).getMetaData();
     
     StandardDimensionMappingImpl cubeDim = StandardDimensionMappingImpl.builder()
     		.withName("StubCubeDimCaption")

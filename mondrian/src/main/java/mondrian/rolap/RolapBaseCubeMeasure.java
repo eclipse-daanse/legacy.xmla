@@ -195,7 +195,7 @@ public class RolapBaseCubeMeasure
     public Datatype getDatatype() {
         Object datatype = getPropertyValue(Property.DATATYPE.name);
         try {
-            return Datatype.fromValue((String) datatype);
+            return Datatype.fromValue(((org.eclipse.daanse.rolap.mapping.api.model.enums.DataType) datatype).getValue());
         } catch (ClassCastException e) {
             return Datatype.STRING;
         } catch (IllegalArgumentException e) {

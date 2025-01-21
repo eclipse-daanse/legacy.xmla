@@ -32,7 +32,11 @@ public class OlapMetaData implements MetaData {
 	}
 
 	public OlapMetaData(Map<String, Object> map) {
-		this.innerMap = map;
+	    if (map == null || map.isEmpty()) {
+	        this.innerMap = Map.of();
+	    } else {
+	        this.innerMap = map;
+	    }
 	}
 
 	@Override
@@ -69,7 +73,7 @@ public class OlapMetaData implements MetaData {
 
 	@Override
 	public Object get(String key) {
-		return innerMap.keySet();
+		return innerMap.get(key);
 	}
 
 	@Override
