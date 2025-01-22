@@ -38,7 +38,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessSchema;
-import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessDimensionGrantMappingImpl;
@@ -176,7 +176,7 @@ class RolapSchemaReaderTest {
             public TestGetCubeDimensionsModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            
+
             protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
             	List<AccessRoleMapping> result = new ArrayList<>();
                 result.addAll(super.schemaAccessRoles(schema));

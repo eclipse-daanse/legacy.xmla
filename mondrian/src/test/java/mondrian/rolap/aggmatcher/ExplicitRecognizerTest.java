@@ -25,7 +25,7 @@ import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationForeignKeyMappingImpl;
@@ -834,7 +834,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 .build()),
             FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY,
-            FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, 
+            FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY,
             FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY, FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY, null,
             List.of(), List.of(expAggTest, expAggTestDistinctCount), "Customer Count");
 

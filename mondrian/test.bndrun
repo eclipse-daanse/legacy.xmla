@@ -79,9 +79,9 @@
 	org.eclipse.daanse.rdb.structure.pojo;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.repackage.dockerjava;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.api;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.rolap.mapping.instance.complex.expressivenames;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.rolap.mapping.instance.complex.foodmart;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.rolap.mapping.instance.complex.steelwheels;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.rolap.mapping.instance.rec.complex.expressivenames;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.rolap.mapping.instance.rec.complex.steelwheels;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.modifier.common;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.modifier.pojo;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.pojo;version='[0.0.1,0.0.2)',\
@@ -108,4 +108,3 @@
     #tester.names='mondrian.rolap.aggmatcher.AggMeasureFactCountTest'
 #-runproperties.tester: \
 #	tester.names='mondrian.rolap.FastBatchingCellReaderTest'
-	

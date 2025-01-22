@@ -26,7 +26,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
-import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationTableMappingImpl;
@@ -119,10 +119,10 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
     public static final ColumnImpl STORE_ID_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
     public static final ColumnImpl STORE_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("store_sales").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
     public static final ColumnImpl STORE_COST_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("store_cost").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
-    public static final ColumnImpl UNIT_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("unit_sales").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();    
+    public static final ColumnImpl UNIT_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnImpl.builder().withName("unit_sales").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
     public static final PhysicalTableImpl FACT_CSV_2016_TABLE = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("fact_csv_2016")
             .withColumns(List.of(
-            		PRODUCT_ID_COLUMN_IN_FACT_CSV_2016,            		
+            		PRODUCT_ID_COLUMN_IN_FACT_CSV_2016,
                     TIME_ID_COLUMN_IN_FACT_CSV_2016,
                     CUSTOMER_ID_COLUMN_IN_FACT_CSV_2016,
                     PROMOTION_ID_COLUMN_IN_FACT_CSV_2016,
@@ -130,7 +130,7 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                     STORE_SALES_COLUMN_IN_FACT_CSV_2016,
                     STORE_COST_COLUMN_IN_FACT_CSV_2016,
                     UNIT_SALES_COLUMN_IN_FACT_CSV_2016
-                                        
+
                     ))).build();
 
     //## TableName: agg_c_6_fact_csv_2016

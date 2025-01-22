@@ -19,7 +19,7 @@
 package org.opencube.junit5.propupdator;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.opencube.junit5.context.TestContext;
 
 public class AppandFoodMartCatalog implements TestContextUpdater {

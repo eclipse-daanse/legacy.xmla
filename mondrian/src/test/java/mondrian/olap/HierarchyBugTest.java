@@ -40,7 +40,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
-import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
@@ -320,11 +320,11 @@ TestUtil.flushSchemaCache(conn);
             + "    </Hierarchy>\n"
             + "  </Dimension>";
         */
-        class VerifyMemberLevelNamesIdentityOlap4jDateDimModifier extends org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier {        		
+        class VerifyMemberLevelNamesIdentityOlap4jDateDimModifier extends org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier {
            public VerifyMemberLevelNamesIdentityOlap4jDateDimModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-     
+
            protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
         	   List<DimensionConnectorMapping> result = new ArrayList<>();
         	   result.addAll(super.cubeDimensionConnectors(cube));
@@ -440,7 +440,7 @@ TestUtil.flushSchemaCache(conn);
                                         .withHasAll(true)
                                         .withName("Weekly")
                                         .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
-                                        .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())                                        
+                                        .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
                                         .withLevels(List.of(
                                             LevelMappingImpl.builder()
                                                 .withName("Year")
@@ -473,7 +473,7 @@ TestUtil.flushSchemaCache(conn);
                 return result;
 
             }
-            
+
         }
         withSchema(context, VerifyMemberLevelNamesIdentityOlap4jWeeklyModifier::new);
         verifyLevelMemberNamesIdentityOlap4j(mdx, context, expected);

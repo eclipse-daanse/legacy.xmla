@@ -26,7 +26,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
-import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
@@ -508,7 +508,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
                 ColumnImpl factCountAggTenant = ColumnImpl.builder().withName("fact_count").withType("INTEGER").build();
                 PhysicalTableImpl aggTenant = ((Builder) PhysicalTableImpl.builder().withName("agg_tenant")
                         .withColumns(List.of(tenantIdAggTenant, unitSalesAggTenant, factCountAggTenant))).build();
-                
+
                 //## TableName: agg_line_class
                 //## ColumnNames: line_class_id,unit_sales,fact_count
                 //## ColumnTypes: INTEGER,INTEGER,INTEGER
@@ -517,7 +517,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
                 ColumnImpl factCountAggLineClass = ColumnImpl.builder().withName("fact_count").withType("INTEGER").build();
                 PhysicalTableImpl aggLineClass = ((Builder) PhysicalTableImpl.builder().withName("agg_line_class")
                         .withColumns(List.of(lineClassIdAggLineClass, unitSalesAggLineClass, factCountAggLineClass))).build();
-                
+
                 //## TableName: agg_10_foo_fact
                 //## ColumnNames: line_class_id,unit_sales,fact_count
                 //## ColumnTypes: INTEGER,INTEGER,INTEGER
@@ -526,7 +526,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
                 ColumnImpl factCountAgg10FooFact = ColumnImpl.builder().withName("fact_count").withType("INTEGER").build();
                 PhysicalTableImpl agg10FooFact = ((Builder) PhysicalTableImpl.builder().withName("agg_10_foo_fact")
                         .withColumns(List.of(lineClassIdAgg10FooFact, unitSalesAgg10FooFact, factCountAgg10FooFact))).build();
-                
+
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(PhysicalCubeMappingImpl.builder()

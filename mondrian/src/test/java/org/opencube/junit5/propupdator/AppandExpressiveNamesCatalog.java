@@ -26,7 +26,7 @@ public class AppandExpressiveNamesCatalog implements TestContextUpdater {
 	@Override
 	public void updateContext(Context context) {
 
-        ((TestContext)context).setCatalogMappingSupplier(new org.eclipse.daanse.rolap.mapping.instance.complex.expressivenames.ExpressivenamesMappingSupplier());
+        ((TestContext)context).setCatalogMappingSupplier(new org.eclipse.daanse.rolap.mapping.instance.rec.complex.expressivenames.ExpressivenamesMappingSupplier());
 	}
 
 }

@@ -318,14 +318,14 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.rolap.mapping.instance.complex.foodmart</artifactId>
+			<artifactId>org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart</artifactId>
 			<version>${revision}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.rolap.mapping.instance.complex.steelwheels</artifactId>
+			<artifactId>org.eclipse.daanse.rolap.mapping.instance.rec.complex.steelwheels</artifactId>
 			<version>${revision}</version>
 			<scope>test</scope>
 		</dependency>
@@ -333,7 +333,7 @@
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
 			<artifactId>
-				org.eclipse.daanse.rolap.mapping.instance.complex.expressivenames
+				org.eclipse.daanse.rolap.mapping.instance.rec.complex.expressivenames
 			</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>test</scope>

@@ -23,7 +23,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
-import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
@@ -567,7 +567,7 @@ class FilterTest extends BatchTestCase {
     if ( SystemWideProperties.instance().FilterChildlessSnowflakeMembers ) {
       return;
     }
-    
+
     String dimension =
       "<Dimension name=\"Warehouse2\">\n"
         + "  <Hierarchy hasAll=\"true\" primaryKey=\"warehouse_id\">\n"
@@ -660,11 +660,11 @@ class FilterTest extends BatchTestCase {
           public TestNotInMultiLevelMemberConstraintMixedNullNonNullParentModifier(CatalogMapping catalog) {
               super(catalog);
           }
-          
+
           @Override
           protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
               List<CubeMapping> result = new ArrayList<>();
-              
+
               StandardDimensionMappingImpl  warehouse2 = StandardDimensionMappingImpl.builder()
               		.withName("Warehouse2")
               		.withHierarchies(List.of(
@@ -691,7 +691,7 @@ class FilterTest extends BatchTestCase {
               			))
               			.build()
               		))
-              		.build();              
+              		.build();
               result.addAll(super.cubes(cubes));
               result.add(PhysicalCubeMappingImpl.builder()
                   .withName("Warehouse2")
@@ -748,10 +748,10 @@ class FilterTest extends BatchTestCase {
                           .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
                           .withAggregatorType(MeasureAggregatorType.SUM)
                           .build()
-                		  
-                  )).build()))		  
+
+                  )).build()))
                   .build());
-              return result;        	  
+              return result;
           }
       }
     /*
@@ -867,7 +867,7 @@ class FilterTest extends BatchTestCase {
           public TestNotInMultiLevelMemberConstraintSingleNullParentModifier(CatalogMapping catalog) {
               super(catalog);
           }
-          
+
           @Override
           protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
               StandardDimensionMappingImpl  warehouse2 = StandardDimensionMappingImpl.builder()
@@ -955,7 +955,7 @@ class FilterTest extends BatchTestCase {
                               .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
                               .withAggregatorType(MeasureAggregatorType.SUM)
                               .build()
-                    		  
+
                   )).build()))
                   .build());
               return result;

@@ -51,8 +51,8 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
-import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
-import org.eclipse.daanse.rolap.mapping.instance.complex.steelwheels.SteelwheelsSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.rec.complex.steelwheels.SteelwheelsSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessDimensionGrantMappingImpl;
@@ -12002,7 +12002,7 @@ public class SchemaModifiers {
          */
     	private static final ColumnImpl foo = ColumnImpl.builder().withName("foo").withType("INTEGER").build();
     	private static final ColumnImpl bar = ColumnImpl.builder().withName("bar").withType("INTEGER").build();
-    	
+
     	private static final TableQueryMappingImpl t = TableQueryMappingImpl.builder()
     			.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
     			.withAggregationTables(List.of(
@@ -12807,7 +12807,7 @@ public class SchemaModifiers {
                             	TableQueryMappingImpl.builder().withTable(cheques)
                             		.withAggregationTables(List.of(
                             			AggregationNameMappingImpl.builder()
-                            				//.withName("agg_lp_xxx_cheques") //TODO agg_lp_xxx_cheques not exist 
+                            				//.withName("agg_lp_xxx_cheques") //TODO agg_lp_xxx_cheques not exist
                             				.withName(aggLp595Cheques)
                             				.withAggregationFactCount(AggregationColumnNameMappingImpl.builder()
                             					.withColumn(factCountAggLp595Cheques)

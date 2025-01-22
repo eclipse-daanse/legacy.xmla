@@ -17,7 +17,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
-import org.eclipse.daanse.rolap.mapping.instance.complex.foodmart.FoodmartMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -52,7 +52,7 @@ class AggregationOverAggTableTest extends AggTableTestCase {
                 factCountAggCAvgSalesFact1997
             ))).build();
 
-	
+
     @Override
     protected String getFileName() {
         return "aggregation-over-agg-table.csv";
