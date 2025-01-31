@@ -579,12 +579,13 @@ public Object getCacheKey() {
   }
 
     private Execution getExecution(Context context) {
-//        if (LocusImpl.isEmpty()) {
-//            final Statement statement = context.getConnection().getInternalStatement();
-//            return new ExecutionImpl(statement, context.getConfig().executeDurationValue());
-//        } else {
+        if (LocusImpl.isEmpty()) {
+            //need for virtual cubes need investigate
+            final Statement statement = context.getConnectionWithDefaultRole().getInternalStatement();
+            return new ExecutionImpl(statement, context.getConfig().executeDurationValue());
+        } else {
             return LocusImpl.peek().getExecution();
-//        }
+        }
     }
 
     @Override
