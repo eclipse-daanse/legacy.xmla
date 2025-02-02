@@ -683,7 +683,7 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.DISCOVER_PROPERTIES:
                 DiscoverPropertiesRestrictionsR discoverPropertiesRestrictions =
-                    new DiscoverPropertiesRestrictionsR(Optional.empty());
+                    new DiscoverPropertiesRestrictionsR(List.of());
                 DiscoverPropertiesRequest discoverPropertiesRequest =
                     new DiscoverPropertiesRequestR((PropertiesR) statementRequest.properties(),
                         discoverPropertiesRestrictions);

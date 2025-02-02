@@ -24,7 +24,6 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
@@ -226,12 +225,12 @@ public class OtherDiscoverService {
     }
 
     public List<DiscoverPropertiesResponseRow> discoverProperties(DiscoverPropertiesRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
-        Optional<String> propertyName = request.restrictions()==null? Optional.empty():request.restrictions().propertyName();
+        List<String> propertyNames = request.restrictions() == null? List.of() : request.restrictions().propertyName();
         Optional<String> properetyCatalog = request.properties().catalog();
         List<DiscoverPropertiesResponseRow> result = new ArrayList<>();
         for (PropertyDefinition propertyDefinition
             : PropertyDefinition.class.getEnumConstants()) {
-            if (propertyName.isPresent() && !propertyName.get().equals(propertyDefinition.name())) {
+            if ( !propertyNames.contains(propertyDefinition.name()) ) {
                 continue;
             }
             String propertyValue = "";
