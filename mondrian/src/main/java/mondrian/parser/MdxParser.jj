@@ -28,7 +28,7 @@ import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.SubtotalVisibility;
-import org.eclipse.daanse.olap.api.function.FunctionTable;
+import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.query.component.AxisOrdinal;
 import org.eclipse.daanse.olap.api.query.component.CellProperty;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -88,7 +88,7 @@ public class MdxParserImpl
 {
     private MdxParserValidator.QueryComponentFactory factory;
     private Statement statement;
-    private FunctionTable funTable;
+    private FunctionServiceble funTable;
     private boolean strictValidation;
 
     public MdxParserImpl(
@@ -96,7 +96,7 @@ public class MdxParserImpl
         Statement statement,
         String queryString,
         boolean debug,
-        FunctionTable funTable,
+        FunctionService funTable,
         boolean strictValidation)
     {
         this(new StringReader(term(queryString)));

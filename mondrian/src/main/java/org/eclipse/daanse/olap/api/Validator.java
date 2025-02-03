@@ -34,7 +34,7 @@ import java.util.List;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
-import org.eclipse.daanse.olap.api.function.FunctionTable;
+import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.query.component.MemberProperty;
@@ -120,7 +120,7 @@ public interface Validator {
     /**
      * Returns the table of function and operator definitions.
      */
-    FunctionTable getFunTable();
+    FunctionService getFunctionService();
 
     /**
      * Creates or retrieves the parameter corresponding to a "Parameter" or

@@ -10,7 +10,7 @@
 package mondrian.parser;
 
 import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.api.function.FunctionTable;
+import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 
@@ -47,7 +47,7 @@ public class JavaccParserValidatorImpl implements MdxParserValidator {
         Statement statement,
         String queryString,
         boolean debug,
-        FunctionTable funTable,
+        FunctionService functionService,
         boolean strictValidation
     ) {
         return null;
@@ -58,7 +58,7 @@ public class JavaccParserValidatorImpl implements MdxParserValidator {
         Statement statement,
         String queryString,
         boolean debug,
-        FunctionTable funTable
+        FunctionService functionService
     ) {
         return null;
     }

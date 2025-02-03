@@ -18,9 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import mondrian.olap.exceptions.MdxMemberExpIsSetException;
-import mondrian.olap.exceptions.UnknownParameterException;
-
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.ParenthesesOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
@@ -30,7 +27,7 @@ import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
-import org.eclipse.daanse.olap.api.function.FunctionTable;
+import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.query.component.FunctionCall;
@@ -45,6 +42,8 @@ import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.mdx.UnresolvedFunCallImpl;
+import mondrian.olap.exceptions.MdxMemberExpIsSetException;
+import mondrian.olap.exceptions.UnknownParameterException;
 import mondrian.util.ArrayStack;
 
 /**
@@ -67,7 +66,7 @@ import mondrian.util.ArrayStack;
  */
 abstract class ValidatorImpl implements Validator {
     protected final ArrayStack<QueryComponent> stack = new ArrayStack<>();
-    private final FunctionTable funTable;
+    private final FunctionService functionService;
     private final Map<QueryComponent, QueryComponent> resolvedNodes =
         new HashMap<>();
     private static final QueryComponent placeHolder = NumericLiteralImpl.zero;
@@ -84,10 +83,10 @@ abstract class ValidatorImpl implements Validator {
      * @pre funTable != null
      */
     protected ValidatorImpl(
-        FunctionTable funTable, Map<QueryComponent, QueryComponent> resolvedIdentifiers)
+    		FunctionService funTable, Map<QueryComponent, QueryComponent> resolvedIdentifiers)
     {
         Util.assertPrecondition(funTable != null, "funTable != null");
-        this.funTable = funTable;
+        this.functionService = funTable;
         resolvedNodes.putAll(resolvedIdentifiers);
     }
 
@@ -212,7 +211,7 @@ abstract class ValidatorImpl implements Validator {
         // function with that name, stop immediately.  If there is more than
         // function, use some custom method, which generally involves looking
         // at the type of one of its arguments.
-        List<FunctionResolver> resolvers = funTable.getResolvers(operationAtom);
+        List<FunctionResolver> resolvers = functionService.getResolvers(operationAtom);
         assert resolvers != null;
 
         final List<FunctionResolver.Conversion> conversionList =
@@ -359,7 +358,7 @@ abstract class ValidatorImpl implements Validator {
         // operator (which returns a scalar) or the crossjoin operator
         // (which returns a set) we have to know what kind of expression is
         // expected.
-        List<FunctionResolver> resolvers = funTable.getResolvers(funCall.getOperationAtom());
+        List<FunctionResolver> resolvers = functionService.getResolvers(funCall.getOperationAtom());
         for (FunctionResolver resolver : resolvers) {
             if (!resolver.requiresScalarExpressionOnArgument(k)) {
                 // This resolver accepts a set in this argument position,
@@ -371,8 +370,8 @@ abstract class ValidatorImpl implements Validator {
     }
 
     @Override
-	public FunctionTable getFunTable() {
-        return funTable;
+	public FunctionService getFunctionService() {
+        return functionService;
     }
 
     @Override

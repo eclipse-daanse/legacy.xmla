@@ -20,7 +20,7 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-import org.eclipse.daanse.olap.api.function.FunctionTable;
+import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.query.ExpressionProvider;
 import org.eclipse.daanse.olap.api.query.QueryProvider;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
@@ -73,7 +73,7 @@ public abstract class ConnectionBase implements Connection {
     public QueryComponent parseStatement(
         Statement statement,
         String query,
-        FunctionTable funTable,
+        FunctionService funTable,
         boolean strictValidation)
     {
         boolean debug = false;

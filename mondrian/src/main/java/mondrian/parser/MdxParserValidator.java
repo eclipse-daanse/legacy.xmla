@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Command;
 import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.api.function.FunctionTable;
+import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.query.component.CalculatedFormula;
 import org.eclipse.daanse.olap.api.query.component.CellProperty;
 import org.eclipse.daanse.olap.api.query.component.DmvQuery;
@@ -52,14 +52,14 @@ public interface MdxParserValidator {
         Statement statement,
         String queryString,
         boolean debug,
-        FunctionTable funTable,
+        FunctionService functionService,
         boolean strictValidation);
 
     Expression parseExpression(
         Statement statement,
         String queryString,
         boolean debug,
-        FunctionTable funTable);
+        FunctionService functionService);
 
     interface QueryComponentFactory {
 

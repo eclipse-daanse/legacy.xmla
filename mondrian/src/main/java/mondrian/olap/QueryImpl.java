@@ -55,7 +55,7 @@ import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
-import org.eclipse.daanse.olap.api.function.FunctionTable;
+import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.query.component.AxisOrdinal;
 import org.eclipse.daanse.olap.api.query.component.CellProperty;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -456,7 +456,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
      * @return Validator
      */
     public Validator createValidator(
-        FunctionTable functionTable,
+        FunctionService functionTable,
         boolean alwaysResolveFunDef)
     {
         return new QueryValidator(
@@ -468,7 +468,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
 
 
     public Validator createValidator(
-        FunctionTable functionTable,
+    		FunctionService functionTable,
         boolean alwaysResolveFunDef,
         Map<QueryComponent, QueryComponent> resolvedIdentifiers)
     {
@@ -2010,7 +2010,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
          * @param query Query
          */
         public QueryValidator(
-            FunctionTable functionTable, boolean alwaysResolveFunDef, QueryImpl query,
+        	FunctionService functionTable, boolean alwaysResolveFunDef, QueryImpl query,
             Map<QueryComponent, QueryComponent> resolvedIdentifiers)
         {
             super(functionTable, resolvedIdentifiers);

@@ -110,7 +110,7 @@ import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
-import org.eclipse.daanse.olap.api.function.FunctionTable;
+import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.query.component.DimensionExpression;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
@@ -2748,7 +2748,7 @@ public class Util {
      * Creates a very simple implementation of {@link Validator}. (Only
      * useful for resolving trivial expressions.)
      */
-    public static Validator createSimpleValidator(final FunctionTable funTable) {
+    public static Validator createSimpleValidator(final FunctionService functionService) {
         return new Validator() {
             @Override
 			public Query getQuery() {
@@ -2790,7 +2790,7 @@ public class Util {
                 // Very simple resolution. Assumes that there is precisely
                 // one resolver (i.e. no overloading) and no argument
                 // conversions are necessary.
-                List<FunctionResolver> resolvers = funTable.getResolvers(operationAtom);
+                List<FunctionResolver> resolvers = functionService.getResolvers(operationAtom);
                 final FunctionResolver resolver = resolvers.get(0);
                 final List<FunctionResolver.Conversion> conversionList =
                     new ArrayList<>();
@@ -2820,8 +2820,8 @@ public class Util {
             }
 
             @Override
-			public FunctionTable getFunTable() {
-                return funTable;
+			public FunctionService getFunctionService() {
+                return functionService;
             }
 
             @Override

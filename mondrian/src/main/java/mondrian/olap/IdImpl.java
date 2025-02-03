@@ -121,7 +121,7 @@ public class IdImpl
             final Segment s = segments.get(0);
             if (s.getQuoting() == Quoting.UNQUOTED) {
                 NameSegmentImpl nameSegment = (NameSegmentImpl) s;
-                if (validator.getFunTable().isReservedWord(nameSegment.getName())) {
+                if (validator.getFunctionService().isReservedWord(nameSegment.getName())) {
                     return SymbolLiteralImpl.create(
                         nameSegment.getName().toUpperCase());
                 }

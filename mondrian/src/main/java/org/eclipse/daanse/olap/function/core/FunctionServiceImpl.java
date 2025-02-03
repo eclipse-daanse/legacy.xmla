@@ -41,11 +41,8 @@ import org.osgi.service.component.annotations.ServiceScope;
 
 import mondrian.olap.fun.FunctionAtomCompareKey;
 
-//@Designate(ocd = Config.class, factory = true)
 @Component(service = FunctionService.class, scope = ServiceScope.SINGLETON)
 public class FunctionServiceImpl implements FunctionService {
-//    private static final Converter CONVERTER = Converters.standardConverter();
-//	private Config config;
 
 	private final List<FunctionResolver> resolvers = synchronizedList(new ArrayList<>());
 	private Map<FunctionAtomCompareKey, List<FunctionResolver>> mapNameToResolvers = new HashMap<>();
@@ -132,18 +129,13 @@ public class FunctionServiceImpl implements FunctionService {
 		return reservedWords.contains(word.toUpperCase());
 	}
 
-	@Override
-	public boolean isProperty(String name) {
-		if (name == null) {
-			return false;
-		}
-		return propertyWords.contains(name.toUpperCase());
-	}
-
-	@Override
-	public List<String> getReservedWords() {
-		return reservedWords;
-	}
+//	@Override
+//	public boolean isProperty(String name) {
+//		if (name == null) {
+//			return false;
+//		}
+//		return propertyWords.contains(name.toUpperCase());
+//	}
 
     @Override
     public Set<String> getPropertyWords() {

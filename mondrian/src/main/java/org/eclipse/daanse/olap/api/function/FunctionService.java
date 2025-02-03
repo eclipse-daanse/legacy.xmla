@@ -14,12 +14,43 @@
 
 package org.eclipse.daanse.olap.api.function;
 
-public interface FunctionService extends FunctionTable{
+import java.util.List;
+import java.util.Set;
 
-    void addResolver(FunctionResolver resolver);
+import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 
-    void removeResolver(FunctionResolver resolver);
+public interface FunctionService {
 
-  
+	void addResolver(FunctionResolver resolver);
+
+	void removeResolver(FunctionResolver resolver);
+
+	/**
+	 * Returns a Set of all words, that are used in Functions and may not be used as
+	 * identifiers.
+	 */
+	Set<String> getPropertyWords();
+
+	List<FunctionMetaData> getFunctionMetaDatas();
+
+	/**
+	 * Returns whether a string is a reserved word.
+	 */
+	boolean isReservedWord(String word);
+
+	/**
+	 * Returns a list of
+	 * {@link org.eclipse.daanse.olap.api.function.FunctionResolver} objects.
+	 */
+	List<FunctionResolver> getResolvers();
+
+	/**
+	 * Returns a list of resolvers for an operator with a given name and syntax.
+	 * Never returns null; if there are no resolvers, returns the empty list.
+	 *
+	 * @param operationAtom OperationAtom
+	 * @return List of resolvers for the OperationAtom
+	 */
+	List<FunctionResolver> getResolvers(OperationAtom operationAtom);
 
 }
