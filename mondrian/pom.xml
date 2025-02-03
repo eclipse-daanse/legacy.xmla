@@ -25,18 +25,6 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.olap.rolap.api</artifactId>
-			<version>${revision}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.olap.rolap.core</artifactId>
-			<version>${revision}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
 		</dependency>
@@ -402,18 +390,7 @@
     </dependency>
   </dependencies>
 	<build>
-		<!--
 
-    <resources>
-      <resource>
-        <directory>${project.basedir}/testfiles</directory>
-        <targetPath>${project.build.directory}/testfiles</targetPath>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-    </resources>
-    -->
 		<plugins>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
