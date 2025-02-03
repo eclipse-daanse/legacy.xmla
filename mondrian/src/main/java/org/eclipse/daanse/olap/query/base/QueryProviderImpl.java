@@ -60,29 +60,18 @@ import org.eclipse.daanse.olap.api.query.component.UpdateClause;
 
 public class QueryProviderImpl implements QueryProvider {
 
-    @Override
-    public QueryComponent createQuery(Statement statement, MdxStatement mdxStatement, boolean strictValidation) {
+	@Override
+	public QueryComponent createQuery(Statement statement, MdxStatement mdxStatement, boolean strictValidation) {
 
-        if (mdxStatement instanceof SelectStatement selectStatement) {
-            return createQuery(statement, selectStatement, strictValidation);
-        }
-        if (mdxStatement instanceof DrillthroughStatement drillthroughStatement) {
-            return createDrillThrough(statement, drillthroughStatement, strictValidation);
-        }
-        if (mdxStatement instanceof ExplainStatement explainStatement) {
-            return createExplain(statement, explainStatement, strictValidation);
-        }
-        if (mdxStatement instanceof DMVStatement dmvStatement) {
-            return createDMV(dmvStatement);
-        }
-        if (mdxStatement instanceof RefreshStatement refreshStatement) {
-            return createRefresh(refreshStatement);
-        }
-        if (mdxStatement instanceof UpdateStatement updateStatement) {
-            return createUpdate(updateStatement);
-        }
-        return null;
-    }
+		return switch (mdxStatement) {
+		case SelectStatement select -> createQuery(statement, select, strictValidation);
+		case DrillthroughStatement drillthrougt -> createDrillThrough(statement, drillthrougt, strictValidation);
+		case ExplainStatement explain -> createExplain(statement, explain, strictValidation);
+		case DMVStatement dmv -> createDMV(dmv);
+		case RefreshStatement refresh -> createRefresh(refresh);
+		case UpdateStatement update -> createUpdate(update);
+		};
+	}
 
     @Override
     public Refresh createRefresh(RefreshStatement refreshStatement) {
