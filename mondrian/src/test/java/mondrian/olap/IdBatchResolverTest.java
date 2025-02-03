@@ -38,7 +38,6 @@ import org.eclipse.daanse.olap.api.SubtotalVisibility;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.AxisOrdinal;
 import org.eclipse.daanse.olap.api.query.component.CellProperty;
-import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.query.component.Id;
 import org.eclipse.daanse.olap.api.query.component.Query;
@@ -58,8 +57,6 @@ import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.parser.JavaccParserValidatorImpl;
-import mondrian.parser.MdxParserValidator;
 import mondrian.rolap.RolapConnection;
 import mondrian.server.ExecutionImpl;
 import mondrian.server.LocusImpl;
@@ -452,13 +449,10 @@ class IdBatchResolverTest  {
 
     public IdBatchResolver makeTestBatchResolver(Context context,String mdx) {
     	TestUtil.flushSchemaCache(context.getConnectionWithDefaultRole());
-        FactoryImpl factoryImpl = new FactoryImplTestWrapper();
-        //MdxParserValidator parser = new JavaccParserValidatorImpl(factoryImpl);
 
         RolapConnection conn = (RolapConnection) spy(
         		context.getConnectionWithDefaultRole());
         when(conn.getQueryProvider()).thenReturn(new QueryProviderWrapper());
-        //when(conn.createParser()).thenReturn(parser);
 
         query = conn.parseQuery(mdx);
         LocusImpl.push(new LocusImpl(new ExecutionImpl(
@@ -511,30 +505,6 @@ class IdBatchResolverTest  {
             	spyReader=spy( new SpySchemaReader(super.getSchemaReader(accessControlled)));
             }
             return spyReader;
-        }
-    }
-
-    class FactoryImplTestWrapper extends FactoryImpl {
-
-        @Override
-        public QueryImpl makeQuery(
-            Statement statement,
-            Formula[] formulae,
-            QueryAxis[] axes,
-            Subcube subcube,
-            Expression slicer,
-            CellProperty[] cellProps,
-            boolean strictValidation)
-        {
-            final QueryAxisImpl slicerAxis =
-                slicer == null
-                    ? null
-                    : new QueryAxisImpl(
-                        false, slicer, AxisOrdinal.StandardAxisOrdinal.SLICER,
-                        SubtotalVisibility.Undefined, new Id[0]);
-            return new QueryTestWrapper(
-                statement, formulae, axes, subcube.getCubeName(), slicerAxis, cellProps,
-                strictValidation);
         }
     }
 

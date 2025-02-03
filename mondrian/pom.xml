@@ -426,22 +426,6 @@
 					</filesets>
 				</configuration>
 			</plugin>
-			<!--plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>javacc-maven-plugin</artifactId>
-        <version>3.0.1</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>javacc</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <sourceDirectory>${project.basedir}/src/main/java/mondrian/parser</sourceDirectory>
-          <outputDirectory>${project.basedir}/src/generated/java</outputDirectory>
-        </configuration>
-      </plugin-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
