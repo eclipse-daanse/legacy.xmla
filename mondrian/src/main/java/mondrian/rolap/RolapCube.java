@@ -568,8 +568,8 @@ public class RolapCube extends CubeBase {
                         columns
                 );
                 this.actionList.add(rolapDrillThroughAction);
+            }
         }
-
         if (cubeMapping.getWritebackTable() != null) {
             WritebackTableMapping writebackTable = cubeMapping.getWritebackTable();
             List<RolapWritebackColumn> columns = new ArrayList<>();
@@ -578,7 +578,7 @@ public class RolapCube extends CubeBase {
 
                     Dimension dimension = null;
                     for(Dimension currentDimension: this.getDimensions()) {
-                        if(currentDimension.getName().equals(writebackAttribute.getDimension().getName())) { //TODO
+                        if(currentDimension.getName().equals(writebackAttribute.getDimensionConnector().getOverrideDimensionName())) {
                             dimension = currentDimension;
                             break;
                         }
@@ -586,7 +586,7 @@ public class RolapCube extends CubeBase {
                     if(dimension == null) {
                         throw Util.newError(
                             new StringBuilder("Error while creating `WritebackTable`. Dimension '")
-                                        .append(writebackAttribute.getDimension()).append("' not found").toString());
+                                        .append(writebackAttribute.getDimensionConnector().getOverrideDimensionName()).append("' not found").toString());
                     }
 
                     columns.add(
@@ -600,7 +600,7 @@ public class RolapCube extends CubeBase {
             for(WritebackMeasureMapping writebackMeasure: writebackTable.getWritebackMeasure()) {
                     Member measure = null;
                     for(Member currentMeasure: this.getMeasures()) {
-                        if(currentMeasure.getName().equals(writebackMeasure.getName())) {
+                        if(currentMeasure instanceof RolapBaseCubeMeasure rbcm && rbcm.getKey().equals(writebackMeasure.getName())) {
                             measure = currentMeasure;
                             break;
                         }
@@ -622,7 +622,6 @@ public class RolapCube extends CubeBase {
                     columns
             );
             this.writebackTable = Optional.of(rolapWritebackTable);
-        }
         }
     }
 
@@ -861,9 +860,9 @@ public class RolapCube extends CubeBase {
             throw Util.newInternal("measure not found in cube usages");
         }
         }
-            
-            
-         if (cm != null) {   
+
+
+         if (cm != null) {
          for (CalculatedMemberMapping calculatedMember : cm) {
         	measureHash.put(calculatedMember.getName(), calculatedMember);
         	if (calculatedMember.getPhysicalCube() != null) {
@@ -880,7 +879,7 @@ public class RolapCube extends CubeBase {
                     if (cubeMeasure.getName().equalsIgnoreCase(
                             mappingVirtualCube.getDefaultMeasure() != null ? mappingVirtualCube.getDefaultMeasure().getName() : null ))
                     {
-                      defaultMeasure = cubeMeasure;                      
+                      defaultMeasure = cubeMeasure;
                     }
                     found = true;
                     List<CalculatedMemberMapping> memberList =
@@ -1162,12 +1161,12 @@ public class RolapCube extends CubeBase {
 
 
         if (dimension == null) {
-            DimensionMapping mappingDimension = mappingCubeDimension.getDimension();            
+            DimensionMapping mappingDimension = mappingCubeDimension.getDimension();
             if (mappingDimension == null) {
             	if (mappingCubeDimension.getPhysicalCube() != null) { //for virtual cube
             		mappingDimension = DimensionUtil.getDimension(mappingCubeDimension.getPhysicalCube(), mappingSchema, mappingCubeDimension.getOverrideDimensionName());
-            	}            	
-            }	
+            	}
+            }
             dimension =
             		new RolapDimension(
             				schema, this, mappingDimension, mappingCubeDimension);
@@ -3629,15 +3628,15 @@ public class RolapCube extends CubeBase {
                 ).filter(h -> hierarchy.equals(h.hierarchyMapping))
                 .findAny().orElse(null);
 	}
-	
-	public Level lookupLevel(LevelMapping level, Hierarchy h) {		
+
+	public Level lookupLevel(LevelMapping level, Hierarchy h) {
 		if (level != null && h != null && h.getLevels() != null) {
 			for (Level l : h.getLevels()) {
 				if (l instanceof RolapLevel rl) {
 					if (level.equals(rl.levelMapping)) {
 						return rl;
 					}
-				}				
+				}
 			}
 		}
 		return null;

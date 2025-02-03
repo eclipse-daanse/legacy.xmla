@@ -529,10 +529,12 @@ public class WriteBackService {
             if (cube.getWritebackTable() != null && cube.getWritebackTable().isPresent()) {
                 if (fact instanceof TableQueryMapping mappingTable) {
                     String alias = mappingTable.getAlias() != null ? mappingTable.getAlias() : mappingTable.getTable().getName();
-                    StringBuilder sql = new StringBuilder("select * from ").append(mappingTable.getTable().getName());
+                    StringBuilder sql = new StringBuilder("select ").append(writebackTable.getColumns().stream().map( c -> c.getColumn().getName() )
+                    .collect(Collectors.joining(", "))).append(" from ").append(mappingTable.getTable().getName());
                     sql.append(getWriteBackSql(dialect, writebackTable, sessionValues));
                     SqlStatementImpl sqlStatement = SqlStatementImpl.builder().withSql(sql.toString()).withDialects(List.of("generic", dialect.getDialectName())).build();
-                    SqlViewImpl sqlView = ((Builder) SqlViewImpl.builder().withSqlStatements(List.of(sqlStatement)).withsSchema((DatabaseSchemaImpl) mappingTable.getTable().getSchema())).build();
+                    DatabaseSchemaImpl schema = DatabaseSchemaImpl.builder().withName(mappingTable.getTable().getSchema().getName()).build();
+                    SqlViewImpl sqlView = ((Builder) SqlViewImpl.builder().withSqlStatements(List.of(sqlStatement)).withsSchema(schema)).build();
                     changeFact(cube, SqlSelectQueryMappingImpl.builder().withSql(sqlView).withAlias(alias).build());
                 }
                 if (fact instanceof InlineTableQueryMapping mappingInlineTable) {
