@@ -172,8 +172,5 @@ public class FunctionServiceImpl implements FunctionService {
 		return representativeFunctionMetaDatas;
 	}
 
-	@Override
-	public void defineFunctions(FunctionTableCollector collector) {
-
-	}
+	
 }
