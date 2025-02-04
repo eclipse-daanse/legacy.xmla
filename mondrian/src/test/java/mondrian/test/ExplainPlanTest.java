@@ -76,7 +76,7 @@ class ExplainPlanTest {
     final Statement statement = connection.createStatement();
     final ResultSet resultSet =
         statement.executeQuery( "explain plan for\n" + "select [Measures].[Unit Sales] on 0,\n"
-            + "  Filter([Product].Children, [Measures].[Unit Sales] > 100) on 1\n" + "from [Sales]", Optional.empty(), Optional.empty(), null );
+            + "  Filter([Product].Children, [Measures].[Unit Sales] > 100) on 1\n" + "from [Sales]", Optional.empty(), null );
     assertTrue( resultSet.next() );
     assertEquals( 1, resultSet.getMetaData().getColumnCount() );
     assertEquals( "PLAN", resultSet.getMetaData().getColumnName( 1 ) );
@@ -135,7 +135,7 @@ mondrian.olap.fun.FilterFunDef$ImmutableIterCalc(type=SetType<MemberType<hierarc
 				where [Gender].[F]""";
 
 		// Plan before execution.
-		final ResultSet resultSet = statement.executeQuery("explain plan for\n" + mdx, Optional.empty(), Optional.empty(), null);
+		final ResultSet resultSet = statement.executeQuery("explain plan for\n" + mdx, Optional.empty(), null);
 		assertTrue(resultSet.next());
 		String s = resultSet.getString(1);
 		String expected = """
@@ -234,7 +234,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
       final ResultSet resultSet =
           statement.executeQuery( "select\n" + "  {[Measures].[Unit Sales], [Measures].[Store Margin]} on 0,\n"
               + "  [Hi Val Products] * [Marital Status].Members on 1\n" + "from [Sales]\n" + "where [Gender].[F]",
-              Optional.empty(), Optional.empty(), null );
+              Optional.empty(), null );
       fail( "expected error, got " + resultSet );
     } catch ( Exception e ) {
       checkThrowable( e, "MDX object '[Measures].[Store Margin]' not found in cube 'Sales'" );

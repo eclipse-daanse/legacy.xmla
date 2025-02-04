@@ -151,7 +151,7 @@ class DrillThroughQuerySpecTest {
         + "RETURN [Product].[Product Department]";
 
     Connection connection = foodMartContext.getConnectionWithDefaultRole();
-    ResultSet resultSet = connection.createStatement().executeQuery(drillThroughMdx, Optional.empty(), Optional.empty(), null);
+    ResultSet resultSet = connection.createStatement().executeQuery(drillThroughMdx, Optional.empty(), null);
 
     assertEquals(1, resultSet.getMetaData().getColumnCount());
     assertEquals

@@ -41,10 +41,9 @@ public interface Statement  {
     CellSet executeQuery(String statement);
     CellSet executeQuery(Query query);
 
-    ResultSet executeQuery(String statement, Optional<Boolean> advanced, Optional<String> tabFields, int[] rowCountSlot);
+    ResultSet executeQuery(String statement, Optional<String> tabFields, int[] rowCountSlot);
 
-    ResultSet executeQuery(QueryComponent queryComponent, Optional<Boolean> advanced,
-                           Optional<String> tabFields, int[] rowCountSlot);
+    ResultSet executeQuery(QueryComponent queryComponent, Optional<String> tabFields, int[] rowCountSlot);
 
     Query getQuery();
 

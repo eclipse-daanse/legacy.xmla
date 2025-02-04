@@ -511,7 +511,7 @@ public class TestUtil {
 	public static ResultSet executeStatement(Connection connection, String queryString ) throws SQLException {
 		queryString = upgradeQuery( queryString );
         org.eclipse.daanse.olap.api.Statement stmt = connection.createStatement();
-		return stmt.executeQuery( queryString, Optional.empty(), Optional.empty(), null );
+		return stmt.executeQuery( queryString, Optional.empty(), null );
 	}
 
 

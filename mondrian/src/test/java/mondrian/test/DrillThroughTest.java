@@ -973,7 +973,7 @@ class DrillThroughTest {
         ResultSet resultSet = null;
         try {
             resultSet = connection.createStatement()
-                .executeQuery(drillThroughMdx, Optional.empty(), Optional.empty(), null);
+                .executeQuery(drillThroughMdx, Optional.empty(), null);
             assertEquals(2, resultSet.getMetaData().getColumnCount());
             assertEquals
                 ("Store sqft", resultSet.getMetaData().getColumnLabel(1));

@@ -77,15 +77,9 @@ public class StatementImpl extends mondrian.server.StatementImpl implements Stat
     @Override
     public ResultSet executeQuery(
         String mdx,
-        Optional<Boolean> advanced,
         Optional<String> tabFields,
         int[] rowCountSlot
     )  {
-        if (advanced.isPresent() && advanced.get()) {
-            // REVIEW: I removed 'executeDrillThroughAdvanced' in the cleanup.
-            // Do we still need it?
-            throw new UnsupportedOperationException();
-        }
         QueryComponent parseTree;
         try {
             parseTree =
@@ -94,23 +88,15 @@ public class StatementImpl extends mondrian.server.StatementImpl implements Stat
             throw new RuntimeException(
                 "mondrian gave exception while parsing query", e);
         }
-        return executeQuery(parseTree, advanced,
-            tabFields,
-         rowCountSlot);
+        return executeQuery(parseTree, tabFields, rowCountSlot);
     }
 
     @Override
     public ResultSet executeQuery(
         QueryComponent queryComponent,
-        Optional<Boolean> advanced,
         Optional<String> tabFields,
         int[] rowCountSlot
     )  {
-        if (advanced.isPresent() && advanced.get()) {
-            // REVIEW: I removed 'executeDrillThroughAdvanced' in the cleanup.
-            // Do we still need it?
-            throw new UnsupportedOperationException();
-        }
         if (queryComponent instanceof DrillThrough drillThrough) {
             final Query query = drillThrough.getQuery();
             query.setResultStyle(ResultStyle.LIST);
