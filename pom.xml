@@ -72,7 +72,7 @@
     <java.release>21</java.release>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
-  
+
 
 
     <slf4j.version>2.0.9</slf4j.version>
@@ -957,7 +957,6 @@
 
   </dependencies>
   <modules>
-    <module>function</module>
     <module>tooling</module>
     <module>mondrian</module>
     <module>olap</module>
