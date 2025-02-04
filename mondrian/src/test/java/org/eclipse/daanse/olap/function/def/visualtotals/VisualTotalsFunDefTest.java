@@ -106,7 +106,7 @@ class VisualTotalsFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testVisualTotalsNoPattern(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "VisualTotals("
                 + "    {[Product].[All Products].[Food].[Baked Goods].[Bread],"
                 + "     [Product].[All Products].[Food].[Baked Goods].[Bread].[Bagels],"
@@ -275,7 +275,7 @@ class VisualTotalsFunDefTest {
     void testVisualTotalsCrossjoin(Context context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "VisualTotals(Crossjoin([Gender].Members, [Store].children))",
-            "Argument to 'VisualTotals' function must be a set of members; got set of tuples." );
+            "Argument to 'VisualTotals' function must be a set of members; got set of tuples.", "Sales" );
     }
 
     /**

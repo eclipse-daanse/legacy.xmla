@@ -65,7 +65,7 @@ import mondrian.rolap.SchemaModifiers;
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
      void testCalculatedMemberInCube(Context context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(), "[Measures].[Profit]", "$339,610.90");
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Measures].[Profit]", "$339,610.90");
 
         // Testcase for bug 829012.
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -339,7 +339,7 @@ import mondrian.rolap.SchemaModifiers;
         assertNotNull(result);
     }
 
-    //TODO caption 
+    //TODO caption
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
      void testCalculatedMemberCaption(Context context) {
@@ -374,49 +374,49 @@ import mondrian.rolap.SchemaModifiers;
 //        discard(result);
 
         // Level cannot be converted.
-        assertExprThrows(context,
+        assertExprThrows(context, "Sales",
             "[Customers].[Country]",
             "Member expression '[Customers].[Country]' must not be a set");
 
         // Hierarchy can be converted.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "[Customers].[Customers]", "266,773");
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Customers].[Customers]", "266,773");
 
         // Dimension can be converted, if unambiguous.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "[Customers]", "266,773");
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Customers]", "266,773");
 
         if (SystemWideProperties.instance().SsasCompatibleNaming) {
             // SSAS 2005 does not have default hierarchies.
-            assertExprThrows(context,
+            assertExprThrows(context, "Sales",
                 "[Time]",
                 "The 'Time' dimension contains more than one hierarchy, "
                 + "therefore the hierarchy must be explicitly specified.");
         } else {
             // Default to first hierarchy.
-            assertExprReturns(context.getConnectionWithDefaultRole(), "[Time]", "266,773");
+            assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Time]", "266,773");
         }
 
         // Explicit hierarchy OK.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "[Time].[Time]", "266,773");
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Time].[Time]", "266,773");
 
         // Member can be converted.
-        assertExprReturns(context.getConnectionWithDefaultRole(), "[Customers].[USA]", "266,773");
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Customers].[USA]", "266,773");
 
         // Tuple can be converted.
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "([Customers].[USA], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer])",
             "1,683");
 
         // Set of tuples cannot be converted.
-        assertExprThrows(context,
+        assertExprThrows(context, "Sales",
             "{([Customers].[USA], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer])}",
             "Member expression '{([Customers].[USA], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer])}' must not be a set");
-        assertExprThrows(context,
+        assertExprThrows(context, "Sales",
             "{([Customers].[USA], [Product].[Food]),"
             + "([Customers].[USA], [Product].[Drink])}",
             "{([Customers].[USA], [Product].[Food]), ([Customers].[USA], [Product].[Drink])}' must not be a set");
 
         // Sets cannot be converted.
-        assertExprThrows(context,
+        assertExprThrows(context, "Sales",
             "{[Product].[Food]}",
             "Member expression '{[Product].[Food]}' must not be a set");
     }

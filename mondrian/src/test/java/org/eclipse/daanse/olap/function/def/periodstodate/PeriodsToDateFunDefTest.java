@@ -39,12 +39,12 @@ class PeriodsToDateFunDefTest {
             "PeriodsToDate([Time].[Year], [Time].[1997].[Q2].[5])", "{}" );
 
         // two args
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "PeriodsToDate([Time].[Quarter], [Time].[1997].[Q2].[5])",
             "[Time].[1997].[Q2].[4]\n" + "[Time].[1997].[Q2].[5]" );
 
         // equivalent to above
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopCount("
                 + "  Descendants("
                 + "    Ancestor("
@@ -150,7 +150,7 @@ class PeriodsToDateFunDefTest {
 
         // TODO: enable
         if ( false ) {
-            assertExprThrows(context.getConnectionWithDefaultRole(),
+            assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
                 "Sum(PeriodsToDate([Time.Weekly].[Year], [Time].CurrentMember), [Measures].[Unit Sales])",
                 "wrong dimension" );
         }

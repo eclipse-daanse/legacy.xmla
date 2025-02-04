@@ -33,7 +33,7 @@ class HierarchizeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchize(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Hierarchize(\n"
                 + "    {[Product].[All Products], "
                 + "     [Product].[Food],\n"
@@ -53,7 +53,7 @@ class HierarchizeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchizePost(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Hierarchize(\n"
                 + "    {[Product].[All Products], "
                 + "     [Product].[Food],\n"
@@ -105,7 +105,7 @@ class HierarchizeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchizeCrossJoinPre(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Hierarchize(\n"
                 + "  CrossJoin(\n"
                 + "    {[Product].[All Products], "
@@ -132,7 +132,7 @@ class HierarchizeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchizeCrossJoinPost(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Hierarchize(\n"
                 + "  CrossJoin(\n"
                 + "    {[Product].[All Products], "

@@ -88,7 +88,6 @@ import mondrian.olap.fun.FunUtil;
 import mondrian.rolap.MemberCacheHelper;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapHierarchy;
-import mondrian.rolap.RolapSchemaCache;
 import mondrian.rolap.RolapUtil;
 import mondrian.rolap.SmartMemberReader;
 import mondrian.server.ExecutionImpl;
@@ -99,7 +98,7 @@ import mondrian.util.DelegatingInvocationHandler;
 
 public class TestUtil {
 
-	protected static final String nl = Util.NL;
+    protected static final String nl = Util.NL;
 	private static final String lineBreak = "\"," + nl + "\"";
 	  /**
 	   * Executes the expression in the context of the cube indicated by
@@ -192,12 +191,6 @@ public class TestUtil {
 	        throwable = e;
 	      }
 	      checkThrowable( throwable, pattern );
-	    }
-
-	    public static void assertAxisThrows(Connection connection,
-	  	      String expression,
-	  	      String pattern) {
-	    	assertAxisThrows(connection, expression, pattern, getDefaultCubeName());
 	    }
 
 		/**
@@ -316,26 +309,6 @@ public class TestUtil {
 		}
 		checkThrowable(throwable, pattern);
 	}
-
-    /**
-	 * Executes an expression, and asserts that it gives an error which contains a
-	 * particular pattern. The error might occur during parsing, or might be
-	 * contained within the cell value.
-	 */
-	public static void assertExprThrows(Connection connection, String expression, String pattern) {
-		String cubeName = getDefaultCubeName();
-		assertExprThrows(connection, cubeName, expression, pattern);
-	}
-
-    /**
-     * Executes an expression, and asserts that it gives an error which contains a
-     * particular pattern. The error might occur during parsing, or might be
-     * contained within the cell value.
-     */
-    public static void assertExprThrows(Context context, String expression, String pattern) {
-        String cubeName = getDefaultCubeName();
-        assertExprThrows(context, cubeName, expression, pattern);
-    }
 
     /**
 		 * Checks that an actual string matches an expected string.
@@ -545,11 +518,11 @@ public class TestUtil {
 
 
 
-	public static void assertParameterizedExprReturns(Connection connection,
+	public static void assertParameterizedExprReturns(Connection connection, String cubeName,
 			String expr,
 			String expected,
 			Object... paramValues ) {
-		String queryString = generateExpression( expr );
+		String queryString = generateExpression(cubeName, expr);
 		Query query = connection.parseQuery( queryString );
 		assert paramValues.length % 2 == 0;
 		for ( int i = 0; i < paramValues.length; ) {
@@ -627,9 +600,8 @@ public class TestUtil {
 		return dialect;
 	}
 
-	public static boolean databaseIsValid(Connection connection) {
+	public static boolean databaseIsValid(Connection connection, String cubeName) {
 		try {
-			String cubeName = getDefaultCubeName();
 			if ( cubeName.indexOf( ' ' ) >= 0 ) {
 				cubeName = Util.quoteMdxIdentifier( cubeName );
 			}
@@ -844,17 +816,6 @@ public class TestUtil {
 			assertEqualsVerbose(expected, cell.getFormattedValue());
 		}
 
-		/**
-		 * Executes an expression and asserts that it returns a given result.
-		 */
-		public static void assertExprReturns(Connection connection, String expression, String expected) {
-			assertExprReturns(connection, getDefaultCubeName(), expression, expected);
-		}
-
-		public static String getDefaultCubeName() {
-			return "Sales";
-		}
-
 	    public static void checkThrowable( Throwable throwable, String pattern ) {
 	      if ( throwable == null ) {
 	        fail( "query did not yield an exception" );
@@ -950,9 +911,6 @@ public class TestUtil {
 		return result.getAxes()[0];
 	}
 
-	public static Axis executeAxis(Connection connection, String expression) {
-		return executeAxis(connection, getDefaultCubeName(), expression);
-	}
 	/**
 	 * Converts a set of positions into a string. Useful if you want to check that
 	 * an axis has the results you expected.
@@ -1015,10 +973,6 @@ public class TestUtil {
 	public static void assertAxisReturns(Connection connection, String cubeName, String expression, String expected) {
 		Axis axis = executeAxis(connection, cubeName, expression);
 		assertEqualsVerbose(expected, upgradeActual(toString(axis.getPositions())));
-	}
-
-	public static void assertAxisReturns(Connection connection, String expression, String expected) {
-		assertAxisReturns(connection, getDefaultCubeName(), expression, expected);
 	}
 
 	/**
@@ -1249,11 +1203,6 @@ public class TestUtil {
 		return connection.getContext().getDialect();
     }
 
-	public static Member executeSingletonAxis(Connection connection, String expression) {
-		final String cubeName = getDefaultCubeName();
-		return executeSingletonAxis(connection, expression, cubeName);
-	}
-
 	public static Member executeSingletonAxis(Connection connection, String expression, String cubeName) {
 		Result result = executeQuery(connection, "select {" + expression + "} on columns from " + cubeName);
 		Axis axis = result.getAxes()[0];
@@ -1321,22 +1270,22 @@ public class TestUtil {
 	 * Executes an expression which yields a boolean result, and asserts that
 	 * the result is the expected one.
 	 */
-	public static void assertBooleanExprReturns(Connection connection, String expression, boolean expected) {
+	public static void assertBooleanExprReturns(Connection connection, String cubeName, String expression, boolean expected) {
 		final String iifExpression =
 				"Iif (" + expression + ",\"true\",\"false\")";
-		final String actual = executeExpr(connection, iifExpression);
+		final String actual = executeExpr(connection, cubeName, iifExpression);
 		final String expectedString = expected ? "true" : "false";
 		assertEquals(expectedString, actual);
 	}
 
-	
+
 	/**
 	 * Executes an expression against the Sales cube in the FoodMart database
 	 * to form a single cell result set, then returns that cell's formatted
 	 * value.
 	 */
-	public static String executeExpr(Connection connection, String expression) {
-		return executeExprRaw(connection, expression).getFormattedValue();
+	public static String executeExpr(Connection connection, String cubeName, String expression) {
+		return executeExprRaw(connection, cubeName, expression).getFormattedValue();
 	}
 
 	public static boolean isDefaultNullMemberRepresentation() {
@@ -1344,8 +1293,7 @@ public class TestUtil {
 				.equals("#null");
 	}
 
-	public static String compileExpression(Connection connection, String expression, final boolean scalar ) {
-		String cubeName = getDefaultCubeName();
+	public static String compileExpression(Connection connection, String expression, final boolean scalar, String cubeName ) {
 		if ( cubeName.indexOf( ' ' ) >= 0 ) {
 			cubeName = Util.quoteMdxIdentifier( cubeName );
 		}
@@ -1388,22 +1336,11 @@ public class TestUtil {
 	 * @param expression The expression to evaluate
 	 * @return Cell which is the result of the expression
 	 */
-	public static Cell executeExprRaw(Connection connection, String expression ) {
-		final String queryString = generateExpression( expression );
-		Result result = executeQuery(connection, queryString);
-		return result.getCell( new int[] { 0 } );
-	}
-
-	private static String generateExpression( String expression ) {
-		String cubeName = getDefaultCubeName();
-		if ( cubeName.indexOf( ' ' ) >= 0 ) {
-			cubeName = Util.quoteMdxIdentifier( cubeName );
-		}
-		return
-				"with member [Measures].[Foo] as "
-						+ Util.singleQuoteString( expression )
-						+ " select {[Measures].[Foo]} on columns from " + cubeName;
-	}
+	//public static Cell executeExprRaw(Connection connection, String expression ) {
+	//	final String queryString = generateExpression( expression, "Sales" );
+	//	Result result = executeQuery(connection, queryString);
+	//	return result.getCell( new int[] { 0 } );
+	//}
 
 	private static void checkDependsOn(
 			final Query query,
@@ -1762,7 +1699,7 @@ public class TestUtil {
 		// Clear the cache for the Sales cube, so the query runs as if
 		// for the first time. (TODO: Cleaner way to do this.)
 		final Cube salesCube =
-				connection.getSchema().lookupCube("Sales", true);
+				connection.getSchema().lookupCube(cube.getName(), true);
 		RolapHierarchy hierarchy =
 				(RolapHierarchy) salesCube.lookupHierarchy(
 						new IdImpl.NameSegmentImpl("Store", Quoting.UNQUOTED),

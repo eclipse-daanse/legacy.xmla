@@ -342,8 +342,8 @@ public class UdfTest {
             + PlusOrMinusOneUdf.class.getName()
             + "\"/>\n");
          */
-        assertExprReturns(context.getConnectionWithDefaultRole(), "GenericPlusOne(3)", "4");
-        assertExprReturns(context.getConnectionWithDefaultRole(), "GenericMinusOne(3)", "2");
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "GenericPlusOne(3)", "4");
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "GenericMinusOne(3)", "2");
     }
 
     @Disabled //TODO: UserDefinedFunction
@@ -411,7 +411,7 @@ public class UdfTest {
     void testCurrentDateString(Context context)
     {
         prepareContext(context);
-        String actual = executeExpr(context.getConnectionWithDefaultRole(), "CurrentDateString(\"Ddd mmm dd yyyy\")");
+        String actual = executeExpr(context.getConnectionWithDefaultRole(), "Sales", "CurrentDateString(\"Ddd mmm dd yyyy\")");
         Date currDate = new Date();
         String dateString = currDate.toString();
         String expected =
@@ -440,7 +440,7 @@ public class UdfTest {
     void testCurrentDateMemberBeforeUsingQuotes(Context context)
     {
         prepareContext(context);
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             SystemWideProperties.instance().SsasCompatibleNaming
             ? "CurrentDateMember([Time].[Time], "
             + "'\"[Time].[Time].[\"yyyy\"].[Q\"q\"].[\"m\"]\"', BEFORE)"
@@ -830,7 +830,7 @@ public class UdfTest {
         updateTestContext(context, SchemaModifiers.UdfTestModifier15::new);
         // The default implementation of getResultType would assume that
         // StringMult(int, string) returns an int, whereas it returns a string.
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StringMult(5, 'foo') || 'bar'", "foofoofoofoofoobar");
     }
 
@@ -1021,7 +1021,7 @@ public class UdfTest {
             + "\"/>\n");
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier19::new);
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "MemberName([Gender].[F])", "F");
     }
 
@@ -1162,7 +1162,7 @@ public class UdfTest {
             + "</UserDefinedFunction>\n");
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier24::new);
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Factorial(4 + 2)",
             "720");
     }
@@ -1198,7 +1198,7 @@ public class UdfTest {
             + "</UserDefinedFunction>\n");
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier25::new);
-        final Cell cell = executeExprRaw(context.getConnectionWithDefaultRole(), "Factorial(4 + 2)");
+        final Cell cell = executeExprRaw(context.getConnectionWithDefaultRole(), "Sales", "Factorial(4 + 2)");
         assertMatchesVerbose(
             Pattern.compile(
                 "(?s).*ReferenceError: \"factorial_xx\" is not defined..*"),
@@ -1433,7 +1433,7 @@ public class UdfTest {
             + "  </Dimension>"));
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier6::new);
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Promotion Media2].FirstChild.Caption",
             "fooBulk Mailbar");
     }
@@ -1462,7 +1462,7 @@ public class UdfTest {
             + "  </Dimension>"));
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier6::new);
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Promotion Media2].FirstChild.Caption",
             "fooBulk Mailbar");
     }
@@ -1493,7 +1493,7 @@ public class UdfTest {
             + "  </Dimension>"));
          */
         updateTestContext(context, SchemaModifiers.UdfTestModifier7::new);
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Promotion Media2].FirstChild.Caption",
             "fooBulk Mailbar");
     }

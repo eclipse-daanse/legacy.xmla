@@ -33,7 +33,7 @@ class UnionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnionAll(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Union({[Gender].[M]}, {[Gender].[F]}, ALL)",
             "[Gender].[M]\n"
                 + "[Gender].[F]" ); // order is preserved
@@ -94,7 +94,7 @@ class UnionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnion(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Union({[Store].[USA], [Store].[USA], [Store].[USA].[OR]}, "
                 + "{[Store].[USA].[CA], [Store].[USA]})",
             "[Store].[USA]\n"
@@ -105,7 +105,7 @@ class UnionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnionEmptyBoth(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Union({}, {})",
             "" );
     }
@@ -113,7 +113,7 @@ class UnionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnionEmptyRight(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Union({[Gender].[M]}, {})",
             "[Gender].[M]" );
     }
@@ -121,7 +121,7 @@ class UnionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnionTuple(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Union({"
                 + " ([Gender].[M], [Marital Status].[S]),"
                 + " ([Gender].[F], [Marital Status].[S])"
@@ -138,7 +138,7 @@ class UnionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnionTupleDistinct(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Union({"
                 + " ([Gender].[M], [Marital Status].[S]),"
                 + " ([Gender].[F], [Marital Status].[S])"

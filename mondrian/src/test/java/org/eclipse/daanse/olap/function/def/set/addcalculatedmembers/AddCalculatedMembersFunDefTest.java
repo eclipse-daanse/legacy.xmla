@@ -129,7 +129,7 @@ class AddCalculatedMembersFunDefTest {
 
         assertAxisThrows(connection,
             "AddCalculatedMembers({([Store].[USA].[CA], [Gender].[F])})",
-            "Only single dimension members allowed in Set for AddCalculatedMembers");
+            "Only single dimension members allowed in Set for AddCalculatedMembers", "Sales");
     }
 
 }

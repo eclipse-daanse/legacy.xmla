@@ -44,13 +44,13 @@ public class DimensionsFunctionsTest {
 		TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(2).Name", "{}");
 		TestUtil.assertMemberExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(3).CurrentMember",
 				FunctionTest.allHiers());
-		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Dimensions(2).Name", "Store Size in SQFT");
+		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(2).Name", "Store Size in SQFT");
 		// bug 1426134 -- Dimensions(0) throws 'Index '0' out of bounds'
-		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Dimensions(0).Name", "Measures");
-		TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Dimensions(-1).Name", "Index '-1' out of bounds");
-		TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Dimensions(100).Name", "Index '100' out of bounds");
+		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(0).Name", "Measures");
+		TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(-1).Name", "Index '-1' out of bounds");
+		TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(100).Name", "Index '100' out of bounds");
 		// Since Dimensions returns a Hierarchy, can apply CurrentMember.
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Dimensions(3).CurrentMember", "[Store Type].[All Store Types]");
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(3).CurrentMember", "[Store Type].[All Store Types]");
 	}
 
 	@ParameterizedTest
@@ -59,9 +59,9 @@ public class DimensionsFunctionsTest {
 		TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(\"foo\").UniqueName", "{}");
 		TestUtil.assertMemberExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(\"foo\").CurrentMember",
 				FunctionTest.allHiers());
-		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Dimensions(\"Store\").UniqueName", "[Store]");
+		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"Store\").UniqueName", "[Store]");
 		// Since Dimensions returns a Hierarchy, can apply Children.
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Dimensions(\"Store\").Children", """
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"Store\").Children", """
 				[Store].[Canada]
 				[Store].[Mexico]
 				[Store].[USA]""");
@@ -74,7 +74,7 @@ public class DimensionsFunctionsTest {
 				Crossjoin(
 				{Dimensions("Measures").CurrentMember.Hierarchy.CurrentMember},
 				{Dimensions("Product")})""";
-		assertAxisReturns(context.getConnectionWithDefaultRole(), expression, "{[Measures].[Unit Sales], [Product].[All Products]}");
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", expression, "{[Measures].[Unit Sales], [Product].[All Products]}");
 		TestUtil.assertSetExprDependsOn(context.getConnectionWithDefaultRole(), expression, FunctionTest.allHiers());
 	}
 

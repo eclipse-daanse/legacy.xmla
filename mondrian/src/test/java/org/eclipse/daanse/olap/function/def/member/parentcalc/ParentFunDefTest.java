@@ -39,12 +39,12 @@ class ParentFunDefTest {
             "[Gender].Parent",
             "{[Gender]}" );
         assertMemberExprDependsOn(connection, "[Gender].[M].Parent", "{}" );
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "{[Store].[USA].[CA].Parent}", "[Store].[USA]" );
         // root member has null parent
-        assertAxisReturns(connection, "{[Store].[All Stores].Parent}", "" );
+        assertAxisReturns(connection, "Sales", "{[Store].[All Stores].Parent}", "" );
         // parent of null member is null
-        assertAxisReturns(connection, "{[Store].[All Stores].Parent.Parent}", "" );
+        assertAxisReturns(connection, "Sales", "{[Store].[All Stores].Parent.Parent}", "" );
     }
 
     @ParameterizedTest

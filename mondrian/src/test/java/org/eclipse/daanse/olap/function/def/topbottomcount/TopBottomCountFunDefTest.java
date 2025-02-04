@@ -34,11 +34,11 @@ import org.slf4j.LoggerFactory;
 class TopBottomCountFunDefTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger( TopBottomCountFunDefTest.class );
-    
+
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBottomCount(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "BottomCount({[Promotion Media].[Media Type].members}, 2, [Measures].[Unit Sales])",
             "[Promotion Media].[Radio]\n"
                 + "[Promotion Media].[Sunday Paper, Radio, TV]" );
@@ -47,7 +47,7 @@ class TopBottomCountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBottomCountUnordered(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "BottomCount({[Promotion Media].[Media Type].members}, 2)",
             "[Promotion Media].[Sunday Paper, Radio, TV]\n"
                 + "[Promotion Media].[TV]" );
@@ -58,7 +58,7 @@ class TopBottomCountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopCount(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopCount({[Promotion Media].[Media Type].members}, 2, [Measures].[Unit Sales])",
             "[Promotion Media].[No Media]\n"
                 + "[Promotion Media].[Daily Paper, Radio, TV]" );
@@ -67,7 +67,7 @@ class TopBottomCountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopCountUnordered(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopCount({[Promotion Media].[Media Type].members}, 2)",
             "[Promotion Media].[Bulk Mail]\n"
                 + "[Promotion Media].[Cash Register Handout]" );
@@ -76,7 +76,7 @@ class TopBottomCountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopCountTuple(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopCount([Customers].[Name].members,2,(Time.[1997].[Q1],[Measures].[Store Sales]))",
             "[Customers].[USA].[WA].[Spokane].[Grace McLaughlin]\n"
                 + "[Customers].[USA].[WA].[Spokane].[Matt Bellah]" );
@@ -85,7 +85,7 @@ class TopBottomCountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTopCountEmpty(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopCount(Filter({[Promotion Media].[Media Type].members}, 1=0), 2, [Measures].[Unit Sales])",
             "" );
     }

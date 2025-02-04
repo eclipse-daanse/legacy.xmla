@@ -34,7 +34,7 @@ class StrToMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStrToMember(Context context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(\"[Time].[1997].[Q2].[4]\").Name",
             "4" );
     }
@@ -42,7 +42,7 @@ class StrToMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStrToMemberUniqueName(Context context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(\"[Store].[USA].[CA]\").Name",
             "CA" );
     }
@@ -50,7 +50,7 @@ class StrToMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStrToMemberFullyQualifiedName(Context context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(\"[Store].[All Stores].[USA].[CA]\").Name",
             "CA" );
     }
@@ -60,13 +60,13 @@ class StrToMemberFunDefTest {
     void testStrToMemberNull(Context context) {
         // SSAS 2005 gives "#Error An MDX expression was expected. An empty
         // expression was specified."
-        assertExprThrows(context.getConnectionWithDefaultRole(),
+        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(null).Name",
             "An MDX expression was expected. An empty expression was specified" );
-        assertExprThrows(context.getConnectionWithDefaultRole(),
+        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet(null, [Gender]).Count",
             "An MDX expression was expected. An empty expression was specified" );
-        assertExprThrows(context.getConnectionWithDefaultRole(),
+        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "StrToTuple(null, [Gender]).Name",
             "An MDX expression was expected. An empty expression was specified" );
     }
@@ -99,38 +99,38 @@ class StrToMemberFunDefTest {
                 + "Row #0: 191,940\n" );
 
         // Hierarchy is inferred from leading edge
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(\"[Marital Status].[Separated]\").Hierarchy.Name",
             "Marital Status" );
 
         // Null member is returned
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(\"[Marital Status].[Separated]\").Name",
             "#null" );
 
         // Use longest valid prefix, so get [Time].[Weekly] rather than just
         // [Time].
         final String timeWeekly = hierarchyName( "Time", "Weekly" );
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(\"" + timeWeekly
                 + ".[1996].[Q1]\").Hierarchy.UniqueName",
             timeWeekly );
 
         // If hierarchy is invalid, throw an error even though
         // IgnoreInvalidMembersDuringQuery is set.
-        assertExprThrows(context.getConnectionWithDefaultRole(),
+        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(\"[Unknown Hierarchy].[Invalid].[Member]\").Name",
             "MDX object '[Unknown Hierarchy].[Invalid].[Member]' not found in cube 'Sales'" );
-        assertExprThrows(context.getConnectionWithDefaultRole(),
+        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(\"[Unknown Hierarchy].[Invalid]\").Name",
             "MDX object '[Unknown Hierarchy].[Invalid]' not found in cube 'Sales'" );
-        assertExprThrows(context.getConnectionWithDefaultRole(),
+        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(\"[Unknown Hierarchy]\").Name",
             "MDX object '[Unknown Hierarchy]' not found in cube 'Sales'" );
 
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "StrToMember(\"\")",
-            "MDX object '' not found in cube 'Sales'" );
+            "MDX object '' not found in cube 'Sales'", "Sales" );
 
         ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(false);
         assertQueryThrows(context,
@@ -140,7 +140,7 @@ class StrToMemberFunDefTest {
                 + "  {[Measures].[Unit Sales]} on rows\n"
                 + "from [Sales]",
             "Member '[Product].[Drugs]' not found" );
-        assertExprThrows(context,
+        assertExprThrows(context, "Sales",
             "StrToMember(\"[Marital Status].[Separated]\").Hierarchy.Name",
             "Member '[Marital Status].[Separated]' not found" );
     }

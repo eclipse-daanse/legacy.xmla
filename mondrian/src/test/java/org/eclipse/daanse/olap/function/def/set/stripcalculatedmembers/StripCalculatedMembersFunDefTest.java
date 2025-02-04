@@ -18,7 +18,7 @@ class StripCalculatedMembersFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStripCalculatedMembers(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "StripCalculatedMembers({[Measures].AllMembers})",
             "[Measures].[Unit Sales]\n"
                 + "[Measures].[Store Cost]\n"
@@ -28,7 +28,7 @@ class StripCalculatedMembersFunDefTest {
                 + "[Measures].[Promotion Sales]" );
 
         // applied to empty set
-        assertAxisReturns(connection, "StripCalculatedMembers({[Gender].Parent})", "" );
+        assertAxisReturns(connection, "Sales", "StripCalculatedMembers({[Gender].Parent})", "" );
 
         assertSetExprDependsOn(connection,
             "StripCalculatedMembers([Customers].CurrentMember.Children)",

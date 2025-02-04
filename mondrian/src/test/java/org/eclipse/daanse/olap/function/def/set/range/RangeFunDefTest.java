@@ -29,7 +29,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRange(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[1997].[Q1].[2] : [Time].[1997].[Q2].[5]",
             "[Time].[1997].[Q1].[2]\n"
                 + "[Time].[1997].[Q1].[3]\n"
@@ -60,7 +60,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNullRange(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[1997].[Q1].[2] : NULL", //[Time].[1997].[Q2].[5]
             "" ); // Empty Set
     }
@@ -73,7 +73,7 @@ class RangeFunDefTest {
     void testTwoNullRange(Context context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "NULL : NULL",
-            "Failed to parse query 'select {NULL : NULL} on columns from Sales'" );
+            "Failed to parse query 'select {NULL : NULL} on columns from Sales'" , "Sales");
     }
 
     /**
@@ -82,7 +82,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeLarge(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Customers].[USA].[CA].[San Francisco] : [Customers].[USA].[WA].[Bellingham]",
             "[Customers].[USA].[CA].[San Francisco]\n"
                 + "[Customers].[USA].[CA].[San Gabriel]\n"
@@ -112,7 +112,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeStartEqualsEnd(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[1997].[Q3].[7] : [Time].[1997].[Q3].[7]",
             "[Time].[1997].[Q3].[7]" );
     }
@@ -120,7 +120,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeStartEqualsEndLarge(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Customers].[USA].[CA] : [Customers].[USA].[CA]",
             "[Customers].[USA].[CA]" );
     }
@@ -128,7 +128,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeEndBeforeStart(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[1997].[Q3].[7] : [Time].[1997].[Q2].[5]",
             "[Time].[1997].[Q2].[5]\n"
                 + "[Time].[1997].[Q2].[6]\n"
@@ -138,7 +138,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeEndBeforeStartLarge(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Customers].[USA].[WA] : [Customers].[USA].[CA]",
             "[Customers].[USA].[CA]\n"
                 + "[Customers].[USA].[OR]\n"
@@ -150,13 +150,13 @@ class RangeFunDefTest {
     void testRangeBetweenDifferentLevelsIsError(Context context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "[Time].[1997].[Q2] : [Time].[1997].[Q2].[5]",
-            "Members must belong to the same level" );
+            "Members must belong to the same level", "Sales" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeBoundedByAll(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Gender] : [Gender]",
             "[Gender].[All Gender]" );
     }
@@ -164,7 +164,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeBoundedByAllLarge(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Customers].DefaultMember : [Customers]",
             "[Customers].[All Customers]" );
     }
@@ -172,7 +172,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeBoundedByNull(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Gender].[F] : [Gender].[M].NextMember",
             "" );
     }
@@ -180,7 +180,7 @@ class RangeFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRangeBoundedByNullLarge(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Customers].PrevMember : [Customers].[USA].[OR]",
             "" );
     }

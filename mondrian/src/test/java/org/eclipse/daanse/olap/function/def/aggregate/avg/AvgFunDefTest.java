@@ -26,7 +26,7 @@ class AvgFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testIIfSetType_InCrossJoinAndAvg(Context context) {
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Avg(CROSSJOIN([Store Type].[Deluxe Supermarket],IIf(1 = 1, {[Store].[USA].[OR], [Store].[USA].[WA]}, {[Store]"
                 + ".[Mexico], [Store].[USA].[CA]})), [Measures].[Store Sales])",
             "81,031.12" );

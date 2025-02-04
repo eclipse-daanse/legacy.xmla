@@ -149,7 +149,7 @@ class UnionFunDefTest {
         + "{[Customers].[USA].[WA], [Time].[1997].[Q3], [Gender].[F], [Marital Status].[M]}\n"
         + "{[Customers].[USA].[WA], [Time].[1997].[Q4], [Gender].[F], [Marital Status].[M]}";
 
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Union( " + tupleSet + ", " + tupleSet + ")", expected);
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Union( " + tupleSet + ", " + tupleSet + ")", expected);
   }
 
   @ParameterizedTest
@@ -165,9 +165,9 @@ class UnionFunDefTest {
         + "{[Customers].[Canada].[BC], [Time].[1997].[Q4], [Education Level].[Partial College], [Gender].[F], [Marital Status].[M]}\n"
         + "{[Customers].[Canada].[BC], [Time].[1997].[Q4], [Education Level].[Partial High School], [Gender].[F], [Marital Status].[M]}";
     Connection connection = context.getConnectionWithDefaultRole();
-    assertAxisReturns(connection, tupleSet, expected);
+    assertAxisReturns(connection, "Sales", tupleSet, expected);
 
-    assertAxisReturns(connection, "Union( " + tupleSet + ", " + tupleSet + ")", expected);
+    assertAxisReturns(connection, "Sales", "Union( " + tupleSet + ", " + tupleSet + ")", expected);
   }
 
   void testArity5TupleUnionAll(Context context) {
@@ -183,9 +183,9 @@ class UnionFunDefTest {
         + "{[Customers].[Canada].[BC], [Time].[1998].[Q1], [Education Level].[Partial High School], [Gender].[F], [Marital Status].[M]}";
 
     Connection connection = context.getConnectionWithDefaultRole();
-    assertAxisReturns(connection, tupleSet, expected);
+    assertAxisReturns(connection, "Sales", tupleSet, expected);
 
-    assertAxisReturns(connection,
+    assertAxisReturns(connection, "Sales",
         "Union( " + tupleSet + ", " + tupleSet + ", " + "ALL" + ")",
         expected + "\n" + expected);
   }
@@ -207,7 +207,7 @@ class UnionFunDefTest {
     String tupleSet1Expected =
         "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$90K - $110K], [Gender].[F], [Marital Status].[M]}";
     Connection connection = context.getConnectionWithDefaultRole();
-    assertAxisReturns(connection, tupleSet1, tupleSet1Expected);
+    assertAxisReturns(connection, "Sales", tupleSet1, tupleSet1Expected);
 
     String tupleSet2Expected =
         "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$10K - $30K], [Gender].[F], [Marital Status].[M]}\n"
@@ -219,9 +219,9 @@ class UnionFunDefTest {
         + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$70K - $90K], [Gender].[F], [Marital Status].[M]}\n"
         + tupleSet1Expected;
 
-    assertAxisReturns(connection, tupleSet2, tupleSet2Expected);
+    assertAxisReturns(connection, "Sales", tupleSet2, tupleSet2Expected);
 
-    assertAxisReturns(connection,
+    assertAxisReturns(connection, "Sales",
         "Union( " + tupleSet2 + ", " + tupleSet1 + ")",
         tupleSet2Expected);
   }
@@ -243,7 +243,7 @@ class UnionFunDefTest {
     String tupleSet1Expected =
         "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$90K - $110K], [Gender].[F], [Marital Status].[M]}";
     Connection connection = context.getConnectionWithDefaultRole();
-    assertAxisReturns(connection, tupleSet1, tupleSet1Expected);
+    assertAxisReturns(connection, "Sales", tupleSet1, tupleSet1Expected);
 
     String tupleSet2Expected =
         "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$10K - $30K], [Gender].[F], [Marital Status].[M]}\n"
@@ -254,9 +254,9 @@ class UnionFunDefTest {
         + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$50K - $70K], [Gender].[F], [Marital Status].[M]}\n"
         + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$70K - $90K], [Gender].[F], [Marital Status].[M]}\n"
         + tupleSet1Expected;
-    assertAxisReturns(connection, tupleSet2, tupleSet2Expected);
+    assertAxisReturns(connection, "Sales", tupleSet2, tupleSet2Expected);
 
-    assertAxisReturns(connection,
+    assertAxisReturns(connection, "Sales",
             "Union( " + tupleSet1 + ", " + tupleSet2 + ", " + "ALL" + ")",
         tupleSet1Expected + "\n" + tupleSet2Expected);
   }

@@ -28,19 +28,19 @@ class AndOperatorDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAnd(Context context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), " 1=1 AND 2=2 ", true );
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=1 AND 2=2 ", true );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAnd2(Context context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), " 1=1 AND 2=0 ", false );
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=1 AND 2=0 ", false );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOr(Context context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), " 1=0 OR 2=0 ", false );
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=0 OR 2=0 ", false );
     }
 
     @ParameterizedTest

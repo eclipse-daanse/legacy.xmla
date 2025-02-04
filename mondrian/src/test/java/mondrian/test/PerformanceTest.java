@@ -277,7 +277,7 @@ public class PerformanceTest {
     Statistician[] statisticians) {
     Result result;
     long start = System.currentTimeMillis();
-    final Axis axis = executeAxis(connection, "Customers.Members" );
+    final Axis axis = executeAxis(connection, "Sales", "Customers.Members" );
     statisticians[ 0 ].record( start );
     final List<Position> positionList = axis.getPositions();
     assertEquals( 10407, positionList.size() );

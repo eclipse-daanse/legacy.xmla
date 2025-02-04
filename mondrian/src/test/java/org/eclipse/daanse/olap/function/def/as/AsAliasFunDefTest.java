@@ -45,7 +45,7 @@ public class AsAliasFunDefTest {
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAs(Context context) {
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Filter([Customers].Children as t,\n" + "t.Current.Name = 'USA')",
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Filter([Customers].Children as t,\n" + "t.Current.Name = 'USA')",
 				"[Customers].[USA]");
 	}
 

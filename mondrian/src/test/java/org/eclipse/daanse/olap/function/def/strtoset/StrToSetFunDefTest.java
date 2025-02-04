@@ -38,7 +38,7 @@ class StrToSetFunDefTest {
         // TODO: test spaces before unbracketed names,
         //       e.g. "{Gender. M, Gender. F   }".
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + " \"{[Gender].[F], [Gender].[M]}\","
                 + " [Gender])",
@@ -49,10 +49,10 @@ class StrToSetFunDefTest {
             "StrToSet("
                 + " \"{[Gender].[F], [Time].[1997]}\","
                 + " [Gender])",
-            "member is of wrong hierarchy" );
+            "member is of wrong hierarchy", "Sales" );
 
         // whitespace ok
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + " \"  {   [Gender] .  [F]  ,[Gender].[M] }  \","
                 + " [Gender])",
@@ -60,7 +60,7 @@ class StrToSetFunDefTest {
                 + "[Gender].[M]" );
 
         // tuples
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + "\""
                 + "{"
@@ -74,7 +74,7 @@ class StrToSetFunDefTest {
                 + "{[Gender].[M], [Time].[1997]}" );
 
         // matches unique name
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + "\""
                 + "{"
@@ -103,7 +103,7 @@ class StrToSetFunDefTest {
                 + " [Gender],"
                 + " [Time],"
                 + " [Gender])",
-            "Tuple contains more than one member of hierarchy '[Gender]'." );
+            "Tuple contains more than one member of hierarchy '[Gender]'.", "Sales" );
     }
 
     @ParameterizedTest
@@ -111,7 +111,7 @@ class StrToSetFunDefTest {
     void testStrToSetIgnoreInvalidMembers(Context context) {
         context.getSchemaCache().clear();
         ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + "\""
                 + "{"
@@ -125,7 +125,7 @@ class StrToSetFunDefTest {
             "[Product].[Food]\n"
                 + "[Product].[Drink].[Dairy]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + "\""
                 + "{"

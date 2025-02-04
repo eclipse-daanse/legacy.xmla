@@ -43,22 +43,22 @@ class RankFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testRank(Context context) {
         // Member within set
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Store].[USA].[CA], "
                 + "{[Store].[USA].[OR],"
                 + " [Store].[USA].[CA],"
                 + " [Store].[USA]})", "2" );
         // Member not in set
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Store].[USA].[WA], "
                 + "{[Store].[USA].[OR],"
                 + " [Store].[USA].[CA],"
                 + " [Store].[USA]})", "0" );
         // Member not in empty set
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Store].[USA].[WA], {})", "0" );
         // Null member not in set returns null.
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Store].Parent, "
                 + "{[Store].[USA].[OR],"
                 + " [Store].[USA].[CA],"
@@ -66,32 +66,32 @@ class RankFunDefTest {
         // Null member in empty set. (MSAS returns an error "Formula error -
         // dimension count is not valid - in the Rank function" but I think
         // null is the correct behavior.)
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].Parent, {})", "" );
         // Member occurs twice in set -- pick first
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Store].[USA].[WA], \n"
                 + "{[Store].[USA].[WA],"
                 + " [Store].[USA].[CA],"
                 + " [Store].[USA],"
                 + " [Store].[USA].[WA]})", "1" );
         // Tuple not in set
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank(([Gender].[F], [Marital Status].[M]), \n"
                 + "{([Gender].[F], [Marital Status].[S]),\n"
                 + " ([Gender].[M], [Marital Status].[S]),\n"
                 + " ([Gender].[M], [Marital Status].[M])})", "0" );
         // Tuple in set
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank(([Gender].[F], [Marital Status].[M]), \n"
                 + "{([Gender].[F], [Marital Status].[S]),\n"
                 + " ([Gender].[M], [Marital Status].[S]),\n"
                 + " ([Gender].[F], [Marital Status].[M])})", "3" );
         // Tuple not in empty set
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank(([Gender].[F], [Marital Status].[M]), \n" + "{})", "0" );
         // Partially null tuple in set, returns null
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank(([Gender].[F], [Marital Status].Parent), \n"
                 + "{([Gender].[F], [Marital Status].[S]),\n"
                 + " ([Gender].[M], [Marital Status].[S]),\n"
@@ -223,21 +223,21 @@ class RankFunDefTest {
         // All gender 266,733
         // F          131,558
         // M          135,215
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[All Gender],"
                 + " {[Gender].Members},"
                 + " [Measures].[Unit Sales])", "1" );
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[F],"
                 + " {[Gender].Members},"
                 + " [Measures].[Unit Sales])", "3" );
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[M],"
                 + " {[Gender].Members},"
                 + " [Measures].[Unit Sales])", "2" );
         // Null member. Expression evaluates to null, therefore value does
         // not appear in the list of values, therefore the rank is null.
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[All Gender].Parent,"
                 + " {[Gender].Members},"
                 + " [Measures].[Unit Sales])", "" );
@@ -247,34 +247,34 @@ class RankFunDefTest {
         // a tuple expression, should reference the same hierachies as the
         // second argument, a set expression'. I think that's because it can't
         // deduce a type for '{}'. SSAS's problem, not Mondrian's. :)
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[M],"
                 + " {},"
                 + " [Measures].[Unit Sales])",
             "1" );
         // As above, but SSAS can type-check this.
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[M],"
                 + " Filter(Gender.Members, 1 = 0),"
                 + " [Measures].[Unit Sales])",
             "1" );
         // Member is not in set
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[M]," + " {[Gender].[All Gender], [Gender].[F]})",
             "0" );
         // Even though M is not in the set, its value lies between [All Gender]
         // and [F].
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[M],"
                 + " {[Gender].[All Gender], [Gender].[F]},"
                 + " [Measures].[Unit Sales])", "2" );
         // Expr evaluates to null for some values of set.
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Product].[Non-Consumable].[Household],"
                 + " {[Product].[Food], [Product].[All Products], [Product].[Drink].[Dairy]},"
                 + " [Product].CurrentMember.Parent)", "2" );
         // Expr evaluates to null for all values in the set.
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Gender].[M],"
                 + " {[Gender].[All Gender], [Gender].[F]},"
                 + " [Marital Status].[All Marital Status].Parent)", "1" );

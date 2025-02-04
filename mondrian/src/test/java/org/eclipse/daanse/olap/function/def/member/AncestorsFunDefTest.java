@@ -126,7 +126,7 @@ class AncestorsFunDefTest {
         // test depth argument not a level
         assertAxisThrows(connection,
             "Ancestors([Store].[USA].[CA].[Los Angeles],[Store])",
-            "Error while executing query" );
+            "Error while executing query", "Sales");
     }
 
 }

@@ -39,15 +39,15 @@ class HierarchyCurrentMemberFunDefTest {
     void testCurrentMember(Context context) {
         // <Dimension>.CurrentMember
         Connection connection = context.getConnectionWithDefaultRole();
-        assertAxisReturns(connection, "[Gender].CurrentMember", "[Gender].[All Gender]" );
+        assertAxisReturns(connection, "Sales", "[Gender].CurrentMember", "[Gender].[All Gender]" );
         // <Hierarchy>.CurrentMember
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "[Gender].Hierarchy.CurrentMember", "[Gender].[All Gender]" );
 
         // <Level>.CurrentMember
         // MSAS doesn't allow this, but Mondrian does: it implicitly casts
         // level to hierarchy.
-        assertAxisReturns(connection, "[Store Name].CurrentMember", "[Store].[All Stores]" );
+        assertAxisReturns(connection, "Sales", "[Store Name].CurrentMember", "[Store].[All Stores]" );
     }
 
     @Disabled //disabled for CI build

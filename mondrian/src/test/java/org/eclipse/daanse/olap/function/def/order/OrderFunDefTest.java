@@ -46,7 +46,7 @@ class OrderFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBug715177c(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Order(TopCount({[Store].[USA].[CA].children},"
                 + " [Measures].[Unit Sales], 2), [Measures].[Unit Sales])",
             "[Store].[USA].[CA].[Alameda]\n"
@@ -408,7 +408,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOrderHierarchicalDesc(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Order(\n"
                 + "    {[Product].[All Products], "
                 + "     [Product].[Food],\n"
@@ -430,7 +430,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOrderCrossJoinDesc(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Order(\n"
                 + "  CrossJoin(\n"
                 + "    {[Gender].[M], [Gender].[F]},\n"

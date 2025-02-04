@@ -33,19 +33,19 @@ class AllMembersFunDefTest {
     void testAllMembers(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
         // <Level>.allmembers
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "{[Customers].[Country].allmembers}",
             "[Customers].[Canada]\n"
                 + "[Customers].[Mexico]\n"
                 + "[Customers].[USA]" );
 
         // <Level>.allmembers applied to 'all' level
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "{[Customers].[(All)].allmembers}", "[Customers].[All Customers]" );
 
         // <Level>.allmembers applied to measures dimension
         // Note -- cube-level calculated members ARE present
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "{[Measures].[MeasuresLevel].allmembers}",
             "[Measures].[Unit Sales]\n"
                 + "[Measures].[Store Cost]\n"
@@ -58,7 +58,7 @@ class AllMembersFunDefTest {
                 + "[Measures].[Profit last Period]" );
 
         // <Dimension>.allmembers applied to Measures
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "{[Measures].allmembers}",
             "[Measures].[Unit Sales]\n"
                 + "[Measures].[Store Cost]\n"

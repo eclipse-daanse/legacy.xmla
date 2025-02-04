@@ -29,9 +29,9 @@ class EqualOperatorDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testEq(Context context) {
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), " 1.0 = 1 ", true );
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1.0 = 1 ", true );
 
-        assertBooleanExprReturns(context.getConnectionWithDefaultRole(),
+        assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Product].CurrentMember.Level.Ordinal = 2.0", false );
         checkNullOp(context.getConnectionWithDefaultRole(), "=" );
     }

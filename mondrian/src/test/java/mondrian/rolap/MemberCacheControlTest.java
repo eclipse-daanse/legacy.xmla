@@ -555,7 +555,7 @@ class MemberCacheControlTest {
             + "Row #0: \n"
             + "Row #0: \n"
             + "Row #0: \n");
-        assertAxisReturns(conn,
+        assertAxisReturns(conn, "Sales",
             "[Retail].[CA].Children",
             "[Retail].[CA].[Alameda]\n"
             + "[Retail].[CA].[Beverly Hills]\n"
@@ -572,7 +572,7 @@ class MemberCacheControlTest {
         // Load cell data and check it is in cache
         executeQuery(conn,
             "select {[Measures].[Unit Sales]} on columns, {[Retail].[CA]} on rows from [Sales]");
-        
+
         AbstractBasicContext abc = (AbstractBasicContext) conn.getContext();
         final AggregationManager aggMgr =
           abc.getAggregationManager();
@@ -591,7 +591,7 @@ class MemberCacheControlTest {
             aggMgr.getCellFromAllCaches(
                 AggregationManager.makeRequest(cacheRegionMembers), (RolapConnection)conn));
 
-        assertAxisReturns(conn,
+        assertAxisReturns(conn, "Sales",
             "[Retail].[CA].Children",
             "[Retail].[CA].[Alameda]\n"
             + "[Retail].[CA].[Beverly Hills]\n"
@@ -715,7 +715,7 @@ class MemberCacheControlTest {
                 yearCubeMember
             };
 
-        assertAxisReturns(conn,
+        assertAxisReturns(conn, "Sales",
             "[Retail].[CA].Children",
             "[Retail].[CA].[Alameda]\n"
             + "[Retail].[CA].[Beverly Hills]\n"
@@ -757,7 +757,7 @@ class MemberCacheControlTest {
                 AggregationManager.makeRequest(cacheRegionMembers), (RolapConnection)conn));
 
         // The list of children should be updated.
-        assertAxisReturns(conn,
+        assertAxisReturns(conn, "Sales",
             "[Retail].[CA].Children",
             "[Retail].[CA].[Alameda]\n"
             + "[Retail].[CA].[Beverly Hills]\n"
@@ -800,17 +800,17 @@ class MemberCacheControlTest {
                 null);
 
         // test axis contents
-        assertAxisReturns(conn,
+        assertAxisReturns(conn, "Sales",
             "[Retail].[CA].Children",
             "[Retail].[CA].[Alameda]\n"
             + "[Retail].[CA].[Beverly Hills]\n"
             + "[Retail].[CA].[Los Angeles]\n"
             + "[Retail].[CA].[San Diego]\n"
             + "[Retail].[CA].[San Francisco]");
-        assertAxisReturns(conn,
+        assertAxisReturns(conn, "Sales",
             "[Retail].[CA].[Alameda].Children",
             "[Retail].[CA].[Alameda].[HQ]");
-        assertAxisReturns(conn,
+        assertAxisReturns(conn, "Sales",
             "[Retail].[CA].[San Francisco].Children",
             "[Retail].[CA].[San Francisco].[Store 14]");
 
@@ -840,10 +840,10 @@ class MemberCacheControlTest {
         assertEquals(2, alamedaChildren.size());
 
         // test axis contents
-        assertAxisReturns(conn,
+        assertAxisReturns(conn, "Sales",
             "[Retail].[CA].[San Francisco].Children",
             "");
-        assertAxisReturns(conn,
+        assertAxisReturns(conn, "Sales",
             "[Retail].[CA].[Alameda].Children",
             "[Retail].[CA].[Alameda].[HQ]\n"
             + "[Retail].[CA].[Alameda].[Store 14]");
@@ -882,14 +882,14 @@ class MemberCacheControlTest {
                 null);
 
         // test axis contents
-        assertAxisReturns(conn,
+        assertAxisReturns(conn, "Sales",
             "[Retail].[CA].Children",
             "[Retail].[CA].[Alameda]\n"
             + "[Retail].[CA].[Beverly Hills]\n"
             + "[Retail].[CA].[Los Angeles]\n"
             + "[Retail].[CA].[San Diego]\n"
             + "[Retail].[CA].[San Francisco]");
-        assertAxisReturns(conn,
+        assertAxisReturns(conn, "Sales",
             "[Retail].[CA].[San Francisco].Children",
             "[Retail].[CA].[San Francisco].[Store 14]");
 
@@ -917,10 +917,10 @@ class MemberCacheControlTest {
             memberCache.getChildrenFromCache(sfMember, null).size());
 
         // test axis contents. should not have been modified
-        assertAxisReturns(conn,
+        assertAxisReturns(conn, "Sales",
             "[Retail].[CA].[San Francisco].Children",
             "[Retail].[CA].[San Francisco].[Store 14]");
-        assertAxisReturns(conn,
+        assertAxisReturns(conn, "Sales",
             "[Retail].[CA].Children",
             "[Retail].[CA].[Alameda]\n"
             + "[Retail].[CA].[Beverly Hills]\n"
@@ -1106,7 +1106,7 @@ class MemberCacheControlTest {
 					public void run() {
                         // Check that <Member>.Children uses cache when applied
                         // to an 'all' member.
-                        assertAxisReturns(context.getConnectionWithDefaultRole(),
+                        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
                             "[Store].Children",
                             "[Store].[Canada]\n"
                             + "[Store].[Mexico]\n"
@@ -1120,7 +1120,7 @@ class MemberCacheControlTest {
 					public void run() {
                         // Check that <Member>.Children uses cache when applied
                         // to regular member.
-                        assertAxisReturns(context.getConnectionWithDefaultRole(),
+                        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
                             "[Store].[USA].[CA].Children",
                             "[Store].[USA].[CA].[Alameda]\n"
                             + "[Store].[USA].[CA].[Beverly Hills]\n"
@@ -1139,7 +1139,7 @@ class MemberCacheControlTest {
 					public void run() {
                         // Check that <Member>.Children uses cache when applied
                         // to regular member.
-                        assertAxisReturns(context.getConnectionWithDefaultRole(),
+                        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
                             "[Store].[USA].[CA].Children",
                             "[Store].[USA].[CA].[Alameda]\n"
                             + "[Store].[USA].[CA].[Beverly Hills]\n"
@@ -1154,7 +1154,7 @@ class MemberCacheControlTest {
                     @Override
 					public void run() {
                         // Check that <Hierarchy>.Members uses cache.
-                        assertExprReturns(context.getConnectionWithDefaultRole(),
+                        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
                             "Count([Store].Members)", "63");
                     }
                 });
@@ -1163,7 +1163,7 @@ class MemberCacheControlTest {
                     @Override
 					public void run() {
                         // Check that <Level>.Members uses cache.
-                        assertExprReturns(context.getConnectionWithDefaultRole(),
+                        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
                             "Count([Store].[Store Name].Members)", "25");
                     }
                 });
@@ -1192,7 +1192,7 @@ class MemberCacheControlTest {
                     @Override
 					public void run() {
                         // Check that <Level>.Members uses cache.
-                        assertExprReturns(context.getConnectionWithDefaultRole(),
+                        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
                             "Count([Time].[Month].Members)",
                             "24");
                     }
@@ -1203,7 +1203,7 @@ class MemberCacheControlTest {
                     @Override
 					public void run() {
                         // Check that <Level>.Members uses cache.
-                        assertAxisReturns(context.getConnectionWithDefaultRole(),
+                        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
                             "[Time].[1997].[Q2].Children",
                             "[Time].[1997].[Q2].[4]\n"
                             + "[Time].[1997].[Q2].[5]\n"

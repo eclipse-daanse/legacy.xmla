@@ -161,29 +161,29 @@ class ParallelPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testParallelPeriod(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "parallelperiod([Time].[Quarter], 1, [Time].[1998].[Q1])",
             "[Time].[1997].[Q4]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "parallelperiod([Time].[Quarter], -1, [Time].[1997].[Q1])",
             "[Time].[1997].[Q2]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "parallelperiod([Time].[Year], 1, [Time].[1998].[Q1])",
             "[Time].[1997].[Q1]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "parallelperiod([Time].[Year], 1, [Time].[1998].[Q1].[1])",
             "[Time].[1997].[Q1].[1]" );
 
         // No args, therefore finds parallel period to [Time].[1997], which
         // would be [Time].[1996], except that that doesn't exist, so null.
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "ParallelPeriod()", "" );
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "ParallelPeriod()", "" );
 
         // Parallel period to [Time].[1997], which would be [Time].[1996],
         // except that that doesn't exist, so null.
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "ParallelPeriod([Time].[Year], 1, [Time].[1997])", "" );
 
         // one parameter, level 2 above member

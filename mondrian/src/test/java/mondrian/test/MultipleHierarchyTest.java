@@ -45,18 +45,18 @@ class MultipleHierarchyTest {
         Connection connection = context.getConnectionWithDefaultRole();
         if (SystemWideProperties.instance().SsasCompatibleNaming) {
             // [Time.Weekly] has an 'all' member, but [Time] does not.
-            assertAxisReturns(connection,
+            assertAxisReturns(connection, "Sales",
                 "{[Time].[Time].CurrentMember}",
                 "[Time].[1997]");
-            assertAxisReturns(connection,
+            assertAxisReturns(connection, "Sales",
                 "{[Time].[Weekly].CurrentMember}",
                 "[Time].[Weekly].[All Weeklys]");
         } else {
             // [Time.Weekly] has an 'all' member, but [Time] does not.
-            assertAxisReturns(connection,
+            assertAxisReturns(connection, "Sales",
                 "{[Time].CurrentMember}",
                 "[Time].[1997]");
-            assertAxisReturns(connection,
+            assertAxisReturns(connection, "Sales",
                 "{[Time.Weekly].CurrentMember}",
                 "[Time].[Weekly].[All Weeklys]");
         }

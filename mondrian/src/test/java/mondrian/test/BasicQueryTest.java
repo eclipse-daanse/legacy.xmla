@@ -991,14 +991,14 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testConstantString(Context context) {
-    String s = executeExpr(context.getConnectionWithDefaultRole(), " \"a string\" " );
+    String s = executeExpr(context.getConnectionWithDefaultRole(), "Sales", " \"a string\" " );
     assertEquals( "a string", s );
   }
 
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testConstantNumber(Context context) {
-    String s = executeExpr(context.getConnectionWithDefaultRole(), " 1234 " );
+    String s = executeExpr(context.getConnectionWithDefaultRole(), "Sales", " 1234 " );
     assertEquals( "1,234", s );
   }
 
@@ -1020,9 +1020,9 @@ public class BasicQueryTest {
   void testCycle(Context context) {
     Connection connection = context.getConnectionWithDefaultRole();
     if ( false ) {
-      assertExprThrows(connection, "[Time].[1997].[Q4]", "infinite loop" );
+      assertExprThrows(connection, "Sales", "[Time].[1997].[Q4]", "infinite loop" );
     } else {
-      String s = executeExpr(connection, "[Time].[1997].[Q4]" );
+      String s = executeExpr(connection, "Sales", "[Time].[1997].[Q4]" );
       assertEquals( "72,024", s );
     }
   }
@@ -1104,7 +1104,7 @@ public class BasicQueryTest {
   }
 
   public void _testProduct2(Context context) {
-    final Axis axis = executeAxis(context.getConnectionWithDefaultRole(), "{[Product2].members}" );
+    final Axis axis = executeAxis(context.getConnectionWithDefaultRole(), "Sales", "{[Product2].members}" );
     System.out.println( TestUtil.toString( axis.getPositions() ) );
   }
 
@@ -1821,7 +1821,7 @@ public class BasicQueryTest {
     if ( !TestUtil.getDialect(connection).allowsFromQuery() ) {
       return;
     }
-    assertAxisReturns(connection, "[Gender2].members", "[Gender2].[All Gender]\n" + "[Gender2].[F]\n"
+    assertAxisReturns(connection, "Sales", "[Gender2].members", "[Gender2].[All Gender]\n" + "[Gender2].[F]\n"
         + "[Gender2].[M]" );
   }
 
@@ -3771,10 +3771,10 @@ public class BasicQueryTest {
      */
       withSchema(context, SchemaModifiers.BasicQueryTestModifier4::new);
 
-      Axis axis = executeAxis(connection, "[Other Store].members" );
+      Axis axis = executeAxis(connection, "Sales", "[Other Store].members" );
     assertEquals( 63, axis.getPositions().size() );
 
-    axis = executeAxis(connection, "[Store].members" );
+    axis = executeAxis(connection, "Sales", "[Store].members" );
     assertEquals( 63, axis.getPositions().size() );
 
     final String q1 =
@@ -5555,7 +5555,7 @@ public class BasicQueryTest {
   void testResultLimit(Context context) throws Exception {
     SystemWideProperties.instance().ResultLimit = 1000;
     assertAxisThrows(context.getConnectionWithDefaultRole(), "CrossJoin([Product].[Brand Name].Members, [Gender].[Gender].Members)",
-        "result (1,001) exceeded limit (1,000)" );
+        "result (1,001) exceeded limit (1,000)", "Sales" );
   }
 
     @ParameterizedTest
@@ -5644,7 +5644,7 @@ public class BasicQueryTest {
     SystemWideProperties.instance().CaseSensitive = true;
     String[] wrongCase = { "gender.gender.f", "gender.[All gender].f" };
     for ( String memberName : wrongCase ) {
-      assertExprThrows(context.getConnectionWithDefaultRole(), "select " + memberName + " on 0 from sales", "Failed to parse query" );
+      assertExprThrows(context.getConnectionWithDefaultRole(), "Sales", "select " + memberName + " on 0 from sales", "Failed to parse query" );
     }
     SystemWideProperties.instance().CaseSensitive = false;
   }
@@ -5977,11 +5977,11 @@ public class BasicQueryTest {
     ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.BasicQueryTestModifier8(catalog, dialect));
 
         connection = context.getConnectionWithDefaultRole();
-    assertAxisReturns(connection, "[Example.Example Hierarchy].[Non-Zero]",
+    assertAxisReturns(connection, "Sales", "[Example.Example Hierarchy].[Non-Zero]",
         "[Example.Example Hierarchy].[Non-Zero]" );
-    assertAxisReturns(connection, "[Example.Example Hierarchy].[Non-Zero].Children",
+    assertAxisReturns(connection, "Sales", "[Example.Example Hierarchy].[Non-Zero].Children",
         "[Example.Example Hierarchy].[Non-Zero].[Juice]" );
-    assertAxisReturns(connection, "[Example.Example Hierarchy].[Non-Zero].[Juice].Children",
+    assertAxisReturns(connection, "Sales", "[Example.Example Hierarchy].[Non-Zero].[Juice].Children",
         "[Example.Example Hierarchy].[Non-Zero].[Juice].[Washington Berry Juice]" );
   }
 

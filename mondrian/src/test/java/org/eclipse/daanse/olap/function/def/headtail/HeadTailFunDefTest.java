@@ -29,7 +29,7 @@ class HeadTailFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHead(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Head([Store].Children, 2)",
             "[Store].[Canada]\n"
                 + "[Store].[Mexico]" );
@@ -38,7 +38,7 @@ class HeadTailFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHeadNegative(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Head([Store].Children, 2 - 3)",
             "" );
     }
@@ -46,7 +46,7 @@ class HeadTailFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHeadDefault(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Head([Store].Children)",
             "[Store].[Canada]" );
     }
@@ -54,7 +54,7 @@ class HeadTailFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHeadOvershoot(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Head([Store].Children, 2 + 2)",
             "[Store].[Canada]\n"
                 + "[Store].[Mexico]\n"
@@ -64,11 +64,11 @@ class HeadTailFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHeadEmpty(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Head([Gender].[F].Children, 2)",
             "" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Head([Gender].[F].Children)",
             "" );
     }
@@ -140,7 +140,7 @@ class HeadTailFunDefTest {
                 + "Row #0: 266,773\n" );
 
         // More minimal test case. Also demonstrates similar problem with Tail.
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Union(\n"
                 + "  Union(\n"
                 + "    Tail([Customers].[USA].[CA].Children, 2),\n"
@@ -160,7 +160,7 @@ class HeadTailFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTail(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Tail([Store].Children, 2)",
             "[Store].[Mexico]\n"
                 + "[Store].[USA]" );
@@ -169,7 +169,7 @@ class HeadTailFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTailNegative(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Tail([Store].Children, 2 - 3)",
             "" );
     }
@@ -177,7 +177,7 @@ class HeadTailFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTailDefault(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Tail([Store].Children)",
             "[Store].[USA]" );
     }
@@ -185,7 +185,7 @@ class HeadTailFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTailOvershoot(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Tail([Store].Children, 2 + 2)",
             "[Store].[Canada]\n"
                 + "[Store].[Mexico]\n"
@@ -195,11 +195,11 @@ class HeadTailFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTailEmpty(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Tail([Gender].[F].Children, 2)",
             "" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Tail([Gender].[F].Children)",
             "" );
     }

@@ -31,49 +31,49 @@ class TupleToStrFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTupleToStr(Context context) {
         // Applied to a dimension (which becomes a member)
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TupleToStr([Product])",
             "[Product].[All Products]" );
 
         // Applied to a dimension (invalid because has no default hierarchy)
         if ( SystemWideProperties.instance().SsasCompatibleNaming ) {
-            assertExprThrows(context.getConnectionWithDefaultRole(),
+            assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
                 "TupleToStr([Time])",
                 "The 'Time' dimension contains more than one hierarchy, "
                     + "therefore the hierarchy must be explicitly specified." );
         } else {
-            assertExprReturns(context.getConnectionWithDefaultRole(),
+            assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
                 "TupleToStr([Time])",
                 "[Time].[1997]" );
         }
 
         // Applied to a hierarchy
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TupleToStr([Time].[Time])",
             "[Time].[1997]" );
 
         // Applied to a member
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TupleToStr([Store].[USA].[OR])",
             "[Store].[USA].[OR]" );
 
         // Applied to a member (extra set of parens)
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TupleToStr(([Store].[USA].[OR]))",
             "([Store].[USA].[OR])" );
 
         // Now, applied to a tuple
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TupleToStr(([Marital Status], [Gender].[M]))",
             "([Marital Status].[All Marital Status], [Gender].[M])" );
 
         // Applied to a tuple containing a null member
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TupleToStr(([Marital Status], [Gender].Parent))",
             "" );
 
         // Applied to a null member
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TupleToStr([Marital Status].Parent)",
             "" );
     }

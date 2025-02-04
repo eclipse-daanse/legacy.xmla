@@ -33,19 +33,19 @@ class MembersFunDefTest {
     void testMembers(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
         // <Level>.members
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "{[Customers].[Country].Members}",
             "[Customers].[Canada]\n"
                 + "[Customers].[Mexico]\n"
                 + "[Customers].[USA]" );
 
         // <Level>.members applied to 'all' level
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "{[Customers].[(All)].Members}", "[Customers].[All Customers]" );
 
         // <Level>.members applied to measures dimension
         // Note -- no cube-level calculated members are present
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "{[Measures].[MeasuresLevel].Members}",
             "[Measures].[Unit Sales]\n"
                 + "[Measures].[Store Cost]\n"
@@ -55,7 +55,7 @@ class MembersFunDefTest {
                 + "[Measures].[Promotion Sales]" );
 
         // <Dimension>.members applied to Measures
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "{[Measures].Members}",
             "[Measures].[Unit Sales]\n"
                 + "[Measures].[Store Cost]\n"
@@ -125,7 +125,7 @@ class MembersFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchyMembers(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "Head({[Time.Weekly].Members}, 10)",
             "[Time].[Weekly].[All Weeklys]\n"
                 + "[Time].[Weekly].[1997]\n"
@@ -137,7 +137,7 @@ class MembersFunDefTest {
                 + "[Time].[Weekly].[1997].[1].[19]\n"
                 + "[Time].[Weekly].[1997].[1].[20]\n"
                 + "[Time].[Weekly].[1997].[2]" );
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "Tail({[Time.Weekly].Members}, 5)",
             "[Time].[Weekly].[1998].[51].[5]\n"
                 + "[Time].[Weekly].[1998].[51].[29]\n"

@@ -25,14 +25,14 @@ class LevelsStringPropertyDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchyLevelsString(Context context) {
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[Time].Levels(\"Year\").UniqueName", "[Time].[Year]" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchyLevelsStringFail(Context context) {
-        TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(),
+        TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[Time].Levels(\"nonexistent\").UniqueName",
             "Level 'nonexistent' not found in hierarchy '[Time]'" );
     }

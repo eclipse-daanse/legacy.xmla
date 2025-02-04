@@ -26,7 +26,7 @@ class CaptionFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchyCaption(Context context) {
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "[Time].[1997].Hierarchy.Caption", "Time" );
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1997].Hierarchy.Caption", "Time" );
     }
 
 }

@@ -34,7 +34,7 @@ class PropertiesFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPropertiesExpr(Context context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Store Type\")",
             "Gourmet Supermarket" );
     }
@@ -49,17 +49,17 @@ class PropertiesFunDefTest {
     void testPropertiesOnDimension(Context context) {
         // [Store] is a dimension. When called with a property like FirstChild,
         // it is implicitly converted to a member.
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "[Store].FirstChild", "[Store].[Canada]" );
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "[Store].FirstChild", "[Store].[Canada]" );
 
         // The same should happen with the <Member>.Properties(<String>)
         // function; now the bug is fixed, it does. Dimension is implicitly
         // converted to member.
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Store].Properties('MEMBER_UNIQUE_NAME')",
             "[Store].[All Stores]" );
 
         // Hierarchy is implicitly converted to member.
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Store].[USA].Hierarchy.Properties('MEMBER_UNIQUE_NAME')",
             "[Store].[All Stores]" );
     }
@@ -70,7 +70,7 @@ class PropertiesFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPropertiesNonExistent(Context context) {
-        assertExprThrows(context.getConnectionWithDefaultRole(),
+        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Foo\")",
             "Property 'Foo' is not valid for" );
     }

@@ -30,70 +30,70 @@ class LeadLagFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLag(Context context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q4].[12].Lag(4)" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q4].[12].Lag(4)", "Sales" );
         assertEquals( "8", member.getName() );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLagFirstInLevel(Context context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].Lag(1)" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].Lag(1)", "Sales" );
         assertNull( member );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLagAll(Context context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].DefaultMember.Lag(2)" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].DefaultMember.Lag(2)", "Sales" );
         assertNull( member );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLagRoot(Context context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1998].Lag(1)" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1998].Lag(1)", "Sales" );
         assertEquals( "1997", member.getName() );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLagRootTooFar(Context context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1998].Lag(2)" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1998].Lag(2)", "Sales" );
         assertNull( member );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLead(Context context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q2].[4].Lead(4)" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q2].[4].Lead(4)", "Sales" );
         assertEquals( "8", member.getName() );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLeadNegative(Context context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[M].Lead(-1)" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[M].Lead(-1)", "Sales" );
         assertEquals( "F", member.getName() );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLeadLastInLevel(Context context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[M].Lead(3)" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[M].Lead(3)", "Sales" );
         assertNull( member );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLeadNull(Context context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].Parent.Lead(1)" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].Parent.Lead(1)", "Sales" );
         assertNull( member );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLeadZero(Context context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].Lead(0)" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].Lead(0)", "Sales" );
         assertEquals( "F", member.getName() );
     }
 

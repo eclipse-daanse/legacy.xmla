@@ -28,7 +28,7 @@ class DrilldownLevelFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDrilldownLevel(Context context) {
         // Expect all children of USA
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevel({[Store].[USA]}, [Store].[Store Country])",
             "[Store].[USA]\n"
                 + "[Store].[USA].[CA]\n"
@@ -36,14 +36,14 @@ class DrilldownLevelFunDefTest {
                 + "[Store].[USA].[WA]" );
 
         // Expect same set, because [USA] is already drilled
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevel({[Store].[USA], [Store].[USA].[CA]}, [Store].[Store Country])",
             "[Store].[USA]\n"
                 + "[Store].[USA].[CA]" );
 
         // Expect drill, because [USA] isn't already drilled. You can't
         // drill down on [CA] and get to [USA]
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevel({[Store].[USA].[CA],[Store].[USA]}, [Store].[Store Country])",
             "[Store].[USA].[CA]\n"
                 + "[Store].[USA]\n"
@@ -51,7 +51,7 @@ class DrilldownLevelFunDefTest {
                 + "[Store].[USA].[OR]\n"
                 + "[Store].[USA].[WA]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevel({[Store].[USA].[CA],[Store].[USA]},, 0)",
             "[Store].[USA].[CA]\n"
                 + "[Store].[USA].[CA].[Alameda]\n"
@@ -64,7 +64,7 @@ class DrilldownLevelFunDefTest {
                 + "[Store].[USA].[OR]\n"
                 + "[Store].[USA].[WA]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevel({[Store].[USA].[CA],[Store].[USA]} * {[Gender].Members},, 0)",
             "{[Store].[USA].[CA], [Gender].[All Gender]}\n"
                 + "{[Store].[USA].[CA].[Alameda], [Gender].[All Gender]}\n"
@@ -97,7 +97,7 @@ class DrilldownLevelFunDefTest {
                 + "{[Store].[USA].[OR], [Gender].[M]}\n"
                 + "{[Store].[USA].[WA], [Gender].[M]}" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevel({[Store].[USA].[CA],[Store].[USA]} * {[Gender].Members},, 1)",
             "{[Store].[USA].[CA], [Gender].[All Gender]}\n"
                 + "{[Store].[USA].[CA], [Gender].[F]}\n"

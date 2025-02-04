@@ -43,12 +43,12 @@ class IsEmptyFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testIsEmpty(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertBooleanExprReturns(connection, "[Gender].[All Gender].Parent IS NULL", true );
+        assertBooleanExprReturns(connection, "Sales", "[Gender].[All Gender].Parent IS NULL", true );
 
         // Any functions that return a member from parameters that
         // include a member and that member is NULL also give a NULL.
         // Not a runtime exception.
-        assertBooleanExprReturns(connection,
+        assertBooleanExprReturns(connection, "Sales",
             "[Gender].CurrentMember.Parent.NextMember IS NULL",
             true );
 
@@ -59,10 +59,10 @@ class IsEmptyFunDefTest {
         // When resolving a tuple's value in the cube, if there is
         // at least one NULL member in the tuple should return a
         // NULL cell value.
-        assertBooleanExprReturns(connection,
+        assertBooleanExprReturns(connection, "Sales",
             "IsEmpty(([Time].currentMember.Parent, [Measures].[Unit Sales]))",
             false );
-        assertBooleanExprReturns(connection,
+        assertBooleanExprReturns(connection, "Sales",
             "IsEmpty(([Time].currentMember, [Measures].[Unit Sales]))",
             false );
 
@@ -70,13 +70,13 @@ class IsEmptyFunDefTest {
         // and has no NULL members in the tuple,
         // but has no fact data at that crossing,
         // so it evaluates to EMPTY as a cell value.
-        assertBooleanExprReturns(connection,
+        assertBooleanExprReturns(connection, "Sales",
             "IsEmpty(\n"
                 + " ([Time].[1997].[Q4].[12],\n"
                 + "  [Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth].[Portsmouth "
                 + "Imported Beer],\n"
                 + "  [Store].[All Stores].[USA].[WA].[Bellingham]))", true );
-        assertBooleanExprReturns(connection,
+        assertBooleanExprReturns(connection, "Sales",
             "IsEmpty(\n"
                 + " ([Time].[1997].[Q4].[11],\n"
                 + "  [Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth].[Portsmouth "

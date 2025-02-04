@@ -29,17 +29,17 @@ class UnorderFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnorder(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Unorder([Gender].members)",
             "[Gender].[All Gender]\n"
                 + "[Gender].[F]\n"
                 + "[Gender].[M]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Unorder(Order([Gender].members, -[Measures].[Unit Sales]))",
             "[Gender].[All Gender]\n"
                 + "[Gender].[M]\n"
                 + "[Gender].[F]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Unorder(Crossjoin([Gender].members, [Marital Status].Children))",
             "{[Gender].[All Gender], [Marital Status].[M]}\n"
                 + "{[Gender].[All Gender], [Marital Status].[S]}\n"
@@ -49,16 +49,16 @@ class UnorderFunDefTest {
                 + "{[Gender].[M], [Marital Status].[S]}" );
 
         // implicitly convert member to set
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Unorder([Gender].[M])",
             "[Gender].[M]" );
 
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Unorder(1 + 3)",
-            "No function matches signature 'Unorder(<Numeric Expression>)'" );
+            "No function matches signature 'Unorder(<Numeric Expression>)'", "Sales");
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Unorder([Gender].[M], 1 + 3)",
-            "No function matches signature 'Unorder(<Member>, <Numeric Expression>)'" );
+            "No function matches signature 'Unorder(<Member>, <Numeric Expression>)'", "Sales" );
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Store Sales], [Measures].[Unit Sales]} on 0,\n"
                 + "  Unorder([Gender].Members) on 1\n"

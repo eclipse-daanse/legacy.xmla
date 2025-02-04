@@ -37,12 +37,12 @@ class StrToTupleFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStrToTuple(Context context) {
         // single dimension yields member
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{StrToTuple(\"[Time].[1997].[Q2]\", [Time])}",
             "[Time].[1997].[Q2]" );
 
         // multiple dimensions yield tuple
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{StrToTuple(\"([Gender].[F], [Time].[1997].[Q2])\", [Gender], [Time])}",
             "{[Gender].[F], [Time].[1997].[Q2]}" );
 
@@ -55,7 +55,7 @@ class StrToTupleFunDefTest {
         context.getSchemaCache().clear();
         ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
         // If any member is invalid, the whole tuple is null.
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToTuple(\"([Gender].[M], [Marital Status].[Separated])\","
                 + " [Gender], [Marital Status])",
             "" );
@@ -66,7 +66,7 @@ class StrToTupleFunDefTest {
     void testStrToTupleDuHierarchiesFails(Context context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "{StrToTuple(\"([Gender].[F], [Time].[1997].[Q2], [Gender].[M])\", [Gender], [Time], [Gender])}",
-            "Tuple contains more than one member of hierarchy '[Gender]'." );
+            "Tuple contains more than one member of hierarchy '[Gender]'.", "Sales" );
     }
 
     @ParameterizedTest
@@ -80,7 +80,7 @@ class StrToTupleFunDefTest {
                 + " [Gender], "
                 + hierarchyName( "Time", "Weekly" )
                 + ", [Gender])}",
-            "Tuple contains more than one member of hierarchy '[Gender]'." );
+            "Tuple contains more than one member of hierarchy '[Gender]'.", "Sales" );
     }
 
     @ParameterizedTest

@@ -48,21 +48,21 @@ public class XtdFunDefTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testYtd(Context context) {
 
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Ytd()", "[Time].[1997]");
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Ytd()", "[Time].[1997]");
 
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Ytd([Time].[1997].[Q3])", """
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Ytd([Time].[1997].[Q3])", """
 				[Time].[1997].[Q1]
 				[Time].[1997].[Q2]
 				[Time].[1997].[Q3]""");
 
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Ytd([Time].[1997].[Q2].[4])", """
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Ytd([Time].[1997].[Q2].[4])", """
 				[Time].[1997].[Q1].[1]
 				[Time].[1997].[Q1].[2]
 				[Time].[1997].[Q1].[3]
 				[Time].[1997].[Q2].[4]""");
 
 		assertAxisThrows(context.getConnectionWithDefaultRole(), "Ytd([Store])",
-				"Argument to function 'Ytd' must belong to Time hierarchy");
+				"Argument to function 'Ytd' must belong to Time hierarchy", "Sales");
 
 		assertSetExprDependsOn(context.getConnectionWithDefaultRole(), "Ytd()", "{[Time], " + TimeWeekly + "}");
 
@@ -77,8 +77,8 @@ public class XtdFunDefTest {
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testGeneratePlusXtd(Context context) {
-		
-		assertAxisReturns(context.getConnectionWithDefaultRole(), """
+
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", """
 				generate(
 				  {[Time].[1997].[Q1].[2], [Time].[1997].[Q3].[7]},
 				 {Ytd( [Time].[Time].currentMember)})""", """
@@ -89,8 +89,8 @@ public class XtdFunDefTest {
 				[Time].[1997].[Q2].[5]
 				[Time].[1997].[Q2].[6]
 				[Time].[1997].[Q3].[7]""");
-		
-		assertAxisReturns(context.getConnectionWithDefaultRole(), """
+
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", """
 				generate(
 				  {[Time].[1997].[Q1].[2], [Time].[1997].[Q3].[7]},
 				 {Ytd( [Time].[Time].currentMember)}, ALL)""", """
@@ -103,10 +103,10 @@ public class XtdFunDefTest {
 				[Time].[1997].[Q2].[5]
 				[Time].[1997].[Q2].[6]
 				[Time].[1997].[Q3].[7]""");
-		
+
 		FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
 				"count(generate({[Time].[1997].[Q4].[11]}, {Qtd( [Time].[Time].currentMember)}))", 2, 0);
-		
+
 		FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
 				"count(generate({[Time].[1997].[Q4].[11]}, {Mtd( [Time].[Time].currentMember)}))", 1, 0);
 	}
@@ -128,17 +128,17 @@ public class XtdFunDefTest {
 				""");
 
 		// one arg, a month
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Qtd([Time].[1997].[Q2].[5])",
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Qtd([Time].[1997].[Q2].[5])",
 				"[Time].[1997].[Q2].[4]\n" + "[Time].[1997].[Q2].[5]");
 
 		// one arg, a quarter
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Qtd([Time].[1997].[Q2])", "[Time].[1997].[Q2]");
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Qtd([Time].[1997].[Q2])", "[Time].[1997].[Q2]");
 
 		// one arg, a year
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Qtd([Time].[1997])", "");
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Qtd([Time].[1997])", "");
 
 		assertAxisThrows(context.getConnectionWithDefaultRole(), "Qtd([Store])",
-				"Argument to function 'Qtd' must belong to Time hierarchy");
+				"Argument to function 'Qtd' must belong to Time hierarchy", "Sales");
 	}
 
 	@ParameterizedTest
@@ -158,16 +158,16 @@ public class XtdFunDefTest {
 				""");
 
 		// one arg, a month
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Mtd([Time].[1997].[Q2].[5])", "[Time].[1997].[Q2].[5]");
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Mtd([Time].[1997].[Q2].[5])", "[Time].[1997].[Q2].[5]");
 
 		// one arg, a quarter
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Mtd([Time].[1997].[Q2])", "");
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Mtd([Time].[1997].[Q2])", "");
 
 		// one arg, a year
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Mtd([Time].[1997])", "");
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Mtd([Time].[1997])", "");
 
 		assertAxisThrows(context.getConnectionWithDefaultRole(), "Mtd([Store])",
-				"Argument to function 'Mtd' must belong to Time hierarchy");
+				"Argument to function 'Mtd' must belong to Time hierarchy", "Sales");
 	}
 
 }

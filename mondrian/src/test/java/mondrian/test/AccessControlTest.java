@@ -131,7 +131,7 @@ class AccessControlTest {
         TestUtil.assertAxisThrows(
     		connection,
             "[Gender].children",
-            "MDX object '[Gender]' not found in cube 'Sales'");
+            "MDX object '[Gender]' not found in cube 'Sales'", "Sales");
     }
 
     @ParameterizedTest
@@ -472,7 +472,7 @@ class AccessControlTest {
         // Francisco)
         Connection connection = getRestrictedConnection(foodMartContext);
         TestUtil.assertAxisReturns(
-    		connection,
+    		connection, "Sales",
             "[Store].level.members",
             "[Store].[Mexico]\n" + "[Store].[USA]");
     }
@@ -486,7 +486,7 @@ class AccessControlTest {
         // Francisco)
         Connection connection = getRestrictedConnection(foodMartContext);
         TestUtil.assertAxisReturns(
-    		connection,
+    		connection, "Sales",
             "[Store].level.allmembers",
             "[Store].[Mexico]\n" + "[Store].[USA]");
     }
@@ -498,7 +498,7 @@ class AccessControlTest {
         // one
         Connection connection = getRestrictedConnection(foodMartContext);
         TestUtil.assertAxisReturns(
-    		connection,
+    		connection, "Sales",
             "[Store].defaultMember",
             "[Store].[Mexico]");
     }
@@ -509,7 +509,7 @@ class AccessControlTest {
         // the root element is All Customers
         Connection connection = getRestrictedConnection(foodMartContext);
         TestUtil.assertAxisReturns(
-    		connection,
+    		connection, "Sales",
             "[Customers].defaultMember",
             "[Customers].[Canada].[BC]");
     }
@@ -520,15 +520,15 @@ class AccessControlTest {
         // assert: can access California (parent of allowed member)
         Connection connection = getRestrictedConnection(foodMartContext);
         TestUtil.assertAxisReturns(
-    		connection,
+    		connection, "Sales",
             "[Store].[USA].children",
             "[Store].[USA].[CA]");
         TestUtil.assertAxisReturns(
-    		connection,
+    		connection, "Sales",
             "[Store].[USA].children",
             "[Store].[USA].[CA]");
         TestUtil.assertAxisReturns(
-    		connection,
+    		connection, "Sales",
             "[Store].[USA].[CA].children",
             "[Store].[USA].[CA].[Los Angeles]\n"
             + "[Store].[USA].[CA].[San Francisco]");
@@ -539,7 +539,7 @@ class AccessControlTest {
     void testGrantHierarchy3(Context foodMartContext) {
         // assert: can not access Washington (child of denied member)
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisThrows(connection, "[Store].[USA].[WA]", "not found");
+        TestUtil.assertAxisThrows(connection, "[Store].[USA].[WA]", "not found", "Sales");
     }
 
     @ParameterizedTest
@@ -548,7 +548,7 @@ class AccessControlTest {
         // assert: can not access Oregon (rule 1 - order matters)
         Connection connection = getRestrictedConnection(foodMartContext);
         TestUtil.assertAxisThrows(connection,
-            "[Store].[USA].[OR].children", "not found");
+            "[Store].[USA].[OR].children", "not found", "Sales");
     }
 
     @ParameterizedTest
@@ -556,8 +556,8 @@ class AccessControlTest {
     void testGrantHierarchy5(Context foodMartContext) {
         // assert: can not access All (above top level)
         Connection connection = getRestrictedConnection(foodMartContext);
-        TestUtil.assertAxisThrows(connection, "[Store].[All Stores]", "not found");
-        TestUtil.assertAxisReturns(connection,
+        TestUtil.assertAxisThrows(connection, "[Store].[All Stores]", "not found", "Sales");
+        TestUtil.assertAxisReturns(connection, "Sales",
             "[Store].members",
                 // note:
                 // no: [All Stores] -- above top level
@@ -603,7 +603,7 @@ class AccessControlTest {
         // assert: parent if at top level is null
         Connection connection = getRestrictedConnection(foodMartContext);
         TestUtil.assertAxisReturns(
-    		connection,
+    		connection, "Sales",
             "[Customers].[USA].[CA].parent",
             "");
     }
@@ -616,7 +616,7 @@ class AccessControlTest {
         TestUtil.assertAxisThrows(
     		connection,
     		"[Customers].[Canada].children",
-            "MDX object '[Customers].[Canada]' not found in cube 'Sales'");
+            "MDX object '[Customers].[Canada]' not found in cube 'Sales'", "Sales");
     }
 
     @ParameterizedTest
@@ -628,12 +628,12 @@ class AccessControlTest {
         TestUtil.assertAxisThrows(
     		connection,
             "[Customers].[USA].[CA].[San Francisco].[Catherine Abel]",
-            "not found");
+            "not found", "Sales");
         TestUtil.assertAxisReturns(
-    		connection,
+    		connection, "Sales",
             "[Customers].[USA].[CA].[San Francisco].children",
             "");
-        Axis axis = TestUtil.executeAxis(connection, "[Customers].members");
+        Axis axis = TestUtil.executeAxis(connection, "Sales", "[Customers].members");
         // 13 states, 109 cities
         assertEquals(122, axis.getPositions().size());
     }
@@ -647,12 +647,12 @@ class AccessControlTest {
         TestUtil.assertAxisThrows(
     		connection,
             "[Customers].[USA].[CA].[San Francisco].[Catherine Abel]",
-            "not found");
+            "not found", "Sales");
         TestUtil.assertAxisReturns(
-    		connection,
+    		connection, "Sales",
             "[Customers].[USA].[CA].[San Francisco].children",
             "");
-        Axis axis = TestUtil.executeAxis(connection, "[Customers].allmembers");
+        Axis axis = TestUtil.executeAxis(connection, "Sales", "[Customers].allmembers");
         // 13 states, 109 cities
         assertEquals(122, axis.getPositions().size());
     }
@@ -1002,7 +1002,7 @@ class AccessControlTest {
         connection.setRole(role);
 
         TestUtil.assertExprThrows(
-    		connection,
+    		connection, "Sales",
             "[Store].DefaultMember",
             "cube 'Sales' not found");
     }
@@ -1149,7 +1149,7 @@ class AccessControlTest {
         ConnectionProps props = new RolapConnectionPropsR(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
         Connection connection = foodMartContext.getConnection(props);
         TestUtil.assertExprReturns(
-    		connection,
+    		connection, "Sales",
             "([Store].[All Stores])",
             "192,025");
     }
@@ -1165,7 +1165,7 @@ class AccessControlTest {
         ConnectionProps props = new RolapConnectionPropsR(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
         Connection connection = foodMartContext.getConnection(props);
         TestUtil.assertExprReturns(
-    		connection,
+    		connection, "Sales",
             "([Store])",
             "192,025");
     }
@@ -1181,7 +1181,7 @@ class AccessControlTest {
         ConnectionProps props = new RolapConnectionPropsR(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
         Connection connection = foodMartContext.getConnection(props);
         TestUtil.assertExprReturns(
-    		connection,
+    		connection, "Sales",
             "([Store].[USA].Parent)",
             "192,025");
     }
@@ -1253,18 +1253,18 @@ class AccessControlTest {
         // All of the children of [San Francisco] are invisible, because [City]
         // is the bottom level, but that shouldn't affect the total.
     	TestUtil.assertExprReturns(
-			connection,
+			connection, "Sales",
             "([Customers].[USA].[CA].[San Francisco])", "88");
     	TestUtil.assertExprThrows(
-			connection,
+			connection, "Sales",
 			"([Customers].[USA].[CA].[Los Angeles])",
             "MDX object '[Customers].[USA].[CA].[Los Angeles]' not found in cube 'Sales'");
 
-    	TestUtil.assertExprReturns(connection,"([Customers].[USA].[CA])", v1);
+    	TestUtil.assertExprReturns(connection, "Sales", "([Customers].[USA].[CA])", v1);
     	TestUtil.assertExprReturns(
-			connection,
+			connection, "Sales",
             "([Customers].[USA].[CA], [Gender].[F])", v2);
-    	TestUtil.assertExprReturns(connection,"([Customers].[USA])", v3);
+    	TestUtil.assertExprReturns(connection, "Sales", "([Customers].[USA])", v3);
 
     	checkQuery(
     			connection,
@@ -1355,12 +1355,12 @@ class AccessControlTest {
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.AccessControlTestModifier40(catalog, policy));
         ConnectionProps props = new RolapConnectionPropsR(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
     	Connection connection = context.getConnection(props);
-    	TestUtil.assertExprReturns(connection, "[Measures].[Unit Sales]", v1);
+    	TestUtil.assertExprReturns(connection, "Sales", "[Measures].[Unit Sales]", v1);
     	TestUtil.assertExprReturns(
-			connection, "([Measures].[Unit Sales], [Customers].[USA])",
+			connection, "Sales", "([Measures].[Unit Sales], [Customers].[USA])",
             v1);
     	TestUtil.assertExprReturns(
-			connection,
+			connection, "Sales",
             "([Measures].[Unit Sales], [Customers].[USA].[CA])",
             v2);
     }
@@ -1394,22 +1394,22 @@ class AccessControlTest {
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.AccessControlTestModifier41(catalogMapping, policy));
         ConnectionProps props = new RolapConnectionPropsR(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
     	Connection connection = context.getConnection(props);
-    	TestUtil.assertExprReturns(connection, "[Measures].[Unit Sales]", v1);
+    	TestUtil.assertExprReturns(connection, "Sales", "[Measures].[Unit Sales]", v1);
     	TestUtil.assertExprReturns(
-			connection,
+			connection, "Sales",
             "([Measures].[Unit Sales], [Customers].[USA])",
             v1);
     	TestUtil.assertExprReturns(
-			connection,
+			connection, "Sales",
             "([Measures].[Unit Sales], [Customers].[USA].[CA])",
             v2);
     	TestUtil.assertExprReturns(
-			connection,
+			connection, "Sales",
             "([Measures].[Unit Sales], "
             + "[Customers].[USA].[CA], [Store].[USA].[CA])",
             v2);
     	TestUtil.assertExprReturns(
-			connection,
+			connection, "Sales",
             "([Measures].[Unit Sales], "
             + "[Customers].[USA].[CA], "
             + "[Store].[USA].[CA].[San Diego])",
@@ -2652,7 +2652,7 @@ class AccessControlTest {
         ConnectionProps props = new RolapConnectionPropsR(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
     	Connection connection = foodMartContext.getConnection(props);
     	TestUtil.assertAxisReturns(
-			connection,
+			connection, "Sales",
             "[Education Level].Members",
             "[Education Level].[All Education Levels]\n"
             + "[Education Level].[Bachelors Degree]\n"
@@ -2663,7 +2663,7 @@ class AccessControlTest {
     	TestUtil.assertAxisThrows(
 			connection,
             "[Customers].Members",
-            "Failed to parse query 'select {[Customers].Members} on columns from Sales'");
+            "Failed to parse query 'select {[Customers].Members} on columns from Sales'", "Sales");
     	TestUtil.assertQueryReturns(
 			connection,
             "select {[Education Level].Members} on columns, {[Measures].[Unit Sales]} on rows from Sales",
@@ -2689,7 +2689,7 @@ class AccessControlTest {
     	TestUtil.assertAxisThrows(
 			connection,
             "[Customers].Members",
-            "Failed to parse query 'select {[Customers].Members} on columns from Sales'");
+            "Failed to parse query 'select {[Customers].Members} on columns from Sales'", "Sales");
         props = new RolapConnectionPropsR(List.of("Role3"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
         connection = foodMartContext.getConnection(props);
     	TestUtil.assertQueryThrows(

@@ -120,7 +120,7 @@ class FilterFunDefTest {
       TestUtil.withSchema(context, schema);
        */
             withSchema(context, TestFilterWillTimeoutModifier::new);
-            executeAxis(context.getConnectionWithDefaultRole(),
+            executeAxis(context.getConnectionWithDefaultRole(), "Sales",
                 "Filter("
                     + "Filter(CrossJoin([Customers].[Name].members, [Product].[Product Name].members), SleepUdf([Measures]"
                     + ".[Unit Sales]) > 0),"
@@ -137,10 +137,10 @@ class FilterFunDefTest {
     void testFilterEmpty(Context context) {
         // Unlike "Descendants(<set>, ...)", we do not need to know the precise
         // type of the set, therefore it is OK if the set is empty.
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Filter({}, 1=0)",
             "" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Filter({[Time].[Time].Children}, 1=0)",
             "" );
     }

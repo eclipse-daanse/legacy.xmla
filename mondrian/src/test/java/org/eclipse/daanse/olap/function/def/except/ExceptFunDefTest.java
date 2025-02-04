@@ -31,11 +31,11 @@ class ExceptFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExceptEmpty(Context context) {
         // If left is empty, result is empty.
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Except(Filter([Gender].Members, 1=0), {[Gender].[M]})", "" );
 
         // If right is empty, result is left.
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Except({[Gender].[M]}, Filter([Gender].Members, 1=0))",
             "[Gender].[M]" );
     }
@@ -47,7 +47,7 @@ class ExceptFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExceptCrossjoin(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Except(CROSSJOIN({[Promotion Media].[All Media]},\n"
                 + "                  [Product].[All Products].Children),\n"
                 + "       CROSSJOIN({[Promotion Media].[All Media]},\n"
@@ -59,7 +59,7 @@ class ExceptFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testExtract(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Extract(\n"
                 + "Crossjoin({[Gender].[F], [Gender].[M]},\n"
                 + "          {[Marital Status].Members}),\n"
@@ -69,21 +69,21 @@ class ExceptFunDefTest {
         // Extract(<set>) with no dimensions is not valid
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Extract(Crossjoin({[Gender].[F], [Gender].[M]}, {[Marital Status].Members}))",
-            "No function matches signature 'Extract(<Set>)'" );
+            "No function matches signature 'Extract(<Set>)'", "Sales" );
 
         // Extract applied to non-constant dimension should fail
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Extract(Crossjoin([Gender].Members, [Store].Children), [Store].Hierarchy.Dimension)",
-            "not a constant hierarchy: [Store].Hierarchy.Dimension" );
+            "not a constant hierarchy: [Store].Hierarchy.Dimension", "Sales" );
 
         // Extract applied to non-constant hierarchy should fail
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Extract(Crossjoin([Gender].Members, [Store].Children), [Store].Hierarchy)",
-            "not a constant hierarchy: [Store].Hierarchy" );
+            "not a constant hierarchy: [Store].Hierarchy", "Sales" );
 
         // Extract applied to set of members is OK (if silly). Duplicates are
         // removed, as always.
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Extract({[Gender].[M], [Gender].Members}, [Gender])",
             "[Gender].[M]\n"
                 + "[Gender].[All Gender]\n"
@@ -92,15 +92,15 @@ class ExceptFunDefTest {
         // Extract of hierarchy not in set fails
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Extract(Crossjoin([Gender].Members, [Store].Children), [Marital Status])",
-            "hierarchy [Marital Status] is not a hierarchy of the expression Crossjoin([Gender].Members, [Store].Children)" );
+            "hierarchy [Marital Status] is not a hierarchy of the expression Crossjoin([Gender].Members, [Store].Children)" , "Sales");
 
         // Extract applied to empty set returns empty set
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Extract(Crossjoin({[Gender].Parent}, [Store].Children), [Store])",
             "" );
 
         // Extract applied to asymmetric set
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Extract(\n"
                 + "{([Gender].[M], [Marital Status].[M]),\n"
                 + " ([Gender].[F], [Marital Status].[M]),\n"
@@ -109,7 +109,7 @@ class ExceptFunDefTest {
             "[Gender].[M]\n" + "[Gender].[F]" );
 
         // Extract applied to asymmetric set (other side)
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Extract(\n"
                 + "{([Gender].[M], [Marital Status].[M]),\n"
                 + " ([Gender].[F], [Marital Status].[M]),\n"
@@ -119,7 +119,7 @@ class ExceptFunDefTest {
                 + "[Marital Status].[S]" );
 
         // Extract more than one hierarchy
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Extract(\n"
                 + "[Gender].Children * [Marital Status].Children * [Time].[1997].Children * [Store].[USA].Children,\n"
                 + "[Time], [Marital Status])",
@@ -139,7 +139,7 @@ class ExceptFunDefTest {
                 + " ([Gender].[F], [Marital Status].[M]),\n"
                 + " ([Gender].[M], [Marital Status].[S])},\n"
                 + "[Gender], [Gender])",
-            "hierarchy [Gender] is extracted more than once" );
+            "hierarchy [Gender] is extracted more than once", "Sales" );
     }
 
     /**

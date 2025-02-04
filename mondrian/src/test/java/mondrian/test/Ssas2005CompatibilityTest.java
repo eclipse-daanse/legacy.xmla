@@ -149,7 +149,7 @@ class Ssas2005CompatibilityTest {
             // SSAS gives error with the <Level>.Ordinal function:
             //   The ORDINAL function expects a level expression for
             //   the  argument. A hierarchy expression was used.
-            assertExprThrows(context.getConnectionWithDefaultRole(),
+            assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
                 "[Currency].[Currency].Ordinal",
                 "Mondrian Error:MDX object '[Currency].[Currency]' not found in cube 'Sales'");
 
@@ -959,7 +959,7 @@ class Ssas2005CompatibilityTest {
         // SSAS2005 returns error:
         //   The 'Product' dimension contains more than one hierarchy,
         //   therefore the hierarchy must be explicitly specified.
-        assertExprThrows(context.getConnectionWithDefaultRole(),
+        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].Parent.UniqueName",
             "It may contains more than one hierarchy. Specify the hierarchy explicitly");
     }
@@ -1870,7 +1870,7 @@ class Ssas2005CompatibilityTest {
                 + "  </Dimension>\n"));
     	 */
     	withSchema(context, SchemaModifiers.Ssas2005CompatibilityTestModifier3::new);
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "head(\n"
             + "  filter(\n"
             + "    [Customer Last Name].[Last Name].Members,"
@@ -1888,7 +1888,7 @@ class Ssas2005CompatibilityTest {
             + "[Customer Last Name].[Mackin]\n"
             + "[Customer Last Name].[Maddalena]");
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "order(\n"
             + "  head(\n"
             + "    filter(\n"

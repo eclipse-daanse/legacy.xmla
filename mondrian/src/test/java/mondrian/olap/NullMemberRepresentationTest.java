@@ -63,21 +63,21 @@ class NullMemberRepresentationTest {
         throws IOException
     {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprReturns(connection,
+        assertExprReturns(connection, "Sales",
             "[Time].[1997].Children.Item(6).UniqueName",
             "[Time].[" + getNullMemberRepresentation() + "]");
-        assertExprReturns(connection,
+        assertExprReturns(connection, "Sales",
             "[Time].[1997].Children.Item(-1).UniqueName",
             "[Time].[" + getNullMemberRepresentation() + "]");
     }
 
     void testNullMemberWithCustomRepresentation(Context context) throws IOException {
         Connection connection = context.getConnectionWithDefaultRole();
-        assertExprReturns(connection,
+        assertExprReturns(connection, "Sales",
             "[Gender].[All Gender].Parent.UniqueName",
             "[Gender].[" + getNullMemberRepresentation() + "]");
 
-        assertExprReturns(connection,
+        assertExprReturns(connection, "Sales",
             "[Gender].[All Gender].Parent.Name", getNullMemberRepresentation());
     }
 

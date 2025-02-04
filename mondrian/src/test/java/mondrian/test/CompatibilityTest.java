@@ -123,7 +123,7 @@ class CompatibilityTest {
     		connection,
             "with member [Measures].ordinal as '1'\n"
             + " select {[Measures].ordinal} on columns from Sales",
-            "Encountered an error at (or somewhere around) input:1:9");
+            "Encountered an error at (or somewhere around) input:1:9", "Sales");
     	TestUtil.assertQueryReturns(
     		connection,
             "with member [Measures].[ordinal] as '1'\n"
@@ -329,7 +329,7 @@ class CompatibilityTest {
 
     private void checkAxis(Connection connection, String result, String expression) {
         assertEquals(
-            result, TestUtil.executeSingletonAxis(connection, expression).toString());
+            result, TestUtil.executeSingletonAxis(connection, expression, "Sales").toString());
     }
 
     protected boolean isDefaultNullMemberRepresentation() {
@@ -569,35 +569,35 @@ class CompatibilityTest {
 
         // A user-defined property of a member.
         TestUtil.assertExprReturns(
-    		connection,
+    		connection, "Sales",
             "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Store Type\")",
             "Gourmet Supermarket");
 
         if (caseSensitive) {
         	TestUtil.assertExprThrows(
-        		connection,
+        		connection, "Sales",
                 "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"store tYpe\")",
                 "Property 'store tYpe' is not valid for member '[Store].[USA].[CA].[Beverly Hills].[Store 6]'");
         } else {
         	TestUtil.assertExprReturns(
-        		connection,
+        		connection, "Sales",
                 "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"store tYpe\")",
                 "Gourmet Supermarket");
         }
 
         // A builtin property of a member.
         TestUtil.assertExprReturns(
-    		connection,
+    		connection, "Sales",
             "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"LEVEL_NUMBER\")",
             "4");
         if (caseSensitive) {
         	TestUtil.assertExprThrows(
-        		connection,
+        		connection, "Sales",
                 "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Level_Number\")",
                 "Property 'store tYpe' is not valid for member '[Store].[USA].[CA].[Beverly Hills].[Store 6]'");
         } else {
         	TestUtil.assertExprReturns(
-        		connection,
+        		connection, "Sales",
                 "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Level_Number\")",
                 "4");
         }
@@ -627,10 +627,10 @@ class CompatibilityTest {
 
     private void assertAxisWithDimensionPrefix(Connection connection, boolean prefixNeeded) {
         ((TestConfig)connection.getContext().getConfig()).setNeedDimensionPrefix(prefixNeeded);
-        TestUtil.assertAxisReturns(connection, "[Gender].[M]", "[Gender].[M]");
-        TestUtil.assertAxisReturns(connection, "[Gender].[All Gender].[M]", "[Gender].[M]");
-        TestUtil.assertAxisReturns(connection, "[Store].[USA]", "[Store].[USA]");
-        TestUtil.assertAxisReturns(connection, "[Store].[All Stores].[USA]", "[Store].[USA]");
+        TestUtil.assertAxisReturns(connection, "Sales", "[Gender].[M]", "[Gender].[M]");
+        TestUtil.assertAxisReturns(connection, "Sales", "[Gender].[All Gender].[M]", "[Gender].[M]");
+        TestUtil.assertAxisReturns(connection, "Sales", "[Store].[USA]", "[Store].[USA]");
+        TestUtil.assertAxisReturns(connection, "Sales", "[Store].[All Stores].[USA]", "[Store].[USA]");
     }
 
     @ParameterizedTest
@@ -639,26 +639,26 @@ class CompatibilityTest {
     	context.getSchemaCache().clear();
     	Connection connection = context.getConnectionWithDefaultRole();
         ((TestConfig)context.getConfig()).setNeedDimensionPrefix(false);
-        TestUtil.assertAxisReturns(connection, "{[M]}", "[Gender].[M]");
-        TestUtil.assertAxisReturns(connection, "{M}", "[Gender].[M]");
-        TestUtil.assertAxisReturns(connection, "{[USA].[CA]}", "[Store].[USA].[CA]");
-        TestUtil.assertAxisReturns(connection, "{USA.CA}", "[Store].[USA].[CA]");
+        TestUtil.assertAxisReturns(connection, "Sales", "{[M]}", "[Gender].[M]");
+        TestUtil.assertAxisReturns(connection, "Sales", "{M}", "[Gender].[M]");
+        TestUtil.assertAxisReturns(connection, "Sales", "{[USA].[CA]}", "[Store].[USA].[CA]");
+        TestUtil.assertAxisReturns(connection, "Sales", "{USA.CA}", "[Store].[USA].[CA]");
         ((TestConfig)context.getConfig()).setNeedDimensionPrefix(true);
         TestUtil.assertAxisThrows(
     		connection,
             "{[M]}",
-            "MDX object '[M]' not found in cube 'Sales'");
+            "MDX object '[M]' not found in cube 'Sales'", "Sales");
         TestUtil.assertAxisThrows(
     		connection,
             "{M}",
-            "MDX object 'M' not found in cube 'Sales'");
+            "MDX object 'M' not found in cube 'Sales'", "Sales");
         TestUtil.assertAxisThrows(
     		connection,
             "{[USA].[CA]}",
-            "MDX object '[USA].[CA]' not found in cube 'Sales'");
+            "MDX object '[USA].[CA]' not found in cube 'Sales'", "Sales");
         TestUtil.assertAxisThrows(
     		connection,
             "{USA.CA}",
-            "MDX object 'USA.CA' not found in cube 'Sales'");
+            "MDX object 'USA.CA' not found in cube 'Sales'", "Sales");
     }
 }

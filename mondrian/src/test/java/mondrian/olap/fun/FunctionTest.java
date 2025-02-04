@@ -195,13 +195,13 @@ public class FunctionTest {//extends FoodMartTestCase {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNumericLiteral(Context context) {
-    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "2", "2" );
+    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "2", "2" );
     if ( false ) {
       // The test is currently broken because the value 2.5 is formatted
       // as "2". TODO: better default format string
-      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),"2.5", "2.5" );
+      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "2.5", "2.5" );
     }
-     TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "-10.0", "-10" );
+     TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "-10.0", "-10" );
     TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "1.5", "{}" );
   }
 
@@ -212,10 +212,10 @@ public class FunctionTest {//extends FoodMartTestCase {
     if ( false ) {
       // TODO: enhance parser so that you can include a quoted string
       //   inside a WITH MEMBER clause
-      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "'foobar'", "foobar" );
+      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "'foobar'", "foobar" );
     }
     // double-quoted string
-    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "\"foobar\"", "foobar" );
+    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "\"foobar\"", "foobar" );
     // literals don't depend on any dimensions
     TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "\"foobar\"", "{}" );
   }
@@ -227,29 +227,29 @@ public class FunctionTest {//extends FoodMartTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNullMember(Context context) {
     // MSAS fails here, but Mondrian doesn't.
-    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
+    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
       "[Gender].[All Gender].Parent.Level.UniqueName",
       "[Gender].[(All)]" );
 
     // MSAS fails here, but Mondrian doesn't.
-    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
+    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
       "[Gender].[All Gender].Parent.Hierarchy.UniqueName", "[Gender]" );
 
     // MSAS fails here, but Mondrian doesn't.
-    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
+    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
       "[Gender].[All Gender].Parent.Dimension.UniqueName", "[Gender]" );
 
     // MSAS succeeds too
-    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
+    TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
       "[Gender].[All Gender].Parent.Children.Count", "0" );
 
     if ( isDefaultNullMemberRepresentation() ) {
       // MSAS returns "" here.
-      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
+      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
         "[Gender].[All Gender].Parent.UniqueName", "[Gender].[#null]" );
 
       // MSAS returns "" here.
-      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
+      TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
         "[Gender].[All Gender].Parent.Name", "#null" );
     }
   }
@@ -323,25 +323,25 @@ public class FunctionTest {//extends FoodMartTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNullInMultiplication(Context context) {
     Connection connection = context.getConnectionWithDefaultRole();
-    TestUtil.assertExprReturns(connection, "NULL*1", "" );
-    TestUtil.assertExprReturns(connection, "1*NULL", "" );
-    TestUtil.assertExprReturns(connection, "NULL*NULL", "" );
+    TestUtil.assertExprReturns(connection, "Sales", "NULL*1", "" );
+    TestUtil.assertExprReturns(connection, "Sales", "1*NULL", "" );
+    TestUtil.assertExprReturns(connection, "Sales", "NULL*NULL", "" );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNullInAddition(Context context) {
     Connection connection = context.getConnectionWithDefaultRole();
-    TestUtil.assertExprReturns(connection, "1+NULL", "1" );
-    TestUtil.assertExprReturns(connection, "NULL+1", "1" );
+    TestUtil.assertExprReturns(connection, "Sales", "1+NULL", "1" );
+    TestUtil.assertExprReturns(connection, "Sales", "NULL+1", "1" );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNullInSubtraction(Context context) {
     Connection connection = context.getConnectionWithDefaultRole();
-    TestUtil.assertExprReturns(connection, "1-NULL", "1" );
-    TestUtil.assertExprReturns(connection, "NULL-1", "-1" );
+    TestUtil.assertExprReturns(connection, "Sales", "1-NULL", "1" );
+    TestUtil.assertExprReturns(connection, "Sales", "NULL-1", "-1" );
   }
 
   @Disabled //TODO need investigate
@@ -497,7 +497,7 @@ public class FunctionTest {//extends FoodMartTestCase {
   void testBug714707(Context context) {
     // Same issue as bug 715177 -- "children" returns immutable
     // list, which set operator must make mutable.
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "{[Store].[USA].[CA].children, [Store].[USA]}",
       "[Store].[USA].[CA].[Alameda]\n"
         + "[Store].[USA].[CA].[Beverly Hills]\n"
@@ -545,13 +545,13 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "([Gender].[M], " + TimeWeekly + ")", "135,215" );
 
     // coerce args (hierarchy, member, member, dimension)
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "{([Time.Weekly], [Measures].[Store Sales], [Marital Status].[M], [Promotion Media])}",
       "{[Time].[Weekly].[All Weeklys], [Measures].[Store Sales], [Marital Status].[M], [Promotion Media].[All "
         + "Media]}" );
 
     // usage of different hierarchies in the [Time] dimension
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "{([Time.Weekly], [Measures].[Store Sales], [Marital Status].[M], [Time].[Time])}",
       "{[Time].[Weekly].[All Weeklys], [Measures].[Store Sales], [Marital Status].[M], [Time].[1997]}" );
 
@@ -559,45 +559,45 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
     if ( SystemWideProperties.instance().SsasCompatibleNaming ) {
       assertAxisThrows(context.getConnectionWithDefaultRole(),
         "{([Time].[Weekly], [Measures].[Store Sales], [Marital Status].[M], [Time].[Weekly])}",
-        "Tuple contains more than one member of hierarchy '[Time].[Weekly]'." );
+        "Tuple contains more than one member of hierarchy '[Time].[Weekly]'." , "Sales");
     } else {
       assertAxisThrows(context.getConnectionWithDefaultRole(),
         "{([Time.Weekly], [Measures].[Store Sales], [Marital Status].[M], [Time.Weekly])}",
-        "Tuple contains more than one member of hierarchy '[Time.Weekly]'." );
+        "Tuple contains more than one member of hierarchy '[Time.Weekly]'." , "Sales");
     }
 
     // cannot coerce integer to member
     assertAxisThrows(context.getConnectionWithDefaultRole(),
       "{([Gender].[M], 123)}",
-      "No function matches signature '(<Member>, <Numeric Expression>)'" );
+      "No function matches signature '(<Member>, <Numeric Expression>)'" , "Sales");
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testTupleItem(Context context) {
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(2)",
       "[Gender].[M]" );
 
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(1)",
       "[Customers].[USA].[OR]" );
 
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "{[Time].[1997].[Q1].[1]}.item(0)",
       "[Time].[1997].[Q1].[1]" );
 
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "{[Time].[1997].[Q1].[1]}.Item(0).Item(0)",
       "[Time].[1997].[Q1].[1]" );
 
     // given out of bounds index, item returns null
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(-1)",
       "" );
 
     // given out of bounds index, item returns null
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(500)",
       "" );
 
@@ -720,7 +720,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
 
     // the set function eliminates tuples which are wholly or partially
     // null
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "([Gender].parent, [Marital Status]),\n" // part null
         + " ([Gender].[M], [Marital Status].parent),\n" // part null
         + " ([Gender].parent, [Marital Status].parent),\n" // wholly null
@@ -775,19 +775,19 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
   void testLevelMemberExpressions(Context context) {
 	context.getSchemaCache().clear();
     // Should return Beverly Hills in California.
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "[Store].[Store City].[Beverly Hills]",
       "[Store].[USA].[CA].[Beverly Hills]" );
 
     // There are two months named "1" in the time dimension: one
     // for 1997 and one for 1998.  <Level>.<Member> should return
     // the first one.
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "[Time].[Month].[1]", "[Time].[1997].[Q1].[1]" );
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "[Time].[Month].[1]", "[Time].[1997].[Q1].[1]" );
 
     // Shouldn't be able to find a member named "Q1" on the month level.
     assertAxisThrows(context.getConnectionWithDefaultRole(),
       "[Time].[Month].[Q1]",
-      "MDX object '[Time].[Month].[Q1]' not found in cube" );
+      "MDX object '[Time].[Month].[Q1]' not found in cube", "Sales");
   }
 
   @ParameterizedTest
@@ -837,12 +837,12 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "{[Gender].[M]}\n"
         + "Row #0: 131,558\n" );
 
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "CASE WHEN 1+1 = 2 THEN [Gender].[F] ELSE [Gender].[F].Parent END",
       "[Gender].[F]" );
 
     // try case match for good measure
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "CASE 1 WHEN 2 THEN [Gender].[F] ELSE [Gender].[F].Parent END",
       "[Gender].[All Gender]" );
   }
@@ -877,19 +877,19 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
     // type mismatch between case and else
     assertAxisThrows(context.getConnectionWithDefaultRole(),
       "CASE 1 WHEN 1 THEN 2 ELSE \"foo\" END",
-      "No function matches signature" );
+      "No function matches signature", "Sales" );
     // type mismatch between case and case
     assertAxisThrows(context.getConnectionWithDefaultRole(),
       "CASE 1 WHEN 1 THEN 2 WHEN 2 THEN \"foo\" ELSE 3 END",
-      "No function matches signature" );
+      "No function matches signature", "Sales" );
     // type mismatch between value and case
     assertAxisThrows(context.getConnectionWithDefaultRole(),
       "CASE 1 WHEN \"foo\" THEN 2 ELSE 3 END",
-      "No function matches signature" );
+      "No function matches signature", "Sales" );
     // non-boolean condition
     assertAxisThrows(context.getConnectionWithDefaultRole(),
       "CASE WHEN 1 = 2 THEN 3 WHEN 4 THEN 5 ELSE 6 END",
-      "No function matches signature" );
+      "No function matches signature", "Sales" );
   }
 
   /**
@@ -958,10 +958,10 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
     assertExprReturns(context.getConnectionWithDefaultRole(), "mod(3, -2)", "-1" );
     assertExprReturns(context.getConnectionWithDefaultRole(), "mod(-3, -2)", "-1" );
 
-    assertExprThrows(context.getConnectionWithDefaultRole(),
+    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
       "mod(4, 0)",
       "java.lang.ArithmeticException: / by zero" );
-    assertExprThrows(context.getConnectionWithDefaultRole(),
+    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
       "mod(0, 0)",
       "java.lang.ArithmeticException: / by zero" );
   }
@@ -996,16 +996,16 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
     }
     // Error if length<0
     assertExprReturns(context.getConnectionWithDefaultRole(), "String(0, 'x')", "" ); // SSAS agrees
-    assertExprThrows(context.getConnectionWithDefaultRole(),
+    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
       "String(-1, 'x')", "NegativeArraySizeException" ); // SSAS agrees
-    assertExprThrows(context.getConnectionWithDefaultRole(),
+    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
       "String(-200, 'x')", "NegativeArraySizeException" ); // SSAS agrees
   }
 
     public static void checkNullOp(Connection connection, final String op ) {
-        assertBooleanExprReturns(connection, " 0 " + op + " " + NullNumericExpr, false );
-        assertBooleanExprReturns(connection, NullNumericExpr + " " + op + " 0", false );
-        assertBooleanExprReturns(connection,
+        assertBooleanExprReturns(connection, "Sales", " 0 " + op + " " + NullNumericExpr, false );
+        assertBooleanExprReturns(connection, "Sales", NullNumericExpr + " " + op + " 0", false );
+        assertBooleanExprReturns(connection, "Sales",
             NullNumericExpr + " " + op + " " + NullNumericExpr, false );
     }
 
@@ -1014,7 +1014,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
    * + 2", "3")</code> should succeed.
    */
    public static void assertExprReturns(Connection connection, String expr, String expected ) {
-    String actual = executeExpr(connection, expr);
+    String actual = executeExpr(connection, "Sales", expr);
     assertEquals( expected, actual );
   }
 
@@ -1027,7 +1027,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
    */
  public static void assertExprReturns(Connection connection,
     String expr, double expected, double delta ) {
-    Object value = executeExprRaw(connection, expr).getValue();
+    Object value = executeExprRaw(connection, "Sales", expr).getValue();
 
     try {
       double actual = ( (Number) value ).doubleValue();
@@ -1052,7 +1052,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
     String expr,
     String expectedCalc ) {
     final String actualCalc =
-      compileExpression(connection, expr, true);
+      compileExpression(connection, expr, true, "Sales");
     final int expDeps =
       connection.getContext().getConfig().testExpDependencies();
     if ( expDeps > 0 ) {
@@ -1071,7 +1071,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
     String expr,
     String expectedCalc ) {
     final String actualCalc =
-      compileExpression(connection, expr, false);
+      compileExpression(connection, expr, false, "Sales");
     final int expDeps =
       connection.getContext().getConfig().testExpDependencies();
     if ( expDeps > 0 ) {
@@ -1092,7 +1092,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
     // -- jhyde, 2006/9/3
 
     // From double to integer.  MONDRIAN-1631
-    Cell cell = executeExprRaw(context.getConnectionWithDefaultRole(), "Cast(1.4 As Integer)" );
+    Cell cell = executeExprRaw(context.getConnectionWithDefaultRole(), "Sales", "Cast(1.4 As Integer)" );
     assertEquals(Integer.class, cell.getValue().getClass(),
             "Cast to Integer resulted in wrong datatype\n"
                     + cell.getValue().getClass().toString());
@@ -1149,12 +1149,12 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
     assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND Cast(NULL AS Boolean)", "false" );
 
     // Double is not allowed as a type
-    assertExprThrows(context.getConnectionWithDefaultRole(),
+    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
       "Cast(1 AS Double)",
       "Unknown type 'Double'; values are NUMERIC, STRING, BOOLEAN" );
 
     // An integer constant is not allowed as a type
-    assertExprThrows(context.getConnectionWithDefaultRole(),
+    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
       "Cast(1 AS 5)",
       "Encountered an error at (or somewhere around) input:1:11" );
 
@@ -1541,7 +1541,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testVbaExceptions(Context context) {
-    assertExprThrows(context.getConnectionWithDefaultRole(),
+    assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
       "right(\"abc\", -4)",
       Util.IBM_JVM
         ? "StringIndexOutOfBoundsException: null"

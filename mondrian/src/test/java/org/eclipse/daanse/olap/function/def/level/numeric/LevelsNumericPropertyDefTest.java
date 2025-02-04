@@ -27,22 +27,22 @@ class LevelsNumericPropertyDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelsNumeric(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        TestUtil.assertExprReturns(connection, "[Time].[Time].Levels(2).Name", "Month" );
-        TestUtil.assertExprReturns(connection, "[Time].[Time].Levels(0).Name", "Year" );
-        TestUtil.assertExprReturns(connection, "[Product].Levels(0).Name", "(All)" );
+        TestUtil.assertExprReturns(connection, "Sales", "[Time].[Time].Levels(2).Name", "Month" );
+        TestUtil.assertExprReturns(connection, "Sales", "[Time].[Time].Levels(0).Name", "Year" );
+        TestUtil.assertExprReturns(connection, "Sales", "[Product].Levels(0).Name", "(All)" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelsTooSmall(Context context) {
-        TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(),
+        TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[Time].Levels(-1).Name", "Index '-1' out of bounds" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelsTooLarge(Context context) {
-        TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(),
+        TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[Time].Levels(8).Name", "Index '8' out of bounds" );
     }
 

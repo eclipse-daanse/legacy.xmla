@@ -7549,11 +7549,11 @@ class SchemaTest {
 
         // Check that can apply ParallelPeriod to a TimeUndefined level.
         Connection connection = context.getConnectionWithDefaultRole();
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "PeriodsToDate([Time2].[Quarter hours], [Time2].[1997].[Q1].[1].[368])",
             "[Time2].[1997].[Q1].[1].[368]");
 
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "PeriodsToDate([Time2].[Half year], [Time2].[1997].[Q1].[1].[368])",
             "[Time2].[1997].[Q1].[1].[367]\n"
             + "[Time2].[1997].[Q1].[1].[368]");

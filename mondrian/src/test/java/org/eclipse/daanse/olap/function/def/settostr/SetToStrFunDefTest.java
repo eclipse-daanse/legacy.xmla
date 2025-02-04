@@ -28,12 +28,12 @@ class SetToStrFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSetToStr(Context context) {
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "SetToStr([Time].[Time].children)",
             "{[Time].[1997].[Q1], [Time].[1997].[Q2], [Time].[1997].[Q3], [Time].[1997].[Q4]}" );
 
         // Now, applied to tuples
-        assertExprReturns(context.getConnectionWithDefaultRole(),
+        assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "SetToStr({CrossJoin([Marital Status].children, {[Gender].[M]})})",
             "{"
                 + "([Marital Status].[M], [Gender].[M]), "

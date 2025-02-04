@@ -199,7 +199,7 @@ class DefaultMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionDefaultMember(Context context) {
-      Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Measures].DefaultMember" );
+      Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Measures].DefaultMember", "Sales");
       assertEquals( "Unit Sales", member.getName() );
     }
 

@@ -37,11 +37,11 @@ public class AncestorTest {
 	void testAncestor(Context context) {
 		Connection con = context.getConnectionWithDefaultRole();
 		Member member = TestUtil.executeSingletonAxis(con,
-				"Ancestor([Store].[USA].[CA].[Los Angeles],[Store Country])");
+				"Ancestor([Store].[USA].[CA].[Los Angeles],[Store Country])", "Sales");
 		assertEquals("USA", member.getName());
 
 		TestUtil.assertAxisThrows(con, "Ancestor([Store].[USA].[CA].[Los Angeles],[Promotions].[Promotion Name])",
-				"Error while executing query");
+				"Error while executing query", "Sales");
 	}
 
 	@ParameterizedTest
@@ -50,10 +50,10 @@ public class AncestorTest {
 	void testAncestorNumeric(Context context) {
 		Connection con = context.getConnectionWithDefaultRole();
 
-		Member member = executeSingletonAxis(con, "Ancestor([Store].[USA].[CA].[Los Angeles],1)");
+		Member member = executeSingletonAxis(con, "Ancestor([Store].[USA].[CA].[Los Angeles],1)", "Sales");
 		assertEquals("CA", member.getName());
 
-		member = executeSingletonAxis(con, "Ancestor([Store].[USA].[CA].[Los Angeles], 0)");
+		member = executeSingletonAxis(con, "Ancestor([Store].[USA].[CA].[Los Angeles], 0)", "Sales");
 		assertEquals("Los Angeles", member.getName());
 
 		member = executeSingletonAxis(con, "Ancestor([Store].[All Stores].[Vatican], 1)", "[Sales Ragged]");
@@ -76,7 +76,7 @@ public class AncestorTest {
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAncestorHigher(Context context) {
-		Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "Ancestor([Store].[USA],[Store].[Store City])");
+		Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "Ancestor([Store].[USA],[Store].[Store City])", "Sales");
 		assertNull(member); // MSOLAP returns null
 	}
 
@@ -84,7 +84,7 @@ public class AncestorTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAncestorSameLevel(Context context) {
 		Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
-				"Ancestor([Store].[Canada],[Store].[Store Country])");
+				"Ancestor([Store].[Canada],[Store].[Store Country])", "Sales");
 		assertEquals("Canada", member.getName());
 	}
 
@@ -94,13 +94,13 @@ public class AncestorTest {
 		// MSOLAP gives error "Formula error - dimensions are not
 		// valid (they do not match) - in the Ancestor function"
 		assertAxisThrows(context.getConnectionWithDefaultRole(), "Ancestor([Gender].[M],[Store].[Store Country])",
-				"Error while executing query");
+				"Error while executing query", "Sales");
 	}
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAncestorAllLevel(Context context) {
-		Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "Ancestor([Store].[USA].[CA],[Store].Levels(0))");
+		Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "Ancestor([Store].[USA].[CA],[Store].Levels(0))", "Sales");
 		assertTrue(member.isAll());
 	}
 

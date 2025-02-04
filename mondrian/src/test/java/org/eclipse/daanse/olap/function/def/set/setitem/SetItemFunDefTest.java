@@ -31,25 +31,25 @@ class SetItemFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSetItemInt(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Customers].[All Customers].[USA].[OR].[Lebanon].[Mary Frances Christian]}.Item(0)",
             "[Customers].[USA].[OR].[Lebanon].[Mary Frances Christian]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Customers].[All Customers].[USA],"
                 + "[Customers].[All Customers].[USA].[WA],"
                 + "[Customers].[All Customers].[USA].[CA],"
                 + "[Customers].[All Customers].[USA].[OR].[Lebanon].[Mary Frances Christian]}.Item(2)",
             "[Customers].[USA].[CA]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Customers].[All Customers].[USA],"
                 + "[Customers].[All Customers].[USA].[WA],"
                 + "[Customers].[All Customers].[USA].[CA],"
                 + "[Customers].[All Customers].[USA].[OR].[Lebanon].[Mary Frances Christian]}.Item(100 / 50 - 1)",
             "[Customers].[USA].[WA]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA]),"
                 + "([Time].[1997].[Q1].[2], [Customers].[All Customers].[USA].[WA]),"
                 + "([Time].[1997].[Q1].[3], [Customers].[All Customers].[USA].[CA]),"
@@ -58,7 +58,7 @@ class SetItemFunDefTest {
             "{[Time].[1997].[Q1].[2], [Customers].[USA].[WA]}" );
 
         // given index out of bounds, item returns null
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Customers].[All Customers].[USA],"
                 + "[Customers].[All Customers].[USA].[WA],"
                 + "[Customers].[All Customers].[USA].[CA],"
@@ -66,7 +66,7 @@ class SetItemFunDefTest {
             "" );
 
         // given index out of bounds, item returns null
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Customers].[All Customers].[USA],"
                 + "[Customers].[All Customers].[USA].[WA],"
                 + "[Customers].[All Customers].[USA].[CA],"
@@ -80,33 +80,33 @@ class SetItemFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSetItemString(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Gender].[M], [Gender].[F]}.Item(\"M\")",
             "[Gender].[M]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{CrossJoin([Gender].Members, [Marital Status].Members)}.Item(\"M\", \"S\")",
             "{[Gender].[M], [Marital Status].[S]}" );
 
         // MSAS fails with "duplicate dimensions across (independent) axes".
         // (That's a bug in MSAS.)
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{CrossJoin([Gender].Members, [Marital Status].Members)}.Item(\"M\", \"M\")",
             "{[Gender].[M], [Marital Status].[M]}" );
 
         // None found.
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Gender].[M], [Gender].[F]}.Item(\"X\")", "" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{CrossJoin([Gender].Members, [Marital Status].Members)}.Item(\"M\", \"F\")",
             "" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "CrossJoin([Gender].Members, [Marital Status].Members).Item(\"S\", \"M\")",
             "" );
 
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "CrossJoin([Gender].Members, [Marital Status].Members).Item(\"M\")",
-            "Argument count does not match set's cardinality 2" );
+            "Argument count does not match set's cardinality 2", "Sales" );
     }
 
 }

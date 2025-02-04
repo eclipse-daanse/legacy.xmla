@@ -2215,6 +2215,6 @@ protected void assertQuerySql(Connection connection,
     SystemWideProperties.instance().ResultLimit = 400;
     assertAxisThrows(context.getConnectionWithDefaultRole(), "NonEmptyCrossjoin({[Product].[All Products].Children}, "
         + "{ [Customers].[Name].members})",
-      "exceeded limit (400)" );
+      "exceeded limit (400)", "Sales");
   }
 }

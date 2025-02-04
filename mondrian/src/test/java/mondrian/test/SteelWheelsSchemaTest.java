@@ -62,10 +62,10 @@ class SteelWheelsSchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
     void testMeasures(Context context) {
-        if (!TestUtil.databaseIsValid(context.getConnectionWithDefaultRole())) {
+        if (!TestUtil.databaseIsValid(context.getConnectionWithDefaultRole(), "Sales")) {
             return;
         }
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Measures.Members",
             "[Measures].[Quantity]\n"
             + "[Measures].[Sales]\n"
@@ -77,7 +77,7 @@ class SteelWheelsSchemaTest {
     void testMondrian1273(Context context) {
         //createContext(context, schema);
         withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier1::new);
-        if (!databaseIsValid(((TestContext)context).getConnection(List.of("dev")))) {
+        if (!databaseIsValid(((TestContext)context).getConnection(List.of("dev")), "Sales")) {
             return;
         }
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1256,7 +1256,7 @@ class SteelWheelsSchemaTest {
         Connection connection = context.getConnectionWithDefaultRole();
         Schema schema = connection.getSchema();
 
-        
+
         // get roles
         Role minimal = schema.lookupRole("CUBE_SALES_MINIMAL");
         Role market_800 = RoleImpl.union(
@@ -1286,7 +1286,7 @@ class SteelWheelsSchemaTest {
             + "from [SteelWheelsSales]";
 
         // [Markets].[Territory].Members would get cached after role filter..
-        
+
         connection.setRole(market_800);
         assertQueryReturns(connection,
             nonEmptyMembersQuery,

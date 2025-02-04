@@ -36,21 +36,21 @@ class UniqueNameFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTime(Context context) {
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[1997].[Q1].[1].Hierarchy.UniqueName", "[Time]" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBasic9(Context context) {
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Gender].[All Gender].[F].Hierarchy.UniqueName", "[Gender]" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFirstInLevel9(Context context) {
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Education Level].[All Education Levels].[Bachelors Degree].Hierarchy.UniqueName",
             "[Education Level]" );
     }
@@ -58,7 +58,7 @@ class UniqueNameFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchyAll(Context context) {
-        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(),
+        TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Gender].[All Gender].Hierarchy.UniqueName", "[Gender]" );
     }
 

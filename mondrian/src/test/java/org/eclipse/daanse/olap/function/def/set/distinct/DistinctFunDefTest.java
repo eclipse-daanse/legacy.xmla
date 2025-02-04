@@ -62,7 +62,7 @@ class DistinctFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDistinctTwoTuples(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Distinct({([Time].[1997],[Store].[All Stores].[Mexico]), "
                 + "([Time].[1997], [Store].[All Stores].[Mexico])})",
             "{[Time].[1997], [Store].[Mexico]}" );
@@ -71,7 +71,7 @@ class DistinctFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDistinctSomeTuples(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Distinct({([Time].[1997],[Store].[All Stores].[Mexico]), "
                 + "crossjoin({[Time].[1997]},{[Store].[All Stores].children})})",
             "{[Time].[1997], [Store].[Mexico]}\n"

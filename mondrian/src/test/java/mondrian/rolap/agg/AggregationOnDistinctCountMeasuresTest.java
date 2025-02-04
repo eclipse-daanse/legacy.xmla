@@ -806,7 +806,7 @@ class AggregationOnDistinctCountMeasuresTest {
                 DatabaseProduct.MYSQL, necjSqlMySql, necjSqlMySql)
         };
 
-        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns);
+        assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
     }
 
   @ParameterizedTest

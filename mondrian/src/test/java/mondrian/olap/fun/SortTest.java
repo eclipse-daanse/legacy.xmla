@@ -196,7 +196,7 @@ class SortTest {
   void testListTuplesExceedsCellEvalLimit(Context context) {
     // cell eval performed within the sort, so cycles to retrieve all cells.
       ((TestConfig)(context.getConfig())).setCellBatchSize(2);
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "ORDER(GENERATE(CROSSJOIN({[Customers].[USA].[WA].Children},{[Product].[Food]}),\n"
         + "{([Customers].CURRENTMEMBER,[Product].CURRENTMEMBER)}), [Measures].[Store Sales], BASC, [Customers]"
         + ".CURRENTMEMBER.ORDERKEY,BASC)",
@@ -229,7 +229,7 @@ class SortTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNonBreakingAscendingComparator(Context context) {
     // more than one non-breaking sortkey, where first is ascending
-    assertAxisReturns(context.getConnectionWithDefaultRole(),
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "ORDER(GENERATE(CROSSJOIN({[Customers].[USA].[WA].Children},{[Product].[Food]}),\n"
         + "{([Customers].CURRENTMEMBER,[Product].CURRENTMEMBER)}), [Measures].[Unit Sales], DESC, [Measures].[Store "
         + "Sales], ASC)",

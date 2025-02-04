@@ -31,14 +31,14 @@ class LastSiblingFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLastSibling(Context context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].LastSibling" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].LastSibling", "Sales" );
         assertEquals( "M", member.getName() );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLastSiblingFirstInLevel(Context context) {
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q1].LastSibling" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1997].[Q1].LastSibling", "Sales" );
         assertEquals( "Q4", member.getName() );
     }
 
@@ -46,7 +46,7 @@ class LastSiblingFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLastSiblingAll(Context context) {
         Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[All Gender].LastSibling" );
+            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[All Gender].LastSibling", "Sales" );
         assertTrue( member.isAll() );
     }
 
@@ -55,7 +55,7 @@ class LastSiblingFunDefTest {
     void testLastSiblingRoot(Context context) {
         // The [Time] hierarchy does not have an 'all' member, so
         // [1997], [1998] do not have parents.
-        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1998].LastSibling" );
+        Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Time].[1998].LastSibling", "Sales" );
         assertEquals( "1998", member.getName() );
     }
 
@@ -63,7 +63,7 @@ class LastSiblingFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLastSiblingNull(Context context) {
         Member member =
-            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].FirstChild.LastSibling" );
+            executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Gender].[F].FirstChild.LastSibling", "Sales" );
         assertNull( member );
     }
 

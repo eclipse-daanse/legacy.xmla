@@ -32,22 +32,22 @@ class CacheFunDefTest {
         // test various data types: integer, string, member, set, tuple
         assertExprReturns(context.getConnectionWithDefaultRole(), "Cache(1 + 2)", "3" );
         assertExprReturns(context.getConnectionWithDefaultRole(), "Cache('foo' || 'bar')", "foobar" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Gender].Children",
             "[Gender].[F]\n"
                 + "[Gender].[M]" );
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "([Gender].[M], [Marital Status].[S].PrevMember)",
             "{[Gender].[M], [Marital Status].[M]}" );
 
         // inside another expression
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Order(Cache([Gender].Children), Cache(([Measures].[Unit Sales], [Time].[1997].[Q1])), BDESC)",
             "[Gender].[M]\n"
                 + "[Gender].[F]" );
 
         // doesn't work with multiple args
-        assertExprThrows(context.getConnectionWithDefaultRole(),
+        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "Cache(1, 2)",
             "No function matches signature 'Cache(<Numeric Expression>, <Numeric Expression>)'" );
     }

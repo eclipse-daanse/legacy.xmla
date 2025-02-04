@@ -56,7 +56,7 @@ class CalculatedChildFunDefTest {
                 + "Row #0: 6,838\n" // Calculated child for [Drink]
                 + "Row #1: 841\n" ); // Calculated child for [Non-Consumable]
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
-            "[Product].[All Products].CalculatedChild(\"foobar\")" );
+            "[Product].[All Products].CalculatedChild(\"foobar\")", "Sales" );
         assertEquals( null, member );
     }
 
@@ -91,7 +91,7 @@ class CalculatedChildFunDefTest {
                 // selected!
                 + "Row #1: 6,838\n" );
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
-            "[Product].[All Products].CalculatedChild(\"foobar\")" );
+            "[Product].[All Products].CalculatedChild(\"foobar\")", "Sales" );
         assertEquals( null, member );
     }
 
@@ -100,7 +100,7 @@ class CalculatedChildFunDefTest {
     void testCalculatedChildOnMemberWithNoChildren(Context context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(),
-                "[Measures].[Store Sales].CalculatedChild(\"foobar\")" );
+                "[Measures].[Store Sales].CalculatedChild(\"foobar\")", "Sales" );
         assertEquals( null, member );
     }
 
@@ -109,7 +109,7 @@ class CalculatedChildFunDefTest {
     void testCalculatedChildOnNullMember(Context context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(),
-                "[Measures].[Store Sales].parent.CalculatedChild(\"foobar\")" );
+                "[Measures].[Store Sales].parent.CalculatedChild(\"foobar\")", "Sales" );
         assertEquals( null, member);
     }
 

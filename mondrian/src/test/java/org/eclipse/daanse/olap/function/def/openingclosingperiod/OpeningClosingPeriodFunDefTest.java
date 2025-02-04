@@ -56,7 +56,7 @@ class OpeningClosingPeriodFunDefTest {
             "ClosingPeriod()", "{[Time]}" );
         // MSOLAP returns [1997].[Q4], because [Time].CurrentMember =
         // [1997].
-        Member member = executeSingletonAxis(connection, "ClosingPeriod()" );
+        Member member = executeSingletonAxis(connection, "ClosingPeriod()", "Sales" );
         assertEquals( "[Time].[1997].[Q4]", member.getUniqueName() );
     }
 
@@ -72,13 +72,13 @@ class OpeningClosingPeriodFunDefTest {
 
         Member member;
 
-        member = executeSingletonAxis(connection, "ClosingPeriod([Year])" );
+        member = executeSingletonAxis(connection, "ClosingPeriod([Year])", "Sales" );
         assertEquals( "[Time].[1997]", member.getUniqueName() );
 
-        member = executeSingletonAxis(connection, "ClosingPeriod([Quarter])" );
+        member = executeSingletonAxis(connection, "ClosingPeriod([Quarter])", "Sales" );
         assertEquals( "[Time].[1997].[Q4]", member.getUniqueName() );
 
-        member = executeSingletonAxis(connection, "ClosingPeriod([Month])" );
+        member = executeSingletonAxis(connection, "ClosingPeriod([Month])", "Sales" );
         assertEquals( "[Time].[1997].[Q4].[12]", member.getUniqueName() );
 
         assertQueryReturns(connection,
@@ -164,7 +164,7 @@ class OpeningClosingPeriodFunDefTest {
             "ClosingPeriod([Store].[Store City])",
             "The <level> and <member> arguments to ClosingPeriod must be from "
                 + "the same hierarchy. The level was from '[Store]' but the member "
-                + "was from '[Time]'" );
+                + "was from '[Time]'", "Sales" );
     }
 
     @ParameterizedTest
@@ -174,7 +174,7 @@ class OpeningClosingPeriodFunDefTest {
             // This test is mistaken. Valid forms are ClosingPeriod(<level>)
             // and ClosingPeriod(<level>, <member>), but not
             // ClosingPeriod(<member>)
-            Member member = executeSingletonAxis( context.getConnectionWithDefaultRole(),"ClosingPeriod([USA])" );
+            Member member = executeSingletonAxis( context.getConnectionWithDefaultRole(),"ClosingPeriod([USA])", "Sales" );
             assertEquals( "WA", member.getName() );
         }
     }
@@ -188,7 +188,7 @@ class OpeningClosingPeriodFunDefTest {
             // and ClosingPeriod(<level>, <member>), but not
             // ClosingPeriod(<member>)
             member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
-                "ClosingPeriod([Time].[1997].[Q3].[8])" );
+                "ClosingPeriod([Time].[1997].[Q3].[8])", "Sales" );
             assertNull( member );
         } else if ( isDefaultNullMemberRepresentation() ) {
             assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -233,53 +233,53 @@ class OpeningClosingPeriodFunDefTest {
         assertMemberExprDependsOn(connection,
             "ClosingPeriod([Time].[Month], [Time].[1997].[Q3])", "{}" );
 
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Year], [Time].[1997].[Q3])", "" );
 
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Quarter], [Time].[1997].[Q3])",
             "[Time].[1997].[Q3]" );
 
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Month], [Time].[1997].[Q3])",
             "[Time].[1997].[Q3].[9]" );
 
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Quarter], [Time].[1997])",
             "[Time].[1997].[Q4]" );
 
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Year], [Time].[1997])", "[Time].[1997]" );
 
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Month], [Time].[1997])",
             "[Time].[1997].[Q4].[12]" );
 
         // leaf member
 
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Year], [Time].[1997].[Q3].[8])", "" );
 
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Quarter], [Time].[1997].[Q3].[8])", "" );
 
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Month], [Time].[1997].[Q3].[8])",
             "[Time].[1997].[Q3].[8]" );
 
         // non-Time dimension
 
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Product].[Product Name], [Product].[All Products].[Drink])",
             "[Product].[Drink].[Dairy].[Dairy].[Milk].[Gorilla].[Gorilla Whole Milk]" );
 
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Product].[Product Family], [Product].[All Products].[Drink])",
             "[Product].[Drink]" );
 
         // 'all' level
 
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Product].[(All)], [Product].[All Products].[Drink])",
             "" );
 
@@ -290,10 +290,10 @@ class OpeningClosingPeriodFunDefTest {
             "[Store].[Israel].[Israel].[Tel Aviv]" );
 
         // Default member is [Time].[1997].
-        assertAxisReturns(connection,
+        assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Month])", "[Time].[1997].[Q4].[12]" );
 
-        assertAxisReturns(connection, "ClosingPeriod()", "[Time].[1997].[Q4]" );
+        assertAxisReturns(connection, "Sales", "ClosingPeriod()", "[Time].[1997].[Q4]" );
 
         //Context testContext = getContext().withCube( "[Sales Ragged]" );
         assertAxisReturns(connection, "[Sales Ragged]",
@@ -311,7 +311,7 @@ class OpeningClosingPeriodFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testClosingPeriodBelow(Context context) {
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
-            "ClosingPeriod([Quarter],[1997].[Q3].[8])" );
+            "ClosingPeriod([Quarter],[1997].[Q3].[8])", "Sales" );
         assertNull( member );
     }
 
@@ -319,22 +319,22 @@ class OpeningClosingPeriodFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testOpeningPeriod(Context context) {
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "OpeningPeriod([Time].[Month], [Time].[1997].[Q3])",
             "[Time].[1997].[Q3].[7]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "OpeningPeriod([Time].[Quarter], [Time].[1997])",
             "[Time].[1997].[Q1]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "OpeningPeriod([Time].[Year], [Time].[1997])", "[Time].[1997]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "OpeningPeriod([Time].[Month], [Time].[1997])",
             "[Time].[1997].[Q1].[1]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "OpeningPeriod([Product].[Product Name], [Product].[All Products].[Drink])",
             "[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Imported Beer]" );
 
@@ -349,10 +349,10 @@ class OpeningClosingPeriodFunDefTest {
             "" );
 
         // Default member is [Time].[1997].
-        assertAxisReturns(context.getConnectionWithDefaultRole(),
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "OpeningPeriod([Time].[Month])", "[Time].[1997].[Q1].[1]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "OpeningPeriod()", "[Time].[1997].[Q1]" );
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "OpeningPeriod()", "[Time].[1997].[Q1]" );
 
         //TestContext testContext = getTestContext().withCube( "[Sales Ragged]" );
         assertAxisThrows(context.getConnectionWithDefaultRole(),
@@ -376,7 +376,7 @@ class OpeningClosingPeriodFunDefTest {
     void testOpeningPeriodNull(Context context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "OpeningPeriod([Time].[Month], NULL)",
-            "Failed to parse query 'select {OpeningPeriod([Time].[Month], NULL)} on columns from Sales'" );
+            "Failed to parse query 'select {OpeningPeriod([Time].[Month], NULL)} on columns from Sales'", "Sales" );
     }
 
 }
