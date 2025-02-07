@@ -645,12 +645,6 @@
         <version>2.0.0</version>
         <scope>runtime</scope>
       </dependency>
-			<dependency>
-				<groupId>commons-fileupload</groupId>
-				<artifactId>commons-fileupload</artifactId>
-				<version>1.5</version>
-				<scope>runtime</scope>
-			</dependency>
       <dependency>
         <groupId>org.owasp.encoder</groupId>
         <artifactId>encoder</artifactId>
@@ -664,7 +658,7 @@
       <dependency>
         <groupId>org.apache.felix</groupId>
         <artifactId>org.apache.felix.http.jetty12</artifactId>
-        <version>1.0.18</version>
+        <version>1.0.20</version>
         <scope>runtime</scope>
         <classifier>light</classifier>
       </dependency>
