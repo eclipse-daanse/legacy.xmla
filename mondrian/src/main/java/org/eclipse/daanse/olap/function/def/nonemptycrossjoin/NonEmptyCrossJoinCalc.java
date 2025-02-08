@@ -15,7 +15,7 @@ package org.eclipse.daanse.olap.function.def.nonemptycrossjoin;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
@@ -41,7 +41,7 @@ public class NonEmptyCrossJoinCalc extends AbstractListCalc{
 
     @Override
     public TupleList evaluateList(Evaluator evaluator) {
-        SchemaReader schemaReader = evaluator.getSchemaReader();
+        CatalogReader schemaReader = evaluator.getCatalogReader();
 
         // Evaluate the arguments in non empty mode, but remove from
         // the slicer any members that will be overridden by args to

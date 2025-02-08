@@ -1,6 +1,6 @@
 package org.eclipse.daanse.olap.api;
 
-public interface SchemaCache {
+public interface CatalogCache {
 
 	void clear();
 

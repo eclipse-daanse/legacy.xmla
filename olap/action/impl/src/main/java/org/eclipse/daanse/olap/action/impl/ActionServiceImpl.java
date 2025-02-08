@@ -27,10 +27,9 @@ import org.eclipse.daanse.olap.action.api.ActionService;
 import org.eclipse.daanse.olap.action.api.ReportAction;
 import org.eclipse.daanse.olap.action.api.UrlAction;
 import org.eclipse.daanse.olap.action.api.XmlaAction;
-import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DrillThroughAction;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
-import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;
 import org.eclipse.daanse.xmla.api.common.enums.ActionTypeEnum;
@@ -86,7 +85,7 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     public List<MdSchemaActionsResponseRow> getResponses(
-        List<Context> contexts,
+        List<Catalog> catalogs,
         Optional<String> schemaName,
         String cubeName,
         Optional<String> actionName,
@@ -100,21 +99,21 @@ public class ActionServiceImpl implements ActionService {
     ) {
     	// TODO: one connection per context not each row
         List<MdSchemaActionsResponseRow> result = new ArrayList<>();
-        result.addAll(contexts.stream().map(c ->
+        result.addAll(catalogs.stream().map(c ->
             getMdSchemaActionsResponseRow(c, schemaName, cubeName, actionName, actionType, coordinate, coordinateType
                 , invocation, cubeSource,metaData,userPrincipal)
         ).flatMap(Collection::stream).toList());
 
         if (CoordinateTypeEnum.CELL.equals(coordinateType)) {
-            result.addAll(contexts.stream().map(c ->
+            result.addAll(catalogs.stream().map(c ->
             getMdSchemaActionsResponseRow(c, schemaName, cubeName, actionName, actionType, coordinate, xmlaActions)
             ).flatMap(Collection::stream).toList());
         }
         return result;
     }
 
-    private List<MdSchemaActionsResponseRow> getMdSchemaActionsResponseRow(Context context, Optional<String> schemaName, String cubeName, Optional<String> actionName, Optional<ActionTypeEnum> actionType, Optional<String> coordinate, List<XmlaAction> xmlaActions) {
-        return getMdSchemaActionsResponseRow(schemaName, cubeName, actionName, actionType, coordinate, getXmlaActionWithFilterByOptional(xmlaActions, context.getName(), XmlaAction::catalogName));
+    private List<MdSchemaActionsResponseRow> getMdSchemaActionsResponseRow(Catalog catalog, Optional<String> schemaName, String cubeName, Optional<String> actionName, Optional<ActionTypeEnum> actionType, Optional<String> coordinate, List<XmlaAction> xmlaActions) {
+        return getMdSchemaActionsResponseRow(schemaName, cubeName, actionName, actionType, coordinate, getXmlaActionWithFilterByOptional(xmlaActions, catalog.getName(), XmlaAction::catalogName));
     }
 
     private List<MdSchemaActionsResponseRow> getMdSchemaActionsResponseRow(Optional<String> schemaName, String cubeName, Optional<String> actionName, Optional<ActionTypeEnum> actionType, Optional<String> coordinate, List<XmlaAction> xmlaActions) {
@@ -158,7 +157,7 @@ public class ActionServiceImpl implements ActionService {
     }
 
     private List<MdSchemaActionsResponseRow> getMdSchemaActionsResponseRow(
-        Context context,
+        Catalog catalog,
         Optional<String> oSchemaName,
         String cubeName,
         Optional<String> oActionName,
@@ -170,19 +169,16 @@ public class ActionServiceImpl implements ActionService {
         RequestMetaData metaData,
         UserPrincipal userPrincipal
     ) {
-        List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
-        if (schemas != null) {
-            return getSchemasWithFilter(schemas, oSchemaName).stream()
-                .map(schema -> getMdSchemaActionsResponseRow(context.getName(), schema, cubeName, oActionName,
-                    oActionType, oCoordinate, coordinateType, invocation, oCubeSource)
-                ).flatMap(Collection::stream).toList();
+        if (catalog != null ) {
+            return  getMdSchemaActionsResponseRow(catalog.getName(), catalog, cubeName, oActionName,
+                    oActionType, oCoordinate, coordinateType, invocation, oCubeSource);
         }
         return List.of();
     }
 
     private List<MdSchemaActionsResponseRow> getMdSchemaActionsResponseRow(
         String catalogName,
-        Schema schema,
+        Catalog catalog,
         String cubeName,
         Optional<String> oActionName,
         Optional<ActionTypeEnum> oActionType,
@@ -192,9 +188,9 @@ public class ActionServiceImpl implements ActionService {
         Optional<CubeSourceEnum> oCubeSource
     ) {
         List<MdSchemaActionsResponseRow> result = new ArrayList<>();
-        List<Cube> cubes = schema.getCubes() == null ? List.of() : Arrays.asList(schema.getCubes());
+        List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalog.getCubes());
         result.addAll(getCubesWithFilter(cubes, cubeName).stream()
-            .map(c -> getMdSchemaActionsResponseRow(catalogName, schema.getName(), c, oActionName, oActionType,
+            .map(c -> getMdSchemaActionsResponseRow(catalogName, catalog.getName(), c, oActionName, oActionType,
                 oCoordinate, coordinateType, invocation, oCubeSource))
             .flatMap(Collection::stream)
             .toList());
@@ -264,12 +260,7 @@ public class ActionServiceImpl implements ActionService {
         return actions;
     }
 
-    private List<Schema> getSchemasWithFilter(List<Schema> schemas, Optional<String> oSchemaName) {
-        if (oSchemaName.isPresent()) {
-            return schemas.stream().filter(s -> oSchemaName.get().equals(s.getName())).toList();
-        }
-        return schemas;
-    }
+
 
     private List<Cube> getCubesWithFilter(List<Cube> cubes, String cubeName) {
         if (cubeName != null) {

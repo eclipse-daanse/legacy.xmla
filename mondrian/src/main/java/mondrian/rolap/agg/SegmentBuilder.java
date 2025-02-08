@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.CellKey;
-import mondrian.rolap.RolapSchema;
+import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.StarColumnPredicate;
 import mondrian.rolap.StarPredicate;
@@ -707,7 +707,7 @@ public class SegmentBuilder {
         SegmentHeader header,
         Segment segment)
     {
-        if (!segment.getStar().getSchema().getName()
+        if (!segment.getStar().getCatalog().getName()
             .equals(header.schemaName))
         {
             return false;
@@ -795,7 +795,7 @@ public class SegmentBuilder {
             compoundPredicate.toSql(query, buf);
             cp.add(buf.toString());
         }
-        final RolapSchema schema = segment.star.getSchema();
+        final RolapCatalog schema = segment.star.getCatalog();
         return new SegmentHeader(
             schema.getName(),
             schema.getChecksum(),

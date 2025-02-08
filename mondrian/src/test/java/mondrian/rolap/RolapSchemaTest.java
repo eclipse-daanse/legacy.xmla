@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -80,8 +80,8 @@ import mondrian.rolap.util.RelationUtil;
 /**
  * @author Andrey Khayrutdinov
  */
-class RolapSchemaTest {
-  private RolapSchema schemaSpy;
+class RolapCatalogTest {
+  private RolapCatalog schemaSpy;
   private static RolapStar rlStarMock = mock(RolapStar.class);
   private static AbstractRolapContext contextMock;
 
@@ -96,9 +96,9 @@ class RolapSchemaTest {
         SystemWideProperties.instance().populateInitial();
     }
 
-    private RolapSchema createSchema() {
+    private RolapCatalog createSchema() {
         CacheKey key = new CacheKey(
-            new SchemaContentKey("test", 1), new ConnectionKey(1, "1"));
+            new CatalogContentKey("test", 1), new ConnectionKey(1, "1"));
 
         //noinspection deprecation
         //mock rolap connection to eliminate calls for cache loading
@@ -110,11 +110,11 @@ class RolapSchemaTest {
         when(contextMock.getAggregationManager()).thenReturn(aggManagerMock);
         when(contextMock.getConfig()).thenReturn(new TestConfig());
         when(aggManagerMock.getCacheMgr(rolapConnectionMock)).thenReturn(scManagerMock);
-        return new RolapSchema(key,  rolapConnectionMock, contextMock);
+        return new RolapCatalog(key,  rolapConnectionMock, contextMock);
     }
 
-    private SchemaReader mockSchemaReader(DataType category, OlapElement element) {
-        SchemaReader reader = mock(SchemaReader.class);
+    private CatalogReader mockCatalogReader(DataType category, OlapElement element) {
+        CatalogReader reader = mock(CatalogReader.class);
         when(reader.withLocus()).thenReturn(reader);
         when(reader.lookupCompound(
             any(OlapElement.class), anyList(),
@@ -123,9 +123,9 @@ class RolapSchemaTest {
         return reader;
     }
 
-    private RolapCube mockCube(RolapSchema schema) {
+    private RolapCube mockCube(RolapCatalog schema) {
         RolapCube cube = mock(RolapCube.class);
-        when(cube.getSchema()).thenReturn(schema);
+        when(cube.getCatalog()).thenReturn(schema);
         return cube;
     }
 
@@ -170,7 +170,7 @@ class RolapSchemaTest {
 
     @Test
     void testHandleSchemaGrant() {
-        RolapSchema schema = createSchema();
+        RolapCatalog schema = createSchema();
         schema = spy(schema);
         doNothing().when(schema)
             .handleCubeGrant(
@@ -194,7 +194,7 @@ class RolapSchemaTest {
 
     @Test
     void testHandleCubeGrant_ThrowsException_WhenCubeIsUnknown() {
-        RolapSchema schema = createSchema();
+        RolapCatalog schema = createSchema();
         schema = spy(schema);
         doReturn(null).when(schema).lookupCube(anyString());
 
@@ -213,20 +213,20 @@ class RolapSchemaTest {
 
     @Test
     void testHandleCubeGrant_GrantsCubeDimensionsAndHierarchies() {
-        RolapSchema schema = createSchema();
+        RolapCatalog schema = createSchema();
         schema = spy(schema);
         doNothing().when(schema)
             .handleHierarchyGrant(
                 any(mondrian.olap.RoleImpl.class),
                 any(RolapCube.class),
-                any(SchemaReader.class),
+                any(CatalogReader.class),
                 any(AccessHierarchyGrantMappingImpl.class));
 
         final Dimension dimension = mock(Dimension.class);
-        SchemaReader reader = mockSchemaReader(org.eclipse.daanse.olap.api.DataType.DIMENSION, dimension);
+        CatalogReader reader = mockCatalogReader(org.eclipse.daanse.olap.api.DataType.DIMENSION, dimension);
 
         RolapCube cube = mockCube(schema);
-        when(cube.getSchemaReader(any())).thenReturn(reader);
+        when(cube.getCatalogReader(any())).thenReturn(reader);
         doReturn(cube).when(schema).lookupCube(any(CubeMapping.class));
 
         AccessDimensionGrantMappingImpl dimensionGrant =
@@ -267,7 +267,7 @@ class RolapSchemaTest {
     @Test
     void testEmptyRolapStarRegistryCreatedForTheNewSchema()
         throws Exception {
-      RolapSchema schema = createSchema();
+      RolapCatalog schema = createSchema();
       RolapStarRegistry rolapStarRegistry = schema.getRolapStarRegistry();
       assertNotNull(rolapStarRegistry);
       assertTrue(rolapStarRegistry.getStars().isEmpty());
@@ -289,7 +289,7 @@ class RolapSchemaTest {
       //Expected result star
       RolapStar expectedStar = rlStarMock;
       RolapStarRegistry rolapStarRegistry =
-          getStarRegistryLinkedToRolapSchemaSpy(schemaSpy, fact);
+          getStarRegistryLinkedToRolapCatalogSpy(schemaSpy, fact);
 
 
       //Test that a new rolap star has created and put to the registry
@@ -321,7 +321,7 @@ class RolapSchemaTest {
       List<String> rolapStarKey = RolapUtil.makeRolapStarKey(fact);
       //Expected result star
       RolapStarRegistry rolapStarRegistry =
-          getStarRegistryLinkedToRolapSchemaSpy(schemaSpy, fact);
+          getStarRegistryLinkedToRolapCatalogSpy(schemaSpy, fact);
       //Put rolap star to the registry
       rolapStarRegistry.getOrCreateStar(fact);
 
@@ -339,7 +339,7 @@ class RolapSchemaTest {
 
       //Expected result star
       RolapStarRegistry rolapStarRegistry =
-          getStarRegistryLinkedToRolapSchemaSpy(schemaSpy, fact);
+          getStarRegistryLinkedToRolapCatalogSpy(schemaSpy, fact);
       //Put rolap star to the registry
       RolapStar actualStar = rolapStarRegistry.getOrCreateStar(fact);
 
@@ -347,8 +347,8 @@ class RolapSchemaTest {
       assertSame(rlStarMock, actualStar);
     }
 
-    private static RolapStarRegistry getStarRegistryLinkedToRolapSchemaSpy(
-        RolapSchema schemaSpy, RelationalQueryMapping fact) throws Exception
+    private static RolapStarRegistry getStarRegistryLinkedToRolapCatalogSpy(
+        RolapCatalog schemaSpy, RelationalQueryMapping fact) throws Exception
     {
       //the rolap star registry is linked to the origin rolap schema,
       //not to the schemaSpy
@@ -358,7 +358,7 @@ class RolapSchemaTest {
       doReturn(rlStarMock).when(rolapStarRegistry).makeRolapStar(fact);
       //Set the schema spy to be linked with the rolap star registry
       //assertTrue(
-      //        replaceRolapSchemaLinkedToStarRegistry(
+      //        replaceRolapCatalogLinkedToStarRegistry(
       //        rolapStarRegistry,
       //        schemaSpy),
       //        "For testing purpose object this$0 in the inner class "
@@ -368,15 +368,15 @@ class RolapSchemaTest {
       return rolapStarRegistry;
     }
 
-     private static boolean replaceRolapSchemaLinkedToStarRegistry(
+     private static boolean replaceRolapCatalogLinkedToStarRegistry(
          RolapStarRegistry innerClass,
-         RolapSchema sSpy) throws Exception
+         RolapCatalog sSpy) throws Exception
      {
        Field field = innerClass.getClass().getDeclaredField("this$0");
        if (field != null) {
          field.setAccessible(true);
          field.set(innerClass, sSpy);
-         RolapSchema outerMocked = (RolapSchema) field.get(innerClass);
+         RolapCatalog outerMocked = (RolapCatalog) field.get(innerClass);
          return outerMocked == sSpy;
        }
        return false;
@@ -403,7 +403,7 @@ class RolapSchemaTest {
         Access expectedHierarchyAccess,
         Access expectedMemberAccess)
     {
-        RolapSchema schema = createSchema();
+        RolapCatalog schema = createSchema();
         RolapCube cube = mockCube(schema);
         mondrian.olap.RoleImpl role = new mondrian.olap.RoleImpl();
 
@@ -424,7 +424,7 @@ class RolapSchemaTest {
         Dimension dimension = mock(Dimension.class);
         when(hierarchy.getDimension()).thenReturn(dimension);
 
-        SchemaReader reader = mockSchemaReader(DataType.HIERARCHY, hierarchy);
+        CatalogReader reader = mockCatalogReader(DataType.HIERARCHY, hierarchy);
         Context context = mock(Context.class);
         TestConfig config = new TestConfig();
         config.setIgnoreInvalidMembers(true);

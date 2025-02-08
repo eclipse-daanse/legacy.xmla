@@ -17,14 +17,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.daanse.olap.api.NameSegment;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.element.OlapMetaData;
@@ -363,7 +363,7 @@ public class RolapMemberBase
 	public Object getPropertyValue(String propertyName, boolean matchCase) {
         Property property = Property.lookup(propertyName, matchCase);
         if (property != null) {
-            Schema schema;
+            Catalog schema;
             Member parentMember;
             List<RolapMember> list;
             switch (property.ordinal) {
@@ -386,7 +386,7 @@ public class RolapMemberBase
                 break;
 
             case Property.SCHEMA_NAME_ORDINAL:
-                schema = getHierarchy().getDimension().getSchema();
+                schema = getHierarchy().getDimension().getCatalog();
                 return schema.getName();
 
             case Property.CUBE_NAME_ORDINAL:
@@ -425,7 +425,7 @@ public class RolapMemberBase
 
             case Property.CHILDREN_CARDINALITY_ORDINAL:
                 return LocusImpl.execute(
-                    ((RolapSchema) level.getDimension().getSchema())
+                    ((RolapCatalog) level.getDimension().getCatalog())
                         .getInternalConnection(),
                     "Member.CHILDREN_CARDINALITY",
                     new LocusImpl.Action<Integer>() {
@@ -692,7 +692,7 @@ public class RolapMemberBase
 	public boolean isParentChildLeaf() {
         if (isParentChildLeaf == null) {
             isParentChildLeaf = getLevel().isParentChild()
-                && getDimension().getSchema().getSchemaReader()
+                && getDimension().getCatalog().getCatalogReader()
                 .getMemberChildren(this).size() == 0;
         }
         return isParentChildLeaf;
@@ -713,7 +713,7 @@ public class RolapMemberBase
      * @return List of arrays of members
      */
     public static List<List<Member>> getAllMembers(
-        SchemaReader schemaReader,
+        CatalogReader schemaReader,
         Hierarchy hierarchy)
     {
         long start = System.currentTimeMillis();
@@ -741,7 +741,7 @@ public class RolapMemberBase
     }
 
     public static int getHierarchyCardinality(
-        SchemaReader schemaReader,
+        CatalogReader schemaReader,
         Hierarchy hierarchy)
     {
         int cardinality = 0;
@@ -775,7 +775,7 @@ public class RolapMemberBase
      * @param seedMember Member
      */
     public static void setOrdinals(
-        SchemaReader schemaReader,
+        CatalogReader schemaReader,
         Member seedMember)
     {
         seedMember = RolapUtil.strip((RolapMember) seedMember);
@@ -903,7 +903,7 @@ public class RolapMemberBase
      * @param member Member
      */
     private static void setOrdinalsTopDown(
-        SchemaReader schemaReader,
+        CatalogReader schemaReader,
         Member member)
     {
         long start = System.currentTimeMillis();
@@ -936,7 +936,7 @@ public class RolapMemberBase
 
     private static int setAllChildren(
         int ordinal,
-        SchemaReader schemaReader,
+        CatalogReader schemaReader,
         Member member)
     {
         ordinal = setOrdinal(member, ordinal);

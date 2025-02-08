@@ -12,7 +12,7 @@ package mondrian.rolap.agg;
 
 import junit.framework.TestCase;
 import mondrian.rolap.BitKey;
-import mondrian.rolap.RolapSchema;
+import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.StarColumnPredicate;
 import mondrian.rolap.StarPredicate;
@@ -128,7 +128,7 @@ class GroupingSetsListTest extends TestCase {
     RolapStar mock = mock(RolapStar.class);
 
     RolapStar.Table tableMock = mock(RolapStar.Table.class);
-    RolapSchema schemaMock = mock(RolapSchema.class);
+    RolapCatalog schemaMock = mock(RolapCatalog.class);
     ByteString md5 = new ByteString("test schema".getBytes());
     when(mock.getSchema()).thenReturn(schemaMock);
     when(schemaMock.getChecksum()).thenReturn(md5);

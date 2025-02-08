@@ -28,6 +28,6 @@ public class PrevMemberCalc extends AbstractProfilingNestedMemberCalc {
     @Override
     public Member evaluate(Evaluator evaluator) {
         Member member = getChildCalc(0, MemberCalc.class).evaluate(evaluator);
-        return evaluator.getSchemaReader().getLeadMember(member, -1);
+        return evaluator.getCatalogReader().getLeadMember(member, -1);
     }
 }

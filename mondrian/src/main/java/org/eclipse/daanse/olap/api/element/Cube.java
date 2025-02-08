@@ -18,9 +18,9 @@ package org.eclipse.daanse.olap.api.element;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.DrillThroughAction;
 import org.eclipse.daanse.olap.api.NameSegment;
-import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 
@@ -31,7 +31,7 @@ import org.eclipse.daanse.olap.api.query.component.Formula;
  */
 public interface Cube extends OlapElement, MetaElement {
 
-    Schema getSchema();
+    Catalog getCatalog();
 
     /**
      * Returns the dimensions of this cube.
@@ -60,12 +60,12 @@ public interface Cube extends OlapElement, MetaElement {
     Member[] getMembersForQuery(String query, List<Member> calcMembers);
 
     /**
-     * Returns a {@link SchemaReader} for which this cube is the context for
+     * Returns a {@link CatalogReader} for which this cube is the context for
      * lookup up members.
      * If <code>role</code> is null, the returned schema reader also obeys the
      * access-control profile of role.
      */
-    SchemaReader getSchemaReader(Role role);
+    CatalogReader getCatalogReader(Role role);
 
     /**
      * Finds out non joining dimensions for this cube.
@@ -111,4 +111,5 @@ public interface Cube extends OlapElement, MetaElement {
     int getLevelCardinality(
         Level level, boolean approximate, boolean materialize);
 
+    List<? extends KPI> getKPIs();
 }

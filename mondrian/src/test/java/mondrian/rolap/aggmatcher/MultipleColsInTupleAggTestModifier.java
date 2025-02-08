@@ -23,7 +23,6 @@ import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
@@ -171,7 +170,7 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
     }
 
     @Override
-    protected List<? extends CubeMapping> schemaCubes(SchemaMapping schemaMappingOriginal) {
+    protected List<? extends CubeMapping> schemaCubes(CatalogMapping schemaMappingOriginal) {
         List<CubeMapping> result = new ArrayList<>();
         result.addAll(super.schemaCubes(schemaMappingOriginal));
         result.add(PhysicalCubeMappingImpl.builder()

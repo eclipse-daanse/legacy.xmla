@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
@@ -54,7 +54,7 @@ public class DrilldownLevelWithIndexCalc extends AbstractListCalc {
         HashMap<Member, List<Member>> calcMembersByParent = DrilldownLevelCalc
                 .getCalcMembersByParent(list.get(0).get(index).getHierarchy(), evaluator, includeCalcMembers);
         TupleList result = TupleCollections.createList(arity);
-        final SchemaReader schemaReader = evaluator.getSchemaReader();
+        final CatalogReader schemaReader = evaluator.getCatalogReader();
         final Member[] tupleClone = new Member[arity];
         for (List<Member> tuple : list) {
             result.add(tuple);

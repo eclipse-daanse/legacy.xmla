@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.calc.impl.DelegatingTupleList;
-import mondrian.olap.DelegatingSchemaReader;
+import mondrian.olap.DelegatingCatalogReader;
 import mondrian.olap.ResultStyleException;
 import mondrian.olap.Util;
 import mondrian.rolap.TupleReader.MemberBuilder;
@@ -171,22 +171,22 @@ public abstract class RolapNativeSet extends RolapNative {
 
   protected class SetEvaluator implements NativeEvaluator {
     private final CrossJoinArg[] args;
-    private final SchemaReaderWithMemberReaderAvailable schemaReader;
+    private final CatalogReaderWithMemberReaderAvailable schemaReader;
     private final TupleConstraint constraint;
     private int maxRows = 0;
     private boolean completeWithNullValues;
 
     public SetEvaluator(
       CrossJoinArg[] args,
-      SchemaReader schemaReader,
+      CatalogReader schemaReader,
       TupleConstraint constraint ) {
       this.args = args;
-      if ( schemaReader instanceof SchemaReaderWithMemberReaderAvailable schemaReaderWithMemberReaderAvailable ) {
+      if ( schemaReader instanceof CatalogReaderWithMemberReaderAvailable schemaReaderWithMemberReaderAvailable ) {
         this.schemaReader =
             schemaReaderWithMemberReaderAvailable;
       } else {
         this.schemaReader =
-          new SchemaReaderWithMemberReaderCache( schemaReader );
+          new CatalogReaderWithMemberReaderCache( schemaReader );
       }
       this.constraint = constraint;
     }
@@ -358,7 +358,7 @@ public abstract class RolapNativeSet extends RolapNative {
       Access access =
         constraint
           .getEvaluator()
-          .getSchemaReader()
+          .getCatalogReader()
           .getRole()
           .getAccess( hierarchy );
       return access == Access.CUSTOM;
@@ -371,7 +371,7 @@ public abstract class RolapNativeSet extends RolapNative {
 		public boolean test( Member member ) {
             Role role =
               constraint
-                .getEvaluator().getSchemaReader().getRole();
+                .getEvaluator().getCatalogReader().getRole();
             return member.isHidden() || !role.canAccess( member );
           }
         };
@@ -484,7 +484,7 @@ public abstract class RolapNativeSet extends RolapNative {
     RolapEvaluator evaluator,
     CrossJoinArg[] cargs,
     RolapStoredMeasure storedMeasure ) {
-    SchemaReader schemaReader = evaluator.getSchemaReader();
+    CatalogReader schemaReader = evaluator.getCatalogReader();
     for ( CrossJoinArg carg : cargs ) {
       RolapLevel level = carg.getLevel();
       if ( level != null ) {
@@ -517,18 +517,18 @@ public abstract class RolapNativeSet extends RolapNative {
   }
 
 
-  public interface SchemaReaderWithMemberReaderAvailable
-    extends SchemaReader {
+  public interface CatalogReaderWithMemberReaderAvailable
+    extends CatalogReader {
     MemberReader getMemberReader( Hierarchy hierarchy );
   }
 
-  private static class SchemaReaderWithMemberReaderCache
-    extends DelegatingSchemaReader
-    implements SchemaReaderWithMemberReaderAvailable {
+  private static class CatalogReaderWithMemberReaderCache
+    extends DelegatingCatalogReader
+    implements CatalogReaderWithMemberReaderAvailable {
     private final Map<Hierarchy, MemberReader> hierarchyReaders =
       new HashMap<>();
 
-    SchemaReaderWithMemberReaderCache( SchemaReader schemaReader ) {
+    CatalogReaderWithMemberReaderCache( CatalogReader schemaReader ) {
       super( schemaReader );
     }
 

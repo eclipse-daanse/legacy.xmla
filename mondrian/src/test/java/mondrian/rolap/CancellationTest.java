@@ -18,7 +18,7 @@ import static org.opencube.junit5.TestUtil.productMembersPotScrubbersPotsAndPans
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
@@ -90,12 +90,12 @@ class CancellationTest {
         RolapCube salesCube = (RolapCube) cubeByName(
              connection,
             "Sales");
-        SchemaReader salesCubeSchemaReader =
-            salesCube.getSchemaReader(
+        CatalogReader salesCubeCatalogReader =
+            salesCube.getCatalogReader(
                     connection.getRole()).withLocus();
 
         TupleList productMembers =
-            productMembersPotScrubbersPotsAndPans(salesCubeSchemaReader);
+            productMembersPotScrubbersPotsAndPans(salesCubeCatalogReader);
 
         String selectGenders = "select Gender.members on 0 from sales";
         Result genders = executeQuery(connection, selectGenders);

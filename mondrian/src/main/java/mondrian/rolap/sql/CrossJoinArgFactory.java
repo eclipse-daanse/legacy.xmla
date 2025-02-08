@@ -166,7 +166,7 @@ public class CrossJoinArgFactory {
         FunctionDefinition fun = funCall.getFunDef();
         Expression[] args = funCall.getArgs();
 
-        final Role role = evaluator.getSchemaReader().getRole();
+        final Role role = evaluator.getCatalogReader().getRole();
         CrossJoinArg[] cjArgs;
 
         cjArgs = checkMemberChildren(role, fun, args);
@@ -957,7 +957,7 @@ public class CrossJoinArgFactory {
         ExpressionCompiler compiler = evaluator.getQuery().createCompiler();
         CrossJoinArg[] arg0 = null;
         if (shouldExpandNonEmpty(exp,
-            evaluator.getCube().getSchema().getInternalConnection().getContext().getConfig().expandNonNative())
+            evaluator.getCube().getCatalog().getInternalConnection().getContext().getConfig().expandNonNative())
             && evaluator.getActiveNativeExpansions().add(exp))
         {
             TupleListCalc listCalc0 = compiler.compileList(exp);

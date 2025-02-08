@@ -58,7 +58,7 @@ class MemberCacheControlTest extends FoodMartTestCase {
         propSaver.set(
             MondrianProperties.instance().EnableRolapCubeMemberCache,
             false);
-        RolapSchemaPool.instance().clear();
+        RolapCatalogPool.instance().clear();
 
         final RolapConnection conn = (RolapConnection) getConnection();
         final Statement statement = conn.getInternalStatement();
@@ -69,7 +69,7 @@ class MemberCacheControlTest extends FoodMartTestCase {
 
     protected void tearDown() throws Exception {
         super.tearDown();
-        RolapSchemaPool.instance().clear();
+        RolapCatalogPool.instance().clear();
         Locus.pop(locus);
         locus = null;
     }

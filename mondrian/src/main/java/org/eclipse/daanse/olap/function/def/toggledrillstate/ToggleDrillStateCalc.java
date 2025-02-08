@@ -94,7 +94,7 @@ public class ToggleDrillStateCalc extends AbstractListCalc{
                     } while (i < n);
                 } else {
                     List<Member> children =
-                        evaluator.getSchemaReader().getMemberChildren(m);
+                        evaluator.getCatalogReader().getMemberChildren(m);
                     for (Member child : children) {
                         o.toArray(members);
                         members[k] = child;

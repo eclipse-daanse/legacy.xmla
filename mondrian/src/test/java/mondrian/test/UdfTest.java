@@ -68,7 +68,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.spi.CellFormatter;
 import mondrian.spi.PropertyFormatter;
@@ -123,7 +123,7 @@ public class UdfTest {
     }
 
     private void updateTestContext(Context context, PojoMappingModifier m) {
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(m);
     }
 

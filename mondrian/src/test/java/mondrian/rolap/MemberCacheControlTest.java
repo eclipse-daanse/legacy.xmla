@@ -35,7 +35,7 @@ import org.eclipse.daanse.olap.api.CacheControl.MemberEditCommand;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Locus;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -91,13 +91,13 @@ class MemberCacheControlTest {
 
 
         SystemWideProperties.instance().EnableRolapCubeMemberCache = false;
-//        RolapSchemaCache.instance().clear();
+//        RolapCatalogCache.instance().clear();
     }
 
     @AfterEach
     public void afterEach() {
         SystemWideProperties.instance().populateInitial();
-//        RolapSchemaCache.instance().clear();
+//        RolapCatalogCache.instance().clear();
         LocusImpl.pop(locus);
         locus = null;
     }
@@ -172,8 +172,8 @@ class MemberCacheControlTest {
         String cubeName,
         String... names)
     {
-        Cube cube = connection.getSchema().lookupCube(cubeName, true);
-        SchemaReader scr = cube.getSchemaReader(null).withLocus();
+        Cube cube = connection.getCatalog().lookupCube(cubeName, true);
+        CatalogReader scr = cube.getCatalogReader(null).withLocus();
         return (RolapMember)
             scr.getMemberByUniqueName(IdImpl.toList(names), true);
     }
@@ -304,7 +304,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFilter(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareTestContext(context);
         final Connection conn = context.getConnectionWithDefaultRole();
         final DiffRepository dr = getDiffRepos();
@@ -324,7 +324,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMemberOpsFailIfCacheEnabled(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         SystemWideProperties.instance().EnableRolapCubeMemberCache = true;
         prepareTestContext(context);
         final Connection conn = context.getConnectionWithDefaultRole();
@@ -349,7 +349,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSetPropertyCommandOnLeafMember(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
     	prepareTestContext(context);
         final Connection conn = context.getConnectionWithDefaultRole();
         final DiffRepository dr = getDiffRepos();
@@ -407,7 +407,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSetPropertyCommandOnNonLeafMember(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
     	prepareTestContext(context);
         final Connection conn = context.getConnectionWithDefaultRole();
         final DiffRepository dr = getDiffRepos();
@@ -474,7 +474,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAddCommand(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareTestContext(context);
         final Connection conn = context.getConnectionWithDefaultRole();
         final CacheControl cc = conn.getCacheControl(null);
@@ -693,7 +693,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDeleteCommand(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareTestContext(context);
         final Connection conn = context.getConnectionWithDefaultRole();
         final CacheControl cc = conn.getCacheControl(null);
@@ -769,7 +769,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMoveCommand(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareTestContext(context);
         final Connection conn = context.getConnectionWithDefaultRole();
         final CacheControl cc = conn.getCacheControl(null);
@@ -857,7 +857,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMoveFailBadLevel(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareTestContext(context);
         final Connection conn = context.getConnectionWithDefaultRole();
         final CacheControl cc = conn.getCacheControl(null);
@@ -940,7 +940,7 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAddCommandNegative(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareTestContext(context);
         final Connection conn = context.getConnectionWithDefaultRole();
         final CacheControl cc = conn.getCacheControl(null);
@@ -1053,14 +1053,14 @@ class MemberCacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFlushHierarchy(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareTestContext(context);
         flushCache(context.getConnectionWithDefaultRole());
         final CacheControl cacheControl =
             context.getConnectionWithDefaultRole().getCacheControl(null);
         final Cube salesCube =
                 context.getConnectionWithDefaultRole()
-                .getSchema().lookupCube("Sales", true);
+                .getCatalog().lookupCube("Sales", true);
 
         final Logger logger = RolapUtil.SQL_LOGGER;
         final StringWriter sw = new StringWriter();

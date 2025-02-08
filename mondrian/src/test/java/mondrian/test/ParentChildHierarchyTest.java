@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -1383,11 +1383,11 @@ class ParentChildHierarchyTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSchemaReaderLevelMembers(Context context)
+    void testCatalogReaderLevelMembers(Context context)
     {
-        final SchemaReader schemaReader =
+        final CatalogReader schemaReader =
                 context.getConnectionWithDefaultRole()
-            .getSchemaReader().withLocus();
+            .getCatalogReader().withLocus();
         int found = 0;
         for (Cube cube : schemaReader.getCubes()) {
             if (!cube.getName().equals("HR")) {

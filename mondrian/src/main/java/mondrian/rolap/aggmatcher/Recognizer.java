@@ -39,7 +39,7 @@ import mondrian.rolap.HierarchyUsage;
 import mondrian.rolap.RolapAggregator;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapLevel;
-import mondrian.rolap.RolapSchema;
+import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.Utils;
 import mondrian.rolap.sql.SqlQuery;
@@ -1002,7 +1002,7 @@ public abstract class Recognizer {
         String name = dbFactTable.getName();
 
         List<RolapCube> list = new ArrayList<>();
-        RolapSchema schema = star.getSchema();
+        RolapCatalog schema = star.getCatalog();
         for (RolapCube cube : schema.getCubeList()) {
             if (cube.isVirtual()) {
                 continue;

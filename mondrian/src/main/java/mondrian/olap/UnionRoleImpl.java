@@ -24,7 +24,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +80,7 @@ class UnionRoleImpl implements Role {
     }
 
     @Override
-	public Access getAccess(Schema schema) {
+	public Access getAccess(Catalog schema) {
         Access access = Access.NONE;
         for (Role role : roleList) {
             access = max(access, role.getAccess(schema));

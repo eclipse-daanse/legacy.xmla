@@ -47,39 +47,39 @@ import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.api.Calc;
 
-import mondrian.rolap.RolapSchema;
+import mondrian.rolap.RolapCatalog;
 
 /**
- * A <code>SchemaReader</code> queries schema objects ({@link Schema},
+ * A <code>CatalogReader</code> queries schema objects ({@link Catalog},
  * {@link Cube}, {@link Dimension}, {@link Hierarchy}, {@link Level},
  * {@link Member}).
  *
- * <p>It is generally created using {@link Connection#getSchemaReader},
- * but also via {@link Cube#getSchemaReader(Role)}.</p>
+ * <p>It is generally created using {@link Connection#getCatalogReader},
+ * but also via {@link Cube#getCatalogReader(Role)}.</p>
  *
- * <p>SchemaReader is deprecated for code outside of mondrian. For new code,
+ * <p>CatalogReader is deprecated for code outside of mondrian. For new code,
  * use the metadata provided by olap4j, for example
  * {@link mondrian.olap4j.MondrianOlap4jSchema#getCubes()}.
  *
- * <p>If you use a SchemaReader from outside of a mondrian statement, you may
+ * <p>If you use a CatalogReader from outside of a mondrian statement, you may
  * get a {@link java.util.EmptyStackException} indicating that mondrian cannot
  * deduce the current locus (statement context). If you get that error, call
- * {@link #withLocus()} to create a SchemaReader that automatically provides a
+ * {@link #withLocus()} to create a CatalogReader that automatically provides a
  * locus whenever a call is made.</p>
  *
  * @author jhyde
  * @since Feb 24, 2003
  */
-public interface SchemaReader {
+public interface CatalogReader {
     /**
      * Returns the schema.
      *
      * @return Schema, never null
      */
-    RolapSchema getSchema();
+    RolapCatalog getCatalog();
 
     /**
-     * Returns the access-control profile that this <code>SchemaReader</code>
+     * Returns the access-control profile that this <code>CatalogReader</code>
      * is implementing.
      */
     Role getRole();
@@ -130,7 +130,7 @@ public interface SchemaReader {
 
     /**
      * Substitutes a member with an equivalent member which enforces the
-     * access control policy of this SchemaReader.
+     * access control policy of this CatalogReader.
      */
     Member substitute(Member member);
 
@@ -152,7 +152,7 @@ public interface SchemaReader {
      * <em>may</em> be restricted to those members that have a
      * non empty row in the fact table for <code>context</code>.
      * Wether or not optimization is possible depends
-     * on the SchemaReader implementation.
+     * on the CatalogReader implementation.
      */
     List<Member> getMemberChildren(Member member, Evaluator context);
 
@@ -537,7 +537,7 @@ public interface SchemaReader {
      * @return Schema reader that has a similar perspective (e.g. cube) but
      * no access control
      */
-    SchemaReader withoutAccessControl();
+    CatalogReader withoutAccessControl();
 
     /**
      * Returns the default cube in which to look for dimensions etc.
@@ -557,7 +557,7 @@ public interface SchemaReader {
      *
      * @return Schema reader that assigns a locus to each operation
      */
-    SchemaReader withLocus();
+    CatalogReader withLocus();
 
     /**
      * Returns a list of namespaces to search when resolving elements by name.

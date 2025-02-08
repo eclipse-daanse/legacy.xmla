@@ -37,7 +37,7 @@ import java.util.Optional;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -45,7 +45,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.NamedSet;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
@@ -68,7 +68,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MeasureGroupMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.NamedSetMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
@@ -110,7 +110,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.ParentChildLinkMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SchemaMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
@@ -135,8 +135,8 @@ import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapSchema;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalog;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.aggmatcher.AggTableManager;
 import mondrian.spi.PropertyFormatter;
 import mondrian.util.Bug;
@@ -190,7 +190,7 @@ class SchemaTest {
 
     /**
      * Asserts that a list of exceptions (probably from
-     * {@link Schema#getWarnings()}) contains the expected
+     * {@link Catalog#getWarnings()}) contains the expected
      * exception.
      *
      * @param exceptionList List of exceptions
@@ -4230,7 +4230,7 @@ class SchemaTest {
             + "Row #2: 901\n"
             + "Row #2: 901\n"
             + "Row #2: 451\n");
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
     }
 
     /**
@@ -4312,7 +4312,7 @@ class SchemaTest {
             }
 
             @Override
-            protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+            protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             	TableQueryMappingImpl t = TableQueryMappingImpl.builder()
             			.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
             			.withAggregationExcludes(
@@ -4428,10 +4428,10 @@ class SchemaTest {
                         		.build()))
                         .build();
 
-            	 return List.of(SchemaMappingImpl.builder()
+            	 return CatalogMappingImpl.builder()
             			 .withName("FoodMart")
                          .withCubes(List.of(c))
-                         .build());
+                         .build();
             }
         }
 
@@ -4517,7 +4517,7 @@ class SchemaTest {
             }
 
             @Override
-            protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+            protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             	TableQueryMappingImpl t = TableQueryMappingImpl.builder()
             			.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
             			.withAggregationExcludes(
@@ -4664,10 +4664,10 @@ class SchemaTest {
                         		.build()))
                         .build();
 
-            	 return List.of(SchemaMappingImpl.builder()
+            	 return CatalogMappingImpl.builder()
             			 .withName("FoodMart")
                          .withCubes(List.of(c))
-                         .build());
+                         .build();
             }
 
         }
@@ -5324,7 +5324,7 @@ class SchemaTest {
          */
         withSchema(context, TestCubeCaptionModifier::new);
         final Cube[] cubes =
-            context.getConnectionWithDefaultRole().getSchema().getCubes();
+            context.getConnectionWithDefaultRole().getCatalog().getCubes();
         Optional<Cube> optionalCube1 = Arrays.stream(cubes).filter(c -> "Cube with caption".equals(c.getName())).findFirst();
         final Cube cube = optionalCube1.orElseThrow(() -> new RuntimeException("Cube with name \"Cube with caption\" is absent"));
         assertEquals("Cube with caption", cube.getCaption());
@@ -6222,7 +6222,7 @@ class SchemaTest {
             public TestInvalidSchemaAccess(CatalogMapping catalog) {
                 super(catalog);
             }
-            protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+            protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
                 List<AccessRoleMapping> result = new ArrayList<>();
                 result.addAll(super.schemaAccessRoles(schema));
                 result.add(AccessRoleMappingImpl.builder()
@@ -6333,7 +6333,7 @@ class SchemaTest {
                 super(catalog);
             }
 
-            protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+            protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             	AccessRoleMappingImpl role1;
             	AccessRoleMappingImpl role2;
             	AccessRoleMappingImpl role1Plus2;
@@ -6401,7 +6401,7 @@ class SchemaTest {
                 super(catalog);
             }
 
-            protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+            protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             	AccessRoleMappingImpl role1;
                 List<AccessRoleMapping> result = new ArrayList<>();
                 result.addAll(super.schemaAccessRoles(schema));
@@ -6446,7 +6446,7 @@ class SchemaTest {
                 super(catalog);
             }
 
-            protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+            protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             	AccessRoleMappingImpl role1;
             	AccessRoleMappingImpl role2;
                 List<AccessRoleMapping> result = new ArrayList<>();
@@ -6669,7 +6669,7 @@ class SchemaTest {
             public TestInvalidRoleErrorModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            protected AccessRoleMapping schemaDefaultAccessRole(SchemaMapping schema) {
+            protected AccessRoleMapping schemaDefaultAccessRole(CatalogMapping schema) {
             	AccessRoleMapping role = super.schemaDefaultAccessRole(schema);
                 if ("FoodMart".equals(schema.getName())) {
                     return AccessRoleMappingImpl.builder().withName("Unknown").build();
@@ -7421,7 +7421,7 @@ class SchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBugMondrian355(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         checkBugMondrian355(context, "TimeHalfYears");
 
         // make sure that the deprecated name still works
@@ -7429,7 +7429,7 @@ class SchemaTest {
     }
 
     public void checkBugMondrian355(Context context, String timeHalfYear) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         class CheckBugMondrian355Modifier1 extends PojoMappingModifier {
             public CheckBugMondrian355Modifier1(CatalogMapping catalog) {
                 super(catalog);
@@ -7594,7 +7594,7 @@ class SchemaTest {
             }
 
             @Override
-            protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+            protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
                 ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
                 ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
                 ColumnImpl sales_district_id = ColumnImpl.builder().withName("sales_district_id").withType("INTEGER").build();
@@ -7904,7 +7904,7 @@ class SchemaTest {
                         ))
                         .build();
 
-           	 	return List.of(SchemaMappingImpl.builder()
+           	 	return CatalogMappingImpl.builder()
         			 .withName(schemaName)
         			 .withDescription("Schema to test descriptions and captions")
         			 .withAnnotations(List.of(
@@ -7918,7 +7918,7 @@ class SchemaTest {
                              .build()
                      ))
                      .withCubes(List.of(c1, c2, vc1))
-                     .build());
+                     .build();
             }
         }
         /*
@@ -8045,7 +8045,7 @@ class SchemaTest {
         assertEquals("Cube description", cube.getDescription());
         checkAnnotations(cube.getMetaData(), "a", "Cube");
 
-        final Schema schema = cube.getSchema();
+        final Catalog schema = cube.getCatalog();
         checkAnnotations(schema.getMetaData(), "a", "Schema", "b", "Xyz");
 
         final Dimension dimension = cube.getDimensions()[1];
@@ -8067,7 +8067,7 @@ class SchemaTest {
         // Description comes from the DESCRIPTION member property.
         // Annotations are always empty for regular members.
         final List<Member> memberList =
-            cube.getSchemaReader(null).withLocus()
+            cube.getCatalogReader(null).withLocus()
                 .getLevelMembers(level, false);
         final Member member = memberList.get(0);
         assertEquals("Canada", member.getName());
@@ -8158,7 +8158,7 @@ class SchemaTest {
             measuresDimension.getHierarchies()[0];
         final Level measuresLevel =
             measuresHierarchy.getLevels()[0];
-        final SchemaReader schemaReader = cube.getSchemaReader(null);
+        final CatalogReader schemaReader = cube.getCatalogReader(null);
         final List<Member> measures =
             schemaReader.getLevelMembers(measuresLevel, true);
         final Member measure = measures.get(0);
@@ -8213,7 +8213,7 @@ class SchemaTest {
         assertEquals("Virtual cube description", cube2.getDescription());
         checkAnnotations(cube2.getMetaData(), "a", "Virtual cube");
 
-        final SchemaReader schemaReader2 = cube2.getSchemaReader(null);
+        final CatalogReader schemaReader2 = cube2.getCatalogReader(null);
         final Dimension measuresDimension2 = cube2.getDimensions()[0];
         final Hierarchy measuresHierarchy2 =
             measuresDimension2.getHierarchies()[0];
@@ -8374,7 +8374,7 @@ class SchemaTest {
             }
 
             @Override
-            protected SchemaMapping schema(SchemaMapping schemaMappingOriginal) {
+            protected CatalogMapping modifyCatalog(CatalogMapping schemaMappingOriginal) {
             	LevelMappingImpl stateLevel;
             	MeasureMappingImpl unitsales1Measure;
             	MeasureMappingImpl unitsales2Measure;
@@ -8538,7 +8538,7 @@ class SchemaTest {
                         	unitsales2Measure
                         ))
                         .build();
-                    return SchemaMappingImpl.builder()
+                    return CatalogMappingImpl.builder()
                         .withName("Test_DimensionUsage")
                         .withCubes(List.of(
                             c1, c2, vc
@@ -8903,7 +8903,7 @@ class SchemaTest {
                 super(catalog);
             }
 
-            protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+            protected List<CatalogMapping> catalogSchemas(CatalogMapping catalog2) {
                 LevelMappingImpl l1 = LevelMappingImpl.builder()
                         .withName("Product Family")
                         .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
@@ -9032,7 +9032,7 @@ class SchemaTest {
                                 ))
                         		.build()))
                         .build();
-           	 	return List.of(SchemaMappingImpl.builder()
+           	 	return List.of(CatalogMappingImpl.builder()
         			 .withName("FoodMart")
                      .withCubes(List.of(c))
                      .build());
@@ -9253,7 +9253,7 @@ class SchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCaptionWithOrdinalColumn(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         class TestCaptionWithOrdinalColumnModifier extends PojoMappingModifier {
 
             public TestCaptionWithOrdinalColumnModifier(CatalogMapping catalog) {
@@ -9403,14 +9403,14 @@ class SchemaTest {
          */
         withSchema(context, TestBugMondrian923Modifier::new);
         for (Cube cube
-                : context.getConnectionWithDefaultRole().getSchemaReader().getCubes())
+                : context.getConnectionWithDefaultRole().getCatalogReader().getCubes())
         {
             if (cube.getName().equals("Warehouse and Sales")) {
                 for (Dimension dim : cube.getDimensions()) {
                     if (dim.isMeasures()) {
                         List<Member> members =
                             context.getConnectionWithDefaultRole()
-                                .getSchemaReader().getLevelMembers(
+                                .getCatalogReader().getLevelMembers(
                                     dim.getHierarchy().getLevels()[0],
                                     true);
                         assertTrue(
@@ -9447,7 +9447,7 @@ class SchemaTest {
                 }
 
                 @Override
-                protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+                protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
                     result.add(PhysicalCubeMappingImpl.builder()
                         .withName("Foo")
@@ -9508,7 +9508,7 @@ class SchemaTest {
              */
             withSchema(context, TestCubesVisibilityModifier::new);
             final Cube cube =
-                context.getConnectionWithDefaultRole().getSchema()
+                context.getConnectionWithDefaultRole().getCatalog()
                     .lookupCube("Foo", true);
             assertTrue(testValue.equals(cube.isVisible()));
         }
@@ -9524,7 +9524,7 @@ class SchemaTest {
                     super(catalogMapping);
                 }
                 @Override
-                protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+                protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
                     result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                     result.add(VirtualCubeMappingImpl.builder()
@@ -9562,7 +9562,7 @@ class SchemaTest {
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestVirtualCubesVisibilityModifier::new);
             final Cube cube =
-                context.getConnectionWithDefaultRole().getSchema()
+                context.getConnectionWithDefaultRole().getCatalog()
                     .lookupCube("Foo", true);
             assertTrue(testValue.equals(cube.isVisible()));
         }
@@ -9578,7 +9578,7 @@ class SchemaTest {
                     super(catalogMapping);
                 }
                 @Override
-                protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+                protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
                     result.add(PhysicalCubeMappingImpl.builder()
                         .withName("Foo")
@@ -9642,7 +9642,7 @@ class SchemaTest {
              */
             withSchema(context, TestDimensionVisibilityModifier::new);
             final Cube cube =
-                context.getConnectionWithDefaultRole().getSchema()
+                context.getConnectionWithDefaultRole().getCatalog()
                     .lookupCube("Foo", true);
             Dimension dim = null;
             for (Dimension dimCheck : cube.getDimensions()) {
@@ -9665,7 +9665,7 @@ class SchemaTest {
                     super(catalogMapping);
                 }
                 @Override
-                protected List<CubeMapping> schemaCubes(SchemaMapping schema) {
+                protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
                     result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                     result.add(VirtualCubeMappingImpl.builder()
@@ -9702,7 +9702,7 @@ class SchemaTest {
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestVirtualDimensionVisibilityModifier::new);
             final Cube cube =
-                context.getConnectionWithDefaultRole().getSchema()
+                context.getConnectionWithDefaultRole().getCatalog()
                     .lookupCube("Foo", true);
             Dimension dim = null;
             for (Dimension dimCheck : cube.getDimensions()) {
@@ -9727,7 +9727,7 @@ class SchemaTest {
                 }
 
                 @Override
-                protected List<CubeMapping> schemaCubes(SchemaMapping schema) {
+                protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
                     result.add(PhysicalCubeMappingImpl.builder()
                         .withName("Foo")
@@ -9792,14 +9792,14 @@ class SchemaTest {
                     null, cubeDef, null, null, null, null);
             withSchema(context, schema);
              */
-            context.getSchemaCache().clear();
+            context.getCatalogCache().clear();
             CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
             TestDimensionUsageVisibilityModifier testDimensionUsageVisibilityModifier =
             		new TestDimensionUsageVisibilityModifier(catalogMapping, testValue);
             ((TestContext)context).setCatalogMappingSupplier(testDimensionUsageVisibilityModifier);
 
             final Cube cube =
-                context.getConnectionWithDefaultRole().getSchema()
+                context.getConnectionWithDefaultRole().getCatalog()
                     .lookupCube("Foo", true);
 
             Dimension dim = null;
@@ -9817,7 +9817,7 @@ class SchemaTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchyVisibility(Context context) throws Exception {
         for (Boolean testValue : new Boolean[] {true, false}) {
-        	context.getSchemaCache().clear();
+        	context.getCatalogCache().clear();
             class TestHierarchyVisibilityModifier extends PojoMappingModifier {
 
                 public TestHierarchyVisibilityModifier(CatalogMapping catalogMapping) {
@@ -9825,7 +9825,7 @@ class SchemaTest {
                 }
 
                 @Override
-                protected List<CubeMapping> schemaCubes(SchemaMapping schema) {
+                protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
                     result.add(PhysicalCubeMappingImpl.builder()
                         .withName("Foo")
@@ -9891,7 +9891,7 @@ class SchemaTest {
              */
             withSchema(context, TestHierarchyVisibilityModifier::new);
             final Cube cube =
-                context.getConnectionWithDefaultRole().getSchema()
+                context.getConnectionWithDefaultRole().getCatalog()
                     .lookupCube("Foo", true);
             Dimension dim = null;
             for (Dimension dimCheck : cube.getDimensions()) {
@@ -9922,7 +9922,7 @@ class SchemaTest {
                 }
 
                 @Override
-                protected List<CubeMapping> schemaCubes(SchemaMapping schema) {
+                protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
                     result.add(PhysicalCubeMappingImpl.builder()
                         .withName("Foo")
@@ -9983,7 +9983,7 @@ class SchemaTest {
              */
             withSchema(context, TestLevelVisibilityModifier::new);
             final Cube cube =
-                context.getConnectionWithDefaultRole().getSchema()
+                context.getConnectionWithDefaultRole().getCatalog()
                     .lookupCube("Foo", true);
             Dimension dim = null;
             for (Dimension dimCheck : cube.getDimensions()) {
@@ -10013,14 +10013,14 @@ class SchemaTest {
         {
             return;
         }
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         class TestNonCollapsedAggregateModifier extends PojoMappingModifier {
 
             public TestNonCollapsedAggregateModifier(CatalogMapping catalog) {
                 super(catalog);
             }
             @Override
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
             	TableQueryMappingImpl t = TableQueryMappingImpl.builder()
             			.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
@@ -10226,7 +10226,7 @@ class SchemaTest {
             }
 
             @Override
-            protected List<CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
 
             	TableQueryMappingImpl t = TableQueryMappingImpl.builder()
@@ -10427,7 +10427,7 @@ class SchemaTest {
             .build();
 
             @Override
-            protected List<CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
                 ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
@@ -10833,7 +10833,7 @@ class SchemaTest {
             }
 
             @Override
-            protected List<CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
 
             	TableQueryMappingImpl t = TableQueryMappingImpl.builder()
@@ -11267,16 +11267,16 @@ class SchemaTest {
      * This is a test for
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-1390">MONDRIAN-1390</a>
      *
-     * <p>Calling {@link SchemaReader#getLevelMembers(Level, boolean)}
+     * <p>Calling {@link CatalogReader#getLevelMembers(Level, boolean)}
      * directly would return the null members at the end, since it was
      * using TupleReader#readTuples instead of TupleReader#readMembers.
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMondrian1390(Context context) throws Exception {
-        Schema schema = context.getConnectionWithDefaultRole().getSchema();
+        Catalog schema = context.getConnectionWithDefaultRole().getCatalog();
         Cube salesCube = schema.lookupCube("Sales", true);
-        SchemaReader sr = salesCube.getSchemaReader(null).withLocus();
+        CatalogReader sr = salesCube.getCatalogReader(null).withLocus();
         List<Member> members = sr.getLevelMembers(
             (Level)Util.lookupCompound(
                 sr,
@@ -11323,7 +11323,7 @@ class SchemaTest {
             }
 
             @Override
-            protected SchemaMapping schema(SchemaMapping schemaMappingOriginal) {
+            protected CatalogMapping modifyCatalog(CatalogMapping schemaMappingOriginal) {
                 DimensionConnectorMappingImpl d1 = DimensionConnectorMappingImpl.builder()
                 		.withOverrideDimensionName("Store")
                         .withForeignKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_SALARY)
@@ -11570,7 +11570,7 @@ class SchemaTest {
                                 .build()
                         )).build())
                         .build();
-                    return SchemaMappingImpl.builder()
+                    return CatalogMappingImpl.builder()
                         .withName("FoodMart")
                         .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -11726,7 +11726,7 @@ class SchemaTest {
             }
 
             @Override
-            protected List<CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 MeasureMappingImpl mA = MeasureMappingImpl.builder()
                 .withName("Unit Sales")
@@ -11889,7 +11889,7 @@ class SchemaTest {
             }
 
             @Override
-            protected List<AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+            protected List<AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
                 List<AccessRoleMapping> result = new ArrayList<>();
                 result.addAll(super.schemaAccessRoles(schema));
                 result.add(
@@ -12007,7 +12007,7 @@ class SchemaTest {
             }
 
             @Override
-            protected SchemaMapping schema(SchemaMapping schemaMappingOriginal) {
+            protected CatalogMapping modifyCatalog(CatalogMapping schemaMappingOriginal) {
                 HierarchyMappingImpl h1 = HierarchyMappingImpl.builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -12062,7 +12062,7 @@ class SchemaTest {
                         		.build()))
                         .build();
 
-                    return SchemaMappingImpl.builder()
+                    return CatalogMappingImpl.builder()
                         .withName("FoodMart")
                         .withCubes(List.of(c1))
                         .build();
@@ -12097,8 +12097,8 @@ class SchemaTest {
         */
         withSchema(context, TestMondrian1275Modifier::new);
         final RolapConnection rolapConn = (RolapConnection) context.getConnectionWithDefaultRole();
-        final SchemaReader schemaReader = rolapConn.getSchemaReader();
-        final RolapSchema schema = schemaReader.getSchema();
+        final CatalogReader schemaReader = rolapConn.getCatalogReader();
+        final RolapCatalog schema = schemaReader.getCatalog();
         for (RolapCube cube : schema.getCubeList()) {
             Dimension dim = cube.getDimensions()[1];
             final MetaData metaData = dim.getMetaData();

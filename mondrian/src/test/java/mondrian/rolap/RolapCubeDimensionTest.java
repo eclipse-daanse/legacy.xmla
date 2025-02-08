@@ -73,7 +73,7 @@ class RolapCubeDimensionTest {
   void testLookupCube_notVirtual() {
     RolapCubeDimension rcd = stubRolapCubeDimension(false);
     DimensionConnectorMappingImpl cubeDim = DimensionConnectorMappingImpl.builder().build();
-    RolapSchema schema = mock(RolapSchema.class);
+    RolapCatalog schema = mock(RolapCatalog.class);
 
     assertEquals(null, rcd.lookupFactCube(cubeDim, schema));
     verify(schema, times(0)).lookupCube(anyString());
@@ -83,7 +83,7 @@ class RolapCubeDimensionTest {
   @Test
   void testLookupCube_noSuchCube() {
     RolapCubeDimension rcd = stubRolapCubeDimension(false);
-    RolapSchema schema = mock(RolapSchema.class);
+    RolapCatalog schema = mock(RolapCatalog.class);
     final String cubeName = "TheCubeName";
     PhysicalCubeMappingImpl cube = PhysicalCubeMappingImpl.builder().withName(cubeName).build();   
     DimensionConnectorMappingImpl dimCon = DimensionConnectorMappingImpl.builder()
@@ -104,7 +104,7 @@ class RolapCubeDimensionTest {
     DimensionConnectorMappingImpl cubeCon = DimensionConnectorMappingImpl.builder()
     		.withPhysicalCube(cube)
     		.build();
-    RolapSchema schema = mock(RolapSchema.class);
+    RolapCatalog schema = mock(RolapCatalog.class);
     RolapCube factCube = mock(RolapCube.class);        
     doReturn(factCube).when(schema).lookupCube(cube);
 

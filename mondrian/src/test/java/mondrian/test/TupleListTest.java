@@ -25,10 +25,10 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -273,11 +273,11 @@ class TupleListTest {
      * @return The member
      */
     private Member xxx(Connection connection, String memberName) {
-        Schema schema = connection.getSchema();
+        Catalog schema = connection.getCatalog();
         final boolean fail = true;
         Cube salesCube = schema.lookupCube("Sales", fail);
-        final SchemaReader schemaReader =
-            salesCube.getSchemaReader(null).withLocus(); // unrestricted
+        final CatalogReader schemaReader =
+            salesCube.getCatalogReader(null).withLocus(); // unrestricted
         return schemaReader.getMemberByUniqueName(
             Util.parseIdentifier(memberName), true);
     }

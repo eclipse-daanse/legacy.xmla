@@ -57,7 +57,7 @@ public abstract class CsvDBTestCase extends BatchTestCase {
             loader.executeStatements(tables);
 
             /*
-            RolapSchemaPool.instance().clear();
+            RolapCatalogPool.instance().clear();
             String baseSchema = TestUtil.getRawSchema(context);
             String schema = SchemaUtil.getSchema(baseSchema,
                     getParameterDescription(), getCubeDescription(), getVirtualCubeDescription(), getNamedSetDescription(),

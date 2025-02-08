@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
@@ -366,7 +365,7 @@ class CachedExistsTest{
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(PhysicalCubeMappingImpl.builder()

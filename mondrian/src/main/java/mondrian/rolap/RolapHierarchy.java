@@ -34,7 +34,7 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.access.Access;
@@ -287,7 +287,7 @@ public class RolapHierarchy extends HierarchyBase {
           // if cube is virtual than there is no fact in it,
           // so look for it in source cube
           if(cube.isVirtual()) {
-            RolapCube sourceCube = cube.getSchema().lookupCube(cubeDimensionMapping.getPhysicalCube());
+            RolapCube sourceCube = cube.getCatalog().lookupCube(cubeDimensionMapping.getPhysicalCube());
             if(sourceCube != null) {
               xmlHierarchyRelation = sourceCube.getFact();
             }
@@ -301,7 +301,7 @@ public class RolapHierarchy extends HierarchyBase {
             this.relation =
                 RolapUtil.convertInlineTableToRelation(
                     inlineTable,
-                    getRolapSchema().getInternalConnection().getContext().getDialect());
+                    getRolapCatalog().getInternalConnection().getContext().getDialect());
         }
         this.memberReaderClass = xmlHierarchy.getMemberReaderClass();
         this.uniqueKeyLevelName = xmlHierarchy.getUniqueKeyLevelName();
@@ -459,7 +459,7 @@ public class RolapHierarchy extends HierarchyBase {
     void init(DimensionConnectorMapping xmlDimension) {
         // first create memberReader
         if (this.memberReader == null) {
-            this.memberReader = getRolapSchema().createMemberReader(
+            this.memberReader = getRolapCatalog().createMemberReader(
                 xmlDimension != null ? xmlDimension.getDimension() : null, this, memberReaderClass);
         }
         for (Level level : levels) {
@@ -480,7 +480,7 @@ public class RolapHierarchy extends HierarchyBase {
             // First look up from within this hierarchy. Works for unqualified
             // names, e.g. [USA].[CA].
             defaultMember = (Member) Util.lookupCompound(
-                getRolapSchema().getSchemaReader(),
+                getRolapCatalog().getCatalogReader(),
                 this,
                 uniqueNameParts,
                 false,
@@ -491,7 +491,7 @@ public class RolapHierarchy extends HierarchyBase {
             // e.g. [Store].[USA].[CA] or [Time].[Weekly].[1997].[Q2].
             if (defaultMember == null) {
                 defaultMember = (Member) Util.lookupCompound(
-                    getRolapSchema().getSchemaReader(),
+                    getRolapCatalog().getCatalogReader(),
                     new DummyElement(),
                     uniqueNameParts,
                     false,
@@ -592,8 +592,8 @@ public class RolapHierarchy extends HierarchyBase {
         }
     }
 
-    public RolapSchema getRolapSchema() {
-        return (RolapSchema) dimension.getSchema();
+    public RolapCatalog getRolapCatalog() {
+        return (RolapCatalog) dimension.getCatalog();
     }
 
     public QueryMapping getRelation() {
@@ -613,8 +613,8 @@ public class RolapHierarchy extends HierarchyBase {
         // use lazy initialization to get around bootstrap issues
         if (defaultMember == null) {
             List<RolapMember> rootMembers = memberReader.getRootMembers();
-            final SchemaReader schemaReader =
-                getRolapSchema().getSchemaReader();
+            final CatalogReader schemaReader =
+                getRolapCatalog().getCatalogReader();
             List<RolapMember> calcMemberList =
                 Util.cast(schemaReader.getCalculatedMembers(getLevels()[0]));
             for (RolapMember rootMember
@@ -1127,7 +1127,7 @@ public class RolapHierarchy extends HierarchyBase {
             		new InternalOperationAtom("$AggregateChildren"),
                 new Expression[] {new HierarchyExpressionImpl(this)});
             Validator validator =
-                    Util.createSimpleValidator(getRolapSchema().getInternalConnection().getContext().getFunctionService());
+                    Util.createSimpleValidator(getRolapCatalog().getInternalConnection().getContext().getFunctionService());
             aggregateChildrenExpression = fc.accept(validator);
         }
         return aggregateChildrenExpression;
@@ -1204,7 +1204,7 @@ public class RolapHierarchy extends HierarchyBase {
 
         // Create a peer dimension.
         RolapDimension peerDimension = new RolapDimension(
-            dimension.getSchema(),
+            dimension.getCatalog(),
             new StringBuilder(dimension.getName()).append("$Closure").toString(),
             null,
             true,
@@ -1619,7 +1619,7 @@ public class RolapHierarchy extends HierarchyBase {
 
         @Override
 		public OlapElement lookupChild(
-            SchemaReader schemaReader,
+            CatalogReader schemaReader,
             Segment s,
             MatchType matchType)
         {

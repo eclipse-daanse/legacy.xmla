@@ -30,7 +30,7 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
@@ -71,7 +71,7 @@ import mondrian.rolap.BatchTestCase;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapHierarchy;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.util.Bug;
 
@@ -241,7 +241,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeTopCountWithAggFlatSet(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     // Note: changed mdx and expected as a part of the fix for MONDRIAN-2202
     // Formerly the aggregate set and measures used a conflicting hierarchy,
     // which is not a safe scenario for nativization.
@@ -284,7 +284,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeTopCountWithAggMemberNamedSet(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     final boolean useAgg =
       context.getConfig().useAggregates()
         && context.getConfig().readAggregates();
@@ -318,7 +318,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeFilterWithAggDescendants(Context context) {
-	  context.getSchemaCache().clear();
+	  context.getCatalogCache().clear();
 	  context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
     final boolean useAgg =
       context.getConfig().useAggregates()
@@ -429,7 +429,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeTopCountWithMemberOnlySlicer(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
     final boolean useAggregates =
       context.getConfig().useAggregates()
@@ -639,7 +639,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeTopCountWithMemberSumSlicer(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
     final boolean useAggregates =
       context.getConfig().useAggregates()
@@ -798,7 +798,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAggTCTwoArgWithCrossjoinedSet(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     if ( !context.getConfig().enableNativeTopCount() ) {
       return;
     }
@@ -820,7 +820,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAggTCTwoArgWithCalcMemPresent(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     if ( !context.getConfig().enableNativeTopCount() ) {
       return;
     }
@@ -977,7 +977,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testTopCountWithAggregatedMemberAggStar(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     ((TestConfig)context.getConfig()).setUseAggregates(true );
     ((TestConfig)context.getConfig()).setReadAggregates(true);
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
@@ -1231,7 +1231,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCompoundSlicerNativeEval(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     // MONDRIAN-1404
       ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
       ((TestConfig)context.getConfig()).setUseAggregates(false);
@@ -1316,7 +1316,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testSnowflakeDimInSlicerBug1407(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     // MONDRIAN-1407
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
     ((TestConfig)context.getConfig()).setUseAggregates(false);
@@ -1410,7 +1410,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCompoundSlicerNonUniqueMemberNames1413(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     // MONDRIAN-1413
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
     ((TestConfig)context.getConfig()).setUseAggregates(false);
@@ -1591,7 +1591,7 @@ protected void assertQuerySql(Connection connection,
           }
 
           @Override
-          protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+          protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
               List<AccessRoleMapping> result = new ArrayList<>();
               result.addAll(super.schemaAccessRoles(schema));
               result.add(AccessRoleMappingImpl.builder()
@@ -1721,7 +1721,7 @@ protected void assertQuerySql(Connection connection,
               super(catalogMapping);
           }
 
-          protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+          protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
               List<AccessRoleMapping> result = new ArrayList<>();
               result.addAll(super.schemaAccessRoles(schema));
               result.add(AccessRoleMappingImpl.builder()
@@ -1805,7 +1805,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeFilterWithCompoundSlicer(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     String mdx =
       "WITH MEMBER [Measures].[TotalVal] AS 'Aggregate(Filter({[Store].[Store City].members},[Measures].[Unit Sales] "
         + "> 1000))'\n"
@@ -2175,7 +2175,7 @@ protected void assertQuerySql(Connection connection,
     Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
 
     checkNative(context, mdx, result);
-    context.getSchemaCache().clear();
+    context.getCatalogCache().clear();
   }
 
   @ParameterizedTest

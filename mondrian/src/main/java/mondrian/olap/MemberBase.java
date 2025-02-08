@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.MatchType;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -188,7 +188,7 @@ public boolean isEvaluated() {
 
   @Override
 public OlapElement lookupChild(
-    SchemaReader schemaReader,
+    CatalogReader schemaReader,
     Segment childName,
     MatchType matchType ) {
     return schemaReader.lookupMemberChildByName(
@@ -273,8 +273,8 @@ public Expression getExpression() {
   // implement Member
   @Override
 public List<Member> getAncestorMembers() {
-    final SchemaReader schemaReader =
-      getDimension().getSchema().getSchemaReader();
+    final CatalogReader schemaReader =
+      getDimension().getCatalog().getCatalogReader();
     final ArrayList<Member> ancestorList = new ArrayList<>();
     schemaReader.getMemberAncestors( this, ancestorList );
     return ancestorList;

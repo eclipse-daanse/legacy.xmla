@@ -26,7 +26,7 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 
 class DefaultRecognizerTest {
@@ -107,7 +107,7 @@ class DefaultRecognizerTest {
             query,
             mysqlPattern(expectedSql),
             false, true, true);
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
     }
 
     @Disabled //TODO need investigate

@@ -17,7 +17,7 @@ package org.eclipse.daanse.olap.api.element;
 import java.util.Locale;
 
 import org.eclipse.daanse.olap.api.MatchType;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 
 /**
@@ -36,7 +36,7 @@ public interface OlapElement {
      * Looks up a child element, returning null if it does not exist.
      */
     OlapElement lookupChild(
-        SchemaReader schemaReader,
+        CatalogReader schemaReader,
         Segment s,
         MatchType matchType);
 

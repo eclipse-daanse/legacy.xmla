@@ -30,13 +30,12 @@
 package org.eclipse.daanse.olap.api;
 
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Locale;
 
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.access.Role;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.query.component.DrillThrough;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Query;
@@ -52,18 +51,11 @@ import org.eclipse.daanse.olap.api.result.Scenario;
 public interface Connection {
 
     /**
-     * Get the Schema associated with this Connection.
+     * Get the Catalog associated with this Connection.
      *
-     * @return the Schema (never null).
+     * @return the Catalog (never null).
      */
-    Schema getSchema();
-
-    /**
-     * Get the Schema associated with this Connection.
-     *
-     * @return the Schema (never null).
-     */
-    List<Schema> getSchemas();
+    Catalog getCatalog();
 
     /**
      * Closes this <code>Connection</code>. You may not use this
@@ -131,7 +123,7 @@ public interface Connection {
      * Returns a schema reader with access control appropriate to the current
      * role.
      */
-    SchemaReader getSchemaReader();
+    CatalogReader getCatalogReader();
 
 
     /**

@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 		void get_Empty() throws Exception {
 			when(contextGroup.getValidContexts()).thenReturn(List.of());
 			ContextsSupplyerImpl csi= new ContextsSupplyerImpl(contextGroup);
-			assertThat(csi.get()).isNotNull().isEmpty();
+			assertThat(csi.getContexts()).isNotNull().isEmpty();
 		}
 		
 }

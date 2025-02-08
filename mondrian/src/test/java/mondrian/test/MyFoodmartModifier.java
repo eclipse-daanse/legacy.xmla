@@ -16,7 +16,6 @@ package mondrian.test;
 import java.util.List;
 
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
@@ -35,6 +34,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AccessSchemaGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberPropertyMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
@@ -47,7 +47,6 @@ import org.eclipse.daanse.rolap.mapping.pojo.ParentChildLinkMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TimeDimensionMappingImpl;
@@ -617,7 +616,8 @@ public class MyFoodmartModifier extends PojoMappingModifier {
 
      */
 
-    protected SchemaMapping schema(SchemaMapping schemaMappingOriginal) {
+    @Override
+    protected CatalogMapping modifyCatalog(CatalogMapping schemaMappingOriginal) {
     	HierarchyMappingImpl storeHierarchy;
     	HierarchyMappingImpl customersHierarchy;
     	HierarchyMappingImpl genderHierarchy;
@@ -849,7 +849,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
      	MeasureMappingImpl warehouseMeasuresWarehouseProfit;
      	MeasureMappingImpl warehouseMeasuresWarehouseSales;
 
-        return SchemaMappingImpl.builder()
+        return CatalogMappingImpl.builder()
                 .withName("FoodMart")
                 .withCubes(List.of(
                 		sales = PhysicalCubeMappingImpl.builder()

@@ -15,7 +15,7 @@ package org.eclipse.daanse.olap.function.def.set.filter;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
@@ -39,7 +39,7 @@ public abstract class BaseIterFilterCalc extends AbstractIterCalc {
         try {
             // Use a native evaluator, if more efficient.
             // TODO: Figure this out at compile time.
-            SchemaReader schemaReader = evaluator.getSchemaReader();
+            CatalogReader schemaReader = evaluator.getCatalogReader();
             NativeEvaluator nativeEvaluator =
                 schemaReader.getNativeSetEvaluator(
                     call.getFunDef(), call.getArgs(), evaluator, this);

@@ -13,7 +13,10 @@
  */
 package org.eclipse.daanse.olap.action.api;
 
-import org.eclipse.daanse.olap.api.Context;
+import java.util.List;
+import java.util.Optional;
+
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;
 import org.eclipse.daanse.xmla.api.common.enums.ActionTypeEnum;
@@ -22,13 +25,10 @@ import org.eclipse.daanse.xmla.api.common.enums.CubeSourceEnum;
 import org.eclipse.daanse.xmla.api.common.enums.InvocationEnum;
 import org.eclipse.daanse.xmla.api.discover.mdschema.actions.MdSchemaActionsResponseRow;
 
-import java.util.List;
-import java.util.Optional;
-
 public interface ActionService {
 
     List<MdSchemaActionsResponseRow> getResponses(
-        List<Context> contexts,
+        List<Catalog> catalogs,
         Optional<String> schemaName,
         String cubeName,
         Optional<String> actionName,

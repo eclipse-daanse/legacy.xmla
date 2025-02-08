@@ -50,7 +50,7 @@ public class ParentFunDef extends AbstractFunctionDefinition {
     }
 
     Member memberParent(Evaluator evaluator, Member member) {
-        Member parent = evaluator.getSchemaReader().getMemberParent(member);
+        Member parent = evaluator.getCatalogReader().getMemberParent(member);
         if (parent == null) {
             parent = member.getHierarchy().getNullMember();
         }

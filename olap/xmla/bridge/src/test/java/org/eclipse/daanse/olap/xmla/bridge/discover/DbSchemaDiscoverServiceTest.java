@@ -37,7 +37,7 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.olap.xmla.bridge.ContextsSupplyerImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
@@ -106,10 +106,10 @@ class DbSchemaDiscoverServiceTest {
     private SchemaMapping schema2;
 
     @Mock
-    private Schema schem1;
+    private Catalog schem1;
 
     @Mock
-    private Schema schem2;
+    private Catalog schem2;
 
     @Mock
     private AccessRoleMapping role1;
@@ -457,7 +457,7 @@ class DbSchemaDiscoverServiceTest {
     void dbSchemaTables() {
         when(cls.get()).thenReturn(List.of(context1, context2));
         org.eclipse.daanse.olap.api.Connection con = mock(org.eclipse.daanse.olap.api.Connection.class);
-        when(con.getSchemas()).thenAnswer(setupDummyListAnswer(schem1, schem2));
+        when(con.getCatalogs()).thenAnswer(setupDummyListAnswer(schem1, schem2));
         DbSchemaTablesRequest request = mock(DbSchemaTablesRequest.class);
         DbSchemaTablesRestrictions restrictions = mock(DbSchemaTablesRestrictions.class);
         Level level1 = mock(Level.class);
@@ -506,7 +506,7 @@ class DbSchemaDiscoverServiceTest {
     @Test
     void dbSchemaTablesWithDimensionUsage() {
     	org.eclipse.daanse.olap.api.Connection con = mock(org.eclipse.daanse.olap.api.Connection.class);
-    	when(con.getSchemas()).thenAnswer(setupDummyListAnswer(schem1, schem2));
+    	when(con.getCatalogs()).thenAnswer(setupDummyListAnswer(schem1, schem2));
         when(cls.get()).thenReturn(List.of(context1, context2));
 
         DbSchemaTablesRequest request = mock(DbSchemaTablesRequest.class);
@@ -560,7 +560,7 @@ class DbSchemaDiscoverServiceTest {
     @Test
     void dbSchemaTablesWithRestriction() {
     	org.eclipse.daanse.olap.api.Connection con = mock(org.eclipse.daanse.olap.api.Connection.class);
-        when(con.getSchemas()).thenAnswer(setupDummyListAnswer(schem1, schem2));
+        when(con.getCatalogs()).thenAnswer(setupDummyListAnswer(schem1, schem2));
         when(cls.get()).thenReturn(List.of(context1, context2));
 
         DbSchemaTablesRequest request = mock(DbSchemaTablesRequest.class);

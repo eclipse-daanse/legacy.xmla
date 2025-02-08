@@ -23,7 +23,6 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
@@ -78,7 +77,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPositiveMatching(Context context) throws Exception {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         if (!context.getConfig().enableNativeFilter()) {
             // No point testing these if the native filters
             // are turned off.
@@ -163,7 +162,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNegativeMatching(Context context) throws Exception {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         if (!context.getConfig().enableNativeFilter()) {
              // No point testing these if the native filters
              // are turned off.
@@ -377,9 +376,9 @@ class NativeFilterMatchingTest extends BatchTestCase {
                 return result;
             }
 
-            protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+            protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping catalogMapping) {
                 List<AccessRoleMapping> result = new ArrayList<>();
-                result.addAll(super.schemaAccessRoles(schema));
+                result.addAll(super.schemaAccessRoles(catalogMapping));
                 result.add(AccessRoleMappingImpl.builder()
                     .withName("test")
                     .withAccessSchemaGrants(List.of(
@@ -612,7 +611,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNativeFilterWithCompoundSlicer_1(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
         final String mdx =
             "with member [measures].[avgQtrs] as 'count(filter([Customers].[Name].Members, [Measures].[Unit Sales] > 0))' "

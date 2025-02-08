@@ -26,14 +26,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.daanse.jdbc.db.dialect.db.common.JdbcDialectImpl;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.db.common.JdbcDialectImpl;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
@@ -933,7 +932,7 @@ class SqlQueryTest  extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+            protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
                 List<AccessRoleMapping> result = new ArrayList<>();
                 result.addAll(super.schemaAccessRoles(schema));
                 result.add(AccessRoleMappingImpl.builder()

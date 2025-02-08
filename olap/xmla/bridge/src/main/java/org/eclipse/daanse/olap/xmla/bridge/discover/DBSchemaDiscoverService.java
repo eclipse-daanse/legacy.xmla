@@ -13,12 +13,22 @@
  */
 package org.eclipse.daanse.olap.xmla.bridge.discover;
 
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getDbSchemaColumnsResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getDbSchemaSchemataResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getDbSchemaSourceTablesResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getDbSchemaTablesInfoResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getRoles;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.isDataTypeCond;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
-import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;
 import org.eclipse.daanse.xmla.api.XmlaConstants;
@@ -42,20 +52,6 @@ import org.eclipse.daanse.xmla.api.discover.dbschema.tablesinfo.DbSchemaTablesIn
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.catalogs.DbSchemaCatalogsResponseRowR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.providertypes.DbSchemaProviderTypesResponseRowR;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getDbSchemaColumnsResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getDbSchemaSchemataResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getDbSchemaSourceTablesResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getDbSchemaTablesInfoResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getDbSchemaTablesResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getRoles;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.isDataTypeCond;
-
 public class DBSchemaDiscoverService {
 
     private ContextListSupplyer contextsListSupplyer;
@@ -66,16 +62,15 @@ public class DBSchemaDiscoverService {
 
     public List<DbSchemaCatalogsResponseRow> dbSchemaCatalogs(DbSchemaCatalogsRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
 
-        Optional<String> oName = request.restrictions().catalogName();
-        if (oName.isPresent()) {
-            Optional<Context> oContext = oName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
+        Optional<String> oCatalogName = request.restrictions().catalogName();
+        if (oCatalogName.isPresent()) {
+            Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.getContext(name));
             if (oContext.isPresent()) {
-                Context context = oContext.get();
-                CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
+            	Context catalog = oContext.get();
                 return List.of((DbSchemaCatalogsResponseRow) new DbSchemaCatalogsResponseRowR(
                     Optional.ofNullable(catalog.getName()),
-                    Optional.ofNullable(catalog.getDescription()),
-                    getRoles(getAccessRoleMappings(catalog.getSchemas())),
+                    catalog.getDescription(),
+                    getRoles(catalog.getAccessRoles()),
                     Optional.of(LocalDateTime.now()),
                     Optional.empty(),
                     Optional.empty(),
@@ -89,11 +84,11 @@ public class DBSchemaDiscoverService {
             }
         }
         else {
-            return contextsListSupplyer.get().stream().map(c ->
+            return contextsListSupplyer.getContexts().stream().map(c ->
                 (DbSchemaCatalogsResponseRow) new DbSchemaCatalogsResponseRowR(
-                    Optional.ofNullable(((RolapContext) c).getCatalogMapping().getName()),
-                    Optional.ofNullable(((RolapContext) c).getCatalogMapping().getDescription()),
-                    getRoles(getAccessRoleMappings(((RolapContext) c).getCatalogMapping().getSchemas())),
+                    Optional.ofNullable(c.getName()),
+                    c.getDescription(),
+                    getRoles(c.getAccessRoles()),
                     Optional.of(LocalDateTime.now()),
                     Optional.empty(),
                     Optional.empty(),
@@ -109,9 +104,7 @@ public class DBSchemaDiscoverService {
         return List.of();
     }
 
-    private List<? extends AccessRoleMapping> getAccessRoleMappings(List<? extends SchemaMapping> schemas) {
-        return schemas.stream().flatMap(s -> s.getAccessRoles().stream()).toList();
-    }
+
 
     public List<DbSchemaColumnsResponseRow> dbSchemaColumns(DbSchemaColumnsRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         Optional<String> oCatalog = request.restrictions().tableCatalog();
@@ -121,14 +114,14 @@ public class DBSchemaDiscoverService {
         Optional<ColumnOlapTypeEnum> oColumnOlapType = request.restrictions().columnOlapType();
         List<DbSchemaColumnsResponseRow> result = new ArrayList<>();
         if (oCatalog.isPresent()) {
-            Optional<Context> oContext = oCatalog.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
+            Optional<Catalog> oContext = oCatalog.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
             if (oContext.isPresent()) {
-                Context context = oContext.get();
-                result.addAll(getDbSchemaColumnsResponseRow(context, oTableSchema, oTableName, oColumnName,
+                Catalog catalog = oContext.get();
+                result.addAll(getDbSchemaColumnsResponseRow(catalog, oTableSchema, oTableName, oColumnName,
                     oColumnOlapType));
             }
         } else {
-            result.addAll(contextsListSupplyer.get().stream()
+            result.addAll(contextsListSupplyer.get(userPrincipal.roles()).stream()
                 .map(c -> getDbSchemaColumnsResponseRow(c, oTableSchema, oTableName, oColumnName, oColumnOlapType))
                 .flatMap(Collection::stream).toList());
         }
@@ -311,13 +304,12 @@ public class DBSchemaDiscoverService {
         String schemaOwner = request.restrictions().schemaOwner();
         List<DbSchemaSchemataResponseRow> result = new ArrayList<>();
         if (catalogName != null) {
-            Optional<Context> oContext = contextsListSupplyer.tryGetFirstByName(catalogName);
-            if (oContext.isPresent()) {
-                Context context = oContext.get();
-                result.addAll(getDbSchemaSchemataResponseRow(context, schemaName, schemaOwner));
+            Optional<Catalog> oCatalog = contextsListSupplyer.tryGetFirstByName(catalogName,userPrincipal.roles());
+            if (oCatalog.isPresent()) {
+                result.addAll(getDbSchemaSchemataResponseRow(oCatalog.get(), schemaName, schemaOwner));
             }
         } else {
-            result.addAll(contextsListSupplyer.get().stream()
+            result.addAll(contextsListSupplyer.get(userPrincipal.roles()).stream()
                 .map(c -> getDbSchemaSchemataResponseRow(c, schemaName, schemaOwner))
                 .flatMap(Collection::stream).toList());
         }
@@ -331,12 +323,12 @@ public class DBSchemaDiscoverService {
         TableTypeEnum tableType = request.restrictions().tableType();
 
         if (oCatalogName.isPresent()) {
-            Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
-            if (oContext.isPresent()) {
-                return getDbSchemaSourceTablesResponseRow(oContext.get(), List.of(tableType.getValue()));
+            Optional<Catalog> oCatalog = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
+            if (oCatalog.isPresent()) {
+                return getDbSchemaSourceTablesResponseRow(oCatalog.get(), List.of(tableType.getValue()));
             }
         } else {
-            return contextsListSupplyer.get().stream()
+            return contextsListSupplyer.get(userPrincipal.roles()).stream()
                 .map(c -> getDbSchemaSourceTablesResponseRow(c, List.of(tableType.getValue())))
                 .flatMap(Collection::stream).toList();
         }
@@ -355,14 +347,13 @@ public class DBSchemaDiscoverService {
         }
 
         if (oTableCatalog.isPresent()) {
-            Optional<Context> oContext = oTableCatalog.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
-            if (oContext.isPresent()) {
-                return getDbSchemaTablesResponseRow(oContext.get(), oTableSchema, oTableName, oTableType, metaData, userPrincipal);
+            Optional<Catalog> oCatalog = oTableCatalog.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
+            if (oCatalog.isPresent()) {
+                return Utils.getDbSchemaTablesResponseRow(oCatalog.get(), oTableSchema, oTableName, oTableType);
             }
         } else {
-            return contextsListSupplyer.get().stream()
-					.map(c -> getDbSchemaTablesResponseRow(c, oTableSchema, oTableName, oTableType, metaData,
-							userPrincipal))
+            return contextsListSupplyer.get(userPrincipal.roles()).stream()
+					.map(c -> Utils.getDbSchemaTablesResponseRow(c, oTableSchema, oTableName, oTableType))
                 .flatMap(Collection::stream).toList();
         }
         return List.of();
@@ -374,12 +365,12 @@ public class DBSchemaDiscoverService {
         String tableName = request.restrictions().tableName();
         TableTypeEnum tableType = request.restrictions().tableType();
         if (oCatalogName.isPresent()) {
-            Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
-            if (oContext.isPresent()) {
-                return getDbSchemaTablesInfoResponseRow(oContext.get(), oSchemaName, tableName, tableType);
+            Optional<Catalog> oCatalog = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
+            if (oCatalog.isPresent()) {
+                return getDbSchemaTablesInfoResponseRow(oCatalog.get(), oSchemaName, tableName, tableType);
             }
         } else {
-            return contextsListSupplyer.get().stream()
+            return contextsListSupplyer.get(userPrincipal.roles()).stream()
                 .map(c -> getDbSchemaTablesInfoResponseRow(c, oSchemaName, tableName, tableType))
                 .flatMap(Collection::stream).toList();
         }

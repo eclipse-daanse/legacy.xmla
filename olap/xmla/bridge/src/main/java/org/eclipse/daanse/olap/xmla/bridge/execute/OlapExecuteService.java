@@ -37,7 +37,7 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Cube;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.CalculatedFormula;
 import org.eclipse.daanse.olap.api.query.component.DmvQuery;
@@ -196,8 +196,8 @@ public class OlapExecuteService implements ExecuteService {
 
     @Override
     public CancelResponse cancel(CancelRequest cancel, RequestMetaData metaData, UserPrincipal userPrincipal) {
-        List<Context> contexts = contextsListSupplyer.get();
-        //TODO: store the connection for your session and use it.
+        List<Context> contexts = contextsListSupplyer.getContexts();
+        //TODO: Context should have cencel with session
         for (Context context : contexts) {
             try {
                 final Connection connection = context.getConnection(userPrincipal.roles());
@@ -247,7 +247,8 @@ public class OlapExecuteService implements ExecuteService {
 
 		if (oCatalog.isPresent()) {
 
-			Optional<Context> oContext = contextsListSupplyer.tryGetFirstByName(oCatalog.get());
+			String catalogName=oCatalog.get();
+			Optional<Context> oContext = contextsListSupplyer.getContexts().stream().filter(ctx->catalogName.equals(ctx.getName())).findAny();
 			if (oContext.isPresent()) {
 				Context context = oContext.get();
 				String statement = statementRequest.command().statement();
@@ -429,7 +430,7 @@ public class OlapExecuteService implements ExecuteService {
 
     private StatementResponse executeRefresh(Context context, UserPrincipal userPrincipal, RequestMetaData metaData, Refresh refresh) {
         Connection connection = context.getConnection(userPrincipal.roles());
-        Schema schema = connection.getSchema();
+        Catalog schema = connection.getCatalog();
         Cube cube = schema.lookupCube(refresh.getCubeName(), true);
         flushCache(cube, connection);
         return new StatementResponseR(null, null);
@@ -722,7 +723,7 @@ public class OlapExecuteService implements ExecuteService {
     private StatementResponse executeCalculatedFormula(Context context, UserPrincipal userPrincipal, RequestMetaData metaData, CalculatedFormula calculatedFormula) {
         Formula formula = calculatedFormula.getFormula();
         Connection connection = context.getConnection(userPrincipal.roles());
-        final Schema schema = connection.getSchema();
+        final Catalog schema = connection.getCatalog();
         final Cube cube = schema.lookupCube(calculatedFormula.getCubeName(), true);
         if (formula.isMember()) {
             cube.createCalculatedMember(formula);
@@ -734,7 +735,7 @@ public class OlapExecuteService implements ExecuteService {
 
     private StatementResponse executeDrillThroughQuery(Context context, UserPrincipal userPrincipal, RequestMetaData metaData, StatementRequest statementRequest) {
         Optional<String> tabFields = statementRequest.properties().tableFields();
-        Optional<Boolean> advanced = statementRequest.properties().advancedFlag();
+//        Optional<Boolean> advanced = statementRequest.properties().advancedFlag();
         final boolean enableRowCount = context.getConfig().enableTotalCount();
         final int[] rowCountSlot = enableRowCount ? new int[]{0} : null;
         Connection connection = null;
@@ -777,7 +778,6 @@ public class OlapExecuteService implements ExecuteService {
             statement = connection.createStatement();
             resultSet = statement.executeQuery(
                 parseTree,
-                advanced,
                 tabFields,
                 rowCountSlot);
             int rowCount = enableRowCount ? rowCountSlot[0] : -1;

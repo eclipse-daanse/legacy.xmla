@@ -34,7 +34,7 @@ public class FirstChildCalc extends AbstractProfilingNestedMemberCalc {
     }
 
     private Member firstChild(Evaluator evaluator, Member member) {
-        List<Member> children = evaluator.getSchemaReader().getMemberChildren(member);
+        List<Member> children = evaluator.getCatalogReader().getMemberChildren(member);
         return (children.isEmpty()) ? member.getHierarchy().getNullMember() : children.get(0);
     }
 

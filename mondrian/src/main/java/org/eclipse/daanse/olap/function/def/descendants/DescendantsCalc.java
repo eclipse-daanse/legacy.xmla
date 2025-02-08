@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
@@ -47,8 +47,8 @@ public class DescendantsCalc extends AbstractListCalc{
         evaluator.isNonEmpty() ? evaluator : null;
       final Member member = memberCalc.evaluate( evaluator );
       List<Member> result = new ArrayList<>();
-      final SchemaReader schemaReader =
-        evaluator.getSchemaReader();
+      final CatalogReader schemaReader =
+        evaluator.getCatalogReader();
       final Level level =
         levelCalc != null
           ? levelCalc.evaluate( evaluator )
@@ -76,7 +76,7 @@ public class DescendantsCalc extends AbstractListCalc{
      * @param context      Evaluation context; determines criteria by which the result set should be filtered
      */
     private void descendantsByLevel(
-      SchemaReader schemaReader,
+      CatalogReader schemaReader,
       Member ancestor,
       Level level,
       List<Member> result,

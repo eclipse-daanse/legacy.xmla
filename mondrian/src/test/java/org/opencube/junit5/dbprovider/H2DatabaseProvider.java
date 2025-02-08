@@ -34,7 +34,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.h2.jdbcx.JdbcDataSource;
 
 import aQute.bnd.annotation.spi.ServiceProvider;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 
 @ServiceProvider(value = DatabaseProvider.class)
 public class H2DatabaseProvider implements DatabaseProvider {

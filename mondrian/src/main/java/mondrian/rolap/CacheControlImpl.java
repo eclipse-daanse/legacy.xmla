@@ -192,7 +192,7 @@ public class CacheControlImpl implements CacheControl {
                 + cube.getName());
         }
         final List<Member> measures =
-            cube.getSchemaReader(null).withLocus().getLevelMembers(
+            cube.getCatalogReader(null).withLocus().getLevelMembers(
                 measuresDimension.getHierarchy().getLevels()[0],
                 false);
         if (measures.isEmpty()) {
@@ -257,7 +257,7 @@ public class CacheControlImpl implements CacheControl {
             break;
         }
         if (!containsMeasures(cellRegion)) {
-            for (RolapCube cube : connection.getSchema().getCubeList()) {
+            for (RolapCube cube : connection.getCatalog().getCubeList()) {
                 flush(
                     createCrossjoinRegion(
                         createMeasuresRegion(cube),
@@ -290,14 +290,14 @@ public class CacheControlImpl implements CacheControl {
 
     @Override
 	public void flushSchemaCache() {
-    	connection.getContext().getSchemaCache().clear();
+    	connection.getContext().getCatalogCache().clear();
         // In some cases, the request might originate from a reference
         // to the schema which isn't in the pool anymore. We must also call
         // the cleanup procedure on the current connection.
         if (connection != null
-            && connection.getSchema() != null)
+            && connection.getCatalog() != null)
         {
-            connection.getSchema().finalCleanUp();
+            connection.getCatalog().finalCleanUp();
         }
     }
 
@@ -630,7 +630,7 @@ public class CacheControlImpl implements CacheControl {
         // REVIEW How is flush(s) different to executing createDeleteCommand(s)?
         synchronized (MEMBER_CACHE_LOCK) {
             // firstly clear all cache associated with native sets
-            connection.getSchema().getNativeRegistry().flushAllNativeSetCache();
+            connection.getCatalog().getNativeRegistry().flushAllNativeSetCache();
             final List<CellRegion> cellRegionList = new ArrayList<>();
             ((MemberSetPlus) memberSet).accept(
                 new MemberSetVisitorImpl() {
@@ -861,7 +861,7 @@ public class CacheControlImpl implements CacheControl {
                         memberRegion.getDimensionality();
                     if (!dimensions.isEmpty()) {
                         for (Cube cube
-                            : dimensions.get(0) .getSchema().getCubes())
+                            : dimensions.get(0) .getCatalog().getCubes())
                         {
                             try {
                                 final List<CellRegionImpl> crossList =

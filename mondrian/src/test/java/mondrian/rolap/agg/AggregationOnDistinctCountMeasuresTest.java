@@ -32,10 +32,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Execution;
-import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Result;
@@ -45,7 +45,6 @@ import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
@@ -66,6 +65,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
@@ -75,7 +75,6 @@ import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TimeDimensionMappingImpl;
@@ -112,8 +111,8 @@ import mondrian.test.SqlPattern;
 class AggregationOnDistinctCountMeasuresTest {
     private  final String cubeNameSales = "Sales";
 
-    private SchemaReader salesCubeSchemaReader = null;
-    private SchemaReader schemaReader = null;
+    private CatalogReader salesCubeCatalogReader = null;
+    private CatalogReader catalogReader = null;
     private RolapCube salesCube;
 
     @AfterEach
@@ -153,13 +152,13 @@ class AggregationOnDistinctCountMeasuresTest {
         withSchema(context, SchemaModifiers.AggregationOnDistinctCountMeasuresTestModifier::new);
         Connection connection = context.getConnectionWithDefaultRole();
 
-        schemaReader =
-                connection.getSchemaReader().withLocus();
+        catalogReader =
+                connection.getCatalogReader().withLocus();
         salesCube = (RolapCube) cubeByName(
                 connection,
                 cubeNameSales);
-        salesCubeSchemaReader =
-                salesCube.getSchemaReader(
+        salesCubeCatalogReader =
+                salesCube.getCatalogReader(
                         connection.getRole()).withLocus();
 
     }
@@ -724,7 +723,7 @@ class AggregationOnDistinctCountMeasuresTest {
           }
 
           @Override
-          protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+          protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
         	  StandardDimensionMappingImpl warehouse2Dimension = StandardDimensionMappingImpl.builder()
               .withName("Warehouse2")
               .withHierarchies(List.of(
@@ -853,7 +852,7 @@ class AggregationOnDistinctCountMeasuresTest {
               super(c);
           }
 
-          protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+          protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
         	  StandardDimensionMappingImpl warehouse2Dimension = StandardDimensionMappingImpl.builder()
               .withName("Warehouse2")
               .withHierarchies(List.of(
@@ -981,7 +980,7 @@ class AggregationOnDistinctCountMeasuresTest {
           }
 
           @Override
-          protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+          protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
         	  StandardDimensionMappingImpl warehouse2Dimension = StandardDimensionMappingImpl.builder()
               .withName("Warehouse2")
               .withHierarchies(List.of(
@@ -1523,7 +1522,7 @@ class AggregationOnDistinctCountMeasuresTest {
       prepareContext(context);
         TupleList memberList =
             productMembersPotScrubbersPotsAndPans(
-                salesCubeSchemaReader);
+                salesCubeCatalogReader);
 
         TupleList tuples = optimizeChildren(memberList);
         assertTrue(
@@ -1534,7 +1533,7 @@ class AggregationOnDistinctCountMeasuresTest {
                         "Product", "All Products", "Non-Consumable",
                         "Household", "Kitchen Products", "Pot Scrubbers",
                         "Cormorant"),
-                    salesCubeSchemaReader)));
+                    salesCubeCatalogReader)));
         assertFalse(
             tuppleListContains(
                 tuples,
@@ -1542,7 +1541,7 @@ class AggregationOnDistinctCountMeasuresTest {
                     IdImpl.toList(
                         "Product", "All Products", "Non-Consumable",
                         "Household", "Kitchen Products", "Pot Scrubbers"),
-                    salesCubeSchemaReader)));
+                    salesCubeCatalogReader)));
         assertFalse(
             tuppleListContains(
                 tuples,
@@ -1551,7 +1550,7 @@ class AggregationOnDistinctCountMeasuresTest {
                         "Product", "All Products", "Non-Consumable",
                         "Household", "Kitchen Products", "Pots and Pans",
                         "Cormorant"),
-                    salesCubeSchemaReader)));
+                    salesCubeCatalogReader)));
         assertTrue(
             tuppleListContains(
                 tuples,
@@ -1559,7 +1558,7 @@ class AggregationOnDistinctCountMeasuresTest {
                     IdImpl.toList(
                         "Product", "All Products", "Non-Consumable",
                         "Household", "Kitchen Products", "Pots and Pans"),
-                    salesCubeSchemaReader)));
+                    salesCubeCatalogReader)));
         assertEquals(4, tuples.size());
     }
 
@@ -1568,12 +1567,12 @@ class AggregationOnDistinctCountMeasuresTest {
   void testOptimizeChildrenForTuplesWithLength3(Context context) {
       prepareContext(context);
         TupleList genderMembers =
-            genderMembersIncludingAll(false, salesCubeSchemaReader, salesCube);
+            genderMembersIncludingAll(false, salesCubeCatalogReader, salesCube);
         TupleList productMembers =
-            productMembersPotScrubbersPotsAndPans(salesCubeSchemaReader);
+            productMembersPotScrubbersPotsAndPans(salesCubeCatalogReader);
         TupleList crossJoinResult = mutableCrossJoin(
             genderMembers, productMembers);
-        TupleList storeMembers = storeMembersCAAndOR(salesCubeSchemaReader);
+        TupleList storeMembers = storeMembersCAAndOR(salesCubeCatalogReader);
         crossJoinResult = mutableCrossJoin(crossJoinResult, storeMembers);
         TupleList tuples = optimizeChildren(crossJoinResult);
         assertFalse(
@@ -1582,13 +1581,13 @@ class AggregationOnDistinctCountMeasuresTest {
                 member(
                     IdImpl.toList(
                         "Store", "All Stores", "USA", "OR", "Portland"),
-                    salesCubeSchemaReader)));
+                    salesCubeCatalogReader)));
         assertTrue(
             tuppleListContains(
                 tuples,
                 member(
                     IdImpl.toList("Store", "All Stores", "USA", "OR"),
-                    salesCubeSchemaReader)));
+                    salesCubeCatalogReader)));
         assertEquals(16, tuples.size());
     }
 
@@ -1597,9 +1596,9 @@ class AggregationOnDistinctCountMeasuresTest {
   void testOptimizeChildrenWhenTuplesAreFormedWithDifferentLevels(Context context) {
       prepareContext(context);
         TupleList genderMembers =
-            genderMembersIncludingAll(false, salesCubeSchemaReader, salesCube);
+            genderMembersIncludingAll(false, salesCubeCatalogReader, salesCube);
         TupleList productMembers =
-            productMembersPotScrubbersPotsAndPans(salesCubeSchemaReader);
+            productMembersPotScrubbersPotsAndPans(salesCubeCatalogReader);
         TupleList memberList = mutableCrossJoin(genderMembers, productMembers);
         TupleList tuples = optimizeChildren(memberList);
         assertEquals(4, tuples.size());
@@ -1612,7 +1611,7 @@ class AggregationOnDistinctCountMeasuresTest {
                         "Product", "All Products", "Non-Consumable",
                         "Household", "Kitchen Products", "Pots and Pans",
                         "Cormorant"),
-                salesCubeSchemaReader)));
+                salesCubeCatalogReader)));
         assertTrue(
             tuppleListContains(
                 tuples,
@@ -1620,7 +1619,7 @@ class AggregationOnDistinctCountMeasuresTest {
                     IdImpl.toList(
                         "Product", "All Products", "Non-Consumable",
                         "Household", "Kitchen Products", "Pots and Pans"),
-                salesCubeSchemaReader)));
+                salesCubeCatalogReader)));
         assertTrue(
             tuppleListContains(
                 tuples,
@@ -1629,7 +1628,7 @@ class AggregationOnDistinctCountMeasuresTest {
                         "Product", "All Products", "Non-Consumable",
                         "Household", "Kitchen Products", "Pot Scrubbers",
                         "Cormorant"),
-                salesCubeSchemaReader)));
+                salesCubeCatalogReader)));
     }
 
   @ParameterizedTest
@@ -1637,9 +1636,9 @@ class AggregationOnDistinctCountMeasuresTest {
   void testWhetherCJOfChildren(Context context) {
       prepareContext(context);
         TupleList genderMembers =
-            genderMembersIncludingAll(false, salesCubeSchemaReader, salesCube);
+            genderMembersIncludingAll(false, salesCubeCatalogReader, salesCube);
         TupleList storeMembers =
-            storeMembersUsaAndCanada(false, salesCubeSchemaReader, salesCube);
+            storeMembersUsaAndCanada(false, salesCubeCatalogReader, salesCube);
         TupleList memberList = mutableCrossJoin(genderMembers, storeMembers);
 
         List tuples = optimizeChildren(memberList);
@@ -1652,10 +1651,10 @@ class AggregationOnDistinctCountMeasuresTest {
       prepareContext(context);
         Member maleChildMember = member(
             IdImpl.toList("Gender", "All Gender", "M"),
-            salesCubeSchemaReader);
+            salesCubeCatalogReader);
         Member femaleChildMember = member(
             IdImpl.toList("Gender", "All Gender", "F"),
-            salesCubeSchemaReader);
+            salesCubeCatalogReader);
 
         List<Member> memberList = new ArrayList<>();
         memberList.add(maleChildMember);
@@ -1671,9 +1670,9 @@ class AggregationOnDistinctCountMeasuresTest {
   void testMemberCountIsSameForAllMembersInTuple(Context context) {
       prepareContext(context);
         TupleList genderMembers =
-            genderMembersIncludingAll(false, salesCubeSchemaReader, salesCube);
+            genderMembersIncludingAll(false, salesCubeCatalogReader, salesCube);
         TupleList storeMembers =
-            storeMembersUsaAndCanada(false, salesCubeSchemaReader, salesCube);
+            storeMembersUsaAndCanada(false, salesCubeCatalogReader, salesCube);
         TupleList memberList = mutableCrossJoin(genderMembers, storeMembers);
         Map<Member, Integer>[] memberCounterMap =
             AggregateCalc.membersVersusOccurencesInTuple(
@@ -1694,15 +1693,15 @@ class AggregationOnDistinctCountMeasuresTest {
         Member maleChild =
             member(
                 IdImpl.toList("Gender", "All Gender", "M"),
-                salesCubeSchemaReader);
+                salesCubeCatalogReader);
         Member femaleChild =
             member(
                 IdImpl.toList("Gender", "All Gender", "F"),
-                salesCubeSchemaReader);
+                salesCubeCatalogReader);
         Member mexicoMember =
             member(
                 IdImpl.toList("Store", "All Stores", "Mexico"),
-                salesCubeSchemaReader);
+                salesCubeCatalogReader);
 
         TupleList memberList =
             new UnaryTupleList(
@@ -1710,7 +1709,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
         TupleList list2 =
             storeMembersUsaAndCanada(
-                false, salesCubeSchemaReader, salesCube);
+                false, salesCubeCatalogReader, salesCube);
         memberList = mutableCrossJoin(memberList, list2);
 
         memberList.addTuple(femaleChild, mexicoMember);
@@ -1792,7 +1791,7 @@ class AggregationOnDistinctCountMeasuresTest {
           public TestMondrian906Modifier(CatalogMapping c) {
               super(c);
           }
-          protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+          protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
               List<CubeMapping> result = new ArrayList<>();
               result.addAll(super.schemaCubes(schema));
               result.add(VirtualCubeMappingImpl.builder()
@@ -1858,7 +1857,7 @@ class AggregationOnDistinctCountMeasuresTest {
           }
 
           @Override
-          protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+          protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
               List<AccessRoleMapping> result = new ArrayList<>();
               result.addAll(super.schemaAccessRoles(schema));
               result.add(AccessRoleMappingImpl.builder()
@@ -1917,13 +1916,13 @@ class AggregationOnDistinctCountMeasuresTest {
       withSchema(context, TestMondrian906Modifier::new);
       Connection connection = context.getConnectionWithDefaultRole();
 
-      schemaReader =
-              connection.getSchemaReader().withLocus();
+      catalogReader =
+              connection.getCatalogReader().withLocus();
       salesCube = (RolapCube) cubeByName(
               connection,
               cubeNameSales);
-      salesCubeSchemaReader =
-              salesCube.getSchemaReader(
+      salesCubeCatalogReader =
+              salesCube.getCatalogReader(
                       connection.getRole()).withLocus();
 
 
@@ -1960,21 +1959,21 @@ class AggregationOnDistinctCountMeasuresTest {
             member(
                 IdImpl.toList(
                     "Store", "All Stores", "USA", "CA"),
-                salesCubeSchemaReader);
+                salesCubeCatalogReader);
         Member orMember =
             member(
                 IdImpl.toList(
                     "Store", "All Stores", "USA", "OR"),
-                salesCubeSchemaReader);
+                salesCubeCatalogReader);
         Member waMember =
             member(
                 IdImpl.toList(
                     "Store", "All Stores", "USA", "WA"),
-                salesCubeSchemaReader);
+                salesCubeCatalogReader);
         Member femaleMember =
             member(
                 IdImpl.toList("Gender", "All Gender", "F"),
-                salesCubeSchemaReader);
+                salesCubeCatalogReader);
         Member [] tupleMembersArity1 =
             new Member[] {
                 caMember,
@@ -2023,7 +2022,7 @@ class AggregationOnDistinctCountMeasuresTest {
                 @Override
 				public TupleList execute() {
                     return AggregateCalc.optimizeChildren(
-                        memberList, schemaReader, salesCube);
+                        memberList, catalogReader, salesCube);
                 }
             }
         );
@@ -2121,7 +2120,7 @@ class AggregationOnDistinctCountMeasuresTest {
           }
 
           @Override
-          protected SchemaMapping schema(SchemaMapping schemaMappingOriginal) {
+          protected CatalogMapping modifyCatalog(CatalogMapping schemaMappingOriginal) {
         	  TimeDimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
               .withName("Time")
               .withHierarchies(List.of(
@@ -2163,7 +2162,7 @@ class AggregationOnDistinctCountMeasuresTest {
               .build();
 
 
-              return SchemaMappingImpl.builder()
+              return CatalogMappingImpl.builder()
                       .withName("FoodMart")
                       .withCubes(List.of(
                     	 PhysicalCubeMappingImpl.builder()
@@ -2475,17 +2474,17 @@ class AggregationOnDistinctCountMeasuresTest {
 
     private TupleList genderMembersIncludingAll(
             boolean includeAllMember,
-            SchemaReader salesCubeSchemaReader,
+            CatalogReader salesCubeCatalogReader,
             Cube salesCube)
     {
         Member maleMember =
                 member(
                     IdImpl.toList("Gender", "All Gender", "M"),
-                        salesCubeSchemaReader);
+                        salesCubeCatalogReader);
         Member femaleMember =
                 member(
                 		IdImpl.toList("Gender", "All Gender", "F"),
-                        salesCubeSchemaReader);
+                        salesCubeCatalogReader);
         Member [] members;
         if (includeAllMember) {
             members = new Member[] {
@@ -2499,61 +2498,61 @@ class AggregationOnDistinctCountMeasuresTest {
     }
 
     private static TupleList storeMembersCAAndOR(
-            SchemaReader salesCubeSchemaReader)
+            CatalogReader salesCubeCatalogReader)
     {
         return new UnaryTupleList(Arrays.asList(
                 member(
                     IdImpl.toList(
                                 "Store", "All Stores", "USA", "CA", "Alameda"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                     IdImpl.toList(
                                 "Store", "All Stores", "USA", "CA", "Alameda", "HQ"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                     IdImpl.toList(
                                 "Store", "All Stores", "USA", "CA", "Beverly Hills"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                     IdImpl.toList(
                                 "Store", "All Stores", "USA", "CA", "Beverly Hills",
                                 "Store 6"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                     IdImpl.toList(
                                 "Store", "All Stores", "USA", "CA", "Los Angeles"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                     IdImpl.toList(
                                 "Store", "All Stores", "USA", "OR", "Portland"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                     IdImpl.toList(
                                 "Store", "All Stores", "USA", "OR", "Portland", "Store 11"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                     IdImpl.toList(
                                 "Store", "All Stores", "USA", "OR", "Salem"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                     IdImpl.toList(
                                 "Store", "All Stores", "USA", "OR", "Salem", "Store 13"),
-                        salesCubeSchemaReader)));
+                        salesCubeCatalogReader)));
     }
 
     private static  TupleList storeMembersUsaAndCanada(
             boolean includeAllMember,
-            SchemaReader salesCubeSchemaReader,
+            CatalogReader salesCubeCatalogReader,
             Cube salesCube)
     {
         Member usaMember =
                 member(
                     IdImpl.toList("Store", "All Stores", "USA"),
-                        salesCubeSchemaReader);
+                        salesCubeCatalogReader);
         Member canadaMember =
                 member(
                     IdImpl.toList("Store", "All Stores", "CANADA"),
-                        salesCubeSchemaReader);
+                        salesCubeCatalogReader);
         Member [] members;
         if (includeAllMember) {
             members = new Member[]{

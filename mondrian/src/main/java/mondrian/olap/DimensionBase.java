@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -106,7 +106,7 @@ public abstract class DimensionBase
 
     @Override
 	public OlapElement lookupChild(
-        SchemaReader schemaReader, Segment s, MatchType matchType)
+        CatalogReader schemaReader, Segment s, MatchType matchType)
     {
         OlapElement oe = null;
         if (s instanceof NameSegment nameSegment) {

@@ -251,7 +251,7 @@ public class SqlContextConstraint
         // Add restrictions imposed by Role based access filtering
         Map<Level, List<RolapMember>> roleMembers =
             SqlConstraintUtils.getRoleConstraintMembers(
-                this.getEvaluator().getSchemaReader(),
+                this.getEvaluator().getCatalogReader(),
                 this.getEvaluator().getMembers());
         for (List<RolapMember> list : roleMembers.values()) {
             cacheKey.addAll(list);

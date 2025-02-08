@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.BasicContextConfig;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
@@ -65,11 +65,11 @@ class RolapCubeHierarchyTest {
     RolapCube cubeDimension_cube = mock(RolapCube.class);
     boolean cubeDimension_cube_isVirtual = true;
     String cubeDimension_uniqueName = "TheDimUniqueName";
-    RolapSchema cubeDimension_schema = mock(RolapSchema.class);
+    RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
     RolapConnection cubeDimension_schema_connection =
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
-    SchemaReader schemaReader = mock(SchemaReader.class);
+    CatalogReader schemaReader = mock(CatalogReader.class);
     BasicContextConfig config = mock(BasicContextConfig.class);
     doReturn(false).when(config).memoryMonitor();
     Context context = mock(Context.class);
@@ -92,9 +92,9 @@ class RolapCubeHierarchyTest {
 
     doReturn(cubeDimension_cube).when(cubeDimension).getCube();
     doReturn(cubeDimension_cube_isVirtual).when(cubeDimension_cube).isVirtual();
-    doReturn(cubeDimension_schema).when(cubeDimension).getSchema();
+    doReturn(cubeDimension_schema).when(cubeDimension).getCatalog();
     doReturn(schemaReader).when(cubeDimension_schema)
-    .getSchemaReader();
+    .getCatalogReader();
     doReturn(cubeDimension_schema_connection).when(cubeDimension_schema)
       .getInternalConnection();
     doReturn(cubeDimension_schema_connection_DS)
@@ -119,11 +119,11 @@ class RolapCubeHierarchyTest {
     RolapCube cubeDimension_cube = mock(RolapCube.class);
     boolean cubeDimension_cube_isVirtual = true;
     String cubeDimension_uniqueName = "TheDimUniqueName";
-    RolapSchema cubeDimension_schema = mock(RolapSchema.class);
+    RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
     RolapConnection cubeDimension_schema_connection =
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
-    SchemaReader schemaReader = mock(SchemaReader.class);
+    CatalogReader schemaReader = mock(CatalogReader.class);
     BasicContextConfig config = mock(BasicContextConfig.class);
     doReturn(false).when(config).memoryMonitor();
     Context context = mock(Context.class);
@@ -147,11 +147,11 @@ class RolapCubeHierarchyTest {
 
     doReturn(cubeDimension_cube).when(cubeDimension).getCube();
     doReturn(cubeDimension_cube_isVirtual).when(cubeDimension_cube).isVirtual();
-    doReturn(cubeDimension_schema).when(cubeDimension).getSchema();
+    doReturn(cubeDimension_schema).when(cubeDimension).getCatalog();
     doReturn(cubeDimension_schema_connection).when(cubeDimension_schema)
       .getInternalConnection();
     doReturn(schemaReader).when(cubeDimension_schema)
-    .getSchemaReader();
+    .getCatalogReader();
     doReturn(cubeDimension_schema_connection_DS)
       .when(cubeDimension_schema_connection).getDataSource();
     doReturn(cubeDimension_uniqueName).when(cubeDimension).getUniqueName();
@@ -171,7 +171,7 @@ class RolapCubeHierarchyTest {
     RolapCube cubeDimension_cube = mock(RolapCube.class);
     boolean cubeDimension_cube_isVirtual = true;
     String cubeDimension_uniqueName = "TheDimUniqueName";
-    RolapSchema cubeDimension_schema = mock(RolapSchema.class);
+    RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
     RolapConnection cubeDimension_schema_connection =
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
@@ -183,7 +183,7 @@ class RolapCubeHierarchyTest {
     String rolapHierarchy_uniqueName = "TheDimUniqueName";
     Level[] rolapHierarchy_levels = new Level[]{};
     QueryMapping rolapHierarchy_relation = mock(TableQueryMapping.class);
-    SchemaReader schemaReader = mock(SchemaReader.class);
+    CatalogReader schemaReader = mock(CatalogReader.class);
     BasicContextConfig config = mock(BasicContextConfig.class);
     doReturn(false).when(config).memoryMonitor();
     Context context = mock(Context.class);
@@ -206,11 +206,11 @@ class RolapCubeHierarchyTest {
 
     doReturn(cubeDimension_cube).when(cubeDimension).getCube();
     doReturn(cubeDimension_cube_isVirtual).when(cubeDimension_cube).isVirtual();
-    doReturn(cubeDimension_schema).when(cubeDimension).getSchema();
+    doReturn(cubeDimension_schema).when(cubeDimension).getCatalog();
     doReturn(cubeDimension_schema_connection).when(cubeDimension_schema)
       .getInternalConnection();
     doReturn(schemaReader).when(cubeDimension_schema)
-    .getSchemaReader();
+    .getCatalogReader();
     doReturn(cubeDimension_schema_connection_DS)
       .when(cubeDimension_schema_connection).getDataSource();
     doReturn(cubeDimension_uniqueName).when(cubeDimension).getUniqueName();
@@ -231,11 +231,11 @@ class RolapCubeHierarchyTest {
     RolapCube cubeDimension_cube = mock(RolapCube.class);
     boolean cubeDimension_cube_isVirtual = true;
     String cubeDimension_uniqueName = "TheDimUniqueName";
-    RolapSchema cubeDimension_schema = mock(RolapSchema.class);
+    RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
     RolapConnection cubeDimension_schema_connection =
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
-    SchemaReader schemaReader = mock(SchemaReader.class);
+    CatalogReader schemaReader = mock(CatalogReader.class);
     BasicContextConfig config = mock(BasicContextConfig.class);
     doReturn(false).when(config).memoryMonitor();
     Context context = mock(Context.class);
@@ -268,11 +268,11 @@ class RolapCubeHierarchyTest {
 
     doReturn(cubeDimension_cube).when(cubeDimension).getCube();
     doReturn(cubeDimension_cube_isVirtual).when(cubeDimension_cube).isVirtual();
-    doReturn(cubeDimension_schema).when(cubeDimension).getSchema();
+    doReturn(cubeDimension_schema).when(cubeDimension).getCatalog();
     doReturn(cubeDimension_schema_connection).when(cubeDimension_schema)
       .getInternalConnection();
     doReturn(schemaReader).when(cubeDimension_schema)
-    .getSchemaReader();
+    .getCatalogReader();
     doReturn(cubeDimension_schema_connection_DS)
       .when(cubeDimension_schema_connection).getDataSource();
     doReturn(cubeDimension_uniqueName).when(cubeDimension).getUniqueName();

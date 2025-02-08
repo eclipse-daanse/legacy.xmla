@@ -45,13 +45,13 @@ import javax.sql.DataSource;
 import org.eclipse.daanse.mdx.model.api.expression.MdxExpression;
 import org.eclipse.daanse.mdx.parser.api.MdxParser;
 import org.eclipse.daanse.olap.api.CacheControl;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Command;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
-import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -67,7 +67,7 @@ import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,8 +98,8 @@ public class RolapConnection extends ConnectionBase {
   private final ConnectionProps rolapConnectionProps;
 
   private Context context = null;
-  private final RolapSchema schema;
-  private SchemaReader schemaReader;
+  private final RolapCatalog catalog;
+  private CatalogReader schemaReader;
   protected Role role;
   private Locale locale = Locale.getDefault();
   private Scenario scenario;
@@ -116,7 +116,7 @@ public class RolapConnection extends ConnectionBase {
   /**
    * Creates a RolapConnection.
    *
-   * <p>Only {@link RolapSchemaCache#get} calls this with
+   * <p>Only {@link RolapCatalogCache#get} calls this with
    * schema != null (to create a schema's internal connection).
    * Other uses retrieve a schema from the cache based upon
    * the <code>Catalog</code> property.
@@ -124,12 +124,12 @@ public class RolapConnection extends ConnectionBase {
    * @param server      Server instance this connection belongs to
    * @param connectInfo Connection properties; keywords are described in
    *                    {@link RolapConnectionProperties}.
-   * @param schema      Schema for the connection. Must be null unless this is to
+   * @param catalog      Schema for the connection. Must be null unless this is to
    *                    be an internal connection.
    * @param context  If not null an external DataSource to be used
    *                    by Mondrian
    */
-	RolapConnection(RolapContext context, RolapSchema schema, ConnectionProps rolapConnectionProps) {
+	RolapConnection(RolapContext context, RolapCatalog catalog, ConnectionProps rolapConnectionProps) {
     super();
 
     this.context = context;
@@ -144,8 +144,8 @@ public class RolapConnection extends ConnectionBase {
     // Register this connection before we register its internal statement.
     context.addConnection( this );
 
-    if ( schema == null ) {
-      // If RolapSchema.Pool.get were to call this with schema == null,
+    if ( catalog == null ) {
+      // If RolapCatalog.Pool.get were to call this with schema == null,
       // we would loop.
       Statement bootstrapStatement = createInternalStatement( false, this);
       final Locus locus =
@@ -157,8 +157,8 @@ public class RolapConnection extends ConnectionBase {
       try {
 
 			// TODO: switch from schemareader to catalogreader;
-			SchemaMapping schemaMapping = context.getCatalogMapping().getSchemas().getFirst();
-			schema = ((RolapSchemaCache) context.getSchemaCache()).getOrCreateSchema(schemaMapping, rolapConnectionProps,
+			CatalogMapping catalogMapping = context.getCatalogMapping();
+			catalog = ((RolapCatalogCache) context.getCatalogCache()).getOrCreateCatalog(catalogMapping, rolapConnectionProps,
 					Optional.empty());
 
       } finally {
@@ -166,14 +166,14 @@ public class RolapConnection extends ConnectionBase {
         bootstrapStatement.close();
       }
       internalStatement =
-        schema.getInternalConnection().getInternalStatement();
+        catalog.getInternalConnection().getInternalStatement();
       List<String> roleNameList =rolapConnectionProps.roles();
       if ( !roleNameList.isEmpty() ) {
 
         List<Role> roleList = new ArrayList<>();
         for ( String roleName : roleNameList ) {
 
-          Role role1 = schema.lookupRole( roleName );
+          Role role1 = catalog.lookupRole( roleName );
 
           if ( role1 == null ) {
             throw Util.newError(
@@ -201,13 +201,13 @@ public class RolapConnection extends ConnectionBase {
     }
 
     if ( roleInner == null ) {
-      roleInner = schema.getDefaultRole();
+      roleInner = catalog.getDefaultRole();
     }
 
     // Set the locale.
     this.locale  =rolapConnectionProps.locale();
 
-    this.schema = schema;
+    this.catalog = catalog;
     setRole( roleInner );
   }
 
@@ -240,8 +240,8 @@ public void close() {
   }
 
   @Override
-public RolapSchema getSchema() {
-    return schema;
+public RolapCatalog getCatalog() {
+    return catalog;
   }
 
 @Override
@@ -257,7 +257,7 @@ public Locale getLocale() {
   }
 
   @Override
-public SchemaReader getSchemaReader() {
+public CatalogReader getCatalogReader() {
     return schemaReader;
   }
 
@@ -417,7 +417,7 @@ public void setRole( Role role ) {
     assert role != null;
 
     this.role = role;
-    this.schemaReader = new RolapSchemaReader( context,role, schema );
+    this.schemaReader = new RolapCatalogReader( context,role, catalog );
   }
 
   @Override
@@ -490,7 +490,7 @@ public Expression parseExpression( String expr ) {
   @Override
 public Statement getInternalStatement() {
     if ( internalStatement == null ) {
-      return schema.getInternalConnection().getInternalStatement();
+      return catalog.getInternalConnection().getInternalStatement();
     } else {
       return internalStatement;
     }
@@ -524,7 +524,7 @@ public Context getContext() {
    */
   public Scenario createScenario() {
     final ScenarioImpl scenarioInner = new ScenarioImpl();
-    scenarioInner.register( schema );
+    scenarioInner.register( catalog );
     return scenarioInner;
   }
 

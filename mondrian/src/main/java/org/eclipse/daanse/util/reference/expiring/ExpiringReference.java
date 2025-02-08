@@ -112,10 +112,10 @@ public class ExpiringReference<T> extends SoftReference<T> {
 
 	@Override
 	public synchronized T get() {
-		return getSchemaAndResetTimeout(Duration.ofMillis(Long.MIN_VALUE));
+		return getCatalogAndResetTimeout(Duration.ofMillis(Long.MIN_VALUE));
 	}
 
-	public synchronized T getSchemaAndResetTimeout(Duration timeOut) {
+	public synchronized T getCatalogAndResetTimeout(Duration timeOut) {
 
 		final T weakRef = super.get();
 

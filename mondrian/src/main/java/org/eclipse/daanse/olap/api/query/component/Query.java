@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -38,7 +38,7 @@ import mondrian.rolap.RolapCube;
 
 public non-sealed interface Query extends QueryComponent {
 
-    SchemaReader getSchemaReader(boolean b);
+    CatalogReader getCatalogReader(boolean b);
 
     Cube getCube();
 

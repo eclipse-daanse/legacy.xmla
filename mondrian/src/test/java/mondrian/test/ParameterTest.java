@@ -37,16 +37,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.ParameterMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.ParameterMappingImpl;
@@ -98,7 +97,7 @@ class ParameterTest {
             "select {Parameter(\"Foo\",[Time],[Time].[1997],\"Foo\")} "
             + "ON COLUMNS from [Sales]";
         Query query = context.getConnectionWithDefaultRole().parseQuery(mdx);
-        SchemaReader sr = query.getSchemaReader(false).withLocus();
+        CatalogReader sr = query.getCatalogReader(false).withLocus();
         Member m =
             sr.getMemberByUniqueName(
                 IdImpl.toList("Time", "1997", "Q2", "5"), true);
@@ -689,7 +688,7 @@ class ParameterTest {
         assertEquals("P", parameters[2].getName());
         assertEquals("Q", parameters[3].getName());
         final Member member =
-            query.getSchemaReader(true).getMemberByUniqueName(
+            query.getCatalogReader(true).getMemberByUniqueName(
             		IdImpl.toList("Gender", "M"), true);
         parameters[2].setValue(member);
         assertEqualsVerbose(
@@ -891,9 +890,9 @@ class ParameterTest {
         // parameter once you've set it -- even by setting it to null.)
         assertAssignParameter(connection, para, false, null, null);
 
-        SchemaReader sr =
+        CatalogReader sr =
                 connection
-                .parseQuery("select from [Sales]").getSchemaReader(true)
+                .parseQuery("select from [Sales]").getCatalogReader(true)
                 .withLocus();
 
         // Member of wrong hierarchy.
@@ -991,9 +990,9 @@ class ParameterTest {
             "MDX object '[Customers].[Canada].[BC].[Bear City]' not found in cube 'Sales'");
 
         List<Member> list;
-        SchemaReader sr =
+        CatalogReader sr =
                 connection
-                .parseQuery("select from [Sales]").getSchemaReader(true)
+                .parseQuery("select from [Sales]").getCatalogReader(true)
                 .withLocus();
 
         // Empty list is OK.
@@ -1140,7 +1139,7 @@ class ParameterTest {
                 + " Parameter(\"Foo\", [Time], {}, \"Foo\") on 1\n"
                 + "from [Sales]";
             Query query = connection.parseQuery(mdx);
-            SchemaReader sr = query.getSchemaReader(false);
+            CatalogReader sr = query.getCatalogReader(false);
             Member m1 =
                 sr.getMemberByUniqueName(
                     IdImpl.toList("Time", "1997", "Q2", "5"), true);
@@ -1253,7 +1252,7 @@ class ParameterTest {
             }
 
             @Override
-            protected List<? extends ParameterMapping> schemaParameters(SchemaMapping schema) {
+            protected List<? extends ParameterMapping> schemaParameters(CatalogMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
                 result.addAll(super.schemaParameters(schema));
                 result.add(ParameterMappingImpl.builder()
@@ -1290,7 +1289,7 @@ class ParameterTest {
                 super(catalog);
             }
             @Override
-            protected List<? extends ParameterMapping> schemaParameters(SchemaMapping schema) {
+            protected List<? extends ParameterMapping> schemaParameters(CatalogMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
                 result.addAll(super.schemaParameters(schema));
                 result.add(ParameterMappingImpl.builder()
@@ -1329,7 +1328,7 @@ class ParameterTest {
         assertExprThrows(context, "Sales",
             "ParamRef(\"foo\")",
             "Duplicate parameter 'foo' in schema");
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
     }
 
     @Disabled //we not able set bad type. type is enum. this test will delete in future
@@ -1344,7 +1343,7 @@ class ParameterTest {
             }
 
             @Override
-            protected List<? extends ParameterMapping> schemaParameters(SchemaMapping schema) {
+            protected List<? extends ParameterMapping> schemaParameters(CatalogMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
                 result.addAll(super.schemaParameters(schema));
                 result.add(ParameterMappingImpl.builder()
@@ -1384,7 +1383,7 @@ class ParameterTest {
             }
 
             @Override
-            protected List<? extends ParameterMapping> schemaParameters(SchemaMapping schema) {
+            protected List<? extends ParameterMapping> schemaParameters(CatalogMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
                 result.addAll(super.schemaParameters(schema));
                 result.add(ParameterMappingImpl.builder()
@@ -1426,7 +1425,7 @@ class ParameterTest {
             }
 
             @Override
-            protected List<? extends ParameterMapping> schemaParameters(SchemaMapping schema) {
+            protected List<? extends ParameterMapping> schemaParameters(CatalogMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
                 result.addAll(super.schemaParameters(schema));
                 result.add(ParameterMappingImpl.builder()

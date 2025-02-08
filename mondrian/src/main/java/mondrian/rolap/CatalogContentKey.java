@@ -13,12 +13,12 @@
  */
 package mondrian.rolap;
 
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 
-public record SchemaContentKey(String schemaName, int schemaMappingHash) {
-	static SchemaContentKey create(SchemaMapping schemaMapping) {
+public record CatalogContentKey(String schemaName, int schemaMappingHash) {
+	static CatalogContentKey create(CatalogMapping catalogMapping) {
 
-		int hash = System.identityHashCode(schemaMapping);
-		return new SchemaContentKey(schemaMapping.getName(), hash);
+		int hash = System.identityHashCode(catalogMapping);
+		return new CatalogContentKey(catalogMapping.getName(), hash);
 	}
 }

@@ -42,10 +42,10 @@ import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
  */
 public class RolapStarRegistry {
 	private final Map<List<String>, RolapStar> stars = new HashMap<>();
-	private RolapSchema schema;
+	private RolapCatalog schema;
 	private Context context;
 
-	public RolapStarRegistry(RolapSchema schema, Context context) {
+	public RolapStarRegistry(RolapCatalog schema, Context context) {
 		this.schema = schema;
 		this.context = context;
 	}

@@ -47,7 +47,7 @@ public class DimensionsStringCalc extends AbstractProfilingNestedHierarchyCalc {
         if (name.indexOf("[") == -1) {
             name = Util.quoteMdxIdentifier(name);
         }
-        OlapElement o = evaluator.getSchemaReader().lookupCompound(evaluator.getCube(), Util.parseIdentifier(name),
+        OlapElement o = evaluator.getCatalogReader().lookupCompound(evaluator.getCube(), Util.parseIdentifier(name),
                 false, DataType.HIERARCHY);
         if (o instanceof Hierarchy hierarchy) {
             return hierarchy;

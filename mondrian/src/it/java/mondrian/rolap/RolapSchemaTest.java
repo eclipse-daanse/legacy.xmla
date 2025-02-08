@@ -10,7 +10,7 @@ package mondrian.rolap;
 
 import mondrian.olap.*;
 import mondrian.resource.MondrianResource;
-import mondrian.rolap.RolapSchema.RolapStarRegistry;
+import mondrian.rolap.RolapCatalog.RolapStarRegistry;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.agg.SegmentCacheManager;
 import mondrian.test.PropertyRestoringTestCase;
@@ -30,8 +30,8 @@ import org.eigenbase.xom.XOMUtil;
 /**
  * @author Andrey Khayrutdinov
  */
-class RolapSchemaTest extends PropertyRestoringTestCase {
-  private RolapSchema schemaSpy;
+class RolapCatalogTest extends PropertyRestoringTestCase {
+  private RolapCatalog schemaSpy;
   private static RolapStar rlStarMock = mock(RolapStar.class);
 
     @Override
@@ -46,7 +46,7 @@ class RolapSchemaTest extends PropertyRestoringTestCase {
     }
 
 
-    private RolapSchema createSchema() {
+    private RolapCatalog createSchema() {
         SchemaKey key = new SchemaKey(
             mock(SchemaContentKey.class), mock(ConnectionKey.class));
 
@@ -60,7 +60,7 @@ class RolapSchemaTest extends PropertyRestoringTestCase {
         when(rolapConnectionMock.getServer()).thenReturn(mServerMock);
         when(mServerMock.getAggregationManager()).thenReturn(aggManagerMock);
         when(aggManagerMock.getCacheMgr(rolapConnectionMock)).thenReturn(scManagerMock);
-        return new RolapSchema(key, md5, rolapConnectionMock);
+        return new RolapCatalog(key, md5, rolapConnectionMock);
     }
 
     private SchemaReader mockSchemaReader(int category, OlapElement element) {
@@ -73,7 +73,7 @@ class RolapSchemaTest extends PropertyRestoringTestCase {
         return reader;
     }
 
-    private RolapCube mockCube(RolapSchema schema) {
+    private RolapCube mockCube(RolapCatalog schema) {
         RolapCube cube = mock(RolapCube.class);
         when(cube.getSchema()).thenReturn(schema);
         return cube;
@@ -117,7 +117,7 @@ class RolapSchemaTest extends PropertyRestoringTestCase {
 
 
     void testHandleSchemaGrant() {
-        RolapSchema schema = createSchema();
+        RolapCatalog schema = createSchema();
         schema = spy(schema);
         doNothing().when(schema)
             .handleCubeGrant(
@@ -138,7 +138,7 @@ class RolapSchemaTest extends PropertyRestoringTestCase {
 
 
     void testHandleCubeGrant_ThrowsException_WhenCubeIsUnknown() {
-        RolapSchema schema = createSchema();
+        RolapCatalog schema = createSchema();
         schema = spy(schema);
         doReturn(null).when(schema).lookupCube(anyString());
 
@@ -156,7 +156,7 @@ class RolapSchemaTest extends PropertyRestoringTestCase {
     }
 
     void testHandleCubeGrant_GrantsCubeDimensionsAndHierarchies() {
-        RolapSchema schema = createSchema();
+        RolapCatalog schema = createSchema();
         schema = spy(schema);
         doNothing().when(schema)
             .handleHierarchyGrant(
@@ -211,7 +211,7 @@ class RolapSchemaTest extends PropertyRestoringTestCase {
 
     void testEmptyRolapStarRegistryCreatedForTheNewSchema()
         throws Exception {
-      RolapSchema schema = createSchema();
+      RolapCatalog schema = createSchema();
       RolapStarRegistry rolapStarRegistry = schema.getRolapStarRegistry();
       assertNotNull(rolapStarRegistry);
       assertTrue(rolapStarRegistry.getStars().isEmpty());
@@ -227,7 +227,7 @@ class RolapSchemaTest extends PropertyRestoringTestCase {
       //Expected result star
       RolapStar expectedStar = rlStarMock;
       RolapStarRegistry rolapStarRegistry =
-          getStarRegistryLinkedToRolapSchemaSpy(schemaSpy, fact);
+          getStarRegistryLinkedToRolapCatalogSpy(schemaSpy, fact);
 
 
       //Test that a new rolap star has created and put to the registry
@@ -252,7 +252,7 @@ class RolapSchemaTest extends PropertyRestoringTestCase {
       List<String> rolapStarKey = RolapUtil.makeRolapStarKey(fact);
       //Expected result star
       RolapStarRegistry rolapStarRegistry =
-          getStarRegistryLinkedToRolapSchemaSpy(schemaSpy, fact);
+          getStarRegistryLinkedToRolapCatalogSpy(schemaSpy, fact);
       //Put rolap star to the registry
       rolapStarRegistry.getOrCreateStar(fact);
 
@@ -266,7 +266,7 @@ class RolapSchemaTest extends PropertyRestoringTestCase {
           new MondrianDef.Table(wrapStrSources(getFactTable()));
       //Expected result star
       RolapStarRegistry rolapStarRegistry =
-          getStarRegistryLinkedToRolapSchemaSpy(schemaSpy, fact);
+          getStarRegistryLinkedToRolapCatalogSpy(schemaSpy, fact);
       //Put rolap star to the registry
       rolapStarRegistry.getOrCreateStar(fact);
 
@@ -274,8 +274,8 @@ class RolapSchemaTest extends PropertyRestoringTestCase {
       assertSame(rlStarMock, actualStar);
     }
 
-    private static RolapStarRegistry getStarRegistryLinkedToRolapSchemaSpy(
-        RolapSchema schemaSpy, MondrianDef.Relation fact) throws Exception
+    private static RolapStarRegistry getStarRegistryLinkedToRolapCatalogSpy(
+        RolapCatalog schemaSpy, MondrianDef.Relation fact) throws Exception
     {
       //the rolap star registry is linked to the origin rolap schema,
       //not to the schemaSpy
@@ -287,22 +287,22 @@ class RolapSchemaTest extends PropertyRestoringTestCase {
           "For testing purpose object this$0 in the inner class "
           + "should be replaced to the rolap schema spy "
           + "but this not happend",
-          replaceRolapSchemaLinkedToStarRegistry(
+          replaceRolapCatalogLinkedToStarRegistry(
               rolapStarRegistry,
               schemaSpy));
       verify(schemaSpy, times(0)).makeRolapStar(fact);
       return rolapStarRegistry;
     }
 
-     private static boolean replaceRolapSchemaLinkedToStarRegistry(
+     private static boolean replaceRolapCatalogLinkedToStarRegistry(
          RolapStarRegistry innerClass,
-         RolapSchema sSpy) throws Exception
+         RolapCatalog sSpy) throws Exception
      {
        Field field = innerClass.getClass().getDeclaredField("this$0");
        if (field != null) {
          field.setAccessible(true);
          field.set(innerClass, sSpy);
-         RolapSchema outerMocked = (RolapSchema) field.get(innerClass);
+         RolapCatalog outerMocked = (RolapCatalog) field.get(innerClass);
          return outerMocked == sSpy;
        }
        return false;
@@ -337,7 +337,7 @@ class RolapSchemaTest extends PropertyRestoringTestCase {
     {
         propSaver.set(propSaver.properties.IgnoreInvalidMembers, true);
 
-        RolapSchema schema = createSchema();
+        RolapCatalog schema = createSchema();
         RolapCube cube = mockCube(schema);
         RoleImpl role = new RoleImpl();
 

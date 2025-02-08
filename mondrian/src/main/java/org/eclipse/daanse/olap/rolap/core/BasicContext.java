@@ -50,7 +50,7 @@ import aQute.bnd.metatype.annotations.Designate;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapResultShepherd;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.server.NopEventBus;
 
@@ -106,7 +106,7 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
         this.config = configuration;
 		this.monitor = new NopEventBus();
 	
-		schemaCache=new RolapSchemaCache(this);
+		schemaCache=new RolapCatalogCache(this);
 		queryLimitSemaphore = new Semaphore(config.queryLimit());
 
 		try (Connection connection = dataSource.getConnection()) {
@@ -140,12 +140,12 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
 
 	@Override
 	public String getName() {
-		return config.name();
+		return getCatalogMapping().getName();
 	}
 
 	@Override
 	public Optional<String> getDescription() {
-		return Optional.ofNullable(config.description());
+		return Optional.ofNullable(getCatalogMapping().getName());
 	}
 
 
@@ -208,5 +208,10 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
     public MdxParserProvider getMdxParserProvider() {
         return mdxParserProvider;
     }
+
+	@Override
+	public List<String> getAccessRoles() {
+		return List.of();
+	}
 
 }

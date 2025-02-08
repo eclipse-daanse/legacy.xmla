@@ -12,7 +12,7 @@ import mondrian.rolap.RolapCubeMember;
 import mondrian.rolap.RolapEvaluator;
 import mondrian.rolap.RolapHierarchy;
 import mondrian.rolap.RolapMember;
-import mondrian.rolap.RolapSchema;
+import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.RolapStoredMeasure;
 import mondrian.rolap.RolapWritebackTable;
@@ -229,7 +229,7 @@ public class ScenarioImpl implements Scenario {
      *
      * @param schema Schema
      */
-    public void register(RolapSchema schema) {
+    public void register(RolapCatalog schema) {
         // Add a value to the [Scenario] dimension of every cube that has
         // writeback enabled.
         for (RolapCube cube : schema.getCubeList()) {
@@ -324,7 +324,7 @@ public class ScenarioImpl implements Scenario {
         }
         final String mdx = buf.toString();
         final RolapConnection connection =
-            cube.getSchema().getInternalConnection();
+            cube.getCatalog().getInternalConnection();
         final QueryImpl query = connection.parseQuery(mdx);
         final Result result = connection.execute(query);
         final Object o = result.getCell(new int[0]).getValue();
@@ -338,7 +338,7 @@ public class ScenarioImpl implements Scenario {
      * scenario. Including that member in the slicer will automatically use
      * this scenario.
      *
-     * <p>The result is not null, provided that {@link #register(RolapSchema)}
+     * <p>The result is not null, provided that {@link #register(RolapCatalog)}
      * has been called.
      *
      * @return Scenario member

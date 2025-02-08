@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
@@ -44,7 +44,7 @@ public class SiblingsCalc extends AbstractListCalc {
             return Collections.emptyList();
         }
         Member parent = member.getParentMember();
-        final SchemaReader schemaReader = evaluator.getSchemaReader();
+        final CatalogReader schemaReader = evaluator.getCatalogReader();
         if (parent == null) {
             return schemaReader.getHierarchyRootMembers(member.getHierarchy());
         } else {

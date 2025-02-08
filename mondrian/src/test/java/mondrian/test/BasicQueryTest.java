@@ -64,7 +64,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.Syntax;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -101,8 +101,8 @@ import mondrian.olap.QueryCanceledException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapConnection;
-import mondrian.rolap.RolapSchema;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalog;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.RolapUtil;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.server.ExecutionImpl;
@@ -2104,7 +2104,7 @@ public class BasicQueryTest {
 
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier16::new);
     assertQueryReturns( context.getConnectionWithDefaultRole(),mdx, result );
-    context.getSchemaCache().clear();
+    context.getCatalogCache().clear();
   }
 
   @ParameterizedTest
@@ -2160,7 +2160,7 @@ public class BasicQueryTest {
     // check that consistent with fact table
     ((TestConfig)context.getConfig()).setUseAggregates(false);
     ((TestConfig)context.getConfig()).setReadAggregates(false);
-    context.getSchemaCache().clear();
+    context.getCatalogCache().clear();
 
     assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, desiredResultWithoutAgg );
   }
@@ -2953,7 +2953,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testTopmost2(Context context) {
-    context.getSchemaCache().clear();
+    context.getCatalogCache().clear();
     assertQueryReturns( context.getConnectionWithDefaultRole(),"SELECT {Measures.[Unit Sales]} ON COLUMNS,\n" + "  CROSSJOIN(Customers.CHILDREN,\n"
         + "    TOPCOUNT(DESCENDANTS([Store].CURRENTMEMBER, [Store].[Store Name]),\n"
         + "             1, [Measures].[Unit Sales])) ON ROWS\n" + "FROM Sales",
@@ -3460,7 +3460,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void dont_testParallelMutliple(Context context) {
-	  context.getSchemaCache().clear();
+	  context.getCatalogCache().clear();
       ((TestConfig)context.getConfig()).setMaxEvalDepth(MAX_EVAL_DEPTH_VALUE);
     Connection connection = context.getConnectionWithDefaultRole();
     for ( int i = 0; i < 5; i++ ) {
@@ -3486,7 +3486,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void dont_testParallelFlushCache(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     ((TestConfig)context.getConfig()).setMaxEvalDepth(MAX_EVAL_DEPTH_VALUE);
     runParallelQueries(context.getConnectionWithDefaultRole(), 4, 6, true );
   }
@@ -3859,7 +3859,7 @@ public class BasicQueryTest {
             + "  </CalculatedMember>\n" + "</Cube>", null, null, null, null );
      */
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier20::new);
-    SchemaReader scr = context.getConnectionWithDefaultRole().getSchema().lookupCube( cubeName, true ).getSchemaReader( null );
+    CatalogReader scr = context.getConnectionWithDefaultRole().getCatalog().lookupCube( cubeName, true ).getCatalogReader( null );
     Member member = scr.getMemberByUniqueName( IdImpl.toList( "Measures", "Unit Sales" ), true );
     Object visible = member.getPropertyValue( Property.VISIBLE.name );
     assertEquals( Boolean.FALSE, visible );
@@ -4051,7 +4051,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNullMember(Context context) {
-    context.getSchemaCache().clear();
+    context.getCatalogCache().clear();
     if ( isDefaultNullMemberRepresentation() ) {
       assertQueryReturns( context.getConnectionWithDefaultRole(),"SELECT \n" + "{[Measures].[Store Cost]} ON columns, \n"
           + "{[Store Size in SQFT].[All Store Size in SQFTs].[#null]} ON rows \n" + "FROM [Sales] \n"
@@ -4185,7 +4185,7 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testInvalidMembersInQuery(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     String mdx =
         "select {[Measures].[Unit Sales]} on columns,\n" + " {[Time].[1997].[Q1], [Time].[1997].[QTOO]} on rows\n"
             + "from [Sales]";
@@ -4807,7 +4807,7 @@ public class BasicQueryTest {
                 + "aggregator=\"sum\"/>\n" + "  <Measure name=\"Warehouse Cost\" column=\"warehouse_cost\" "
                 + "aggregator=\"sum\"/>\n" + "</Cube>", null, null, null, null );
        */
-    context.getSchemaCache().clear();
+    context.getCatalogCache().clear();
     CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
     ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.BasicQueryTestModifier27(catalog, "Supply Time Error"));
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
@@ -4830,7 +4830,7 @@ public class BasicQueryTest {
             + "aggregator=\"sum\"/>\n" + "</Cube>", null, null, null, null );
        */
 
-    context.getSchemaCache().clear();
+    context.getCatalogCache().clear();
     CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
     ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.BasicQueryTestModifier27(catalog, "SUPPLY TIME"));
     String queryWithoutFilter = "select store.members on 0 from " + "DefaultMeasureTesting";
@@ -5533,7 +5533,7 @@ public class BasicQueryTest {
       for ( SqlStatisticsProviderNew statisticsProvider : statisticsProviders ) {
         long rowCount =
             statisticsProvider.getTableCardinality( context, null, null,
-                "customer", new ExecutionImpl( ( (RolapSchema) connection.getSchema() )
+                "customer", new ExecutionImpl( ( (RolapCatalog) connection.getCatalog() )
                     .getInternalConnection().getInternalStatement(), Optional.empty() ) );
         if ( statisticsProvider instanceof SqlStatisticsProviderNew ) {
           assertTrue(rowCount > 10000 && rowCount < 15000, "Row count estimate: " + rowCount + " (actual 10281)");
@@ -5541,7 +5541,7 @@ public class BasicQueryTest {
 
         long valueCount =
             statisticsProvider.getColumnCardinality(context, null, null,
-                "customer", "gender", new ExecutionImpl( ( (RolapSchema) connection.getSchema() )
+                "customer", "gender", new ExecutionImpl( ( (RolapCatalog) connection.getCatalog() )
                     .getInternalConnection().getInternalStatement(), Optional.empty() ) );
         assertTrue(statisticsProvider instanceof SqlStatisticsProviderNew ? valueCount == -1 : valueCount == 2, "Value count estimate: " + valueCount + " (actual 2)");
       }
@@ -5972,7 +5972,7 @@ public class BasicQueryTest {
             null ));
      */
 
-    context.getSchemaCache().clear();
+    context.getCatalogCache().clear();
     CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
     ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.BasicQueryTestModifier8(catalog, dialect));
 
@@ -6055,7 +6055,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCurrentMemberWithCompoundSlicerIgnoreException(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         ((TestConfig)context.getConfig()).setCurrentMemberWithCompoundSlicerAlert("OFF" );
 
     //final TestContext context = getTestContext().withFreshConnection();
@@ -6077,7 +6077,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCurrentMemberWithCompoundSlicer2(Context context) {
-    context.getSchemaCache().clear();
+    context.getCatalogCache().clear();
     String mdx =
         "with\n" + "member [Measures].[Drink Sales Previous Period] as\n"
             + "'( Time.CurrentMember.lag(1), [Product].[All Products].[Drink]," + " measures.[unit sales] )'\n"
@@ -6097,7 +6097,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCurrentMemberWithCompoundSlicer2IgnoreException(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         ((TestConfig)context.getConfig()).setCurrentMemberWithCompoundSlicerAlert("OFF");
 
     //final TestContext context = getTestContext().withFreshConnection();

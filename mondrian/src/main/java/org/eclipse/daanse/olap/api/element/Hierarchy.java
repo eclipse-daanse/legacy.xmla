@@ -15,7 +15,7 @@ package org.eclipse.daanse.olap.api.element;
 
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 
 import mondrian.olap.SystemWideProperties;
@@ -33,7 +33,7 @@ public interface Hierarchy extends OlapElement, MetaElement {
      * Returns the levels in this hierarchy.
      *
      * <p>If a hierarchy is subject to access-control, some of the levels may
-     * not be visible; use {@link SchemaReader#getHierarchyLevels} instead.
+     * not be visible; use {@link CatalogReader#getHierarchyLevels} instead.
      *
      * @post return != null
      */
@@ -42,7 +42,7 @@ public interface Hierarchy extends OlapElement, MetaElement {
      * Returns the default member of this hierarchy.
      *
      * <p>If a hierarchy is subject to access-control, the default member may
-     * not be visible, so use {@link SchemaReader#getHierarchyDefaultMember}.
+     * not be visible, so use {@link CatalogReader#getHierarchyDefaultMember}.
      *
      * @post return != null
      */

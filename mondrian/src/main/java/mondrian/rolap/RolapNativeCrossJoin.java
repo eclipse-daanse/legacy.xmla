@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.daanse.olap.api.NativeEvaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -245,7 +245,7 @@ public class RolapNativeCrossJoin extends RolapNativeSet {
                 buildConstraint(evaluator, fun, cargs, enableNativeFilter);
             // Use the just the CJ CrossJoiArg for the evaluator context,
             // which will be translated to select list in sql.
-            final SchemaReader schemaReader = evaluator.getSchemaReader();
+            final CatalogReader schemaReader = evaluator.getCatalogReader();
             return new SetEvaluator(cjArgs, schemaReader, constraint);
         } finally {
             evaluator.restore(savepoint);
@@ -319,7 +319,7 @@ public class RolapNativeCrossJoin extends RolapNativeSet {
             return;
         }
         RolapUtil.alertNonNative("NonEmptyCrossJoin", reason,
-            evaluator.getCube().getSchema().getInternalConnection().getContext()
+            evaluator.getCube().getCatalog().getInternalConnection().getContext()
                 .getConfig().alertNativeEvaluationUnsupported());
     }
 }

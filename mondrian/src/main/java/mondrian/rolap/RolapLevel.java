@@ -23,7 +23,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -599,13 +599,13 @@ public class RolapLevel extends LevelBase {
         }
     }
 
-    public OlapElement lookupChild(SchemaReader schemaReader, Segment name) {
+    public OlapElement lookupChild(CatalogReader schemaReader, Segment name) {
         return lookupChild(schemaReader, name, MatchType.EXACT);
     }
 
     @Override
 	public OlapElement lookupChild(
-            SchemaReader schemaReader, Segment name, MatchType matchType)
+            CatalogReader schemaReader, Segment name, MatchType matchType)
     {
         if (name instanceof IdImpl.KeySegment keySegment) {
             List<Comparable> keyValues = new ArrayList<>();

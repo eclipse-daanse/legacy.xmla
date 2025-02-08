@@ -25,7 +25,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import mondrian.rolap.BitKey;
-import mondrian.rolap.RolapSchema;
+import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.StarColumnPredicate;
 import mondrian.rolap.StarPredicate;
@@ -135,9 +135,9 @@ class GroupingSetsListTest {
     RolapStar mock = mock(RolapStar.class);
 
     RolapStar.Table tableMock = mock(RolapStar.Table.class);
-    RolapSchema schemaMock = mock(RolapSchema.class);
+    RolapCatalog schemaMock = mock(RolapCatalog.class);
     ByteString md5 = new ByteString("test schema".getBytes());
-    when(mock.getSchema()).thenReturn(schemaMock);
+    when(mock.getCatalog()).thenReturn(schemaMock);
     when(schemaMock.getChecksum()).thenReturn(md5);
     when(mock.getFactTable()).thenReturn(tableMock);
     when(tableMock.getAlias()).thenReturn("Table Mock");

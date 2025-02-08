@@ -29,7 +29,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import mondrian.enums.DatabaseProduct;
 import mondrian.olap.SystemWideProperties;
 import mondrian.rolap.BatchTestCase;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 
 /**
@@ -82,7 +82,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-      context.getSchemaCache().clear();
+      context.getCatalogCache().clear();
       CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
       ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1KE(catalog, colName));
 
@@ -130,7 +130,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         context.getSchemaCache().clear();       
+         context.getCatalogCache().clear();       
          CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1NE(catalog, colName));
          assertQuerySql(
@@ -180,7 +180,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         context.getSchemaCache().clear();
+         context.getCatalogCache().clear();
          CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1CE(catalog, colName));
          assertQuerySql(
@@ -230,7 +230,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         context.getSchemaCache().clear();
+         context.getCatalogCache().clear();
          CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1OE(catalog, colName));         
          assertQuerySql(
@@ -292,7 +292,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         context.getSchemaCache().clear();
+         context.getCatalogCache().clear();
          CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier2(catalog, colName));         
          assertQuerySql(
@@ -354,7 +354,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         context.getSchemaCache().clear();
+         context.getCatalogCache().clear();
          CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier3(catalog, colName));
          assertQuerySql(
@@ -403,7 +403,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1ME(catalog, colName));
 

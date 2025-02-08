@@ -13,8 +13,26 @@
  */
 package org.eclipse.daanse.olap.xmla.bridge.discover;
 
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaCubesResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaDimensionsResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaHierarchiesResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaKpisResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaLevelsResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaMeasureGroupDimensionsResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaMeasureGroupsResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaMeasuresResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaMembersResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaPropertiesResponseRow;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaPropertiesResponseRowCell;
+import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaSetsResponseRow;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
 import org.eclipse.daanse.olap.action.api.ActionService;
-import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;
@@ -57,25 +75,6 @@ import org.eclipse.daanse.xmla.api.discover.mdschema.properties.MdSchemaProperti
 import org.eclipse.daanse.xmla.api.discover.mdschema.sets.MdSchemaSetsRequest;
 import org.eclipse.daanse.xmla.api.discover.mdschema.sets.MdSchemaSetsResponseRow;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaCubesResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaDimensionsResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaFunctionsResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaHierarchiesResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaKpisResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaLevelsResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaMeasureGroupDimensionsResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaMeasureGroupsResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaMeasuresResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaMembersResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaPropertiesResponseRow;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaPropertiesResponseRowCell;
-import static org.eclipse.daanse.olap.xmla.bridge.discover.Utils.getMdSchemaSetsResponseRow;
-
 public class MDSchemaDiscoverService {
 
     private ContextListSupplyer contextsListSupplyer;
@@ -110,10 +109,10 @@ public class MDSchemaDiscoverService {
             }
         }
         if (catalogName != null) {
-            Optional<Context> oContext = contextsListSupplyer.tryGetFirstByName(catalogName);
-            if (oContext.isPresent()) {
-                Context context = oContext.get();
-                result.addAll(actionService.getResponses(List.of(context), schemaName,
+            Optional<Catalog> oCatalog = contextsListSupplyer.tryGetFirstByName(catalogName, userPrincipal.roles());
+            if (oCatalog.isPresent()) {
+            	Catalog catalog = oCatalog.get();
+                result.addAll(actionService.getResponses(List.of(catalog), schemaName,
                     cubeName,
                     actionName,
                     actionType,
@@ -123,7 +122,7 @@ public class MDSchemaDiscoverService {
                     cubeSource,metaData,userPrincipal));
             }
         } else {
-            result.addAll(actionService.getResponses(contextsListSupplyer.get(), schemaName,
+            result.addAll(actionService.getResponses(contextsListSupplyer.get(userPrincipal.roles()), schemaName,
                 cubeName,
                 actionName,
                 actionType,
@@ -144,20 +143,20 @@ public class MDSchemaDiscoverService {
         List<MdSchemaCubesResponseRow> result = new ArrayList<>();
 
       //??????????????????
-        Optional<String> oCatalog=  request.properties().catalog();
-        if(oCatalog.isPresent()) {
-        	catalogName= oCatalog.get();
+        Optional<String> oCatalogName=  request.properties().catalog();
+        if(oCatalogName.isPresent()) {
+        	catalogName= oCatalogName.get();
         }
 
         if (catalogName != null) {
-            Optional<Context> oContext = contextsListSupplyer.tryGetFirstByName(catalogName);
-            if (oContext.isPresent()) {
-                Context context = oContext.get();
-                result.addAll(getMdSchemaCubesResponseRow(context, schemaName, cubeName, baseCubeName, cubeSource, metaData, userPrincipal));
+            Optional<Catalog> oCatalog = contextsListSupplyer.tryGetFirstByName(catalogName,userPrincipal.roles());
+            if (oCatalog.isPresent()) {
+            	Catalog catalog = oCatalog.get();
+                result.addAll(getMdSchemaCubesResponseRow(catalog, schemaName, cubeName, baseCubeName, cubeSource, metaData, userPrincipal));
             }
         } else {        	//TODO: open Connection here and delegate to row.
 
-        	result.addAll(contextsListSupplyer.get().stream().map(c ->
+        	result.addAll(contextsListSupplyer.get(userPrincipal.roles()).stream().map(c ->
                 getMdSchemaCubesResponseRow(c, schemaName, cubeName, baseCubeName, cubeSource, metaData, userPrincipal)
             ).flatMap(Collection::stream).toList());
         }
@@ -179,15 +178,15 @@ public class MDSchemaDiscoverService {
         	oCatalogName = request.properties().catalog();
         }
         if (oCatalogName.isPresent()) {
-            Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
-            if (oContext.isPresent()) {
-                Context context = oContext.get();
-                result.addAll(getMdSchemaDimensionsResponseRow(context, oSchemaName, oCubeName, oDimensionName,
+            Optional<Catalog> oCatalog = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
+            if (oCatalog.isPresent()) {
+            	Catalog catalog = oCatalog.get();
+                result.addAll(getMdSchemaDimensionsResponseRow(catalog, oSchemaName, oCubeName, oDimensionName,
                     oDimensionUniqueName,
                     cubeSource, oDimensionVisibility, deep, metaData, userPrincipal));
             }
         } else {
-            result.addAll(contextsListSupplyer.get().stream()
+            result.addAll(contextsListSupplyer.get(userPrincipal.roles()).stream()
                 .map(c -> getMdSchemaDimensionsResponseRow(c, oSchemaName, oCubeName, oDimensionName,
                     oDimensionUniqueName,
                     cubeSource, oDimensionVisibility, deep, metaData, userPrincipal))
@@ -200,8 +199,8 @@ public class MDSchemaDiscoverService {
         Optional<String> oLibraryName = request.restrictions().libraryName();
         Optional<InterfaceNameEnum> oInterfaceName = request.restrictions().interfaceName();
         Optional<OriginEnum> oOrigin = request.restrictions().origin();
-        return contextsListSupplyer.get().stream()
-            .map(c -> getMdSchemaFunctionsResponseRow(c, oLibraryName, oInterfaceName, oOrigin,metaData,userPrincipal))
+        return contextsListSupplyer.getContexts().stream()
+            .map(c -> Utils.getMdSchemaFunctionsResponseRow(c, oLibraryName, oInterfaceName, oOrigin,metaData,userPrincipal))
             .flatMap(Collection::stream).toList();
 
     }
@@ -230,15 +229,15 @@ public class MDSchemaDiscoverService {
         }
 
         if (oCatalogName.isPresent()) {
-            Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
-            if (oContext.isPresent()) {
-                Context context = oContext.get();
-                result.addAll(getMdSchemaHierarchiesResponseRow(context, oSchemaName, oCubeName, oCubeSource,
+            Optional<Catalog> oCatalog= oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
+            if (oCatalog.isPresent()) {
+                Catalog catalog = oCatalog.get();
+                result.addAll(getMdSchemaHierarchiesResponseRow(catalog, oSchemaName, oCubeName, oCubeSource,
                     oDimensionUniqueName,
                     oHierarchyName, oHierarchyUniqueName, oHierarchyVisibility, oHierarchyOrigin, deep, metaData, userPrincipal));
             }
         } else {
-            result.addAll(contextsListSupplyer.get().stream()
+            result.addAll(contextsListSupplyer.get(userPrincipal.roles()).stream()
                 .map(c -> getMdSchemaHierarchiesResponseRow(c, oSchemaName, oCubeName, oCubeSource,
                     oDimensionUniqueName,
                     oHierarchyName, oHierarchyUniqueName, oHierarchyVisibility, oHierarchyOrigin, deep, metaData, userPrincipal))
@@ -259,13 +258,13 @@ public class MDSchemaDiscoverService {
             oCatalogName = request.properties().catalog();
         }
         if (oCatalogName.isPresent()) {
-            Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
-            if (oContext.isPresent()) {
-                Context context = oContext.get();
-                result.addAll(getMdSchemaKpisResponseRow(context, oSchemaName, oCubeName, oKpiName));
+            Optional<Catalog> oCatalog = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
+            if (oCatalog.isPresent()) {
+                Catalog catalog = oCatalog.get();
+                result.addAll(getMdSchemaKpisResponseRow(catalog, oSchemaName, oCubeName, oKpiName));
             }
         } else {
-            result.addAll(contextsListSupplyer.get().stream()
+            result.addAll(contextsListSupplyer.get(userPrincipal.roles()).stream()
                 .map(c -> getMdSchemaKpisResponseRow(c, oSchemaName, oCubeName, oKpiName))
                 .flatMap(Collection::stream).toList());
         }
@@ -296,14 +295,14 @@ public class MDSchemaDiscoverService {
 
 
         if (oCatalogName.isPresent()) {
-            Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
-            if (oContext.isPresent()) {
-                Context context = oContext.get();
-                result.addAll(getMdSchemaLevelsResponseRow(context, oSchemaName, oCubeName, oDimensionUniqueName,
+            Optional<Catalog> oCatalog = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
+            if (oCatalog.isPresent()) {
+            	Catalog catalog = oCatalog.get();
+                result.addAll(getMdSchemaLevelsResponseRow(catalog, oSchemaName, oCubeName, oDimensionUniqueName,
                     oHierarchyUniqueName, oLevelName, oLevelUniqueName, oLevelVisibility, metaData, userPrincipal));
             }
         } else {
-            result.addAll(contextsListSupplyer.get().stream()
+            result.addAll(contextsListSupplyer.get(userPrincipal.roles()).stream()
                 .map(c -> getMdSchemaLevelsResponseRow(c, oSchemaName, oCubeName, oDimensionUniqueName,
                     oHierarchyUniqueName, oLevelName, oLevelUniqueName, oLevelVisibility, metaData, userPrincipal))
                 .flatMap(Collection::stream).toList());
@@ -326,14 +325,14 @@ public class MDSchemaDiscoverService {
             oCatalogName = request.properties().catalog();
         }
         if (oCatalogName.isPresent()) {
-            Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
-            if (oContext.isPresent()) {
-                Context context = oContext.get();
-                result.addAll(getMdSchemaMeasureGroupDimensionsResponseRow(context, oSchemaName, oCubeName,
+            Optional<Catalog> oCatalog = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
+            if (oCatalog.isPresent()) {
+            	Catalog catalog = oCatalog.get();
+                result.addAll(getMdSchemaMeasureGroupDimensionsResponseRow(catalog, oSchemaName, oCubeName,
                     oMeasureGroupName, oDimensionUniqueName, oDimensionVisibility, metaData, userPrincipal));
             }
         } else {
-            result.addAll(contextsListSupplyer.get().stream()
+            result.addAll(contextsListSupplyer.get(userPrincipal.roles()).stream()
                 .map(c -> getMdSchemaMeasureGroupDimensionsResponseRow(c, oSchemaName, oCubeName, oMeasureGroupName,
                     oDimensionUniqueName, oDimensionVisibility, metaData, userPrincipal))
                 .flatMap(Collection::stream).toList());
@@ -352,13 +351,13 @@ public class MDSchemaDiscoverService {
             oCatalogName = request.properties().catalog();
         }
         if (oCatalogName.isPresent()) {
-            Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
-            if (oContext.isPresent()) {
-                Context context = oContext.get();
-                result.addAll(getMdSchemaMeasureGroupsResponseRow(context, oSchemaName, oCubeName, oMeasureGroupName));
+            Optional<Catalog> oCatalog = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
+            if (oCatalog.isPresent()) {
+            	Catalog catalog = oCatalog.get();
+                result.addAll(getMdSchemaMeasureGroupsResponseRow(catalog, oSchemaName, oCubeName, oMeasureGroupName));
             }
         } else {
-            result.addAll(contextsListSupplyer.get().stream()
+            result.addAll(contextsListSupplyer.get(userPrincipal.roles()).stream()
                 .map(c -> getMdSchemaMeasureGroupsResponseRow(c, oSchemaName, oCubeName, oMeasureGroupName))
                 .flatMap(Collection::stream).toList());
         }
@@ -390,16 +389,16 @@ public class MDSchemaDiscoverService {
 
 
         if (oCatalogName.isPresent()) {
-            Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
+            Optional<Catalog> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
             if (oContext.isPresent()) {
-                Context context = oContext.get();
-                result.addAll(getMdSchemaMeasuresResponseRow(context, oSchemaName, oCubeName, oMeasureName,
-                    oMeasureUniqueName, oMeasureGroupName, shouldEmitInvisibleMembers, metaData, userPrincipal));
+            	Catalog catalog = oContext.get();
+                result.addAll(getMdSchemaMeasuresResponseRow(catalog, oSchemaName, oCubeName, oMeasureName,
+                    oMeasureUniqueName, oMeasureGroupName, shouldEmitInvisibleMembers));
             }
         } else {
-            result.addAll(contextsListSupplyer.get().stream()
+            result.addAll(contextsListSupplyer.get(userPrincipal.roles()).stream()
                 .map(c -> getMdSchemaMeasuresResponseRow(c, oSchemaName, oCubeName, oMeasureName, oMeasureUniqueName,
-                    oMeasureGroupName, shouldEmitInvisibleMembers, metaData, userPrincipal))
+                    oMeasureGroupName, shouldEmitInvisibleMembers))
                 .flatMap(Collection::stream).toList());
         }
 
@@ -431,18 +430,18 @@ public class MDSchemaDiscoverService {
         
         // TODO: open Connection here and delegate to row.
         if (oCatalogName.isPresent()) {
-            Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
-            if (oContext.isPresent()) {
-                Context context = oContext.get();
-                result.addAll(getMdSchemaMembersResponseRow(context, oSchemaName, oCubeName, oDimensionUniqueName,
+            Optional<Catalog> oCatalog = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
+            if (oCatalog.isPresent()) {
+                Catalog catalog= oCatalog.get();
+                result.addAll(getMdSchemaMembersResponseRow(catalog, oSchemaName, oCubeName, oDimensionUniqueName,
                     oHierarchyUniqueName, oLevelUniqueName, oLevelNumber, oMemberName, oMemberUniqueName, oMemberType
-                    , oMemberCaption, cubeSource, treeOp, emitInvisibleMembers, metaData, userPrincipal));
+                    , oMemberCaption, cubeSource, treeOp, emitInvisibleMembers));
             }
         } else {
-            result.addAll(contextsListSupplyer.get().stream()
+            result.addAll(contextsListSupplyer.get(userPrincipal.roles()).stream()
                 .map(c -> getMdSchemaMembersResponseRow(c, oSchemaName, oCubeName, oDimensionUniqueName,
                     oHierarchyUniqueName, oLevelUniqueName, oLevelNumber, oMemberName, oMemberUniqueName, oMemberType
-                    , oMemberCaption, cubeSource, treeOp, emitInvisibleMembers, metaData, userPrincipal))
+                    , oMemberCaption, cubeSource, treeOp, emitInvisibleMembers))
                 .flatMap(Collection::stream).toList());
         }
 
@@ -477,11 +476,11 @@ public class MDSchemaDiscoverService {
         switch (propertyType) {
             case PROPERTY_MEMBER:
                 if (oCatalogName.isPresent()) {
-                    Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
-                    if (oContext.isPresent()) {
-                        Context context = oContext.get();
+                    Optional<Catalog> oCatalog = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
+                    if (oCatalog.isPresent()) {
+                    	Catalog catalog = oCatalog.get();
                         result.addAll(getMdSchemaPropertiesResponseRow(
-                            context,
+                            catalog,
                             oSchemaName,
                             oCubeName,
                             oDimensionUniqueName,
@@ -491,14 +490,12 @@ public class MDSchemaDiscoverService {
                             oPropertyName,
                             oPropertyOrigin,
                             oCubeSource,
-                            oPropertyVisibility,
-                            metaData,
-                            userPrincipal
+                            oPropertyVisibility
                         ));
                     }
                 } else {
                 	//TODO: open Connection here and delegate to row.
-                    result.addAll(contextsListSupplyer.get().stream()
+                    result.addAll(contextsListSupplyer.get(userPrincipal.roles()).stream()
                         .map(c -> getMdSchemaPropertiesResponseRow(
                             c,
                             oSchemaName,
@@ -510,9 +507,7 @@ public class MDSchemaDiscoverService {
                             oPropertyName,
                             oPropertyOrigin,
                             oCubeSource,
-                            oPropertyVisibility,
-                            metaData,
-                            userPrincipal))
+                            oPropertyVisibility))
                         .flatMap(Collection::stream).toList());
                 }
                 break;
@@ -542,15 +537,15 @@ public class MDSchemaDiscoverService {
     	//TODO: open Connection here and delegate to row.
 
         if (oCatalogName.isPresent()) {
-            Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name));
-            if (oContext.isPresent()) {
-                Context context = oContext.get();
-                result.addAll(getMdSchemaSetsResponseRow(context, oSchemaName, oCubeName, oSetName, oScope, cubeSource,
+            Optional<Catalog> oCatalog = oCatalogName.flatMap(name -> contextsListSupplyer.tryGetFirstByName(name,userPrincipal.roles()));
+            if (oCatalog.isPresent()) {
+            	Catalog catalog = oCatalog.get();
+                result.addAll(getMdSchemaSetsResponseRow(catalog, oSchemaName, oCubeName, oSetName, oScope, cubeSource,
 						oHierarchyUniqueName, metaData, userPrincipal));
             }
         } else {
         	//TODO: open Connection here and delegate to row.
-            result.addAll(contextsListSupplyer.get().stream()
+            result.addAll(contextsListSupplyer.get(userPrincipal.roles()).stream()
                 .map(c -> getMdSchemaSetsResponseRow(c, oSchemaName, oCubeName, oSetName, oScope, cubeSource,
                     oHierarchyUniqueName,
                     metaData,

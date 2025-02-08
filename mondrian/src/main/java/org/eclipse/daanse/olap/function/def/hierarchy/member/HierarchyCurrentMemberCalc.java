@@ -53,7 +53,7 @@ public class HierarchyCurrentMemberCalc extends AbstractProfilingNestedMemberCal
     public static void validateSlicerMembers(Hierarchy hierarchy, Evaluator evaluator) {
         if (evaluator instanceof RolapEvaluator rev) {
 
-            String alertValue = evaluator.getSchemaReader().getContext().getConfig()
+            String alertValue = evaluator.getCatalogReader().getContext().getConfig()
                     .currentMemberWithCompoundSlicerAlert();
 
             if (alertValue.equalsIgnoreCase("OFF")) {

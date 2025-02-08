@@ -1553,9 +1553,9 @@ public class AggStar {
                     query.toString(),
                     new LocusImpl(
                         new ExecutionImpl(
-                            star.getSchema().getInternalConnection()
+                            star.getCatalog().getInternalConnection()
                                 .getInternalStatement(),
-                            star.getSchema().getInternalConnection().getContext().getConfig().executeDurationValue()),
+                            star.getCatalog().getInternalConnection().getContext().getConfig().executeDurationValue()),
                         "AggStar.FactTable.makeNumberOfRows",
                         "Counting rows in aggregate table"));
             try {

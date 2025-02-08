@@ -83,7 +83,7 @@ class SqlStatementTest extends TestCase {
   }
 
   void testGetDialectDialectNull() {
-    RolapSchema schema = mock(RolapSchema.class);
+    RolapCatalog schema = mock(RolapCatalog.class);
     when(schema.getDialect()).thenReturn(null);
     try {
       statement.getDialect(schema);
@@ -94,7 +94,7 @@ class SqlStatementTest extends TestCase {
   }
 
   void testGetDialect() {
-    RolapSchema schema = mock(RolapSchema.class);
+    RolapCatalog schema = mock(RolapCatalog.class);
     Dialect dialect = mock(Dialect.class);
     when(schema.getDialect()).thenReturn(dialect);
     Dialect dialectReturn = statement.getDialect(schema);

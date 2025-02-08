@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -130,7 +130,7 @@ public class RolapDependencyTestingEvaluator extends RolapEvaluator {
         final Member saveMember = getContext(independentHierarchies[i]);
         final Member otherMember =
             dteRoot.chooseOtherMember(
-                saveMember, getQuery().getSchemaReader(false));
+                saveMember, getQuery().getCatalogReader(false));
         setContext(otherMember);
         final Object otherResult = calc.evaluate(this);
         if (false) {
@@ -270,7 +270,7 @@ public class RolapDependencyTestingEvaluator extends RolapEvaluator {
          */
         private Member chooseOtherMember(
             final Member save,
-            SchemaReader schemaReader)
+            CatalogReader schemaReader)
         {
             final Hierarchy hierarchy = save.getHierarchy();
             int attempt = 0;

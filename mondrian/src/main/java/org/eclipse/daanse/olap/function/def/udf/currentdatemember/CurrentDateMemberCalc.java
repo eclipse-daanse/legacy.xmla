@@ -61,7 +61,7 @@ public class CurrentDateMemberCalc extends AbstractProfilingNestedCalc<Object> {
 
         List<Segment> uniqueNames = Util.parseIdentifier(currDateStr);
         resultDateMember =
-            evaluator.getSchemaReader().getMemberByUniqueName(
+            evaluator.getCatalogReader().getMemberByUniqueName(
                 uniqueNames, false, matchType);
         if (resultDateMember != null) {
             return resultDateMember;

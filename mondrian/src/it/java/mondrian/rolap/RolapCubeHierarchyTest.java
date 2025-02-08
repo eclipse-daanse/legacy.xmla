@@ -52,7 +52,7 @@ class RolapCubeHierarchyTest extends FoodMartTestCase {
     RolapCube cubeDimension_cube = mock(RolapCube.class);
     boolean cubeDimension_cube_isVirtual = true;
     String cubeDimension_uniqueName = "TheDimUniqueName";
-    RolapSchema cubeDimension_schema = mock(RolapSchema.class);
+    RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
     RolapConnection cubeDimension_schema_connection =
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
@@ -96,7 +96,7 @@ class RolapCubeHierarchyTest extends FoodMartTestCase {
     RolapCube cubeDimension_cube = mock(RolapCube.class);
     boolean cubeDimension_cube_isVirtual = true;
     String cubeDimension_uniqueName = "TheDimUniqueName";
-    RolapSchema cubeDimension_schema = mock(RolapSchema.class);
+    RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
     RolapConnection cubeDimension_schema_connection =
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
@@ -138,7 +138,7 @@ class RolapCubeHierarchyTest extends FoodMartTestCase {
     RolapCube cubeDimension_cube = mock(RolapCube.class);
     boolean cubeDimension_cube_isVirtual = true;
     String cubeDimension_uniqueName = "TheDimUniqueName";
-    RolapSchema cubeDimension_schema = mock(RolapSchema.class);
+    RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
     RolapConnection cubeDimension_schema_connection =
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
@@ -189,7 +189,7 @@ class RolapCubeHierarchyTest extends FoodMartTestCase {
     RolapCube cubeDimension_cube = mock(RolapCube.class);
     boolean cubeDimension_cube_isVirtual = true;
     String cubeDimension_uniqueName = "TheDimUniqueName";
-    RolapSchema cubeDimension_schema = mock(RolapSchema.class);
+    RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
     RolapConnection cubeDimension_schema_connection =
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);

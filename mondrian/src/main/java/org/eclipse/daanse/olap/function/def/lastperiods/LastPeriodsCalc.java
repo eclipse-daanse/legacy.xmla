@@ -71,22 +71,22 @@ public class LastPeriodsCalc extends AbstractListCalc {
         Member startMember;
         Member endMember;
         if (indexValue > 0) {
-            startMember = evaluator.getSchemaReader().getLeadMember(member, -(indexValue - 1));
+            startMember = evaluator.getCatalogReader().getLeadMember(member, -(indexValue - 1));
             endMember = member;
             if (startMember.isNull()) {
-                List<Member> members = evaluator.getSchemaReader().getLevelMembers(member.getLevel(), false);
+                List<Member> members = evaluator.getCatalogReader().getLevelMembers(member.getLevel(), false);
                 startMember = members.get(0);
             }
         } else {
             startMember = member;
-            endMember = evaluator.getSchemaReader().getLeadMember(member, -(indexValue + 1));
+            endMember = evaluator.getCatalogReader().getLeadMember(member, -(indexValue + 1));
             if (endMember.isNull()) {
-                List<Member> members = evaluator.getSchemaReader().getLevelMembers(member.getLevel(), false);
+                List<Member> members = evaluator.getCatalogReader().getLevelMembers(member.getLevel(), false);
                 endMember = members.get(members.size() - 1);
             }
         }
 
-        evaluator.getSchemaReader().getMemberRange(member.getLevel(), startMember, endMember, list);
+        evaluator.getCatalogReader().getMemberRange(member.getLevel(), startMember, endMember, list);
         return list;
     }
 

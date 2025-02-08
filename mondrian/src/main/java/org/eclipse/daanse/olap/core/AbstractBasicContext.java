@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ResultShepherd;
-import org.eclipse.daanse.olap.api.SchemaCache;
+import org.eclipse.daanse.olap.api.CatalogCache;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
@@ -62,7 +62,7 @@ public abstract class AbstractBasicContext implements Context {
 
 	protected AggregationManager aggMgr;
 
-	protected SchemaCache schemaCache;
+	protected CatalogCache schemaCache;
 
 	
 	private boolean shutdown = false;
@@ -113,7 +113,7 @@ public abstract class AbstractBasicContext implements Context {
 			super.finalize();
 			shutdown(true);
 		} catch (Throwable t) {
-			LOGGER.info("An exception was encountered while finalizing a RolapSchema object instance.", t);
+			LOGGER.info("An exception was encountered while finalizing a RolapCatalog object instance.", t);
 		}
 	}
 
@@ -261,7 +261,7 @@ public abstract class AbstractBasicContext implements Context {
 
 
 	@Override
-	public SchemaCache getSchemaCache() {
+	public CatalogCache getCatalogCache() {
 		return schemaCache;
 	}
 }

@@ -25,8 +25,8 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCa
  * @author jhyde
  * @since Jul 20, 2006
  */
-public class RolapSchemaParameter implements Parameter, CompilableParameter {
-    private final RolapSchema schema;
+public class RolapCatalogParameter implements Parameter, CompilableParameter {
+    private final RolapCatalog catalog;
     private final String name;
     private String description;
     private String defaultExpString;
@@ -36,8 +36,8 @@ public class RolapSchemaParameter implements Parameter, CompilableParameter {
     private boolean assigned;
     private Object cachedDefaultValue;
 
-    RolapSchemaParameter(
-        RolapSchema schema,
+    RolapCatalogParameter(
+        RolapCatalog catalog,
         String name,
         String defaultExpString,
         String description,
@@ -46,19 +46,19 @@ public class RolapSchemaParameter implements Parameter, CompilableParameter {
     {
         assert defaultExpString != null;
         assert name != null;
-        assert schema != null;
+        assert catalog != null;
         assert type != null;
-        this.schema = schema;
+        this.catalog = catalog;
         this.name = name;
         this.defaultExpString = defaultExpString;
         this.description = description;
         this.type = type;
         this.modifiable = modifiable;
-        schema.parameterList.add(this);
+        catalog.parameterList.add(this);
     }
 
-    RolapSchema getSchema() {
-        return schema;
+    RolapCatalog getCatalog() {
+        return catalog;
     }
 
     @Override

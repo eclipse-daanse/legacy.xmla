@@ -39,13 +39,13 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -54,7 +54,6 @@ import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.VirtualCubeMappingImpl;
@@ -823,7 +822,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testBug1515302(Context context) {
       ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-      context.getSchemaCache().clear();
+      context.getCatalogCache().clear();
       class TestBug1515302Modifier extends PojoMappingModifier {
           public TestBug1515302Modifier(CatalogMapping catalog) {
               super(catalog);
@@ -1128,7 +1127,7 @@ class NonEmptyTest extends BatchTestCase {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testExpandNonNativeResourceLimitFailure(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
     ((TestConfig)context.getConfig()).setExpandNonNative(true);
     ((TestConfig)context.getConfig()).setEnableNativeCrossJoin(true);
@@ -1913,7 +1912,7 @@ class NonEmptyTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>" ) );
      */
-      context.getSchemaCache().clear();
+      context.getCatalogCache().clear();
       CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
       ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.NonEmptyTestModifier2(catalog,
     		  HideMemberIfType.IF_BLANK_NAME));
@@ -1951,7 +1950,7 @@ class NonEmptyTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>" ) );
      */
-      context.getSchemaCache().clear();
+      context.getCatalogCache().clear();
       CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
       ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.NonEmptyTestModifier2(catalogMapping,
     		  HideMemberIfType.IF_PARENTS_NAME));
@@ -2056,7 +2055,7 @@ class NonEmptyTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>" ) );
       */
-      context.getSchemaCache().clear();
+      context.getCatalogCache().clear();
       CatalogMapping schema = ((RolapContext) context).getCatalogMapping();
       ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.NonEmptyTestModifier2(schema,
     		  HideMemberIfType.IF_BLANK_NAME));
@@ -3633,7 +3632,7 @@ class NonEmptyTest extends BatchTestCase {
       }
       // Expected
     } finally {
-      context.getSchemaCache().clear();
+      context.getCatalogCache().clear();
       ((TestConfig)context.getConfig())
             .setAlertNativeEvaluationUnsupported("OFF");
       //propSaver.setAtLeast( rolapUtilLogger, org.apache.logging.log4j.Level.WARN );
@@ -3669,7 +3668,7 @@ class NonEmptyTest extends BatchTestCase {
     try {
       checkNotNative(context, 3, mdx );
     } finally {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         ((TestConfig)context.getConfig())
             .setAlertNativeEvaluationUnsupported("OFF");
         //propSaver.setAtLeast( rolapUtilLogger, org.apache.logging.log4j.Level.WARN );
@@ -5816,7 +5815,7 @@ class NonEmptyTest extends BatchTestCase {
               super(catalog);
           }
 
-          protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+          protected List<CatalogMapping> catalogSchemas(CatalogMapping catalog2) {
         	  MeasureGroupMappingImpl mgSales = MeasureGroupMappingImpl.builder().build();
               MeasureMappingImpl m = MeasureMappingImpl.builder()
             		  .withName("Unit Sales")
@@ -5851,7 +5850,7 @@ class NonEmptyTest extends BatchTestCase {
               mgSales.setPhysicalCube(salesCube);
               cm.setPhysicalCube(salesCube);
 
-              return List.of(SchemaMappingImpl.builder()
+              return List.of(CatalogMappingImpl.builder()
             		  .withName("FoodMart")
                       .withCubes(List.of(
                     		  salesCube,
@@ -6034,9 +6033,9 @@ class NonEmptyTest extends BatchTestCase {
   }
 
   SmartMemberReader getSmartMemberReader( Connection con, String hierName ) {
-    RolapCube cube = (RolapCube) con.getSchema().lookupCube( "Sales", true );
-    RolapSchemaReader schemaReader =
-      (RolapSchemaReader) cube.getSchemaReader();
+    RolapCube cube = (RolapCube) con.getCatalog().lookupCube( "Sales", true );
+    RolapCatalogReader schemaReader =
+      (RolapCatalogReader) cube.getCatalogReader();
     RolapHierarchy hierarchy =
       (RolapHierarchy) cube.lookupHierarchy(
         new IdImpl.NameSegmentImpl( hierName, Quoting.UNQUOTED ),
@@ -6048,9 +6047,9 @@ class NonEmptyTest extends BatchTestCase {
 
   private SmartMemberReader getSharedSmartMemberReader(
     Connection con, String hierName ) {
-    RolapCube cube = (RolapCube) con.getSchema().lookupCube( "Sales", true );
-    RolapSchemaReader schemaReader =
-      (RolapSchemaReader) cube.getSchemaReader();
+    RolapCube cube = (RolapCube) con.getCatalog().lookupCube( "Sales", true );
+    RolapCatalogReader schemaReader =
+      (RolapCatalogReader) cube.getCatalogReader();
     RolapCubeHierarchy hierarchy =
       (RolapCubeHierarchy) cube.lookupHierarchy(
         new IdImpl.NameSegmentImpl( hierName, Quoting.UNQUOTED ), false );
@@ -6400,7 +6399,7 @@ class NonEmptyTest extends BatchTestCase {
         oracleWithFactJoin, oracleWithFactJoin )
     };
 
-    context.getSchemaCache().clear();
+    context.getCatalogCache().clear();
     withSchema(context, SchemaModifiers.NonEmptyTestModifier6::new );
     //withSchema(context, schema );
 
@@ -6610,7 +6609,7 @@ class NonEmptyTest extends BatchTestCase {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNonEmptyAggregateSlicerIsNative(Context context)  {
     ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     final String mdx =
       "select NON EMPTY\n"
         + " Crossjoin([Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]\n"

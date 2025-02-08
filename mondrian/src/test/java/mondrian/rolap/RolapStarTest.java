@@ -44,7 +44,7 @@ class RolapStarTest {
 
     static class RolapStarForTests extends RolapStar {
         public RolapStarForTests(
-            final RolapSchema schema,
+            final RolapCatalog schema,
             final Context context,
             final RelationalQueryMapping fact)
         {
@@ -61,7 +61,7 @@ class RolapStarTest {
 
     RolapStar getRolapStar(Connection con, String starName) {
         RolapCube cube =
-            (RolapCube) con.getSchema().lookupCube(starName, true);
+            (RolapCube) con.getCatalog().lookupCube(starName, true);
         return cube.getStar();
     }
 
@@ -69,7 +69,7 @@ class RolapStarTest {
         RolapStar rs =  getRolapStar(connection, starName);
 
         return new RolapStarForTests(
-            rs.getSchema(),
+            rs.getCatalog(),
             rs.getContext(),
             rs.getFactTable().getRelation());
     }

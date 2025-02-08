@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -197,7 +197,7 @@ public class AggregateCalc  extends AbstractProfilingNestedUnknownCalc {
         if (!tupleList.isEmpty()) {
             for (Member member : tupleList.get(0)) {
                 final RollupPolicy policy =
-                    evaluator.getSchemaReader().getRole()
+                    evaluator.getCatalogReader().getRole()
                         .getAccessDetails(member.getHierarchy())
                         .getRollupPolicy();
                 if (policy == RollupPolicy.PARTIAL) {
@@ -228,7 +228,7 @@ public class AggregateCalc  extends AbstractProfilingNestedUnknownCalc {
         tupleList =
             optimizeChildren(
                 tupleList,
-                evaluator.getSchemaReader(),
+                evaluator.getCatalogReader(),
                 evaluator.getMeasureCube());
         if (checkSize) {
             checkIfAggregationSizeIsTooLarge(tupleList, SystemWideProperties.instance().MaxConstraints);
@@ -355,7 +355,7 @@ public class AggregateCalc  extends AbstractProfilingNestedUnknownCalc {
      */
     public static TupleList optimizeChildren(
         TupleList tuples,
-        SchemaReader reader,
+        CatalogReader reader,
         Cube baseCubeForMeasure)
     {
         Map<Member, Integer>[] membersOccurencesInTuple =
@@ -422,7 +422,7 @@ public class AggregateCalc  extends AbstractProfilingNestedUnknownCalc {
 
     private static Set<Member> optimizeMemberSet(
         Set<Member> members,
-        SchemaReader reader,
+        CatalogReader reader,
         Cube baseCubeForMeasure)
     {
         boolean didOptimize;
@@ -536,7 +536,7 @@ public class AggregateCalc  extends AbstractProfilingNestedUnknownCalc {
 
     private static int getChildCount(
         Member parentMember,
-        SchemaReader reader)
+        CatalogReader reader)
     {
         int childrenCountFromCache =
             reader.getChildrenCountFromCache(parentMember);

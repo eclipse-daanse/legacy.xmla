@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -63,7 +63,7 @@ public class AddCalculatedMembersCalc extends AbstractListCalc {
         // For each level, add the calculated members from both
         // the schema and the query
         List<Member> workingList = new ArrayList<>(memberList);
-        final SchemaReader schemaReader = evaluator.getQuery().getSchemaReader(true);
+        final CatalogReader schemaReader = evaluator.getQuery().getCatalogReader(true);
         for (Level level : levels) {
             List<Member> calcMemberList = schemaReader.getCalculatedMembers(level);
             for (Member calcMember : calcMemberList) {

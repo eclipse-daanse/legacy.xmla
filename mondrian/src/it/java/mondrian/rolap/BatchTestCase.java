@@ -848,8 +848,8 @@ public class BatchTestCase extends FoodMartTestCase {
     RolapNativeRegistry getRegistry(Connection connection) {
         RolapCube cube =
             (RolapCube) connection.getSchema().lookupCube("Sales", true);
-        RolapSchemaReader schemaReader =
-            (RolapSchemaReader) cube.getSchemaReader();
+        RolapCatalogReader schemaReader =
+            (RolapCatalogReader) cube.getSchemaReader();
         return schemaReader.getSchema().getNativeRegistry();
     }
 

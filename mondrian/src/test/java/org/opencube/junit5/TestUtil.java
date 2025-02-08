@@ -50,7 +50,7 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -124,55 +124,55 @@ public class TestUtil {
 	  }
 
 	   public static TupleList productMembersPotScrubbersPotsAndPans(
-		        SchemaReader salesCubeSchemaReader)
+		        CatalogReader salesCubeCatalogReader)
 		    {
 		        return new UnaryTupleList(Arrays.asList(
 		            member(
 		                IdImpl.toList(
 		                    "Product", "All Products", "Non-Consumable", "Household",
 		                    "Kitchen Products", "Pot Scrubbers", "Cormorant"),
-		                salesCubeSchemaReader),
+		                salesCubeCatalogReader),
 		            member(
 		                IdImpl.toList(
 		                    "Product", "All Products", "Non-Consumable", "Household",
 		                    "Kitchen Products", "Pot Scrubbers", "Denny"),
-		                salesCubeSchemaReader),
+		                salesCubeCatalogReader),
 		            member(
 		                IdImpl.toList(
 		                    "Product", "All Products", "Non-Consumable", "Household",
 		                    "Kitchen Products", "Pot Scrubbers", "Red Wing"),
-		                salesCubeSchemaReader),
+		                salesCubeCatalogReader),
 		            member(
 		                IdImpl.toList(
 		                    "Product", "All Products", "Non-Consumable", "Household",
 		                    "Kitchen Products", "Pots and Pans", "Cormorant"),
-		                salesCubeSchemaReader),
+		                salesCubeCatalogReader),
 		            member(
 		                IdImpl.toList(
 		                    "Product", "All Products", "Non-Consumable", "Household",
 		                    "Kitchen Products", "Pots and Pans", "Denny"),
-		                salesCubeSchemaReader),
+		                salesCubeCatalogReader),
 		            member(
 		                IdImpl.toList(
 		                    "Product", "All Products", "Non-Consumable", "Household",
 		                    "Kitchen Products", "Pots and Pans", "High Quality"),
-		                salesCubeSchemaReader),
+		                salesCubeCatalogReader),
 		            member(
 		                IdImpl.toList(
 		                    "Product", "All Products", "Non-Consumable", "Household",
 		                    "Kitchen Products", "Pots and Pans", "Red Wing"),
-		                salesCubeSchemaReader),
+		                salesCubeCatalogReader),
 		            member(
 		                IdImpl.toList(
 		                    "Product", "All Products", "Non-Consumable", "Household",
 		                    "Kitchen Products", "Pots and Pans", "Sunset"),
-		                salesCubeSchemaReader)));
+		                salesCubeCatalogReader)));
 		    }
 	    public static Member member(
 	            List<Segment> segmentList,
-	            SchemaReader salesCubeSchemaReader)
+	            CatalogReader salesCubeCatalogReader)
 	        {
-	            return salesCubeSchemaReader.getMemberByUniqueName(segmentList, true);
+	            return salesCubeCatalogReader.getMemberByUniqueName(segmentList, true);
 	        }
 	    /**
 	     * Executes a query with a given expression on an axis, and asserts that it throws an error which matches a particular
@@ -573,7 +573,7 @@ public class TestUtil {
 		//		"true");
 		final Connection connection = context.getConnectionWithDefaultRole();
 				//withProperties( propertyList ).getConnection();
-		return connection.getSchema().getWarnings();
+		return connection.getCatalog().getWarnings();
 	}
 
 	/**
@@ -838,7 +838,7 @@ public class TestUtil {
 	    }
 
 	public static Cube cubeByName(Connection connection, String cubeName) {
-        SchemaReader reader = connection.getSchemaReader().withLocus();
+        CatalogReader reader = connection.getCatalogReader().withLocus();
 
         Cube[] cubes = reader.getCubes();
         return cubeByName(cubeName, cubes);
@@ -1226,7 +1226,7 @@ public class TestUtil {
 	}
 
 	public static void withSchema(Context context, Function<CatalogMapping, org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier> f) {
-          context.getSchemaCache().clear();
+          context.getCatalogCache().clear();
           CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
           ((TestContext)context).setCatalogMappingSupplier(f.apply(catalogMapping));
     }
@@ -1674,7 +1674,7 @@ public class TestUtil {
 		// Flush the entire cache.
 		CacheControl.CellRegion measuresRegion = null;
 		for (Cube cube
-				: connection.getSchema().getCubes())
+				: connection.getCatalog().getCubes())
 		{
 			measuresRegion =
 					cacheControl.createMeasuresRegion(cube);
@@ -1699,7 +1699,7 @@ public class TestUtil {
 		// Clear the cache for the Sales cube, so the query runs as if
 		// for the first time. (TODO: Cleaner way to do this.)
 		final Cube salesCube =
-				connection.getSchema().lookupCube(cube.getName(), true);
+				connection.getCatalog().lookupCube(cube.getName(), true);
 		RolapHierarchy hierarchy =
 				(RolapHierarchy) salesCube.lookupHierarchy(
 						new IdImpl.NameSegmentImpl("Store", Quoting.UNQUOTED),

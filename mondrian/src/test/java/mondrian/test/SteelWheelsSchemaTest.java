@@ -23,7 +23,7 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.access.Role;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.junit.jupiter.api.AfterEach;
@@ -38,7 +38,7 @@ import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
 
 import mondrian.olap.RoleImpl;
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.util.Bug;
 
@@ -968,7 +968,7 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         final String mdx =
             "With\n"
             + "Member [Measures].[*ZERO] as '0', SOLVE_ORDER=0\n"
@@ -1254,7 +1254,7 @@ class SteelWheelsSchemaTest {
 
         withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier7::new);
         Connection connection = context.getConnectionWithDefaultRole();
-        Schema schema = connection.getSchema();
+        Catalog schema = connection.getCatalog();
 
 
         // get roles
@@ -2155,6 +2155,6 @@ class SteelWheelsSchemaTest {
             + "Row #3: 96\n"
             + "Row #3: 70,488.44\n"
             + "Row #3: \n");
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
     }
 }

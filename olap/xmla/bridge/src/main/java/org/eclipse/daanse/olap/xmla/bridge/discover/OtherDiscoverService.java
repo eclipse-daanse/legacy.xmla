@@ -22,14 +22,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
-import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.olap.xmla.bridge.ContextGroupXmlaServiceConfig;
 import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.xmla.api.PropertyDefinition;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;
@@ -142,14 +139,12 @@ public class OtherDiscoverService {
 
     public List<DiscoverDataSourcesResponseRow> dataSources(DiscoverDataSourcesRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         List<DiscoverDataSourcesResponseRow> result = new ArrayList<>();
-        List<Context> contexts = this.contextsListSupplyer.get();
-        for (Context context : contexts) {
-            DataSource dataSource = context.getDataSource();
+        List<Catalog> catalogs = this.contextsListSupplyer.get(userPrincipal.roles());
+        for (Catalog catalog : catalogs) {
 
             result.add(new DiscoverDataSourcesResponseRowR(
-                context.getName(),
-                context.getDescription(),
-                //TODO
+            		"DataSource of "+catalog.getName(),
+                Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),
                 null,
@@ -161,7 +156,7 @@ public class OtherDiscoverService {
     }
 
     public List<DiscoverEnumeratorsResponseRow> discoverEnumerators(DiscoverEnumeratorsRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
-        List<DiscoverEnumeratorsResponseRow> result = new ArrayList();
+        List<DiscoverEnumeratorsResponseRow> result = new ArrayList<>();
         for (Class c : enums) {
             String enumDescription = getEnumDescription(c.getSimpleName());
 
@@ -235,19 +230,20 @@ public class OtherDiscoverService {
             }
             String propertyValue = "";
             if (propertyDefinition.name().equals(PropertyDefinition.Catalog.name())) {
-                List<String> catalogs = new ArrayList<>();
-                for (Context context : contextsListSupplyer.get()) {
-                    catalogs.add(((RolapContext) context).getCatalogMapping().getName());
-                }
                 if (properetyCatalog.isPresent()) {
-                    for (String catalog : catalogs) {
-                        if (catalog.equals(properetyCatalog.get())) {
-                            propertyValue = catalog;
-                            break;
-                        }
-                    }
-                } else if (!catalogs.isEmpty()) {
-                    propertyValue = catalogs.get(0);
+                	Optional<Context> oContext= contextsListSupplyer.getContext(properetyCatalog.get());
+                	if(oContext.isPresent()) {
+                		propertyValue=oContext.get().getName();
+                	}else {
+                    	propertyValue=contextsListSupplyer.getContexts().getFirst().getName();
+
+					}
+                	
+                } else {
+
+                	propertyValue=contextsListSupplyer.getContexts().getFirst().getName();
+                	//                	if (!catalogs.isEmpty()) {
+//                    propertyValue = catalogs.get(0);
                 }
             } else {
                 propertyValue = propertyDefinition.getValue();
@@ -304,10 +300,11 @@ public class OtherDiscoverService {
         List<DiscoverXmlMetaDataResponseRow> result = new ArrayList<>();
         Optional<String> databaseId = request.restrictions().databaseId();
         if (databaseId.isPresent()) {
-            Optional<Context> oContext = contextsListSupplyer.tryGetFirstByName(databaseId.get());
-            if (oContext.isPresent()) {
-                Context context = oContext.get();
-                for (SchemaMapping schema : ((RolapContext) context).getCatalogMapping().getSchemas()) {
+            Optional<Catalog> oCatalog = contextsListSupplyer.tryGetFirstByName(databaseId.get(),userPrincipal.roles());
+            if (oCatalog.isPresent()) {
+                Catalog catalog= oCatalog.get();
+                
+                if(catalog!=null) {
                     //SerializerModifier serializerModifier = new SerializerModifier(schema);
                     //try {
                         result.add(new DiscoverXmlMetaDataResponseRowR(""));

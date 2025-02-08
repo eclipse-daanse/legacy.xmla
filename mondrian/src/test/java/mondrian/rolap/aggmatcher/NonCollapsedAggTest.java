@@ -23,7 +23,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MeasureGroupMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
@@ -429,7 +428,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 //## ColumnNames: line_id,unit_sales
                 //## ColumnTypes: INTEGER,INTEGER
             	ColumnImpl lineIdFooFact = ColumnImpl.builder().withName("line_id").withType("INTEGER").build();

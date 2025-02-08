@@ -32,7 +32,7 @@ import java.util.function.Predicate;
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -297,7 +297,7 @@ public class SqlConstraintUtils {
 
   public static Map<RolapLevel, List<RolapMember>> getRolesConstraints( Evaluator evaluator ) {
     Member[] mm = evaluator.getMembers();
-    SchemaReader schemaReader = evaluator.getSchemaReader();
+    CatalogReader schemaReader = evaluator.getCatalogReader();
     Map<RolapLevel, List<RolapMember>> roleConstraints = new LinkedHashMap<>( mm.length );
     for ( Member member : mm ) {
       boolean isRolesMember =
@@ -510,7 +510,7 @@ public class SqlConstraintUtils {
     }
   }
 
-  public static Map<Level, List<RolapMember>> getRoleConstraintMembers( SchemaReader schemaReader, Member[] members ) {
+  public static Map<Level, List<RolapMember>> getRoleConstraintMembers( CatalogReader schemaReader, Member[] members ) {
     // LinkedHashMap keeps insert-order
     Map<Level, List<RolapMember>> roleMembers = new LinkedHashMap<>();
     Role role = schemaReader.getRole();
@@ -544,7 +544,7 @@ public class SqlConstraintUtils {
   private static void addRoleAccessConstraints( SqlQuery sqlQuery, AggStar aggStar, boolean restrictMemberTypes,
       RolapCube baseCube, Evaluator evaluator ) {
     Map<Level, List<RolapMember>> roleMembers =
-        getRoleConstraintMembers( evaluator.getSchemaReader(), evaluator.getMembers() );
+        getRoleConstraintMembers( evaluator.getCatalogReader(), evaluator.getMembers() );
     for ( Map.Entry<Level, List<RolapMember>> entry : roleMembers.entrySet() ) {
       final String where =
           generateSingleValueInExpr( sqlQuery, baseCube, aggStar, entry.getValue(), (RolapCubeLevel) entry.getKey(),

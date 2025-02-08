@@ -24,7 +24,6 @@ import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
@@ -213,7 +212,7 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
     .build();
 
     @Override
-    protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+    protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
         List<CubeMapping> result = new ArrayList<>();
         result.addAll(super.schemaCubes(schema));
         result.add(mondrian2225);
@@ -242,7 +241,7 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
 
      */
 
-    protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+    protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
         List<AccessRoleMapping> result = new ArrayList<>();
         result.addAll(super.schemaAccessRoles(schema));
         result.add(AccessRoleMappingImpl.builder()

@@ -49,8 +49,8 @@ import org.slf4j.LoggerFactory;
 import mondrian.olap.Util;
 import mondrian.rolap.CacheControlImpl;
 import mondrian.rolap.CacheKey;
-import mondrian.rolap.RolapSchema;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalog;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.RolapStoredMeasure;
 import mondrian.rolap.RolapUtil;
@@ -141,9 +141,9 @@ import mondrian.util.Pair;
  *
  * <p>12. Remove methods: RolapCube.checkAggregateModifications,
  * RolapStar.checkAggregateModifications,
- * RolapSchema.checkAggregateModifications,
+ * RolapCatalog.checkAggregateModifications,
  * RolapStar.pushAggregateModificationsToGlobalCache,
- * RolapSchema.pushAggregateModificationsToGlobalCache,
+ * RolapCatalog.pushAggregateModificationsToGlobalCache,
  * RolapCube.pushAggregateModificationsToGlobalCache.</p>
  *
  * <p>13. Add new implementations of Future: CompletedFuture and SlotFuture.</p>
@@ -974,8 +974,8 @@ public class SegmentCacheManager {
           cacheMgr.indexRegistry.getIndex( star );
         headers.addAll(
           index.intersectRegion(
-            member.getDimension().getSchema().getName(),
-            ( (RolapSchema) member.getDimension().getSchema() )
+            member.getDimension().getCatalog().getName(),
+            ( (RolapCatalog) member.getDimension().getCatalog() )
               .getChecksum(),
             storedMeasure.getCube().getName(),
             storedMeasure.getName(),
@@ -1603,13 +1603,13 @@ public class SegmentCacheManager {
 	public PeekResponse call() {
       final RolapStar.Measure measure = request.getMeasure();
       final RolapStar star = measure.getStar();
-      final RolapSchema schema = star.getSchema();
+      final RolapCatalog catalog = star.getCatalog();
       final AggregationKey key = new AggregationKey( request );
       final List<SegmentHeader> headers =
         indexRegistry.getIndex( star )
           .locate(
-            schema.getName(),
-            schema.getChecksum(),
+            catalog.getName(),
+            catalog.getChecksum(),
             measure.getCubeName(),
             measure.getName(),
             star.getFactTable().getAlias(),
@@ -1676,16 +1676,16 @@ public class SegmentCacheManager {
         "SegmentCacheManager.SegmentCacheIndexRegistry.getIndex:"
           + System.identityHashCode( star ) );
 
-      if ( !indexes.containsKey( star.getSchema().getKey() ) ) {
+      if ( !indexes.containsKey( star.getCatalog().getKey() ) ) {
         final SegmentCacheIndexImpl index =
           new SegmentCacheIndexImpl( thread );
         LOGGER.trace(
           "SegmentCacheManager.SegmentCacheIndexRegistry.getIndex:Creating New Index {}"
             + System.identityHashCode( index ) );
-        indexes.put( star.getSchema().getKey(), index );
+        indexes.put( star.getCatalog().getKey(), index );
       }
       final SegmentCacheIndex index =
-        indexes.get( star.getSchema().getKey() );
+        indexes.get( star.getCatalog().getKey() );
       LOGGER.trace(
         "SegmentCacheManager.SegmentCacheIndexRegistry.getIndex:Returning Index {}",
           System.identityHashCode( index ) );
@@ -1716,7 +1716,7 @@ public class SegmentCacheManager {
   }
 
   RolapStar getStar(SegmentHeader header ) {
-    for ( RolapSchema schema : ((RolapSchemaCache)context.getSchemaCache()).getRolapSchemas() ) {
+    for ( RolapCatalog schema : ((RolapCatalogCache)context.getCatalogCache()).getRolapCatalogs() ) {
       if ( !schema.getChecksum().equals( header.schemaChecksum ) ) {
         continue;
       }

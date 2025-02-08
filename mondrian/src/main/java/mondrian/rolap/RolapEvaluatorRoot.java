@@ -20,7 +20,7 @@ import java.util.Set;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -47,7 +47,7 @@ class RolapEvaluatorRoot {
   final Map<Object, Object> tmpExpResultCache = new HashMap<>();
   final RolapCube cube;
   final Connection connection;
-  final SchemaReader schemaReader;
+  final CatalogReader schemaReader;
   final Map<CompiledExpKey, Calc> compiledExps = new HashMap<>();
   final Statement statement;
   final Query query;
@@ -99,7 +99,7 @@ public RolapEvaluatorRoot( Statement statement ) {
     this.solveOrderMode =
         Util.lookup( SolveOrderMode.class, connection.getContext().getConfig().solveOrderMode().toUpperCase(),
             SolveOrderMode.ABSOLUTE );
-    this.schemaReader = query.getSchemaReader( true );
+    this.schemaReader = query.getCatalogReader( true );
     this.queryStartTime = new Date();
     List<RolapMember> list = new ArrayList<>();
     nonAllPositions = new int[cube.getHierarchies().size()];

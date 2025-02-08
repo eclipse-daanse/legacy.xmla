@@ -32,7 +32,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.NamedSetMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberPropertyMappingImpl;
@@ -874,7 +873,7 @@ class NamedSetTest {
                 super(catalog);
             }
             
-            protected List<? extends NamedSetMapping> schemaNamedSets(SchemaMapping schema) {
+            protected List<? extends NamedSetMapping> schemaNamedSets(CatalogMapping schema) {
                 List<NamedSetMapping> result = new ArrayList<>();
                 result.addAll(super.schemaNamedSets(schema));
                 result.add(NamedSetMappingImpl.builder()
@@ -1324,7 +1323,7 @@ class NamedSetTest {
         public NamedSetsInCubeModifier(CatalogMapping catalogMapping) {
             super(catalogMapping);
         }
-        protected List<? extends NamedSetMapping> schemaNamedSets(SchemaMapping schema) {
+        protected List<? extends NamedSetMapping> schemaNamedSets(CatalogMapping schema) {
             List<NamedSetMapping> result = new ArrayList<>();
             result.addAll(super.schemaNamedSets(schema));
             result.add(NamedSetMappingImpl.builder()
@@ -1348,7 +1347,7 @@ class NamedSetTest {
             super(catalogMapping);
         }
         
-        protected List<? extends NamedSetMapping> schemaNamedSets(SchemaMapping schema) {
+        protected List<? extends NamedSetMapping> schemaNamedSets(CatalogMapping schema) {
             List<NamedSetMapping> result = new ArrayList<>();
             result.addAll(super.schemaNamedSets(schema));
             result.add(NamedSetMappingImpl.builder()

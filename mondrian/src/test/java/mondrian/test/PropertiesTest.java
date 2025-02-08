@@ -19,7 +19,7 @@ import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -54,8 +54,8 @@ class PropertiesTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMandatoryMemberProperties(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        Cube salesCube = connection.getSchema().lookupCube("Sales", true);
-        SchemaReader scr = salesCube.getSchemaReader(null).withLocus();
+        Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        CatalogReader scr = salesCube.getCatalogReader(null).withLocus();
         Member member =
             scr.getMemberByUniqueName(
                 IdImpl.toList("Customers", "All Customers", "USA", "CA"),
@@ -74,7 +74,7 @@ class PropertiesTest {
 //        assertEquals(getConnection().getCatalogName(), stringPropValue);
 
         stringPropValue = (String)member.getPropertyValue("SCHEMA_NAME");
-        assertEquals(connection.getSchema().getName(), stringPropValue);
+        assertEquals(connection.getCatalog().getName(), stringPropValue);
 
         // todo:
 //        stringPropValue = (String)member.getPropertyValue("CUBE_NAME");
@@ -195,8 +195,8 @@ class PropertiesTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGetChildCardinalityPropertyValue(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        Cube salesCube = connection.getSchema().lookupCube("Sales", true);
-        SchemaReader scr = salesCube.getSchemaReader(null);
+        Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        CatalogReader scr = salesCube.getCatalogReader(null);
         Member memberForCardinalityTest =
             scr.getMemberByUniqueName(
                 IdImpl.toList("Marital Status", "All Marital Status"),
@@ -344,7 +344,7 @@ class PropertiesTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPropertyDescription(Context context) throws Exception {
         withSchema(context, SchemaModifiers.PropertiesTestModifier::new);
-        Cube[] cubes = context.getConnectionWithDefaultRole().getSchema()
+        Cube[] cubes = context.getConnectionWithDefaultRole().getCatalog()
             .getCubes();
         Optional<Cube> optionalCube = Arrays.stream(cubes).filter(c -> c.getName().equals("Foo")).findFirst();
         Cube cube = optionalCube.orElseThrow(() -> new RuntimeException("Cube with name Foo absent"));

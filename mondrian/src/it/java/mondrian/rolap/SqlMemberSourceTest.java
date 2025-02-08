@@ -114,12 +114,12 @@ class SqlMemberSourceTest extends FoodMartTestCase {
 
     SchemaKey sKeyMock = mock( SchemaKey.class );
     RolapConnection rlConnectionMock = mock( RolapConnection.class );
-    RolapSchema rlSchema = new RolapSchema( sKeyMock, MD5_BYTE_STRING, rlConnectionMock );
+    RolapCatalog rlSchema = new RolapCatalog( sKeyMock, MD5_BYTE_STRING, rlConnectionMock );
     RolapHierarchy rlHierarchyStoreMock = mock( RolapHierarchy.class );
 
     when( rlConnectionMock.getDataSource() ).thenReturn( dataSourceMock );
 
-    when( rlHierarchyStoreMock.getRolapSchema() ).thenReturn( rlSchema );
+    when( rlHierarchyStoreMock.getRolapCatalog() ).thenReturn( rlSchema );
     when( rlHierarchyStoreMock.getUniqueName() ).thenReturn( "[Store]" );
     when( rlHierarchyStoreMock.getUniqueTable() ).thenReturn( relationMock );
     when( rlHierarchyStoreMock.getDimension() ).thenReturn( dimMock );

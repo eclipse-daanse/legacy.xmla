@@ -30,7 +30,7 @@ import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
@@ -95,7 +95,7 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
@@ -143,7 +143,7 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
@@ -202,7 +202,7 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
@@ -263,7 +263,7 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
@@ -315,7 +315,7 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
@@ -386,7 +386,7 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
@@ -524,7 +524,7 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             	PhysicalCubeMappingImpl warehouseDefaultUSA;
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
@@ -695,7 +695,7 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
@@ -823,7 +823,7 @@ class VirtualCubeTest extends BatchTestCase {
                 super(catalog);
             }
 
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             	MeasureMappingImpl unitsShipped;
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
@@ -1344,7 +1344,7 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
@@ -1420,7 +1420,7 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
@@ -1608,7 +1608,7 @@ class VirtualCubeTest extends BatchTestCase {
                 super(catalog);
             }
 
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
@@ -1684,7 +1684,7 @@ class VirtualCubeTest extends BatchTestCase {
             public TestBugMondrian322aModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 result.addAll(super.schemaCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
@@ -1755,7 +1755,7 @@ class VirtualCubeTest extends BatchTestCase {
                 super(catalog);
             }
 
-            protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             	PhysicalCubeMappingImpl testStore;
             	MeasureMappingImpl storeSqftMeasure;
                 List<CubeMapping> result = new ArrayList<>();
@@ -2137,7 +2137,7 @@ class VirtualCubeTest extends BatchTestCase {
         }
         // we want to make sure a SqlConstraint is used for retrieving
         // [Product Family].members
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
 
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);

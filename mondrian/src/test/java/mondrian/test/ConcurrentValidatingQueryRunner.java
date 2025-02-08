@@ -18,7 +18,7 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.Connection;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -277,13 +277,13 @@ public class ConcurrentValidatingQueryRunner extends Thread {
         CacheControl cacheControl =
             connection.getCacheControl(null);
 
-        Cube salesCube = connection.getSchema().lookupCube("Sales", true);
+        Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
         CacheControl.CellRegion measuresRegion =
             cacheControl.createMeasuresRegion(salesCube);
         cacheControl.flush(measuresRegion);
 
         Cube whsalesCube =
-            connection.getSchema().lookupCube("Warehouse and Sales", true);
+            connection.getCatalog().lookupCube("Warehouse and Sales", true);
         measuresRegion =
             cacheControl.createMeasuresRegion(whsalesCube);
         cacheControl.flush(measuresRegion);
@@ -301,10 +301,10 @@ public class ConcurrentValidatingQueryRunner extends Thread {
 
         // Lookup members
         Cube salesCube =
-            connection.getSchema().lookupCube(
+            connection.getCatalog().lookupCube(
                 "Sales", true);
-        SchemaReader schemaReader =
-            salesCube.getSchemaReader(null);
+        CatalogReader schemaReader =
+            salesCube.getCatalogReader(null);
 
         CacheControl.CellRegion measuresRegion =
             cacheControl.createMeasuresRegion(

@@ -101,7 +101,7 @@ import mondrian.util.Bug;
 public class RolapStar {
     private static final Logger LOGGER = LoggerFactory.getLogger(RolapStar.class);
 
-    private final RolapSchema schema;
+    private final RolapCatalog catalog;
 
     private final Context context;
 
@@ -144,16 +144,16 @@ public class RolapStar {
 
     /**
      * Creates a RolapStar. Please use
-     * {@link RolapSchema.RolapStarRegistry#getOrCreateStar} to create a
+     * {@link RolapCatalog.RolapStarRegistry#getOrCreateStar} to create a
      * {@link RolapStar}.
      */
     RolapStar(
-        final RolapSchema schema,
+        final RolapCatalog catalog,
         final Context context,
         final RelationalQueryMapping fact)
     {
         this.cacheAggregations = true;
-        this.schema = schema;
+        this.catalog = catalog;
         this.context = context;
         this.factTable = new RolapStar.Table(this, fact, null, null);
 
@@ -512,7 +512,7 @@ public class RolapStar {
      */
     public void addAggStar(AggStar aggStar) {
         // Add it before the first AggStar which is larger, if there is one.
-        boolean chooseAggregateByVolume = schema.getInternalConnection().getContext().getConfig().chooseAggregateByVolume();
+        boolean chooseAggregateByVolume = catalog.getInternalConnection().getContext().getConfig().chooseAggregateByVolume();
         long size = aggStar.getSize(chooseAggregateByVolume);
         ListIterator<AggStar> lit = aggStars.listIterator();
         while (lit.hasNext()) {
@@ -621,7 +621,7 @@ public class RolapStar {
             if (LOGGER.isDebugEnabled()) {
                 StringBuilder buf = new StringBuilder(100);
                 buf.append("RolapStar.clearCachedAggregations: schema=");
-                buf.append(schema.getName());
+                buf.append(catalog.getName());
                 buf.append(", star=");
                 buf.append(getFactTable().getAlias());
                 LOGGER.debug(buf.toString());
@@ -789,8 +789,8 @@ public class RolapStar {
         return columnList.get(bitPos);
     }
 
-    public RolapSchema getSchema() {
-        return schema;
+    public RolapCatalog getCatalog() {
+        return catalog;
     }
 
     /**

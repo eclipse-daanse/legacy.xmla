@@ -46,6 +46,6 @@ public interface Dimension extends OlapElement, MetaElement {
     /**
      * Returns the schema this dimension belongs to.
      */
-    Schema getSchema();
+    Catalog getCatalog();
 
 }

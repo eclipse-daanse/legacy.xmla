@@ -418,7 +418,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
     final CacheControl cacheControl = connection.getCacheControl( null );
 
     // Flush the entire cache.
-    final Cube salesCube = connection.getSchema().lookupCube( "Sales", true );
+    final Cube salesCube = connection.getCatalog().lookupCube( "Sales", true );
     final CacheControl.CellRegion measuresRegion = cacheControl.createMeasuresRegion( salesCube );
     cacheControl.flush( measuresRegion );
 

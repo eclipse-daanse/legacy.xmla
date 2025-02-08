@@ -16,7 +16,7 @@ import java.util.List;
 
 import mondrian.olap.exceptions.MdxCubeSlicerHierarchyErrorException;
 import mondrian.olap.exceptions.MdxCubeSlicerMemberErrorException;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -111,7 +111,7 @@ public class CubeAccess {
         if (bMember) {
             boolean fail = false;
             List<Segment> sMembers = Util.parseIdentifier(sMember);
-            SchemaReader schemaReader = mdxCube.getSchemaReader(null);
+            CatalogReader schemaReader = mdxCube.getCatalogReader(null);
             Member member = schemaReader.getMemberByUniqueName(sMembers, fail);
             if (member == null) {
                 throw new MdxCubeSlicerMemberErrorException(

@@ -35,10 +35,8 @@ import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
-import org.eclipse.daanse.olap.rolap.core.BasicContext;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -90,8 +88,6 @@ class ServiceTest {
 	@Mock
 	CatalogMapping catalogMapping;
 
-	@Mock
-	SchemaMapping schemaMapping;
 	
 	@BeforeEach
 	public void setup() throws SQLException {
@@ -106,8 +102,7 @@ class ServiceTest {
         when(dataSource.getConnection()).thenReturn(connection);
         when(dialectResolver.resolve((DataSource)any())).thenReturn(Optional.of(dialect));
         when(catalogMappingSupplier.get()).thenReturn(catalogMapping);
-        when(schemaMapping.getName()).thenReturn("schemaName");
-        when(catalogMapping.getSchemas()).thenAnswer(setupDummyListAnswer(schemaMapping));
+        when(catalogMapping.getName()).thenReturn("schemaName");
 
         assertThat(saContext).isNotNull()
                 .extracting(ServiceAware::size)

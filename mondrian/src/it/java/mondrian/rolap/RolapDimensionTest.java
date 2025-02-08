@@ -16,7 +16,7 @@ import org.mockito.Mockito;
 
 class RolapDimensionTest extends PropertyRestoringTestCase {
 
-  private RolapSchema schema;
+  private RolapCatalog schema;
   private RolapCube cube;
   private MondrianDef.Dimension xmlDimension;
   private MondrianDef.CubeDimension xmlCubeDimension;
@@ -24,7 +24,7 @@ class RolapDimensionTest extends PropertyRestoringTestCase {
 
   @Override
   protected void setUp() throws Exception {
-    schema = Mockito.mock(RolapSchema.class);
+    schema = Mockito.mock(RolapCatalog.class);
     cube = Mockito.mock(RolapCube.class);
     MondrianDef.Relation fact = Mockito.mock(MondrianDef.Relation.class);
 

@@ -16,7 +16,7 @@ package org.eclipse.daanse.olap.function.def.nativizeset;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -153,7 +153,7 @@ public class NativeListCalc  extends AbstractListCalc {
     {
         Util.assertTrue(!simplifiedList.isEmpty());
 
-        SchemaReader schema = evaluator.getSchemaReader();
+        CatalogReader schema = evaluator.getCatalogReader();
         List<Member> tuple = simplifiedList.get(0);
         long nativizeMinThreshold =
             evaluator.getQuery().getConnection().getContext().getConfig().nativizeMinThreshold();
@@ -194,7 +194,7 @@ public class NativeListCalc  extends AbstractListCalc {
         return isHighCardinality;
     }
 
-    private long getLevelCardinality(SchemaReader schema, Level level) {
+    private long getLevelCardinality(CatalogReader schema, Level level) {
         if (cardinalityIsKnown(level)) {
             return level.getApproxRowCount();
         }

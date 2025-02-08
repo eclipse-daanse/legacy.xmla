@@ -130,8 +130,8 @@ public class SegmentCacheIndexImpl implements SegmentCacheIndex {
     public static List makeConverterKey(CellRequest request)
     {
         return Arrays.asList(
-            request.getMeasure().getStar().getSchema().getName(),
-            request.getMeasure().getStar().getSchema().getChecksum(),
+            request.getMeasure().getStar().getCatalog().getName(),
+            request.getMeasure().getStar().getCatalog().getChecksum(),
             request.getMeasure().getCubeName(),
             request.getMeasure().getStar().getFactTable().getAlias(),
             request.getMeasure().getName(),

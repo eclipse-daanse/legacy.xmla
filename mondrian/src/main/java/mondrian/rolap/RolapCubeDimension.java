@@ -13,7 +13,7 @@ package mondrian.rolap;
 
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 
@@ -76,7 +76,7 @@ public class RolapCubeDimension extends RolapDimension {
 
         RolapCube factCube = null;
         if (cube.isVirtual()) {
-          factCube = lookupFactCube(cubeDim, cube.getSchema());
+          factCube = lookupFactCube(cubeDim, cube.getCatalog());
         }
         for (int i = 0; i < rolapDim.getHierarchies().length; i++) {
           final RolapCubeHierarchy cubeHierarchy =
@@ -93,7 +93,7 @@ public class RolapCubeDimension extends RolapDimension {
     }
 
     RolapCube lookupFactCube(
-        DimensionConnectorMapping cubeDim, RolapSchema schema)
+        DimensionConnectorMapping cubeDim, RolapCatalog schema)
     {
       	
       if (cubeDim.getPhysicalCube() != null && cubeDim.getPhysicalCube().getName() != null) {
@@ -107,8 +107,8 @@ public class RolapCubeDimension extends RolapDimension {
     }
 
     @Override
-	public Schema getSchema() {
-        return rolapDimension.getSchema();
+	public Catalog getCatalog() {
+        return rolapDimension.getCatalog();
     }
 
     // this method should eventually replace the call below

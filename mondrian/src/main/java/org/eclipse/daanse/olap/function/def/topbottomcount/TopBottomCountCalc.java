@@ -18,7 +18,7 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
@@ -56,7 +56,7 @@ public class TopBottomCountCalc extends AbstractListCalc {
       IntegerCalc integerCalc = getChildCalc(1, IntegerCalc.class);
       Calc<?> orderCalc = getChildCalc(2, Calc.class);
       final int arity = call.getType().getArity();
-      SchemaReader schemaReader = evaluator.getSchemaReader();
+      CatalogReader schemaReader = evaluator.getCatalogReader();
       NativeEvaluator nativeEvaluator =
         schemaReader.getNativeSetEvaluator(
           call.getFunDef(), call.getArgs(), evaluator, this );

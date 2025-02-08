@@ -36,8 +36,8 @@ public interface SegmentCacheIndex {
     /**
      * Identifies the segment headers that contain a given cell.
      *
-     * @param schemaName Schema name
-     * @param schemaChecksum Schema checksum
+     * @param catalogName Schema name
+     * @param catalogChecksum Schema checksum
      * @param cubeName Cube name
      * @param measureName Measure name
      * @param rolapStarFactTableName Fact table table
@@ -47,8 +47,8 @@ public interface SegmentCacheIndex {
      * @return Empty list if not found; never null
      */
     List<SegmentHeader> locate(
-        String schemaName,
-        ByteString schemaChecksum,
+        String catalogName,
+        ByteString catalogChecksum,
         String cubeName,
         String measureName,
         String rolapStarFactTableName,
@@ -60,7 +60,7 @@ public interface SegmentCacheIndex {
      * Returns a list of segments that can be rolled up to satisfy a given
      * cell request.
      *
-     * @param schemaName Schema name
+     * @param catalogName Schema name
      * @param schemaChecksum Schema checksum
      * @param cubeName Cube name
      * @param measureName Measure name
@@ -73,8 +73,8 @@ public interface SegmentCacheIndex {
      * combined using union, are sufficient to answer the given cell request
      */
     List<List<SegmentHeader>> findRollupCandidates(
-        String schemaName,
-        ByteString schemaChecksum,
+        String catalogName,
+        ByteString catalogChecksum,
         String cubeName,
         String measureName,
         String rolapStarFactTableName,

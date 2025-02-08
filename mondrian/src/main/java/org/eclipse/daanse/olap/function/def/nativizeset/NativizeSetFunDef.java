@@ -145,7 +145,7 @@ public class NativizeSetFunDef extends AbstractFunctionDefinition {
         Level level = findLevel(funArg);
         if (level != null) {
             int cardinality =
-                evaluator.getSchemaReader()
+                evaluator.getCatalogReader()
                     .getLevelCardinality(level, false, true);
             final int minThreshold = evaluator.getQuery().getConnection().getContext()
                 .getConfig().nativizeMinThreshold();

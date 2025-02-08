@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
@@ -103,8 +103,8 @@ public class RolapNativeFilter extends RolapNativeSet {
       SqlQuery testQuery = SqlQuery.newQuery( context, "testQuery" );
       SqlTupleReader sqlTupleReader = new SqlTupleReader( this );
 
-      Role role = evaluator.getSchemaReader().getRole();
-      RolapSchemaReader reader = new RolapSchemaReader( context,role, evaluator.getSchemaReader().getSchema() );
+      Role role = evaluator.getCatalogReader().getRole();
+      RolapCatalogReader reader = new RolapCatalogReader( context,role, evaluator.getCatalogReader().getCatalog() );
 
       for ( CrossJoinArg arg : args ) {
         addLevel( sqlTupleReader, reader, arg );
@@ -116,7 +116,7 @@ public class RolapNativeFilter extends RolapNativeSet {
       return testQuery.isSupported();
     }
 
-    private void addLevel( TupleReader tr, RolapSchemaReader schemaReader, CrossJoinArg arg ) {
+    private void addLevel( TupleReader tr, RolapCatalogReader schemaReader, CrossJoinArg arg ) {
       RolapLevel level = arg.getLevel();
       if ( level == null ) {
         // Level can be null if the CrossJoinArg represent
@@ -195,7 +195,7 @@ NativeEvaluator createEvaluator( RolapEvaluator evaluator, FunctionDefinition fu
     }
 
     // extract "order by" expression
-    SchemaReader schemaReader = evaluator.getSchemaReader();
+    CatalogReader schemaReader = evaluator.getCatalogReader();
     Context context=schemaReader.getContext();
     // generate the WHERE condition
     // Need to generate where condition here to determine whether

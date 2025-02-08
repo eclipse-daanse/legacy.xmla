@@ -49,18 +49,20 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.eclipse.daanse.olap.api.CacheControl;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.DbSchema;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -68,7 +70,6 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
-import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
@@ -77,6 +78,9 @@ import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.rdb.structure.api.model.Column;
+import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
+import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCubeGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessDimensionGrantMapping;
@@ -85,13 +89,13 @@ import org.eclipse.daanse.rolap.mapping.api.model.AccessMemberGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessSchemaGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.NamedSetMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.ParameterMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +111,7 @@ import mondrian.util.ByteString;
 import mondrian.util.ClassResolver;
 
 /**
- * A <code>RolapSchema</code> is a collection of {@link RolapCube}s and shared
+ * A <code>RolapCatalog</code> is a collection of {@link RolapCube}s and shared
  * {@link RolapDimension}s. It is shared betweeen {@link RolapConnection}s. It
  * caches {@link MemberReader}s, etc.
  *
@@ -115,10 +119,12 @@ import mondrian.util.ClassResolver;
  * @author jhyde
  * @since 26 July, 2001
  */
-public class RolapSchema implements Schema {
-	static final Logger LOGGER = LoggerFactory.getLogger(RolapSchema.class);
+public class RolapCatalog implements Catalog {
+	static final Logger LOGGER = LoggerFactory.getLogger(RolapCatalog.class);
 
 	private String name;
+	
+	private String description;
 
 	/**
 	 * Internal use only.
@@ -144,6 +150,8 @@ public class RolapSchema implements Schema {
 	 */
 	private final Map<DimensionMapping, RolapHierarchy> mapSharedHierarchyNameToHierarchy = new HashMap<>();
 
+	private List<RolapDbSchema> rolapDbSchemas = new ArrayList<>();
+
 	/**
 	 * The default role for connections to this schema.
 	 */
@@ -157,7 +165,7 @@ public class RolapSchema implements Schema {
 	private AggTableManager aggTableManager;
 
 	/**
-	 * This is basically a unique identifier for this RolapSchema instance used it
+	 * This is basically a unique identifier for this RolapCatalog instance used it
 	 * its equals and hashCode methods.
 	 */
 	private final CacheKey key;
@@ -172,11 +180,11 @@ public class RolapSchema implements Schema {
 	 */
 	private final Map<String, NamedSet> mapNameToSet = new HashMap<>();
 
-	private SchemaMapping mappingSchema;
+	private CatalogMapping mappingCatalog;
 
-	final List<RolapSchemaParameter> parameterList = new ArrayList<>();
+	final List<RolapCatalogParameter> parameterList = new ArrayList<>();
 
-	private Date schemaLoadDate;
+	private Date catalogLoadDate;
 
 	/**
 	 * List of warnings. Populated when a schema is created by a connection that has
@@ -199,7 +207,7 @@ public class RolapSchema implements Schema {
 	RolapNativeRegistry nativeRegistry;
 	private final static String publicDimensionMustNotHaveForeignKey = "Dimension ''{0}'' has a foreign key. This attribute is only valid in private dimensions and dimension usages.";
 	private final static String duplicateSchemaParameter = "Duplicate parameter ''{0}'' in schema";
-	private final static String finalizerErrorRolapSchema = "An exception was encountered while finalizing a RolapSchema object instance.";
+	private final static String finalizerErrorRolapCatalog = "An exception was encountered while finalizing a RolapCatalog object instance.";
 	private final static String namedSetHasBadFormula = "Named set ''{0}'' has bad formula";
 
 	/**
@@ -210,7 +218,7 @@ public class RolapSchema implements Schema {
 	 * @param connectInfo Connect properties
 	 * @param context     Context
 	 */
-	public RolapSchema(final CacheKey key, ConnectionProps rolapConnectionProps, final RolapContext context) {
+	public RolapCatalog(final CacheKey key, ConnectionProps rolapConnectionProps, final RolapContext context) {
 		this.id = UUID.randomUUID().toString();
 		this.key = key;
 		rolapStarRegistry = new RolapStarRegistry(this, context);
@@ -233,7 +241,7 @@ public class RolapSchema implements Schema {
 	 * @deprecated for tests only!
 	 */
 	@Deprecated
-	RolapSchema(CacheKey key, RolapConnection internalConnection, final RolapContext context) {
+	RolapCatalog(CacheKey key, RolapConnection internalConnection, final RolapContext context) {
 		this.id = UUID.randomUUID().toString();
 		this.key = key;
 		this.defaultRole = RoleImpl.createRootRole(this);
@@ -266,7 +274,7 @@ public class RolapSchema implements Schema {
 
 	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof RolapSchema other)) {
+		if (!(o instanceof RolapCatalog other)) {
 			return false;
 		}
 		return other.key.equals(key);
@@ -293,26 +301,26 @@ public class RolapSchema implements Schema {
 
 		this.context = context;
 		// TODO: get from schema var
-		mappingSchema = context.getCatalogMapping().getSchemas().get(0);
+		mappingCatalog = context.getCatalogMapping();
 
-		sha512Bytes = new ByteString(("" + mappingSchema.hashCode()).getBytes());
+		sha512Bytes = new ByteString(("" + mappingCatalog.hashCode()).getBytes());
 
 		// todo: use this >jdk19
 //		sha512Bytes = new ByteString(Objects.toIdentityString(xmlSchema).getBytes());
 
-		load(mappingSchema);
+		load(mappingCatalog);
 
 		aggTableManager.initialize(connectionProps, context.getConfig().useAggregates());
 		setSchemaLoadDate();
 	}
 
 	private void setSchemaLoadDate() {
-		schemaLoadDate = new Date();
+		catalogLoadDate = new Date();
 	}
 
 	@Override
-	public Date getSchemaLoadDate() {
-		return schemaLoadDate;
+	public Date getCatalogLoadDate() {
+		return catalogLoadDate;
 	}
 
 	@Override
@@ -360,13 +368,14 @@ public class RolapSchema implements Schema {
 		return metadata;
 	}
 
-	private void load(SchemaMapping mappingSchema2) {
-		this.name = mappingSchema2.getName();
+	private void load(CatalogMapping mappingCatalog2) {
+		this.name = mappingCatalog2.getName();
 		if (name == null || name.equals("")) {
 			throw Util.newError("<Schema> name must be set");
 		}
+		description=mappingCatalog2.getDescription();
 
-		this.metadata = RolapMetaData.createMetaData(mappingSchema2.getAnnotations());
+		this.metadata = RolapMetaData.createMetaData(mappingCatalog2.getAnnotations());
 
 		// Validate public dimensions.
 		// me not relevant - should be validated before
@@ -380,7 +389,7 @@ public class RolapSchema implements Schema {
 
 		// Create parameters.
 		Set<String> parameterNames = new HashSet<>();
-		for (ParameterMapping mappingParameter : mappingSchema2.getParameters()) {
+		for (ParameterMapping mappingParameter : mappingCatalog2.getParameters()) {
 			String name = mappingParameter.getName();
 			if (!parameterNames.add(name)) {
 				throw new OlapRuntimeException(MessageFormat.format(duplicateSchemaParameter, name));
@@ -397,22 +406,22 @@ public class RolapSchema implements Schema {
 			final String description = mappingParameter.getDescription();
 			final boolean modifiable = mappingParameter.isModifiable();
 			String defaultValue = mappingParameter.getDefaultValue();
-			RolapSchemaParameter param = new RolapSchemaParameter(this, name, defaultValue, description, type,
+			RolapCatalogParameter param = new RolapCatalogParameter(this, name, defaultValue, description, type,
 					modifiable);
 //            discard(param);
 		}
 
 		// Create cubes.
-		for (CubeMapping cubeMapping : mappingSchema2.getCubes()) {
+		for (CubeMapping cubeMapping : mappingCatalog2.getCubes()) {
 //            if (cubeMapping.isEnabled()) {
 			RolapCube cube = null;
 			if (cubeMapping instanceof PhysicalCubeMapping physicalCubeMapping) {
-				cube = new RolapCube(this, mappingSchema2, physicalCubeMapping, context);
+				cube = new RolapCube(this, mappingCatalog2, physicalCubeMapping, context);
 				// addCube(cubeMapping, cube);
 
 			}
 			if (cubeMapping instanceof VirtualCubeMapping virtualCubeMapping) {
-				cube = new RolapCube(this, mappingSchema2, virtualCubeMapping, context);
+				cube = new RolapCube(this, mappingCatalog2, virtualCubeMapping, context);
 				// addCube(cubeMapping, cube);
 			}
 //            }
@@ -429,22 +438,22 @@ public class RolapSchema implements Schema {
 //        }
 
 		// Create named sets.
-		for (NamedSetMapping namedSetsMapping : mappingSchema2.getNamedSets()) {
+		for (NamedSetMapping namedSetsMapping : mappingCatalog2.getNamedSets()) {
 			mapNameToSet.put(namedSetsMapping.getName(), createNamedSet(namedSetsMapping));
 		}
 
 		// Create roles.
-		for (AccessRoleMapping roleMapping : mappingSchema2.getAccessRoles()) {
+		for (AccessRoleMapping roleMapping : mappingCatalog2.getAccessRoles()) {
 			Role role = createRole(roleMapping);
 			mapNameToRole.put(roleMapping, role);
 		}
 
 		// Set default role.
-		if (mappingSchema2.getDefaultAccessRole() != null) {
-			Role role = lookupRole(mappingSchema2.getDefaultAccessRole());
+		if (mappingCatalog2.getDefaultAccessRole() != null) {
+			Role role = lookupRole(mappingCatalog2.getDefaultAccessRole());
 			if (role == null) {
 
-				String sb = new StringBuilder("Role '").append(mappingSchema2.getDefaultAccessRole())
+				String sb = new StringBuilder("Role '").append(mappingCatalog2.getDefaultAccessRole())
 						.append("' not found").toString();
 
 				final RuntimeException ex = new RuntimeException(sb);
@@ -454,6 +463,27 @@ public class RolapSchema implements Schema {
 				// RoleImpl roles so it is safe to case.
 				defaultRole = role;
 			}
+		}
+		
+		for (DatabaseSchema dbSchemaMapping : mappingCatalog2.getDbschemas()) {
+			RolapDbSchema rolapDbSchema = new RolapDbSchema();
+			List<RolapDbTable> rolapDbTables = new ArrayList<>();
+			rolapDbSchema.setName(rolapDbSchema.getName());
+
+			for (Table table : dbSchemaMapping.getTables()) {
+				RolapDbTable rolapDbTable = new RolapDbTable();
+				List<RolapDbColumn> rolapDbColumns = new ArrayList<>();
+				rolapDbTable.setName(table.getName());
+
+				for (Column column : table.getColumns()) {
+					RolapDbColumn rolapDbColumn = new RolapDbColumn();
+					rolapDbColumn.setName(column.getName());
+
+					rolapDbColumns.add(rolapDbColumn);
+				}
+				rolapDbTables.add(rolapDbTable);
+			}
+			rolapDbSchemas.add(rolapDbSchema);
 		}
 	}
 
@@ -528,7 +558,7 @@ public class RolapSchema implements Schema {
 		}
 		role.grant(cube, getAccess(cubeGrant.getAccess().name(), cubeAllowed));
 
-		SchemaReader reader = cube.getSchemaReader(null);
+		CatalogReader reader = cube.getCatalogReader(null);
 		for (AccessDimensionGrantMapping accessDimGrantMapping : cubeGrant.getDimensionGrants()) {
 			Dimension dimension;
 			if (accessDimGrantMapping.getDimension() != null) {
@@ -551,7 +581,7 @@ public class RolapSchema implements Schema {
 	}
 
 	// package-local visibility for testing purposes
-	public void handleHierarchyGrant(RoleImpl role, RolapCube cube, SchemaReader reader,
+	public void handleHierarchyGrant(RoleImpl role, RolapCube cube, CatalogReader reader,
 			AccessHierarchyGrantMapping hierarchyGrant) {
 		Hierarchy hierarchy;
 		if (hierarchyGrant.getHierarchy() != null) {
@@ -618,13 +648,13 @@ public class RolapSchema implements Schema {
 		}
 	}
 
-	private <T extends OlapElement> T lookup(RolapCube cube, SchemaReader reader, DataType category, String name) {
+	private <T extends OlapElement> T lookup(RolapCube cube, CatalogReader reader, DataType category, String name) {
 		List<Segment> segments = Util.parseIdentifier(name);
 		// noinspection unchecked
 		return (T) reader.lookupCompound(cube, segments, true, category);
 	}
 
-	private Level findLevelForHierarchyGrant(RolapCube cube, SchemaReader schemaReader, Access hierarchyAccess,
+	private Level findLevelForHierarchyGrant(RolapCube cube, CatalogReader schemaReader, Access hierarchyAccess,
 			LevelMapping levelMapping, String desc) {
 		if (levelMapping == null) {
 			return null;
@@ -688,8 +718,8 @@ public class RolapSchema implements Schema {
 	 * 'cubeName' or return null if no calculatedMember or xmlCube by those name
 	 * exists.
 	 */
-	protected CalculatedMemberMapping lookupXmlCalculatedMember(final String calcMemberName, final String cubeName) {
-		for (final CubeMapping cube : mappingSchema.getCubes()) {
+	protected CalculatedMemberMapping lookupMappingCalculatedMember(final String calcMemberName, final String cubeName) {
+		for (final CubeMapping cube : mappingCatalog.getCubes()) {
 			if (!Util.equalName(cube.getName(), cubeName)) {
 				continue;
 			}
@@ -813,12 +843,12 @@ public class RolapSchema implements Schema {
 					mapSharedHierarchyToReader.put(xmlDimension, reader);
 				}
 				/*
-				 * System.out.println("RolapSchema.createMemberReader: "+
+				 * System.out.println("RolapCatalog.createMemberReader: "+
 				 * "add to sharedHierName->Hier map"+ " sharedName=" + sharedName +
 				 * ", hierarchy=" + hierarchy.getName() + ", hierarchy.dim=" +
 				 * hierarchy.getDimension().getName() ); if
 				 * (mapSharedHierarchyNameToHierarchy.containsKey(sharedName)) {
-				 * System.out.println("RolapSchema.createMemberReader: CONTAINS NAME"); } else {
+				 * System.out.println("RolapCatalog.createMemberReader: CONTAINS NAME"); } else {
 				 * mapSharedHierarchyNameToHierarchy.put(sharedName, hierarchy); }
 				 */
 				mapSharedHierarchyNameToHierarchy.computeIfAbsent(xmlDimension, k -> hierarchy);
@@ -889,8 +919,8 @@ public class RolapSchema implements Schema {
 	}
 
 	@Override
-	public SchemaReader getSchemaReader() {
-		return new RolapSchemaReader(context, defaultRole, this).withLocus();
+	public CatalogReader getCatalogReader() {
+		return new RolapCatalogReader(context, defaultRole, this).withLocus();
 	}
 
 	/**
@@ -917,6 +947,21 @@ public class RolapSchema implements Schema {
 
 	RolapNativeRegistry getNativeRegistry() {
 		return nativeRegistry;
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
+	public List<String> getAccessRoles() {
+		return mapNameToRole.keySet().stream().map(AccessRoleMapping::getName).toList();
+	}
+
+	@Override
+	public List<? extends DbSchema> getDbSchemas() {
+		return rolapDbSchemas;
 	}
 
 }

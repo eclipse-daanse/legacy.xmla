@@ -37,7 +37,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 
 
@@ -636,7 +636,7 @@ class CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testWithNoDimensionPrefix(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
     	Connection connection = context.getConnectionWithDefaultRole();
         ((TestConfig)context.getConfig()).setNeedDimensionPrefix(false);
         TestUtil.assertAxisReturns(connection, "Sales", "{[M]}", "[Gender].[M]");

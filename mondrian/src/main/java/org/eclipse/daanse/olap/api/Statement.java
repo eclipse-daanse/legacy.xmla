@@ -17,7 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.result.CellSet;
@@ -59,14 +59,14 @@ public interface Statement  {
      *
      * @return Schema reader, not null
      */
-    SchemaReader getSchemaReader();
+    CatalogReader getCatalogReader();
 
     /**
-     * Returns this statement's schema.
+     * Returns this statement's Catalog.
      *
-     * @return Schema, not null
+     * @return Catalog, not null
      */
-    Schema getSchema();
+    Catalog getCatalog();
 
     /**
      * Returns this statement's connection.

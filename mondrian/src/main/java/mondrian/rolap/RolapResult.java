@@ -33,7 +33,7 @@ import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -967,7 +967,7 @@ public class RolapResult extends ResultBase {
    */
   protected void loadSpecialMembers( List<Member> nonDefaultAllMembers, List<List<Member>> nonAllMembers,
       List<Member> measureMembers ) {
-    SchemaReader schemaReader = evaluator.getSchemaReader();
+    CatalogReader schemaReader = evaluator.getCatalogReader();
     Member[] evalMembers = evaluator.getMembers();
     for ( Member em : evalMembers ) {
       if ( em.isCalculated() ) {

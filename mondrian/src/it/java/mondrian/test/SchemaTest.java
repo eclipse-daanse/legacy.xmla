@@ -16,7 +16,7 @@ import org.eclipse.daanse.olap.api.Level;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapConnectionProperties;
 import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapSchema;
+import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.aggmatcher.AggTableManager;
 import mondrian.spi.Dialect;
 import mondrian.spi.PropertyFormatter;
@@ -4944,7 +4944,7 @@ class SchemaTest extends FoodMartTestCase {
 
         final RolapConnection rolapConn = tc.getOlap4jConnection().unwrap(RolapConnection.class);
         final SchemaReader schemaReader = rolapConn.getSchemaReader();
-        final RolapSchema schema = schemaReader.getSchema();
+        final RolapCatalog schema = schemaReader.getSchema();
         for (RolapCube cube : schema.getCubeList()) {
             Dimension dim = cube.getDimensions()[1];
             final Map<String, Annotation> annotations = dim.getAnnotationMap();

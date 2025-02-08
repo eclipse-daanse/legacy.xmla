@@ -44,7 +44,7 @@ import mondrian.rolap.RolapStar;
  * a resource in the jar file (but can be a url).
  *
  * <p>It is a singleton since it is used to recognize tables independent of
- * database connection (each {@link mondrian.rolap.RolapSchema} uses the same
+ * database connection (each {@link mondrian.rolap.RolapCatalog} uses the same
  * instance).
  *
  * @author Richard M. Emberson

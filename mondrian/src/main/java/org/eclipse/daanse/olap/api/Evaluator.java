@@ -242,10 +242,10 @@ public interface Evaluator{
     Object getProperty(String name, Object defaultValue);
 
     /**
-     * Returns a {@link SchemaReader} appropriate for the current
+     * Returns a {@link CatalogReader} appropriate for the current
      * access-control context.
      */
-    SchemaReader getSchemaReader();
+    CatalogReader getCatalogReader();
 
     /**
      * Simple caching of the result of an <code>Exp</code>. The

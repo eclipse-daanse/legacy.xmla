@@ -39,7 +39,7 @@ import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.ProfileHandler;
 import org.eclipse.daanse.olap.api.QueryTiming;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.Validator;
@@ -251,7 +251,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
                CellProperty[] cellProps, boolean strictValidation ) {
       this(
               statement,
-              Util.lookupCube( statement.getSchemaReader(), cubeName, true ),
+              Util.lookupCube( statement.getCatalogReader(), cubeName, true ),
               formulas,
               new SubcubeImpl(cubeName, null, new QueryAxisImpl[] {}, null),
               axes,
@@ -263,7 +263,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
 
   public QueryImpl(Statement statement, Formula[] formulas, QueryAxis[] axes, Subcube subcube, QueryAxis slicerAxis,
                    CellProperty[] cellProps, boolean strictValidation ) {
-    this( statement, Util.lookupCube( statement.getSchemaReader(), subcube.getCubeName(), true ), formulas, subcube, axes, slicerAxis, cellProps,
+    this( statement, Util.lookupCube( statement.getCatalogReader(), subcube.getCubeName(), true ), formulas, subcube, axes, slicerAxis, cellProps,
         new Parameter[0], strictValidation );
   }
 
@@ -950,7 +950,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         }
 
         final Parameter param =
-            getSchemaReader(false).getParameter(parameterName);
+            getCatalogReader(false).getParameter(parameterName);
         if (param == null) {
             throw new UnknownParameterException(parameterName);
         }
@@ -1128,7 +1128,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
      *
      * @return schema reader
      */
-    public SchemaReader getSchemaReader(boolean accessControlled) {
+    public CatalogReader getCatalogReader(boolean accessControlled) {
         final Role role;
         if (accessControlled) {
             // full access control
@@ -1136,8 +1136,8 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         } else {
             role = null;
         }
-        final SchemaReader cubeSchemaReader = cube.getSchemaReader(role);
-        return new QuerySchemaReader(cubeSchemaReader, QueryImpl.this);
+        final CatalogReader cubeCatalogReader = cube.getCatalogReader(role);
+        return new QueryCatalogReader(cubeCatalogReader, QueryImpl.this);
     }
 
     /**
@@ -1627,20 +1627,20 @@ public class QueryImpl extends AbstractQueryPart implements Query {
      * perform access control; all calculated members defined in a query are
      * visible to everyone.
      */
-    private static class QuerySchemaReader
-        extends DelegatingSchemaReader
+    private static class QueryCatalogReader
+        extends DelegatingCatalogReader
         implements NameResolverImpl.Namespace
     {
         private final QueryImpl query;
 
-        public QuerySchemaReader(SchemaReader cubeSchemaReader, QueryImpl query) {
-            super(cubeSchemaReader);
+        public QueryCatalogReader(CatalogReader cubeCatalogReader, QueryImpl query) {
+            super(cubeCatalogReader);
             this.query = query;
         }
 
         @Override
-		public SchemaReader withoutAccessControl() {
-            return new QuerySchemaReader(
+		public CatalogReader withoutAccessControl() {
+            return new QueryCatalogReader(
                 schemaReader.withoutAccessControl(), query);
         }
 
@@ -1999,7 +1999,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
     private static class QueryValidator extends ValidatorImpl {
         private final boolean alwaysResolveFunDef;
         private QueryImpl query;
-        private final SchemaReader schemaReader;
+        private final CatalogReader schemaReader;
 
         /**
          * Creates a QueryValidator.
@@ -2016,11 +2016,11 @@ public class QueryImpl extends AbstractQueryPart implements Query {
             super(functionTable, resolvedIdentifiers);
             this.alwaysResolveFunDef = alwaysResolveFunDef;
             this.query = query;
-            this.schemaReader = new ScopedSchemaReader(this, true);
+            this.schemaReader = new ScopedCatalogReader(this, true);
         }
 
         @Override
-		public SchemaReader getSchemaReader() {
+		public CatalogReader getCatalogReader() {
             return schemaReader;
         }
 
@@ -2047,40 +2047,40 @@ public class QueryImpl extends AbstractQueryPart implements Query {
     }
 
     /**
-     * Schema reader that depends on the current scope during the validation
+     * Catalog reader that depends on the current scope during the validation
      * of a query. Depending on the scope, different calculated sets may be
      * visible. The scope is represented by the expression stack inside the
      * validator.
      */
-    private static class ScopedSchemaReader
-        extends DelegatingSchemaReader
+    private static class ScopedCatalogReader
+        extends DelegatingCatalogReader
         implements NameResolverImpl.Namespace
     {
         private final QueryValidator queryValidator;
         private final boolean accessControlled;
 
         /**
-         * Creates a ScopedSchemaReader.
+         * Creates a ScopedCatalogReader.
          *
          * @param queryValidator Validator that is being used to validate the
          *     query
          * @param accessControlled Access controlled
          */
-        private ScopedSchemaReader(
+        private ScopedCatalogReader(
             QueryValidator queryValidator,
             boolean accessControlled)
         {
-            super(queryValidator.getQuery().getSchemaReader(accessControlled));
+            super(queryValidator.getQuery().getCatalogReader(accessControlled));
             this.queryValidator = queryValidator;
             this.accessControlled = accessControlled;
         }
 
         @Override
-		public SchemaReader withoutAccessControl() {
+		public CatalogReader withoutAccessControl() {
             if (!accessControlled) {
                 return this;
             }
-            return new ScopedSchemaReader(queryValidator, false);
+            return new ScopedCatalogReader(queryValidator, false);
         }
 
         @Override
@@ -2233,7 +2233,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
 
         @Override
 		public OlapElement lookupChild(
-                SchemaReader schemaReader, Segment s, MatchType matchType)
+                CatalogReader schemaReader, Segment s, MatchType matchType)
         {
             throw new UnsupportedOperationException();
         }

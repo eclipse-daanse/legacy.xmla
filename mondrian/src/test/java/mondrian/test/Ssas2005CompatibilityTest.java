@@ -46,7 +46,7 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 
 /**
@@ -105,7 +105,7 @@ class Ssas2005CompatibilityTest {
 
     private void runQ(Context context, String s) {
         prepareContext(context);
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         Result result = TestUtil.executeQuery(context.getConnectionWithDefaultRole(), s);
         TestUtil.toString(result);
 //        discard();
@@ -558,7 +558,7 @@ class Ssas2005CompatibilityTest {
         if (!SystemWideProperties.instance().SsasCompatibleNaming) {
             return;
         }
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         // [dimension].members for a dimension with multiple hierarchies
         // SSAS2005 gives error:
         //    Query (1, 8) The 'Time' dimension contains more than one
@@ -1809,7 +1809,7 @@ class Ssas2005CompatibilityTest {
          */
         withSchema(context, SchemaModifiers.Ssas2005CompatibilityTestModifier2::new);
         Cube cube = getCubeByNameFromArray(context.getConnectionWithDefaultRole()
-            .getSchema().getCubes(), "Sales").orElseThrow(() -> new RuntimeException("Cube with name \"Sales\" is absent"));
+            .getCatalog().getCubes(), "Sales").orElseThrow(() -> new RuntimeException("Cube with name \"Sales\" is absent"));
         Dimension dimension =  getDimensionByNameFromArray(cube.getDimensions(), "SameName")
             .orElseThrow(() -> new RuntimeException("Dimension with name \"SameName\" is absent"));
         Hierarchy hierarchy = getHierarchyByNameFromArray(dimension.getHierarchies(), "SameName")

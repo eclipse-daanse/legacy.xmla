@@ -15,18 +15,18 @@ package org.eclipse.daanse.olap.xmla.bridge;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.element.Catalog;
 
-public interface ContextListSupplyer extends Supplier<List<Context>> {
+public interface ContextListSupplyer {
 
-	List<Context> get();
+	List<Context> getContexts();
+	
+	List<Catalog> get(List<String> roles);
 
-	Optional<Context> tryGetFirstByName(String catalogName);
+	Optional<Catalog> tryGetFirstByName(String catalogName, List<String> roles);
 
-	Optional<Context> tryGetFirst(Predicate<Context> function);
+	Optional<Context> getContext(String name);
 
-	List<Context> get(Predicate<Context> predicate);
 }

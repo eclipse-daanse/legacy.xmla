@@ -40,7 +40,7 @@ import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -120,9 +120,9 @@ public class RolapUtil {
      * @param schemaReader Schema reader
      * @return Wrapped schema reader
      */
-    public static SchemaReader locusSchemaReader(
+    public static CatalogReader locusCatalogReader(
         RolapConnection connection,
-        final SchemaReader schemaReader)
+        final CatalogReader schemaReader)
     {
         final Statement statement = connection.getInternalStatement();
         final ExecutionImpl execution = new ExecutionImpl(statement,
@@ -132,9 +132,9 @@ public class RolapUtil {
                 execution,
                 "Schema reader",
                 null);
-        return (SchemaReader) Proxy.newProxyInstance(
-            SchemaReader.class.getClassLoader(),
-            new Class[]{SchemaReader.class},
+        return (CatalogReader) Proxy.newProxyInstance(
+            CatalogReader.class.getClassLoader(),
+            new Class[]{CatalogReader.class},
             new InvocationHandler() {
                 @Override
 				public Object invoke(

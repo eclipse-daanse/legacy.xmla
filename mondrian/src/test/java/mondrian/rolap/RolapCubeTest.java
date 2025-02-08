@@ -27,7 +27,7 @@ import java.util.Set;
 
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -70,7 +70,7 @@ class RolapCubeTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testProcessFormatStringAttributeToIgnoreNullFormatString(Context context) {
         RolapCube cube =
-            (RolapCube) context.getConnectionWithDefaultRole().getSchema().lookupCube("Sales", false);
+            (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales", false);
         StringBuilder builder = new StringBuilder();
         cube.processFormatStringAttribute(
             CalculatedMemberMappingImpl.builder().build(), builder);
@@ -81,7 +81,7 @@ class RolapCubeTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testProcessFormatStringAttribute(Context context) {
         RolapCube cube =
-            (RolapCube) context.getConnectionWithDefaultRole().getSchema().lookupCube("Sales", false);
+            (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales", false);
         StringBuilder builder = new StringBuilder();
         CalculatedMemberMappingImpl xmlCalcMember =
         		CalculatedMemberMappingImpl.builder().build();
@@ -106,8 +106,8 @@ class RolapCubeTest {
         try {
             Cube warehouseAndSalesCube =
                 cubeByName(connection, "Warehouse and Sales");
-            SchemaReader schemaReader =
-                warehouseAndSalesCube.getSchemaReader(null);
+            CatalogReader schemaReader =
+                warehouseAndSalesCube.getCatalogReader(null);
 
             List<Member> calculatedMembers =
                 schemaReader.getCalculatedMembers();
@@ -125,7 +125,7 @@ class RolapCubeTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGetCalculatedMembersForCaliforniaManager(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         String[] expectedCalculatedMembers = new String[] {
             "[Measures].[Profit]", "[Measures].[Profit last Period]",
             "[Measures].[Profit Growth]"
@@ -134,8 +134,8 @@ class RolapCubeTest {
 
         try {
             Cube salesCube = cubeByName(connection, "Sales");
-            SchemaReader schemaReader = salesCube
-                .getSchemaReader(connection.getRole());
+            CatalogReader schemaReader = salesCube
+                .getCatalogReader(connection.getRole());
 
             List<Member> calculatedMembers =
                 schemaReader.getCalculatedMembers();
@@ -166,8 +166,8 @@ class RolapCubeTest {
 
         try {
             Cube salesCube = cubeByName(connection, "Sales");
-            SchemaReader schemaReader =
-                salesCube.getSchemaReader(connection.getRole());
+            CatalogReader schemaReader =
+                salesCube.getCatalogReader(connection.getRole());
             List<Member> calculatedMembers =
                 schemaReader.getCalculatedMembers();
             assertEquals(
@@ -195,8 +195,8 @@ class RolapCubeTest {
 
         try {
             Cube salesCube = cubeByName(connection, "Sales");
-            SchemaReader schemaReader =
-                salesCube.getSchemaReader(connection.getRole());
+            CatalogReader schemaReader =
+                salesCube.getCatalogReader(connection.getRole());
 
             // Product.~Missing accessible
             List<Member> calculatedMembers =
@@ -238,8 +238,8 @@ class RolapCubeTest {
 
         try {
             Cube salesCube = cubeByName(connection, "Sales");
-            SchemaReader schemaReader =
-                salesCube.getSchemaReader(connection.getRole());
+            CatalogReader schemaReader =
+                salesCube.getCatalogReader(connection.getRole());
 
             // Product.~Missing accessible
             List<Member> calculatedMembers =
@@ -280,8 +280,8 @@ class RolapCubeTest {
 
             RolapCube warehouseAndSalesCube =
                 (RolapCube) cubeByName(connection, "Warehouse and Sales");
-            SchemaReader readerWarehouseAndSales =
-                warehouseAndSalesCube.getSchemaReader().withLocus();
+            CatalogReader readerWarehouseAndSales =
+                warehouseAndSalesCube.getCatalogReader().withLocus();
 
             List<Member> members = new ArrayList<>();
             List<Member> warehouseMembers =
@@ -314,16 +314,16 @@ class RolapCubeTest {
 
         try {
             RolapCube salesCube1 = (RolapCube) cubeByName(connection1, "Sales");
-            SchemaReader readerSales1 =
-                salesCube1.getSchemaReader().withLocus();
+            CatalogReader readerSales1 =
+                salesCube1.getCatalogReader().withLocus();
             List<Member> storeMembersSales =
                 storeMembersCAAndOR(readerSales1).slice(0);
             Dimension storeDim1 = storeMembersSales.get(0).getDimension();
             assertEquals(storeDim1, storeDim1);
 
             RolapCube salesCube2 = (RolapCube) cubeByName(connection2, "Sales");
-            SchemaReader readerSales2 =
-                salesCube2.getSchemaReader().withLocus();
+            CatalogReader readerSales2 =
+                salesCube2.getCatalogReader().withLocus();
             List<Member> storeMembersSales2 =
                 storeMembersCAAndOR(readerSales2).slice(0);
             Dimension storeDim2 = storeMembersSales2.get(0).getDimension();
@@ -332,8 +332,8 @@ class RolapCubeTest {
 
             RolapCube warehouseAndSalesCube =
                 (RolapCube) cubeByName(connection1, "Warehouse and Sales");
-            SchemaReader readerWarehouseAndSales =
-                warehouseAndSalesCube.getSchemaReader().withLocus();
+            CatalogReader readerWarehouseAndSales =
+                warehouseAndSalesCube.getCatalogReader().withLocus();
             List<Member> storeMembersWarehouseAndSales =
                 storeMembersCAAndOR(readerWarehouseAndSales).slice(0);
             Dimension storeDim3 =
@@ -372,12 +372,12 @@ class RolapCubeTest {
     void testBasedCubesForVirtualCube(Context context) {
       Connection connection = context.getConnectionWithDefaultRole();
       RolapCube cubeSales =
-          (RolapCube) connection.getSchema().lookupCube("Sales", false);
+          (RolapCube) connection.getCatalog().lookupCube("Sales", false);
       RolapCube cubeWarehouse =
-          (RolapCube) connection.getSchema().lookupCube(
+          (RolapCube) connection.getCatalog().lookupCube(
               "Warehouse", false);
       RolapCube cube =
-          (RolapCube) connection.getSchema().lookupCube(
+          (RolapCube) connection.getCatalog().lookupCube(
               "Warehouse and Sales", false);
       assertNotNull(cube);
       assertNotNull(cubeSales);
@@ -394,7 +394,7 @@ class RolapCubeTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBasedCubesForNotVirtualCubeIsThisCube(Context context) {
       RolapCube cubeSales =
-          (RolapCube) context.getConnectionWithDefaultRole().getSchema().lookupCube("Sales", false);
+          (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales", false);
       assertNotNull(cubeSales);
       assertEquals(false, cubeSales.isVirtual());
       List<RolapCube> baseCubes = cubeSales.getBaseCubes();
@@ -403,7 +403,7 @@ class RolapCubeTest {
       assertSame(cubeSales, baseCubes.get(0));
     }
 
-    private List<Member> warehouseMembersCanadaMexicoUsa(SchemaReader reader)
+    private List<Member> warehouseMembersCanadaMexicoUsa(CatalogReader reader)
     {
         return Arrays.asList(
                 member(IdImpl.toList(
@@ -416,51 +416,51 @@ class RolapCubeTest {
 
     private Member member(
             List<Segment> segmentList,
-            SchemaReader salesCubeSchemaReader)
+            CatalogReader salesCubeCatalogReader)
     {
-        return salesCubeSchemaReader.getMemberByUniqueName(segmentList, true);
+        return salesCubeCatalogReader.getMemberByUniqueName(segmentList, true);
     }
 
     private TupleList storeMembersCAAndOR(
-            SchemaReader salesCubeSchemaReader)
+            CatalogReader salesCubeCatalogReader)
     {
         return new UnaryTupleList(Arrays.asList(
                 member(
                 		IdImpl.toList(
                                 "Store", "All Stores", "USA", "CA", "Alameda"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                 		IdImpl.toList(
                                 "Store", "All Stores", "USA", "CA", "Alameda", "HQ"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                 		IdImpl.toList(
                                 "Store", "All Stores", "USA", "CA", "Beverly Hills"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                 		IdImpl.toList(
                                 "Store", "All Stores", "USA", "CA", "Beverly Hills",
                                 "Store 6"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                 		IdImpl.toList(
                                 "Store", "All Stores", "USA", "CA", "Los Angeles"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                 		IdImpl.toList(
                                 "Store", "All Stores", "USA", "OR", "Portland"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                 		IdImpl.toList(
                                 "Store", "All Stores", "USA", "OR", "Portland", "Store 11"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                 		IdImpl.toList(
                                 "Store", "All Stores", "USA", "OR", "Salem"),
-                        salesCubeSchemaReader),
+                        salesCubeCatalogReader),
                 member(
                 		IdImpl.toList(
                                 "Store", "All Stores", "USA", "OR", "Salem", "Store 13"),
-                        salesCubeSchemaReader)));
+                        salesCubeCatalogReader)));
     }
 }

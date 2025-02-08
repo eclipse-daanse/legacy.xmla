@@ -152,7 +152,7 @@ class SegmentCacheTest {
 
     private Cube getCube(Connection connection, String cubeName) {
         for (Cube cube
-            : connection.getSchemaReader().withLocus().getCubes())
+            : connection.getCatalogReader().withLocus().getCubes())
         {
             if (cube.getName().equals(cubeName)) {
                 return cube;

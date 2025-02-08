@@ -86,7 +86,7 @@ class CacheTest {
             cacheControl.createMeasuresRegion(
                 getCubeWithName(
                     "Sales",
-                    connection.getSchema().getCubes())));
+                    connection.getCatalog().getCubes())));
         Thread.sleep(2000); // wait for flush to propagate
         final EventBus monitor = context.getMonitor();
 //        final ServerInfo serverBefore = monitor.getServer();

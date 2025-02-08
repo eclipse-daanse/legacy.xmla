@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 
@@ -295,7 +295,7 @@ public class Aggregation {
                 //  cache for the drilldown case, the children will be
                 //  in the cache
                 // - if not, forget this optimization.
-                SchemaReader scr = star.getSchema().getSchemaReader();
+                CatalogReader scr = star.getCatalog().getCatalogReader();
                 int childCount = scr.getChildrenCountFromCache(parent);
                 if (childCount == -1) {
                    // nothing gotten from cache
@@ -314,7 +314,7 @@ public class Aggregation {
 
             if (!done && level != null) {
                 // if the level members are cached, we do not need "count *"
-                SchemaReader scr = star.getSchema().getSchemaReader();
+                CatalogReader scr = star.getCatalog().getCatalogReader();
                 int memberCount = scr.getLevelCardinality(level, true, false);
                 if (memberCount > 0) {
                     bloats[i] = constraintLength / memberCount;

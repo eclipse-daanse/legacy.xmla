@@ -22,7 +22,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 
 /**
  * A <code>Role</code> is a collection of access rights to cubes, permissions,
@@ -50,7 +50,7 @@ public interface Role {
      * || return == Access.NONE
      * || return == Access.ALL_DIMENSIONS
      */
-    Access getAccess(Schema schema);
+    Access getAccess(Catalog schema);
 
     /**
      * Returns the access this role has to a given cube.

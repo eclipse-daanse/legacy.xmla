@@ -29,7 +29,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +44,7 @@ import mondrian.rolap.RolapCubeDimension;
  */
 public class RoleImpl implements Role {
     private boolean mutable = true;
-    private final Map<Schema, Access> schemaGrants =
+    private final Map<Catalog, Access> schemaGrants =
         new HashMap<>();
     private final Map<Cube, Access> cubeGrants =
         new HashMap<>();
@@ -62,7 +62,7 @@ public class RoleImpl implements Role {
      * @param schema A schema to bind this role to.
      * @return A role with root access to the schema.
      */
-    public static Role createRootRole(Schema schema) {
+    public static Role createRootRole(Catalog schema) {
         RoleImpl role = new RoleImpl();
         role.grant(schema, Access.ALL);
         role.makeImmutable();
@@ -148,7 +148,7 @@ public class RoleImpl implements Role {
     /**
      * Defines access to all cubes and dimensions in a schema.
      *
-     * @param schema Schema whose access to grant/deny.
+     * @param catalog Catalog whose access to grant/deny.
      * @param access An {@link Access access code}
      *
      * @pre schema != null
@@ -156,20 +156,20 @@ public class RoleImpl implements Role {
      * || access == Access.ALL_DIMENSIONS
      * @pre isMutable()
      */
-    public void grant(Schema schema, Access access) {
-        checkSchema(schema);
+    public void grant(Catalog catalog, Access access) {
+        checkCatalog(catalog);
         assert isMutable();
-        schemaGrants.put(schema, access);
+        schemaGrants.put(catalog, access);
         hashCache.add(
             new Object[] {
-                schema.getId(),
+                catalog.getId(),
                 access.name()});
         hash = 0;
     }
 
     @Override
-	public Access getAccess(Schema schema) {
-        checkSchema(schema);
+	public Access getAccess(Catalog schema) {
+        checkCatalog(schema);
         final Access schemaAccess = schemaGrants.get(schema);
         if (schemaAccess == null) {
             // No specific rules means full access.
@@ -206,14 +206,14 @@ public class RoleImpl implements Role {
         LOGGER.trace(
             "Grant {} on cube {}", access, cube.getName());
         cubeGrants.put(cube, access);
-        // Set the schema's access to 'custom' if no rules already exist.
-        final Access schemaAccess =
-            getAccess(cube.getSchema());
-        if (schemaAccess == Access.NONE) {
+        // Set the catalogs's access to 'custom' if no rules already exist.
+        final Access catalogAccess =
+            getAccess(cube.getCatalog());
+        if (catalogAccess == Access.NONE) {
             LOGGER.trace(
                 "Cascading grant {} on schema {}",
-                Access.CUSTOM, cube.getSchema().getName());
-            grant(cube.getSchema(), Access.CUSTOM);
+                Access.CUSTOM, cube.getCatalog().getName());
+            grant(cube.getCatalog(), Access.CUSTOM);
         }
         hashCache.add(
             new Object[] {
@@ -236,13 +236,13 @@ public class RoleImpl implements Role {
         }
         // Check for inheritance from the parent schema
         // 'All Dimensions' and 'custom' are not good enough
-        access = schemaGrants.get(cube.getSchema());
+        access = schemaGrants.get(cube.getCatalog());
         if (access == Access.ALL) {
             LOGGER.trace(
                 "Access level {} granted to cube {} because of the grant to schema {}",
                 access,
                 cube.getName(),
-                cube.getSchema().getName());
+                cube.getCatalog().getName());
             return Access.ALL;
         }
         // Deny access
@@ -327,11 +327,11 @@ public class RoleImpl implements Role {
         }
         // Check access at the schema level.
         // Levels of 'custom' and 'none' are not good enough.
-        switch (getAccess(dimension.getSchema())) {
+        switch (getAccess(dimension.getCatalog())) {
         case ALL:
             LOGGER.trace(
                 "Access level ALL granted to dimension {} because of the grant to schema {}",
-                dimension.getUniqueName(), dimension.getSchema().getName());
+                dimension.getUniqueName(), dimension.getCatalog().getName());
             return Access.ALL;
         case ALL_DIMENSIONS:
             // For all_dimensions to work, the cube access must be
@@ -341,7 +341,7 @@ public class RoleImpl implements Role {
             LOGGER.trace(
                 "Access denided to dimension {} because of the access level of schema {}",
                 dimension.getUniqueName(),
-                dimension.getSchema().getName());
+                dimension.getCatalog().getName());
             return Access.NONE;
         }
     }
@@ -506,7 +506,7 @@ public class RoleImpl implements Role {
         }
         final Access hierarchyAccess;
         final Access schemaGrant =
-            schemaGrants.get(hierarchy.getDimension().getSchema());
+            schemaGrants.get(hierarchy.getDimension().getCatalog());
         if (schemaGrant != null) {
             if (schemaGrant == Access.ALL) {
                 hierarchyAccess = Access.ALL;
@@ -667,7 +667,7 @@ public class RoleImpl implements Role {
      */
     public static HierarchyAccess createAllAccess(Hierarchy hierarchy) {
         return new HierarchyAccessImpl(
-        		RoleImpl.createRootRole(hierarchy.getDimension().getSchema()),
+        		RoleImpl.createRootRole(hierarchy.getDimension().getCatalog()),
             hierarchy, Access.ALL, null, null, RollupPolicy.FULL);
     }
 
@@ -693,7 +693,7 @@ public class RoleImpl implements Role {
         }
     }
 
-    private void checkSchema(Schema schema) {
+    private void checkCatalog(Catalog schema) {
         if (schema == null) {
             throw new IllegalArgumentException("schema should be not null");
         }

@@ -26,7 +26,7 @@ import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
@@ -36,7 +36,7 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
@@ -62,7 +62,7 @@ import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapHierarchy.LimitedRollupMember;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 
 /**
@@ -99,16 +99,16 @@ class AccessControlTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testSchemaReader(Context foodMartContext) {
+    void testCatalogReader(Context foodMartContext) {
         final Connection connection = foodMartContext.getConnectionWithDefaultRole();
-        Schema schema = connection.getSchema();
+        Catalog schema = connection.getCatalog();
         final boolean fail = true;
         Cube cube = schema.lookupCube("Sales", fail);
-        final SchemaReader schemaReader =
-            cube.getSchemaReader(connection.getRole());
-        final SchemaReader schemaReader1 = schemaReader.withoutAccessControl();
+        final CatalogReader schemaReader =
+            cube.getCatalogReader(connection.getRole());
+        final CatalogReader schemaReader1 = schemaReader.withoutAccessControl();
         assertNotNull(schemaReader1);
-        final SchemaReader schemaReader2 = schemaReader1.withoutAccessControl();
+        final CatalogReader schemaReader2 = schemaReader1.withoutAccessControl();
         assertNotNull(schemaReader2);
     }
 
@@ -117,10 +117,10 @@ class AccessControlTest {
     void testGrantDimensionNone(Context foodMartContext) {
         final Connection connection = foodMartContext.getConnectionWithDefaultRole();
         RoleImpl role = ((RoleImpl) connection.getRole()).makeMutableClone();
-        Schema schema = connection.getSchema();
+        Catalog schema = connection.getCatalog();
         Cube salesCube = schema.lookupCube("Sales", true);
         // todo: add Schema.lookupDimension
-        final SchemaReader schemaReader = salesCube.getSchemaReader(role);
+        final CatalogReader schemaReader = salesCube.getCatalogReader(role);
         Dimension genderDimension =
             (Dimension) schemaReader.lookupCompound(
                 salesCube, IdImpl.toList("Gender"), true,
@@ -349,7 +349,7 @@ class AccessControlTest {
 
         assertEquals(2, hierarchyAccess.getTopLevelDepth());
         assertEquals(3, hierarchyAccess.getBottomLevelDepth());
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
     }
 
     @ParameterizedTest
@@ -367,7 +367,7 @@ class AccessControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testRoleMemberAccess(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         final Connection connection = getRestrictedConnection(context);
         // because CA has access
         assertMemberAccess(connection, Access.CUSTOM, "[Store].[USA]");
@@ -398,11 +398,11 @@ class AccessControlTest {
         String memberName)
     {
         final Role role = connection.getRole(); // restricted
-        Schema schema = connection.getSchema();
+        Catalog schema = connection.getCatalog();
         final boolean fail = true;
         Cube salesCube = schema.lookupCube("Sales", fail);
-        final SchemaReader schemaReader =
-            salesCube.getSchemaReader(null).withLocus();
+        final CatalogReader schemaReader =
+            salesCube.getCatalogReader(null).withLocus();
         final Member member =
             schemaReader.getMemberByUniqueName(
                 Util.parseIdentifier(memberName), true);
@@ -416,7 +416,7 @@ class AccessControlTest {
         String cubeName)
     {
         final Role role = connection.getRole();
-        Schema schema = connection.getSchema();
+        Catalog schema = connection.getCatalog();
         final boolean fail = true;
         Cube cube = schema.lookupCube(cubeName, fail);
         final Access actualAccess = role.getAccess(cube);
@@ -430,11 +430,11 @@ class AccessControlTest {
         String hierarchyName)
     {
         final Role role = connection.getRole();
-        Schema schema = connection.getSchema();
+        Catalog schema = connection.getCatalog();
         final boolean fail = true;
         Cube cube = schema.lookupCube(cubeName, fail);
-        final SchemaReader schemaReader =
-            cube.getSchemaReader(null); // unrestricted
+        final CatalogReader schemaReader =
+            cube.getCatalogReader(null); // unrestricted
         final Hierarchy hierarchy =
             (Hierarchy) schemaReader.lookupCompound(
                 cube, Util.parseIdentifier(hierarchyName), fail,
@@ -450,11 +450,11 @@ class AccessControlTest {
         String hierarchyName)
     {
         final Role role = connection.getRole();
-        Schema schema = connection.getSchema();
+        Catalog schema = connection.getCatalog();
         final boolean fail = true;
         Cube cube = schema.lookupCube(cubeName, fail);
-        final SchemaReader schemaReader =
-            cube.getSchemaReader(null); // unrestricted
+        final CatalogReader schemaReader =
+            cube.getCatalogReader(null); // unrestricted
         final Hierarchy hierarchy =
             (Hierarchy) schemaReader.lookupCompound(
                 cube, Util.parseIdentifier(hierarchyName), fail,
@@ -980,7 +980,7 @@ class AccessControlTest {
     public void _testSharedObjectsInGrantMappingsBug(Context foodMartContext) {
         boolean mustGet = true;
         Connection connection = foodMartContext.getConnectionWithDefaultRole();
-        Schema schema = connection.getSchema();
+        Catalog schema = connection.getCatalog();
         Cube salesCube = schema.lookupCube("Sales", mustGet);
         Cube warehouseCube = schema.lookupCube("Warehouse", mustGet);
         Hierarchy measuresInSales = salesCube.lookupHierarchy(
@@ -1031,11 +1031,11 @@ class AccessControlTest {
     private Connection getRestrictedConnection(Context foodMartContext, boolean restrictCustomers) {
         Connection connection = foodMartContext.getConnectionWithDefaultRole();
         RoleImpl role = new RoleImpl();
-        Schema schema = connection.getSchema();
+        Catalog schema = connection.getCatalog();
         final boolean fail = true;
         Cube salesCube = schema.lookupCube("Sales", fail);
-        final SchemaReader schemaReader =
-            salesCube.getSchemaReader(null).withLocus();
+        final CatalogReader schemaReader =
+            salesCube.getCatalogReader(null).withLocus();
         Hierarchy storeHierarchy = salesCube.lookupHierarchy(
             new IdImpl.NameSegmentImpl("Store", Quoting.UNQUOTED), false);
         role.grant(schema, Access.ALL_DIMENSIONS);
@@ -1245,7 +1245,7 @@ class AccessControlTest {
         String v2,
         String v3)
     {
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.AccessControlTestModifier39(catalog, rollupPolicy));
         ConnectionProps props = new RolapConnectionPropsR(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
@@ -1273,7 +1273,7 @@ class AccessControlTest {
     }
 
     /**
-     * Calls various {@link SchemaReader} methods on the members returned in
+     * Calls various {@link CatalogReader} methods on the members returned in
      * a result set.
      *
      * @param connection connection
@@ -1281,8 +1281,8 @@ class AccessControlTest {
      */
     private void checkQuery(Connection connection, String mdx) {
         Result result = TestUtil.executeQuery(connection, mdx);
-        final SchemaReader schemaReader =
-        		connection.getSchemaReader().withLocus();
+        final CatalogReader schemaReader =
+        		connection.getCatalogReader().withLocus();
         for (Axis axis : result.getAxes()) {
             for (Position position : axis.getPositions()) {
                 for (Member member : position) {
@@ -1350,7 +1350,7 @@ class AccessControlTest {
         String v1,
         String v2)
     {
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.AccessControlTestModifier40(catalog, policy));
         ConnectionProps props = new RolapConnectionPropsR(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
@@ -1389,7 +1389,7 @@ class AccessControlTest {
         String v2,
         String v3)
     {
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.AccessControlTestModifier41(catalogMapping, policy));
         ConnectionProps props = new RolapConnectionPropsR(List.of("Role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
@@ -1645,15 +1645,15 @@ class AccessControlTest {
         ConnectionProps props = new RolapConnectionPropsR(List.of("Role1","Role2"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
     	Connection connection = foodMartContext.getConnection(props);
         final Cube cube =
-            connection.getSchema()
+            connection.getCatalog()
                 .lookupCube("Sales", true);
         final HierarchyAccess accessDetails =
             connection.getRole().getAccessDetails(
                 cube.lookupHierarchy(
                     new IdImpl.NameSegmentImpl("Customers", Quoting.UNQUOTED),
                     false));
-        final SchemaReader scr =
-            cube.getSchemaReader(null).withLocus();
+        final CatalogReader scr =
+            cube.getCatalogReader(null).withLocus();
         assertEquals(
             true,
             accessDetails.hasInaccessibleDescendants(
@@ -1692,8 +1692,8 @@ class AccessControlTest {
             + "{}\n"
             + "Axis #1:\n");
 
-        SchemaReader reader =
-        		connection.getSchemaReader().withLocus();
+        CatalogReader reader =
+        		connection.getCatalogReader().withLocus();
         Cube cube = null;
         for (Cube c : reader.getCubes()) {
             if (c.getName().equals("Sales")) {
@@ -1702,7 +1702,7 @@ class AccessControlTest {
         }
         assertNotNull(cube);
         reader =
-            cube.getSchemaReader(connection.getRole());
+            cube.getCatalogReader(connection.getRole());
         final List<Dimension> dimensions =
             reader.getCubeDimensions(cube);
         Dimension dimension = null;
@@ -1941,7 +1941,7 @@ class AccessControlTest {
     }
 
     private static void setGoodmanContext(Context context, final RollupPolicyType policy) {
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.AccessControlTestModifier42(catalogMapping, policy));
     }
@@ -2017,7 +2017,7 @@ class AccessControlTest {
             // Run queries as top-level employee.
             connection.setRole(
                 new PeopleRole(
-                    savedRole, connection.getSchema(), "Sheri Nowmer"));
+                    savedRole, connection.getCatalog(), "Sheri Nowmer"));
             TestUtil.assertExprReturns(
         		connection,
         		"HR",
@@ -2027,7 +2027,7 @@ class AccessControlTest {
             // Level 2 employee
             connection.setRole(
                 new PeopleRole(
-                    savedRole, connection.getSchema(), "Derrick Whelply"));
+                    savedRole, connection.getCatalog(), "Derrick Whelply"));
             TestUtil.assertExprReturns(
         		connection,
         		"HR",
@@ -2048,7 +2048,7 @@ class AccessControlTest {
             // Leaf employee
             connection.setRole(
                 new PeopleRole(
-                    savedRole, connection.getSchema(), "Ann Weyerhaeuser"));
+                    savedRole, connection.getCatalog(), "Ann Weyerhaeuser"));
             TestUtil.assertExprReturns(
         		connection,
         		"HR",
@@ -2075,7 +2075,7 @@ class AccessControlTest {
      * <a href="http://jira.pentaho.com/browse/BISERVER-1574">BISERVER-1574,
      * "Cube role rollupPolicy='partial' failure"</a>. The problem was a
      * NullPointerException in
-     * {@link SchemaReader#getMemberParent(org.eclipse.daanse.olap.api.element.Member)} when called
+     * {@link CatalogReader#getMemberParent(org.eclipse.daanse.olap.api.element.Member)} when called
      * on a members returned in a result set. JPivot calls that method but
      * Mondrian normally does not.
      */
@@ -2426,7 +2426,7 @@ class AccessControlTest {
             "select [Customers].[City].Members on 0 from [Sales]");
 
         final long t0 = System.currentTimeMillis();
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         CatalogMapping schema = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.AccessControlTestModifier12(schema, result));
         ConnectionProps props = new RolapConnectionPropsR(List.of("Test"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
@@ -2703,13 +2703,13 @@ class AccessControlTest {
     public static class PeopleRole extends DelegatingRole {
         private final String repName;
 
-        public PeopleRole(Role role, Schema schema, String repName) {
+        public PeopleRole(Role role, Catalog schema, String repName) {
             super(((RoleImpl)role).makeMutableClone());
             this.repName = repName;
             defineGrantsForUser(schema);
         }
 
-        private void defineGrantsForUser(Schema schema) {
+        private void defineGrantsForUser(Catalog schema) {
             RoleImpl role = (RoleImpl)this.role;
             role.grant(schema, Access.NONE);
 
@@ -2728,7 +2728,7 @@ class AccessControlTest {
             boolean foundMember = false;
 
             List <Member> members =
-                schema.getSchemaReader().withLocus()
+                schema.getCatalogReader().withLocus()
                     .getLevelMembers(topLevel, true);
 
             for (Member member : members) {
@@ -3015,10 +3015,10 @@ class AccessControlTest {
             + "Row #0: 2,117\n");
         Cube cube =
         		TestUtil.getCubeByNameFromArray(connection
-                .getSchema().getCubes(), "Sales").orElseThrow(() -> new RuntimeException("Cube with name \"Sales\" is absent"));
+                .getCatalog().getCubes(), "Sales").orElseThrow(() -> new RuntimeException("Cube with name \"Sales\" is absent"));
 
         Member allMember =
-            cube.getSchemaReader(connection.getRole()).withLocus().getMemberByUniqueName(
+            cube.getCatalogReader(connection.getRole()).withLocus().getMemberByUniqueName(
                 Util.parseIdentifier("[Store].[All Stores]"), false);
         //org.olap4j.metadata.Member allMember =
         //    cube.lookupMember(
@@ -3337,7 +3337,7 @@ class AccessControlTest {
                     // rollup policies and different default members
                     // RolapNativeCrossjoin
                 	((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
-                    context.getSchemaCache().clear();
+                    context.getCatalogCache().clear();
                     CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
                     ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.AccessControlTestModifier29(catalogMapping, hasAll, defaultMember, policy));
 

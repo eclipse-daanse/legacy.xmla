@@ -34,7 +34,7 @@ public class LastChildCalc extends AbstractProfilingNestedMemberCalc {
     }
 
     private Member lastChild(Evaluator evaluator, Member member) {
-        List<Member> children = evaluator.getSchemaReader().getMemberChildren(member);
+        List<Member> children = evaluator.getCatalogReader().getMemberChildren(member);
         return (children.isEmpty()) ? member.getHierarchy().getNullMember() : children.get(children.size() - 1);
     }
 

@@ -63,7 +63,7 @@ class RolapCubeDimensionTest extends TestCase {
   void testLookupCube_notVirtual() {
     RolapCubeDimension rcd = stubRolapCubeDimension(false);
     MondrianDef.CubeDimension cubeDim = new MondrianDef.Dimension();
-    RolapSchema schema = mock(RolapSchema.class);
+    RolapCatalog schema = mock(RolapCatalog.class);
 
     assertEquals(null, rcd.lookupFactCube(cubeDim, schema));
     verify(schema, times(0)).lookupCube(anyString());
@@ -74,7 +74,7 @@ class RolapCubeDimensionTest extends TestCase {
     RolapCubeDimension rcd = stubRolapCubeDimension(false);
     MondrianDef.VirtualCubeDimension cubeDim =
         new MondrianDef.VirtualCubeDimension();
-    RolapSchema schema = mock(RolapSchema.class);
+    RolapCatalog schema = mock(RolapCatalog.class);
     final String cubeName = "TheCubeName";
     cubeDim.cubeName = cubeName;
     // explicit doReturn - just to make it evident
@@ -88,7 +88,7 @@ class RolapCubeDimensionTest extends TestCase {
     RolapCubeDimension rcd = stubRolapCubeDimension(false);
     MondrianDef.VirtualCubeDimension cubeDim =
         mock(MondrianDef.VirtualCubeDimension.class);
-    RolapSchema schema = mock(RolapSchema.class);
+    RolapCatalog schema = mock(RolapCatalog.class);
     RolapCube factCube = mock(RolapCube.class);
     final String cubeName = "TheCubeName";
     cubeDim.cubeName = cubeName;

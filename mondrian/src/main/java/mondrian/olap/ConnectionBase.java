@@ -18,7 +18,7 @@ import org.eclipse.daanse.mdx.model.api.MdxStatement;
 import org.eclipse.daanse.mdx.parser.api.MdxParser;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.query.ExpressionProvider;
@@ -90,11 +90,6 @@ public abstract class ConnectionBase implements Connection {
         } catch (Exception e) {
             throw new FailedToParseQueryException(query, e);
         }
-    }
-
-    @Override
-    public List<Schema> getSchemas() {
-        return List.of(getSchema());
     }
 
     public QueryProvider getQueryProvider() {

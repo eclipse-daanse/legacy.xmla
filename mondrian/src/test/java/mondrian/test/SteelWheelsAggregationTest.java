@@ -41,7 +41,6 @@ import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -55,7 +54,6 @@ import org.opencube.junit5.dataloader.SteelWheelsDataLoader;
 import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
 
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapSchemaCache;
 
 /**
  * @author Andrey Khayrutdinov
@@ -172,17 +170,14 @@ class SteelWheelsAggregationTest {
 
     private CatalogMapping getSchemaWith(List<AccessRoleMappingImpl> roles) {
 
-    	return CatalogMappingImpl.builder()
-    			.withSchemas(List.of(
-    					SchemaMappingImpl.builder()
+    	return 
+    					CatalogMappingImpl.builder()
     		            .withName("SteelWheels")
     		            .withDescription("1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2")
     		            .withCubes(List.of(customersCube))
     		            .withAccessRoles(roles)
-    		            .build()
-    			))
-    			.withDbschemas(List.of(SteelwheelsSupplier.DATABASE_SCHEMA))
-    			.build();
+    		            .withDbSchemas(List.of(SteelwheelsSupplier.DATABASE_SCHEMA))
+    		            .build();
     }
 
     @Disabled //disabled for CI build
@@ -233,7 +228,7 @@ class SteelWheelsAggregationTest {
                         .build())
                 );
 
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
         assertQueryReturns(((TestContext)context).getConnection(List.of("Power User")), QUERY, EXPECTED);
     }
@@ -279,7 +274,7 @@ class SteelWheelsAggregationTest {
                         ))
                         .build())
         	 );
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
         assertQueryReturns(((TestContext)context).getConnection(List.of("Power User")), QUERY, EXPECTED);
     }
@@ -344,7 +339,7 @@ class SteelWheelsAggregationTest {
                      .build()
 
            	));
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
         assertQueryReturns(((TestContext)context).getConnection(List.of("Power User Union")), QUERY, EXPECTED);
     }
@@ -435,7 +430,7 @@ class SteelWheelsAggregationTest {
                      .build()
 
            	));
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
         assertQueryReturns(((TestContext)context).getConnection(List.of("Power User Union")), QUERY, EXPECTED);
     }

@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.NameSegment;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -789,7 +789,7 @@ public class ExplicitRules {
                                 nameInner));
                     } else {
                         RolapCube cube = ExplicitRules.TableDef.this.getCube();
-                        SchemaReader schemaReader = cube.getSchemaReader();
+                        CatalogReader schemaReader = cube.getCatalogReader();
                         RolapLevel level =
                             (RolapLevel) schemaReader.lookupCompound(
                                 cube,
@@ -997,7 +997,7 @@ public class ExplicitRules {
                                 nameInner));
                     } else {
                         RolapCube cube = ExplicitRules.TableDef.this.getCube();
-                        SchemaReader schemaReader = cube.getSchemaReader();
+                        CatalogReader schemaReader = cube.getCatalogReader();
                         Member member = (Member) schemaReader.lookupCompound(
                             cube,
                             names,

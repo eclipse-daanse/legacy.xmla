@@ -32,13 +32,13 @@ class ExpiringReferenceTest {
 		final Object referent = new Object();
 		final ExpiringReference<Object> reference = new ExpiringReference<>(referent, Duration.ofSeconds(1));
 		Thread.sleep(500);
-		assertNotNull(reference.getSchemaAndResetTimeout(Duration.ofSeconds(1)));
+		assertNotNull(reference.getCatalogAndResetTimeout(Duration.ofSeconds(1)));
 		assertNotNull(reference.getHardRef());
 		Thread.sleep(500);
-		assertNotNull(reference.getSchemaAndResetTimeout(Duration.ofSeconds(1)));
+		assertNotNull(reference.getCatalogAndResetTimeout(Duration.ofSeconds(1)));
 		assertNotNull(reference.getHardRef());
 		Thread.sleep(500);
-		assertNotNull(reference.getSchemaAndResetTimeout(Duration.ofSeconds(1)));
+		assertNotNull(reference.getCatalogAndResetTimeout(Duration.ofSeconds(1)));
 		assertNotNull(reference.getHardRef());
 		Thread.sleep(1200);
 		assertNull(reference.getHardRef());
@@ -83,7 +83,7 @@ class ExpiringReferenceTest {
 		assertNotNull(reference.getHardRef());
 		Thread.sleep(500);
 		assertNotNull(reference.getHardRef());
-		assertNotNull(reference.getSchemaAndResetTimeout(Duration.ofSeconds(1)));
+		assertNotNull(reference.getCatalogAndResetTimeout(Duration.ofSeconds(1)));
 		Thread.sleep(1100);
 		assertNotNull(reference.getHardRef());
 	}

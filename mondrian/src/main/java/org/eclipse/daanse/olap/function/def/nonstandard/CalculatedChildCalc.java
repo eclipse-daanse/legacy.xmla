@@ -16,7 +16,7 @@ package org.eclipse.daanse.olap.function.def.nonstandard;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
@@ -38,7 +38,7 @@ public class CalculatedChildCalc extends AbstractProfilingNestedMemberCalc {
     }
 
     private Member getCalculatedChild(Member parent, String childName, Evaluator evaluator) {
-        final SchemaReader schemaReader = evaluator.getQuery().getSchemaReader(true);
+        final CatalogReader schemaReader = evaluator.getQuery().getCatalogReader(true);
         Level childLevel = parent.getLevel().getChildLevel();
         if (childLevel == null) {
             return parent.getHierarchy().getNullMember();

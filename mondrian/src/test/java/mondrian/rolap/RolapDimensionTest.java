@@ -36,7 +36,7 @@ import mondrian.olap.SystemWideProperties;
 
 class RolapDimensionTest {
 
-  private RolapSchema schema;
+  private RolapCatalog schema;
   private RolapCube cube;
   private DimensionMappingImpl xmlDimension;
   private DimensionConnectorMappingImpl xmlCubeDimension;
@@ -46,11 +46,11 @@ class RolapDimensionTest {
   @BeforeEach
   public void beforeEach() {
 
-    schema = Mockito.mock(RolapSchema.class);
+    schema = Mockito.mock(RolapCatalog.class);
     cube = Mockito.mock(RolapCube.class);
     RelationalQueryMapping fact = Mockito.mock(RelationalQueryMapping.class);
 
-    Mockito.when(cube.getSchema()).thenReturn(schema);
+    Mockito.when(cube.getCatalog()).thenReturn(schema);
     Mockito.when(cube.getFact()).thenReturn(fact);
 
     xmlDimension = StandardDimensionMappingImpl.builder().build();

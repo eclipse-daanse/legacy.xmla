@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
@@ -44,13 +44,13 @@ public class DescendantsByDepthCalc extends AbstractListCalc {
         final Member member = memberCalc.evaluate(evaluator);
         List<Member> result = new ArrayList<>();
         final Integer depth = depthCalc.evaluate(evaluator);
-        final SchemaReader schemaReader = evaluator.getSchemaReader();
+        final CatalogReader schemaReader = evaluator.getCatalogReader();
         descendantsByDepth(member, result, schemaReader, depth, flag.before, flag.self, flag.after, evaluator);
         Sorter.hierarchizeMemberList(result, false);
         return new UnaryTupleList(result);
     }
 
-    private void descendantsByDepth(Member member, List<Member> result, final SchemaReader schemaReader,
+    private void descendantsByDepth(Member member, List<Member> result, final CatalogReader schemaReader,
             final int depthLimitFinal, final boolean before, final boolean self, final boolean after,
             final Evaluator context) {
         List<Member> children = new ArrayList<>();

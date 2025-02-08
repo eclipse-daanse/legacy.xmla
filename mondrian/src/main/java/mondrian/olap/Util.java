@@ -95,7 +95,7 @@ import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.ProfileHandler;
 import org.eclipse.daanse.olap.api.QueryTiming;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.access.Access;
@@ -588,7 +588,7 @@ public class Util {
     }
 
     public static OlapElement lookupCompound(
-        SchemaReader schemaReader,
+        CatalogReader schemaReader,
         OlapElement parent,
         List<Segment> names,
         boolean failIfNotFound,
@@ -604,7 +604,7 @@ public class Util {
      * '[Products]&#46;[Product Department]&#46;[Produce]' by resolving the
      * components ('Products', and so forth) one at a time.
      *
-     * @param schemaReader Schema reader, supplies access-control context
+     * @param catalogReader Catalog reader, supplies access-control context
      * @param parent Parent element to search in
      * @param names Exploded compound name, such as {"Products",
      *   "Product Department", "Produce"}
@@ -619,7 +619,7 @@ public class Util {
      * @see #parseIdentifier(String)
      */
     public static OlapElement lookupCompound(
-        SchemaReader schemaReader,
+        CatalogReader catalogReader,
         OlapElement parent,
         List<Segment> names,
         boolean failIfNotFound,
@@ -643,14 +643,14 @@ public class Util {
         // First look up a member from the cache of calculated members
         // (cubes and queries both have them).
         if (category == DataType.MEMBER || category == DataType.UNKNOWN) {
-            Member member = schemaReader.getCalculatedMember(names);
+            Member member = catalogReader.getCalculatedMember(names);
             if (member != null) {
                 return member;
             }
         }
         // Likewise named set.
         if (category == DataType.SET || category == DataType.UNKNOWN) {
-            NamedSet namedSet = schemaReader.getNamedSet(names);
+            NamedSet namedSet = catalogReader.getNamedSet(names);
             if (namedSet != null) {
                 return namedSet;
             }
@@ -662,7 +662,7 @@ public class Util {
             org.eclipse.daanse.olap.api.NameSegment name;
             if (names.get(i) instanceof org.eclipse.daanse.olap.api.NameSegment nameSegment) {
                 name = nameSegment;
-                child = schemaReader.getElementChild(parent, name, matchType);
+                child = catalogReader.getElementChild(parent, name, matchType);
             } else if (parent instanceof RolapLevel
                        && names.get(i) instanceof IdImpl.KeySegment
                        && names.get(i).getKeyParts().size() == 1)
@@ -674,7 +674,7 @@ public class Util {
                 final IdImpl.KeySegment keySegment = (IdImpl.KeySegment) names.get(i);
                 name = keySegment.getKeyParts().get(0);
                 final List<Member> levelMembers =
-                    schemaReader.getLevelMembers(
+                    catalogReader.getLevelMembers(
                         (Level) parent, false);
                 child = null;
                 for (Member member : levelMembers) {
@@ -687,7 +687,7 @@ public class Util {
                 }
             } else {
                 name = null;
-                child = schemaReader.getElementChild(parent, name, matchType);
+                child = catalogReader.getElementChild(parent, name, matchType);
             }
             // if we're doing a non-exact match, and we find a non-exact
             // match, then for an after match, return the first child
@@ -699,7 +699,7 @@ public class Util {
             {
                 for (int j = i + 1; j < names.size(); j++) {
                     List<Member> childrenList =
-                        schemaReader.getMemberChildren(bestChild);
+                        catalogReader.getMemberChildren(bestChild);
                     Sorter.hierarchizeMemberList(childrenList, false);
                     if (matchType == MatchType.AFTER) {
                         bestChild = childrenList.get(0);
@@ -825,7 +825,7 @@ public class Util {
         List<Segment> nameParts,
         boolean allowProp)
     {
-        return lookup(q, q.getSchemaReader(true), nameParts, allowProp);
+        return lookup(q, q.getCatalogReader(true), nameParts, allowProp);
     }
 
     /**
@@ -839,21 +839,21 @@ public class Util {
      * In this case, the result will be a {@link ResolvedFunCallImpl}.
      *
      * @param q Query expression belongs to
-     * @param schemaReader Schema reader
+     * @param catalogReader Catalog reader
      * @param segments Parts of the identifier
      * @param allowProp Whether to allow property references
      * @return OLAP object or property reference
      */
     public static Expression lookup(
         Query q,
-        SchemaReader schemaReader,
+        CatalogReader catalogReader,
         List<Segment> segments,
         boolean allowProp)
     {
         // First, look for a calculated member defined in the query.
         final String fullName = quoteMdxIdentifier(segments);
-        final SchemaReader schemaReaderSansAc =
-            schemaReader.withoutAccessControl().withLocus();
+        final CatalogReader schemaReaderSansAc =
+            catalogReader.withoutAccessControl().withLocus();
         final Cube cube = q.getCube();
         // Check level properties before Member.
         // Otherwise it will query all level members to find member with property name.
@@ -920,13 +920,13 @@ public class Util {
             }
         }
 
-        Role role = schemaReader.getRole();
+        Role role = catalogReader.getRole();
         if (!role.canAccess(olapElement)) {
             throw new MdxChildObjectNotFoundException(fullName, cube.getQualifiedName());
         }
         if (olapElement instanceof Member member) {
             olapElement =
-                    schemaReader.substitute(member);
+                    catalogReader.substitute(member);
         }
 
         // keep track of any measure members referenced; these will be used
@@ -944,7 +944,7 @@ public class Util {
      * @return Cube, or null if not found
      */
     static Cube lookupCube(
-        SchemaReader schemaReader,
+        CatalogReader schemaReader,
         String cubeName,
         boolean fail)
     {
@@ -990,7 +990,7 @@ public class Util {
      * @return Member, or null if not found
      */
     public static Member lookupHierarchyRootMember(
-        SchemaReader reader,
+        CatalogReader reader,
         Hierarchy hierarchy,
         org.eclipse.daanse.olap.api.NameSegment memberName,
         MatchType matchType)
@@ -1093,7 +1093,7 @@ public class Util {
      * Finds the zero based ordinal of a Member among its siblings.
      */
     public static int getMemberOrdinalInParent(
-        SchemaReader reader,
+        CatalogReader reader,
         Member member)
     {
         Member parent = member.getParentMember();
@@ -1117,7 +1117,7 @@ public class Util {
      * the member [Time].[1997].[Q1].[1] will be returned
      */
     public static Member getFirstDescendantOnLevel(
-        SchemaReader reader,
+        CatalogReader reader,
         Member parent,
         Level level)
     {
@@ -1229,7 +1229,7 @@ public class Util {
     }
 
     public static List<Member> addLevelCalculatedMembers(
-        SchemaReader reader,
+        CatalogReader reader,
         Level level,
         List<Member> members)
     {
@@ -2756,7 +2756,7 @@ public class Util {
             }
 
             @Override
-			public SchemaReader getSchemaReader() {
+			public CatalogReader getCatalogReader() {
                 throw new UnsupportedOperationException();
             }
 

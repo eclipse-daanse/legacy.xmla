@@ -42,7 +42,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.result.Property;
@@ -139,10 +139,10 @@ class MDSchemaDiscoverServiceTest {
     private SchemaMapping mappingSchema2;
 
     @Mock
-    private Schema schema1;
+    private Catalog schema1;
 
     @Mock
-    private Schema schema2;
+    private Catalog schema2;
 
     @Mock
     private CubeMapping mappingCube1;
@@ -238,7 +238,7 @@ class MDSchemaDiscoverServiceTest {
     @Test
     void mdSchemaCubes() {
     	org.eclipse.daanse.olap.api.Connection con = mock(org.eclipse.daanse.olap.api.Connection.class);
-    	when(con.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
+    	when(con.getCatalogs()).thenAnswer(setupDummyListAnswer(schema1, schema2));
         when(cls.get()).thenReturn(List.of(context1, context2));
 
         MdSchemaCubesRequest request = mock(MdSchemaCubesRequest.class);
@@ -340,7 +340,7 @@ class MDSchemaDiscoverServiceTest {
         when(schema1.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
         when(schema2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
 
-        when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
+        when(connection.getCatalogs()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
         when(context1.getCatalogMapping()).thenReturn(catalog1);
         when(context2.getCatalogMapping()).thenReturn(catalog2);
@@ -502,7 +502,7 @@ class MDSchemaDiscoverServiceTest {
         when(schema1.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
         when(schema2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
 
-        when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
+        when(connection.getCatalogs()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
         when(context1.getCatalogMapping()).thenReturn(catalog1);
         when(context2.getCatalogMapping()).thenReturn(catalog2);
@@ -712,7 +712,7 @@ class MDSchemaDiscoverServiceTest {
         when(schema1.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
         when(schema2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
 
-        when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
+        when(connection.getCatalogs()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
         when(context1.getCatalogMapping()).thenReturn(catalog1);
         when(context2.getCatalogMapping()).thenReturn(catalog2);
@@ -775,7 +775,7 @@ class MDSchemaDiscoverServiceTest {
         when(schema1.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
         when(schema2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
 
-        when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
+        when(connection.getCatalogs()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
         when(context1.getCatalogMapping()).thenReturn(catalog1);
         when(context2.getCatalogMapping()).thenReturn(catalog2);
@@ -882,7 +882,7 @@ class MDSchemaDiscoverServiceTest {
         when(schema1.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
         when(schema2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
 
-        when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
+        when(connection.getCatalogs()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
         when(context1.getCatalogMapping()).thenReturn(catalog1);
         when(context2.getCatalogMapping()).thenReturn(catalog2);
@@ -992,7 +992,7 @@ class MDSchemaDiscoverServiceTest {
         when(schema1.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
         when(schema2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
 
-        when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
+        when(connection.getCatalogs()).thenAnswer(setupDummyListAnswer(schema1, schema2));
         when(context1.getCatalogMapping()).thenReturn(catalog1);
         when(context2.getCatalogMapping()).thenReturn(catalog2);
         
@@ -1077,7 +1077,7 @@ class MDSchemaDiscoverServiceTest {
         when(schema1.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
         when(schema2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
 
-        when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
+        when(connection.getCatalogs()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
         when(context1.getCatalogMapping()).thenReturn(catalog1);
         when(context2.getCatalogMapping()).thenReturn(catalog2);
@@ -1136,7 +1136,7 @@ class MDSchemaDiscoverServiceTest {
         when(schema1.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
         when(schema2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
 
-        when(connection.getSchemas()).thenAnswer(setupDummyListAnswer(schema1, schema2));
+        when(connection.getCatalogs()).thenAnswer(setupDummyListAnswer(schema1, schema2));
 
         when(context1.getCatalogMapping()).thenReturn(catalog1);
         when(context2.getCatalogMapping()).thenReturn(catalog2);

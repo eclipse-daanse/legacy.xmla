@@ -27,7 +27,7 @@ import org.opencube.junit5.context.TestConfig;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 
 
 class StrToMemberFunDefTest {
@@ -79,7 +79,7 @@ class StrToMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStrToMemberIgnoreInvalidMembers(Context context) {
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
 
         // [Product].[Drugs] is invalid, becomes null member, and is dropped

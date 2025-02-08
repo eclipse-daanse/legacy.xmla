@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.util.Bug;
 
@@ -773,7 +773,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testLevelMemberExpressions(Context context) {
-	context.getSchemaCache().clear();
+	context.getCatalogCache().clear();
     // Should return Beverly Hills in California.
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "[Store].[Store City].[Beverly Hills]",

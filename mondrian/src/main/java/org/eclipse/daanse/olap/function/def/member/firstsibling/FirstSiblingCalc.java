@@ -16,7 +16,7 @@ package org.eclipse.daanse.olap.function.def.member.firstsibling;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
@@ -37,7 +37,7 @@ public class FirstSiblingCalc extends AbstractProfilingNestedMemberCalc {
     private Member firstSibling(Member member, Evaluator evaluator) {
         Member parent = member.getParentMember();
         List<Member> children;
-        final SchemaReader schemaReader = evaluator.getSchemaReader();
+        final CatalogReader schemaReader = evaluator.getCatalogReader();
         if (parent == null) {
             if (member.isNull()) {
                 return member;

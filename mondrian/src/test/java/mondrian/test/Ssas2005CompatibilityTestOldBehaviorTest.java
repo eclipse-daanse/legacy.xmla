@@ -1,7 +1,7 @@
 package mondrian.test;
 
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -10,7 +10,7 @@ public class Ssas2005CompatibilityTestOldBehaviorTest  extends Ssas2005Compatibi
     @Override
     @BeforeEach
     public void beforeEach() {
-//        RolapSchemaCache.instance().clear();
+//        RolapCatalogCache.instance().clear();
         SystemWideProperties.instance().SsasCompatibleNaming = false;
     }
 

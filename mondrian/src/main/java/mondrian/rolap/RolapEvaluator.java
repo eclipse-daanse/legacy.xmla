@@ -28,7 +28,7 @@ import java.util.Set;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.ExpCacheDescriptor;
 import org.eclipse.daanse.olap.api.QueryTiming;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -270,7 +270,7 @@ public RolapCube getMeasureCube() {
 
   @Override
 public boolean mightReturnNullForUnrelatedDimension() {
-    if ( !this.getCube().getSchema().getInternalConnection().getContext().getConfig().ignoreMeasureForNonJoiningDimension() ) {
+    if ( !this.getCube().getCatalog().getInternalConnection().getContext().getConfig().ignoreMeasureForNonJoiningDimension() ) {
       return false;
     }
     RolapCube virtualCube = getCube();
@@ -409,7 +409,7 @@ public final Query getQuery() {
   }
 
   @Override
-public final SchemaReader getSchemaReader() {
+public final CatalogReader getCatalogReader() {
     return root.schemaReader;
   }
 

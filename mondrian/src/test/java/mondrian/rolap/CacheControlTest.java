@@ -26,7 +26,7 @@ import org.eclipse.daanse.olap.api.CacheControl.CellRegion;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -610,12 +610,12 @@ class CacheControlTest {
         CacheControl cacheControl)
     {
         // Flush a region of the cache.
-        final Cube salesCube = connection.getSchema().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
 
         // Region consists of [Time].[1997].[Q1] and its children, and products
         // [Beer] and [Dairy].
-        final SchemaReader schemaReader =
-            salesCube.getSchemaReader(null).withLocus();
+        final CatalogReader schemaReader =
+            salesCube.getCatalogReader(null).withLocus();
         final Member memberQ1 = schemaReader.getMemberByUniqueName(
         		IdImpl.toList("Time", "1997", "Q1"), true);
         final Member memberBeer = schemaReader.getMemberByUniqueName(
@@ -682,11 +682,11 @@ class CacheControlTest {
         Connection connection,
         CacheControl cacheControl)
     {
-        final Cube salesCube = connection.getSchema().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
 
         // Region consists of [Time].[1997].[Q1] and its children.
-        final SchemaReader schemaReader =
-            salesCube.getSchemaReader(null).withLocus();
+        final CatalogReader schemaReader =
+            salesCube.getCatalogReader(null).withLocus();
         final Member memberQ1 = schemaReader.getMemberByUniqueName(
         		IdImpl.toList("Time", "1997", "Q1"), true);
 
@@ -712,11 +712,11 @@ class CacheControlTest {
         Connection connection,
         CacheControl cacheControl)
     {
-        final Cube salesCube = connection.getSchema().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
 
         // Region consists of [Time].[1997].[Q2].[4] and its children.
-        final SchemaReader schemaReader =
-            salesCube.getSchemaReader(null).withLocus();
+        final CatalogReader schemaReader =
+            salesCube.getCatalogReader(null).withLocus();
         final Member memberApril = schemaReader.getMemberByUniqueName(
         		IdImpl.toList("Time", "1997", "Q2", "4"), true);
 
@@ -745,10 +745,10 @@ class CacheControlTest {
         Connection connection,
         CacheControl cacheControl)
     {
-        final Cube salesCube = connection.getSchema().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
 
         // Region consists of [Time].[1997] and its children.
-        final SchemaReader schemaReader = salesCube.getSchemaReader(null);
+        final CatalogReader schemaReader = salesCube.getCatalogReader(null);
         final Member member1997 = schemaReader.getMemberByUniqueName(
         		IdImpl.toList("Time", "1997"), true);
 
@@ -776,12 +776,12 @@ class CacheControlTest {
         Connection connection,
         CacheControl cacheControl)
     {
-        final Cube salesCube = connection.getSchema().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
 
         // Region consists of [Product].[Food], [Product].[Drink] and their
         // children.
-        final SchemaReader schemaReader =
-            salesCube.getSchemaReader(null).withLocus();
+        final CatalogReader schemaReader =
+            salesCube.getCatalogReader(null).withLocus();
         final Member memberFood = schemaReader.getMemberByUniqueName(
         		IdImpl.toList("Product", "Food"), true);
         final Member memberDrink = schemaReader.getMemberByUniqueName(
@@ -812,10 +812,10 @@ class CacheControlTest {
         CacheControl cacheControl)
     {
         final Cube salesCube =
-            connection.getSchema().lookupCube("Sales", true);
+            connection.getCatalog().lookupCube("Sales", true);
 
-        final SchemaReader schemaReader =
-            salesCube.getSchemaReader(null).withLocus();
+        final CatalogReader schemaReader =
+            salesCube.getCatalogReader(null).withLocus();
         final Member memberFemale =
             schemaReader.getMemberByUniqueName(
             		IdImpl.toList("Gender", "F"), true);
@@ -835,10 +835,10 @@ class CacheControlTest {
         CacheControl cacheControl)
     {
         final Cube salesCube =
-            connection.getSchema().lookupCube("Sales", true);
+            connection.getCatalog().lookupCube("Sales", true);
 
-        final SchemaReader schemaReader =
-            salesCube.getSchemaReader(null).withLocus();
+        final CatalogReader schemaReader =
+            salesCube.getCatalogReader(null).withLocus();
         final Member memberFemale =
             schemaReader.getMemberByUniqueName(
             		IdImpl.toList("Gender", "M"), true);
@@ -872,8 +872,8 @@ class CacheControlTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNegative(Context context) {
         final Connection connection = context.getConnectionWithDefaultRole();
-        final Cube salesCube = connection.getSchema().lookupCube("Sales", true);
-        final SchemaReader schemaReader = salesCube.getSchemaReader(null);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        final CatalogReader schemaReader = salesCube.getCatalogReader(null);
         final CacheControl cacheControl = connection.getCacheControl(null);
         final Member memberQ1 =
             schemaReader.withLocus().getMemberByUniqueName(
@@ -1018,13 +1018,13 @@ class CacheControlTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCrossjoin(Context context) {
         final Connection connection = context.getConnectionWithDefaultRole();
-        final Cube salesCube = connection.getSchema().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
         final CacheControl cacheControl = connection.getCacheControl(null);
 
         // Region consists of [Time].[1997].[Q1] and its children, and products
         // [Beer] and [Dairy].
-        final SchemaReader schemaReader =
-            salesCube.getSchemaReader(null).withLocus();
+        final CatalogReader schemaReader =
+            salesCube.getCatalogReader(null).withLocus();
         final Member memberQ1 = schemaReader.getMemberByUniqueName(
         		IdImpl.toList("Time", "1997", "Q1"), true);
         final Member memberBeer = schemaReader.getMemberByUniqueName(
@@ -1111,10 +1111,10 @@ class CacheControlTest {
             names[i] = name.substring(1, name.length() - 1);
             ids.add(new IdImpl.NameSegmentImpl(names[i]));
         }
-        final Cube salesCube = connection.getSchema().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
         final CacheControl cacheControl = connection.getCacheControl(null);
-        final SchemaReader schemaReader =
-            salesCube.getSchemaReader(null).withLocus();
+        final CatalogReader schemaReader =
+            salesCube.getCatalogReader(null).withLocus();
         final Member member = schemaReader.getMemberByUniqueName(ids, true);
         return cacheControl.createMemberRegion(member, false);
     }
@@ -1204,7 +1204,7 @@ class CacheControlTest {
         final CacheControl cacheControl = connection.getCacheControl(null);
         final Cube cube =
             connection
-                .getSchema().lookupCube("Sales", true);
+                .getCatalog().lookupCube("Sales", true);
         Hierarchy hier =
             cube.getDimensions()[2].getHierarchies()[0];
         Member hierMember = hier.getAllMember();
@@ -1256,7 +1256,7 @@ class CacheControlTest {
 
         // Flush the cache.
         final Cube salesCube =
-                connection.getSchema().lookupCube("Sales", true);
+                connection.getCatalog().lookupCube("Sales", true);
         final Hierarchy storeHierarchy =
             salesCube.lookupHierarchy(
                 new IdImpl.NameSegmentImpl(

@@ -15,7 +15,7 @@ package org.eclipse.daanse.olap.api.element;
 
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 
 import mondrian.olap.Property;
@@ -49,7 +49,7 @@ public interface Member extends OlapElement, Comparable, MetaElement {
    * has no parent.
    *
    * <p>In an access-control context, a member may have no <em>visible</em>
-   * parents, so use {@link SchemaReader#getMemberParent}.
+   * parents, so use {@link CatalogReader#getMemberParent}.
    */
   Member getParentMember();
 
@@ -142,7 +142,7 @@ Hierarchy getHierarchy();
   /**
    * Returns a list of the ancestor members of this member.
    *
-   * @deprecated Use {@link SchemaReader#getMemberAncestors(Member, java.util.List)}.
+   * @deprecated Use {@link CatalogReader#getMemberAncestors(Member, java.util.List)}.
    */
   @Deprecated
 List<Member> getAncestorMembers();

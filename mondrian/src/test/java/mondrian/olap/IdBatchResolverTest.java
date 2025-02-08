@@ -32,7 +32,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.SubtotalVisibility;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -110,7 +110,7 @@ class IdBatchResolverTest  {
         // verify lookupMemberChildrenByNames is called as expected with
         // batched children's names.
         verify(
-            query.getSchemaReader(true), times(2))
+            query.getCatalogReader(true), times(2))
             .lookupMemberChildrenByNames(
                 parentMember.capture(),
                 childNames.capture(),
@@ -159,7 +159,7 @@ class IdBatchResolverTest  {
             + "'Sum(Descendants([Time.Weekly].CurrentMember, [Time.Weekly].Week))' "
             + "select Gender.levelRef on 0 from sales where [Time.Weekly].[1997]");
         verify(
-            query.getSchemaReader(true), times(1))
+            query.getCatalogReader(true), times(1))
             .lookupMemberChildrenByNames(
                 parentMember.capture(),
                 childNames.capture(),
@@ -189,7 +189,7 @@ class IdBatchResolverTest  {
                 "[Time].[1997].[Q1]",
                 "[Time].[1997].[Q2]"));
         verify(
-            query.getSchemaReader(true), times(1))
+            query.getCatalogReader(true), times(1))
             .lookupMemberChildrenByNames(
                 parentMember.capture(),
                 childNames.capture(),
@@ -235,7 +235,7 @@ class IdBatchResolverTest  {
                 "[Promotions].[Bye Bye Baby]"));
 
         verify(
-            query.getSchemaReader(true), times(5))
+            query.getCatalogReader(true), times(5))
             .lookupMemberChildrenByNames(
                 parentMember.capture(),
                 childNames.capture(),
@@ -282,7 +282,7 @@ class IdBatchResolverTest  {
                 "[Store Size in SQFT].[23598]"));
 
         verify(
-            query.getSchemaReader(true), times(1))
+            query.getCatalogReader(true), times(1))
             .lookupMemberChildrenByNames(
                 parentMember.capture(),
                 childNames.capture(),
@@ -319,7 +319,7 @@ class IdBatchResolverTest  {
                 "[Time.Weekly].[1997].[6]"));
 
         verify(
-            query.getSchemaReader(true), times(2))
+            query.getCatalogReader(true), times(2))
             .lookupMemberChildrenByNames(
                 parentMember.capture(),
                 childNames.capture(),
@@ -358,7 +358,7 @@ class IdBatchResolverTest  {
                 "[Time].[Weekly].[1997].[6]"));
 
         verify(
-            query.getSchemaReader(true), times(2))
+            query.getCatalogReader(true), times(2))
             .lookupMemberChildrenByNames(
                 parentMember.capture(),
                 childNames.capture(),
@@ -399,7 +399,7 @@ class IdBatchResolverTest  {
                     "[Employees].[Sheri Nowmer].[Michael Spence]"));
 
         verify(
-            query.getSchemaReader(true), times(2))
+            query.getCatalogReader(true), times(2))
             .lookupMemberChildrenByNames(
                 parentMember.capture(),
                 childNames.capture(),
@@ -463,7 +463,7 @@ class IdBatchResolverTest  {
     }
 
     private class QueryTestWrapper extends QueryImpl {
-        private SchemaReader spyReader;
+        private CatalogReader spyReader;
 
         public QueryTestWrapper(
             Statement statement,
@@ -476,7 +476,7 @@ class IdBatchResolverTest  {
         {
             super(
                 statement,
-                Util.lookupCube(statement.getSchemaReader(), cube, true),
+                Util.lookupCube(statement.getCatalogReader(), cube, true),
                 formulas,
                 axes,
                 slicerAxis,
@@ -498,11 +498,11 @@ class IdBatchResolverTest  {
         }
 
         @Override
-        public synchronized SchemaReader getSchemaReader(
+        public synchronized CatalogReader getCatalogReader(
             boolean accessControlled)
         {
             if (spyReader == null) {
-            	spyReader=spy( new SpySchemaReader(super.getSchemaReader(accessControlled)));
+            	spyReader=spy( new SpyCatalogReader(super.getCatalogReader(accessControlled)));
             }
             return spyReader;
         }

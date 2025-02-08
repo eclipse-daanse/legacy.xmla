@@ -45,7 +45,7 @@ public class DefaultMemberFunDef extends AbstractFunctionDefinition {
             @Override
             public Member evaluate(Evaluator evaluator) {
                 Hierarchy hierarchy = hierarchyCalc.evaluate(evaluator);
-                return evaluator.getSchemaReader().getHierarchyDefaultMember(hierarchy);
+                return evaluator.getCatalogReader().getHierarchyDefaultMember(hierarchy);
             }
         };
     }

@@ -24,7 +24,7 @@ import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.access.Role;
@@ -39,34 +39,34 @@ import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.api.Calc;
 
-import mondrian.rolap.RolapSchema;
+import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapUtil;
 
 /**
- * <code>DelegatingSchemaReader</code> implements {@link SchemaReader} by
- * delegating all methods to an underlying {@link SchemaReader}.
+ * <code>DelegatingCatalogReader</code> implements {@link CatalogReader} by
+ * delegating all methods to an underlying {@link CatalogReader}.
  *
  * <p>It is a convenient base class if you want to override just a few of
- * {@link SchemaReader}'s methods.</p>
+ * {@link CatalogReader}'s methods.</p>
  *
  * @author jhyde
  * @since Feb 26, 2003
  */
-public abstract class DelegatingSchemaReader implements SchemaReader {
-    protected final SchemaReader schemaReader;
+public abstract class DelegatingCatalogReader implements CatalogReader {
+    protected final CatalogReader schemaReader;
 
     /**
-     * Creates a DelegatingSchemaReader.
+     * Creates a DelegatingCatalogReader.
      *
      * @param schemaReader Parent reader to delegate unhandled calls to
      */
-    protected DelegatingSchemaReader(SchemaReader schemaReader) {
+    protected DelegatingCatalogReader(CatalogReader schemaReader) {
         this.schemaReader = schemaReader;
     }
 
     @Override
-	public RolapSchema getSchema() {
-        return schemaReader.getSchema();
+	public RolapCatalog getCatalog() {
+        return schemaReader.getCatalog();
     }
 
     @Override
@@ -361,14 +361,14 @@ public abstract class DelegatingSchemaReader implements SchemaReader {
     }
 
     @Override
-	public SchemaReader withoutAccessControl() {
+	public CatalogReader withoutAccessControl() {
         return schemaReader.withoutAccessControl();
     }
 
     @Override
-	public SchemaReader withLocus() {
-        return RolapUtil.locusSchemaReader(
-            schemaReader.getSchema().getInternalConnection(),
+	public CatalogReader withLocus() {
+        return RolapUtil.locusCatalogReader(
+            schemaReader.getCatalog().getInternalConnection(),
             this);
     }
 

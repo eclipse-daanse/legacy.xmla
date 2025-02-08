@@ -386,7 +386,7 @@ public class BatchTestCase{
     }
 
     private RolapCube lookupCube(Connection connection, String cubeName) {
-        for (Cube cube : connection.getSchema().getCubes()) {
+        for (Cube cube : connection.getCatalog().getCubes()) {
             if (cube.getName().equals(cubeName)) {
                 return (RolapCube) cube;
             }
@@ -591,7 +591,7 @@ public class BatchTestCase{
         // Clear the cache for the Sales cube, so the query runs as if
         // for the first time. (TODO: Cleaner way to do this.)
         final Cube salesCube =
-                connection.getSchema().lookupCube("Sales", false);
+                connection.getCatalog().lookupCube("Sales", false);
         if (salesCube != null) {
             RolapHierarchy hierarchy =
                     (RolapHierarchy) salesCube.lookupHierarchy(
@@ -799,15 +799,15 @@ public class BatchTestCase{
     protected RolapStar.Measure getMeasure(Connection connection, String cube, String measureName) {
         //final Connection connection = getFoodMartConnection(context);
         final boolean fail = true;
-        Cube salesCube = connection.getSchema().lookupCube(cube, fail);
-        Member measure = salesCube.getSchemaReader(null).getMemberByUniqueName(
+        Cube salesCube = connection.getCatalog().lookupCube(cube, fail);
+        Member measure = salesCube.getCatalogReader(null).getMemberByUniqueName(
             Util.parseIdentifier(measureName), fail);
         return RolapStar.getStarMeasure(measure);
     }
 
     protected RolapCube getCube(Connection connection, final String cube) {
         final boolean fail = true;
-        return (RolapCube) connection.getSchema().lookupCube(cube, fail);
+        return (RolapCube) connection.getCatalog().lookupCube(cube, fail);
     }
 
     /**
@@ -871,10 +871,10 @@ public class BatchTestCase{
 
     RolapNativeRegistry getRegistry(Connection connection) {
         RolapCube cube =
-            (RolapCube) connection.getSchema().lookupCube("Sales", true);
-        RolapSchemaReader schemaReader =
-            (RolapSchemaReader) cube.getSchemaReader();
-        return schemaReader.getSchema().getNativeRegistry();
+            (RolapCube) connection.getCatalog().lookupCube("Sales", true);
+        RolapCatalogReader schemaReader =
+            (RolapCatalogReader) cube.getCatalogReader();
+        return schemaReader.getCatalog().getNativeRegistry();
     }
 
     /**

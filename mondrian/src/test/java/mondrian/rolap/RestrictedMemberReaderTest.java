@@ -25,7 +25,7 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -48,7 +48,7 @@ class RestrictedMemberReaderTest {
 
   @Test
   void testGetHierarchy_allAccess() {
-    Schema schema = Mockito.mock(Schema.class);
+    Catalog schema = Mockito.mock(Catalog.class);
     Dimension dimension = Mockito.mock(Dimension.class);
     RolapHierarchy hierarchy = Mockito.mock(RolapHierarchy.class);
     Level[] hierarchyAccessLevels = new Level[] { null };
@@ -56,7 +56,7 @@ class RestrictedMemberReaderTest {
     HierarchyAccess roleAccess = null;
     Role role = Mockito.mock(Role.class);
 
-    Mockito.doReturn(schema).when(dimension).getSchema();
+    Mockito.doReturn(schema).when(dimension).getCatalog();
     Mockito.doReturn(dimension).when(hierarchy).getDimension();
     Mockito.doReturn(hierarchyAccessLevels).when(hierarchy).getLevels();
     Mockito.doReturn(true).when(hierarchy).isRagged();
@@ -87,7 +87,7 @@ class RestrictedMemberReaderTest {
 
   @Test
   void testDefaultMember_allAccess() {
-    Schema schema = Mockito.mock(Schema.class);
+    Catalog schema = Mockito.mock(Catalog.class);
     Dimension dimension = Mockito.mock(Dimension.class);
     RolapHierarchy hierarchy = Mockito.mock(RolapHierarchy.class);
     Level[] hierarchyAccessLevels = new Level[] { null };
@@ -95,7 +95,7 @@ class RestrictedMemberReaderTest {
     HierarchyAccess roleAccess = null;
     Role role = Mockito.mock(Role.class);
 
-    Mockito.doReturn(schema).when(dimension).getSchema();
+    Mockito.doReturn(schema).when(dimension).getCatalog();
     Mockito.doReturn(dimension).when(hierarchy).getDimension();
     Mockito.doReturn(hierarchyAccessLevels).when(hierarchy).getLevels();
     Mockito.doReturn(true).when(hierarchy).isRagged();
@@ -294,13 +294,13 @@ class RestrictedMemberReaderTest {
       MemberReader delegateMemberReader = Mockito.mock(MemberReader.class);
       MemberChildrenConstraint constraint = Mockito.mock(MemberChildrenConstraint.class);
       Role role = Mockito.mock(Role.class);
-      Schema schema = Mockito.mock(Schema.class);
+      Catalog schema = Mockito.mock(Catalog.class);
       Dimension dimension = Mockito.mock(Dimension.class);
       RolapHierarchy hierarchy = Mockito.mock(RolapHierarchy.class);
 
       Level[] hierarchyAccessLevels = new Level[] { null };
 
-      Mockito.doReturn(schema).when(dimension).getSchema();
+      Mockito.doReturn(schema).when(dimension).getCatalog();
       Mockito.doReturn(dimension).when(hierarchy).getDimension();
       Mockito.doReturn(hierarchyAccessLevels).when(hierarchy).getLevels();
       Mockito.doReturn(true).when(hierarchy).isRagged();

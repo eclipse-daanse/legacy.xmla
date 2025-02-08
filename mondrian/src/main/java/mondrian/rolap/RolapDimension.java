@@ -17,7 +17,7 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.MetaData;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
@@ -43,8 +43,8 @@ import mondrian.rolap.util.DimensionTypeUtil;
  *
  * <p>
  * A dimension may be either shared or private to a particular cube. The
- * dimension object doesn't actually know which; {@link Schema} has a list of
- * shared hierarchies ({@link Schema#getSharedHierarchies}), and {@link Cube}
+ * dimension object doesn't actually know which; {@link Catalog} has a list of
+ * shared hierarchies ({@link Catalog#getSharedHierarchies}), and {@link Cube}
  * has a list of dimensions ({@link Cube#getDimensions}).
  *
  * <p>
@@ -58,7 +58,7 @@ import mondrian.rolap.util.DimensionTypeUtil;
  * too. For example, if you query <code>[Product].[Beer]</code> from the
  * <code>Sales</code> and <code>Warehouse</code> cubes, you will get the
  * same {@link RolapMember}object.
- * ({@link RolapSchema#mapSharedHierarchyToReader} holds the mapping. I don't
+ * ({@link RolapCatalog#mapSharedHierarchyToReader} holds the mapping. I don't
  * know whether it's still necessary.)
  *
  * @author jhyde
@@ -68,11 +68,11 @@ class RolapDimension extends DimensionBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RolapDimension.class);
 
-    private final Schema schema;
+    private final Catalog schema;
     private final MetaData metaData;
 
     RolapDimension(
-        Schema schema,
+        Catalog schema,
         String name,
         String caption,
         boolean visible,
@@ -100,7 +100,7 @@ class RolapDimension extends DimensionBase {
      * @pre schema != null
      */
     RolapDimension(
-        RolapSchema schema,
+        RolapCatalog schema,
         RolapCube cube,
         DimensionMapping mappingDimension,
         DimensionConnectorMapping mappingCubeDimension)
@@ -117,7 +117,7 @@ class RolapDimension extends DimensionBase {
         Util.assertPrecondition(schema != null);
 
         if (cube != null) {
-            Util.assertTrue(cube.getSchema() == schema);
+            Util.assertTrue(cube.getCatalog() == schema);
         }
 
         if (!Util.isEmpty(mappingCubeDimension.getOverrideDimensionName())) {
@@ -223,7 +223,7 @@ class RolapDimension extends DimensionBase {
     }
 
     @Override
-	public Schema getSchema() {
+	public Catalog getCatalog() {
         return schema;
     }
 

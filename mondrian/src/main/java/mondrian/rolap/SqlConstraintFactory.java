@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.NameSegment;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Level;
 
 import mondrian.olap.SystemWideProperties;
@@ -188,12 +188,12 @@ public class SqlConstraintFactory {
     }
 
     private int getLevelCardinality(RolapLevel level) {
-        return getSchemaReader(level)
+        return getCatalogReader(level)
             .getLevelCardinality(level, true, true);
     }
 
-    private SchemaReader getSchemaReader(RolapLevel level) {
-        return level.getHierarchy().getRolapSchema().getSchemaReader();
+    private CatalogReader getCatalogReader(RolapLevel level) {
+        return level.getHierarchy().getRolapCatalog().getCatalogReader();
     }
 
     /**

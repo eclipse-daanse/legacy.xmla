@@ -21,7 +21,7 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -66,7 +66,7 @@ class TypeTest {
     void testConversions(Context foodMartContext) {
         final Connection connection = foodMartContext.getConnectionWithDefaultRole();
         Cube salesCube =
-            getCubeWithName("Sales", connection.getSchema().getCubes());
+            getCubeWithName("Sales", connection.getCatalog().getCubes());
         assertTrue(salesCube != null);
         Dimension customersDimension = null;
         for (Dimension dimension : salesCube.getDimensions()) {
@@ -298,7 +298,7 @@ class TypeTest {
             new IdImpl.NameSegmentImpl("All Stores", Quoting.UNQUOTED),
             new IdImpl.NameSegmentImpl("USA", Quoting.UNQUOTED),
             new IdImpl.NameSegmentImpl("CA", Quoting.UNQUOTED));
-        return getSalesCubeSchemaReader(connection).getMemberByUniqueName(
+        return getSalesCubeCatalogReader(connection).getMemberByUniqueName(
             storeParts, false);
     }
 
@@ -322,7 +322,7 @@ class TypeTest {
         List<Segment> genderParts = Arrays.<Segment>asList(
             new IdImpl.NameSegmentImpl("Gender", Quoting.UNQUOTED),
             new IdImpl.NameSegmentImpl("M", Quoting.UNQUOTED));
-        return getSalesCubeSchemaReader(connection).getMemberByUniqueName(
+        return getSalesCubeCatalogReader(connection).getMemberByUniqueName(
             genderParts, false);
     }
 
@@ -330,20 +330,20 @@ class TypeTest {
         List<Segment> measureParts = Arrays.<Segment>asList(
             new IdImpl.NameSegmentImpl("Measures", Quoting.UNQUOTED),
             new IdImpl.NameSegmentImpl("Unit Sales", Quoting.UNQUOTED));
-        return getSalesCubeSchemaReader(connection).getMemberByUniqueName(
+        return getSalesCubeCatalogReader(connection).getMemberByUniqueName(
             measureParts, false);
     }
 
-    private static SchemaReader getSalesCubeSchemaReader(Connection connection) {
+    private static CatalogReader getSalesCubeCatalogReader(Connection connection) {
         final Cube salesCube = getCubeWithName(
             "Sales",
-            getSchemaReader(connection).getCubes());
-        return salesCube.getSchemaReader(
+            getCatalogReader(connection).getCubes());
+        return salesCube.getCatalogReader(
         		connection.getRole()).withLocus();
     }
 
-    private static SchemaReader getSchemaReader(Connection connection) {
-        return connection.getSchemaReader().withLocus();
+    private static CatalogReader getCatalogReader(Connection connection) {
+        return connection.getCatalogReader().withLocus();
     }
 
     private static Cube getCubeWithName(String cubeName, Cube[] cubes) {

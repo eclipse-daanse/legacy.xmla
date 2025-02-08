@@ -22,7 +22,7 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.ParenthesesOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
@@ -382,7 +382,7 @@ abstract class ValidatorImpl implements Validator {
         Expression defaultExp,
         String description)
     {
-        final SchemaReader schemaReader = getQuery().getSchemaReader(false);
+        final CatalogReader schemaReader = getQuery().getCatalogReader(false);
         Parameter param = schemaReader.getParameter(name);
 
         if (definition) {

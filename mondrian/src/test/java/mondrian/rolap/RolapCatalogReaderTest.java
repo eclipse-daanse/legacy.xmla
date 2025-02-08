@@ -24,16 +24,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
@@ -55,9 +54,9 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 /**
- * Unit test for {@link SchemaReader}.
+ * Unit test for {@link CatalogReader}.
  */
-class RolapSchemaReaderTest {
+class RolapCatalogReaderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
@@ -70,7 +69,7 @@ class RolapSchemaReaderTest {
         Connection connection =
             ((TestContext)context).getConnection(List.of("No HR Cube"));
         try {
-            SchemaReader reader = connection.getSchemaReader().withLocus();
+            CatalogReader reader = connection.getCatalogReader().withLocus();
 
             Cube[] cubes = reader.getCubes();
 
@@ -92,7 +91,7 @@ class RolapSchemaReaderTest {
 
         Connection connection = context.getConnectionWithDefaultRole();
         try {
-            SchemaReader reader = connection.getSchemaReader().withLocus();
+            CatalogReader reader = connection.getCatalogReader().withLocus();
 
             Cube[] cubes = reader.getCubes();
 
@@ -113,7 +112,7 @@ class RolapSchemaReaderTest {
 
         Connection connection = ((TestContext)context).getConnection(List.of("California manager"));
         try {
-            SchemaReader reader = connection.getSchemaReader().withLocus();
+            CatalogReader reader = connection.getCatalogReader().withLocus();
 
             Cube[] cubes = reader.getCubes();
 
@@ -156,13 +155,13 @@ class RolapSchemaReaderTest {
     }
 
     /**
-     * Test case for {@link SchemaReader#getCubeDimensions(Cube)}
-     * and {@link SchemaReader#getDimensionHierarchies(Dimension)}
+     * Test case for {@link CatalogReader#getCubeDimensions(Cube)}
+     * and {@link CatalogReader#getDimensionHierarchies(Dimension)}
      * methods.
      *
      * <p>Test case for bug
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-691">MONDRIAN-691,
-     * "RolapSchemaReader is not enforcing access control on two APIs"</a>.
+     * "RolapCatalogReader is not enforcing access control on two APIs"</a>.
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
@@ -177,9 +176,9 @@ class RolapSchemaReaderTest {
                 super(catalog);
             }
 
-            protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+            protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping catalogMapping) {
             	List<AccessRoleMapping> result = new ArrayList<>();
-                result.addAll(super.schemaAccessRoles(schema));
+                result.addAll(super.schemaAccessRoles(catalogMapping));
                 result.add(AccessRoleMappingImpl.builder()
                     .withName("REG1")
                     .withAccessSchemaGrants(List.of(
@@ -235,7 +234,7 @@ class RolapSchemaReaderTest {
         withSchema(context, TestGetCubeDimensionsModifier::new);
         Connection connection = ((TestContext)context).getConnection(List.of("REG1"));
         try {
-            SchemaReader reader = connection.getSchemaReader().withLocus();
+            CatalogReader reader = connection.getCatalogReader().withLocus();
             final Map<String, Cube> cubes = new HashMap<>();
             for (Cube cube : reader.getCubes()) {
                 cubes.put(cube.getName(), cube);

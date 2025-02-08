@@ -69,7 +69,7 @@ import mondrian.olap.Util;
 import mondrian.olap.type.NumericType;
 import mondrian.olap.type.Type;
 import mondrian.rolap.RolapConnection;
-import mondrian.rolap.RolapSchema;
+import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapUtil;
 import mondrian.server.Execution;
 import mondrian.spi.Dialect;
@@ -4915,7 +4915,7 @@ class BasicQueryTest extends FoodMartTestCase {
       for ( StatisticsProvider statisticsProvider : statisticsProviders ) {
         long rowCount =
             statisticsProvider.getTableCardinality( dialect, testContext.getConnection().getDataSource(), null, null,
-                "customer", new Execution( ( (RolapSchema) testContext.getConnection().getSchema() )
+                "customer", new Execution( ( (RolapCatalog) testContext.getConnection().getSchema() )
                     .getInternalConnection().getInternalStatement(), 0 ) );
         if ( statisticsProvider instanceof SqlStatisticsProvider ) {
           assertTrue( "Row count estimate: " + rowCount + " (actual 10281)", rowCount > 10000 && rowCount < 15000 );
@@ -4923,7 +4923,7 @@ class BasicQueryTest extends FoodMartTestCase {
 
         long valueCount =
             statisticsProvider.getColumnCardinality( dialect, testContext.getConnection().getDataSource(), null, null,
-                "customer", "gender", new Execution( ( (RolapSchema) testContext.getConnection().getSchema() )
+                "customer", "gender", new Execution( ( (RolapCatalog) testContext.getConnection().getSchema() )
                     .getInternalConnection().getInternalStatement(), 0 ) );
         assertTrue( "Value count estimate: " + valueCount + " (actual 2)",
             statisticsProvider instanceof JdbcStatisticsProvider ? valueCount == -1 : valueCount == 2 );

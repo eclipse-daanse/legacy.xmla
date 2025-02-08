@@ -60,7 +60,7 @@ public class DrilldownMemberCalc extends AbstractListCalc {
         for (int k = 0; k < tuple.length; k++) {
             Member member = tuple[k];
             if (memberSet.contains(member)) {
-                List<Member> children = evaluator.getSchemaReader().getMemberChildren(member);
+                List<Member> children = evaluator.getCatalogReader().getMemberChildren(member);
                 final Member[] tuple2 = tuple.clone();
                 for (Member childMember : children) {
                     tuple2[k] = childMember;

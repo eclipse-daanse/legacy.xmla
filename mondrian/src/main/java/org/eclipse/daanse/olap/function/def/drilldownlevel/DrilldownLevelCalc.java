@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -104,7 +104,7 @@ public class DrilldownLevelCalc extends AbstractListCalc{
 
         for(Member parentMember: parentMembers) {
             List<Member> childMembers =
-                    evaluator.getSchemaReader().getMemberChildren(parentMember);
+                    evaluator.getCatalogReader().getMemberChildren(parentMember);
             for (Member childMember : childMembers) {
                 drilledSet.add(childMember);
             }
@@ -122,8 +122,8 @@ public class DrilldownLevelCalc extends AbstractListCalc{
     static HashMap<Member,List<Member>> getCalcMembersByParent(Hierarchy hierarchy, Evaluator evaluator, boolean includeCalcMembers) {
         List<Member> calculatedMembers;
         if(includeCalcMembers) {
-            final SchemaReader schemaReader =
-                    evaluator.getSchemaReader();
+            final CatalogReader schemaReader =
+                    evaluator.getCatalogReader();
             calculatedMembers = schemaReader.getCalculatedMembers(hierarchy);
         }
         else {

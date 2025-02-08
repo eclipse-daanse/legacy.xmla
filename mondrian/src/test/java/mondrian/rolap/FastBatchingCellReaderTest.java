@@ -111,7 +111,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     aggMgr = abc.getAggregationManager();
     locus = new LocusImpl( e, "FastBatchingCellReaderTest", null );
     LocusImpl.push( locus );
-    salesCube = (RolapCube) connection.getSchemaReader().withLocus().getCubes()[0];
+    salesCube = (RolapCube) connection.getCatalogReader().withLocus().getCubes()[0];
   }
 
   private BatchLoader createFbcr( Boolean useGroupingSets, RolapCube cube ) {
@@ -172,7 +172,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testShouldUseGroupingFunctionOnPropertyTrueAndOnSupportedDB(Context context) {
-    context.getSchemaCache().clear();
+    context.getCatalogCache().clear();
     prepareContext(context);
     ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
     BatchLoader fbcr = createFbcr( true, salesCube );

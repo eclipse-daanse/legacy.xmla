@@ -35,7 +35,7 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.MatchType;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.access.Access;
@@ -302,7 +302,7 @@ public class FunUtil extends Util {
 
 
   static List<Member> addMembers(
-    final SchemaReader schemaReader,
+    final CatalogReader schemaReader,
     final List<Member> members,
     final Hierarchy hierarchy) {
     // only add accessible levels
@@ -313,7 +313,7 @@ public class FunUtil extends Util {
   }
 
   static List<Member> addMembers(
-    SchemaReader schemaReader,
+    CatalogReader schemaReader,
     List<Member> members,
     Level level) {
     List<Member> levelMembers = schemaReader.getLevelMembers( level, true );
@@ -1122,7 +1122,7 @@ public class FunUtil extends Util {
       // e.g. m is [Time].[1997] and member is [Time].[1997].[Q1].[3]
       // we now have to make m to be the first member of the range,
       // so m becomes [Time].[1997].[Q1].[1]
-      SchemaReader reader = evaluator.getSchemaReader();
+      CatalogReader reader = evaluator.getCatalogReader();
       m = Util.getFirstDescendantOnLevel( reader, m, member.getLevel() );
       reader.getMemberRange( level, m, member, members );
     }
@@ -1136,13 +1136,13 @@ public class FunUtil extends Util {
     final Level level = startMember.getLevel();
     Util.assertTrue( level == endMember.getLevel() );
     List<Member> members = new ArrayList<>();
-    evaluator.getSchemaReader().getMemberRange(
+    evaluator.getCatalogReader().getMemberRange(
       level, startMember, endMember, members );
 
     if ( members.isEmpty() ) {
       // The result is empty, so maybe the members are reversed. This is
       // cheaper than comparing the members before we call getMemberRange.
-      evaluator.getSchemaReader().getMemberRange(
+      evaluator.getCatalogReader().getMemberRange(
         level, endMember, startMember, members );
     }
     return members;
@@ -1159,7 +1159,7 @@ public class FunUtil extends Util {
    * under its parent.
    */
   public static Member cousin(
-    SchemaReader schemaReader,
+    CatalogReader schemaReader,
     Member member,
     Member ancestorMember ) {
     if ( ancestorMember.isNull() ) {
@@ -1183,7 +1183,7 @@ public class FunUtil extends Util {
   }
 
   private static Member cousin2(
-    SchemaReader schemaReader,
+    CatalogReader schemaReader,
     Member member1,
     Member member2 ) {
     if ( member1.getLevel() == member2.getLevel() ) {
@@ -1238,7 +1238,7 @@ public class FunUtil extends Util {
     }
 
     final List<Member> ancestors = new ArrayList<>();
-    final SchemaReader schemaReader = evaluator.getSchemaReader();
+    final CatalogReader schemaReader = evaluator.getCatalogReader();
     schemaReader.getMemberAncestors( member, ancestors );
 
     Member result = member.getHierarchy().getNullMember();
@@ -1507,7 +1507,7 @@ public class FunUtil extends Util {
   public static List<Member> getNonEmptyMemberChildren(
     Evaluator evaluator,
     Member member ) {
-    SchemaReader sr = evaluator.getSchemaReader();
+    CatalogReader sr = evaluator.getCatalogReader();
     if ( evaluator.isNonEmpty() ) {
       return sr.getMemberChildren( member, evaluator );
     } else {
@@ -1517,7 +1517,7 @@ public class FunUtil extends Util {
 
   public static Map<Member, Access> getNonEmptyMemberChildrenWithDetails(
     Evaluator evaluator, Member member ) {
-    SchemaReader sr = evaluator.getSchemaReader();
+    CatalogReader sr = evaluator.getCatalogReader();
     if ( evaluator.isNonEmpty() ) {
       return (Map<Member, Access>)
         sr.getMemberChildrenWithDetails( member, evaluator );
@@ -1538,7 +1538,7 @@ public class FunUtil extends Util {
     final Evaluator evaluator,
     final Level level,
     final boolean includeCalcMembers ) {
-    SchemaReader sr = evaluator.getSchemaReader();
+    CatalogReader sr = evaluator.getCatalogReader();
     if ( evaluator.isNonEmpty() ) {
       List<Member> members = sr.getLevelMembers( level, evaluator );
       if ( includeCalcMembers ) {
@@ -1581,7 +1581,7 @@ public class FunUtil extends Util {
       }
     } else {
       final List<Member> memberList1 = FunUtil.addMembers(
-        evaluator.getSchemaReader(),
+        evaluator.getCatalogReader(),
         new ConcatenableList<>(),
         hierarchy);
       if ( includeCalcMembers ) {
@@ -1607,7 +1607,7 @@ public class FunUtil extends Util {
     List<Hierarchy> hierarchies ) {
     final IdentifierParser.TupleListBuilder builder =
       new IdentifierParser.TupleListBuilder(
-        evaluator.getSchemaReader(),
+        evaluator.getCatalogReader(),
         evaluator.getCube(),
         hierarchies );
     IdentifierParser.parseTupleList( builder, string );
@@ -1617,7 +1617,7 @@ public class FunUtil extends Util {
   /**
    * Parses a tuple, of the form '(member, member, ...)'. There must be precisely one member for each hierarchy.
    *
-   * @param evaluator   Evaluator, provides a {@link org.eclipse.daanse.olap.api.SchemaReader} and {@link org.eclipse.daanse.olap.api.element.Cube}
+   * @param evaluator   Evaluator, provides a {@link org.eclipse.daanse.olap.api.CatalogReader} and {@link org.eclipse.daanse.olap.api.element.Cube}
    * @param string      String to parse
    * @param i           Position to start parsing in string
    * @param members     Output array of members
@@ -1632,7 +1632,7 @@ public class FunUtil extends Util {
     List<Hierarchy> hierarchies ) {
     final Builder builder =
       new IdentifierParser.TupleBuilder(
-        evaluator.getSchemaReader(),
+        evaluator.getCatalogReader(),
         evaluator.getCube(),
         hierarchies ) {
         @Override
@@ -1647,7 +1647,7 @@ public class FunUtil extends Util {
   /**
    * Parses a tuple, such as "([Gender].[M], [Marital Status].[S])".
    *
-   * @param evaluator   Evaluator, provides a {@link org.eclipse.daanse.olap.api.SchemaReader} and {@link org.eclipse.daanse.olap.api.element.Cube}
+   * @param evaluator   Evaluator, provides a {@link org.eclipse.daanse.olap.api.CatalogReader} and {@link org.eclipse.daanse.olap.api.element.Cube}
    * @param string      String to parse
    * @param hierarchies Hierarchies of the members
    * @return Tuple represented as array of members
@@ -1671,7 +1671,7 @@ public class FunUtil extends Util {
     Hierarchy hierarchy ) {
     IdentifierParser.MemberListBuilder builder =
       new IdentifierParser.MemberListBuilder(
-        evaluator.getSchemaReader(),
+        evaluator.getCatalogReader(),
         evaluator.getCube(),
         hierarchy );
     IdentifierParser.parseMemberList( builder, string );
@@ -1686,7 +1686,7 @@ public class FunUtil extends Util {
     Hierarchy hierarchy ) {
     IdentifierParser.MemberListBuilder builder =
       new IdentifierParser.MemberListBuilder(
-        evaluator.getSchemaReader(), evaluator.getCube(), hierarchy ) {
+        evaluator.getCatalogReader(), evaluator.getCube(), hierarchy ) {
         @Override
         public void memberComplete() {
           members[ 0 ] = resolveMember( hierarchyList.get( 0 ) );
@@ -2021,7 +2021,7 @@ public class FunUtil extends Util {
 
     @Override
 	public OlapElement lookupChild(
-        SchemaReader schemaReader, Segment s, MatchType matchType ) {
+        CatalogReader schemaReader, Segment s, MatchType matchType ) {
       throw new UnsupportedOperationException();
     }
 

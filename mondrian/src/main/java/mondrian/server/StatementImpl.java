@@ -14,9 +14,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.ProfileHandler;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.query.component.Query;
 
 /**
@@ -124,13 +124,13 @@ public abstract class StatementImpl implements Statement {
     }
 
     @Override
-	public SchemaReader getSchemaReader() {
-        return getMondrianConnection().getSchemaReader().withLocus();
+	public CatalogReader getCatalogReader() {
+        return getMondrianConnection().getCatalogReader().withLocus();
     }
 
     @Override
-	public Schema getSchema() {
-        return getMondrianConnection().getSchema();
+	public Catalog getCatalog() {
+        return getMondrianConnection().getCatalog();
     }
 
 

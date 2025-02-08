@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.CacheControl;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.DrillThroughAction;
@@ -51,7 +52,6 @@ import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.OlapAction;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.SchemaReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.access.Access;
@@ -59,6 +59,7 @@ import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
+import org.eclipse.daanse.olap.api.element.KPI;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
@@ -86,6 +87,7 @@ import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.ActionMappingMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberPropertyMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
@@ -102,7 +104,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.WritebackAttributeMapping;
@@ -153,7 +154,7 @@ public class RolapCube extends CubeBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(RolapCube.class);
     public static final String BAD_RELATION_TYPE = "bad relation type ";
 
-    private final RolapSchema schema;
+    private final RolapCatalog schema;
     private final MetaData metaData;
     private final RolapHierarchy measuresHierarchy;
 
@@ -161,13 +162,14 @@ public class RolapCube extends CubeBase {
     private RelationalQueryMapping fact;
 
     /** Schema reader which can see this cube and nothing else. */
-    private SchemaReader schemaReader;
+    private CatalogReader schemaReader;
 
     /**
      * List of calculated members.
      */
     private final List<Formula> calculatedMemberList = new ArrayList<>();
 
+    private List<KPI> kpis=new ArrayList<>();
     /**
      * Role-based cache of calculated members
      */
@@ -256,8 +258,8 @@ public class RolapCube extends CubeBase {
      * @param metaData Annotations
      */
     private RolapCube(
-        RolapSchema schema,
-        SchemaMapping schemaMapping,
+        RolapCatalog schema,
+        CatalogMapping schemaMapping,
         String name,
         boolean visible,
         String caption,
@@ -362,8 +364,8 @@ public class RolapCube extends CubeBase {
      * Creates a <code>RolapCube</code> from a regular cube.
      */
     RolapCube(
-        RolapSchema schema,
-        SchemaMapping mappingSchema2,
+        RolapCatalog schema,
+        CatalogMapping mappingSchema2,
         PhysicalCubeMapping cubeMapping,
         Context context)
     {
@@ -754,8 +756,8 @@ public class RolapCube extends CubeBase {
      * Creates a <code>RolapCube</code> from a virtual cube.
      */
     RolapCube(
-        RolapSchema schema,
-        SchemaMapping mappingSchema,
+        RolapCatalog schema,
+        CatalogMapping mappingSchema,
         VirtualCubeMapping mappingVirtualCube,
         Context context)
     {
@@ -1146,8 +1148,8 @@ public class RolapCube extends CubeBase {
      */
     private RolapCubeDimension getOrCreateDimension(
     	DimensionConnectorMapping mappingCubeDimension,
-        RolapSchema schema,
-        SchemaMapping mappingSchema,
+        RolapCatalog schema,
+        CatalogMapping mappingSchema,
         int dimensionOrdinal,
         List<RolapHierarchy> cubeHierarchyList)
     {
@@ -1454,7 +1456,7 @@ public class RolapCube extends CubeBase {
 //
 //            dimName = mappingCalcMember.getHierarchy().getName();
 //            hierarchy = (Hierarchy)
-//                getSchemaReader().withLocus().lookupCompound(
+//                getCatalogReader().withLocus().lookupCompound(
 //                    this,
 //                    Util.parseIdentifier(dimName),
 //                    false,
@@ -1477,7 +1479,7 @@ public class RolapCube extends CubeBase {
             // Check if the parent exists.
             final OlapElement parent =
                 Util.lookupCompound(
-                    getSchemaReader().withLocus(),
+                    getCatalogReader().withLocus(),
                     this,
                     Util.parseIdentifier(parentFqName),
                     false,
@@ -1662,7 +1664,7 @@ public class RolapCube extends CubeBase {
     }
 
     @Override
-	public RolapSchema getSchema() {
+	public RolapCatalog getCatalog() {
         return schema;
     }
 
@@ -1684,22 +1686,22 @@ public class RolapCube extends CubeBase {
      * any changes to the cube.
      *
      * @post return != null
-     * @see #getSchemaReader(Role)
+     * @see #getCatalogReader(Role)
      */
-    public synchronized SchemaReader getSchemaReader() {
+    public synchronized CatalogReader getCatalogReader() {
         if (schemaReader == null) {
             schemaReader =
-                new RolapCubeSchemaReader(context, RoleImpl.createRootRole(schema));
+                new RolapCubeCatalogReader(context, RoleImpl.createRootRole(schema));
         }
         return schemaReader;
     }
 
     @Override
-	public SchemaReader getSchemaReader(Role role) {
+	public CatalogReader getCatalogReader(Role role) {
         if (role == null) {
-            return getSchemaReader();
+            return getCatalogReader();
         } else {
-            return new RolapCubeSchemaReader(context, role);
+            return new RolapCubeCatalogReader(context, role);
         }
     }
 
@@ -2384,7 +2386,7 @@ public class RolapCube extends CubeBase {
 
     public boolean isLoadInProgress() {
         return loadInProgress
-            || getSchema().getSchemaLoadDate() == null;
+            || getCatalog().getCatalogLoadDate() == null;
     }
 
     /**
@@ -2801,7 +2803,7 @@ public class RolapCube extends CubeBase {
     @Override
 	public List<Member> getMeasures() {
         Level measuresLevel = dimensions[0].getHierarchies()[0].getLevels()[0];
-        return getSchemaReader().getLevelMembers(measuresLevel, true);
+        return getCatalogReader().getLevelMembers(measuresLevel, true);
     }
 
     /**
@@ -2944,7 +2946,7 @@ public class RolapCube extends CubeBase {
 
     RolapCubeDimension createDimension(
     	DimensionConnectorMapping mappingCubeDimension,
-        SchemaMapping mappingSchema)
+        CatalogMapping mappingSchema)
     {
         RolapCubeDimension dimension =
             getOrCreateDimension(
@@ -2964,13 +2966,13 @@ public class RolapCube extends CubeBase {
         return dimension;
     }
 
-    public OlapElement lookupChild(SchemaReader schemaReader, Segment s) {
+    public OlapElement lookupChild(CatalogReader schemaReader, Segment s) {
         return lookupChild(schemaReader, s, MatchType.EXACT);
     }
 
     @Override
 	public OlapElement lookupChild(
-        SchemaReader schemaReader, Segment s, MatchType matchType)
+        CatalogReader schemaReader, Segment s, MatchType matchType)
     {
         if (!(s instanceof NameSegment nameSegment)) {
             return null;
@@ -3162,11 +3164,11 @@ public class RolapCube extends CubeBase {
      * (and hence includes calculated members defined in that cube) and also
      * applies the access-rights of a given role.
      */
-    private class RolapCubeSchemaReader
-        extends RolapSchemaReader
+    private class RolapCubeCatalogReader
+        extends RolapCatalogReader
         implements NameResolverImpl.Namespace
     {
-        public RolapCubeSchemaReader(Context context,Role role) {
+        public RolapCubeCatalogReader(Context context,Role role) {
             super(context,role, RolapCube.this.schema);
             assert role != null : "precondition: role != null";
         }
@@ -3285,10 +3287,10 @@ public class RolapCube extends CubeBase {
         }
 
         @Override
-		public SchemaReader withoutAccessControl() {
-            assert getClass() == RolapCubeSchemaReader.class
+		public CatalogReader withoutAccessControl() {
+            assert getClass() == RolapCubeCatalogReader.class
                 : new StringBuilder("Derived class ").append(getClass()).append(" must override method").toString();
-            return RolapCube.this.getSchemaReader();
+            return RolapCube.this.getCatalogReader();
         }
 
         @Override
@@ -3331,7 +3333,7 @@ public class RolapCube extends CubeBase {
             final List<NameResolverImpl.Namespace> list =
                 new ArrayList<>();
             list.add(this);
-            list.addAll(schema.getSchemaReader().getNamespaces());
+            list.addAll(schema.getCatalogReader().getNamespaces());
             return list;
         }
 
@@ -3449,7 +3451,7 @@ public class RolapCube extends CubeBase {
                             Util.<RolapMember>cast(measuresFound))));
 
                 CalculatedMemberMapping mappingCalcMember =
-                    schema.lookupXmlCalculatedMember(
+                    schema.lookupMappingCalculatedMember(
                         calcMember.getName(),
                         baseCube.getName());
                 createCalcMembersAndNamedSets(
@@ -3606,13 +3608,13 @@ public class RolapCube extends CubeBase {
 
     @Override
     public List<Member> getLevelMembers(Level level, boolean includeCalculated) {
-        return getSchemaReader().withLocus().getLevelMembers(level, true);
+        return getCatalogReader().withLocus().getLevelMembers(level, true);
     }
 
     @Override
     public int getLevelCardinality(
         Level level, boolean approximate, boolean materialize){
-        return getSchemaReader().withLocus().getLevelCardinality(level, approximate, materialize);
+        return getCatalogReader().withLocus().getLevelCardinality(level, approximate, materialize);
     }
 
     public Context getContext() {
@@ -3640,6 +3642,11 @@ public class RolapCube extends CubeBase {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public List<? extends KPI> getKPIs() {
+		return kpis;
 	}
 
 }

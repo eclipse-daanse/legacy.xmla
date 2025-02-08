@@ -28,7 +28,7 @@ import org.eclipse.daanse.olap.api.BasicContextConfig;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -188,11 +188,11 @@ public class CrossJoinTest {
    Connection con= foodMartContext.getConnectionWithDefaultRole();
     RolapCube salesCube =
       (RolapCube) TestUtil.cubeByName( con, SALES_CUBE );
-    SchemaReader salesCubeSchemaReader =
-      salesCube.getSchemaReader( con.getRole() )
+    CatalogReader salesCubeCatalogReader =
+      salesCube.getCatalogReader( con.getRole() )
         .withLocus();
     TupleList productMembers =
-    		TestUtil.productMembersPotScrubbersPotsAndPans( salesCubeSchemaReader );
+    		TestUtil.productMembersPotScrubbersPotsAndPans( salesCubeCatalogReader );
     // Get genders members as TupleList
     Result genders = TestUtil.executeQuery(con, SELECT_GENDER_MEMBERS );
     TupleList genderMembers = getGenderMembers( genders );

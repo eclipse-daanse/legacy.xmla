@@ -32,19 +32,19 @@ import static org.mockito.Mockito.spy;
 /**
  * @author Andrey Khayrutdinov
  */
-class RolapSchemaPoolConcurrencyTest extends TestCase
-        implements Answer<RolapSchema>
+class RolapCatalogPoolConcurrencyTest extends TestCase
+        implements Answer<RolapCatalog>
 {
 
-    private List<RolapSchema> addedSchemas;
-    private RolapSchemaPool poolSpy;
+    private List<RolapCatalog> addedSchemas;
+    private RolapCatalogPool poolSpy;
 
     public void setUp() {
-        addedSchemas = new ArrayList<RolapSchema>();
+        addedSchemas = new ArrayList<RolapCatalog>();
 
-        poolSpy = spy(RolapSchemaPool.instance());
+        poolSpy = spy(RolapCatalogPool.instance());
         doAnswer(this).when(poolSpy)
-                .createRolapSchema(
+                .createRolapCatalog(
                     anyString(),
                     any(DataSource.class),
                     any(Util.PropertyList.class),
@@ -54,8 +54,8 @@ class RolapSchemaPoolConcurrencyTest extends TestCase
     }
 
     public void tearDown() {
-        for (RolapSchema schema : addedSchemas) {
-            RolapSchemaPool.instance().remove(schema);
+        for (RolapCatalog schema : addedSchemas) {
+            RolapCatalogPool.instance().remove(schema);
         }
         addedSchemas = null;
         poolSpy = null;
@@ -63,12 +63,12 @@ class RolapSchemaPoolConcurrencyTest extends TestCase
 
 
     @Override
-    public RolapSchema answer(InvocationOnMock invocation) throws Throwable {
+    public RolapCatalog answer(InvocationOnMock invocation) throws Throwable {
         SchemaKey key = (SchemaKey) invocation.getArguments()[4];
         ByteString md5 = (ByteString) invocation.getArguments()[5];
         RolapConnection connection = mock(RolapConnection.class);
         //noinspection deprecation
-        return new RolapSchema(key, md5, connection);
+        return new RolapCatalog(key, md5, connection);
     }
 
 
@@ -100,8 +100,8 @@ class RolapSchemaPoolConcurrencyTest extends TestCase
         List<Adder> adders = new ArrayList<Adder>(addersAmount);
         List<Remover> removers = new ArrayList<Remover>(removersAmount);
         for (int i = 0; i < removersAmount; i++) {
-            BlockingQueue<RolapSchema> shared =
-                new LinkedBlockingQueue<RolapSchema>();
+            BlockingQueue<RolapCatalog> shared =
+                new LinkedBlockingQueue<RolapCatalog>();
             adders.add(new Adder(poolSpy, cycles, false, shared));
             adders.add(new Adder(poolSpy, cycles, true, shared));
             removers.add(new Remover(poolSpy, shared));
@@ -138,7 +138,7 @@ class RolapSchemaPoolConcurrencyTest extends TestCase
             list.put(CatalogContent.name(), UUID.randomUUID().toString());
 
             // force the pool to create the fake schema
-            RolapSchema schema = poolSpy.get(catalogUrl, ds, list);
+            RolapCatalog schema = poolSpy.get(catalogUrl, ds, list);
             addedSchemas.add(schema);
 
             actors.add(new SingleSchemaGetter(
@@ -159,8 +159,8 @@ class RolapSchemaPoolConcurrencyTest extends TestCase
         List<Adder> adders = new ArrayList<Adder>(addersAmount);
         List<Remover> removers = new ArrayList<Remover>(removersAmount);
         for (int i = 0; i < removersAmount; i++) {
-            BlockingQueue<RolapSchema> shared =
-                new LinkedBlockingQueue<RolapSchema>();
+            BlockingQueue<RolapCatalog> shared =
+                new LinkedBlockingQueue<RolapCatalog>();
             adders.add(new Adder(poolSpy, addingCycles, false, shared));
             adders.add(new Adder(poolSpy, addingCycles, true, shared));
             removers.add(new Remover(poolSpy, shared));
@@ -228,29 +228,29 @@ class RolapSchemaPoolConcurrencyTest extends TestCase
     }
 
     private static class Adder implements Callable<String> {
-        private final RolapSchemaPool pool;
+        private final RolapCatalogPool pool;
         private final int cycles;
         private final String catalogUrl;
         private final boolean needsCheckSum;
-        private final Queue<RolapSchema> sharedQueue;
+        private final Queue<RolapCatalog> sharedQueue;
 
-        private final List<RolapSchema> added;
+        private final List<RolapCatalog> added;
 
-        public Adder(RolapSchemaPool pool, int cycles, boolean needsCheckSum) {
+        public Adder(RolapCatalogPool pool, int cycles, boolean needsCheckSum) {
             this(pool, cycles, needsCheckSum, null);
         }
         public Adder(
-            RolapSchemaPool pool,
+            RolapCatalogPool pool,
             int cycles,
             boolean needsCheckSum,
-            Queue<RolapSchema> sharedQueue)
+            Queue<RolapCatalog> sharedQueue)
         {
             this.pool = pool;
             this.cycles = cycles;
             this.catalogUrl = "catalog";
             this.needsCheckSum = needsCheckSum;
             this.sharedQueue = sharedQueue;
-            this.added = new ArrayList<RolapSchema>(cycles);
+            this.added = new ArrayList<RolapCatalog>(cycles);
         }
 
         @Override
@@ -265,7 +265,7 @@ class RolapSchemaPoolConcurrencyTest extends TestCase
                     list.put(UseContentChecksum.name(), "true");
                 }
 
-                RolapSchema schema = pool.get(catalogUrl, ds, list);
+                RolapCatalog schema = pool.get(catalogUrl, ds, list);
                 added.add(schema);
                 if (sharedQueue != null) {
                     sharedQueue.add(schema);
@@ -276,18 +276,18 @@ class RolapSchemaPoolConcurrencyTest extends TestCase
             return null;
         }
 
-        public List<RolapSchema> getAdded() {
+        public List<RolapCatalog> getAdded() {
             return added;
         }
     }
 
     private static class Remover implements Callable<String> {
-        private final RolapSchemaPool pool;
-        private final BlockingQueue<RolapSchema> sharedQueue;
+        private final RolapCatalogPool pool;
+        private final BlockingQueue<RolapCatalog> sharedQueue;
 
         public Remover(
-            RolapSchemaPool pool,
-            BlockingQueue<RolapSchema> sharedQueue)
+            RolapCatalogPool pool,
+            BlockingQueue<RolapCatalog> sharedQueue)
         {
             this.pool = pool;
             this.sharedQueue = sharedQueue;
@@ -298,7 +298,7 @@ class RolapSchemaPoolConcurrencyTest extends TestCase
             // sleep for a while to let adders do their work
             Thread.sleep(100);
             while (true) {
-                RolapSchema schema = sharedQueue.poll(
+                RolapCatalog schema = sharedQueue.poll(
                     250, TimeUnit.MILLISECONDS);
                 if (schema == null) {
                     // let's give another chance
@@ -313,10 +313,10 @@ class RolapSchemaPoolConcurrencyTest extends TestCase
     }
 
     private static class Getter implements Callable<String> {
-        private final RolapSchemaPool pool;
+        private final RolapCatalogPool pool;
         private final int cycles;
 
-        public Getter(RolapSchemaPool pool, int cycles) {
+        public Getter(RolapCatalogPool pool, int cycles) {
             this.pool = pool;
             this.cycles = cycles;
         }
@@ -326,7 +326,7 @@ class RolapSchemaPoolConcurrencyTest extends TestCase
             Random random = new Random();
             for (int i = 0; i < cycles; i++) {
                 int acc = 0;
-                for (RolapSchema schema : pool.getRolapSchemas()) {
+                for (RolapCatalog schema : pool.getRolapCatalogs()) {
                     // fake actions to prevent JIT from eliminating this block
                     acc += schema.key.hashCode();
                 }
@@ -340,14 +340,14 @@ class RolapSchemaPoolConcurrencyTest extends TestCase
     }
 
     private static class SingleSchemaGetter implements Callable<String> {
-        private final RolapSchemaPool pool;
+        private final RolapCatalogPool pool;
         private final int cycles;
         private final String catalogUrl;
         private final DataSource dataSource;
         private final Util.PropertyList list;
 
         public SingleSchemaGetter(
-            RolapSchemaPool pool,
+            RolapCatalogPool pool,
             int cycles,
             String catalogUrl,
             DataSource dataSource,
@@ -363,7 +363,7 @@ class RolapSchemaPoolConcurrencyTest extends TestCase
         @Override
         public String call() throws Exception {
             for (int i = 0; i < cycles; i++) {
-                RolapSchema schema = pool.get(catalogUrl, dataSource, list);
+                RolapCatalog schema = pool.get(catalogUrl, dataSource, list);
                 assertNotNull(String.format(
                     "Catalog: [%s], catalog content: [%s]", catalogUrl,
                     list.get(CatalogContent.name())), schema);

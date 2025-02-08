@@ -29,7 +29,7 @@ import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
@@ -60,34 +60,34 @@ import mondrian.rolap.sql.MemberChildrenConstraint;
 import mondrian.rolap.sql.TupleConstraint;
 
 /**
- * A <code>RolapSchemaReader</code> allows you to read schema objects while
+ * A <code>RolapCatalogReader</code> allows you to read schema objects while
  * observing the access-control profile specified by a given role.
  *
  * @author jhyde
  * @since Feb 24, 2003
  */
-public class RolapSchemaReader
-    implements SchemaReader,
-        RolapNativeSet.SchemaReaderWithMemberReaderAvailable,
+public class RolapCatalogReader
+    implements CatalogReader,
+        RolapNativeSet.CatalogReaderWithMemberReaderAvailable,
         NameResolverImpl.Namespace
 {
     protected final Role role;
     private final Map<Hierarchy, MemberReader> hierarchyReaders =
         new ConcurrentHashMap<>();
-    protected final RolapSchema schema;
+    protected final RolapCatalog schema;
     private final SqlConstraintFactory sqlConstraintFactory =
         SqlConstraintFactory.instance();
     private Context context;
     private static final Logger LOGGER =
-        LoggerFactory.getLogger(RolapSchemaReader.class);
+        LoggerFactory.getLogger(RolapCatalogReader.class);
 
     /**
-     * Creates a RolapSchemaReader.
+     * Creates a RolapCatalogReader.
      *
      * @param role Role for access control, must not be null
      * @param schema Schema
      */
-    RolapSchemaReader(Context context, Role role, RolapSchema schema) {
+    RolapCatalogReader(Context context, Role role, RolapCatalog schema) {
         assert role != null : "precondition: role != null";
         assert schema != null;
         assert context != null;
@@ -414,13 +414,13 @@ public class RolapSchemaReader
     }
 
     @Override
-	public SchemaReader withoutAccessControl() {
-        assert this.getClass() == RolapSchemaReader.class
+	public CatalogReader withoutAccessControl() {
+        assert this.getClass() == RolapCatalogReader.class
             : new StringBuilder("Subclass ").append(getClass()).append(" must override").toString();
         if (role == schema.getDefaultRole()) {
             return this;
         }
-        return new RolapSchemaReader(context,schema.getDefaultRole(), schema);
+        return new RolapCatalogReader(context,schema.getDefaultRole(), schema);
     }
 
     @Override
@@ -785,7 +785,7 @@ ElevatorSimplifyer.simplifyEvaluator(calc, evaluator);
     @Override
 	public Parameter getParameter(String name) {
         // Scan through schema parameters.
-        for (RolapSchemaParameter parameter : schema.parameterList) {
+        for (RolapCatalogParameter parameter : schema.parameterList) {
             if (Util.equalName(parameter.getName(), name)) {
                 return parameter;
             }
@@ -809,13 +809,13 @@ ElevatorSimplifyer.simplifyEvaluator(calc, evaluator);
     }
 
     @Override
-	public RolapSchema getSchema() {
+	public RolapCatalog getCatalog() {
         return schema;
     }
 
     @Override
-	public SchemaReader withLocus() {
-        return RolapUtil.locusSchemaReader(
+	public CatalogReader withLocus() {
+        return RolapUtil.locusCatalogReader(
             schema.getInternalConnection(),
             this);
     }

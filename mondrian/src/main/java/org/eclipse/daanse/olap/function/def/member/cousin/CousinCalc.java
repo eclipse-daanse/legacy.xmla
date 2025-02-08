@@ -31,7 +31,7 @@ public class CousinCalc extends AbstractProfilingNestedMemberCalc {
     public Member evaluate(Evaluator evaluator) {
         Member member = getChildCalc(0, MemberCalc.class).evaluate(evaluator);
         Member ancestorMember = getChildCalc(1, MemberCalc.class).evaluate(evaluator);
-        return FunUtil.cousin(evaluator.getSchemaReader(), member, ancestorMember);
+        return FunUtil.cousin(evaluator.getCatalogReader(), member, ancestorMember);
     }
 
 }

@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.MemberCalc;
@@ -36,10 +36,10 @@ public class AscendantsCalc extends AbstractListCalc {
     @Override
     public TupleList evaluateList(Evaluator evaluator) {
         Member member = getChildCalc(0, MemberCalc.class).evaluate(evaluator);
-        return new UnaryTupleList(ascendants(evaluator.getSchemaReader(), member));
+        return new UnaryTupleList(ascendants(evaluator.getCatalogReader(), member));
     }
 
-    private List<Member> ascendants(SchemaReader schemaReader, Member member) {
+    private List<Member> ascendants(CatalogReader schemaReader, Member member) {
         if (member.isNull()) {
             return Collections.emptyList();
         }

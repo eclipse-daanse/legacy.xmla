@@ -132,8 +132,8 @@ public class FastBatchingCellReader implements CellReader {
         this.aggMgr = aggMgr;
         cacheMgr = aggMgr.getCacheMgr(execution.getMondrianStatement().getMondrianConnection());
         pinnedSegments = this.aggMgr.createPinSet();
-        cacheEnabled = !cube.getSchema().getInternalConnection().getContext().getConfig().disableCaching();
-        Integer cellBatchSize = cube.getSchema().getInternalConnection().getContext().getConfig().cellBatchSize();
+        cacheEnabled = !cube.getCatalog().getInternalConnection().getContext().getConfig().disableCaching();
+        Integer cellBatchSize = cube.getCatalog().getInternalConnection().getContext().getConfig().cellBatchSize();
         cellRequestLimit =
             cellBatchSize <= 0
                 ? 100000 // TODO Make this logic into a pluggable algorithm.
@@ -624,7 +624,7 @@ class BatchLoader {
     }
 
     final boolean shouldUseGroupingFunction() {
-        return cube.getSchema().getInternalConnection().getContext().getConfig().enableGroupingSets()
+        return cube.getCatalog().getInternalConnection().getContext().getConfig().enableGroupingSets()
             && dialect.supportsGroupingSets();
     }
 
@@ -683,13 +683,13 @@ class BatchLoader {
         }
         final RolapStar.Measure measure = request.getMeasure();
         final RolapStar star = measure.getStar();
-        final RolapSchema schema = star.getSchema();
+        final RolapCatalog catalog = star.getCatalog();
         final SegmentCacheIndex index =
             cacheMgr.getIndexRegistry().getIndex(star);
         final List<SegmentHeader> headersInCache =
             index.locate(
-                schema.getName(),
-                schema.getChecksum(),
+                catalog.getName(),
+                catalog.getChecksum(),
                 measure.getCubeName(),
                 measure.getName(),
                 star.getFactTable().getAlias(),
@@ -744,7 +744,7 @@ class BatchLoader {
         // for example. Both the measure's aggregator and its rollup
         // aggregator must support raw data aggregation. We call
         // Aggregator.supportsFastAggregates() to verify.
-        Boolean enableInMemoryRollup = cube.getSchema().getInternalConnection().getContext().getConfig().enableInMemoryRollup();
+        Boolean enableInMemoryRollup = cube.getCatalog().getInternalConnection().getContext().getConfig().enableInMemoryRollup();
         if (enableInMemoryRollup
             && measure.getAggregator().supportsFastAggregates(
                 measure.getDatatype())
@@ -756,8 +756,8 @@ class BatchLoader {
             // rollup that measure.
             final List<List<SegmentHeader>> rollup =
                 index.findRollupCandidates(
-                    schema.getName(),
-                    schema.getChecksum(),
+                    catalog.getName(),
+                    catalog.getChecksum(),
                     measure.getCubeName(),
                     measure.getName(),
                     star.getFactTable().getAlias(),
@@ -1287,11 +1287,11 @@ class BatchLoader {
             GroupingSetsCollector groupingSetsCollector,
             List<Future<Map<Segment, SegmentWithData>>> segmentFutures)
         {
-            if (cube.getSchema().getInternalConnection().getContext().getConfig().generateAggregateSql()) {
+            if (cube.getCatalog().getInternalConnection().getContext().getConfig().generateAggregateSql()) {
                 generateAggregateSql();
             }
             boolean optimizePredicates =
-                cube.getSchema().getInternalConnection().getContext().getConfig().optimizePredicates();
+                cube.getCatalog().getInternalConnection().getContext().getConfig().optimizePredicates();
             final StarColumnPredicate[] predicates = initPredicates();
             final long t1 = System.currentTimeMillis();
 

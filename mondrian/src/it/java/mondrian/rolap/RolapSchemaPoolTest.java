@@ -22,30 +22,30 @@ import java.net.URL;
 import javax.sql.DataSource;
 
 /**
- * Test for {@link RolapSchemaPool}.
+ * Test for {@link RolapCatalogPool}.
  */
-class RolapSchemaPoolTest extends FoodMartTestCase {
+class RolapCatalogPoolTest extends FoodMartTestCase {
 
-    public RolapSchemaPoolTest(String name) {
+    public RolapCatalogPoolTest(String name) {
         super(name);
     }
 
     void testBasicSchemaFetch() {
-        RolapSchemaPool schemaPool = RolapSchemaPool.instance();
+        RolapCatalogPool schemaPool = RolapCatalogPool.instance();
         schemaPool.clear();
 
         String catalogUrl = getFoodmartCatalogUrl().toString();
         Util.PropertyList connectInfo =
             Util.parseConnectString(TestContext.getDefaultConnectString());
 
-        RolapSchema schema =
+        RolapCatalog schema =
             schemaPool.get(
                 catalogUrl,
                 "connectionKeyA",
                 "joeTheUser",
                 "aDataSource",
                 connectInfo);
-        RolapSchema schemaA =
+        RolapCatalog schemaA =
             schemaPool.get(
                 catalogUrl,
                 "connectionKeyA",
@@ -57,7 +57,7 @@ class RolapSchemaPoolTest extends FoodMartTestCase {
     }
 
     void testSchemaFetchCatalogUrlJdbcUuid() {
-        RolapSchemaPool schemaPool = RolapSchemaPool.instance();
+        RolapCatalogPool schemaPool = RolapCatalogPool.instance();
         schemaPool.clear();
         final String uuid = "UUID-1";
 
@@ -69,7 +69,7 @@ class RolapSchemaPoolTest extends FoodMartTestCase {
             uuid);
 
         // Put in pool
-        RolapSchema schema =
+        RolapCatalog schema =
             schemaPool.get(
                 catalogUrl,
                 "connectionKeyA",
@@ -83,7 +83,7 @@ class RolapSchemaPoolTest extends FoodMartTestCase {
         connectInfoA.put(
             RolapConnectionProperties.JdbcConnectionUuid.name(),
             uuid);
-        RolapSchema sameSchema =
+        RolapCatalog sameSchema =
             schemaPool.get(
                 catalogUrl,
                 "aDifferentConnectionKey",
@@ -96,7 +96,7 @@ class RolapSchemaPoolTest extends FoodMartTestCase {
         connectInfo.put(
             RolapConnectionProperties.JdbcConnectionUuid.name(),
             "SomethingCompletelyDifferent");
-        RolapSchema aNewSchema =
+        RolapCatalog aNewSchema =
             schemaPool.get(
                 catalogUrl,
                 "connectionKeyA",
@@ -112,7 +112,7 @@ class RolapSchemaPoolTest extends FoodMartTestCase {
      * fetches the same schema in all scenarios.
      */
     void testSchemaFetchMd5JdbcUid() throws IOException {
-        RolapSchemaPool pool = RolapSchemaPool.instance();
+        RolapCatalogPool pool = RolapCatalogPool.instance();
         pool.clear();
         final String uuid = "UUID-1";
         String catalogUrl = getFoodmartCatalogUrl().toString();
@@ -125,7 +125,7 @@ class RolapSchemaPoolTest extends FoodMartTestCase {
             RolapConnectionProperties.UseContentChecksum.name(),
             "true");
 
-        RolapSchema schema =
+        RolapCatalog schema =
             pool.get(
                 catalogUrl,
                 "connectionKeyA",
@@ -137,7 +137,7 @@ class RolapSchemaPoolTest extends FoodMartTestCase {
         connectInfoDyn.put(
             RolapConnectionProperties.DynamicSchemaProcessor.name(),
             NotReallyDynamicSchemaProcessor.class.getName());
-        RolapSchema schemaDyn =
+        RolapCatalog schemaDyn =
             pool.get(
                 catalogUrl,
                 "connectionKeyB",
@@ -153,7 +153,7 @@ class RolapSchemaPoolTest extends FoodMartTestCase {
         connectInfoCont.put(
             RolapConnectionProperties.CatalogContent.name(),
             catalogContent);
-        RolapSchema schemaCont = pool.get(
+        RolapCatalog schemaCont = pool.get(
             catalogUrl,
             "connectionKeyC", "--", "--", connectInfo);
 
@@ -163,7 +163,7 @@ class RolapSchemaPoolTest extends FoodMartTestCase {
         final StringBuilder buf = new StringBuilder();
         DataSource dataSource =
             RolapConnection.createDataSource(null, connectInfoDS, buf);
-        RolapSchema schemaDS = pool.get(catalogUrl, dataSource, connectInfoDS);
+        RolapCatalog schemaDS = pool.get(catalogUrl, dataSource, connectInfoDS);
 
         assertTrue(schema == schemaDS);
     }

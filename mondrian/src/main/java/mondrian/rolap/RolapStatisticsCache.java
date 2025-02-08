@@ -80,9 +80,9 @@ public class RolapStatisticsCache {
             final List<SqlStatisticsProviderNew> statisticsProviders = List.of(new SqlStatisticsProviderNew());
             final ExecutionImpl execution =
                 new ExecutionImpl(
-                    star.getSchema().getInternalConnection()
+                    star.getCatalog().getInternalConnection()
                         .getInternalStatement(),
-                    star.getSchema().getInternalConnection().getContext().getConfig().executeDurationValue());
+                    star.getCatalog().getInternalConnection().getContext().getConfig().executeDurationValue());
             for (SqlStatisticsProviderNew statisticsProvider : statisticsProviders) {
                 rowCount = statisticsProvider.getTableCardinality(
                     star.getContext(),
@@ -113,9 +113,9 @@ public class RolapStatisticsCache {
             final List<SqlStatisticsProviderNew> statisticsProviders = List.of(new SqlStatisticsProviderNew());
             final ExecutionImpl execution =
                 new ExecutionImpl(
-                    star.getSchema().getInternalConnection()
+                    star.getCatalog().getInternalConnection()
                         .getInternalStatement(),
-                    star.getSchema().getInternalConnection().getContext().getConfig().executeDurationValue());
+                    star.getCatalog().getInternalConnection().getContext().getConfig().executeDurationValue());
             for (SqlStatisticsProviderNew statisticsProvider : statisticsProviders) {
                 rowCount = statisticsProvider.getQueryCardinality( star.getContext(), sql, execution);
                 if (rowCount >= 0) {
@@ -171,9 +171,9 @@ public class RolapStatisticsCache {
             //    dialect.getStatisticsProviders();
             final ExecutionImpl execution =
                 new ExecutionImpl(
-                    star.getSchema().getInternalConnection()
+                    star.getCatalog().getInternalConnection()
                         .getInternalStatement(),
-                    star.getSchema().getInternalConnection().getContext().getConfig().executeDurationValue());
+                    star.getCatalog().getInternalConnection().getContext().getConfig().executeDurationValue());
             for (SqlStatisticsProviderNew statisticsProvider : statisticsProviders) {
                 rowCount = statisticsProvider.getColumnCardinality(
                     star.getContext(),

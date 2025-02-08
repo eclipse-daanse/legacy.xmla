@@ -19,7 +19,7 @@ import java.util.List;
 
 import mondrian.olap.exceptions.MdxChildObjectNotFoundException;
 import org.eclipse.daanse.olap.api.DataType;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -45,13 +45,13 @@ public class IdentifierParser extends org.eclipse.daanse.olap.impl.IdentifierPar
      * Implementation of Builder that resolves segment lists to members.
      */
     public static class BuilderImpl extends MemberBuilder {
-        private final SchemaReader schemaReader;
+        private final CatalogReader schemaReader;
         private final Cube cube;
         protected final List<Hierarchy> hierarchyList;
         private final boolean ignoreInvalid;
 
         BuilderImpl(
-            SchemaReader schemaReader,
+            CatalogReader schemaReader,
             Cube cube,
             List<Hierarchy> hierarchyList)
         {
@@ -62,8 +62,8 @@ public class IdentifierParser extends org.eclipse.daanse.olap.impl.IdentifierPar
             final boolean load = ((RolapCube) cube).isLoadInProgress();
             this.ignoreInvalid =
                 (load
-                    ? ((RolapCube) cube).getSchema().getInternalConnection().getContext().getConfig().ignoreInvalidMembers()
-                    : ((RolapCube) cube).getSchema().getInternalConnection().getContext().getConfig().ignoreInvalidMembersDuringQuery());
+                    ? ((RolapCube) cube).getCatalog().getInternalConnection().getContext().getConfig().ignoreInvalidMembers()
+                    : ((RolapCube) cube).getCatalog().getInternalConnection().getContext().getConfig().ignoreInvalidMembersDuringQuery());
         }
 
         protected Member resolveMember(Hierarchy expectedHierarchy) {
@@ -112,7 +112,7 @@ public class IdentifierParser extends org.eclipse.daanse.olap.impl.IdentifierPar
         protected final List<Member> memberList = new ArrayList<>();
 
         public TupleBuilder(
-            SchemaReader schemaReader,
+            CatalogReader schemaReader,
             Cube cube,
             List<Hierarchy> hierarchyList)
         {
@@ -146,7 +146,7 @@ public class IdentifierParser extends org.eclipse.daanse.olap.impl.IdentifierPar
         public final TupleList tupleList;
 
         public TupleListBuilder(
-            SchemaReader schemaReader, Cube cube, List<Hierarchy> hierarchyList)
+            CatalogReader schemaReader, Cube cube, List<Hierarchy> hierarchyList)
         {
             super(schemaReader, cube, hierarchyList);
             tupleList = new ArrayTupleList(hierarchyList.size());
@@ -169,7 +169,7 @@ public class IdentifierParser extends org.eclipse.daanse.olap.impl.IdentifierPar
         public final List<Member> memberList = new ArrayList<>();
 
         public MemberListBuilder(
-            SchemaReader schemaReader, Cube cube, Hierarchy hierarchy)
+            CatalogReader schemaReader, Cube cube, Hierarchy hierarchy)
         {
             super(schemaReader, cube, Collections.singletonList(hierarchy));
         }

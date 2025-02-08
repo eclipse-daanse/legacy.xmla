@@ -15,7 +15,7 @@ package mondrian.olap;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.MatchType;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -144,7 +144,7 @@ public class SetBase extends OlapElementBase implements NamedSet {
 
     @Override
 	public OlapElement lookupChild(
-        SchemaReader schemaReader, Segment s, MatchType matchType)
+        CatalogReader schemaReader, Segment s, MatchType matchType)
     {
         return null;
     }

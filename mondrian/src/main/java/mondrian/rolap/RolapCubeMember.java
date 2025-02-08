@@ -11,7 +11,7 @@
 package mondrian.rolap;
 
 import org.eclipse.daanse.olap.api.MatchType;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
@@ -252,7 +252,7 @@ public class RolapCubeMember
 
     @Override
 	public OlapElement lookupChild(
-        SchemaReader schemaReader,
+        CatalogReader schemaReader,
         Segment childName,
         MatchType matchType)
     {

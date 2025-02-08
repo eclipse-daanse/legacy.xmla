@@ -17,7 +17,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 import org.eclipse.daanse.olap.api.MatchType;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -136,7 +136,7 @@ public class RolapProperty extends Property implements OlapElement {
     }
 
     @Override
-    public OlapElement lookupChild(SchemaReader schemaReader, Segment s, MatchType matchType) {
+    public OlapElement lookupChild(CatalogReader schemaReader, Segment s, MatchType matchType) {
         return null;
     }
 

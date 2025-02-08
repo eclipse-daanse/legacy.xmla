@@ -39,7 +39,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.MeasureGroupMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
@@ -88,7 +88,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.ParentChildLinkMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SchemaMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
@@ -121,7 +121,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
@@ -194,7 +194,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
@@ -423,7 +423,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
         	MeasureMappingImpl measureEmployeeStoreSalesA = null;
         	MeasureMappingImpl measureEmployeeStoreCostA = null;
         	MeasureMappingImpl measureEmployeeStoreSalesB = null;
@@ -540,7 +540,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -612,7 +612,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(VirtualCubeMappingImpl.builder()
@@ -722,7 +722,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -830,7 +830,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -914,7 +914,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -999,7 +999,7 @@ public class SchemaModifiers {
         }
 
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -1083,7 +1083,7 @@ public class SchemaModifiers {
             + "</VirtualCube>",
          */
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(VirtualCubeMappingImpl.builder()
@@ -1219,7 +1219,7 @@ public class SchemaModifiers {
             */
 
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             PhysicalCubeMappingImpl cubeSales3;
@@ -1644,7 +1644,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -1948,7 +1948,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -2077,7 +2077,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -2190,7 +2190,7 @@ public class SchemaModifiers {
         )).build();
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             MeasureMappingImpl mStoreSales;
             MeasureMappingImpl mOrgSalary;
@@ -2341,7 +2341,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -2426,7 +2426,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -2544,7 +2544,7 @@ public class SchemaModifiers {
 
          */
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             ColumnImpl storeId = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
             ColumnImpl employeeId = ColumnImpl.builder().withName("employee_id").withType("INTEGER").build();
             InlineTableImpl itt = InlineTableImpl.builder()
@@ -2622,7 +2622,7 @@ public class SchemaModifiers {
                 .build();
 
 
-                return List.of(SchemaMappingImpl.builder()
+                return CatalogMappingImpl.builder()
                     .withName("FoodMart")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -2651,7 +2651,7 @@ public class SchemaModifiers {
                             		.build()))
                             .build()
                     ))
-                    .build());
+                    .build();
         }
     }
 
@@ -2716,11 +2716,11 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	PhysicalCubeMappingImpl cubeSales;
         	PhysicalCubeMappingImpl cubeSales1;
         	MeasureMappingImpl mUnitSales1;
-            return List.of(SchemaMappingImpl.builder()
+            return CatalogMappingImpl.builder()
             		.withName("FoodMart")
             		.withCubes(List.of(
             			cubeSales = PhysicalCubeMappingImpl.builder()
@@ -2766,7 +2766,7 @@ public class SchemaModifiers {
                             ))
                             .build()
             		))
-            		.build());
+            		.build();
         }
 
         /*
@@ -2905,7 +2905,7 @@ public class SchemaModifiers {
             super(catalogMapping);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schemaMappingOriginal) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schemaMappingOriginal) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schemaMappingOriginal));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -3652,8 +3652,8 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+            return CatalogMappingImpl.builder()
             		.withName("custom")
                     .withCubes(List.of(sales1Cube))
                     	.withAccessRoles(List.of(
@@ -3685,7 +3685,7 @@ public class SchemaModifiers {
                                 ))
                                 .build()
                         ))
-            		.build());
+            		.build();
         }
     }
 
@@ -3778,13 +3778,13 @@ public class SchemaModifiers {
         }
 
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	CalculatedMemberMappingImpl cmDummyMeasure;
         	DimensionConnectorMappingImpl dStore;
         	DimensionConnectorMappingImpl dTime;
         	CalculatedMemberMappingImpl dummyMeasure2Cm;
         	PhysicalCubeMappingImpl salesCube;
-            return List.of(SchemaMappingImpl.builder()
+            return CatalogMappingImpl.builder()
             		.withName("FoodMart")
                     .withCubes(List.of(
                     	salesCube = PhysicalCubeMappingImpl.builder()
@@ -3847,7 +3847,7 @@ public class SchemaModifiers {
                         ))
                         .build()
                     ))
-            		.build());
+            		.build();
         }
 
     }
@@ -4632,8 +4632,8 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+            return CatalogMappingImpl.builder()
             		.withName("FoodMart 2442")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -4715,7 +4715,7 @@ public class SchemaModifiers {
                                 ))
                                 .build()
                         ))
-            		.build());
+            		.build();
         }
 
     }
@@ -4755,8 +4755,8 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+            return CatalogMappingImpl.builder()
             		.withName("FoodMart 2285")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -4844,7 +4844,7 @@ public class SchemaModifiers {
                                 ))
                                 .build()
                         ))
-            		.build());
+            		.build();
         }
 
     }
@@ -4994,11 +4994,11 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	PhysicalCubeMappingImpl warehouseCube;
         	MeasureMappingImpl mUnitSales;
         	CalculatedMemberMappingImpl mWarehouseSalesCalc;
-            return List.of(SchemaMappingImpl.builder()
+            return CatalogMappingImpl.builder()
             		.withName("tiny")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -5094,7 +5094,7 @@ public class SchemaModifiers {
                             ))
                             .build()
                     ))
-                    .build());
+                    .build();
         }
 
 
@@ -5181,8 +5181,8 @@ public class SchemaModifiers {
     			.build();
 
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+            return CatalogMappingImpl.builder()
             		.withName("FoodMart 2399 Rollup Type")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -5229,7 +5229,7 @@ public class SchemaModifiers {
                             ))
                             .build()))
                     .build()
-                    );
+                    ;
         }
     }
 
@@ -5312,8 +5312,8 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+            return CatalogMappingImpl.builder()
             		.withName("FoodMart 2399 Rollup Type")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -5359,7 +5359,7 @@ public class SchemaModifiers {
                                 	.build()
                                 ))
                                 .build()))
-                        .build());
+                        .build();
         }
     }
 
@@ -5442,8 +5442,8 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+            return CatalogMappingImpl.builder()
             		.withName("FoodMart 2399 Rollup Type")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -5489,7 +5489,7 @@ public class SchemaModifiers {
                                 	.build()
                                 ))
                                 .build()))
-                        .build());
+                        .build();
         }
     }
 
@@ -5518,7 +5518,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -5611,7 +5611,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -5762,7 +5762,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -5917,7 +5917,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(
@@ -5963,7 +5963,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(
@@ -6049,7 +6049,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(
@@ -6140,7 +6140,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(
@@ -6190,7 +6190,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(
@@ -6277,8 +6277,8 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog) {
+            return CatalogMappingImpl.builder()
                     .withName("Foo")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -6319,7 +6319,7 @@ public class SchemaModifiers {
                             	.build()))
                             	.build()
                             ))
-                            .build());
+                            .build();
         }
     }
 
@@ -6353,8 +6353,8 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog) {
+            return CatalogMappingImpl.builder()
                     .withName("snowflake bug")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -6454,7 +6454,7 @@ public class SchemaModifiers {
                             		.build()))
                             .build()
                     )
-             ).build());
+             ).build();
         }
 
     }
@@ -6503,8 +6503,8 @@ public class SchemaModifiers {
         .build();
 
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog) {
+            return CatalogMappingImpl.builder()
                     .withName("FoodMart")
                     .withCubes(List.of(
                     	PhysicalCubeMappingImpl.builder()
@@ -6529,7 +6529,7 @@ public class SchemaModifiers {
                         	.build()
                         ))
                         .build()))
-                    .build());
+                    .build();
         }
 
 
@@ -7161,10 +7161,10 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog) {
         	MeasureMappingImpl mUnitSales;
         	MeasureMappingImpl mWarehouseSales;
-            return List.of(SchemaMappingImpl.builder()
+            return CatalogMappingImpl.builder()
                     .withName("FoodMart")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -7236,7 +7236,7 @@ public class SchemaModifiers {
                                 	))
                             .build()
                         ))
-                    .build());
+                    .build();
         }
     }
 
@@ -8070,10 +8070,10 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog) {
         	PhysicalCubeMappingImpl cubeSales;
         	CalculatedMemberMappingImpl cmRecurse;
-            return List.of(SchemaMappingImpl.builder()
+            return CatalogMappingImpl.builder()
                     .withName("FoodMart")
                     .withCubes(List.of(
                     	cubeSales = PhysicalCubeMappingImpl.builder()
@@ -8145,7 +8145,7 @@ public class SchemaModifiers {
                             	cmRecurse
                             ))
                             .build()
-                     )).build());
+                     )).build();
         }
     }
 
@@ -8951,7 +8951,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping catalogOriginal) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping catalogOriginal) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(catalogOriginal));
             ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("Numeric").build();
@@ -9111,7 +9111,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
@@ -10573,8 +10573,8 @@ public class SchemaModifiers {
     	        .build();
 
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+            return CatalogMappingImpl.builder()
                     .withName("AMC")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -10642,7 +10642,7 @@ public class SchemaModifiers {
                             ))
                             .build()
                     ))
-            		.build());
+            		.build();
         }
 
     }
@@ -10675,8 +10675,8 @@ public class SchemaModifiers {
     	        .withFormatString("Standard")
     	        .build();
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+            return CatalogMappingImpl.builder()
                     .withName("FoodMart")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -10715,7 +10715,7 @@ public class SchemaModifiers {
                             ))
                             .build()
                     ))
-            		.build());
+            		.build();
         }
     }
 
@@ -10807,8 +10807,8 @@ public class SchemaModifiers {
         }
 
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+            return CatalogMappingImpl.builder()
             		.withName("FoodMart")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -10859,7 +10859,7 @@ public class SchemaModifiers {
                                 .build()
                         ))
 
-            		.build());
+            		.build();
         }
 
     }
@@ -11078,9 +11078,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-        	return List.of(
-        			SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+        	return 
+        			CatalogMappingImpl.builder()
                     .withName("FooSchema")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -11326,7 +11326,7 @@ public class SchemaModifiers {
                                                 .withFormatString("#,###")
                                                 .build()
                                         )
-                            	).build())).build())).build());
+                            	).build())).build())).build();
         }
 
     }
@@ -11549,8 +11549,8 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+            return CatalogMappingImpl.builder()
                     .withName("custom")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -11589,7 +11589,7 @@ public class SchemaModifiers {
                             		.build()))
                             .build()
                     ))
-            		.build());
+            		.build();
         }
 
     }
@@ -11678,8 +11678,8 @@ public class SchemaModifiers {
         }
 
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+            return CatalogMappingImpl.builder()
                     .withName("FoodMart")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -11724,7 +11724,7 @@ public class SchemaModifiers {
                             		.build()))
                             .build()
                     ))
-            		.build());
+            		.build();
         }
 
     }
@@ -11836,8 +11836,8 @@ public class SchemaModifiers {
         }
 
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-            return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+            return CatalogMappingImpl.builder()
                     .withName("AMC")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -11896,7 +11896,7 @@ public class SchemaModifiers {
                             		.build()))
                             .build()
                     ))
-            		.build());
+            		.build();
         }
 
     }
@@ -12156,7 +12156,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	MeasureGroupMappingImpl mgSales1 = MeasureGroupMappingImpl.builder().build();
 
         	MeasureMappingImpl mUnitSalesSales1 = MeasureMappingImpl.builder()
@@ -12253,7 +12253,7 @@ public class SchemaModifiers {
         	        .build();
         	mgSales2.setPhysicalCube(cubeSales2);
 
-            return List.of(SchemaMappingImpl.builder()
+            return CatalogMappingImpl.builder()
                     .withName("custom")
                     .withCubes(List.of(
                     	cubeSales1,
@@ -12280,7 +12280,7 @@ public class SchemaModifiers {
                         			mStoreSalesSales2
                         ))
                         .build()
-                     )).build());
+                     )).build();
         }
     }
 
@@ -12334,7 +12334,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -12466,7 +12466,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -12591,7 +12591,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -12778,7 +12778,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog) {
             ColumnImpl store_id_cheques = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
             ColumnImpl prod_id_cheques = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
             ColumnImpl amount_cheques = ColumnImpl.builder().withName("amount").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
@@ -12798,7 +12798,7 @@ public class SchemaModifiers {
                             firstprefixValueAggLp595Cheques, secondprefixValueAggLp595Cheques, amountAggLp595Cheques
                             ))).build();
 
-            return List.of(SchemaMappingImpl.builder()
+            return CatalogMappingImpl.builder()
                     .withName("usagePrefixTest")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -12855,7 +12855,7 @@ public class SchemaModifiers {
                             ))
                             .build()
                     ))
-            		.build());
+            		.build();
         }
     }
 
@@ -13003,7 +13003,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog) {
 
         	MeasureGroupMappingImpl mgSales = MeasureGroupMappingImpl.builder().build();
         	MeasureGroupMappingImpl mgWarehouse = MeasureGroupMappingImpl.builder().build();
@@ -13079,7 +13079,7 @@ public class SchemaModifiers {
             .withMeasureGroups(List.of(mgWarehouse)).build();
             mgWarehouse.setPhysicalCube(cubeWarehouse);
 
-            return List.of(SchemaMappingImpl.builder()
+            return CatalogMappingImpl.builder()
                     .withName("MYFoodmart")
                     .withCubes(List.of(cubeSales, cubeWarehouse,
                        VirtualCubeMappingImpl.builder()
@@ -13097,7 +13097,7 @@ public class SchemaModifiers {
                             .withReferencedMeasures(List.of(mStoreSales, mWarehouseSales))
                             .build()
                     ))
-                    .build());
+                    .build();
         }
 
     }
@@ -13143,7 +13143,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("Numeric").build();
@@ -13262,7 +13262,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
@@ -13344,7 +13344,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
@@ -13421,7 +13421,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
@@ -13561,7 +13561,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             AccessRoleMappingImpl roleUSAmanager;
             AccessRoleMappingImpl roleParentUSAmanager;
@@ -13647,7 +13647,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
@@ -13718,7 +13718,7 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -13786,7 +13786,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -13842,7 +13842,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema).stream().filter(r -> !r.getName().equals("California manager")).toList());
             result.add(
@@ -13910,7 +13910,7 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -13981,7 +13981,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -14061,7 +14061,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -14143,7 +14143,7 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -14348,14 +14348,14 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<CubeMapping> schemaCubes(SchemaMapping Schema) {
+        protected List<CubeMapping> schemaCubes(CatalogMapping Schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.add(cube);
             return result;
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> res = new ArrayList<>();
             List<AccessRoleMappingImpl> roleUsages = new ArrayList<>();
             for (Position position : result.getAxes()[0].getPositions()) {
@@ -14485,7 +14485,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -14560,7 +14560,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -14642,7 +14642,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -14698,7 +14698,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -14779,7 +14779,7 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -14880,7 +14880,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -15012,7 +15012,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -15103,7 +15103,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -15159,7 +15159,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -15223,7 +15223,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -15316,7 +15316,7 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -15394,7 +15394,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -15484,7 +15484,7 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -15553,7 +15553,7 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -15617,7 +15617,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -15680,7 +15680,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -15750,7 +15750,7 @@ public class SchemaModifiers {
             this.policy = policy;
         }
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -15820,7 +15820,7 @@ public class SchemaModifiers {
             this.policy = policy;
         }
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema).stream()
                 .filter(r -> !"Role1".equals(r.getName())).toList());
@@ -15901,7 +15901,7 @@ public class SchemaModifiers {
             this.policy = policy;
         }
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema).stream().filter(r -> !r.getName().equals("California manager")).toList());
             result.add(
@@ -15979,7 +15979,7 @@ public class SchemaModifiers {
             + "</Cube>";
          */
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
         	StandardDimensionMappingImpl store2Dimension = StandardDimensionMappingImpl.builder()
                     .withName("Store2")
                     .withHierarchies(List.of(
@@ -16064,7 +16064,7 @@ public class SchemaModifiers {
 
          */
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema)
                 .stream().filter(r -> !"test".equals(r.getName())).toList());
@@ -16127,7 +16127,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -16189,7 +16189,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -16345,7 +16345,7 @@ public class SchemaModifiers {
 
          */
 
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.schemaCubes(schema));
             result.add(sales1Cube = PhysicalCubeMappingImpl.builder()
@@ -16613,7 +16613,7 @@ public class SchemaModifiers {
             + "</Role>");
         */
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -16679,7 +16679,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -16757,7 +16757,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -16911,7 +16911,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -17043,7 +17043,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -17152,7 +17152,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
 
         	HierarchyMappingImpl warehouseSharedHierarchy;
         	StandardDimensionMappingImpl d = StandardDimensionMappingImpl.builder()
@@ -17184,7 +17184,7 @@ public class SchemaModifiers {
             .build();
         	PhysicalCubeMappingImpl warehouse1Cube;
         	PhysicalCubeMappingImpl warehouse2Cube;
-        	return List.of(SchemaMappingImpl.builder()
+        	return CatalogMappingImpl.builder()
                     .withName("FoodMart.DimAndMeasure.Role")
                     .withCubes(List.of(
                     	warehouse1Cube = PhysicalCubeMappingImpl.builder()
@@ -17305,7 +17305,7 @@ public class SchemaModifiers {
                             ))
                             .build()
                     ))
-                    .build());
+                    .build();
         }
     }
 
@@ -17324,7 +17324,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -17374,7 +17374,7 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	TimeDimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
             .withName("Time")
             .withHierarchies(List.of(
@@ -17409,7 +17409,7 @@ public class SchemaModifiers {
             ))
             .build();
 
-        	return List.of(SchemaMappingImpl.builder()
+        	return CatalogMappingImpl.builder()
                     .withName("FoodMart 2358")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -17434,7 +17434,7 @@ public class SchemaModifiers {
                                 		.build()))
                                 .build()
                         ))
-                    .build());
+                    .build();
 
         }
     }
@@ -17475,7 +17475,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	TimeDimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
             .withName("Time")
             .withHierarchies(List.of(
@@ -17517,7 +17517,7 @@ public class SchemaModifiers {
             .withFormatString("Standard")
             .build();
 
-        	return List.of(SchemaMappingImpl.builder()
+        	return CatalogMappingImpl.builder()
                     .withName("FoodMart")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -17561,7 +17561,7 @@ public class SchemaModifiers {
                                 		.build()))
                                 .build()
                         ))
-                    .build());
+                    .build();
 
         }
     }
@@ -17599,7 +17599,7 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	TimeDimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
             .withName("Time")
             .withHierarchies(List.of(
@@ -17634,7 +17634,7 @@ public class SchemaModifiers {
             .withFormatString("Standard")
             .build();
 
-        	return List.of(SchemaMappingImpl.builder()
+        	return CatalogMappingImpl.builder()
                     .withName("FoodMart")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -17653,7 +17653,7 @@ public class SchemaModifiers {
                                 		.build()))
                                 .build()
                         ))
-                    .build());
+                    .build();
 
         }
     }
@@ -17702,9 +17702,9 @@ public class SchemaModifiers {
         public DialectTestModifier2(CatalogMapping catalog) {
             super(catalog);
         }
-
+        
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	TimeDimensionMappingImpl storeSqftDimension = TimeDimensionMappingImpl.builder()
             .withName("StoreSqft")
             .withHierarchies(List.of(
@@ -17740,7 +17740,7 @@ public class SchemaModifiers {
             ))
             .build();
 
-        	return List.of(SchemaMappingImpl.builder()
+        	return CatalogMappingImpl.builder()
                     .withName("FoodMart")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -17778,7 +17778,7 @@ public class SchemaModifiers {
                                 		.build()))
                                 .build()
                         ))
-                    .build());
+                    .build();
 
         }
     }
@@ -17834,7 +17834,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
 
         	StandardDimensionMappingImpl frozenSqftDimension = StandardDimensionMappingImpl.builder()
             .withName("Frozen sqft")
@@ -17908,7 +17908,7 @@ public class SchemaModifiers {
                     ))
                     .build();
 
-        	return List.of(SchemaMappingImpl.builder()
+        	return CatalogMappingImpl.builder()
                     .withName("FoodMart")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -17959,7 +17959,7 @@ public class SchemaModifiers {
                                 		.build()))
                                 .build()
                         ))
-                    .build());
+                    .build();
 
         }
     }
@@ -17992,8 +17992,8 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-        	return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+        	return CatalogMappingImpl.builder()
                     .withName("FoodMartSalesOnly")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -18059,7 +18059,7 @@ public class SchemaModifiers {
                                 		.build()))
                                 .build()
                         ))
-                    .build());
+                    .build();
 
         }
     }
@@ -18092,8 +18092,8 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
-        	return List.of(SchemaMappingImpl.builder()
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
+        	return CatalogMappingImpl.builder()
                     .withName("FoodMartSalesOnly")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -18157,7 +18157,7 @@ public class SchemaModifiers {
                                 		.build()))
                                 .build()
                         ))
-                    .build());
+                    .build();
 
         }
     }
@@ -18185,7 +18185,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
         	MeasureMappingImpl m = MeasureMappingImpl.builder()
             .withName("Unit Sales")
             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
@@ -18348,7 +18348,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	MeasureMappingImpl m = MeasureMappingImpl.builder()
                     .withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
@@ -18356,7 +18356,7 @@ public class SchemaModifiers {
                     .withFormatString("Standard")
                     .build();
 
-        	return List.of(SchemaMappingImpl.builder()
+        	return CatalogMappingImpl.builder()
                     .withName("FoodMart")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -18673,7 +18673,7 @@ public class SchemaModifiers {
                                 		.build()))
                                 .build()
                         ))
-                        .build());
+                        .build();
                 }
     }
 
@@ -18832,12 +18832,12 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	PhysicalCubeMappingImpl steelWheelsSalesCube;
         	HierarchyMappingImpl marketsHierarchy;
         	LevelMappingImpl territoryLevel;
         	LevelMappingImpl countryLevel;
-        	return List.of(SchemaMappingImpl.builder()
+        	return CatalogMappingImpl.builder()
                     .withName("SteelWheels")
                     .withCubes(List.of(
                     		steelWheelsSalesCube = PhysicalCubeMappingImpl.builder()
@@ -19271,7 +19271,7 @@ public class SchemaModifiers {
                                         ))
                                     .build()
                         ))
-                        .build());
+                        .build();
                 }
     }
 
@@ -19432,7 +19432,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	StandardDimensionMappingImpl marketsDimension = StandardDimensionMappingImpl.builder()
                     .withName("Markets")
                     .withHierarchies(List.of(
@@ -19656,7 +19656,7 @@ public class SchemaModifiers {
             ))
             .build();
 
-        	return List.of(SchemaMappingImpl.builder()
+        	return CatalogMappingImpl.builder()
                     .withName("test_namecolumn")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -19789,7 +19789,7 @@ public class SchemaModifiers {
                                         .build()
                                 )).build()))
                                 .build()
-                     )).build());
+                     )).build();
         }
     }
 
@@ -19800,14 +19800,14 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	ColumnImpl ordernumber = ColumnImpl.builder().withName("ORDERNUMBER").withType("INTEGER").build();
         	ColumnImpl orderdate = ColumnImpl.builder().withName("ORDERDATE").withType("TIMESTAMP").build();
             PhysicalTableImpl orders = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("orders")
                     .withColumns(List.of(
                             ordernumber, orderdate
                     ))).build();
-        	return List.of(SchemaMappingImpl.builder()
+        	return CatalogMappingImpl.builder()
                     .withName("FooBar")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -19883,7 +19883,7 @@ public class SchemaModifiers {
                                         .build()
                                 )).build()))
                             .build()))
-                    .build());
+                    .build();
         }
 
         /*
@@ -19998,7 +19998,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	StandardDimensionMappingImpl productDimension = StandardDimensionMappingImpl.builder()
             .withName("Product")
             .withHierarchies(List.of(
@@ -20058,7 +20058,7 @@ public class SchemaModifiers {
             ))
             .build();
 
-        	return List.of(SchemaMappingImpl.builder()
+        	return CatalogMappingImpl.builder()
                     .withName("SteelWheels")
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
@@ -20224,7 +20224,7 @@ public class SchemaModifiers {
                                         .withAggregatorType(MeasureAggregatorType.SUM)
                                         .build()
                                 )).build()))
-                    .build())).build());
+                    .build())).build();
         }
     }
 
@@ -20272,7 +20272,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(SchemaMapping schema) {
+        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             result.addAll(super.schemaAccessRoles(schema));
             result.add(
@@ -20419,7 +20419,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	PhysicalCubeMappingImpl customersCube;
         	HierarchyMappingImpl customersHierarchy;
         	LevelMappingImpl nameLevel;
@@ -20460,8 +20460,8 @@ public class SchemaModifiers {
             ))
         .build();
 
-        	return List.of(
-        		SchemaMappingImpl.builder()
+        	return 
+        		CatalogMappingImpl.builder()
                     .withName("SteelWheels")
                     .withDescription("1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2")
                     .withCubes(List.of(
@@ -20547,7 +20547,7 @@ public class SchemaModifiers {
 
                     ))
                     .build()
-        	);
+        	;
         }
     }
 
@@ -20618,7 +20618,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	PhysicalCubeMappingImpl customersCube;
         	HierarchyMappingImpl customersHierarchy;
         	LevelMappingImpl nameLevel;
@@ -20662,8 +20662,8 @@ public class SchemaModifiers {
             ))
         .build();
 
-        	return List.of(
-        			SchemaMappingImpl.builder()
+        	return 
+        			CatalogMappingImpl.builder()
                     .withName("SteelWheels")
                     .withDescription("1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2")
                     .withCubes(List.of(
@@ -20767,7 +20767,7 @@ public class SchemaModifiers {
                             .build()
                     ))
                     .build()
-        	);
+        	;
         }
     }
 
@@ -20856,7 +20856,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	PhysicalCubeMappingImpl rolesTest1;
         	PhysicalCubeMappingImpl rolesTest2;
         	MeasureMappingImpl measure1;
@@ -20917,8 +20917,8 @@ public class SchemaModifiers {
             .build();
 
 
-        	return List.of(
-        			SchemaMappingImpl.builder()
+        	return 
+        			CatalogMappingImpl.builder()
                     .withName("rolesTest")
                     .withCubes(List.of(
                     	rolesTest1 = PhysicalCubeMappingImpl.builder()
@@ -21064,7 +21064,7 @@ public class SchemaModifiers {
                             .build()
                     ))
                     .build()
-        			);
+        			;
         }
     }
 
@@ -21094,7 +21094,7 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<SchemaMapping> catalogSchemas(CatalogMapping catalog2) {
+        protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	StandardDimensionMappingImpl customersDimension = StandardDimensionMappingImpl.builder()
             .withName("Customers")
             .withHierarchies(List.of(
@@ -21131,8 +21131,8 @@ public class SchemaModifiers {
             .withFormatString("Standard")
             .build();
 
-        	return List.of(
-        			SchemaMappingImpl.builder()
+        	return 
+        			CatalogMappingImpl.builder()
                     .withName("foodmart-xmla-alias-bug")
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
@@ -21154,7 +21154,7 @@ public class SchemaModifiers {
                             .build())).build()
                     ))
                     .build()
-        	);
+        	;
         }
 
     }

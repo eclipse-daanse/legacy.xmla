@@ -22,7 +22,7 @@ import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
@@ -48,7 +48,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SchemaMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 
@@ -150,7 +150,7 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
     }
 
     @Override
-    protected SchemaMapping schema(SchemaMapping schemaMappingOriginal) {
+    protected CatalogMapping modifyCatalog(CatalogMapping schemaMappingOriginal) {
     	HierarchyMappingImpl animalsHierarchy;
         StandardDimensionMappingImpl animal = StandardDimensionMappingImpl.builder()
         .withName("Animal")
@@ -218,7 +218,7 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
         .build();
         PhysicalCubeMappingImpl testCube;
 
-        return SchemaMappingImpl.builder()
+        return CatalogMappingImpl.builder()
         .withName("Testmart")
         .withCubes(List.of(
         	testCube = PhysicalCubeMappingImpl.builder()

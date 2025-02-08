@@ -23,7 +23,7 @@ import mondrian.olap.exceptions.MdxMemberExpIsSetException;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.PrefixOperationAtom;
 import org.eclipse.daanse.olap.api.NameSegment;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Syntax;
 import org.eclipse.daanse.olap.api.Validator;
@@ -213,7 +213,7 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
                 return;
             }
             OlapElement mdxElement = q.getCube();
-            final SchemaReader schemaReader = q.getSchemaReader(false);
+            final CatalogReader schemaReader = q.getCatalogReader(false);
             for (int i = 0; i < segments.size(); i++) {
                 final Segment segment0 = segments.get(i);
                 if (!(segment0 instanceof NameSegment segment)) {

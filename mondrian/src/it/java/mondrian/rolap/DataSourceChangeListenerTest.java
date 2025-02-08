@@ -492,8 +492,8 @@ class DataSourceChangeListenerTest extends BatchTestCase {
 
     SmartMemberReader getSmartMemberReader(Connection con, String hierName) {
         RolapCube cube = (RolapCube) con.getSchema().lookupCube("Sales", true);
-        RolapSchemaReader schemaReader =
-            (RolapSchemaReader) cube.getSchemaReader();
+        RolapCatalogReader schemaReader =
+            (RolapCatalogReader) cube.getSchemaReader();
         RolapHierarchy hierarchy =
             (RolapHierarchy) cube.lookupHierarchy(
                 new Id.NameSegment(hierName, Id.Quoting.UNQUOTED), false);
@@ -513,8 +513,8 @@ class DataSourceChangeListenerTest extends BatchTestCase {
         String hierName)
     {
         RolapCube cube = (RolapCube) con.getSchema().lookupCube("Sales", true);
-        RolapSchemaReader schemaReader =
-            (RolapSchemaReader) cube.getSchemaReader();
+        RolapCatalogReader schemaReader =
+            (RolapCatalogReader) cube.getSchemaReader();
         RolapCubeHierarchy hierarchy =
             (RolapCubeHierarchy) cube.lookupHierarchy(
                 new Id.NameSegment(hierName, Id.Quoting.UNQUOTED), false);

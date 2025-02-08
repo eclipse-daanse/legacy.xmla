@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
@@ -47,7 +47,7 @@ public class DescendantsLeavesByDepthCalc extends AbstractListCalc {
                 depth = -1; // no limit
             }
         }
-        final SchemaReader schemaReader = evaluator.getSchemaReader();
+        final CatalogReader schemaReader = evaluator.getCatalogReader();
         descendantsLeavesByDepth(member, result, schemaReader, depth);
         Sorter.hierarchizeMemberList(result, false);
         return new UnaryTupleList(result);
@@ -59,7 +59,7 @@ public class DescendantsLeavesByDepthCalc extends AbstractListCalc {
      * constraint.
      */
     private void descendantsLeavesByDepth(final Member member, final List<Member> result,
-            final SchemaReader schemaReader, final int depthLimit) {
+            final CatalogReader schemaReader, final int depthLimit) {
         if (!schemaReader.isDrillable(member)) {
             if (depthLimit >= 0) {
                 result.add(member);

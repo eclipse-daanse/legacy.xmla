@@ -50,7 +50,7 @@ public class AggregateChildrenCalc extends AbstractProfilingNestedUnknownCalc {
     Object aggregateChildren(Evaluator evaluator, Hierarchy hierarchy, final Calc<?> valueFunCall) {
         Member member = evaluator.getPreviousContext(hierarchy);
         List<Member> members = new ArrayList<>();
-        evaluator.getSchemaReader().getParentChildContributingChildren(member.getDataMember(), hierarchy, members);
+        evaluator.getCatalogReader().getParentChildContributingChildren(member.getDataMember(), hierarchy, members);
         Aggregator aggregator = (Aggregator) evaluator.getProperty(Property.AGGREGATION_TYPE.name, null);
         if (aggregator == null) {
             throw FunUtil.newEvalException(null, new StringBuilder("Could not find an aggregator in the current ")

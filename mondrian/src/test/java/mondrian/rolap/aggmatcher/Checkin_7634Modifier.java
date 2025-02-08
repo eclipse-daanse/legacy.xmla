@@ -20,7 +20,6 @@ import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
@@ -72,7 +71,7 @@ public class Checkin_7634Modifier extends PojoMappingModifier {
      */
 
     @Override
-    protected List<? extends CubeMapping> schemaCubes(SchemaMapping schemaMappingOriginal) {
+    protected List<? extends CubeMapping> schemaCubes(CatalogMapping schemaMappingOriginal) {
         List<CubeMapping> result = new ArrayList<>();
         ColumnImpl cust_loc_id_geography7631 = ColumnImpl.builder().withName("cust_loc_id").withType("INTEGER").build();
         ColumnImpl state_cd = ColumnImpl.builder().withName("state_cd").withType("VARCHAR").withCharOctetLength(20).build();

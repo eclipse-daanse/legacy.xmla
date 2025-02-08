@@ -13,7 +13,6 @@
  */
 package org.eclipse.daanse.olap.xmla.bridge.discover;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,41 +22,31 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.EmptyOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.InternalOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.ParenthesesOperationAtom;
-import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.DrillThroughAction;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.DbSchema;
+import org.eclipse.daanse.olap.api.element.DbTable;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
+import org.eclipse.daanse.olap.api.element.KPI;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
-import org.eclipse.daanse.olap.api.element.Schema;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.result.Property;
 import org.eclipse.daanse.olap.api.result.Property.TypeFlag;
-import org.eclipse.daanse.olap.rolap.api.RolapContext;
-import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
 import org.eclipse.daanse.rdb.structure.api.model.PhysicalTable;
 import org.eclipse.daanse.rdb.structure.api.model.SystemTable;
-import org.eclipse.daanse.rdb.structure.api.model.Table;
-import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberPropertyMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.KpiMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.MeasureGroupMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.MeasureMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;
@@ -90,7 +79,6 @@ import org.eclipse.daanse.xmla.api.common.enums.TableTypeEnum;
 import org.eclipse.daanse.xmla.api.common.enums.TreeOpEnum;
 import org.eclipse.daanse.xmla.api.common.enums.VisibilityEnum;
 import org.eclipse.daanse.xmla.api.discover.dbschema.columns.DbSchemaColumnsResponseRow;
-import org.eclipse.daanse.xmla.api.discover.dbschema.schemata.DbSchemaSchemataResponseRow;
 import org.eclipse.daanse.xmla.api.discover.dbschema.sourcetables.DbSchemaSourceTablesResponseRow;
 import org.eclipse.daanse.xmla.api.discover.dbschema.tables.DbSchemaTablesResponseRow;
 import org.eclipse.daanse.xmla.api.discover.dbschema.tablesinfo.DbSchemaTablesInfoResponseRow;
@@ -108,7 +96,6 @@ import org.eclipse.daanse.xmla.api.discover.mdschema.properties.MdSchemaProperti
 import org.eclipse.daanse.xmla.api.discover.mdschema.sets.MdSchemaSetsResponseRow;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.columns.DbSchemaColumnsResponseRowR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.schemata.DbSchemaSchemataResponseRowR;
-import org.eclipse.daanse.xmla.model.record.discover.dbschema.sourcetables.DbSchemaSourceTablesResponseRowR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.tables.DbSchemaTablesResponseRowR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.tablesinfo.DbSchemaTablesInfoResponseRowR;
 import org.eclipse.daanse.xmla.model.record.discover.mdschema.cubes.MdSchemaCubesResponseRowR;
@@ -143,47 +130,30 @@ public class Utils {
         // constructor
     }
 
-    static Optional<String> getRoles(List<? extends AccessRoleMapping> roles) {
+    static Optional<String> getRoles(List<String> roles) {
         if (roles != null) {
-            return Optional.of(roles.stream().map(AccessRoleMapping::getName).collect(Collectors.joining(",")));
+			return Optional.of(roles.stream().collect(Collectors.joining(",")));
         }
         return Optional.empty();
     }
 
     static List<DbSchemaColumnsResponseRow> getDbSchemaColumnsResponseRow(
-        Context context,
+        Catalog catalog,
         Optional<String> oTableSchema,
         Optional<String> oTableName,
         Optional<String> oColumnName,
-        Optional<ColumnOlapTypeEnum> oColumnOlapType
-    ) {
+        Optional<ColumnOlapTypeEnum> oColumnOlapType){
 
-        List<? extends SchemaMapping> schemas =
-            getDatabaseMappingSchemaProviderWithFilter(((RolapContext) context).getCatalogMapping(), oTableSchema);
-        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-        return schemas.stream().map(schema -> {
-            return getDbSchemaColumnsResponseRow(catalog.getName(), schema, oTableName, oColumnName, oColumnOlapType
-                );
-        }).flatMap(Collection::stream).toList();
-    }
-
-    static List<DbSchemaColumnsResponseRow> getDbSchemaColumnsResponseRow(
-        String catalogName,
-        SchemaMapping schema,
-        Optional<String> oTableName,
-        Optional<String> oColumnName,
-        Optional<ColumnOlapTypeEnum> oColumnOlapType
-    ) {
-        return schema.getCubes().stream().filter(c -> c instanceof PhysicalCubeMapping).sorted(Comparator.comparing(CubeMapping::getName))
-            .map(c -> getDbSchemaColumnsResponseRow(catalogName, schema.getName(), (PhysicalCubeMapping)c, oTableName, oColumnName,
-                oColumnOlapType))
-            .flatMap(Collection::stream).toList();
+		return Stream.of(catalog.getCubes()).sorted(Comparator.comparing(Cube::getName)).flatMap(
+				c -> getDbSchemaColumnsResponseRow(catalog.getName(), null, c, oTableName, oColumnName, oColumnOlapType)
+						.stream())
+				.toList();
     }
 
     static List<DbSchemaColumnsResponseRow> getDbSchemaColumnsResponseRow(
         String catalogName,
         String schemaName,
-        PhysicalCubeMapping cube,
+        Cube cube,
         Optional<String> oTableName,
         Optional<String> oColumnName,
         Optional<ColumnOlapTypeEnum> oColumnOlapType
@@ -192,21 +162,19 @@ public class Utils {
         List<DbSchemaColumnsResponseRow> result = new ArrayList<>();
         if (!oTableName.isPresent() || (oTableName.isPresent() && oTableName.get().equals(cube.getName()))) {
             final boolean emitInvisibleMembers = true; //TODO
-            for (DimensionConnectorMapping dimensionConnector : cube.getDimensionConnectors()) {
+            for (Dimension dimension : cube.getDimensions()) {
                     populateDimensionForDbSchemaColumns(
                         catalogName,
                         schemaName,
-                        cube, dimensionConnector.getDimension(),
+                        cube, dimension,
                         ordinalPosition, result);
             }
-            for (MeasureGroupMapping measureGroup : cube.getMeasureGroups()) {
-            	for (MeasureMapping measure : measureGroup.getMeasures()) {
+            for (Member measure  : cube.getMeasures()) {
                 Boolean visible = true;
-                Optional<? extends CalculatedMemberPropertyMapping> oP = measure.getCalculatedMemberProperties()
-                    .stream()
-                    .filter(p -> "$visible".equals(p.getName())).findFirst();
-                if (oP.isPresent()) {
-                    visible = Boolean.valueOf(oP.get().getValue());
+               Object o= measure.getPropertyValue("$visible");
+                  
+                if (o!=null) {
+                    visible = Boolean.valueOf(o.toString());
                 }
                 if (!emitInvisibleMembers && !visible) {
                     continue;
@@ -220,7 +188,7 @@ public class Utils {
                 String cubeName = cube.getName();
                 result.add(new DbSchemaColumnsResponseRowR(
                     Optional.of(cubeName),
-                    Optional.of(schemaName),
+                    Optional.ofNullable(schemaName),
                     Optional.of(cubeName),
                     Optional.of(columnName),
                     Optional.empty(),
@@ -249,7 +217,6 @@ public class Utils {
                     Optional.empty(),
                     Optional.empty()
                 ));
-            	}
             }
         }
 
@@ -259,12 +226,12 @@ public class Utils {
     private static void populateDimensionForDbSchemaColumns(
         String catalogName,
         String schemaName,
-        CubeMapping cube,
-        DimensionMapping dimension,
+        Cube cube,
+        Dimension dimension,
         int ordinalPosition,
         List<DbSchemaColumnsResponseRow> result
     ) {
-        for (HierarchyMapping hierarchy : dimension.getHierarchies()) {
+        for (Hierarchy hierarchy : dimension.getHierarchies()) {
             ordinalPosition =
                 populateHierarchyForDbSchemaColumns(
                     catalogName,
@@ -278,8 +245,8 @@ public class Utils {
     static int populateHierarchyForDbSchemaColumns(
         String catalogName,
         String schemaName,
-        CubeMapping cube,
-        HierarchyMapping hierarchy,
+        Cube cube,
+        Hierarchy hierarchy,
         int ordinalPosition,
         List<DbSchemaColumnsResponseRow> result
     ) {
@@ -287,7 +254,7 @@ public class Utils {
         String hierarchyName = hierarchy.getName();
         result.add(new DbSchemaColumnsResponseRowR(
             Optional.of(catalogName),
-            Optional.of(schemaName),
+            Optional.ofNullable(schemaName),
             Optional.of(cubeName),
             Optional.of(new StringBuilder(hierarchyName).append(":(All)!NAME").toString()),
             Optional.empty(),
@@ -318,8 +285,8 @@ public class Utils {
         ));
 
         result.add(new DbSchemaColumnsResponseRowR(
-            Optional.of(schemaName),
-            Optional.of(schemaName),
+            Optional.of(catalogName),
+            Optional.ofNullable(schemaName),
             Optional.of(cubeName),
             Optional.of(new StringBuilder(hierarchyName).append(":(All)!UNIQUE_NAME").toString()),
             Optional.empty(),
@@ -351,68 +318,26 @@ public class Utils {
         return ordinalPosition;
     }
 
-    static List<? extends SchemaMapping> getDatabaseMappingSchemaProviderWithFilter(
-        CatalogMapping catalog,
-        Optional<String> oSchemaName
-    ) {
-        if (oSchemaName.isPresent()) {
-            return catalog.getSchemas().stream().filter(s -> s.getName().equals(oSchemaName.get())).toList();
-        }
-        return catalog.getSchemas();
-    }
 
-    static List<DbSchemaSchemataResponseRow> getDbSchemaSchemataResponseRow(
-        Context context,
-        String schemaName,
-        String schemaOwner
-    ) {
-        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-        if (catalog != null) {
-            return getDatabaseMappingSchemaProviderWithFilter(catalog, schemaName).stream()
-                .map(s -> getDbSchemaSchemataResponseRow(catalog.getName(), s, schemaOwner)).toList();
-        }
-        return List.of();
-    }
+	static List<DbSchemaSchemataResponseRowR> getDbSchemaSchemataResponseRow(Catalog catalog, String schemaNameReq,String schemaOwnerRequ) {
+		return catalog.getDbSchemas().stream().filter(dbs->dbs.getName().equals(schemaNameReq))
+				.map(dbs -> new DbSchemaSchemataResponseRowR(catalog.getName(), dbs.getName(), "")).toList();
+	}
 
-    static DbSchemaSchemataResponseRow getDbSchemaSchemataResponseRow(
-        String catalogName,
-        SchemaMapping schema,
-        String schemaOwner
-    ) {
-        return new DbSchemaSchemataResponseRowR(
-            catalogName,
-            schema.getName(),
-            "");
-    }
 
-    static List<? extends SchemaMapping> getDatabaseMappingSchemaProviderWithFilter(
-        CatalogMapping catalog,
-        String schemaName
-    ) {
-        if (schemaName != null) {
-            return catalog.getSchemas().stream().filter(s -> s.getName().equals(schemaName)).toList();
-        }
-        return catalog.getSchemas();
-    }
 
     static List<MdSchemaCubesResponseRow> getMdSchemaCubesResponseRow(
-        Context context,
+    	Catalog catalog,
         Optional<String> schemaName,
         Optional<String> cubeName,
         Optional<String> baseCubeName,
         Optional<CubeSourceEnum> cubeSource,
         RequestMetaData metaData,
         UserPrincipal userPrincipal) {
-        List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
-        if (schemas != null) {
-            CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-            return getSchemasWithFilter(schemas, schemaName).stream()
-                .map(s -> getMdSchemaCubesResponseRow(catalog.getName(), s, cubeName, baseCubeName,
-                    cubeSource))
-                .flatMap(Collection::stream)
-                .toList();
-        }
-        return List.of();
+    
+            return getMdSchemaCubesResponseRow(catalog, cubeName, baseCubeName,
+                    cubeSource)
+                ;
     }
 
     static List<MdSchemaFunctionsResponseRow> getMdSchemaFunctionsResponseRow(
@@ -424,7 +349,7 @@ public class Utils {
         UserPrincipal userPrincipal
     ) {
         List<MdSchemaFunctionsResponseRow> result = new ArrayList<>();
-        List<FunctionMetaData> fmList = c.getConnection(userPrincipal.roles()).getContext().getFunctionService().getFunctionMetaDatas();
+        List<FunctionMetaData> fmList = c.getFunctionService().getFunctionMetaDatas();
         StringBuilder buf = new StringBuilder(50);
         for (FunctionMetaData fm : fmList) {
 			if (fm.operationAtom() instanceof EmptyOperationAtom//
@@ -496,24 +421,18 @@ public class Utils {
     }
 
     private static List<MdSchemaCubesResponseRow> getMdSchemaCubesResponseRow(
-        String catalogName,
-        Schema schema,
+        Catalog catalog,
         Optional<String> cubeName,
         Optional<String> baseCubeName,
         Optional<CubeSourceEnum> cubeSource
     ) {
-        if (schema.getCubes() != null) {
-            List<Cube> cubes = Arrays.asList(schema.getCubes());
-            return Utils.getCubesWithFilter(cubes, cubeName).stream().
-                map(c -> getMdSchemaCubesResponseRow(catalogName, schema.getName(), c)).
-                flatMap(Collection::stream).toList();
-        }
-        return List.of();
-    }
+            List<Cube> cubes = Arrays.asList(catalog.getCubes());
+			return Utils.getCubesWithFilter(cubes, cubeName).stream()
+					.flatMap(cube -> getMdSchemaCubesResponseRow(catalog.getName(), cube).stream()).toList();
+	    }
 
     private static List<MdSchemaCubesResponseRow> getMdSchemaCubesResponseRow(
         String catalogName,
-        String schemaName,
         Cube cube
     ) {
         if (cube != null) {
@@ -528,7 +447,7 @@ public class Utils {
                 }
                 return List.of(new MdSchemaCubesResponseRowR(
                     catalogName,
-                    Optional.ofNullable(schemaName),
+                    Optional.ofNullable(null),
                     Optional.ofNullable(cube.getName()),
                     Optional.of(CubeTypeEnum.CUBE), //TODO get cube type from olap
                     Optional.empty(),
@@ -552,14 +471,17 @@ public class Utils {
         return List.of();
     }
 
-    private static List<? extends CubeMapping> getMappingCubeWithFilter(List<? extends CubeMapping> cubes, Optional<String> cubeName) {
+    private static List<? extends Cube> getCubeWithFilter(Cube[] cubes, Optional<String> cubeName) {
+    	return getCubesWithFilter(Stream.of(cubes).toList(), cubeName);
+    }
+    private static List<? extends Cube> getCubeWithFilter(List<? extends Cube> cubes, Optional<String> cubeName) {
         if (cubeName.isPresent()) {
-            return getMappingCubeWithFilter(cubes, cubeName.get());
+            return getCubeWithFilter(cubes, cubeName.get());
         }
         return cubes;
     }
 
-    private static List<? extends CubeMapping> getMappingCubeWithFilter(List<? extends CubeMapping> cubes, String cubeName) {
+    private static List<? extends Cube> getCubeWithFilter(List<? extends Cube> cubes, String cubeName) {
         if (cubeName != null) {
             return cubes.stream().filter(c -> cubeName.equals(c.getName())).toList();
         }
@@ -583,57 +505,30 @@ public class Utils {
         return true;
     }
 
+
     static List<DbSchemaTablesResponseRow> getDbSchemaTablesResponseRow(
-        Context context,
+   		Catalog catalog,
         Optional<String> oTableSchema,
         Optional<String> oTableName,
-        Optional<String> oTableType,
-        RequestMetaData metaData,
-        UserPrincipal userPrincipal
+   		Optional<String> oTableType
     ) {
-        List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
-        List<? extends DatabaseSchema> dbSchemas = ((RolapContext) context).getCatalogMapping().getDbschemas();
-        if (schemas != null) {
-            CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-            return getSchemasWithFilter(schemas, oTableSchema).stream()
-                .map(s -> getDbSchemaTablesResponseRow(catalog.getName(), s, dbSchemas, oTableName, oTableType))
-                .flatMap(Collection::stream).toList();
-        }
-        return List.of();
-    }
-
-    private static List<DbSchemaTablesResponseRow> getDbSchemaTablesResponseRow(
-        String catalogName,
-        Schema schema,
-        List<? extends DatabaseSchema> dbSchemas,
-        Optional<String> oTableName,
-        Optional<String> oTableType
-    ) {
-        List<Cube> cubes = schema.getCubes() == null ? List.of() : Arrays.asList(schema.getCubes());
-        return Utils.getCubesWithFilter(cubes, oTableName).stream()
-            .map(c -> getDbSchemaTablesResponseRow(catalogName, schema.getName(), c, dbSchemas, oTableType))
-            .flatMap(Collection::stream).toList();
-    }
-
-    private static List<DbSchemaTablesResponseRow> getDbSchemaTablesResponseRow(
-        String catalogName,
-        String schemaName,
-        Cube cube,
-        List<? extends DatabaseSchema> dbSchemas,
-        Optional<String> oTableType
-    ) {
+    	List<? extends DbSchema> dbSchemas= catalog.getDbSchemas();
+    	String catalogName = catalog.getName();
         List<DbSchemaTablesResponseRow> result = new ArrayList<>();
-        if (cube != null) {
+
+        for(Cube cube: catalog.getCubes()) {
+        	
+       
             String desc = cube.getDescription();
             if (desc == null) {
-                desc =
+				desc =
                     new StringBuilder(catalogName).append(" - ")
                         .append(cube.getName()).append(" Cube").toString();
             }
             if (isTableType(oTableType, TABLE)) {
                 result.add(new DbSchemaTablesResponseRowR(
                     Optional.of(catalogName),
-                    Optional.of(schemaName),
+                    Optional.ofNullable(null),
                     Optional.of(cube.getName()),
                     Optional.of(TABLE),
                     Optional.empty(),
@@ -643,11 +538,12 @@ public class Utils {
                     Optional.empty()
                 ));
             }
-            if (isTableType(oTableType, SYSTEM_TABLE)) {
+       
+        if (isTableType(oTableType, SYSTEM_TABLE)) {
                 for (Dimension dimension : cube.getDimensions()) {
                     populateDimensionForDbSchemaTables(
                         catalogName,
-                        schemaName,
+                        null,
                         cube,
                         dimension,
                         result
@@ -657,24 +553,26 @@ public class Utils {
             if (isTableType(oTableType, SCHEMA)) {
                 populateDbSchemasForDbSchemaTables(
                         catalogName,
-                        schemaName,
+                        null,
                         dbSchemas,
                         result
                     );
             }
         }
+        
+        
         return result;
 
     }
 
     private static void populateDbSchemasForDbSchemaTables(String catalogName, String schemaName,
-        List<? extends DatabaseSchema> dbSchemas, List<DbSchemaTablesResponseRow> result) {
+        List<? extends DbSchema> dbSchemas, List<DbSchemaTablesResponseRow> result) {
         if (dbSchemas != null) {
-            for (DatabaseSchema dbSchema
+            for (DbSchema dbSchema
                     : dbSchemas) {
-                List<? extends Table> tables = dbSchema.getTables();
+                List<? extends DbTable> tables = dbSchema.getDbTables();
                 if (tables != null) {
-                    for (Table table : tables) {
+                    for (DbTable table : tables) {
                         if (table instanceof PhysicalTable || table instanceof SystemTable) {
                             String tableName = table.getName();
                             result.add(new  DbSchemaTablesResponseRowR(
@@ -735,7 +633,7 @@ public class Utils {
                 String desc = l.getDescription();
                 if (desc == null) {
                     desc =
-                        new StringBuilder(schemaName).append(" - ")
+                        new StringBuilder(catalogName).append(" - ")
                             .append(cubeName).append(" Cube - ")
                             .append(hierarchyName).append(" Hierarchy - ")
                             .append(levelName).append(" Level").toString();
@@ -743,7 +641,7 @@ public class Utils {
 
                 return new DbSchemaTablesResponseRowR(
                     Optional.of(catalogName),
-                    Optional.of(schemaName),
+                    Optional.ofNullable(schemaName),
                     Optional.of(tableName),
                     Optional.of(SYSTEM_TABLE),
                     Optional.empty(),
@@ -774,32 +672,25 @@ public class Utils {
     }
 
     static List<DbSchemaTablesInfoResponseRow> getDbSchemaTablesInfoResponseRow(
-        Context context,
+        Catalog catalog,
         Optional<String> oSchemaName,
         String tableName,
         TableTypeEnum tableType
     ) {
-        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-        return getDatabaseMappingSchemaProviderWithFilter(((RolapContext) context).getCatalogMapping(), oSchemaName)
-            .stream()
-            .map(s -> getDbSchemaTablesInfoResponseRow(catalog.getName(), s, tableName, tableType))
-            .flatMap(Collection::stream).toList();
+        return  getDbSchemaTablesInfoResponseRow(catalog, tableName, tableType);
     }
 
     private static List<DbSchemaTablesInfoResponseRow> getDbSchemaTablesInfoResponseRow(
-        String catalogName, SchemaMapping schema, String tableName, TableTypeEnum tableType
+        Catalog catalog, String tableName, TableTypeEnum tableType
     ) {
-        if (schema.getCubes() != null) {
-            return schema.getCubes().stream()
-                .sorted(Comparator.comparing(CubeMapping::getName))
-                .map(c -> getDbSchemaTablesInfoResponseRow(catalogName, schema.getName(), c, tableName, tableType))
+            return Stream.of(catalog.getCubes())
+                .sorted(Comparator.comparing(Cube::getName))
+                .map(c -> getDbSchemaTablesInfoResponseRow(catalog.getName(), null, c, tableName, tableType))
                 .toList();
-        }
-        return List.of();
     }
 
     private static DbSchemaTablesInfoResponseRow getDbSchemaTablesInfoResponseRow(
-        String catalogName, String schemaName, CubeMapping cube, String tableName, TableTypeEnum tableType
+        String catalogName, String schemaName, Cube cube, String tableName, TableTypeEnum tableType
     ) {
         String cubeName = cube.getName();
         String desc = cube.getDescription();
@@ -810,7 +701,7 @@ public class Utils {
         long cardinality = 1000000l;
         return new DbSchemaTablesInfoResponseRowR(
             Optional.of(catalogName),
-            Optional.of(schemaName),
+            Optional.ofNullable(schemaName),
             cubeName,
             TableTypeEnum.TABLE.name(),
             Optional.empty(),
@@ -827,7 +718,7 @@ public class Utils {
     }
 
     static List<MdSchemaLevelsResponseRow> getMdSchemaLevelsResponseRow(
-        Context context,
+    	Catalog catalog,
         Optional<String> oSchemaName,
         Optional<String> oCubeName,
         Optional<String> oDimensionUniqueName,
@@ -838,16 +729,12 @@ public class Utils {
         RequestMetaData metaData,
         UserPrincipal userPrincipal
     ) {
-        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-        return getSchemasWithFilter(context.getConnection(userPrincipal.roles()).getSchemas(), oSchemaName)
-            .stream()
-            .map(s -> getMdSchemaLevelsResponseRow(catalog.getName(), s, oCubeName, oDimensionUniqueName,
-                oHierarchyUniqueName, oLevelName, oLevelUniqueName, oLevelVisibility))
-            .flatMap(Collection::stream).toList();
+        return getMdSchemaLevelsResponseRow(catalog.getName(), catalog, oCubeName, oDimensionUniqueName,
+                oHierarchyUniqueName, oLevelName, oLevelUniqueName, oLevelVisibility);
     }
 
     static List<MdSchemaDimensionsResponseRow> getMdSchemaDimensionsResponseRow(
-        Context context,
+        Catalog catalog,
         Optional<String> oSchemaName,
         Optional<String> oCubeName,
         Optional<String> oDimensionName,
@@ -857,21 +744,14 @@ public class Utils {
         Optional<Boolean> deep,
         RequestMetaData metaData,
         UserPrincipal userPrincipal
-    ) {
-        List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
-        if (schemas != null) {
-            CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-            return getSchemasWithFilter(schemas, oSchemaName).stream()
-                .map(s -> getMdSchemaDimensionsResponseRow(catalog.getName(), s, oCubeName
-                    , oDimensionName, oDimensionUniqueName, cubeSource, oDimensionVisibility, deep))
-                .flatMap(Collection::stream)
-                .toList();
-        }
-        return List.of();
-    }
+	) {
+		return getMdSchemaDimensionsResponseRow(catalog.getName(), catalog, oCubeName, oDimensionName,
+				oDimensionUniqueName, cubeSource, oDimensionVisibility, deep);
+
+	}
 
     static List<MdSchemaMeasureGroupDimensionsResponseRow> getMdSchemaMeasureGroupDimensionsResponseRow(
-        Context context,
+        Catalog catalog,
         Optional<String> oSchemaName,
         Optional<String> oCubeName,
         Optional<String> oMeasureGroupName,
@@ -880,20 +760,13 @@ public class Utils {
         RequestMetaData metaData,
         UserPrincipal userPrincipal
     ) {
-        List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
-        if (schemas != null) {
-            CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-            return getSchemasWithFilter(schemas, oSchemaName).stream()
-                .map(s -> getMdSchemaMeasureGroupDimensionsResponseRow(catalog.getName(), s, oCubeName,
-                    oMeasureGroupName, oDimensionUniqueName, oDimensionVisibility))
-                .flatMap(Collection::stream)
-                .toList();
-        }
-        return List.of();
+            return 
+            		getMdSchemaMeasureGroupDimensionsResponseRow(catalog, oCubeName,
+                    oMeasureGroupName, oDimensionUniqueName, oDimensionVisibility);
     }
 
     static List<MdSchemaMembersResponseRow> getMdSchemaMembersResponseRow(
-        Context context,
+        Catalog catalog,
         Optional<String> oSchemaName,
         Optional<String> oCubeName,
         Optional<String> oDimensionUniqueName,
@@ -906,41 +779,29 @@ public class Utils {
         Optional<String> oMemberCaption,
         Optional<CubeSourceEnum> oCubeSource,
         Optional<TreeOpEnum> oTreeOp,
-        Optional<Boolean> emitInvisibleMembers,
-        RequestMetaData metaData,
-        UserPrincipal userPrincipal
+        Optional<Boolean> emitInvisibleMembers
     ) {
-    	//TODO: move connection one level to the top
-        Connection connection = context.getConnection(userPrincipal.roles());
-		List<Schema> schemas = connection.getSchemas();
-        if (schemas != null) {
-            CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-            return getSchemasWithFilter(schemas, oSchemaName).stream()
-                .map(s -> getMdSchemaMembersResponseRow(catalog.getName(), s, oCubeName,
+    
+     
+
+            return getMdSchemaMembersResponseRow(catalog, oSchemaName, oCubeName,
                     oDimensionUniqueName, oHierarchyUniqueName, oLevelUniqueName, oLevelNumber,
-                    oMemberName, oMemberUniqueName, oMemberType, oCubeSource, oTreeOp, emitInvisibleMembers))
-                .flatMap(Collection::stream)
-                .toList();
-        }
-        return List.of();
+                    oMemberName, oMemberUniqueName, oMemberType, oCubeSource, oTreeOp, emitInvisibleMembers);
+
     }
 
     static List<MdSchemaKpisResponseRow> getMdSchemaKpisResponseRow(
-        Context context,
+    	Catalog catalog,
         Optional<String> oSchemaName,
         Optional<String> oCubeName,
         Optional<String> oKpiName
     ) {
-        List<? extends SchemaMapping> schemas =
-            getDatabaseMappingSchemaProviderWithFilter(((RolapContext) context).getCatalogMapping(), oSchemaName);
-        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-        return schemas.stream().map(schema -> {
-            return getMdSchemaKpisResponseRow(catalog.getName(), schema, oCubeName, oKpiName);
-        }).flatMap(Collection::stream).toList();
+      
+        return getMdSchemaKpisResponseRow( catalog, oCubeName, oKpiName);
     }
 
     static List<MdSchemaSetsResponseRow> getMdSchemaSetsResponseRow(
-        Context context,
+    	Catalog catalog,
         Optional<String> oSchemaName,
         Optional<String> oCubeName,
         Optional<String> oSetName,
@@ -950,36 +811,31 @@ public class Utils {
         RequestMetaData metaData,
         UserPrincipal userPrincipal
     ) {
-        List<Schema> schemas = context.getConnection(userPrincipal.roles()).getSchemas();
-        if (schemas != null) {
-            CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-            return getSchemasWithFilter(schemas, oSchemaName).stream()
-                .map(s -> getMdSchemaSetsResponseRow(catalog.getName(), s, oCubeName, oSetName, oScope, oCubeSource,
-                    oHierarchyUniqueName))
-                .flatMap(Collection::stream)
-                .toList();
-        }
-        return List.of();
+
+            return getMdSchemaSetsResponseRow(catalog,null, oCubeName, oSetName, oScope, oCubeSource,
+                    oHierarchyUniqueName);
+        
+
     }
 
     private static List<MdSchemaSetsResponseRow> getMdSchemaSetsResponseRow(
-        String catalogName,
-        Schema schema,
+        Catalog catalog,
+        String schemaName,
         Optional<String> oCubeName,
         Optional<String> oSetName,
         Optional<ScopeEnum> oScope,
         Optional<CubeSourceEnum> oCubeSource,
         Optional<String> oHierarchyUniqueName
     ) {
-        List<Cube> cubes = schema.getCubes() == null ? List.of() : Arrays.asList(schema.getCubes());
+        List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalog.getCubes());
         return getCubesWithFilter(cubes, oCubeName).stream().
-            map(c -> getMdSchemaSetsResponseRow(catalogName, schema.getName(), c,
+            map(cube -> getMdSchemaSetsResponseRowCube(catalog.getName(), schemaName, cube,
                 oSetName, oScope, oCubeSource,
                 oHierarchyUniqueName)).
             flatMap(Collection::stream).toList();
     }
 
-    private static List<MdSchemaSetsResponseRow> getMdSchemaSetsResponseRow(
+    private static List<MdSchemaSetsResponseRow> getMdSchemaSetsResponseRowCube(
         String catalogName,
         String schemaName,
         Cube cube,
@@ -990,14 +846,14 @@ public class Utils {
     ) {
         List<NamedSet> sets = cube.getNamedSets() == null ? List.of() : Arrays.asList(cube.getNamedSets());
         return getNamedSetsWithFilter(sets, oSetName).stream().
-            map(s -> getMdSchemaSetsResponseRow(catalogName, schemaName, cube.getName(), s,
+            map(s -> getMdSchemaSetsResponseRowNamesSet(catalogName, schemaName, cube.getName(), s,
                 oScope, oCubeSource,
                 oHierarchyUniqueName))
             .toList();
 
     }
 
-    private static MdSchemaSetsResponseRow getMdSchemaSetsResponseRow(
+    private static MdSchemaSetsResponseRow getMdSchemaSetsResponseRowNamesSet(
         String catalogName,
         String schemaName,
         String cubeName,
@@ -1033,27 +889,26 @@ public class Utils {
     }
 
     private static List<MdSchemaKpisResponseRow> getMdSchemaKpisResponseRow(
-        String catalogName,
-        SchemaMapping schema,
+        Catalog catalog,
         Optional<String> oCubeName,
         Optional<String> oKpiName
     ) {
         List<MdSchemaKpisResponseRow> result = new ArrayList<>();
-        result.addAll(getMappingCubeWithFilter(schema.getCubes(), oCubeName).stream()
-            .map(c -> getMdSchemaKpisResponseRow(catalogName, schema.getName(), c, oKpiName))
+        result.addAll(getCubeWithFilter(catalog.getCubes(), oCubeName).stream()
+            .map(c -> getMdSchemaKpisResponseRow(catalog.getName(), null, c, oKpiName))
             .flatMap(Collection::stream)
             .toList());
         return result;
     }
 
-    private static List<MdSchemaKpisResponseRow> getMdSchemaKpisResponseRow(String catalogName, String schemaName, CubeMapping c, Optional<String> oKpiName) {
-        return getMappingKpiWithFilter(c.getKpis(), oKpiName).stream()
-            .map(kpi -> getMdSchemaKpisResponseRow(catalogName, schemaName, c.getName(), kpi))
+    private static List<MdSchemaKpisResponseRow> getMdSchemaKpisResponseRow(String catalogName, String schemaName, Cube cube, Optional<String> oKpiName) {
+        return getMappingKpiWithFilter(cube.getKPIs(), oKpiName).stream()
+            .map(kpi -> getMdSchemaKpisResponseRow(catalogName, schemaName, cube.getName(), kpi))
             .toList();
 
     }
 
-    private static MdSchemaKpisResponseRow getMdSchemaKpisResponseRow(String catalogName, String schemaName, String cubeName, KpiMapping kpi) {
+    private static MdSchemaKpisResponseRow getMdSchemaKpisResponseRow(String catalogName, String schemaName, String cubeName, KPI kpi) {
         if (kpi != null) {
             return new MdSchemaKpisResponseRowR(
                 Optional.ofNullable(catalogName),
@@ -1080,7 +935,7 @@ public class Utils {
         return null;
     }
 
-    private static List<? extends KpiMapping> getMappingKpiWithFilter(List<? extends KpiMapping> kpis, Optional<String> oKpiName) {
+    private static List<? extends KPI> getMappingKpiWithFilter(List<? extends KPI> kpis, Optional<String> oKpiName) {
         if (oKpiName.isPresent()) {
             return kpis.stream().filter(k -> oKpiName.get().equals(k.getName())).toList();
         }
@@ -1095,8 +950,8 @@ public class Utils {
     }
 
     private static List<MdSchemaMembersResponseRow> getMdSchemaMembersResponseRow(
-        String catalogName,
-        Schema schema,
+        Catalog catalog,
+        Optional<String> oSchemaName,
         Optional<String> oCubeName,
         Optional<String> oDimensionUniqueName,
         Optional<String> oHierarchyUniqueName,
@@ -1109,9 +964,9 @@ public class Utils {
         Optional<TreeOpEnum> oTreeOp,
         Optional<Boolean> emitInvisibleMembers
     ) {
-        List<Cube> cubes = schema.getCubes() == null ? List.of() : Arrays.asList(schema.getCubes());
+        List<Cube> cubes =  Arrays.asList(catalog.getCubes());
         return getCubesWithFilter(cubes, oCubeName).stream().
-            map(c -> getMdSchemaMembersResponseRow(catalogName, schema.getName(), c,
+            map(c -> getMdSchemaMembersResponseRow(catalog.getName(), null, c,
                 oDimensionUniqueName, oHierarchyUniqueName, oLevelUniqueName, oLevelNumber,
                 oMemberName, oMemberUniqueName, oMemberType, oCubeSource, oTreeOp, emitInvisibleMembers)).
             flatMap(Collection::stream).toList();
@@ -1350,16 +1205,15 @@ public class Utils {
     }
 
     private static List<MdSchemaMeasureGroupDimensionsResponseRow> getMdSchemaMeasureGroupDimensionsResponseRow(
-        String catalogName,
-        Schema schema,
+        Catalog catalog,
         Optional<String> oCubeName,
         Optional<String> oMeasureGroupName,
         Optional<String> oDimensionUniqueName,
         Optional<VisibilityEnum> oDimensionVisibility
     ) {
-        List<Cube> cubes = schema.getCubes() == null ? List.of() : Arrays.asList(schema.getCubes());
+        List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalog.getCubes());
         return getCubesWithFilter(cubes, oCubeName).stream().
-            map(c -> getMdSchemaMeasureGroupDimensionsResponseRow(catalogName, schema.getName(), c,
+            map(c -> getMdSchemaMeasureGroupDimensionsResponseRow( catalog.getName(),null, c,
                 oDimensionUniqueName, oDimensionVisibility)).
             flatMap(Collection::stream).toList();
     }
@@ -1404,7 +1258,7 @@ public class Utils {
 
     private static List<MdSchemaDimensionsResponseRow> getMdSchemaDimensionsResponseRow(
         String catalogName,
-        Schema schema,
+        Catalog schema,
         Optional<String> oCubeName,
         Optional<String> oDimensionName,
         Optional<String> oDimensionUniqueName,
@@ -1553,16 +1407,9 @@ public class Utils {
         return null;
     }
 
-    private static List<Schema> getSchemasWithFilter(List<Schema> schemas, Optional<String> oSchemaName) {
-        if (oSchemaName.isPresent()) {
-            return schemas.stream().filter(s -> oSchemaName.get().equals(s.getName())).toList();
-        }
-        return schemas;
-    }
-
     private static List<MdSchemaLevelsResponseRow> getMdSchemaLevelsResponseRow(
         String catalogName,
-        Schema schema,
+        Catalog schema,
         Optional<String> oCubeName,
         Optional<String> oDimensionUniqueName,
         Optional<String> oHierarchyUniqueName,
@@ -1866,41 +1713,36 @@ public class Utils {
     }
 
     static List<DbSchemaSourceTablesResponseRow> getDbSchemaSourceTablesResponseRow(
-        Context context,
+        Catalog catalog,
         List<String> tableTypeList
     ) {
         List<DbSchemaSourceTablesResponseRow> result = new ArrayList<>();
-        try (java.sql.Connection sqlConnection = context.getDataSource().getConnection()) {
-
-            java.sql.DatabaseMetaData databaseMetaData = sqlConnection.getMetaData();
             String[] tableTypeRestriction = null;
             if (tableTypeList != null) {
                 tableTypeRestriction = tableTypeList.toArray(new String[0]);
             }
-            java.sql.ResultSet resultSet = databaseMetaData.getTables(null, null, null, tableTypeRestriction);
 
-            while (resultSet.next()) {
+//TODO get database from catalog direct
+//            while () {
+//
+//                final String tableCatalog = "";
+//                final String tableSchema = "";
+//                final String tableName = "";
+//                final String tableType = "";
+//
+//                result.add(new DbSchemaSourceTablesResponseRowR(
+//                    Optional.of(tableCatalog),
+//                    Optional.of(tableSchema),
+//                    tableName,
+//                    TableTypeEnum.fromValue(tableType)
+//                ));
+//            }
 
-                final String tableCatalog = resultSet.getString("TABLE_CAT");
-                final String tableSchema = resultSet.getString("TABLE_SCHEM");
-                final String tableName = resultSet.getString("TABLE_NAME");
-                final String tableType = resultSet.getString("TABLE_TYPE");
-
-                result.add(new DbSchemaSourceTablesResponseRowR(
-                    Optional.of(tableCatalog),
-                    Optional.of(tableSchema),
-                    tableName,
-                    TableTypeEnum.fromValue(tableType)
-                ));
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
         return result;
     }
 
     static List<MdSchemaHierarchiesResponseRow> getMdSchemaHierarchiesResponseRow(
-        Context context,
+    	Catalog catalog,
         Optional<String> oSchemaName,
         Optional<String> oCubeName,
         Optional<CubeSourceEnum> oCubeSource,
@@ -1913,11 +1755,9 @@ public class Utils {
         RequestMetaData requestMetaData,
         UserPrincipal userPrincipal
     ) {
-        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-        return getSchemasWithFilter(context.getConnection(userPrincipal.roles()).getSchemas(), oSchemaName)
-            .stream().map(s -> getMdSchemaHierarchiesResponseRow(
+        return getMdSchemaHierarchiesResponseRow(
                 catalog.getName(),
-                s,
+                catalog,
                 oCubeName,
                 oCubeSource,
                 oDimensionUniqueName,
@@ -1926,12 +1766,12 @@ public class Utils {
                 oHierarchyVisibility,
                 oHierarchyOrigin,
                 deep
-            )).flatMap(Collection::stream).toList();
+            );
     }
 
     private static List<MdSchemaHierarchiesResponseRow> getMdSchemaHierarchiesResponseRow(
         String catalogName,
-        Schema s,
+        Catalog s,
         Optional<String> oCubeName,
         Optional<CubeSourceEnum> oCubeSource,
         Optional<String> oDimensionUniqueName,
@@ -2129,45 +1969,40 @@ oHierarchyName)
     }
 
     static List<MdSchemaMeasureGroupsResponseRow> getMdSchemaMeasureGroupsResponseRow(
-        Context context,
+        Catalog catalog,
         Optional<String> oSchemaName,
         Optional<String> oCubeName,
         Optional<String> oMeasureGroupName
     ) {
-        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-        return getDatabaseMappingSchemaProviderWithFilter(catalog, oSchemaName)
-            .stream()
-            .map(s -> getMdSchemaMeasureGroupsResponseRow(catalog.getName(), s, oCubeName,
-                oMeasureGroupName))
-            .flatMap(Collection::stream).toList();
+        return  getMdSchemaMeasureGroupsResponseRow(catalog, oCubeName,
+                oMeasureGroupName);
 
     }
 
     private static List<MdSchemaMeasureGroupsResponseRow> getMdSchemaMeasureGroupsResponseRow(
-        String catalogName,
-        SchemaMapping schema,
+        Catalog catalog,
         Optional<String> oCubeName,
         Optional<String> oMeasureGroupName
     ) {
-        return getMappingCubeWithFilter(schema.getCubes(), oCubeName).stream()
-            .map(c -> getMdSchemaMeasureGroupsResponseRow(catalogName, schema.getName(), c, oMeasureGroupName))
+        return getCubeWithFilter(Stream.of(catalog.getCubes()).toList(), oCubeName).stream()
+            .map(c -> getMdSchemaMeasureGroupsResponseRow(catalog.getName(), null, c, oMeasureGroupName))
             .toList();
     }
 
     private static MdSchemaMeasureGroupsResponseRow getMdSchemaMeasureGroupsResponseRow(
         String catalogName,
         String schemaName,
-        CubeMapping c,
+        Cube cube,
         Optional<String> oMeasureGroupName
     ) {
         return new MdSchemaMeasureGroupsResponseRowR(
             Optional.ofNullable(catalogName),
             Optional.ofNullable(schemaName),
-            Optional.of(c.getName()),
-            Optional.of(c.getName()),
+            Optional.of(cube.getName()),
+            Optional.of(cube.getName()),
             Optional.of(""),
             Optional.of(false),
-            Optional.of(c.getName())
+            Optional.of(cube.getName())
         );
     }
 
@@ -2219,7 +2054,7 @@ oHierarchyName)
     }
 
     static List<MdSchemaPropertiesResponseRow> getMdSchemaPropertiesResponseRow(
-        Context context,
+    	Catalog catalog,
         Optional<String> oSchemaName,
         Optional<String> oCubeName,
         Optional<String> oDimensionUniqueName,
@@ -2229,43 +2064,11 @@ oHierarchyName)
         Optional<String> oPropertyName,
         Optional<PropertyOriginEnum> oPropertyOrigin,
         Optional<CubeSourceEnum> oCubeSource,
-        Optional<VisibilityEnum> oPropertyVisibility,
-        RequestMetaData requestMetaData,
-        UserPrincipal userPrincipal
-    ) {
-        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-        return getSchemasWithFilter(context.getConnection(userPrincipal.roles()).getSchemas(), oSchemaName)
-            .stream().map(s -> getMdSchemaPropertiesResponseRow(
-                catalog.getName(),
-                s,
-                oCubeName,
-                oDimensionUniqueName,
-                oHierarchyUniqueName,
-                oLevelUniqueName,
-                oMemberUniqueName,
-                oPropertyName,
-                oPropertyOrigin,
-                oCubeSource,
-                oPropertyVisibility
-            )).flatMap(Collection::stream).toList();
-    }
-
-    private static List<MdSchemaPropertiesResponseRow> getMdSchemaPropertiesResponseRow(
-        String catalogName,
-        Schema schema,
-        Optional<String> oCubeName,
-        Optional<String> oDimensionUniqueName,
-        Optional<String> oHierarchyUniqueName,
-        Optional<String> oLevelUniqueName,
-        Optional<String> oMemberUniqueName,
-        Optional<String> oPropertyName,
-        Optional<PropertyOriginEnum> oPropertyOrigin,
-        Optional<CubeSourceEnum> oCubeSource,
         Optional<VisibilityEnum> oPropertyVisibility
-    ) {
-        List<Cube> cubes = schema.getCubes() == null ? List.of() : Arrays.asList(schema.getCubes());
+){
+List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalog.getCubes());
         return getCubesWithFilter(cubes, oCubeName).stream()
-            .map(c -> getMdSchemaPropertiesResponseRow(catalogName, schema.getName(), c, oDimensionUniqueName,
+            .map(c -> getMdSchemaPropertiesResponseRow(catalog.getName(), null, c, oDimensionUniqueName,
                 oHierarchyUniqueName,
                 oLevelUniqueName,
                 oPropertyName,
@@ -2459,28 +2262,22 @@ oHierarchyName)
     }
 
     static List<MdSchemaMeasuresResponseRow> getMdSchemaMeasuresResponseRow(
-        Context context,
+        Catalog catalog,
         Optional<String> oSchemaName,
         Optional<String> oCubeName,
         Optional<String> oMeasureName,
         Optional<String> oMeasureUniqueName,
         Optional<String> oMeasureGroupName,
-        boolean shouldEmitInvisibleMembers,
-        RequestMetaData requestMetaData,
-        UserPrincipal userPrincipal
+        boolean shouldEmitInvisibleMembers
     ) {
-        CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-        return getSchemasWithFilter(context.getConnection(userPrincipal.roles()).getSchemas(), oSchemaName)
-            .stream().filter(s -> s != null)
-            .map(s -> getMdSchemaMeasuresResponseRow(catalog.getName(), s, oCubeName, oMeasureName,
-                oMeasureUniqueName, oMeasureGroupName, shouldEmitInvisibleMembers))
-            .flatMap(Collection::stream).toList();
+        return  getMdSchemaMeasuresResponseRow(catalog.getName(), catalog, oCubeName, oMeasureName,
+                oMeasureUniqueName, oMeasureGroupName, shouldEmitInvisibleMembers);
 
     }
 
     private static List<MdSchemaMeasuresResponseRow> getMdSchemaMeasuresResponseRow(
         String catalogName,
-        Schema schema,
+        Catalog schema,
         Optional<String> oCubeName,
         Optional<String> oMeasureName,
         Optional<String> oMeasureUniqueName,

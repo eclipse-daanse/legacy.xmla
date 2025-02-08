@@ -88,10 +88,10 @@ public class ParallelPeriodCalc extends AbstractProfilingNestedMemberCalc{
                 - ancestorLevel.getDepth();
             Member ancestor = FunUtil.ancestor(
                 evaluator, member, distance, ancestorLevel);
-            Member inLaw = evaluator.getSchemaReader()
+            Member inLaw = evaluator.getCatalogReader()
                 .getLeadMember(ancestor, -lagValue);
             return FunUtil.cousin(
-                evaluator.getSchemaReader(), member, inLaw);
+                evaluator.getCatalogReader(), member, inLaw);
         }
 
 }

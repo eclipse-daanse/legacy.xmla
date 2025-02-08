@@ -18,16 +18,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.access.Role;
 
 /**
- * A <code>Schema</code> is a collection of cubes, shared dimensions, and roles.
+ * A <code>Catalog</code> is a collection of cubes, shared dimensions, and roles.
  *
  * @author jhyde
  */
-public interface Schema extends MetaElement {
+public interface Catalog extends MetaElement {
 
      static final Set<Access> schemaAllowed =
         EnumSet.of(
@@ -53,7 +53,10 @@ public interface Schema extends MetaElement {
      * @post return != null
      * @post return.length() > 0
      */
-    String getName();
+     String getName();
+
+     
+     String getDescription();
 
     /**
      * Returns the uniquely generated id of this schema.
@@ -72,9 +75,9 @@ public interface Schema extends MetaElement {
     Hierarchy[] getSharedHierarchies();
 
     /**
-     * Creates a {@link SchemaReader} without any access control.
+     * Creates a {@link CatalogReader} without any access control.
      */
-    SchemaReader getSchemaReader();
+    CatalogReader getCatalogReader();
 
     /**
      * Finds a role with a given name in the current catalog, or returns
@@ -93,7 +96,7 @@ public interface Schema extends MetaElement {
      * @return Date and time when this schema was last loaded
      */
     @Deprecated
-    Date getSchemaLoadDate();
+    Date getCatalogLoadDate();
 
     /**
      * Returns a list of warnings and errors that occurred while loading this
@@ -113,4 +116,9 @@ public interface Schema extends MetaElement {
 	Role getDefaultRole();
 
 	NamedSet getNamedSet(String name);
+
+
+	List<String> getAccessRoles();
+	
+	List<? extends DbSchema> getDbSchemas();
 }

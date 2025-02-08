@@ -254,7 +254,7 @@ public final class IdBatchResolver {
         List<NameSegment> childNameSegments)
     {
         try {
-            return query.getSchemaReader(true)
+            return query.getCatalogReader(true)
                 .lookupMemberChildrenByNames(
                     parentMember,
                     childNameSegments, MatchType.EXACT);
@@ -402,7 +402,7 @@ public final class IdBatchResolver {
     }
 
     private boolean segmentIsCalcMember(final List<Segment> checkSegments) {
-        return query.getSchemaReader(true)
+        return query.getCatalogReader(true)
             .getCalculatedMember(checkSegments) != null;
     }
 

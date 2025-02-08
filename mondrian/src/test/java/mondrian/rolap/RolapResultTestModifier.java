@@ -21,7 +21,6 @@ import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
@@ -126,7 +125,7 @@ public class RolapResultTestModifier extends PojoMappingModifier {
      */
 
     @Override
-    protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+    protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
     	//## TableName: FT1
     	//## ColumnNames: d1_id,d2_id,value
     	//## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2)

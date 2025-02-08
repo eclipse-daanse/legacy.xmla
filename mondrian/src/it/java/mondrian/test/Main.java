@@ -84,10 +84,10 @@ import mondrian.rolap.RolapNativeSqlInjectionTest;
 import mondrian.rolap.RolapNativeTopCountTest;
 import mondrian.rolap.RolapNativeTopCountVersusNonNativeTest;
 import mondrian.rolap.RolapResultTest;
-import mondrian.rolap.RolapSchemaPoolConcurrencyTest;
-import mondrian.rolap.RolapSchemaPoolTest;
-import mondrian.rolap.RolapSchemaReaderTest;
-import mondrian.rolap.RolapSchemaTest;
+import mondrian.rolap.RolapCatalogPoolConcurrencyTest;
+import mondrian.rolap.RolapCatalogPoolTest;
+import mondrian.rolap.RolapCatalogReaderTest;
+import mondrian.rolap.RolapCatalogTest;
 import mondrian.rolap.RolapStarTest;
 import mondrian.rolap.RolapUtilTest;
 import mondrian.rolap.SharedDimensionTest;
@@ -400,7 +400,7 @@ public class Main extends TestSuite {
       addTest( suite, SharedDimensionTest.class );
       addTest( suite, CellPropertyTest.class );
       addTest( suite, QueryTest.class );
-      addTest( suite, RolapSchemaReaderTest.class );
+      addTest( suite, RolapCatalogReaderTest.class );
       addTest( suite, RolapCubeTest.class );
       addTest( suite, NumberSqlCompilerTest.class );
       addTest( suite, RolapEvaluatorTest.class );
@@ -410,9 +410,9 @@ public class Main extends TestSuite {
       addTest( suite, TopCountNativeEvaluatorTest.class );
       addTest( suite, TopCountWithTwoParamsVersusHeadTest.class );
       addTest( suite, RolapStarTest.class );
-      addTest( suite, RolapSchemaTest.class );
-      addTest( suite, RolapSchemaPoolTest.class );
-      addTest( suite, RolapSchemaPoolConcurrencyTest.class );
+      addTest( suite, RolapCatalogTest.class );
+      addTest( suite, RolapCatalogPoolTest.class );
+      addTest( suite, RolapCatalogPoolConcurrencyTest.class );
       addTest( suite, NullMemberRepresentationTest.class );
       addTest( suite, IgnoreUnrelatedDimensionsTest.class );
       addTest(

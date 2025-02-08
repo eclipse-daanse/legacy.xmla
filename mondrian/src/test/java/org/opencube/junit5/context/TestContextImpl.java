@@ -301,7 +301,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapResultShepherd;
-import mondrian.rolap.RolapSchemaCache;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.server.NopEventBus;
 
@@ -326,7 +326,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 	    shepherd = new RolapResultShepherd(testConfig.rolapConnectionShepherdThreadPollingInterval(),testConfig.rolapConnectionShepherdThreadPollingIntervalUnit(),
             testConfig.rolapConnectionShepherdNbThreads());
 	    aggMgr = new AggregationManager(this);
-	    schemaCache=new RolapSchemaCache(this);
+	    schemaCache=new RolapCatalogCache(this);
 	    queryLimimitSemaphore=new Semaphore(testConfig.queryLimit());
 	    functionService.addResolver(new NullReservedWordsResolver());
 	    functionService.addResolver(new AsAliasResolver());

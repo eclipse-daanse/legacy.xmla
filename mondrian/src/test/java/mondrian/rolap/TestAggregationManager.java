@@ -403,9 +403,9 @@ class TestAggregationManager extends BatchTestCase {
         String value = "CA";
         Connection connection = context.getConnectionWithDefaultRole();
         final boolean fail = true;
-        Cube salesCube = connection.getSchema().lookupCube(cube, fail);
+        Cube salesCube = connection.getCatalog().lookupCube(cube, fail);
         Member storeSqftMeasure =
-            salesCube.getSchemaReader(null).getMemberByUniqueName(
+            salesCube.getCatalogReader(null).getMemberByUniqueName(
                 Util.parseIdentifier(measure), fail);
         RolapStar.Measure starMeasure =
             RolapStar.getStarMeasure(storeSqftMeasure);
@@ -435,7 +435,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUniqueMembers(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareContext(context);
         // [Store].[Store State] is unique, so we don't expect to see any
         // references to country.
@@ -530,7 +530,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNonEmptyCrossJoinLoneAxis(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareContext(context);
         // Not sure what this test is checking.
         // For now, only run it for derby.
@@ -595,7 +595,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchyInFactTable(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request = createRequest(connection,
@@ -634,7 +634,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCountDistinctAggMiss(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request = createRequest(connection,
@@ -737,7 +737,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCountDistinctCannotRollup(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareContext(context);
         // Summary "agg_g_ms_pcat_sales_fact_1997" doesn't match,
         // because we'd need to roll-up the distinct-count measure over
@@ -954,7 +954,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCountDistinctBatchLoading(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareContext(context);
         List<String[]> compoundMembers = new ArrayList<>();
         compoundMembers.add(new String[] {"1997", "Q1", "1"});
@@ -1069,7 +1069,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAggChildMembersOfLeaf(Context context) {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
@@ -1494,7 +1494,7 @@ class TestAggregationManager extends BatchTestCase {
         // cardinality in cache.
         assertQuerySqlOrNot(
             connection, query2, patterns2, false, false, false);
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
     }
 
     /**
@@ -2052,7 +2052,7 @@ class TestAggregationManager extends BatchTestCase {
             + "  </Hierarchy>\n"
             + "</Dimension>", false));
          */
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.TestAggregationManagerModifier2(catalog, colName));
         assertQueryThrows(context,
@@ -2072,7 +2072,7 @@ class TestAggregationManager extends BatchTestCase {
             + "  </Hierarchy>\n"
             + "</Dimension>", false));
          */
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
         catalog = ((RolapContext) context).getCatalogMapping();
         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.TestAggregationManagerModifier10(catalog, colName));
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -2377,7 +2377,7 @@ class TestAggregationManager extends BatchTestCase {
             true,
             false,
             false);
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
     }
 
     @ParameterizedTest
@@ -2614,7 +2614,7 @@ class TestAggregationManager extends BatchTestCase {
                     sqlMysql.length())
             },
             false, false, true);
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
     }
 
     @ParameterizedTest
@@ -3578,7 +3578,7 @@ class TestAggregationManager extends BatchTestCase {
                     sqlMysqlTooLowSegmentQuery.length())
             },
             false, false, true);
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
     }
 
     @ParameterizedTest
@@ -3623,15 +3623,15 @@ class TestAggregationManager extends BatchTestCase {
          */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier7::new);
         Connection connection = context.getConnectionWithDefaultRole();
-        RolapStar star = connection.getSchemaReader()
-            .getSchema().getRolapStarRegistry().getStar("sales_fact_1997");
+        RolapStar star = connection.getCatalogReader()
+            .getCatalog().getRolapStarRegistry().getStar("sales_fact_1997");
         AggStar aggStar1 = getAggStar(star, "agg_c_10_sales_fact_1997");
         AggStar aggStarSpy = spy(
             getAggStar(star, "agg_c_10_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(chooseAggregateByVolume)).thenReturn(0l);
-        connection.getSchemaReader()
-            .getSchema().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
+        connection.getCatalogReader()
+            .getCatalog().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
         boolean[] rollup = { false };
         AggStar returnedStar = AggregationManager
             .findAgg(
@@ -3703,14 +3703,14 @@ class TestAggregationManager extends BatchTestCase {
         */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier3::new);
 
-        RolapStar star = context.getConnectionWithDefaultRole().getSchemaReader()
-            .getSchema().getRolapStarRegistry().getStar("sales_fact_1997");
+        RolapStar star = context.getConnectionWithDefaultRole().getCatalogReader()
+            .getCatalog().getRolapStarRegistry().getStar("sales_fact_1997");
         AggStar aggStarSpy = spy(
             getAggStar(star, "agg_c_special_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(context.getConfig().chooseAggregateByVolume())).thenReturn(0l);
-        context.getConnectionWithDefaultRole().getSchemaReader()
-            .getSchema().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
+        context.getConnectionWithDefaultRole().getCatalogReader()
+            .getCatalog().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
 
         boolean[] rollup = { false };
         AggStar returnedStar = AggregationManager
@@ -3803,14 +3803,14 @@ class TestAggregationManager extends BatchTestCase {
                 + "</Schema>");
          */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier4::new);
-        RolapStar star = context.getConnectionWithDefaultRole().getSchemaReader()
-            .getSchema().getRolapStarRegistry().getStar("sales_fact_1997");
+        RolapStar star = context.getConnectionWithDefaultRole().getCatalogReader()
+            .getCatalog().getRolapStarRegistry().getStar("sales_fact_1997");
         AggStar aggStarSpy = spy(
             getAggStar(star, "agg_g_ms_pcat_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(context.getConfig().chooseAggregateByVolume())).thenReturn(0l);
-        context.getConnectionWithDefaultRole().getSchemaReader()
-            .getSchema().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
+        context.getConnectionWithDefaultRole().getCatalogReader()
+            .getCatalog().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
         boolean[] rollup = { false };
         AggStar returnedStar = AggregationManager
             .findAgg(
@@ -3859,7 +3859,7 @@ class TestAggregationManager extends BatchTestCase {
                     sqlOra,
                     sqlOra.length())},
             false, false, true);
-        context.getSchemaCache().clear();
+        context.getCatalogCache().clear();
     }
 
     @ParameterizedTest
@@ -3867,7 +3867,7 @@ class TestAggregationManager extends BatchTestCase {
     void testDisabledReadAggregatesIgnoresDefaultRules(Context context)
         throws Exception
     {
-    	context.getSchemaCache().clear();
+    	context.getCatalogCache().clear();
         prepareContext(context);
         ((TestConfig)context.getConfig()).setReadAggregates(false);
         ((TestConfig)context.getConfig()).setUseAggregates(true);

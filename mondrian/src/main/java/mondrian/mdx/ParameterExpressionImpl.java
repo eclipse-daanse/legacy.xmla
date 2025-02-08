@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ParameterExpression;
@@ -67,8 +67,8 @@ public class ParameterExpressionImpl extends AbstractExpression implements Param
         // the other one.  The registered one will be resolved after everything
         // else in the query has been resolved.
         String parameterName = parameter.getName();
-        final SchemaReader schemaReader =
-            validator.getQuery().getSchemaReader(false);
+        final CatalogReader schemaReader =
+            validator.getQuery().getCatalogReader(false);
         Parameter p = schemaReader.getParameter(parameterName);
         if (p == null) {
             this.parameter =

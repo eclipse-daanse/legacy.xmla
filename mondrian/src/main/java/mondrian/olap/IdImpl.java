@@ -130,7 +130,7 @@ public class IdImpl
         final Expression element =
             Util.lookup(
                 validator.getQuery(),
-                validator.getSchemaReader().withLocus(),
+                validator.getCatalogReader().withLocus(),
                 segments,
                 true);
 

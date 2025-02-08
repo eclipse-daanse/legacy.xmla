@@ -32,7 +32,7 @@ import org.eclipse.daanse.olap.api.NameResolver;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.access.Role;
@@ -47,19 +47,19 @@ import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.api.Calc;
 
-import mondrian.rolap.RolapSchema;
+import mondrian.rolap.RolapCatalog;
 
-public class SpySchemaReader implements SchemaReader {
+public class SpyCatalogReader implements CatalogReader {
 
-	private SchemaReader delegate;
+	private CatalogReader delegate;
 
-	public SpySchemaReader(SchemaReader schemaReader) {
+	public SpyCatalogReader(CatalogReader schemaReader) {
 		this.delegate=schemaReader;
 	}
 
 	@Override
-	public RolapSchema getSchema() {
-		return delegate.getSchema();
+	public RolapCatalog getCatalog() {
+		return delegate.getCatalog();
 	}
 
 	@Override
@@ -275,7 +275,7 @@ public class SpySchemaReader implements SchemaReader {
 	}
 
 	@Override
-	public SchemaReader withoutAccessControl() {
+	public CatalogReader withoutAccessControl() {
 		return delegate.withoutAccessControl();
 	}
     @Deprecated
@@ -285,7 +285,7 @@ public class SpySchemaReader implements SchemaReader {
 	}
 
 	@Override
-	public SchemaReader withLocus() {
+	public CatalogReader withLocus() {
 		return delegate.withLocus();
 	}
 

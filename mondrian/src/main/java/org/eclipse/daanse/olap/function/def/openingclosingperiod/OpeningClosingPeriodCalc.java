@@ -16,7 +16,7 @@ package org.eclipse.daanse.olap.function.def.openingclosingperiod;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
@@ -65,7 +65,7 @@ public class OpeningClosingPeriodCalc extends AbstractProfilingNestedMemberCalc{
         }
 
         return getDescendant(
-            evaluator.getSchemaReader(), member,
+            evaluator.getCatalogReader(), member,
             level, opening, evaluator);
     }
 
@@ -83,7 +83,7 @@ public class OpeningClosingPeriodCalc extends AbstractProfilingNestedMemberCalc{
      * @pre member.getLevel().getDepth() < level.getDepth();
      */
     private Member getDescendant(
-        SchemaReader schemaReader,
+        CatalogReader schemaReader,
         Member member,
         Level targetLevel,
         boolean returnFirstDescendant,

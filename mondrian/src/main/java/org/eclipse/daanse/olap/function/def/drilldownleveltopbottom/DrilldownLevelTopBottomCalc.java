@@ -18,7 +18,7 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -62,7 +62,7 @@ public class DrilldownLevelTopBottomCalc extends AbstractListCalc {
         TupleListCalc tupleListCalc = getChildCalc(0, TupleListCalc.class);
         IntegerCalc integerCalc = getChildCalc(1, IntegerCalc.class);
         Calc<?> orderCalc = getChildCalc(2, Calc.class);
-        SchemaReader schemaReader = evaluator.getSchemaReader();
+        CatalogReader schemaReader = evaluator.getCatalogReader();
         NativeEvaluator nativeEvaluator = schemaReader.getNativeSetEvaluator(call.getFunDef(), call.getArgs(),
                 evaluator, this);
         if (nativeEvaluator != null) {

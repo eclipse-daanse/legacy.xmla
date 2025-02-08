@@ -870,7 +870,7 @@ public abstract class RolapAggregationManager {
                     rolapMember = (RolapCubeMember) member;
                 } else {
                     rolapMember =
-                        (RolapCubeMember) baseCube.getSchemaReader()
+                        (RolapCubeMember) baseCube.getCatalogReader()
                             .getMemberByUniqueName(
                                 Util.parseIdentifier(member.getUniqueName()),
                                 true);

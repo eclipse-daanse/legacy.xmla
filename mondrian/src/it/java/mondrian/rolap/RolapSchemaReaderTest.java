@@ -20,8 +20,8 @@ import java.util.*;
 /**
  * Unit test for {@link SchemaReader}.
  */
-class RolapSchemaReaderTest extends FoodMartTestCase {
-    public RolapSchemaReaderTest(String name) {
+class RolapCatalogReaderTest extends FoodMartTestCase {
+    public RolapCatalogReaderTest(String name) {
         super(name);
     }
 
@@ -121,7 +121,7 @@ class RolapSchemaReaderTest extends FoodMartTestCase {
      *
      * <p>Test case for bug
      * <a href="http://jira.pentaho.com/browse/MONDRIAN-691">MONDRIAN-691,
-     * "RolapSchemaReader is not enforcing access control on two APIs"</a>.
+     * "RolapCatalogReader is not enforcing access control on two APIs"</a>.
      */
     void testGetCubeDimensions() {
         final String timeWeekly =

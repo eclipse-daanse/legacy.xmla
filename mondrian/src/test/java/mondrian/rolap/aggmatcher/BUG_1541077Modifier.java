@@ -20,7 +20,6 @@ import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
@@ -81,7 +80,7 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
 
      */
 
-    protected List<? extends CubeMapping> schemaCubes(SchemaMapping schema) {
+    protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
     	//## ColumnNames: prod_id,store_id,amount
     	//## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2)
         ColumnImpl store_id_cheques = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();

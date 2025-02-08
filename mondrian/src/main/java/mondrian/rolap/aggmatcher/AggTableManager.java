@@ -39,7 +39,7 @@ import mondrian.recorder.ListRecorder;
 import mondrian.recorder.MessageRecorder;
 import mondrian.recorder.RecorderException;
 import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapSchema;
+import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.util.PojoUtil;
 
@@ -48,10 +48,10 @@ import mondrian.rolap.util.PojoUtil;
  * Manages aggregate tables.
  *
  * <p>It is used as follows:<ul>
- * <li>A {@link mondrian.rolap.RolapSchema} creates an {@link AggTableManager},
+ * <li>A {@link mondrian.rolap.RolapCatalog} creates an {@link AggTableManager},
  *     and stores it in a member variable to ensure that it is not
  *     garbage-collected.
- * <li>The {@link mondrian.rolap.RolapSchema} calls {@link #initialize(PropertyList)},
+ * <li>The {@link mondrian.rolap.RolapCatalog} calls {@link #initialize(PropertyList)},
  *     which scans the JDBC catalog and identifies aggregate tables.
  * <li>For each aggregate table, it creates an {@link AggStar} and calls
  *     {@link RolapStar#addAggStar(AggStar)}.
@@ -62,7 +62,7 @@ public class AggTableManager {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(AggTableManager.class);
 
-    private final RolapSchema schema;
+    private final RolapCatalog schema;
     private final Context context;
     private final static String aggLoadingError = "Error while loading/reloading aggregates.";
     private final static String aggLoadingExceededErrorCount =
@@ -72,7 +72,7 @@ public class AggTableManager {
         "Context ''{0}'': For Fact table ''{1}'', the column ''{2}'' is neither a measure or foreign key\".";
 
 
-    public AggTableManager(final RolapSchema schema, Context context) {
+    public AggTableManager(final RolapCatalog schema, Context context) {
         this.schema = schema;
 		this.context = context;
     }

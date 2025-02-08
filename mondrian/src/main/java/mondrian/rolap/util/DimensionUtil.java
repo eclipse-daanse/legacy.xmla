@@ -13,13 +13,12 @@
  */
 package mondrian.rolap.util;
 
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 
 import mondrian.olap.Util;
-import mondrian.rolap.RolapRuntimeException;
 
 public class DimensionUtil {
 
@@ -29,7 +28,7 @@ public class DimensionUtil {
         // constructor
     }
 
-    public static DimensionMapping getDimension(SchemaMapping schema, DimensionConnectorMapping dimension) {
+    public static DimensionMapping getDimension(CatalogMapping schema, DimensionConnectorMapping dimension) {
     	/*
         if (dimension instanceof MappingDimensionUsage dimensionUsage) {
             Util.assertPrecondition(schema != null, SCHEMA_NULL);
@@ -62,7 +61,7 @@ public class DimensionUtil {
     }
 
     /*
-    private static MappingDimension  getPublicDimension(SchemaMapping schema, String dimensionName) {
+    private static MappingDimension  getPublicDimension(CatalogMapping schema, String dimensionName) {
         for (int i = 0; i < schema.dimensions().size(); i++) {
             if (schema.dimensions().get(i).name().equals(dimensionName)) {
                 return schema.dimensions().get(i);
@@ -74,7 +73,7 @@ public class DimensionUtil {
     */
 
 
-    private static CubeMapping getCube(SchemaMapping schema, String cubeName) {
+    private static CubeMapping getCube(CatalogMapping schema, String cubeName) {
         for (int i = 0; i < schema.getCubes().size(); i++) {
             if (schema.getCubes().get(i).getName().equals(cubeName)) {
                 return schema.getCubes().get(i);
@@ -83,7 +82,7 @@ public class DimensionUtil {
         throw Util.newInternal(new StringBuilder("Cannot find cube '").append(cubeName).append("'").toString());
     }
 
-    public static DimensionMapping getDimension(CubeMapping cube, SchemaMapping schema, String dimensionName) {
+    public static DimensionMapping getDimension(CubeMapping cube, CatalogMapping schema, String dimensionName) {
         for (int i = 0; i < cube.getDimensionConnectors().size(); i++) {
             if (cube.getDimensionConnectors().get(i).getOverrideDimensionName().equals(dimensionName)) {
                 return getDimension(schema, cube.getDimensionConnectors().get(i));

@@ -251,7 +251,7 @@ public class TestContext {
   }
 
   /**
-   * Returns a connection to the FoodMart database with a dynamic schema processor and disables use of RolapSchema
+   * Returns a connection to the FoodMart database with a dynamic schema processor and disables use of RolapCatalog
    * Pool.
    */
   public TestContext withSchemaProcessor(

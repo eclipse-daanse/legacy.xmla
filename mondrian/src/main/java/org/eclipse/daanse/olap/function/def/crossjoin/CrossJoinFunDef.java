@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -314,7 +314,7 @@ public class CrossJoinFunDef extends AbstractFunctionDefinition {
     }
 
     public static TupleList nonEmptyOptimizeList(Evaluator evaluator, TupleList list, ResolvedFunCall call, int ctag) {
-        int opSize = evaluator.getSchemaReader().getContext().getConfig().crossJoinOptimizerSize();
+        int opSize = evaluator.getCatalogReader().getContext().getConfig().crossJoinOptimizerSize();
         if (list.isEmpty()) {
             return list;
         }
@@ -563,7 +563,7 @@ public class CrossJoinFunDef extends AbstractFunctionDefinition {
             // So we create an array of Objects some elements of which are
             // All Members and others elements will be an array of all top-level
             // Members when there is not an All Member.
-            SchemaReader schemaReader = evaluator.getSchemaReader();
+            CatalogReader schemaReader = evaluator.getCatalogReader();
             allMemberList = new ArrayList<>();
             List<Member[]> nonAllMemberList = new ArrayList<>();
 

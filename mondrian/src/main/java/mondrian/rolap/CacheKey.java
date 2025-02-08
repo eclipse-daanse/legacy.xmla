@@ -13,7 +13,7 @@
  */
 package mondrian.rolap;
 
-public record CacheKey(SchemaContentKey schemaContentKey, ConnectionKey connectionKey)
+public record CacheKey(CatalogContentKey schemaContentKey, ConnectionKey connectionKey)
 {
 
 }

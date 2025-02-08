@@ -15,11 +15,11 @@ package org.eclipse.daanse.olap.xmla.bridge;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
+import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ContextGroup;
-import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.olap.api.element.Catalog;
 
 public class ContextsSupplyerImpl implements ContextListSupplyer {
 
@@ -32,27 +32,24 @@ public class ContextsSupplyerImpl implements ContextListSupplyer {
 	}
 
 	@Override
-	public List<Context> get() {
-		List<Context> list=	contextsGroup.getValidContexts();
-		System.err.println(list);
-		return list;
+	public List<Catalog> get(List<String> roles) {
+		return getContexts().stream().map(context -> context.getConnection(roles)).map(Connection::getCatalog).toList();
 	}
 
 	@Override
-	public List<Context> get(Predicate<Context> predicate) {
-		return get().stream().filter(predicate).toList();
+	public Optional<Catalog> tryGetFirstByName(String catalogName, List<String> roles) {
+		return getContext(catalogName).map(co -> co.getConnection(roles).getCatalog());
 	}
 
 	@Override
-	public Optional<Context> tryGetFirstByName(String catalogName) {
-		return get().stream().filter(c -> ((RolapContext) c).getCatalogMapping().getName().equals(catalogName)).findFirst();
+	public List<Context> getContexts() {
+		return contextsGroup.getValidContexts();
 	}
 
 	@Override
-	public Optional<Context> tryGetFirst(Predicate<Context> predicate) {
-		return get().stream().filter(predicate).findFirst();
-	}
+	public Optional<Context> getContext(String name) {
+		return getContexts().stream().filter(c -> c.getName().equals(name)).findFirst();
 
-	// all Filter Work
+	}
 
 }

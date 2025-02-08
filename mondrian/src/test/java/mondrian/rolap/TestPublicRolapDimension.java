@@ -23,7 +23,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 
 public class TestPublicRolapDimension extends RolapDimension{
 
-	TestPublicRolapDimension(RolapSchema schema, RolapCube cube, DimensionMapping xmlDimension,
+	TestPublicRolapDimension(RolapCatalog schema, RolapCube cube, DimensionMapping xmlDimension,
 			DimensionConnectorMapping xmlCubeDimension) {
 		super(schema, cube, xmlDimension, xmlCubeDimension);
 	}

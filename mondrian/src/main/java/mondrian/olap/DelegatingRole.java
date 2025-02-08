@@ -19,7 +19,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 
 /**
  * <code>DelegatingRole</code> implements {@link Role} by
@@ -47,7 +47,7 @@ public class DelegatingRole implements Role {
     }
 
     @Override
-	public Access getAccess(Schema schema) {
+	public Access getAccess(Catalog schema) {
         return role.getAccess(schema);
     }
 

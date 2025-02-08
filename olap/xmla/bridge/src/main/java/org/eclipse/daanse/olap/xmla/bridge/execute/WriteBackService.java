@@ -33,7 +33,7 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.result.AllocationPolicy;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.api.result.Scenario;
@@ -427,7 +427,7 @@ public class WriteBackService {
         buf.append("} ON 0 FROM ").append(cube.getName());
         final String mdx = buf.toString();
         final RolapConnection connection =
-            cube.getSchema().getInternalConnection();
+            cube.getCatalog().getInternalConnection();
         final QueryImpl query = connection.parseQuery(mdx);
         final Result result = connection.execute(query);
         int i = 0;
@@ -453,7 +453,7 @@ public class WriteBackService {
         buf.append("} ON 0 FROM ").append(cube.getName());
         final String mdx = buf.toString();
         final RolapConnection connection =
-            cube.getSchema().getInternalConnection();
+            cube.getCatalog().getInternalConnection();
         final QueryImpl query = connection.parseQuery(mdx);
         final Result result = connection.execute(query);
         res.put(measure, result.getCell(new int[]{0}).getValue());
@@ -508,7 +508,7 @@ public class WriteBackService {
     }
 
     private Optional<Cube> getCube(String cubeName, Connection connection) {
-        Schema schema = connection.getSchema();
+        Catalog schema = connection.getCatalog();
         Cube[] cubes = schema.getCubes();
         if (cubes != null) {
             for (Cube cube : cubes) {

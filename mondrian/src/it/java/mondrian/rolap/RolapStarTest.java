@@ -30,7 +30,7 @@ class RolapStarTest extends FoodMartTestCase {
 
     static class RolapStarForTests extends RolapStar {
         public RolapStarForTests(
-            final RolapSchema schema,
+            final RolapCatalog schema,
             final DataSource dataSource,
             final MondrianDef.Relation fact)
         {

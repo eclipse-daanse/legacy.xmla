@@ -162,5 +162,5 @@ public interface Validator {
      *
      * @return Schema reader
      */
-    SchemaReader getSchemaReader();
+    CatalogReader getCatalogReader();
 }

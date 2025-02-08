@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.daanse.olap.api.MatchType;
-import org.eclipse.daanse.olap.api.SchemaReader;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -20,7 +20,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
-import org.eclipse.daanse.olap.api.element.Schema;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 
 import mondrian.olap.DimensionType;
@@ -210,7 +210,7 @@ public String getDescription() {
 
   @Override
 public OlapElement lookupChild(
-          SchemaReader schemaReader, Segment s, MatchType matchType ) {
+          CatalogReader schemaReader, Segment s, MatchType matchType ) {
     throw new UnsupportedOperationException();
   }
 
@@ -263,7 +263,7 @@ public Dimension getDimension() {
     }
 
     @Override
-	public Schema getSchema() {
+	public Catalog getCatalog() {
       throw new UnsupportedOperationException();
     }
 
@@ -291,7 +291,7 @@ public Dimension getDimension() {
 
     @Override
 	public OlapElement lookupChild(
-        SchemaReader schemaReader,
+        CatalogReader schemaReader,
         Segment s, MatchType matchType ) {
       throw new UnsupportedOperationException();
     }

@@ -40,7 +40,7 @@ public class LevelsStringCalc extends AbstractProfilingNestedLevelCalc {
     private Level findLevel(Evaluator evaluator, String s) {
         Cube cube = evaluator.getCube();
         OlapElement o = (s.startsWith("["))
-                ? evaluator.getSchemaReader().lookupCompound(cube, Util.parseIdentifier(s), false, DataType.LEVEL)
+                ? evaluator.getCatalogReader().lookupCompound(cube, Util.parseIdentifier(s), false, DataType.LEVEL)
                 // lookupCompound barfs if "s" doesn't have matching
                 // brackets, so don't even try
                 : null;

@@ -44,6 +44,6 @@ public class LeadLagCalc extends AbstractProfilingNestedMemberCalc {
 
             n = -n;
         }
-        return evaluator.getSchemaReader().getLeadMember(member, n);
+        return evaluator.getCatalogReader().getLeadMember(member, n);
     }
 }

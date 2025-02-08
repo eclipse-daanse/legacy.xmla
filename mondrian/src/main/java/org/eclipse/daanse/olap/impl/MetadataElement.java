@@ -39,7 +39,7 @@ public interface MetadataElement {
      * Returns the unique name of this element within its schema.
      *
      * <p>The unique name is never null, and is unique among all elements in
-     * this {@link Schema}.
+     * this {@link Catalog}.
      *
      * <p>Unlike {@link #getCaption() caption} and
      * {@link #getDescription() description}, an element's unique name is the
