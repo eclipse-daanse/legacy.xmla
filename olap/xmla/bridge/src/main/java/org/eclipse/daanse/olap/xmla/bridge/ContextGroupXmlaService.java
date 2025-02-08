@@ -19,9 +19,11 @@ import org.eclipse.daanse.olap.action.api.ActionService;
 import org.eclipse.daanse.olap.api.ContextGroup;
 import org.eclipse.daanse.olap.xmla.bridge.discover.DelegatingDiscoverService;
 import org.eclipse.daanse.olap.xmla.bridge.execute.OlapExecuteService;
+import org.eclipse.daanse.olap.xmla.bridge.session.SessionServiceImpl;
 import org.eclipse.daanse.xmla.api.XmlaService;
 import org.eclipse.daanse.xmla.api.discover.DiscoverService;
 import org.eclipse.daanse.xmla.api.execute.ExecuteService;
+import org.eclipse.daanse.xmla.api.session.SessionService;
 import org.osgi.namespace.unresolvable.UnresolvableNamespace;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -38,6 +40,7 @@ public class ContextGroupXmlaService implements XmlaService {
 
 	@Reference(name = REF_NAME_ACTION_SERVICE)
     private ActionService actionService;
+	private SessionService sessionService;
 
 	public ContextGroupXmlaService() {
 
@@ -45,11 +48,11 @@ public class ContextGroupXmlaService implements XmlaService {
 
 	@Activate
 	 void activate(ContextGroupXmlaServiceConfig config, Map<String, Object> props) {
-		 ContextListSupplyer contextsListSupplyer = new ContextsSupplyerImpl(contextGroup);
-		 executeService = new OlapExecuteService(contextsListSupplyer, actionService, config);
-		 discoverService = new DelegatingDiscoverService(contextsListSupplyer, actionService, config);
-
-	}
+			ContextListSupplyer contextsListSupplyer = new ContextsSupplyerImpl(contextGroup);
+			executeService = new OlapExecuteService(contextsListSupplyer, actionService, config);
+			discoverService = new DelegatingDiscoverService(contextsListSupplyer, actionService, config);
+			sessionService = new SessionServiceImpl();
+		}
 
 
 
@@ -81,6 +84,11 @@ public class ContextGroupXmlaService implements XmlaService {
 	@Override
 	public ExecuteService execute() {
 		return executeService;
+	}
+
+	@Override
+	public SessionService session() {
+		return sessionService;
 	}
 
 }

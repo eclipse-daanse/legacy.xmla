@@ -279,7 +279,7 @@ public class OlapExecuteService implements ExecuteService {
 	}
 
     private StatementResponse executeQuery(StatementRequest statementRequest, UserPrincipal userPrincipal, RequestMetaData metaData, Query query) {
-        Session session = Session.getWithoutCheck(statementRequest.sessionId());
+        ScenarioSession session = ScenarioSession.getWithoutCheck(statementRequest.sessionId());
         RelationalQueryMapping fact = null;
         try {
         Scenario scenario;
@@ -292,7 +292,7 @@ public class OlapExecuteService implements ExecuteService {
                 query.getConnection().setScenario(scenario);
             }
         } else {
-        	session = Session.create(statementRequest.sessionId());
+        	session = ScenarioSession.create(statementRequest.sessionId());
         	scenario = query.getConnection().createScenario();
             query.getConnection().setScenario(scenario);
 
@@ -340,14 +340,14 @@ public class OlapExecuteService implements ExecuteService {
     ) {
         String sessionId = statementRequest.sessionId();
 		if (transactionCommand.getCommand() == Command.BEGIN) {
-            Session session = Session.create(sessionId);
+            ScenarioSession session = ScenarioSession.create(sessionId);
 			Scenario scenario = context.createScenario(userPrincipal.roles());
             session.setScenario(scenario);
 		} else if (transactionCommand.getCommand() == Command.ROLLBACK) {
-            Session session = Session.get(sessionId);
+            ScenarioSession session = ScenarioSession.get(sessionId);
             session.setScenario(null);
 		} else if (transactionCommand.getCommand() == Command.COMMIT) {
-            Session session = Session.get(sessionId);
+            ScenarioSession session = ScenarioSession.get(sessionId);
             Scenario scenario = session.getScenario();
             writeBackService.commit(scenario, context.getConnection(userPrincipal.roles()), userPrincipal);
             scenario.getWritebackCells().clear();
@@ -357,7 +357,7 @@ public class OlapExecuteService implements ExecuteService {
     }
 
     private StatementResponse executeUpdate(Context context, StatementRequest statementRequest, Update update, UserPrincipal userPrincipal, RequestMetaData metaData) {
-        Session session = Session.get(statementRequest.sessionId());
+        ScenarioSession session = ScenarioSession.get(statementRequest.sessionId());
         if (session != null) {
             Scenario scenario = session.getScenario();
             Connection connection = context.getConnection(userPrincipal.roles());
@@ -743,7 +743,7 @@ public class OlapExecuteService implements ExecuteService {
         ResultSet resultSet = null;
         RelationalQueryMapping fact = null;
         RolapCube cube = null;
-        Session session = Session.getWithoutCheck(statementRequest.sessionId());
+        ScenarioSession session = ScenarioSession.getWithoutCheck(statementRequest.sessionId());
         try {
             connection = context.getConnection(new RolapConnectionPropsR(userPrincipal.roles()));
             QueryComponent parseTree;
@@ -763,7 +763,7 @@ public class OlapExecuteService implements ExecuteService {
                         scenario = session.getScenario();
                         connection.setScenario(scenario);
                     } else {
-                    	session = Session.create(statementRequest.sessionId());
+                    	session = ScenarioSession.create(statementRequest.sessionId());
                     	scenario = drillThrough.getQuery().getConnection().createScenario();
                     	drillThrough.getQuery().getConnection().setScenario(scenario);
 
