@@ -786,4 +786,9 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 		this.catalogMappingSupplier = catalogMappingSupplier;
 	}
 
+	@Override
+	public List<String> getAccessRoles() {
+		return List.of();
+	}
+
 }
