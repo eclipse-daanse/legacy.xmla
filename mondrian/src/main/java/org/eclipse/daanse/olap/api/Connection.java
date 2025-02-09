@@ -155,7 +155,7 @@ public interface Connection {
      *
      * @return Identifier of this connection
      */
-	int getId();
+	long getId();
 
 	Statement getInternalStatement();
 

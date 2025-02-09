@@ -13,45 +13,6 @@
  */
 package org.eclipse.daanse.olap.xmla.bridge.execute;
 
-import mondrian.olap.QueryImpl;
-import mondrian.rolap.RolapBaseCubeMeasure;
-import mondrian.rolap.RolapConnection;
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapCubeHierarchy;
-import mondrian.rolap.RolapCubeMember;
-import mondrian.rolap.RolapHierarchy;
-import mondrian.rolap.RolapMember;
-import mondrian.rolap.RolapUtil;
-import mondrian.rolap.RolapWritebackAttribute;
-import mondrian.rolap.RolapWritebackColumn;
-import mondrian.rolap.RolapWritebackMeasure;
-import mondrian.rolap.RolapWritebackTable;
-
-import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.olap.api.Connection;
-import org.eclipse.daanse.olap.api.element.Cube;
-import org.eclipse.daanse.olap.api.element.Level;
-import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.element.Catalog;
-import org.eclipse.daanse.olap.api.result.AllocationPolicy;
-import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.api.result.Scenario;
-import org.eclipse.daanse.rdb.structure.api.model.SqlStatement;
-import org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlStatementImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl.Builder;
-import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
-import org.eclipse.daanse.xmla.api.UserPrincipal;
-
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -66,10 +27,48 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.sql.DataSource;
+
+import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.element.Catalog;
+import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.Level;
+import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.result.AllocationPolicy;
+import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.api.result.Scenario;
+import org.eclipse.daanse.rdb.structure.api.model.SqlStatement;
+import org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl;
+import org.eclipse.daanse.rdb.structure.pojo.SqlStatementImpl;
+import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl;
+import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl.Builder;
+import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
+
+import mondrian.olap.QueryImpl;
+import mondrian.rolap.RolapBaseCubeMeasure;
+import mondrian.rolap.RolapConnection;
+import mondrian.rolap.RolapCube;
+import mondrian.rolap.RolapCubeHierarchy;
+import mondrian.rolap.RolapCubeMember;
+import mondrian.rolap.RolapHierarchy;
+import mondrian.rolap.RolapMember;
+import mondrian.rolap.RolapUtil;
+import mondrian.rolap.RolapWritebackAttribute;
+import mondrian.rolap.RolapWritebackColumn;
+import mondrian.rolap.RolapWritebackMeasure;
+import mondrian.rolap.RolapWritebackTable;
+
 public class WriteBackService {
 
-    public void commit(Scenario scenario, Connection con, UserPrincipal userPrincipal) {
+    public void commit(Scenario scenario, Connection con, String userId) {
         if (scenario.getWriteBackTable().isPresent()) {
+        	
             RolapWritebackTable writebackTable = scenario.getWriteBackTable().get();
             DataSource dataSource = con.getDataSource();
             Dialect dialect = con.getContext().getDialect();
@@ -82,7 +81,7 @@ public class WriteBackService {
                     sql.append(writebackTable.getColumns().stream().map(c -> c.getColumn().getName())
                         .collect(Collectors.joining(", ")));
                     sql.append(", ID");
-                    if (userPrincipal != null && userPrincipal.userId() != null) {
+                    if (userId != null) {
                         sql.append(", USER");
                     }
                     sql.append(") values (");
@@ -97,9 +96,9 @@ public class WriteBackService {
                     }
                     sql.append(", ");
                     dialect.quote(sql, UUID.randomUUID(), Datatype.STRING);
-                    if (userPrincipal != null && userPrincipal.userId() != null) {
+                    if (userId != null) {
                         sql.append(", ");
-                        dialect.quote(sql, userPrincipal.userId(), Datatype.STRING);
+                        dialect.quote(sql, userId, Datatype.STRING);
                     }
                     sql.append(")");
                     statement.execute(sql.toString());

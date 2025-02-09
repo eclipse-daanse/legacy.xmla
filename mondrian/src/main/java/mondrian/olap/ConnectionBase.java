@@ -11,14 +11,10 @@
 
 package mondrian.olap;
 
-import java.util.List;
-
-import mondrian.olap.exceptions.FailedToParseQueryException;
 import org.eclipse.daanse.mdx.model.api.MdxStatement;
 import org.eclipse.daanse.mdx.parser.api.MdxParser;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.query.ExpressionProvider;
@@ -27,6 +23,8 @@ import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.query.base.ExpressionProviderImpl;
 import org.eclipse.daanse.olap.query.base.QueryProviderImpl;
 import org.slf4j.Logger;
+
+import mondrian.olap.exceptions.FailedToParseQueryException;
 
 
 /**

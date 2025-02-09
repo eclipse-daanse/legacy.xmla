@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.sql.DataSource;
 
@@ -92,7 +93,7 @@ import mondrian.util.NotificationMemoryMonitor;
 public class RolapConnection extends ConnectionBase {
   private static final Logger LOGGER =
     LoggerFactory.getLogger( RolapConnection.class );
-  private static final AtomicInteger ID_GENERATOR = new AtomicInteger();
+  private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
 
   private final ConnectionProps rolapConnectionProps;
@@ -104,8 +105,7 @@ public class RolapConnection extends ConnectionBase {
   private Locale locale = Locale.getDefault();
   private Scenario scenario;
   private boolean closed = false;
-
-  private final int id;
+  private final long id;
   private final Statement internalStatement;
 
 
@@ -218,7 +218,7 @@ public class RolapConnection extends ConnectionBase {
    * @return Identifier of this connection
    */
 	@Override
-  public int getId() {
+  public long getId() {
     return id;
   }
 

@@ -137,7 +137,7 @@ public class Utils {
         return Optional.empty();
     }
 
-    static List<DbSchemaColumnsResponseRow> getDbSchemaColumnsResponseRow(
+    public static List<DbSchemaColumnsResponseRow> getDbSchemaColumnsResponseRow(
         Catalog catalog,
         Optional<String> oTableSchema,
         Optional<String> oTableName,
@@ -506,7 +506,7 @@ public class Utils {
     }
 
 
-    static List<DbSchemaTablesResponseRow> getDbSchemaTablesResponseRow(
+    public static List<DbSchemaTablesResponseRow> getDbSchemaTablesResponseRow(
    		Catalog catalog,
         Optional<String> oTableSchema,
         Optional<String> oTableName,

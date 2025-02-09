@@ -180,11 +180,6 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
 	}
 
 	@Override
-	public Scenario createScenario(List<String> roles) {
-        return getConnection(roles).createScenario();
-	}
-
-	@Override
 	public BasicContextConfig getConfig() {
 		return config;
 	}
@@ -211,7 +206,7 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
 
 	@Override
 	public List<String> getAccessRoles() {
-		return List.of();
+		return List.of();// may take from mapping
 	}
 
 }

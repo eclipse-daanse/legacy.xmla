@@ -83,9 +83,7 @@ public interface Context {
 	Connection getConnection(List<String> roles);
 
     Connection getConnection(ConnectionProps props);
-    
 
-    Scenario createScenario(List<String> roles);
 
 	void addConnection(Connection rolapConnection);
 

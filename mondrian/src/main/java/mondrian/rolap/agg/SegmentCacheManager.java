@@ -1201,7 +1201,7 @@ public class SegmentCacheManager {
     private final Instant timestamp;
     private final RolapStar star;
     private final String serverId;
-    private final int connectionId;
+    private final long connectionId;
     private final long statementId;
     private final long executionId;
     private final EventBus monitor;
@@ -1210,7 +1210,7 @@ public class SegmentCacheManager {
       Instant timestamp,
       EventBus monitor,
       String serverId,
-      int connectionId,
+      long connectionId,
       long statementId,
       long executionId,
       RolapStar star,
@@ -1242,7 +1242,7 @@ public class SegmentCacheManager {
     private final RolapStar star;
     private final EventBus monitor;
     private final String serverId;
-    private final int connectionId;
+    private final long connectionId;
     private final long statementId;
     private final long executionId;
 
@@ -1250,7 +1250,7 @@ public class SegmentCacheManager {
       long timestamp,
       EventBus monitor,
       String serverId,
-      int connectionId,
+      long connectionId,
       long statementId,
       long executionId,
       RolapStar star,
@@ -1279,7 +1279,7 @@ public class SegmentCacheManager {
     private final Instant timestamp;
     private final EventBus monitor;
     private final String serverId;
-    private final int connectionId;
+    private final long connectionId;
     private final long statementId;
     private final long executionId;
     private final RolapStar star;
@@ -1289,7 +1289,7 @@ public class SegmentCacheManager {
       Instant timestamp,
       EventBus monitor,
       String serverId,
-      int connectionId,
+      long connectionId,
       long statementId,
       long executionId,
       SegmentCacheManager cacheMgr,

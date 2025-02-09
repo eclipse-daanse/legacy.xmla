@@ -66,43 +66,32 @@ public class DBSchemaDiscoverService {
         if (oCatalogName.isPresent()) {
             Optional<Context> oContext = oCatalogName.flatMap(name -> contextsListSupplyer.getContext(name));
             if (oContext.isPresent()) {
-            	Context catalog = oContext.get();
-                return List.of((DbSchemaCatalogsResponseRow) new DbSchemaCatalogsResponseRowR(
-                    Optional.ofNullable(catalog.getName()),
-                    catalog.getDescription(),
-                    getRoles(catalog.getAccessRoles()),
-                    Optional.of(LocalDateTime.now()),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty()));
+            	Context context = oContext.get();
+                return List.of(dbSchemaCatalogsRow(context));
             }
         }
         else {
-            return contextsListSupplyer.getContexts().stream().map(c ->
-                (DbSchemaCatalogsResponseRow) new DbSchemaCatalogsResponseRowR(
-                    Optional.ofNullable(c.getName()),
-                    c.getDescription(),
-                    getRoles(c.getAccessRoles()),
-                    Optional.of(LocalDateTime.now()),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty())
-            ).toList();
+            return contextsListSupplyer.getContexts().stream().map(this::dbSchemaCatalogsRow).toList();
         }
         return List.of();
     }
+
+	public DbSchemaCatalogsResponseRow dbSchemaCatalogsRow(Context catalog) {
+		return new DbSchemaCatalogsResponseRowR(
+		    Optional.ofNullable(catalog.getName()),
+		    catalog.getDescription(),
+		    getRoles(catalog.getAccessRoles()),
+		    Optional.of(LocalDateTime.now()),
+		    Optional.empty(),
+		    Optional.empty(),
+		    Optional.empty(),
+		    Optional.empty(),
+		    Optional.empty(),
+		    Optional.empty(),
+		    Optional.empty(),
+		    Optional.empty(),
+		    Optional.empty());
+	}
 
 
 
@@ -125,9 +114,9 @@ public class DBSchemaDiscoverService {
                 .map(c -> getDbSchemaColumnsResponseRow(c, oTableSchema, oTableName, oColumnName, oColumnOlapType))
                 .flatMap(Collection::stream).toList());
         }
-
         return result;
     }
+    
 
     public List<DbSchemaProviderTypesResponseRow> dbSchemaProviderTypes(DbSchemaProviderTypesRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         List<DbSchemaProviderTypesResponseRow> result = new ArrayList<>();
@@ -376,6 +365,7 @@ public class DBSchemaDiscoverService {
         }
         return List.of();
     }
+
 
 }
 

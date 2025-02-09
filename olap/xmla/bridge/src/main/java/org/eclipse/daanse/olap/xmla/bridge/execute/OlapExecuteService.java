@@ -13,6 +13,7 @@
  */
 package org.eclipse.daanse.olap.xmla.bridge.execute;
 
+import static java.util.Optional.empty;
 import static org.eclipse.daanse.xmla.api.XmlaConstants.CLIENT_FAULT_FC;
 import static org.eclipse.daanse.xmla.api.XmlaConstants.HSB_DRILL_THROUGH_SQL_CODE;
 import static org.eclipse.daanse.xmla.api.XmlaConstants.HSB_DRILL_THROUGH_SQL_FAULT_FS;
@@ -36,9 +37,8 @@ import org.eclipse.daanse.olap.api.Command;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Catalog;
-import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.query.component.CalculatedFormula;
 import org.eclipse.daanse.olap.api.query.component.DmvQuery;
 import org.eclipse.daanse.olap.api.query.component.DrillThrough;
@@ -59,6 +59,7 @@ import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
 import org.eclipse.daanse.olap.xmla.bridge.discover.DBSchemaDiscoverService;
 import org.eclipse.daanse.olap.xmla.bridge.discover.MDSchemaDiscoverService;
 import org.eclipse.daanse.olap.xmla.bridge.discover.OtherDiscoverService;
+import org.eclipse.daanse.olap.xmla.bridge.discover.Utils;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;
@@ -66,12 +67,11 @@ import org.eclipse.daanse.xmla.api.XmlaException;
 import org.eclipse.daanse.xmla.api.common.properties.Content;
 import org.eclipse.daanse.xmla.api.common.properties.Format;
 import org.eclipse.daanse.xmla.api.common.properties.OperationNames;
-import org.eclipse.daanse.xmla.api.discover.dbschema.catalogs.DbSchemaCatalogsRequest;
-import org.eclipse.daanse.xmla.api.discover.dbschema.columns.DbSchemaColumnsRequest;
+import org.eclipse.daanse.xmla.api.discover.dbschema.columns.DbSchemaColumnsResponseRow;
 import org.eclipse.daanse.xmla.api.discover.dbschema.providertypes.DbSchemaProviderTypesRequest;
 import org.eclipse.daanse.xmla.api.discover.dbschema.schemata.DbSchemaSchemataRequest;
 import org.eclipse.daanse.xmla.api.discover.dbschema.sourcetables.DbSchemaSourceTablesRequest;
-import org.eclipse.daanse.xmla.api.discover.dbschema.tables.DbSchemaTablesRequest;
+import org.eclipse.daanse.xmla.api.discover.dbschema.tables.DbSchemaTablesResponseRow;
 import org.eclipse.daanse.xmla.api.discover.dbschema.tablesinfo.DbSchemaTablesInfoRequest;
 import org.eclipse.daanse.xmla.api.discover.discover.datasources.DiscoverDataSourcesRequest;
 import org.eclipse.daanse.xmla.api.discover.discover.enumerators.DiscoverEnumeratorsRequest;
@@ -103,18 +103,12 @@ import org.eclipse.daanse.xmla.api.execute.clearcache.ClearCacheResponse;
 import org.eclipse.daanse.xmla.api.execute.statement.StatementRequest;
 import org.eclipse.daanse.xmla.api.execute.statement.StatementResponse;
 import org.eclipse.daanse.xmla.model.record.discover.PropertiesR;
-import org.eclipse.daanse.xmla.model.record.discover.dbschema.catalogs.DbSchemaCatalogsRequestR;
-import org.eclipse.daanse.xmla.model.record.discover.dbschema.catalogs.DbSchemaCatalogsRestrictionsR;
-import org.eclipse.daanse.xmla.model.record.discover.dbschema.columns.DbSchemaColumnsRequestR;
-import org.eclipse.daanse.xmla.model.record.discover.dbschema.columns.DbSchemaColumnsRestrictionsR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.providertypes.DbSchemaProviderTypesRequestR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.providertypes.DbSchemaProviderTypesRestrictionsR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.schemata.DbSchemaSchemataRequestR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.schemata.DbSchemaSchemataRestrictionsR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.sourcetables.DbSchemaSourceTablesRequestR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.sourcetables.DbSchemaSourceTablesRestrictionsR;
-import org.eclipse.daanse.xmla.model.record.discover.dbschema.tables.DbSchemaTablesRequestR;
-import org.eclipse.daanse.xmla.model.record.discover.dbschema.tables.DbSchemaTablesRestrictionsR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.tablesinfo.DbSchemaTablesInfoRequestR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.tablesinfo.DbSchemaTablesInfoRestrictionsR;
 import org.eclipse.daanse.xmla.model.record.discover.discover.datasources.DiscoverDataSourcesRequestR;
@@ -253,23 +247,23 @@ public class OlapExecuteService implements ExecuteService {
 				Context context = oContext.get();
 				String statement = statementRequest.command().statement();
 				if (statement != null && statement.length() > 0) {
+                    Connection connection = context.getConnection(new RolapConnectionPropsR(userPrincipal.roles()));
+					QueryComponent queryComponent = connection.parseStatement(statement);
 
-                    QueryComponent queryComponent = context.getConnection(new RolapConnectionPropsR(userPrincipal.roles())).parseStatement(statement);
-
-					if (queryComponent instanceof DrillThrough) {
-						return executeDrillThroughQuery(context, userPrincipal, metaData, statementRequest);
+					if (queryComponent instanceof DrillThrough drillThrough) {
+						return executeDrillThroughQuery( statementRequest,drillThrough);
 					} else if (queryComponent instanceof CalculatedFormula calculatedFormula) {
-						return executeCalculatedFormula(context, userPrincipal, metaData, calculatedFormula);
+						return executeCalculatedFormula(connection, calculatedFormula);
 					} else if (queryComponent instanceof DmvQuery dmvQuery) {
-						return executeDmvQuery(dmvQuery, userPrincipal, metaData, statementRequest);
+						return executeDmvQuery(connection ,dmvQuery,  userPrincipal, metaData, statementRequest); // toto: remove  userPrincipal, metaData, 
 					} else if (queryComponent instanceof Refresh refresh) {
-						return executeRefresh(context, userPrincipal, metaData, refresh);
+						return executeRefresh(connection, refresh);
 					} else if (queryComponent instanceof Update update) {
-						return executeUpdate(context, statementRequest, update,userPrincipal, metaData);
+						return executeUpdate(connection, statementRequest, update);
 					} else if (queryComponent instanceof TransactionCommand transactionCommand) {
-						return executeTransactionCommand(context, userPrincipal, metaData, statementRequest, transactionCommand);
+						return executeTransactionCommand(connection, statementRequest, transactionCommand,userPrincipal.userId());
 					} else if (queryComponent instanceof Query query){
-						return executeQuery(statementRequest, userPrincipal, metaData, query);
+						return executeQuery(statementRequest, query);
 					}
 				}
 
@@ -278,7 +272,7 @@ public class OlapExecuteService implements ExecuteService {
 		return new StatementResponseR(null, null);
 	}
 
-    private StatementResponse executeQuery(StatementRequest statementRequest, UserPrincipal userPrincipal, RequestMetaData metaData, Query query) {
+    private StatementResponse executeQuery(StatementRequest statementRequest,  Query query) {
         ScenarioSession session = ScenarioSession.getWithoutCheck(statementRequest.sessionId());
         RelationalQueryMapping fact = null;
         try {
@@ -335,13 +329,13 @@ public class OlapExecuteService implements ExecuteService {
     }
 
     private StatementResponse executeTransactionCommand(
-        Context context, UserPrincipal userPrincipal, RequestMetaData metaData, StatementRequest statementRequest,
-        TransactionCommand transactionCommand
+        Connection connection,  StatementRequest statementRequest,
+        TransactionCommand transactionCommand,String userId
     ) {
         String sessionId = statementRequest.sessionId();
 		if (transactionCommand.getCommand() == Command.BEGIN) {
             ScenarioSession session = ScenarioSession.create(sessionId);
-			Scenario scenario = context.createScenario(userPrincipal.roles());
+			Scenario scenario = connection.createScenario();
             session.setScenario(scenario);
 		} else if (transactionCommand.getCommand() == Command.ROLLBACK) {
             ScenarioSession session = ScenarioSession.get(sessionId);
@@ -349,18 +343,17 @@ public class OlapExecuteService implements ExecuteService {
 		} else if (transactionCommand.getCommand() == Command.COMMIT) {
             ScenarioSession session = ScenarioSession.get(sessionId);
             Scenario scenario = session.getScenario();
-            writeBackService.commit(scenario, context.getConnection(userPrincipal.roles()), userPrincipal);
+            writeBackService.commit(scenario, connection,userId);
             scenario.getWritebackCells().clear();
             scenario.getSessionValues().clear();
         }
         return new StatementResponseR(null, null);
     }
 
-    private StatementResponse executeUpdate(Context context, StatementRequest statementRequest, Update update, UserPrincipal userPrincipal, RequestMetaData metaData) {
+    private StatementResponse executeUpdate(Connection connection, StatementRequest statementRequest, Update update) {
         ScenarioSession session = ScenarioSession.get(statementRequest.sessionId());
         if (session != null) {
             Scenario scenario = session.getScenario();
-            Connection connection = context.getConnection(userPrincipal.roles());
             connection.setScenario(scenario);
             for (UpdateClause updateClause : update.getUpdateClauses()) {
                 if (updateClause instanceof UpdateImpl.UpdateClauseImpl updateClauseImpl) {
@@ -428,10 +421,9 @@ public class OlapExecuteService implements ExecuteService {
     }
 
 
-    private StatementResponse executeRefresh(Context context, UserPrincipal userPrincipal, RequestMetaData metaData, Refresh refresh) {
-        Connection connection = context.getConnection(userPrincipal.roles());
-        Catalog schema = connection.getCatalog();
-        Cube cube = schema.lookupCube(refresh.getCubeName(), true);
+    private StatementResponse executeRefresh(Connection connection, Refresh refresh) {
+        Catalog catalog = connection.getCatalog();
+        Cube cube = catalog.lookupCube(refresh.getCubeName(), true);
         flushCache(cube, connection);
         return new StatementResponseR(null, null);
     }
@@ -443,45 +435,27 @@ public class OlapExecuteService implements ExecuteService {
 
     }
 
-    private StatementResponse executeDmvQuery(DmvQuery dmvQuery, UserPrincipal userPrincipal, RequestMetaData metaData, StatementRequest statementRequest) {
+    private StatementResponse executeDmvQuery(Connection connection,DmvQuery dmvQuery, UserPrincipal userPrincipal, RequestMetaData metaData, StatementRequest statementRequest) {
+    	Catalog catalog=connection.getCatalog();
         String tableName = dmvQuery.getTableName().toUpperCase();
         RowSetR rowSet = null;
         switch (tableName) {
             case OperationNames.DBSCHEMA_COLUMNS:
-                DbSchemaColumnsRestrictionsR r = new DbSchemaColumnsRestrictionsR(
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty()
-                );
-                DbSchemaColumnsRequest request =
-                    new DbSchemaColumnsRequestR((PropertiesR) statementRequest.properties(), r);
-                rowSet =
-						DiscoveryResponseConvertor.dbSchemaColumnsResponseRowToRowSet(
-								dbSchemaService.dbSchemaColumns(request, metaData, userPrincipal));
+				List<DbSchemaColumnsResponseRow> rows = Utils.getDbSchemaColumnsResponseRow(catalog, empty(), empty(), empty(), empty());
+				rowSet = DiscoveryResponseConvertor.dbSchemaColumnsResponseRowToRowSet(rows);
                 break;
             case OperationNames.DBSCHEMA_TABLES:
-                DbSchemaTablesRestrictionsR dbSchemaTablesRestrictions =
-                    new DbSchemaTablesRestrictionsR(Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty());
-                DbSchemaTablesRequest dbSchemaTablesRequest =
-                    new DbSchemaTablesRequestR((PropertiesR) statementRequest.properties(), dbSchemaTablesRestrictions);
-                rowSet =
-                    DiscoveryResponseConvertor.dbSchemaTablesResponseRowToRowSet(dbSchemaService.dbSchemaTables(dbSchemaTablesRequest,metaData, userPrincipal));
+            	List<DbSchemaTablesResponseRow> dbSchemaTablesResponseRows = Utils.getDbSchemaTablesResponseRow(catalog,empty(), empty(), empty());
+                rowSet = DiscoveryResponseConvertor.dbSchemaTablesResponseRowToRowSet(dbSchemaTablesResponseRows);
                 break;
             case OperationNames.DBSCHEMA_CATALOGS:
-                DbSchemaCatalogsRestrictionsR dbSchemaCatalogsRestrictions =
-                    new DbSchemaCatalogsRestrictionsR(Optional.empty());
-                DbSchemaCatalogsRequest dbSchemaCatalogsRequest =
-                    new DbSchemaCatalogsRequestR((PropertiesR) statementRequest.properties(),
-                        dbSchemaCatalogsRestrictions);
+
                 rowSet =
-                    DiscoveryResponseConvertor.dbSchemaCatalogsResponseRowToRowSet(dbSchemaService.dbSchemaCatalogs(dbSchemaCatalogsRequest,metaData, userPrincipal));
+                    DiscoveryResponseConvertor.dbSchemaCatalogsResponseRowToRowSet(List.of(dbSchemaService.dbSchemaCatalogsRow(connection.getContext())));
                 break;
             case OperationNames.DBSCHEMA_PROVIDER_TYPES:
                 DbSchemaProviderTypesRestrictionsR dbSchemaProviderTypesRestrictions =
-                    new DbSchemaProviderTypesRestrictionsR(Optional.empty(), Optional.empty());
+                    new DbSchemaProviderTypesRestrictionsR(empty(), empty());
                 DbSchemaProviderTypesRequest dbSchemaProviderTypesRequest =
                     new DbSchemaProviderTypesRequestR((PropertiesR) statementRequest.properties(),
                         dbSchemaProviderTypesRestrictions);
@@ -499,7 +473,7 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.DBSCHEMA_SOURCE_TABLES:
                 DbSchemaSourceTablesRestrictionsR dbSchemaSourceTablesRestrictions =
-                    new DbSchemaSourceTablesRestrictionsR(Optional.empty(), Optional.empty(), null, null);
+                    new DbSchemaSourceTablesRestrictionsR(empty(), empty(), null, null);
                 DbSchemaSourceTablesRequest dbSchemaSourceTablesRequest =
                     new DbSchemaSourceTablesRequestR((PropertiesR) statementRequest.properties(),
                         dbSchemaSourceTablesRestrictions);
@@ -508,7 +482,7 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.DBSCHEMA_TABLES_INFO:
                 DbSchemaTablesInfoRestrictionsR dbSchemaTablesInfoRestrictions =
-                    new DbSchemaTablesInfoRestrictionsR(Optional.empty(), Optional.empty(), null, null);
+                    new DbSchemaTablesInfoRestrictionsR(empty(), empty(), null, null);
                 DbSchemaTablesInfoRequest dbSchemaTablesInfoRequest =
                     new DbSchemaTablesInfoRequestR((PropertiesR) statementRequest.properties(),
                         dbSchemaTablesInfoRestrictions);
@@ -517,7 +491,7 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_FUNCTIONS:
                 MdSchemaFunctionsRestrictionsR mdSchemaFunctionsRestrictions =
-                    new MdSchemaFunctionsRestrictionsR(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                    new MdSchemaFunctionsRestrictionsR(empty(), empty(), empty(), empty());
                 MdSchemaFunctionsRequest mdSchemaFunctionsRequest =
                     new MdSchemaFunctionsRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaFunctionsRestrictions);
@@ -526,8 +500,8 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_DIMENSIONS:
                 MdSchemaDimensionsRestrictionsR mdSchemaDimensionsRestrictions =
-                    new MdSchemaDimensionsRestrictionsR(Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                    new MdSchemaDimensionsRestrictionsR(empty(), empty(), empty(),
+                        empty(), empty(), empty(), empty());
                 MdSchemaDimensionsRequest mdSchemaDimensionsRequest =
                     new MdSchemaDimensionsRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaDimensionsRestrictions);
@@ -536,8 +510,8 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_CUBES:
                 MdSchemaCubesRestrictionsR mdSchemaCubesRestrictions =
-                    new MdSchemaCubesRestrictionsR(null, Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty());
+                    new MdSchemaCubesRestrictionsR(null, empty(), empty(), empty(),
+                        empty(), empty());
                 MdSchemaCubesRequest mdSchemaCubesRequest =
                     new MdSchemaCubesRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaCubesRestrictions);
@@ -546,8 +520,8 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_ACTIONS:
                 MdSchemaActionsRestrictionsR mdSchemaActionsRestrictions =
-                    new MdSchemaActionsRestrictionsR(Optional.empty(), Optional.empty(), null, Optional.empty(),
-                        Optional.empty(), Optional.empty(), null, null, Optional.empty());
+                    new MdSchemaActionsRestrictionsR(empty(), empty(), null, empty(),
+                        empty(), empty(), null, null, empty());
                 MdSchemaActionsRequest mdSchemaActionsRequest =
                     new MdSchemaActionsRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaActionsRestrictions);
@@ -556,8 +530,8 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_HIERARCHIES:
                 MdSchemaHierarchiesRestrictionsR mdSchemaHierarchiesRestrictions =
-                    new MdSchemaHierarchiesRestrictionsR(Optional.empty(), Optional.empty(), null, Optional.empty(),
-                        Optional.empty(), Optional.empty(), null, null, Optional.empty());
+                    new MdSchemaHierarchiesRestrictionsR(empty(), empty(), null, empty(),
+                        empty(), empty(), null, null, empty());
                 MdSchemaHierarchiesRequest mdSchemaHierarchiesRequest =
                     new MdSchemaHierarchiesRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaHierarchiesRestrictions);
@@ -566,8 +540,8 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_LEVELS:
                 MdSchemaLevelsRestrictionsR mdSchemaLevelsRestrictions =
-                    new MdSchemaLevelsRestrictionsR(Optional.empty(), Optional.empty(), null, Optional.empty(),
-                        Optional.empty(), Optional.empty(), null, Optional.empty(), null, Optional.empty());
+                    new MdSchemaLevelsRestrictionsR(empty(), empty(), null, empty(),
+                        empty(), empty(), null, empty(), null, empty());
                 MdSchemaLevelsRequest mdSchemaLevelsRequest =
                     new MdSchemaLevelsRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaLevelsRestrictions);
@@ -576,8 +550,8 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_MEASUREGROUP_DIMENSIONS:
                 MdSchemaMeasureGroupDimensionsRestrictionsR mdSchemaMeasureGroupDimensionsRestrictions =
-                    new MdSchemaMeasureGroupDimensionsRestrictionsR(Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                    new MdSchemaMeasureGroupDimensionsRestrictionsR(empty(), empty(),
+                        empty(), empty(), empty(), empty());
                 MdSchemaMeasureGroupDimensionsRequest mdSchemaMeasureGroupDimensionsRequest =
                     new MdSchemaMeasureGroupDimensionsRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaMeasureGroupDimensionsRestrictions);
@@ -586,8 +560,8 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_MEASURES:
                 MdSchemaMeasuresRestrictionsR mdSchemaMeasuresRestrictions =
-                    new MdSchemaMeasuresRestrictionsR(Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                    new MdSchemaMeasuresRestrictionsR(empty(), empty(), empty(),
+                        empty(), empty(), empty(), empty(), empty());
                 MdSchemaMeasuresRequest mdSchemaMeasuresRequest =
                     new MdSchemaMeasuresRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaMeasuresRestrictions);
@@ -596,9 +570,9 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_MEMBERS:
                 MdSchemaMembersRestrictionsR mdSchemaMembersRestrictions =
-                    new MdSchemaMembersRestrictionsR(Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                    new MdSchemaMembersRestrictionsR(empty(), empty(), empty(),
+                        empty(), empty(), empty(), empty(), empty(),
+                        empty(), empty(), empty(), empty(), empty());
                 MdSchemaMembersRequest mdSchemaMembersRequest =
                     new MdSchemaMembersRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaMembersRestrictions);
@@ -607,9 +581,9 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_PROPERTIES:
                 MdSchemaPropertiesRestrictionsR mdSchemaPropertiesRestrictions =
-                    new MdSchemaPropertiesRestrictionsR(Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                    new MdSchemaPropertiesRestrictionsR(empty(), empty(), empty(),
+                        empty(), empty(), empty(), empty(), empty(),
+                        empty(), empty(), empty(), empty(), empty());
                 MdSchemaPropertiesRequest mdSchemaPropertiesRequest =
                     new MdSchemaPropertiesRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaPropertiesRestrictions);
@@ -618,8 +592,8 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_SETS:
                 MdSchemaSetsRestrictionsR mdSchemaSetsRestrictions =
-                    new MdSchemaSetsRestrictionsR(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                    new MdSchemaSetsRestrictionsR(empty(), empty(), empty(), empty(),
+                        empty(), empty(), empty(), empty());
                 MdSchemaSetsRequest mdSchemaSetsRequest =
                     new MdSchemaSetsRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaSetsRestrictions);
@@ -628,8 +602,8 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_KPIS:
                 MdSchemaKpisRestrictionsR mdSchemaKpisRestrictions =
-                    new MdSchemaKpisRestrictionsR(Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty());
+                    new MdSchemaKpisRestrictionsR(empty(), empty(), empty(),
+                        empty(), empty());
                 MdSchemaKpisRequest mdSchemaKpisRequest =
                     new MdSchemaKpisRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaKpisRestrictions);
@@ -638,8 +612,8 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_MEASUREGROUPS:
                 MdSchemaMeasureGroupsRestrictionsR mdSchemaMeasureGroupsRestrictions =
-                    new MdSchemaMeasureGroupsRestrictionsR(Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty());
+                    new MdSchemaMeasureGroupsRestrictionsR(empty(), empty(), empty(),
+                        empty());
                 MdSchemaMeasureGroupsRequest mdSchemaMeasureGroupsRequest =
                     new MdSchemaMeasureGroupsRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaMeasureGroupsRestrictions);
@@ -648,7 +622,7 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.DISCOVER_LITERALS:
                 DiscoverLiteralsRestrictionsR discoverLiteralsRestrictions =
-                    new DiscoverLiteralsRestrictionsR(Optional.empty());
+                    new DiscoverLiteralsRestrictionsR(empty());
                 DiscoverLiteralsRequest discoverLiteralsRequest =
                     new DiscoverLiteralsRequestR((PropertiesR) statementRequest.properties(),
                         discoverLiteralsRestrictions);
@@ -657,7 +631,7 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.DISCOVER_KEYWORDS:
                 DiscoverKeywordsRestrictionsR discoverKeywordsRestrictions =
-                    new DiscoverKeywordsRestrictionsR(Optional.empty());
+                    new DiscoverKeywordsRestrictionsR(empty());
                 DiscoverKeywordsRequest discoverKeywordsRequest =
                     new DiscoverKeywordsRequestR((PropertiesR) statementRequest.properties(),
                         discoverKeywordsRestrictions);
@@ -666,7 +640,7 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.DISCOVER_ENUMERATORS:
                 DiscoverEnumeratorsRestrictionsR discoverEnumeratorsRestrictions =
-                    new DiscoverEnumeratorsRestrictionsR(Optional.empty());
+                    new DiscoverEnumeratorsRestrictionsR(empty());
                 DiscoverEnumeratorsRequest discoverEnumeratorsRequest =
                     new DiscoverEnumeratorsRequestR((PropertiesR) statementRequest.properties(),
                         discoverEnumeratorsRestrictions);
@@ -675,7 +649,7 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.DISCOVER_SCHEMA_ROWSETS:
                 DiscoverSchemaRowsetsRestrictionsR discoverSchemaRowsetsRestrictions =
-                    new DiscoverSchemaRowsetsRestrictionsR(Optional.empty());
+                    new DiscoverSchemaRowsetsRestrictionsR(empty());
                 DiscoverSchemaRowsetsRequest discoverSchemaRowsetsRequest =
                     new DiscoverSchemaRowsetsRequestR((PropertiesR) statementRequest.properties(),
                         discoverSchemaRowsetsRestrictions);
@@ -693,8 +667,8 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.DISCOVER_DATASOURCES:
                 DiscoverDataSourcesRestrictionsR discoverDataSourcesRestrictions =
-                    new DiscoverDataSourcesRestrictionsR(null, Optional.empty(), Optional.empty(), Optional.empty(),
-                        null, Optional.empty(), Optional.empty());
+                    new DiscoverDataSourcesRestrictionsR(null, empty(), empty(), empty(),
+                        null, empty(), empty());
                 DiscoverDataSourcesRequest discoverDataSourcesRequest =
                     new DiscoverDataSourcesRequestR((PropertiesR) statementRequest.properties(),
                         discoverDataSourcesRestrictions);
@@ -703,11 +677,11 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.DISCOVER_XML_METADATA:
                 DiscoverXmlMetaDataRestrictionsR discoverXmlMetaDataRestrictions =
-                    new DiscoverXmlMetaDataRestrictionsR(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                    new DiscoverXmlMetaDataRestrictionsR(empty(), empty(), empty(), empty(),
+                        empty(), empty(), empty(), empty(), empty(),
+                        empty(), empty(), empty(), empty(), empty(),
+                        empty(), empty(), empty(), empty(), empty(),
+                        empty(), empty(), empty(), empty());
                 DiscoverXmlMetaDataRequest discoverXmlMetaDataRequest =
                     new DiscoverXmlMetaDataRequestR((PropertiesR) statementRequest.properties(),
                         discoverXmlMetaDataRestrictions);
@@ -720,9 +694,8 @@ public class OlapExecuteService implements ExecuteService {
         return new StatementResponseR(null, rowSet);
     }
 
-    private StatementResponse executeCalculatedFormula(Context context, UserPrincipal userPrincipal, RequestMetaData metaData, CalculatedFormula calculatedFormula) {
+    private StatementResponse executeCalculatedFormula(Connection connection, CalculatedFormula calculatedFormula) {
         Formula formula = calculatedFormula.getFormula();
-        Connection connection = context.getConnection(userPrincipal.roles());
         final Catalog schema = connection.getCatalog();
         final Cube cube = schema.lookupCube(calculatedFormula.getCubeName(), true);
         if (formula.isMember()) {
@@ -733,51 +706,40 @@ public class OlapExecuteService implements ExecuteService {
         return new StatementResponseR(null, null);
     }
 
-    private StatementResponse executeDrillThroughQuery(Context context, UserPrincipal userPrincipal, RequestMetaData metaData, StatementRequest statementRequest) {
+    private StatementResponse executeDrillThroughQuery( StatementRequest statementRequest, DrillThrough drillThrough) {
         Optional<String> tabFields = statementRequest.properties().tableFields();
 //        Optional<Boolean> advanced = statementRequest.properties().advancedFlag();
-        final boolean enableRowCount = context.getConfig().enableTotalCount();
+        Connection connection = drillThrough.getQuery().getConnection();
+        final boolean enableRowCount = connection.getContext().getConfig().enableTotalCount();
         final int[] rowCountSlot = enableRowCount ? new int[]{0} : null;
-        Connection connection = null;
         Statement statement;
         ResultSet resultSet = null;
         RelationalQueryMapping fact = null;
         RolapCube cube = null;
         ScenarioSession session = ScenarioSession.getWithoutCheck(statementRequest.sessionId());
         try {
-            connection = context.getConnection(new RolapConnectionPropsR(userPrincipal.roles()));
-            QueryComponent parseTree;
-            try {
-                parseTree =
-                    connection.parseStatement(statementRequest.command().statement());
-            } catch (OlapRuntimeException e) {
-                throw new RuntimeException(
-                    "mondrian gave exception while parsing query", e);
-            }
-            if (parseTree instanceof DrillThrough drillThrough) {
-                if (drillThrough.getQuery() != null && drillThrough.getQuery().getCube() != null &&
-                    drillThrough.getQuery().getCube() instanceof RolapCube rolapCube) {
-                    cube = rolapCube;
-                    Scenario scenario;
-                    if (session != null) {
-                        scenario = session.getScenario();
-                        connection.setScenario(scenario);
-                    } else {
-                    	session = ScenarioSession.create(statementRequest.sessionId());
-                    	scenario = drillThrough.getQuery().getConnection().createScenario();
-                    	drillThrough.getQuery().getConnection().setScenario(scenario);
-
-                    }
-                    if (connection.getScenario() != null) {
-                        scenario.setWriteBackTable(rolapCube.getWritebackTable());
-                        fact = rolapCube.getFact();
-                        writeBackService.modifyFact(rolapCube, scenario.getSessionValues());
-                    }
+            if (drillThrough.getQuery() != null && drillThrough.getQuery().getCube() != null &&
+                drillThrough.getQuery().getCube() instanceof RolapCube rolapCube) {
+                cube = rolapCube;
+                Scenario scenario;
+                if (session != null) {
+                    scenario = session.getScenario();
+                    connection.setScenario(scenario);
+                } else {
+                	session = ScenarioSession.create(statementRequest.sessionId());
+                	scenario = drillThrough.getQuery().getConnection().createScenario();
+                	drillThrough.getQuery().getConnection().setScenario(scenario);
+            
+                }
+                if (connection.getScenario() != null) {
+                    scenario.setWriteBackTable(rolapCube.getWritebackTable());
+                    fact = rolapCube.getFact();
+                    writeBackService.modifyFact(rolapCube, scenario.getSessionValues());
                 }
             }
             statement = connection.createStatement();
             resultSet = statement.executeQuery(
-                parseTree,
+            	drillThrough,
                 tabFields,
                 rowCountSlot);
             int rowCount = enableRowCount ? rowCountSlot[0] : -1;

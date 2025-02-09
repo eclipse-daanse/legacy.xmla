@@ -710,11 +710,6 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
     }
 
     @Override
-    public Scenario createScenario(List<String> roles) {
-        return null;
-    }
-
-    @Override
     public BasicContextConfig getConfig() {
         return testConfig;
     }
