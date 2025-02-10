@@ -48,7 +48,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessSchema;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
@@ -59,7 +59,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessSchemaGrantMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
@@ -1862,9 +1862,9 @@ class AggregationOnDistinctCountMeasuresTest {
               result.addAll(super.schemaAccessRoles(schema));
               result.add(AccessRoleMappingImpl.builder()
                   .withName("Role1")
-                  .withAccessSchemaGrants(List.of(
-                	AccessSchemaGrantMappingImpl.builder()
-                          .withAccess(AccessSchema.ALL)
+                  .withAccessCatalogGrants(List.of(
+                	AccessCatalogGrantMappingImpl.builder()
+                          .withAccess(AccessCatalog.ALL)
                           .withCubeGrant(List.of(
                         	 AccessCubeGrantMappingImpl.builder()
                                   .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))

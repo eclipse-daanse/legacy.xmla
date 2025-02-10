@@ -19,7 +19,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessSchema;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
@@ -30,7 +30,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessSchemaGrantMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberPropertyMappingImpl;
@@ -2001,9 +2001,9 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                 .withAccessRoles(List.of(
                 	AccessRoleMappingImpl.builder()
                         .withName("California manager")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                 	AccessCubeGrantMappingImpl.builder()
                                         .withCube(sales)
@@ -2052,9 +2052,9 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                         .build(),
                     AccessRoleMappingImpl.builder()
                         .withName("No HR Cube")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.ALL)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.ALL)
                                 .withCubeGrant(List.of(
                                 	AccessCubeGrantMappingImpl.builder()
                                         .withCube(hr)

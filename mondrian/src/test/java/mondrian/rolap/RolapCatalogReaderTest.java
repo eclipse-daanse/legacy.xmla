@@ -36,14 +36,14 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessSchema;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessDimensionGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessSchemaGrantMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -181,9 +181,9 @@ class RolapCatalogReaderTest {
                 result.addAll(super.schemaAccessRoles(catalogMapping));
                 result.add(AccessRoleMappingImpl.builder()
                     .withName("REG1")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))

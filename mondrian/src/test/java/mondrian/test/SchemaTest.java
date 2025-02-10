@@ -72,7 +72,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessSchema;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
@@ -82,7 +82,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessSchemaGrantMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationForeignKeyMappingImpl;
@@ -6227,7 +6227,7 @@ class SchemaTest {
                 result.addAll(super.schemaAccessRoles(schema));
                 result.add(AccessRoleMappingImpl.builder()
                     .withName("Role1")
-                    .withAccessSchemaGrants(List.of(AccessSchemaGrantMappingImpl.builder().build()))
+                    .withAccessCatalogGrants(List.of(AccessCatalogGrantMappingImpl.builder().build()))
                     .build());
                 return result;
             }
@@ -6244,7 +6244,7 @@ class SchemaTest {
         withSchema(context, TestInvalidSchemaAccess::new);
         assertQueryThrows(context, List.of("Role1"),
             "select from [Sales]",
-            "Cannot invoke \"org.eclipse.daanse.rolap.mapping.api.model.enums.AccessSchema.getValue()\" because the return value of \"org.eclipse.daanse.rolap.mapping.api.model.AccessSchemaGrantMapping.getAccess()\" is null");
+            "Cannot invoke \"org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog.getValue()\" because the return value of \"org.eclipse.daanse.rolap.mapping.api.model.AccessCatalogGrantMapping.getAccess()\" is null");
     }
 
     @ParameterizedTest
@@ -6341,10 +6341,10 @@ class SchemaTest {
                 result.addAll(super.schemaAccessRoles(schema));
                 result.add(role1 = AccessRoleMappingImpl.builder()
                     .withName("Role1")
-                    .withAccessSchemaGrants(List.of(AccessSchemaGrantMappingImpl.builder().withAccess(AccessSchema.ALL).build()))
+                    .withAccessCatalogGrants(List.of(AccessCatalogGrantMappingImpl.builder().withAccess(AccessCatalog.ALL).build()))
                     .build());
                 result.add(role2 = AccessRoleMappingImpl.builder().withName("Role2")
-                        .withAccessSchemaGrants(List.of(AccessSchemaGrantMappingImpl.builder().withAccess(AccessSchema.ALL).build()))
+                        .withAccessCatalogGrants(List.of(AccessCatalogGrantMappingImpl.builder().withAccess(AccessCatalog.ALL).build()))
                         .build());
                     result.add(role1Plus2 = AccessRoleMappingImpl.builder().withName("Role1Plus2")
                     	.withReferencedAccessRoles(List.of(
@@ -6407,10 +6407,10 @@ class SchemaTest {
                 result.addAll(super.schemaAccessRoles(schema));
                 result.add(role1 = AccessRoleMappingImpl.builder()
                     .withName("Role1")
-                    .withAccessSchemaGrants(List.of(AccessSchemaGrantMappingImpl.builder().withAccess(AccessSchema.ALL).build()))
+                    .withAccessCatalogGrants(List.of(AccessCatalogGrantMappingImpl.builder().withAccess(AccessCatalog.ALL).build()))
                     .build());
                 result.add(AccessRoleMappingImpl.builder().withName("Role1Plus2")
-                    .withAccessSchemaGrants(List.of(AccessSchemaGrantMappingImpl.builder().withAccess(AccessSchema.ALL).build()))
+                    .withAccessCatalogGrants(List.of(AccessCatalogGrantMappingImpl.builder().withAccess(AccessCatalog.ALL).build()))
                     .withReferencedAccessRoles(List.of(role1, role1))
                     .build());
                 return result;
@@ -6453,14 +6453,14 @@ class SchemaTest {
                 result.addAll(super.schemaAccessRoles(schema));
                 result.add(role1 = AccessRoleMappingImpl.builder()
                     .withName("Role1")
-                    .withAccessSchemaGrants(List.of(AccessSchemaGrantMappingImpl.builder().withAccess(AccessSchema.ALL).build()))
+                    .withAccessCatalogGrants(List.of(AccessCatalogGrantMappingImpl.builder().withAccess(AccessCatalog.ALL).build()))
                     .build());
                 result.add(role2 = AccessRoleMappingImpl.builder()
                     .withName("Role2")
-                    .withAccessSchemaGrants(List.of(AccessSchemaGrantMappingImpl.builder().withAccess(AccessSchema.ALL).build()))
+                    .withAccessCatalogGrants(List.of(AccessCatalogGrantMappingImpl.builder().withAccess(AccessCatalog.ALL).build()))
                     .build());
                 result.add(AccessRoleMappingImpl.builder().withName("Role1Plus2")
-                    .withAccessSchemaGrants(List.of(AccessSchemaGrantMappingImpl.builder().withAccess(AccessSchema.ALL).build()))
+                    .withAccessCatalogGrants(List.of(AccessCatalogGrantMappingImpl.builder().withAccess(AccessCatalog.ALL).build()))
                     .withReferencedAccessRoles(List.of(role1, role2))
                     .build());
                 return result;
@@ -11895,20 +11895,20 @@ class SchemaTest {
                 result.add(
                 	AccessRoleMappingImpl.builder()
                         .withName("admin")
-                        .withAccessSchemaGrants(
+                        .withAccessCatalogGrants(
                             List.of(
-                            AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.ALL)
+                            AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.ALL)
                                 .build()))
                         .build());
                 result.add(
                     AccessRoleMappingImpl.builder()
                         .withName("dev")
-                        .withAccessSchemaGrants(
+                        .withAccessCatalogGrants(
                             List.of(
-                                AccessSchemaGrantMappingImpl
+                                AccessCatalogGrantMappingImpl
                                     .builder()
-                                    .withAccess(AccessSchema.ALL)
+                                    .withAccess(AccessCatalog.ALL)
                                     .withCubeGrant(List.of(
                                         AccessCubeGrantMappingImpl.builder()
                                             .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))

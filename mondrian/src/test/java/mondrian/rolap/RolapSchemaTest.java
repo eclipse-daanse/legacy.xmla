@@ -50,14 +50,14 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessSchema;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessDimensionGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessSchemaGrantMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
@@ -132,8 +132,8 @@ class RolapCatalogTest {
     @Test
     void testCreateUnionRole_ThrowsException_WhenSchemaGrantsExist() {
     	AccessRoleMappingImpl role = AccessRoleMappingImpl.builder()
-    			.withAccessSchemaGrants(List.of(
-    					AccessSchemaGrantMappingImpl.builder().build()))
+    			.withAccessCatalogGrants(List.of(
+    					AccessCatalogGrantMappingImpl.builder().build()))
     			.withReferencedAccessRoles(List.of())
     			.build();
 
@@ -152,7 +152,7 @@ class RolapCatalogTest {
         final String roleName = "non-existing role name";
         AccessRoleMappingImpl usage = AccessRoleMappingImpl.builder()
         		.withName(roleName)
-        		.build();       
+        		.build();
 
         AccessRoleMappingImpl role = AccessRoleMappingImpl.builder().build();
         role.setReferencedAccessRoles(List.of(usage));
@@ -174,18 +174,18 @@ class RolapCatalogTest {
         schema = spy(schema);
         doNothing().when(schema)
             .handleCubeGrant(
-                any(RoleImpl.class), any( AccessCubeGrantMapping.class));        
+                any(RoleImpl.class), any( AccessCubeGrantMapping.class));
 
-        AccessSchemaGrantMappingImpl grant = AccessSchemaGrantMappingImpl.builder()
-        		.withAccess(AccessSchema.CUSTOM)
+        AccessCatalogGrantMappingImpl grant = AccessCatalogGrantMappingImpl.builder()
+        		.withAccess(AccessCatalog.CUSTOM)
         		.withCubeGrant(null)
         		.build();
-        
+
         grant.setCubeGrant(List.of(AccessCubeGrantMappingImpl.builder().build(), AccessCubeGrantMappingImpl.builder().build()));
 
         mondrian.olap.RoleImpl role = new mondrian.olap.RoleImpl();
 
-        schema.handleSchemaGrant(role, grant);
+        schema.handleCatalogGrant(role, grant);
         assertEquals(Access.CUSTOM, role.getAccess(schema));
         verify(schema, times(2))
             .handleCubeGrant(eq(role), any(AccessCubeGrantMapping.class));
@@ -198,7 +198,7 @@ class RolapCatalogTest {
         schema = spy(schema);
         doReturn(null).when(schema).lookupCube(anyString());
 
-        AccessCubeGrantMappingImpl grant = AccessCubeGrantMappingImpl.builder().build();        
+        AccessCubeGrantMappingImpl grant = AccessCubeGrantMappingImpl.builder().build();
         grant.setCube(PhysicalCubeMappingImpl.builder().withName("cube").build());
 
         try {
@@ -409,7 +409,7 @@ class RolapCatalogTest {
 
         AccessMemberGrantMappingImpl memberGrant = AccessMemberGrantMappingImpl.builder().withMember("member").withAccess(AccessMember.ALL).build();
 
-        HierarchyMappingImpl h = HierarchyMappingImpl.builder().build(); 
+        HierarchyMappingImpl h = HierarchyMappingImpl.builder().build();
         AccessHierarchyGrantMappingImpl grant = AccessHierarchyGrantMappingImpl.builder().build();
         grant.setAccess(AccessHierarchy.CUSTOM);
         grant.setRollupPolicyType(RollupPolicyType.FULL);

@@ -26,7 +26,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessSchema;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
@@ -35,7 +35,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessSchemaGrantMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
@@ -259,9 +259,9 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
         .withAccessRoles(List.of(
             AccessRoleMappingImpl.builder()
                 .withName("Test role")
-                .withAccessSchemaGrants(List.of(
-                	AccessSchemaGrantMappingImpl.builder()
-                        .withAccess(AccessSchema.NONE)
+                .withAccessCatalogGrants(List.of(
+                	AccessCatalogGrantMappingImpl.builder()
+                        .withAccess(AccessCatalog.NONE)
                         .withCubeGrant(List.of(
                         	AccessCubeGrantMappingImpl.builder()
                         		.withCube(testCube)

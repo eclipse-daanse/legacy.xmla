@@ -26,7 +26,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessSchema;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
@@ -35,7 +35,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessSchemaGrantMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
@@ -381,9 +381,9 @@ class NativeFilterMatchingTest extends BatchTestCase {
                 result.addAll(super.schemaAccessRoles(catalogMapping));
                 result.add(AccessRoleMappingImpl.builder()
                     .withName("test")
-                    .withAccessSchemaGrants(List.of(
-                    		AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    		AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                             		AccessCubeGrantMappingImpl.builder()
                                     .withCube(cube)

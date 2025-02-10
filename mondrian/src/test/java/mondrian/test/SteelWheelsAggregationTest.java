@@ -20,7 +20,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessSchema;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
@@ -33,7 +33,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AccessDimensionGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessSchemaGrantMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -170,7 +170,7 @@ class SteelWheelsAggregationTest {
 
     private CatalogMapping getSchemaWith(List<AccessRoleMappingImpl> roles) {
 
-    	return 
+    	return
     					CatalogMappingImpl.builder()
     		            .withName("SteelWheels")
     		            .withDescription("1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2")
@@ -190,9 +190,9 @@ class SteelWheelsAggregationTest {
         final CatalogMapping schema = getSchemaWith(
                 List.of(AccessRoleMappingImpl.builder()
                         .withName("Power User")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                 	AccessCubeGrantMappingImpl.builder()
                                         .withCube(customersCube)
@@ -241,9 +241,9 @@ class SteelWheelsAggregationTest {
         final CatalogMapping schema = getSchemaWith(
                 List.of(AccessRoleMappingImpl.builder()
                         .withName("Power User")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                 	AccessCubeGrantMappingImpl.builder()
                                         .withCube(customersCube)
@@ -291,16 +291,16 @@ class SteelWheelsAggregationTest {
            	 (List.of(
            		fooRole = AccessRoleMappingImpl.builder()
            			.withName("Foo")
-           			.withAccessSchemaGrants(List.of(
-           				AccessSchemaGrantMappingImpl.builder()
-           					.withAccess(AccessSchema.NONE)
+           			.withAccessCatalogGrants(List.of(
+           				AccessCatalogGrantMappingImpl.builder()
+           					.withAccess(AccessCatalog.NONE)
                             .build()))
                      .build(),
                 powerUserRole = AccessRoleMappingImpl.builder()
                      .withName("Power User")
-                     .withAccessSchemaGrants(List.of(
-                     	AccessSchemaGrantMappingImpl.builder()
-                             .withAccess(AccessSchema.NONE)
+                     .withAccessCatalogGrants(List.of(
+                     	AccessCatalogGrantMappingImpl.builder()
+                             .withAccess(AccessCatalog.NONE)
                              .withCubeGrant(List.of(
                              	AccessCubeGrantMappingImpl.builder()
                                      .withCube(customersCube)
@@ -356,9 +356,9 @@ class SteelWheelsAggregationTest {
             (List.of(
            		fooRole = AccessRoleMappingImpl.builder()
            			.withName("Foo")
-           			.withAccessSchemaGrants(List.of(
-           				AccessSchemaGrantMappingImpl.builder()
-           					.withAccess(AccessSchema.NONE)
+           			.withAccessCatalogGrants(List.of(
+           				AccessCatalogGrantMappingImpl.builder()
+           					.withAccess(AccessCatalog.NONE)
            					.withCubeGrant(List.of(
            							AccessCubeGrantMappingImpl.builder()
                                         .withCube(customersCube)
@@ -389,9 +389,9 @@ class SteelWheelsAggregationTest {
                      .build(),
                 powerUserRole = AccessRoleMappingImpl.builder()
                      .withName("Power User")
-                     .withAccessSchemaGrants(List.of(
-                     	AccessSchemaGrantMappingImpl.builder()
-                             .withAccess(AccessSchema.NONE)
+                     .withAccessCatalogGrants(List.of(
+                     	AccessCatalogGrantMappingImpl.builder()
+                             .withAccess(AccessCatalog.NONE)
                              .withCubeGrant(List.of(
                              	AccessCubeGrantMappingImpl.builder()
                                      .withCube(customersCube)

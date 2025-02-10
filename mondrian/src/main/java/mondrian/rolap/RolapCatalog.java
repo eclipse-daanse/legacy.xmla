@@ -87,7 +87,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.AccessDimensionGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessHierarchyGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessMemberGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.AccessSchemaGrantMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.AccessCatalogGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
@@ -516,8 +516,8 @@ public class RolapCatalog implements Catalog {
 		}
 
 		RoleImpl role = new RoleImpl();
-		for (AccessSchemaGrantMapping schemaGrantMapings : roleMapping.getAccessSchemaGrants()) {
-			handleSchemaGrant(role, schemaGrantMapings);
+		for (AccessCatalogGrantMapping catalogGrantMapings : roleMapping.getAccessCatalogGrants()) {
+			handleCatalogGrant(role, catalogGrantMapings);
 		}
 		role.makeImmutable();
 		return role;
@@ -525,7 +525,7 @@ public class RolapCatalog implements Catalog {
 
 	// package-local visibility for testing purposes
 	Role createUnionRole(AccessRoleMapping roleMapping) {
-		if (!roleMapping.getAccessSchemaGrants().isEmpty()) {
+		if (!roleMapping.getAccessCatalogGrants().isEmpty()) {
 			throw new RoleUnionGrantsException();
 		}
 
@@ -542,7 +542,7 @@ public class RolapCatalog implements Catalog {
 	}
 
 	// package-local visibility for testing purposes
-	void handleSchemaGrant(RoleImpl role, AccessSchemaGrantMapping schemaGrantMapings) {
+	void handleCatalogGrant(RoleImpl role, AccessCatalogGrantMapping schemaGrantMapings) {
 		role.grant(this, getAccess(schemaGrantMapings.getAccess().getValue(), schemaAllowed));
 		for (AccessCubeGrantMapping cubeGrant : schemaGrantMapings.getCubeGrants()) {
 			handleCubeGrant(role, cubeGrant);

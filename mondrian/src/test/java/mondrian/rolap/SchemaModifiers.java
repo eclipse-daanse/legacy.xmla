@@ -45,7 +45,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessSchema;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
@@ -59,7 +59,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AccessDimensionGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessSchemaGrantMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationForeignKeyMappingImpl;
@@ -126,9 +126,9 @@ public class SchemaModifiers {
             result.addAll(super.schemaAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
                 .withName("No_WA_State")
-                .withAccessSchemaGrants(List.of(
-                		AccessSchemaGrantMappingImpl.builder()
-                        .withAccess(AccessSchema.NONE)
+                .withAccessCatalogGrants(List.of(
+                		AccessCatalogGrantMappingImpl.builder()
+                        .withAccess(AccessCatalog.NONE)
                         .withCubeGrant(List.of(
                         	AccessCubeGrantMappingImpl.builder()
                                 .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -199,9 +199,9 @@ public class SchemaModifiers {
             result.addAll(super.schemaAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
                 .withName("Only_DF_State")
-                .withAccessSchemaGrants(List.of(
-                		AccessSchemaGrantMappingImpl.builder()
-                        .withAccess(AccessSchema.NONE)
+                .withAccessCatalogGrants(List.of(
+                		AccessCatalogGrantMappingImpl.builder()
+                        .withAccess(AccessCatalog.NONE)
                         .withCubeGrant(List.of(
                         	AccessCubeGrantMappingImpl.builder()
                                 .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -3659,9 +3659,9 @@ public class SchemaModifiers {
                     	.withAccessRoles(List.of(
                     		AccessRoleMappingImpl.builder()
                                 .withName("Role1")
-                                .withAccessSchemaGrants(List.of(
-                                    AccessSchemaGrantMappingImpl.builder()
-                                        .withAccess(AccessSchema.NONE)
+                                .withAccessCatalogGrants(List.of(
+                                    AccessCatalogGrantMappingImpl.builder()
+                                        .withAccess(AccessCatalog.NONE)
                                         .withCubeGrant(List.of(
                                         	AccessCubeGrantMappingImpl.builder()
                                                 .withCube(sales1Cube)
@@ -9116,9 +9116,9 @@ public class SchemaModifiers {
             result.addAll(super.schemaAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
                 .withName("Role1")
-                .withAccessSchemaGrants(List.of(
-                		AccessSchemaGrantMappingImpl.builder()
-                		.withAccess(AccessSchema.NONE)
+                .withAccessCatalogGrants(List.of(
+                		AccessCatalogGrantMappingImpl.builder()
+                		.withAccess(AccessCatalog.NONE)
                 		.withCubeGrant(List.of(
                 			AccessCubeGrantMappingImpl.builder()
                                 .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -13349,9 +13349,9 @@ public class SchemaModifiers {
             result.addAll(super.schemaAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
                 .withName("Role1")
-                .withAccessSchemaGrants(List.of(
-                	AccessSchemaGrantMappingImpl.builder()
-                		.withAccess(AccessSchema.NONE)
+                .withAccessCatalogGrants(List.of(
+                	AccessCatalogGrantMappingImpl.builder()
+                		.withAccess(AccessCatalog.NONE)
                 		.withCubeGrant(List.of(
                 			AccessCubeGrantMappingImpl.builder()
                 				.withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -13426,9 +13426,9 @@ public class SchemaModifiers {
             result.addAll(super.schemaAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
                 .withName("Role1")
-                .withAccessSchemaGrants(List.of(
-                	AccessSchemaGrantMappingImpl.builder()
-                		.withAccess(AccessSchema.NONE)
+                .withAccessCatalogGrants(List.of(
+                	AccessCatalogGrantMappingImpl.builder()
+                		.withAccess(AccessCatalog.NONE)
                 		.withCubeGrant(List.of(
                 			AccessCubeGrantMappingImpl.builder()
                 				.withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -13481,9 +13481,9 @@ public class SchemaModifiers {
 
             result.add(AccessRoleMappingImpl.builder()
                     .withName("Role2")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                    		.withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                    		.withAccess(AccessCatalog.NONE)
                     		.withCubeGrant(List.of(
                     			AccessCubeGrantMappingImpl.builder()
                     				.withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -13568,9 +13568,9 @@ public class SchemaModifiers {
             result.addAll(super.schemaAccessRoles(schema));
             result.add(roleUSAmanager = AccessRoleMappingImpl.builder()
                     .withName("USA manager")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -13652,9 +13652,9 @@ public class SchemaModifiers {
             result.addAll(super.schemaAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
                 .withName("Role1")
-                .withAccessSchemaGrants(List.of(
-                  	AccessSchemaGrantMappingImpl.builder()
-                         .withAccess(AccessSchema.NONE)
+                .withAccessCatalogGrants(List.of(
+                  	AccessCatalogGrantMappingImpl.builder()
+                         .withAccess(AccessCatalog.NONE)
                          .build()
                 ))
                 .build()
@@ -13663,9 +13663,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("Role2")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                        	.withAccess(AccessSchema.ALL)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                        	.withAccess(AccessCatalog.ALL)
                         	.withCubeGrant(List.of(
                         		AccessCubeGrantMappingImpl.builder()
                                 	.withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -13724,9 +13724,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("Role1")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                        	.withAccess(AccessSchema.ALL)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                        	.withAccess(AccessCatalog.ALL)
                         	.withCubeGrant(List.of(
                         		AccessCubeGrantMappingImpl.builder()
                                 	.withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -13756,9 +13756,9 @@ public class SchemaModifiers {
             result.add(
                     AccessRoleMappingImpl.builder()
                         .withName("Role2")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .build()
                         ))
                         .build()
@@ -13792,9 +13792,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("Role1")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                        	.withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                        	.withAccess(AccessCatalog.NONE)
                         	.withCubeGrant(List.of(
                         		AccessCubeGrantMappingImpl.builder()
                                 	.withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -13848,9 +13848,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("California manager")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                        	.withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                        	.withAccess(AccessCatalog.NONE)
                         	.withCubeGrant(List.of(
                         		AccessCubeGrantMappingImpl.builder()
                                 	.withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -13916,9 +13916,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("Buggy Role")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                        	.withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                        	.withAccess(AccessCatalog.NONE)
                         	.withCubeGrant(List.of(
                         		AccessCubeGrantMappingImpl.builder()
                                 	.withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_HR))
@@ -13987,9 +13987,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("role1")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                        	.withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                        	.withAccess(AccessCatalog.NONE)
                         	.withCubeGrant(List.of(
                         		AccessCubeGrantMappingImpl.builder()
                                 	.withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_WAREHOUSE))
@@ -14067,9 +14067,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("VCRole")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                        	.withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                        	.withAccess(AccessCatalog.NONE)
                         	.withCubeGrant(List.of(
                         		AccessCubeGrantMappingImpl.builder()
                                 	.withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_VIRTIAL_WAREHOUSE_AND_SALES))
@@ -14149,9 +14149,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("role2")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                        	.withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                        	.withAccess(AccessCatalog.NONE)
                         	.withCubeGrant(List.of(
                         		AccessCubeGrantMappingImpl.builder()
                                 	.withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -14374,9 +14374,9 @@ public class SchemaModifiers {
                     uniqueName.replace("Customers", "Customers3");
                 AccessRoleMappingImpl r = AccessRoleMappingImpl.builder()
                     .withName(name)
-                    .withAccessSchemaGrants(List.of(
-                        AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                        AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                                 AccessCubeGrantMappingImpl.builder()
                                     .withAccess(AccessCube.ALL)
@@ -14491,9 +14491,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("REG1")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_HR))
@@ -14566,9 +14566,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("CTO")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -14648,9 +14648,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -14704,9 +14704,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -14734,9 +14734,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role2")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES_RAGGED))
@@ -14785,9 +14785,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -14886,9 +14886,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -14917,9 +14917,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role2")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -14948,9 +14948,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role3")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                 	AccessCubeGrantMappingImpl.builder()
                                     	.withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15018,9 +15018,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.ALL)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.ALL)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15050,9 +15050,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role2")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.ALL)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.ALL)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15109,9 +15109,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Bacon")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15165,9 +15165,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15229,9 +15229,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15259,9 +15259,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role2")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15322,9 +15322,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Admin")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15400,9 +15400,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("test")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15490,9 +15490,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("dev")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.ALL)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.ALL)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15559,9 +15559,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("dev")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.ALL)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.ALL)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15623,9 +15623,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Admin")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                     AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15686,9 +15686,9 @@ public class SchemaModifiers {
             result.add(
                 AccessRoleMappingImpl.builder()
                     .withName("Role1")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15756,9 +15756,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                     .withName("Role1")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15827,9 +15827,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                     .withName("Role1")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -15907,9 +15907,9 @@ public class SchemaModifiers {
             result.add(
                 AccessRoleMappingImpl.builder()
                     .withName("California manager")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -16071,9 +16071,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                     .withName("test")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube(tinySalesCube)
@@ -16133,9 +16133,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                     .withName("noBaseCubes")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.ALL)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.ALL)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -16195,9 +16195,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                     .withName("Role1")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.ALL)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.ALL)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -16218,9 +16218,9 @@ public class SchemaModifiers {
             result.add(
                 AccessRoleMappingImpl.builder()
                     .withName("Role2")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.ALL)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.ALL)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -16619,9 +16619,9 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                     .withName("MR")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube(sales1Cube)
@@ -16649,9 +16649,9 @@ public class SchemaModifiers {
             result.add(
                 AccessRoleMappingImpl.builder()
                     .withName("DBPentUsers")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .build()
                     ))
                     .build()
@@ -16685,9 +16685,9 @@ public class SchemaModifiers {
             result.add(
                     AccessRoleMappingImpl.builder()
                     .withName("Role1")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -16763,9 +16763,9 @@ public class SchemaModifiers {
             result.add(
                     AccessRoleMappingImpl.builder()
                     .withName("Role1")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -16816,9 +16816,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role2")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                 	AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -16917,9 +16917,9 @@ public class SchemaModifiers {
             result.add(
                     AccessRoleMappingImpl.builder()
                     .withName("Role1")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -16970,9 +16970,9 @@ public class SchemaModifiers {
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role2")
-                        .withAccessSchemaGrants(List.of(
-                        	AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                        .withAccessCatalogGrants(List.of(
+                        	AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                 	AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -17049,9 +17049,9 @@ public class SchemaModifiers {
             result.add(
                     AccessRoleMappingImpl.builder()
                     .withName("Role1")
-                    .withAccessSchemaGrants(List.of(
-                    		AccessSchemaGrantMappingImpl.builder()
-                                .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    		AccessCatalogGrantMappingImpl.builder()
+                                .withAccess(AccessCatalog.NONE)
                                 .withCubeGrant(List.of(
                                 	AccessCubeGrantMappingImpl.builder()
                                         .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES))
@@ -17268,9 +17268,9 @@ public class SchemaModifiers {
                     .withAccessRoles(List.of(
                     	AccessRoleMappingImpl.builder()
                             .withName("Administrator")
-                            .withAccessSchemaGrants(List.of(
-                            	AccessSchemaGrantMappingImpl.builder()
-                                    .withAccess(AccessSchema.NONE)
+                            .withAccessCatalogGrants(List.of(
+                            	AccessCatalogGrantMappingImpl.builder()
+                                    .withAccess(AccessCatalog.NONE)
                                     .withCubeGrant(List.of(
                                     	AccessCubeGrantMappingImpl.builder()
                                             .withCube(warehouse1Cube)
@@ -17330,9 +17330,9 @@ public class SchemaModifiers {
             result.add(
                     AccessRoleMappingImpl.builder()
                     .withName("Sales Ragged")
-                    .withAccessSchemaGrants(List.of(
-                    		AccessSchemaGrantMappingImpl.builder()
-                                        .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                    		AccessCatalogGrantMappingImpl.builder()
+                                        .withAccess(AccessCatalog.NONE)
                                         .withCubeGrant(List.of(
                                         	AccessCubeGrantMappingImpl.builder()
                                                 .withCube((CubeMappingImpl) look(FoodmartMappingSupplier.CUBE_SALES_RAGGED))
@@ -19167,9 +19167,9 @@ public class SchemaModifiers {
                         .withAccessRoles(List.of(
                         	AccessRoleMappingImpl.builder()
                                 .withName("dev")
-                                .withAccessSchemaGrants(List.of(
-                                    AccessSchemaGrantMappingImpl.builder()
-                                        .withAccess(AccessSchema.ALL)
+                                .withAccessCatalogGrants(List.of(
+                                    AccessCatalogGrantMappingImpl.builder()
+                                        .withAccess(AccessCatalog.ALL)
                                         .withCubeGrant(List.of(
                                         	AccessCubeGrantMappingImpl.builder()
                                                 .withCube(steelWheelsSalesCube)
@@ -19197,8 +19197,8 @@ public class SchemaModifiers {
                                                 .build()
                                         ))
                                         .build(),
-                                    AccessSchemaGrantMappingImpl.builder()
-                                        .withAccess(AccessSchema.ALL)
+                                    AccessCatalogGrantMappingImpl.builder()
+                                        .withAccess(AccessCatalog.ALL)
                                         .withCubeGrant(List.of(
                                         	AccessCubeGrantMappingImpl.builder()
                                                 .withCube(steelWheelsSalesCube)
@@ -19226,9 +19226,9 @@ public class SchemaModifiers {
                                 .build(),
                             AccessRoleMappingImpl.builder()
                                 .withName("cto")
-                                .withAccessSchemaGrants(List.of(
-                                	AccessSchemaGrantMappingImpl.builder()
-                                        .withAccess(AccessSchema.ALL)
+                                .withAccessCatalogGrants(List.of(
+                                	AccessCatalogGrantMappingImpl.builder()
+                                        .withAccess(AccessCatalog.ALL)
                                         .withCubeGrant(List.of(
                                         	AccessCubeGrantMappingImpl.builder()
                                                 .withCube(steelWheelsSalesCube)
@@ -19258,9 +19258,9 @@ public class SchemaModifiers {
                                 .build(),
                                 AccessRoleMappingImpl.builder()
                                     .withName("Admin")
-                                    .withAccessSchemaGrants(List.of(
-                                        AccessSchemaGrantMappingImpl.builder()
-                                            .withAccess(AccessSchema.ALL)
+                                    .withAccessCatalogGrants(List.of(
+                                        AccessCatalogGrantMappingImpl.builder()
+                                            .withAccess(AccessCatalog.ALL)
                                             .withCubeGrant(List.of(
                                                 AccessCubeGrantMappingImpl.builder()
                                                     .withCube(steelWheelsSalesCube)
@@ -20278,18 +20278,18 @@ public class SchemaModifiers {
             result.add(
             	AccessRoleMappingImpl.builder()
                     .withName("CUBE_SCHEMA_ALL")
-                    .withAccessSchemaGrants(List.of(
-                    	AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.ALL)
+                    .withAccessCatalogGrants(List.of(
+                    	AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.ALL)
                             .build()
                     ))
                     .build());
             result.add(
                 AccessRoleMappingImpl.builder()
                     .withName("CUBE_SALES_MINIMAL")
-                    .withAccessSchemaGrants(List.of(
-                        AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                        AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                             	AccessCubeGrantMappingImpl.builder()
                                     .withCube((CubeMappingImpl) look(SteelwheelsSupplier.steelWheelsSalesCube))
@@ -20308,9 +20308,9 @@ public class SchemaModifiers {
             result.add(
                 AccessRoleMappingImpl.builder()
                     .withName("DIM_MARKETAREA_MARKET_800")
-                    .withAccessSchemaGrants(List.of(
-                        AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                        AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                                 	AccessCubeGrantMappingImpl.builder()
                                 	.withCube((CubeMappingImpl) look(SteelwheelsSupplier.steelWheelsSalesCube))
@@ -20338,9 +20338,9 @@ public class SchemaModifiers {
             result.add(
                 AccessRoleMappingImpl.builder()
                     .withName("DIM_MARKETAREA_MARKET_850")
-                    .withAccessSchemaGrants(List.of(
-                        AccessSchemaGrantMappingImpl.builder()
-                            .withAccess(AccessSchema.NONE)
+                    .withAccessCatalogGrants(List.of(
+                        AccessCatalogGrantMappingImpl.builder()
+                            .withAccess(AccessCatalog.NONE)
                             .withCubeGrant(List.of(
                                 	AccessCubeGrantMappingImpl.builder()
                                 	.withCube((CubeMappingImpl) look(SteelwheelsSupplier.steelWheelsSalesCube))
@@ -20498,9 +20498,9 @@ public class SchemaModifiers {
                     .withAccessRoles(List.of(
                     	AccessRoleMappingImpl.builder()
                             .withName("Administrator")
-                            .withAccessSchemaGrants(List.of(
-                            	AccessSchemaGrantMappingImpl.builder()
-                                    .withAccess(AccessSchema.ALL)
+                            .withAccessCatalogGrants(List.of(
+                            	AccessCatalogGrantMappingImpl.builder()
+                                    .withAccess(AccessCatalog.ALL)
                                     .withCubeGrant(List.of(
                                         AccessCubeGrantMappingImpl.builder()
                                             .withCube(customersCube)
@@ -20512,9 +20512,9 @@ public class SchemaModifiers {
                             .build(),
                         AccessRoleMappingImpl.builder()
                             .withName("Power User")
-                            .withAccessSchemaGrants(List.of(
-                                AccessSchemaGrantMappingImpl.builder()
-                                    .withAccess(AccessSchema.NONE)
+                            .withAccessCatalogGrants(List.of(
+                                AccessCatalogGrantMappingImpl.builder()
+                                    .withAccess(AccessCatalog.NONE)
                                     .withCubeGrant(List.of(
                                     	AccessCubeGrantMappingImpl.builder()
                                             .withCube(customersCube)
@@ -20700,9 +20700,9 @@ public class SchemaModifiers {
                     .withAccessRoles(List.of(
                     	administratorRole = AccessRoleMappingImpl.builder()
                             .withName("Administrator")
-                            .withAccessSchemaGrants(List.of(
-                            	AccessSchemaGrantMappingImpl.builder()
-                                    .withAccess(AccessSchema.ALL)
+                            .withAccessCatalogGrants(List.of(
+                            	AccessCatalogGrantMappingImpl.builder()
+                                    .withAccess(AccessCatalog.ALL)
                                     .withCubeGrant(List.of(
                                         AccessCubeGrantMappingImpl.builder()
                                             .withCube(customersCube)
@@ -20715,18 +20715,18 @@ public class SchemaModifiers {
 
                         fooRole = AccessRoleMappingImpl.builder()
                             .withName("Foo")
-                            .withAccessSchemaGrants(List.of(
-                            	AccessSchemaGrantMappingImpl.builder()
-                            		.withAccess(AccessSchema.NONE)
+                            .withAccessCatalogGrants(List.of(
+                            	AccessCatalogGrantMappingImpl.builder()
+                            		.withAccess(AccessCatalog.NONE)
                                     .build()
                             ))
                             .build(),
 
                         powerUserRole = AccessRoleMappingImpl.builder()
                             .withName("Power User")
-                            .withAccessSchemaGrants(List.of(
-                                AccessSchemaGrantMappingImpl.builder()
-                                    .withAccess(AccessSchema.NONE)
+                            .withAccessCatalogGrants(List.of(
+                                AccessCatalogGrantMappingImpl.builder()
+                                    .withAccess(AccessCatalog.NONE)
                                     .withCubeGrant(List.of(
                                     	AccessCubeGrantMappingImpl.builder()
                                             .withCube(customersCube)
@@ -21015,18 +21015,18 @@ public class SchemaModifiers {
                     .withAccessRoles(List.of(
                         AccessRoleMappingImpl.builder()
                             .withName("Administrator")
-                            .withAccessSchemaGrants(List.of(
-                            	AccessSchemaGrantMappingImpl.builder()
-                                    .withAccess(AccessSchema.ALL)
+                            .withAccessCatalogGrants(List.of(
+                            	AccessCatalogGrantMappingImpl.builder()
+                                    .withAccess(AccessCatalog.ALL)
                                     .build()
                             ))
                             .build(),
 
                         AccessRoleMappingImpl.builder()
                             .withName("Report Author")
-                            .withAccessSchemaGrants(List.of(
-                                AccessSchemaGrantMappingImpl.builder()
-                                	.withAccess(AccessSchema.CUSTOM)
+                            .withAccessCatalogGrants(List.of(
+                                AccessCatalogGrantMappingImpl.builder()
+                                	.withAccess(AccessCatalog.CUSTOM)
                                 	.withCubeGrant(List.of(
                                         AccessCubeGrantMappingImpl.builder()
                                             .withCube(rolesTest)
