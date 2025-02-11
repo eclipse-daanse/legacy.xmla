@@ -60,6 +60,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.AggregationMeasureFactCountMap
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationNameMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationTableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
@@ -73,7 +74,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.MeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.NamedSetMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
@@ -170,16 +170,14 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     }
 
     private void writeCubeMatrixDiagram(FileWriter writer, RolapContext context) {
-        context.getCatalogMapping().getSchemas().forEach(s -> {
-            writeCubeMatrixDiagram(writer, context, s);
-        });
+        writeCubeMatrixDiagram(writer, context, context.getCatalogMapping());
     }
 
-    private void writeCubeMatrixDiagram(FileWriter writer, Context context, SchemaMapping schema) {
+    private void writeCubeMatrixDiagram(FileWriter writer, Context context, CatalogMapping catalog) {
         try {
-            String schemaName = schema.getName();
+            String catalogName = catalog.getName();
             writer.write("### Cube Matrix for ");
-            writer.write(schemaName);
+            writer.write(catalogName);
             writer.write(":");
             writer.write("""
 
@@ -194,10 +192,10 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                 quadrant-4 Wide
                 """);
             writer.write(ENTER);
-            for (CubeMapping cube : schema.getCubes()) {
+            for (CubeMapping cube : catalog.getCubes()) {
             	if (cube instanceof PhysicalCubeMapping c) {
             		String cubeName = prepare(c.getName());
-            		double x = getLevelsCount(schema, c) / MAX_LEVEL;
+            		double x = getLevelsCount(catalog, c) / MAX_LEVEL;
             		double y = getFactCount(context, c) / MAX_ROW;
             		x = x > 1 ? 1 : x;
             		y = y > 1 ? 1 : y;
@@ -279,15 +277,15 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 	}
 
 
-	private int getLevelsCount(SchemaMapping schema, CubeMapping c) {
+	private int getLevelsCount(CatalogMapping catalog, CubeMapping c) {
         int res = 0;
         for (DimensionConnectorMapping d : c.getDimensionConnectors()) {
-            res = res + getLevelsCount1(schema, d);
+            res = res + getLevelsCount1(catalog, d);
         }
         return res;
     }
 
-    private int getLevelsCount1(SchemaMapping schema, DimensionConnectorMapping d) {
+    private int getLevelsCount1(CatalogMapping catalog, DimensionConnectorMapping d) {
         int res = 0;
             if (d.getDimension()!= null &&  d.getDimension().getHierarchies() != null) {
                 for (HierarchyMapping h : d.getDimension().getHierarchies()) {
@@ -320,20 +318,19 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
     private List<String> schemaTablesConnections(RolapContext context, List<String> missedTableNames) {
         List<String> result = new ArrayList<>();
-        context.getCatalogMapping().getSchemas().forEach(schema -> {
-            result.addAll(schema.getCubes().stream().flatMap(c -> cubeTablesConnections(schema, c, missedTableNames).stream()).toList());
-        });
+        CatalogMapping catalog = context.getCatalogMapping();
+        result.addAll(catalog.getCubes().stream().flatMap(c -> cubeTablesConnections(catalog, c, missedTableNames).stream()).toList());
         return result;
     }
 
-    private List<String> cubeTablesConnections(SchemaMapping schema, CubeMapping cube, List<String> missedTableNames) {
+    private List<String> cubeTablesConnections(CatalogMapping catalog, CubeMapping cube, List<String> missedTableNames) {
 
         List<String> result = new ArrayList<>();
         if (cube instanceof PhysicalCubeMapping c) {
         Optional<String> optionalFactTable = getFactTableName(c.getQuery());
         if (optionalFactTable.isPresent()) {
             result.addAll(getFactTableConnections(c.getQuery(), missedTableNames));
-            result.addAll(dimensionsTablesConnections(schema, c.getDimensionConnectors(),
+            result.addAll(dimensionsTablesConnections(catalog, c.getDimensionConnectors(),
                 optionalFactTable.get(), missedTableNames));
         }
         }
@@ -341,28 +338,28 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         return result;
     }
 
-    private List<String> cubeDimensionConnections(SchemaMapping schema, CubeMapping c, int cubeIndex) {
+    private List<String> cubeDimensionConnections(CatalogMapping catalog, CubeMapping c, int cubeIndex) {
         List<String> result = new ArrayList<>();
         String cubeName = new StringBuilder("c").append(cubeIndex).toString();
         if (cubeName != null) {
-            result.addAll(dimensionsConnections(schema, c.getDimensionConnectors(), cubeName, cubeIndex));
+            result.addAll(dimensionsConnections(catalog, c.getDimensionConnectors(), cubeName, cubeIndex));
         }
 
         return result;
     }
 
-    private List<String> virtualCubeDimensionConnections(SchemaMapping schema, VirtualCubeMapping c, int cubeIndex) {
+    private List<String> virtualCubeDimensionConnections(CatalogMapping catalog, VirtualCubeMapping c, int cubeIndex) {
         List<String> result = new ArrayList<>();
         String cubeName = new StringBuilder("c").append(cubeIndex).toString();
         if (cubeName != null) {
-            result.addAll(dimensionsConnections(schema, c.getDimensionConnectors(), cubeName, cubeIndex));
+            result.addAll(dimensionsConnections(catalog, c.getDimensionConnectors(), cubeName, cubeIndex));
         }
 
         return result;
     }
 
     private List<String> dimensionsConnections(
-        SchemaMapping schema,
+        CatalogMapping catalog,
         List<? extends DimensionConnectorMapping> dimensionUsageOrDimensions,
         String cubeName,
         int cubeIndex
@@ -371,7 +368,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         if (dimensionUsageOrDimensions != null) {
             int i = 0;
             for (DimensionConnectorMapping d : dimensionUsageOrDimensions) {
-                result.addAll(dimensionConnections(schema, d, cubeName, cubeIndex, i));
+                result.addAll(dimensionConnections(catalog, d, cubeName, cubeIndex, i));
                 i++;
             }
         }
@@ -379,7 +376,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     }
 
     private List<String> dimensionConnections(
-        SchemaMapping schema,
+        CatalogMapping catalog,
         DimensionConnectorMapping dc,
         String cubeName,
         int cubeIndex,
@@ -435,39 +432,39 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     }
 
     private List<String> dimensionsTablesConnections(
-        SchemaMapping schema,
+        CatalogMapping catalog,
         List<? extends DimensionConnectorMapping> dimensionUsageOrDimensions,
         String fact,
         List<String> missedTableNames
     ) {
         if (dimensionUsageOrDimensions != null) {
-            return dimensionUsageOrDimensions.stream().flatMap(d -> dimensionTablesConnections(schema, d, fact, missedTableNames).stream()).toList();
+            return dimensionUsageOrDimensions.stream().flatMap(d -> dimensionTablesConnections(catalog, d, fact, missedTableNames).stream()).toList();
         }
         return List.of();
     }
 
-    private List<String> dimensionTablesConnections(SchemaMapping schema, DimensionConnectorMapping d, String fact,
+    private List<String> dimensionTablesConnections(CatalogMapping catalog, DimensionConnectorMapping d, String fact,
                                                     List<String> missedTableNames) {
 
-        return hierarchiesTablesConnections(schema, d.getDimension().getHierarchies(), fact, getColumnName(d.getForeignKey()), missedTableNames);
+        return hierarchiesTablesConnections(catalog, d.getDimension().getHierarchies(), fact, getColumnName(d.getForeignKey()), missedTableNames);
 
     }
 
     private List<String> hierarchiesTablesConnections(
-        SchemaMapping schema,
+        CatalogMapping catalog,
         List<? extends HierarchyMapping> hierarchies,
         String fact,
         String foreignKey,
         List<String> missedTableNames
     ) {
         if (hierarchies != null) {
-            return hierarchies.stream().flatMap(h -> hierarchyTablesConnections(schema, h, fact, foreignKey, missedTableNames).stream()).toList();
+            return hierarchies.stream().flatMap(h -> hierarchyTablesConnections(catalog, h, fact, foreignKey, missedTableNames).stream()).toList();
         }
         return List.of();
     }
 
     private List<String> hierarchyTablesConnections(
-        SchemaMapping schema,
+        CatalogMapping catalog,
         HierarchyMapping h,
         String fact,
         String foreignKey,
@@ -501,26 +498,24 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 
 
 	private void writeVerifyer(FileWriter writer, RolapContext context) {
-        context.getCatalogMapping().getSchemas().forEach(schema -> {
-            writeSchemaVerifyer(writer, schema, context);
-        });
+        writeSchemaVerifyer(writer, context.getCatalogMapping(), context);
 
     }
 
-    private void writeSchemaVerifyer(FileWriter writer, SchemaMapping schema, RolapContext context) {
+    private void writeSchemaVerifyer(FileWriter writer, CatalogMapping catalog, RolapContext context) {
         try {
         	List<? extends DatabaseSchema> dbschemas = context.getCatalogMapping().getDbschemas();
             List<VerificationResult> verifyResult = new ArrayList<>();
             List<org.eclipse.daanse.rdb.structure.check.VerificationResult> dbVerifyResult = new ArrayList<>();
             for (Verifyer verifyer : verifyers) {
-                verifyResult.addAll(verifyer.verify(schema));
+                verifyResult.addAll(verifyer.verify(catalog));
             }
             for (CheckService checkService : checkServices) {
                 DatabaseCatalog databaseCatalog = DatabaseCatalogImpl.builder().withSchemas((List<DatabaseSchemaImpl>) dbschemas).build();
                 dbVerifyResult.addAll(checkService.verify(databaseCatalog, context.getDataSource()));
             }
             if (!verifyResult.isEmpty() || !dbVerifyResult.isEmpty()) {
-                writer.write("## Validation result for schema " + schema.getName());
+                writer.write("## Validation result for catalog " + catalog.getName());
                 writer.write(ENTER);
                 for (Level l : Level.values()) {
                     Map<String, VerificationResult> map = getVerificationResultMap(verifyResult, l.name());
@@ -608,48 +603,42 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     }
 
     private void writeSchemasAsXML(FileWriter writer, RolapContext context) {
-        context.getCatalogMapping().getSchemas().forEach(schema -> {
-            writeSchemaAsXML(writer, schema);
-        });
+            writeSchemaAsXML(writer, context.getCatalogMapping());
     }
 
     private void writeSchemas(FileWriter writer, RolapContext context) {
-        context.getCatalogMapping().getSchemas().forEach(schema -> {
-            writeSchema(writer, schema);
-        });
+        writeSchema(writer, context.getCatalogMapping());
     }
 
     private void writeCubeDiagram(FileWriter writer, RolapContext context) {
-        context.getCatalogMapping().getSchemas().forEach(schema -> {
-            writeSchemaDiagram(writer, schema, context);
-        });
+        writeSchemaDiagram(writer, context.getCatalogMapping(), context);
     }
 
-    private void writeSchemaDiagram(FileWriter writer, SchemaMapping schema, RolapContext context) {
-        List<? extends CubeMapping> cubes =  schema.getCubes();
+    private void writeSchemaDiagram(FileWriter writer, CatalogMapping catalog, RolapContext context) {
+        List<? extends CubeMapping> cubes =  catalog.getCubes();
         int i = 0;
         if (cubes != null && !cubes.isEmpty()) {
             for (CubeMapping c : cubes) {
             	if (c instanceof PhysicalCubeMapping pc) {
-            		writePhysicalCubeDiagram(writer, schema, pc, i, context);
+            		writePhysicalCubeDiagram(writer, catalog, pc, i, context);
             	}
             	if (c instanceof VirtualCubeMapping vc) {
-            		writeVirtualCubeDiagram(writer, schema, vc, i);
+            		writeVirtualCubeDiagram(writer, catalog, vc, i);
             	}
                 i++;
             }
         }
     }
 
-    private void writeSchemaAsXML(FileWriter writer, SchemaMapping schema) {
+    private void writeSchemaAsXML(FileWriter writer, CatalogMapping catalog) {
         try {
-            String schemaName = schema.getName();
+            String catalogName = catalog.getName();
             writer.write("### Schema ");
-            writer.write(schemaName);
+            writer.write(catalogName);
             writer.write(" as XML: ");
             writer.write(ENTER);
             //TODO
-            //SerializerModifier serializerModifier = new SerializerModifier(schema);
+            //SerializerModifier serializerModifier = new SerializerModifier(catalog);
             //writer.write(serializerModifier.getXML());
             writer.write(ENTER);
         } catch (IOException e) {
@@ -657,18 +646,18 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         }
     }
 
-    private void writeSchema(FileWriter writer, SchemaMapping schema) {
+    private void writeSchema(FileWriter writer, CatalogMapping catalog) {
         try {
-            String schemaName = schema.getName();
+            String catalogName = catalog.getName();
             writer.write("### Schema ");
-            writer.write(schemaName);
+            writer.write(catalogName);
             writer.write(" : ");
             writer.write(ENTER);
-            if (schema.getDocumentation() != null && schema.getDocumentation().getValue() != null) {
-                writer.write(schema.getDocumentation().getValue());
+            if (catalog.getDocumentation() != null && catalog.getDocumentation().getValue() != null) {
+                writer.write(catalog.getDocumentation().getValue());
                 writer.write(ENTER);
             }
-            String cubes = schema.getCubes().stream().map(c -> c.getName())
+            String cubes = catalog.getCubes().stream().map(c -> c.getName())
                 .collect(Collectors.joining(", "));
             writer.write("---");
             writer.write(ENTER);
@@ -679,9 +668,9 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
             writer.write(cubes);
             writer.write(ENTER);
             writer.write(ENTER);
-            writeCubeList(writer, schema.getCubes());
+            writeCubeList(writer, catalog.getCubes());
             //write roles
-            writeRoles(writer, schema.getAccessRoles());
+            writeRoles(writer, catalog.getAccessRoles());
             //write database
 
         } catch (IOException e) {
@@ -749,9 +738,9 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         }
     }
 
-    private void writePhysicalCubeDiagram(FileWriter writer, SchemaMapping schema, PhysicalCubeMapping cube, int index, RolapContext context) {
+    private void writePhysicalCubeDiagram(FileWriter writer, CatalogMapping catalog, PhysicalCubeMapping cube, int index, RolapContext context) {
         try {
-            List<String> connections = cubeDimensionConnections(schema, cube, index);
+            List<String> connections = cubeDimensionConnections(catalog, cube, index);
             if (cube.getName() != null) {
                 String tableName = new StringBuilder("c").append(index).append("[\"").append(cube.getName()).append("\"]").toString();
                 String cubeName = cube.getName();
@@ -834,7 +823,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                    writer.write("}");
                    writer.write(ENTER);
 
-                   writeDimensionPartDiagram(writer, schema, cube, index);
+                   writeDimensionPartDiagram(writer, catalog, cube, index);
 
                    for (String c : connections) {
                        writer.write(c);
@@ -845,14 +834,14 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                    writer.write("---");
                    writer.write(ENTER);
                    
-                   writeAggregationSection(writer, schema, cube, context);
+                   writeAggregationSection(writer, catalog, cube, context);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void writeAggregationSection(FileWriter writer, SchemaMapping schema, PhysicalCubeMapping cube,
+    private void writeAggregationSection(FileWriter writer, CatalogMapping catalog, PhysicalCubeMapping cube,
     		RolapContext context) {
     	Optional<TableQueryMapping> tableQuery = getFactTableQuery(cube);
         if (!tableQuery.isPresent() && tableQuery.get().getAggregationTables() != null) {
@@ -957,9 +946,9 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         return Optional.empty();
     }
 
-    private void writeVirtualCubeDiagram(FileWriter writer, SchemaMapping schema, VirtualCubeMapping virtualCube, int index) {
+    private void writeVirtualCubeDiagram(FileWriter writer, CatalogMapping catalog, VirtualCubeMapping virtualCube, int index) {
         try {
-            List<String> connections = virtualCubeDimensionConnections(schema, virtualCube, index);
+            List<String> connections = virtualCubeDimensionConnections(catalog, virtualCube, index);
             if (virtualCube.getName() != null) {
                 String tableName = new StringBuilder("c").append(index).append("[\"")
                     .append(virtualCube.getName()).append("\"]").toString();
@@ -993,7 +982,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                 for (MeasureMapping mm : virtualCube.getReferencedMeasures()) {
                     String description = EMPTY_STRING;
 					String cube = EMPTY_STRING;
-					Optional<CubeMapping> oCubeSource = lookupCube(schema, mm);
+					Optional<CubeMapping> oCubeSource = lookupCube(catalog, mm);
 					if (oCubeSource.isPresent()) {
 					    cube = oCubeSource.get().getName() != null ? oCubeSource.get().getName() : EMPTY_STRING;
 					}
@@ -1062,7 +1051,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                 writer.write("}");
                 writer.write(ENTER);
 
-                writeVirtualCubeDimensionPartDiagram(writer, schema, virtualCube, index);
+                writeVirtualCubeDimensionPartDiagram(writer, catalog, virtualCube, index);
 
                 for (String c : connections) {
                     writer.write(c);
@@ -1095,22 +1084,22 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         return "_";
     }
 
-    private void writeDimensionPartDiagram(FileWriter writer, SchemaMapping schema, CubeMapping cube, int cubeIndex) {
+    private void writeDimensionPartDiagram(FileWriter writer, CatalogMapping catalog, CubeMapping cube, int cubeIndex) {
         int i = 0;
         for (DimensionConnectorMapping d : cube.getDimensionConnectors()) {
-            writeDimensionPartDiagram(writer, schema, d, cubeIndex, i);
+            writeDimensionPartDiagram(writer, catalog, d, cubeIndex, i);
             i++;
         }
     }
 
-    private void writeDimensionPartDiagram(FileWriter writer, SchemaMapping schema, DimensionConnectorMapping d, int cubeIndex, int dimIndex) {
+    private void writeDimensionPartDiagram(FileWriter writer, CatalogMapping catalog, DimensionConnectorMapping d, int cubeIndex, int dimIndex) {
        writeDimensionPartDiagram(writer, d, cubeIndex, dimIndex);
     }
 
-    private void writeVirtualCubeDimensionPartDiagram(FileWriter writer, SchemaMapping schema, VirtualCubeMapping cube, int cubeIndex) {
+    private void writeVirtualCubeDimensionPartDiagram(FileWriter writer, CatalogMapping catalog, VirtualCubeMapping cube, int cubeIndex) {
         int i = 0;
         for (DimensionConnectorMapping d : cube.getDimensionConnectors()) {
-            writeDimensionPartDiagram(writer, schema, d, cubeIndex, i);
+            writeDimensionPartDiagram(writer, catalog, d, cubeIndex, i);
             i++;
         }
     }
@@ -1571,9 +1560,9 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
             .toList();
     }
 
-	private Optional<CubeMapping> lookupCube(SchemaMapping schema,
+	private Optional<CubeMapping> lookupCube(CatalogMapping catalog,
 			MeasureMapping mappingMeasure) {
-			for (CubeMapping cube : schema.getCubes()) {
+			for (CubeMapping cube : catalog.getCubes()) {
 			    if (cube instanceof PhysicalCubeMapping pc) {
 				if (pc.getMeasureGroups() != null) {
 					for (MeasureGroupMapping measureGroupMapping : pc.getMeasureGroups()) {
