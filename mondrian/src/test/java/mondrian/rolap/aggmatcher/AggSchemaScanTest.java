@@ -16,16 +16,13 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
-import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextArgumentsProvider;
@@ -34,7 +31,6 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.rolap.RolapConnection;
-import mondrian.rolap.RolapConnectionPropsR;
 
 /**
   * Test if AggSchemaScan and AggCatalogScan properties are used in JdbcSchema loadTablesOfType
@@ -58,8 +54,8 @@ class AggSchemaScanTest {
       sqlConnection = dataSource.getConnection();
 
       CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
-      List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
-      DatabaseSchema databaseSchema = schemas.getFirst();
+      List<? extends DatabaseSchemaMapping> schemas = catalogMapping.getDbschemas();
+      DatabaseSchemaMapping databaseSchema = schemas.getFirst();
       
       //RolapConnectionPropsR rc =  new RolapConnectionPropsR(List.of(), false, Locale.getDefault(), 0l, TimeUnit.SECONDS, Optional.of("bogus"),Optional.of("bogus"));
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
@@ -147,8 +143,8 @@ class AggSchemaScanTest {
         return;
       }
       CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
-      List<? extends DatabaseSchema> schemas = catalogMapping.getDbschemas();
-      DatabaseSchema databaseSchema = schemas.getFirst();
+      List<? extends DatabaseSchemaMapping> schemas = catalogMapping.getDbschemas();
+      DatabaseSchemaMapping databaseSchema = schemas.getFirst();
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
       //The foodmart schema has 26 tables in module.
       assertEquals( 26, jdbcSchema.getTablesMap().size() );

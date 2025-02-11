@@ -15,14 +15,15 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,8 +33,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.rolap.RolapStar.Column;
 import mondrian.rolap.util.RelationUtil;
-
-import java.util.List;
 
 /**
  * Unit test for {@link RolapStar}.
@@ -83,11 +82,11 @@ class RolapStarTest {
     void testCloneRelationWithFilteredTable(Context context) {
       RolapStarForTests rs = getStar(context.getConnectionWithDefaultRole(), "sales");
       TableQueryMappingImpl original = TableQueryMappingImpl.builder()
-    		  .withTable(((Builder) PhysicalTableImpl.builder().withName("TestTable")
-    				  .withsSchema(DatabaseSchemaImpl.builder().withName("Sechema").build())).build())
+    		  .withTable(((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("TestTable")
+    				  .withsSchema(DatabaseSchemaMappingImpl.builder().withName("Sechema").build())).build())
     		  .withAlias("Alias")
-    		  .withSqlWhereExpression(SQLMappingImpl.builder()
-    				  .withStatement("Alias.clicked = 'true'")
+    		  .withSqlWhereExpression(SqlStatementMappingImpl.builder()
+    				  .withSql("Alias.clicked = 'true'")
     				  .withDialects(List.of("generic"))
     				  .build())
     		  .build();
@@ -100,7 +99,7 @@ class RolapStarTest {
       assertEquals("NewAlias", RelationUtil.getAlias(cloned));
       assertEquals("TestTable", cloned.getTable().getName());
       assertNotNull(cloned.getSqlWhereExpression());
-      assertEquals("NewAlias.clicked = 'true'", cloned.getSqlWhereExpression().getStatement());
+      assertEquals("NewAlias.clicked = 'true'", cloned.getSqlWhereExpression().getSql());
   }
 
    //Below there are tests for mondrian.rolap.RolapStar.ColumnComparator

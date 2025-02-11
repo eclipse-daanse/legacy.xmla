@@ -16,8 +16,6 @@ package mondrian.rolap.aggmatcher;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
@@ -26,12 +24,14 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationForeignKeyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 
@@ -80,45 +80,45 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
 
      */
 
-    protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+    protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
     	//## ColumnNames: prod_id,store_id,amount
     	//## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2)
-        ColumnImpl store_id_cheques = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
-        ColumnImpl prod_id_cheques = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
-        ColumnImpl amount_cheques = ColumnImpl.builder().withName("amount").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
-        PhysicalTableImpl cheques = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("cheques")
+        ColumnMappingImpl store_id_cheques = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
+        ColumnMappingImpl prod_id_cheques = ColumnMappingImpl.builder().withName("prod_id").withType("INTEGER").build();
+        ColumnMappingImpl amount_cheques = ColumnMappingImpl.builder().withName("amount").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
+        PhysicalTableMappingImpl cheques = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("cheques")
                 .withColumns(List.of(
                         store_id_cheques, prod_id_cheques, amount_cheques
                         ))).build();
         //## ColumnNames: store_id,value
         //## ColumnTypes: INTEGER,DECIMAL(10,2)
-        ColumnImpl store_id_store_x = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
-        ColumnImpl value_store_x = ColumnImpl.builder().withName("store_id").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
-        PhysicalTableImpl store_x = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("store_x")
+        ColumnMappingImpl store_id_store_x = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
+        ColumnMappingImpl value_store_x = ColumnMappingImpl.builder().withName("store_id").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
+        PhysicalTableMappingImpl store_x = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("store_x")
                 .withColumns(List.of(
                         store_id_store_x, value_store_x
                         ))).build();
         //## ColumnNames: prod_id,name
         //## ColumnTypes: INTEGER,VARCHAR(30)
-        ColumnImpl prod_id_product_x = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
-        ColumnImpl name_product_x = ColumnImpl.builder().withName("name").withType("VARCHAR").withCharOctetLength(30).build();
-        PhysicalTableImpl product_x = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("product_x")
+        ColumnMappingImpl prod_id_product_x = ColumnMappingImpl.builder().withName("prod_id").withType("INTEGER").build();
+        ColumnMappingImpl name_product_x = ColumnMappingImpl.builder().withName("name").withType("VARCHAR").withCharOctetLength(30).build();
+        PhysicalTableMappingImpl product_x = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("product_x")
                 .withColumns(List.of(
                         prod_id_product_x, name_product_x
                         ))).build();
         //## TableName: agg_lp_xxx_cheques
         //## ColumnNames: store_id,amount_AVG,FACT_COUNT
         //## ColumnTypes: INTEGER,DECIMAL(10,2),INTEGER
-        ColumnImpl storeId = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
-        ColumnImpl amountAvg = ColumnImpl.builder().withName("amount_AVG").withType("DECIMAL").withCharOctetLength(10).withDecimalDigits(2).build();
-        ColumnImpl factCount = ColumnImpl.builder().withName("FACT_COUNT").withType("INTEGER").build();
-        PhysicalTableImpl aggLpXxxCheques = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("agg_lp_xxx_cheques")
+        ColumnMappingImpl storeId = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
+        ColumnMappingImpl amountAvg = ColumnMappingImpl.builder().withName("amount_AVG").withType("DECIMAL").withCharOctetLength(10).withDecimalDigits(2).build();
+        ColumnMappingImpl factCount = ColumnMappingImpl.builder().withName("FACT_COUNT").withType("INTEGER").build();
+        PhysicalTableMappingImpl aggLpXxxCheques = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("agg_lp_xxx_cheques")
                 .withColumns(List.of(
                 		storeId, amountAvg, factCount  
                         ))).build();
         
         List<CubeMapping> result = new ArrayList<>();
-        result.addAll(super.schemaCubes(schema));
+        result.addAll(super.catalogCubes(schema));
         result.add(PhysicalCubeMappingImpl.builder()
             .withName("Cheques")
             .withQuery(TableQueryMappingImpl.builder().withTable(cheques)

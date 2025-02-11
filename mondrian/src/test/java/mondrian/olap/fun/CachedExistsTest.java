@@ -365,9 +365,9 @@ class CachedExistsTest{
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("Alternate Sales")
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())

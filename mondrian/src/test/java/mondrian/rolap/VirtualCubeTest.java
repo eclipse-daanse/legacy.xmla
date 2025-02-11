@@ -95,9 +95,9 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
                     .withName("Sales vs Warehouse")
                     .withDimensionConnectors(List.of(
@@ -143,9 +143,9 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
                     .withName("Sales vs Warehouse")
                     .withDefaultMeasure((MemberMappingImpl) look(FoodmartMappingSupplier.CALCULATED_MEMBER_PROFIT))
@@ -202,9 +202,9 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
                     .withName("Sales vs Warehouse")
                     //.withDefaultMeasure("Profit Error")
@@ -263,9 +263,9 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
                     .withName("Sales vs Warehouse")
                     //.withDefaultMeasure("Profit Error")
@@ -315,9 +315,9 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
                     .withName("Sales vs Warehouse")
                     .withDefaultMeasure((MemberMappingImpl) look(FoodmartMappingSupplier.CALCULATED_MEMBER_PROFIT))
@@ -386,9 +386,9 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
                     .withName("Sales vs Warehouse")
                     .withDimensionConnectors(List.of(
@@ -524,10 +524,10 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             	PhysicalCubeMappingImpl warehouseDefaultUSA;
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(
                   warehouseDefaultUSA = PhysicalCubeMappingImpl.builder()
                     .withName("Warehouse (Default USA)")
@@ -695,9 +695,9 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
                     .withName("Warehouse and Sales Member Visibility")
                     .withDimensionConnectors(List.of(
@@ -823,10 +823,10 @@ class VirtualCubeTest extends BatchTestCase {
                 super(catalog);
             }
 
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             	MeasureMappingImpl unitsShipped;
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(PhysicalCubeMappingImpl.builder()
                     .withName("Warehouse No Cache")
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.INVENTORY_FACKT_1997_TABLE).build())
@@ -1344,9 +1344,9 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
                     .withName("Sales vs HR")
                     .withDimensionConnectors(List.of(
@@ -1420,9 +1420,9 @@ class VirtualCubeTest extends BatchTestCase {
             }
 
             @Override
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
                     .withName("Sales vs Warehouse")
                     .withDefaultMeasure((MemberMappingImpl) look(FoodmartMappingSupplier.MEASURE_UNIT_SALES))
@@ -1608,9 +1608,9 @@ class VirtualCubeTest extends BatchTestCase {
                 super(catalog);
             }
 
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
                     .withName("Warehouse and Sales2")
                     .withDefaultMeasure((MemberMappingImpl) look(FoodmartMappingSupplier.MEASURE_STORE_SALES))
@@ -1684,9 +1684,9 @@ class VirtualCubeTest extends BatchTestCase {
             public TestBugMondrian322aModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(VirtualCubeMappingImpl.builder()
                     .withName("Warehouse and Sales2")
                     .withDefaultMeasure((MemberMappingImpl) look(FoodmartMappingSupplier.MEASURE_STORE_SALES))
@@ -1755,11 +1755,11 @@ class VirtualCubeTest extends BatchTestCase {
                 super(catalog);
             }
 
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             	PhysicalCubeMappingImpl testStore;
             	MeasureMappingImpl storeSqftMeasure;
                 List<CubeMapping> result = new ArrayList<>();
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 result.add(
                 	testStore = PhysicalCubeMappingImpl.builder()
                     .withName("TestStore")

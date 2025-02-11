@@ -23,7 +23,6 @@ import java.lang.reflect.Proxy;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -34,26 +33,26 @@ import java.util.function.Consumer;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
-import org.eclipse.daanse.rdb.structure.api.model.Row;
-import org.eclipse.daanse.rdb.structure.api.model.RowValue;
-import org.eclipse.daanse.rdb.structure.pojo.SqlStatementImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.RowMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.RowValueMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -545,9 +544,9 @@ public class RolapUtil {
             columnTypes.add(inlineTable.getTable().getColumns().get(i).getType());
         }
         List<String[]> valueList = new ArrayList<>();
-        for (Row row : inlineTable.getTable().getRows()) {
+        for (RowMapping row : inlineTable.getTable().getRows()) {
             String[] values = new String[columnCount];
-            for (RowValue value : row.getRowValues()) {
+            for (RowValueMapping value : row.getRowValues()) {
                 final int columnOrdinal = columnNames.indexOf(value.getColumn().getName());
                 if (columnOrdinal < 0) {
                     throw Util.newError(
@@ -559,10 +558,10 @@ public class RolapUtil {
         }
         SqlSelectQueryMappingImpl view = SqlSelectQueryMappingImpl.builder()
         		.withAlias(getAlias(inlineTable))
-        		.withSql(SqlViewImpl.builder()
+        		.withSql(SqlViewMappingImpl.builder()
         				//TODO
         				.withSqlStatements(List.of(
-        					SqlStatementImpl.builder()
+        					SqlStatementMappingImpl.builder()
         					.withDialects(List.of("generic"))
         					.withSql(dialect.generateInline(columnNames, columnTypes, valueList).toString())
         					.build()
@@ -683,12 +682,12 @@ public class RolapUtil {
       }
       // Add SQL filter to the key
       if (!Util.isNull(table) && table != null && !Util.isNull(table.getSqlWhereExpression())
-          && !Util.isBlank(table.getSqlWhereExpression().getStatement()))
+          && !Util.isBlank(table.getSqlWhereExpression().getSql()))
       {
         for (String dialect : table.getSqlWhereExpression().getDialects()) {
             rlStarKey.add(dialect);
         }
-        rlStarKey.add(table.getSqlWhereExpression().getStatement());
+        rlStarKey.add(table.getSqlWhereExpression().getSql());
       }
       return Collections.unmodifiableList(rlStarKey);
     }

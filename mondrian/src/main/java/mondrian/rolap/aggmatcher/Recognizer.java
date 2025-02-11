@@ -28,18 +28,19 @@ import java.util.TreeMap;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.recorder.MessageRecorder;
-import mondrian.rolap.RolapColumn;
 import mondrian.rolap.HierarchyUsage;
 import mondrian.rolap.RolapAggregator;
+import mondrian.rolap.RolapCatalog;
+import mondrian.rolap.RolapColumn;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapLevel;
-import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.Utils;
 import mondrian.rolap.sql.SqlQuery;
@@ -542,7 +543,7 @@ public abstract class Recognizer {
                         // Search through the notSeenForeignKeys list
                         // making sure that this HierarchyUsage's
                         // foreign key is not in the list.
-                    	org.eclipse.daanse.rdb.structure.api.model.Column foreignKey = hierarchyUsage.getForeignKey();
+                    	ColumnMapping foreignKey = hierarchyUsage.getForeignKey();
                         boolean b = foreignKey == null
                             || inNotSeenForeignKeys(
                             foreignKey,
@@ -564,7 +565,7 @@ public abstract class Recognizer {
      * foreign keys.
      */
     boolean inNotSeenForeignKeys(
-    	org.eclipse.daanse.rdb.structure.api.model.Column foreignKey,
+    	ColumnMapping foreignKey,
         List<JdbcSchema.Table.Column.Usage> notSeenForeignKeys
     ) {
         for (JdbcSchema.Table.Column.Usage usage : notSeenForeignKeys) {

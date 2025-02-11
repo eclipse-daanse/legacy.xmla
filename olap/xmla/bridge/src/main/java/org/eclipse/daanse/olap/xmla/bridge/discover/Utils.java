@@ -43,10 +43,10 @@ import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.result.Property;
 import org.eclipse.daanse.olap.api.result.Property.TypeFlag;
-import org.eclipse.daanse.rdb.structure.api.model.PhysicalTable;
-import org.eclipse.daanse.rdb.structure.api.model.SystemTable;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.PhysicalTableMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.SystemTableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;
@@ -573,7 +573,7 @@ public class Utils {
                 List<? extends DbTable> tables = dbSchema.getDbTables();
                 if (tables != null) {
                     for (DbTable table : tables) {
-                        if (table instanceof PhysicalTable || table instanceof SystemTable) {
+                        if (table instanceof PhysicalTableMapping || table instanceof SystemTableMapping) {
                             String tableName = table.getName();
                             result.add(new  DbSchemaTablesResponseRowR(
                             Optional.of(catalogName),

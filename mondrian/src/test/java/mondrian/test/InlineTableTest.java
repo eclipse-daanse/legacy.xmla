@@ -18,18 +18,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
-import org.eclipse.daanse.rdb.structure.pojo.InlineTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.RowImpl;
-import org.eclipse.daanse.rdb.structure.pojo.RowValueImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.InlineTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
@@ -37,6 +35,8 @@ import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.RowMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.RowValueMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -65,17 +65,17 @@ class InlineTableTest {
             }
 
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("Numeric").build();
-                ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("String").withCharOctetLength(20).build();
-                InlineTableImpl t = InlineTableImpl.builder()
+                ColumnMappingImpl promoId = ColumnMappingImpl.builder().withName("promo_id").withType("Numeric").build();
+                ColumnMappingImpl promoName = ColumnMappingImpl.builder().withName("promo_name").withType("String").withCharOctetLength(20).build();
+                InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                 .withColumns(List.of(promoId, promoName))
                 .withRows(List.of(
-                       RowImpl.builder().withRowValues(List.of(
-                            RowValueImpl.builder().withColumn(promoId).withValue("0").build(),
-                            RowValueImpl.builder().withColumn(promoName).withValue("Promo0").build())).build(),
-                       RowImpl.builder().withRowValues(List.of(
-                               RowValueImpl.builder().withColumn(promoId).withValue("1").build(),
-                               RowValueImpl.builder().withColumn(promoName).withValue("Promo1").build())).build()
+                       RowMappingImpl.builder().withRowValues(List.of(
+                            RowValueMappingImpl.builder().withColumn(promoId).withValue("0").build(),
+                            RowValueMappingImpl.builder().withColumn(promoName).withValue("Promo0").build())).build(),
+                       RowMappingImpl.builder().withRowValues(List.of(
+                               RowValueMappingImpl.builder().withColumn(promoId).withValue("1").build(),
+                               RowValueMappingImpl.builder().withColumn(promoName).withValue("Promo1").build())).build()
                 ))
                 .build();
 
@@ -204,17 +204,17 @@ class InlineTableTest {
                 super(catalog);
             }
 
-            private static final ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("Integer").build();
-            private static final ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("String").withCharOctetLength(20).build();
-            private static final InlineTableImpl t = InlineTableImpl.builder()
+            private static final ColumnMappingImpl promoId = ColumnMappingImpl.builder().withName("promo_id").withType("Integer").build();
+            private static final ColumnMappingImpl promoName = ColumnMappingImpl.builder().withName("promo_name").withType("String").withCharOctetLength(20).build();
+            private static final InlineTableMappingImpl t = InlineTableMappingImpl.builder()
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
-                   RowImpl.builder().withRowValues(List.of(
-                        RowValueImpl.builder().withColumn(promoId).withValue("0").build(),
-                        RowValueImpl.builder().withColumn(promoName).withValue("First promo").build())).build(),
-                   RowImpl.builder().withRowValues(List.of(
-                           RowValueImpl.builder().withColumn(promoId).withValue("1").build(),
-                           RowValueImpl.builder().withColumn(promoName).withValue("Second promo").build())).build()
+                   RowMappingImpl.builder().withRowValues(List.of(
+                        RowValueMappingImpl.builder().withColumn(promoId).withValue("0").build(),
+                        RowValueMappingImpl.builder().withColumn(promoName).withValue("First promo").build())).build(),
+                   RowMappingImpl.builder().withRowValues(List.of(
+                           RowValueMappingImpl.builder().withColumn(promoId).withValue("1").build(),
+                           RowValueMappingImpl.builder().withColumn(promoName).withValue("Second promo").build())).build()
             ))
             .build();
 
@@ -356,21 +356,21 @@ class InlineTableTest {
             }
 
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                ColumnImpl nationName = ColumnImpl.builder().withName("nation_name").withType("String").withCharOctetLength(20).build();
-                ColumnImpl nationShortcode = ColumnImpl.builder().withName("nation_shortcode").withType("String").withCharOctetLength(20).build();
-                InlineTableImpl t = InlineTableImpl.builder()
+                ColumnMappingImpl nationName = ColumnMappingImpl.builder().withName("nation_name").withType("String").withCharOctetLength(20).build();
+                ColumnMappingImpl nationShortcode = ColumnMappingImpl.builder().withName("nation_shortcode").withType("String").withCharOctetLength(20).build();
+                InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                 .withName("nation")
                 .withColumns(List.of(nationName, nationShortcode))
                 .withRows(List.of(
-                       RowImpl.builder().withRowValues(List.of(
-                            RowValueImpl.builder().withColumn(nationName).withValue("USA").build(),
-                            RowValueImpl.builder().withColumn(nationShortcode).withValue("US").build())).build(),
-                       RowImpl.builder().withRowValues(List.of(
-                               RowValueImpl.builder().withColumn(nationName).withValue("Mexico").build(),
-                               RowValueImpl.builder().withColumn(nationShortcode).withValue("MX").build())).build(),
-                       RowImpl.builder().withRowValues(List.of(
-                               RowValueImpl.builder().withColumn(nationName).withValue("Canada").build(),
-                               RowValueImpl.builder().withColumn(nationShortcode).withValue("CA").build())).build()
+                       RowMappingImpl.builder().withRowValues(List.of(
+                            RowValueMappingImpl.builder().withColumn(nationName).withValue("USA").build(),
+                            RowValueMappingImpl.builder().withColumn(nationShortcode).withValue("US").build())).build(),
+                       RowMappingImpl.builder().withRowValues(List.of(
+                               RowValueMappingImpl.builder().withColumn(nationName).withValue("Mexico").build(),
+                               RowValueMappingImpl.builder().withColumn(nationShortcode).withValue("MX").build())).build(),
+                       RowMappingImpl.builder().withRowValues(List.of(
+                               RowValueMappingImpl.builder().withColumn(nationName).withValue("Canada").build(),
+                               RowValueMappingImpl.builder().withColumn(nationShortcode).withValue("CA").build())).build()
                 ))
                 .build();
             	List<CubeMapping> result = new ArrayList<>();
@@ -542,33 +542,33 @@ class InlineTableTest {
 
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                ColumnImpl nationName = ColumnImpl.builder().withName("nation_name").withType("String").withCharOctetLength(20).build();
-                ColumnImpl nationShortcode = ColumnImpl.builder().withName("nation_shortcode").withType("String").withCharOctetLength(20).build();
-                InlineTableImpl t = InlineTableImpl.builder()
+                ColumnMappingImpl nationName = ColumnMappingImpl.builder().withName("nation_name").withType("String").withCharOctetLength(20).build();
+                ColumnMappingImpl nationShortcode = ColumnMappingImpl.builder().withName("nation_shortcode").withType("String").withCharOctetLength(20).build();
+                InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                 .withColumns(List.of(nationName, nationShortcode))
                 .withRows(List.of(
-                       RowImpl.builder().withRowValues(List.of(
-                            RowValueImpl.builder().withColumn(nationName).withValue("USA").build(),
-                            RowValueImpl.builder().withColumn(nationShortcode).withValue("US").build())).build(),
-                       RowImpl.builder().withRowValues(List.of(
-                               RowValueImpl.builder().withColumn(nationName).withValue("Mexico").build(),
-                               RowValueImpl.builder().withColumn(nationShortcode).withValue("MX").build())).build(),
-                       RowImpl.builder().withRowValues(List.of(
-                               RowValueImpl.builder().withColumn(nationName).withValue("Canada").build(),
-                               RowValueImpl.builder().withColumn(nationShortcode).withValue("CA").build())).build()
+                       RowMappingImpl.builder().withRowValues(List.of(
+                            RowValueMappingImpl.builder().withColumn(nationName).withValue("USA").build(),
+                            RowValueMappingImpl.builder().withColumn(nationShortcode).withValue("US").build())).build(),
+                       RowMappingImpl.builder().withRowValues(List.of(
+                               RowValueMappingImpl.builder().withColumn(nationName).withValue("Mexico").build(),
+                               RowValueMappingImpl.builder().withColumn(nationShortcode).withValue("MX").build())).build(),
+                       RowMappingImpl.builder().withRowValues(List.of(
+                               RowValueMappingImpl.builder().withColumn(nationName).withValue("Canada").build(),
+                               RowValueMappingImpl.builder().withColumn(nationShortcode).withValue("CA").build())).build()
                 ))
                 .build();
-                ColumnImpl id = ColumnImpl.builder().withName("id").withType("Numeric").build();
-                ColumnImpl date = ColumnImpl.builder().withName("date").withType("Date").build();
-                InlineTableImpl tt = InlineTableImpl.builder()
+                ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withType("Numeric").build();
+                ColumnMappingImpl date = ColumnMappingImpl.builder().withName("date").withType("Date").build();
+                InlineTableMappingImpl tt = InlineTableMappingImpl.builder()
                 .withColumns(List.of(id, date))
                 .withRows(List.of(
-                       RowImpl.builder().withRowValues(List.of(
-                            RowValueImpl.builder().withColumn(id).withValue("1").build(),
-                            RowValueImpl.builder().withColumn(date).withValue("2008-04-29").build())).build(),
-                       RowImpl.builder().withRowValues(List.of(
-                               RowValueImpl.builder().withColumn(id).withValue("2").build(),
-                               RowValueImpl.builder().withColumn(date).withValue("2007-01-20").build())).build()
+                       RowMappingImpl.builder().withRowValues(List.of(
+                            RowValueMappingImpl.builder().withColumn(id).withValue("1").build(),
+                            RowValueMappingImpl.builder().withColumn(date).withValue("2008-04-29").build())).build(),
+                       RowMappingImpl.builder().withRowValues(List.of(
+                               RowValueMappingImpl.builder().withColumn(id).withValue("2").build(),
+                               RowValueMappingImpl.builder().withColumn(date).withValue("2007-01-20").build())).build()
                 ))
                 .build();
                 List<CubeMapping> result = new ArrayList<>();

@@ -23,7 +23,6 @@ import java.util.function.Function;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
@@ -34,6 +33,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationPatternMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationTableMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -355,7 +355,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         ((TestConfig)context.getConfig()).setDisableCaching(true);
         prepareContext(context);
-        ColumnImpl notExist = ColumnImpl.builder().withName("not_exist").withType("INTEGER").build();
+        ColumnMappingImpl notExist = ColumnMappingImpl.builder().withName("not_exist").withType("INTEGER").build();
         List<AggregationTableMappingImpl> aggTables = List.of(
             AggregationNameMappingImpl.builder()
                 .withName(AggMeasureFactCountTestModifier.aggC6FactCsv2016)
@@ -508,7 +508,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         ((TestConfig)context.getConfig()).setDisableCaching(true);
         prepareContext(context);
-        ColumnImpl notExist = ColumnImpl.builder().withName("not_exist").withType("INTEGER").build();
+        ColumnMappingImpl notExist = ColumnMappingImpl.builder().withName("not_exist").withType("INTEGER").build();
         List<AggregationTableMappingImpl> aggTables = List.of(
             AggregationNameMappingImpl.builder()
                 .withName(AggMeasureFactCountTestModifier.aggC6FactCsv2016)

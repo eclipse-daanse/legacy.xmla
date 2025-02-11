@@ -18,14 +18,14 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.BasicContextConfig;
-import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -249,7 +249,7 @@ class RolapCubeHierarchyTest {
     String rolapHierarchy_uniqueName = "TheDimUniqueName";
     Level[] rolapHierarchy_levels = new Level[]{};
     TableQueryMapping rolapHierarchy_relation = mock(TableQueryMapping.class);
-    PhysicalTableImpl table = mock(PhysicalTableImpl.class);
+    PhysicalTableMappingImpl table = mock(PhysicalTableMappingImpl.class);
     doReturn("TableName").when(table).getName();
     doReturn(table).when(rolapHierarchy_relation).getTable();
     String subName = null;

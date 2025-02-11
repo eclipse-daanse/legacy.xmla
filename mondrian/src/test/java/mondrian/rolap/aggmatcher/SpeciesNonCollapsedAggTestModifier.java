@@ -16,30 +16,28 @@ package mondrian.rolap.aggmatcher;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
-import org.eclipse.daanse.rdb.structure.api.model.Table;
-import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
@@ -48,7 +46,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 
@@ -57,42 +55,42 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
 	//## TableName: DIM_SPECIES
 	//## ColumnNames: FAMILY_ID,GENUS_ID,SPECIES_ID,SPECIES_NAME
 	//## ColumnTypes: INTEGER,INTEGER,INTEGER,VARCHAR(30)
-	ColumnImpl familyIdDimSpecies = ColumnImpl.builder().withName("FAMILY_ID").withType("INTEGER").build();
-	ColumnImpl genisIdDimSpecies = ColumnImpl.builder().withName("GENUS_ID").withType("INTEGER").build();
-	ColumnImpl speciesIdDimSpecies = ColumnImpl.builder().withName("SPECIES_ID").withType("INTEGER").build();
-	ColumnImpl speciesNameDimSpecies = ColumnImpl.builder().withName("SPECIES_NAME").withType("VARCHAR").withCharOctetLength(30).build();
-    PhysicalTableImpl dimSpecies = ((Builder) PhysicalTableImpl.builder().withName("DIM_SPECIES")
+	ColumnMappingImpl familyIdDimSpecies = ColumnMappingImpl.builder().withName("FAMILY_ID").withType("INTEGER").build();
+	ColumnMappingImpl genisIdDimSpecies = ColumnMappingImpl.builder().withName("GENUS_ID").withType("INTEGER").build();
+	ColumnMappingImpl speciesIdDimSpecies = ColumnMappingImpl.builder().withName("SPECIES_ID").withType("INTEGER").build();
+	ColumnMappingImpl speciesNameDimSpecies = ColumnMappingImpl.builder().withName("SPECIES_NAME").withType("VARCHAR").withCharOctetLength(30).build();
+    PhysicalTableMappingImpl dimSpecies = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("DIM_SPECIES")
             .withColumns(List.of(familyIdDimSpecies, genisIdDimSpecies, speciesIdDimSpecies, speciesNameDimSpecies))).build();
     //## TableName: DIM_FAMILY
     //## ColumnNames: FAMILY_ID,FAMILY_NAME
     //## ColumnTypes: INTEGER,VARCHAR(30)
-    ColumnImpl familyIdDimFamily = ColumnImpl.builder().withName("FAMILY_ID").withType("INTEGER").build();
-    ColumnImpl familyNameDimFamily = ColumnImpl.builder().withName("FAMILY_NAME").withType("VARCHAR").withCharOctetLength(30).build();
-    PhysicalTableImpl dimFamily = ((Builder) PhysicalTableImpl.builder().withName("DIM_FAMILY")
+    ColumnMappingImpl familyIdDimFamily = ColumnMappingImpl.builder().withName("FAMILY_ID").withType("INTEGER").build();
+    ColumnMappingImpl familyNameDimFamily = ColumnMappingImpl.builder().withName("FAMILY_NAME").withType("VARCHAR").withCharOctetLength(30).build();
+    PhysicalTableMappingImpl dimFamily = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("DIM_FAMILY")
             .withColumns(List.of(familyIdDimFamily, familyNameDimFamily))).build();
     //## TableName: DIM_GENUS
     //## ColumnNames: FAMILY_ID,GENUS_ID,GENUS_NAME
     //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30)
-    ColumnImpl familyIdDimGenus = ColumnImpl.builder().withName("FAMILY_ID").withType("INTEGER").build();
-    ColumnImpl genusIdDimGenus = ColumnImpl.builder().withName("GENUS_ID").withType("INTEGER").build();
-    ColumnImpl genusNameDimGenus = ColumnImpl.builder().withName("GENUS_NAME").withType("VARCHAR").withCharOctetLength(30).build();
-    PhysicalTableImpl dimGenus = ((Builder) PhysicalTableImpl.builder().withName("DIM_GENUS")
+    ColumnMappingImpl familyIdDimGenus = ColumnMappingImpl.builder().withName("FAMILY_ID").withType("INTEGER").build();
+    ColumnMappingImpl genusIdDimGenus = ColumnMappingImpl.builder().withName("GENUS_ID").withType("INTEGER").build();
+    ColumnMappingImpl genusNameDimGenus = ColumnMappingImpl.builder().withName("GENUS_NAME").withType("VARCHAR").withCharOctetLength(30).build();
+    PhysicalTableMappingImpl dimGenus = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("DIM_GENUS")
             .withColumns(List.of(familyIdDimGenus, genusIdDimGenus, genusNameDimGenus))).build();
     //## TableName: species_mart
     //## ColumnNames: SPECIES_ID,POPULATION
     //## ColumnTypes: INTEGER,INTEGER
-    ColumnImpl speciesIdSpeciesMart = ColumnImpl.builder().withName("SPECIES_ID").withType("INTEGER").build();
-    ColumnImpl populationSpeciesMart = ColumnImpl.builder().withName("POPULATION").withType("INTEGER").build();
-    PhysicalTableImpl speciesMart = ((Builder) PhysicalTableImpl.builder().withName("species_mart")
+    ColumnMappingImpl speciesIdSpeciesMart = ColumnMappingImpl.builder().withName("SPECIES_ID").withType("INTEGER").build();
+    ColumnMappingImpl populationSpeciesMart = ColumnMappingImpl.builder().withName("POPULATION").withType("INTEGER").build();
+    PhysicalTableMappingImpl speciesMart = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("species_mart")
             .withColumns(List.of(speciesIdSpeciesMart, populationSpeciesMart))).build();
 
     //## TableName: AGG_SPECIES_MART
     //## ColumnNames: GEN_ID,POPULATION,FACT_COUNT
     //## ColumnTypes: INTEGER,INTEGER,INTEGER
-    ColumnImpl genIdAggSpeciesMart = ColumnImpl.builder().withName("GEN_ID").withType("INTEGER").build();
-    ColumnImpl populationAggSpeciesMart = ColumnImpl.builder().withName("POPULATION").withType("INTEGER").build();
-    ColumnImpl factCountAggSpeciesMart = ColumnImpl.builder().withName("FACT_COUNT").withType("INTEGER").build();
-    PhysicalTableImpl aggSpeciesMart = ((Builder) PhysicalTableImpl.builder().withName("AGG_SPECIES_MART")
+    ColumnMappingImpl genIdAggSpeciesMart = ColumnMappingImpl.builder().withName("GEN_ID").withType("INTEGER").build();
+    ColumnMappingImpl populationAggSpeciesMart = ColumnMappingImpl.builder().withName("POPULATION").withType("INTEGER").build();
+    ColumnMappingImpl factCountAggSpeciesMart = ColumnMappingImpl.builder().withName("FACT_COUNT").withType("INTEGER").build();
+    PhysicalTableMappingImpl aggSpeciesMart = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("AGG_SPECIES_MART")
             .withColumns(List.of(genIdAggSpeciesMart, populationAggSpeciesMart, factCountAggSpeciesMart))).build();
 
     public SpeciesNonCollapsedAggTestModifier(CatalogMapping catalog) {
@@ -142,8 +140,8 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
      */
 
     @Override
-    protected List<? extends Table> databaseSchemaTables(DatabaseSchema databaseSchema) {
-        List<Table> result = new ArrayList<Table>();
+    protected List<? extends TableMapping> databaseSchemaTables(DatabaseSchemaMapping databaseSchema) {
+        List<TableMapping> result = new ArrayList<TableMapping>();
         result.addAll(super.databaseSchemaTables(databaseSchema));
         result.addAll(List.of(dimSpecies, dimFamily, dimGenus, speciesMart, aggSpeciesMart));
         return result;

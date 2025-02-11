@@ -29,6 +29,6 @@ public class TableUtil {
 	}
 
     public static String getFilter(TableQueryMapping table) {
-        return (table.getSqlWhereExpression() == null) ? null : table.getSqlWhereExpression().getStatement();
+        return (table.getSqlWhereExpression() == null) ? null : table.getSqlWhereExpression().getSql();
     }
 }

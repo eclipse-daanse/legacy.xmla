@@ -21,14 +21,6 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
-import org.eclipse.daanse.rdb.structure.pojo.InlineTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.RowImpl;
-import org.eclipse.daanse.rdb.structure.pojo.RowValueImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlStatementImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -39,13 +31,12 @@ import org.eclipse.daanse.rolap.mapping.api.model.MeasureGroupMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
@@ -54,12 +45,12 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.steelwheels.SteelwheelsSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessDimensionGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationForeignKeyMappingImpl;
@@ -69,12 +60,15 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AnnotationMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberPropertyMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CellFormatterMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.InlineTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
@@ -86,10 +80,13 @@ import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyFormatterMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ParentChildLinkMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.RowMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.RowValueMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TimeDimensionMappingImpl;
@@ -121,9 +118,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
                 .withName("No_WA_State")
                 .withAccessCatalogGrants(List.of(
@@ -194,9 +191,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
                 .withName("Only_DF_State")
                 .withAccessCatalogGrants(List.of(
@@ -423,14 +420,14 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
         	MeasureMappingImpl measureEmployeeStoreSalesA = null;
         	MeasureMappingImpl measureEmployeeStoreCostA = null;
         	MeasureMappingImpl measureEmployeeStoreSalesB = null;
         	MeasureMappingImpl measureEmployeeStoreCostB = null;
 
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("Employee Store Analysis A")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.INVENTORY_FACKT_1997_TABLE).withAlias("inventory").build())
@@ -540,9 +537,9 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("Alternate Sales")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -612,9 +609,9 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(VirtualCubeMappingImpl.builder()
                     .withName("Warehouse and Sales2")
                     .withDefaultMeasure((MeasureMappingImpl) look(FoodmartMappingSupplier.MEASURE_STORE_SALES))
@@ -722,9 +719,9 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("CustomSales")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -830,9 +827,9 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("CustomSales")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -914,9 +911,9 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("CustomSales")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -999,9 +996,9 @@ public class SchemaModifiers {
         }
 
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("CustomSales")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -1083,9 +1080,9 @@ public class SchemaModifiers {
             + "</VirtualCube>",
          */
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(VirtualCubeMappingImpl.builder()
                     .withName("Warehouse and Sales2")
                     .withDefaultMeasure((MeasureMappingImpl) look(FoodmartMappingSupplier.MEASURE_STORE_SALES))
@@ -1219,9 +1216,9 @@ public class SchemaModifiers {
             */
 
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             PhysicalCubeMappingImpl cubeSales3;
             StandardDimensionMappingImpl dGender;
             StandardDimensionMappingImpl dEducationLevel;
@@ -1644,9 +1641,9 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("EmployeeSharedClosureCube")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALARY_TABLE).withAlias("salary_closure").build())
@@ -1948,9 +1945,9 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("HR-fewer-dims")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALARY_TABLE).build())
@@ -2077,9 +2074,9 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("HR-ordered")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALARY_TABLE).build())
@@ -2190,11 +2187,11 @@ public class SchemaModifiers {
         )).build();
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             MeasureMappingImpl mStoreSales;
             MeasureMappingImpl mOrgSalary;
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("CustomSales")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -2341,9 +2338,9 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("HR4C")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALARY_TABLE).build())
@@ -2426,9 +2423,9 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("HR4C")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALARY_TABLE).build())
@@ -2545,32 +2542,32 @@ public class SchemaModifiers {
          */
 
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
-            ColumnImpl storeId = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
-            ColumnImpl employeeId = ColumnImpl.builder().withName("employee_id").withType("INTEGER").build();
-            InlineTableImpl itt = InlineTableImpl.builder()
+            ColumnMappingImpl storeId = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
+            ColumnMappingImpl employeeId = ColumnMappingImpl.builder().withName("employee_id").withType("INTEGER").build();
+            InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
             .withColumns(List.of(storeId, employeeId))
             .withRows(List.of(
-                   RowImpl.builder().withRowValues(List.of(
-                        RowValueImpl.builder().withColumn(storeId).withValue("2").build(),
-                        RowValueImpl.builder().withColumn(employeeId).withValue("o").build())).build(),
-                   RowImpl.builder().withRowValues(List.of(
-                           RowValueImpl.builder().withColumn(storeId).withValue("2").build(),
-                           RowValueImpl.builder().withColumn(employeeId).withValue("1").build())).build(),
-                   RowImpl.builder().withRowValues(List.of(
-                           RowValueImpl.builder().withColumn(storeId).withValue("2").build(),
-                           RowValueImpl.builder().withColumn(employeeId).withValue("2").build())).build(),
-                   RowImpl.builder().withRowValues(List.of(
-                           RowValueImpl.builder().withColumn(storeId).withValue("2").build(),
-                           RowValueImpl.builder().withColumn(employeeId).withValue("22").build())).build(),
-                   RowImpl.builder().withRowValues(List.of(
-                           RowValueImpl.builder().withColumn(storeId).withValue("2").build(),
-                           RowValueImpl.builder().withColumn(employeeId).withValue("22").build())).build(),
-                   RowImpl.builder().withRowValues(List.of(
-                           RowValueImpl.builder().withColumn(storeId).withValue("2").build(),
-                           RowValueImpl.builder().withColumn(employeeId).withValue("22").build())).build(),
-                   RowImpl.builder().withRowValues(List.of(
-                           RowValueImpl.builder().withColumn(storeId).withValue("2").build(),
-                           RowValueImpl.builder().withColumn(employeeId).withValue("484").build())).build()
+                   RowMappingImpl.builder().withRowValues(List.of(
+                        RowValueMappingImpl.builder().withColumn(storeId).withValue("2").build(),
+                        RowValueMappingImpl.builder().withColumn(employeeId).withValue("o").build())).build(),
+                   RowMappingImpl.builder().withRowValues(List.of(
+                           RowValueMappingImpl.builder().withColumn(storeId).withValue("2").build(),
+                           RowValueMappingImpl.builder().withColumn(employeeId).withValue("1").build())).build(),
+                   RowMappingImpl.builder().withRowValues(List.of(
+                           RowValueMappingImpl.builder().withColumn(storeId).withValue("2").build(),
+                           RowValueMappingImpl.builder().withColumn(employeeId).withValue("2").build())).build(),
+                   RowMappingImpl.builder().withRowValues(List.of(
+                           RowValueMappingImpl.builder().withColumn(storeId).withValue("2").build(),
+                           RowValueMappingImpl.builder().withColumn(employeeId).withValue("22").build())).build(),
+                   RowMappingImpl.builder().withRowValues(List.of(
+                           RowValueMappingImpl.builder().withColumn(storeId).withValue("2").build(),
+                           RowValueMappingImpl.builder().withColumn(employeeId).withValue("22").build())).build(),
+                   RowMappingImpl.builder().withRowValues(List.of(
+                           RowValueMappingImpl.builder().withColumn(storeId).withValue("2").build(),
+                           RowValueMappingImpl.builder().withColumn(employeeId).withValue("22").build())).build(),
+                   RowMappingImpl.builder().withRowValues(List.of(
+                           RowValueMappingImpl.builder().withColumn(storeId).withValue("2").build(),
+                           RowValueMappingImpl.builder().withColumn(employeeId).withValue("484").build())).build()
             ))
             .build();
             InlineTableQueryMappingImpl it = InlineTableQueryMappingImpl.builder()
@@ -2905,9 +2902,9 @@ public class SchemaModifiers {
             super(catalogMapping);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schemaMappingOriginal) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schemaMappingOriginal) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schemaMappingOriginal));
+            result.addAll(super.catalogCubes(schemaMappingOriginal));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("Sales_Hierarchize")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -3878,12 +3875,12 @@ public class SchemaModifiers {
     	private static final  SqlSelectQueryMappingImpl v = SqlSelectQueryMappingImpl.builder()
                 .withAlias("gender2")
                 .withSql(
-                        ((Builder) SqlViewImpl.builder()
+                        ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
                             .withColumns(List.of(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER,
                                          FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)))
                             .withSqlStatements(List.of(
-                                SqlStatementImpl.builder().withDialects(List.of("generic")).withSql("SELECT * FROM customer").build(),
-                                SqlStatementImpl.builder().withDialects(
+                                SqlStatementMappingImpl.builder().withDialects(List.of("generic")).withSql("SELECT * FROM customer").build(),
+                                SqlStatementMappingImpl.builder().withDialects(
                                     List.of("oracle", "hsqldb", "derby", "luciddb", "db2", "neoview", "netezza", "snowflake"))
                                 .withSql("SELECT * FROM \"customer\"").build()
                             )).build()).build();
@@ -4048,7 +4045,7 @@ public class SchemaModifiers {
             List<DimensionConnectorMapping> result = new ArrayList<>();
             result.addAll(super.cubeDimensionConnectors(cube));
             if ("Sales".equals(cube.getName())) {
-            	SqlViewImpl t = ((Builder) SqlViewImpl.builder()
+            	SqlViewMappingImpl t = ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
                         .withColumns(List.of(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT,
                                      FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS,
                                      FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS,
@@ -4056,10 +4053,10 @@ public class SchemaModifiers {
                                      FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT,
                                      FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)))
                         .withSqlStatements(List.of(
-                            SqlStatementImpl.builder().withDialects(List.of("db2")).withSql(
+                            SqlStatementMappingImpl.builder().withDialects(List.of("db2")).withSql(
                                     "SELECT * FROM \"product\", \"product_class\" WHERE \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\""
                             ).build(),
-                            SqlStatementImpl.builder().withDialects(List.of("mssql"))
+                            SqlStatementMappingImpl.builder().withDialects(List.of("mssql"))
                             .withSql(
                                     "SELECT \"product\".\"product_id\",\n" + "\"product\".\"brand_name\",\n"
                                             + "\"product\".\"product_name\",\n" + "\"product\".\"SKU\",\n" + "\"product\".\"SRP\",\n"
@@ -4073,7 +4070,7 @@ public class SchemaModifiers {
                                             + "FROM \"product\" inner join \"product_class\"\n"
                                             + "ON \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\"\n"
                             ).build(),
-                            SqlStatementImpl.builder().withDialects(List.of("mysql"))
+                            SqlStatementMappingImpl.builder().withDialects(List.of("mysql"))
                             .withSql(
                                     "SELECT `product`.`product_id`,\n" + "`product`.`brand_name`,\n" + "`product`.`product_name`,\n"
                                             + "`product`.`SKU`,\n" + "`product`.`SRP`,\n" + "`product`.`gross_weight`,\n"
@@ -4292,13 +4289,13 @@ public class SchemaModifiers {
                 	.withMeasureGroup(mg)
                 	.withMeasureExpression(SQLExpressionMappingImpl.builder()
                         .withSqls(List.of(
-                        	SQLMappingImpl.builder()
+                        	SqlStatementMappingImpl.builder()
                                 .withDialects(List.of("generic"))
-                                .withStatement(" NULL ")
+                                .withSql(" NULL ")
                                 .build(),
-                            SQLMappingImpl.builder()
+                            SqlStatementMappingImpl.builder()
                                 .withDialects(List.of("vertica"))
-                                .withStatement(" NULL::FLOAT ")
+                                .withSql(" NULL::FLOAT ")
                                 .build()
                         ))
                         .build()).build()));
@@ -4384,9 +4381,9 @@ public class SchemaModifiers {
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
                                         .withNameExpression(SQLExpressionMappingImpl.builder()
-                                        	.withSqls(List.of(SQLMappingImpl.builder()
+                                        	.withSqls(List.of(SqlStatementMappingImpl.builder()
                                                     .withDialects(List.of("generic"))
-                                                    .withStatement("case when " + dialect.quoteIdentifier( "product", "product_id" ) + "=0 then 'Zero' else 'Non-Zero' end")
+                                                    .withSql("case when " + dialect.quoteIdentifier( "product", "product_id" ) + "=0 then 'Zero' else 'Non-Zero' end")
                                                     .build()
                                             ))
                                             .build())
@@ -4402,9 +4399,9 @@ public class SchemaModifiers {
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
                                         .withNameExpression(SQLExpressionMappingImpl.builder()
                                         		.withSqls(List.of(
-                                        			SQLMappingImpl.builder()
+                                        			SqlStatementMappingImpl.builder()
                                                     .withDialects(List.of("generic"))
-                                                    .withStatement(dialect.quoteIdentifier( "product_class", "product_subcategory" ))
+                                                    .withSql(dialect.quoteIdentifier( "product_class", "product_subcategory" ))
                                                     .build()
                                             )).build())
                                         .build(),
@@ -4419,9 +4416,9 @@ public class SchemaModifiers {
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
                                         .withNameExpression(SQLExpressionMappingImpl.builder()
                                         	.withSqls(List.of(
-                                        		SQLMappingImpl.builder()
+                                        		SqlStatementMappingImpl.builder()
                                                     .withDialects(List.of("generic"))
-                                                    .withStatement(dialect.quoteIdentifier( "product", "product_name" ))
+                                                    .withSql(dialect.quoteIdentifier( "product", "product_name" ))
                                                     .build()
                                             )).build())
                                         .build()
@@ -4580,9 +4577,9 @@ public class SchemaModifiers {
                         .withAggregatorType(MeasureAggregatorType.SUM)
                         .withMeasureExpression(SQLExpressionMappingImpl.builder()
                         	.withSqls(List.of(
-                        		SQLMappingImpl.builder()
+                        		SqlStatementMappingImpl.builder()
                                     .withDialects(List.of("generic"))
-                                    .withStatement("0")
+                                    .withSql("0")
                                     .build()
                             ))
                         	.build())
@@ -4914,9 +4911,9 @@ public class SchemaModifiers {
 				.withName("Quarter").withUniqueMembers(false).withLevelType(LevelType.TIME_QUARTERS)
 				.withKeyExpression(SQLExpressionMappingImpl.builder()
 						.withSqls(List.of(
-                            SQLMappingImpl.builder()
+                            SqlStatementMappingImpl.builder()
                             	.withDialects(List.of("generic"))
-                                .withStatement("RTRIM(quarter)")
+                                .withSql("RTRIM(quarter)")
                                 .build()
 						))
 						.build())
@@ -5518,9 +5515,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("Sales_MemberVis")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -5611,9 +5608,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("Sales_DimWithoutAll")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -5762,9 +5759,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("Sales_withCities")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -5917,9 +5914,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(
             	PhysicalCubeMappingImpl.builder()
                     .withName("SalesWithBadMeasure")
@@ -5963,9 +5960,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(
             	PhysicalCubeMappingImpl.builder()
                     .withName("SalesWithBadMeasure2")
@@ -5987,9 +5984,9 @@ public class SchemaModifiers {
                             .withFormatString("Standard")
                             .withMeasureExpression(SQLExpressionMappingImpl.builder()
                             		.withSqls(List.of(
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("generic"))
-                                            .withStatement("unit_sales")
+                                            .withSql("unit_sales")
                                             .build()
                                     ))
                             		.build())
@@ -6049,9 +6046,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(
             	PhysicalCubeMappingImpl.builder()
                     .withName("DefaultMeasureTesting")
@@ -6140,9 +6137,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(
             	PhysicalCubeMappingImpl.builder()
                     .withName("DefaultMeasureTesting")
@@ -6190,9 +6187,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(
             	PhysicalCubeMappingImpl.builder()
                     .withName("FooBarZerOneAnything")
@@ -6227,9 +6224,9 @@ public class SchemaModifiers {
                                 .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withMeasureExpression(SQLExpressionMappingImpl.builder()
                                     .withSqls(List.of(
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("generic"))
-                                            .withStatement("0")
+                                            .withSql("0")
                                             .build()
                                     )).build())
                                     .build()))
@@ -6284,9 +6281,9 @@ public class SchemaModifiers {
                         PhysicalCubeMappingImpl.builder()
                             .withName("Bar")
                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE)
-                            		.withSqlWhereExpression(SQLMappingImpl.builder()
+                            		.withSqlWhereExpression(SqlStatementMappingImpl.builder()
                             				.withDialects(List.of("generic"))
-                            				.withStatement("sleep(0.1) = 0")
+                            				.withSql("sleep(0.1) = 0")
                             				.build()).build())
                             .withDimensionConnectors(List.of(DimensionConnectorMappingImpl.builder()
                             		.withOverrideDimensionName("Dim")
@@ -6313,7 +6310,7 @@ public class SchemaModifiers {
                                         .withAggregatorType(MeasureAggregatorType.SUM)
                                         .withMeasureExpression(SQLExpressionMappingImpl.builder()
                                             .withSqls(List.of(
-                                                SQLMappingImpl.builder().withDialects(List.of("generic")).withStatement("1").build()
+                                                SqlStatementMappingImpl.builder().withDialects(List.of("generic")).withSql("1").build()
                                             )).build())
                                     .build()))
                             	.build()))
@@ -6621,8 +6618,8 @@ public class SchemaModifiers {
                                     .withUniqueMembers(true)
                                     .withKeyExpression(SQLExpressionMappingImpl.builder()
                                         .withSqls(List.of(
-                                            SQLMappingImpl.builder()
-                                                .withStatement("RTRIM("+ colName + ")")
+                                            SqlStatementMappingImpl.builder()
+                                                .withSql("RTRIM("+ colName + ")")
                                                 .withDialects(List.of("generic"))
                                                 .build()
                                         )).build())
@@ -6685,8 +6682,8 @@ public class SchemaModifiers {
                                     .withUniqueMembers(true)
                                     .withOrdinalExpression(SQLExpressionMappingImpl.builder()
                                         .withSqls(List.of(
-                                            SQLMappingImpl.builder()
-                                                .withStatement("RTRIM("+ colName + ")")
+                                            SqlStatementMappingImpl.builder()
+                                                .withSql("RTRIM("+ colName + ")")
                                                 .withDialects(List.of("generic"))
                                                 .build()
                                         )).build())
@@ -6804,8 +6801,8 @@ public class SchemaModifiers {
                                     .withUniqueMembers(true)
                                     .withCaptionExpression(SQLExpressionMappingImpl.builder()
                                         .withSqls(List.of(
-                                            SQLMappingImpl.builder()
-                                                .withStatement("RTRIM("+ colName + ")")
+                                            SqlStatementMappingImpl.builder()
+                                                .withSql("RTRIM("+ colName + ")")
                                                 .withDialects(List.of("generic"))
                                                 .build()
                                         )).build())
@@ -6867,8 +6864,8 @@ public class SchemaModifiers {
                                     .withUniqueMembers(true)
                                     .withCaptionExpression(SQLExpressionMappingImpl.builder()
                                         .withSqls(List.of(
-                                            SQLMappingImpl.builder()
-                                                .withStatement("RTRIM("+ this.colName + ")")
+                                            SqlStatementMappingImpl.builder()
+                                                .withSql("RTRIM("+ this.colName + ")")
                                                 .withDialects(List.of("generic"))
                                                 .build()
                                         )).build())
@@ -6944,8 +6941,8 @@ public class SchemaModifiers {
                                     .withNullParentValue("0")
                                     .withParentExpression(SQLExpressionMappingImpl.builder()
                                         .withSqls(List.of(
-                                            SQLMappingImpl.builder()
-                                                .withStatement("RTRIM("+ colName + ")")
+                                            SqlStatementMappingImpl.builder()
+                                                .withSql("RTRIM("+ colName + ")")
                                                 .withDialects(List.of("generic"))
                                                 .build()
                                         )).build())
@@ -7032,8 +7029,8 @@ public class SchemaModifiers {
                                     .withUniqueMembers(true)
                                     .withKeyExpression(SQLExpressionMappingImpl.builder()
                                         .withSqls(List.of(
-                                            SQLMappingImpl.builder()
-                                                .withStatement("RTRIM("+ this.colName + ")")
+                                            SqlStatementMappingImpl.builder()
+                                                .withSql("RTRIM("+ this.colName + ")")
                                                 .withDialects(List.of("generic"))
                                                 .build()
                                         )).build())
@@ -7117,8 +7114,8 @@ public class SchemaModifiers {
                         .withKeyExpression(
                             SQLExpressionMappingImpl.builder()
                                 .withSqls(List.of(
-                                    SQLMappingImpl.builder()
-                                        .withStatement("RTRIM(quarter)")
+                                    SqlStatementMappingImpl.builder()
+                                        .withSql("RTRIM(quarter)")
                                         .withDialects(List.of("generic"))
                                         .build()
                                 )).build())
@@ -7486,8 +7483,8 @@ public class SchemaModifiers {
 										.withLevels(List.of(LevelMappingImpl.builder().withName("Promotion Name")
 												.withColumn(FoodmartMappingSupplier.PROMOTION_NAME_COLUMN_IN_PROMOTION).withUniqueMembers(true)
 												.withKeyExpression(SQLExpressionMappingImpl.builder()
-														.withSqls(List.of(SQLMappingImpl.builder()
-																.withStatement(
+														.withSqls(List.of(SqlStatementMappingImpl.builder()
+																.withSql(
 																		"ERROR_TEST_FUNCTION_NAME(" + colName + ")")
 																.withDialects(List.of("generic")).build()))
 														.build())
@@ -7541,8 +7538,8 @@ public class SchemaModifiers {
 												.withName("Promotion Name")
 												.withColumn(FoodmartMappingSupplier.PROMOTION_NAME_COLUMN_IN_PROMOTION).withUniqueMembers(true)
 												.withKeyExpression(SQLExpressionMappingImpl.builder()
-														.withSqls(List.of(SQLMappingImpl.builder()
-																.withStatement("RTRIM(" + colName + ")")
+														.withSqls(List.of(SqlStatementMappingImpl.builder()
+																.withSql("RTRIM(" + colName + ")")
 																.withDialects(List.of("generic")).build()))
 														.build())
 												.build()))
@@ -7809,9 +7806,9 @@ public class SchemaModifiers {
                                             .withHideMemberIfType(HideMemberIfType.IF_BLANK_NAME)
                                             .withNameExpression(SQLExpressionMappingImpl.builder()
                                             		.withSqls(List.of(
-                                            			SQLMappingImpl.builder()
+                                            			SqlStatementMappingImpl.builder()
                                             			.withDialects(List.of("generic"))
-                                            			.withStatement("case \"gender\" when 'F' then ' ' when 'M' then 'M' ")
+                                            			.withSql("case \"gender\" when 'F' then ' ' when 'M' then 'M' ")
                                             			.build()
                                             				))
                                             		.build())
@@ -8338,9 +8335,9 @@ public class SchemaModifiers {
                 			.withDatatype(type != null ? DataType.fromValue(type) : null)
                 			.withMeasureExpression(SQLExpressionMappingImpl.builder()
                 					.withSqls(List.of(
-                						SQLMappingImpl.builder()
+                						SqlStatementMappingImpl.builder()
                 						.withDialects(List.of("generic"))
-                						.withStatement(expression)
+                						.withSql(expression)
                 						.build()
                 							))
                 					.build())
@@ -8397,7 +8394,7 @@ public class SchemaModifiers {
             List<DimensionConnectorMapping> result = new ArrayList<>();
             result.addAll(super.cubeDimensionConnectors(cube));
             if ("Sales".equals(cube.getName())) {
-            	ColumnImpl nuStoreId = ColumnImpl.builder().withName("NuStore_id").withType("INTEGER").withTable(FoodmartMappingSupplier.STORE_TABLE).build();
+            	ColumnMappingImpl nuStoreId = ColumnMappingImpl.builder().withName("NuStore_id").withType("INTEGER").withTable(FoodmartMappingSupplier.STORE_TABLE).build();
             	result.add(DimensionConnectorMappingImpl.builder()
             		.withOverrideDimensionName("NuStore")
             		.withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
@@ -8566,7 +8563,7 @@ public class SchemaModifiers {
             List<DimensionConnectorMapping> result = new ArrayList<>();
             result.addAll(super.cubeDimensionConnectors(cube));
             if ("Sales".equals(cube.getName())) {
-            	ColumnImpl nuStoreId = ColumnImpl.builder().withName("NuStore_id").withType("INTEGER").withTable(FoodmartMappingSupplier.STORE_TABLE).build();
+            	ColumnMappingImpl nuStoreId = ColumnMappingImpl.builder().withName("NuStore_id").withType("INTEGER").withTable(FoodmartMappingSupplier.STORE_TABLE).build();
             	result.add(DimensionConnectorMappingImpl.builder()
             		.withOverrideDimensionName("NuStore")
             		.withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
@@ -8810,14 +8807,14 @@ public class SchemaModifiers {
              + "</Dimension>"));
             */
 
-        ColumnImpl id = ColumnImpl.builder().withName("id").withType("NUMERIC").build();
-        ColumnImpl desc = ColumnImpl.builder().withName("desc").withType("VARCHAR").build();
-        InlineTableImpl itt = InlineTableImpl.builder()
+        ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withType("NUMERIC").build();
+        ColumnMappingImpl desc = ColumnMappingImpl.builder().withName("desc").withType("VARCHAR").build();
+        InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
         .withColumns(List.of(id, desc))
         .withRows(List.of(
-               RowImpl.builder().withRowValues(List.of(
-                    RowValueImpl.builder().withColumn(id).withValue("1").build(),
-                    RowValueImpl.builder().withColumn(desc).withValue("SameName").build())).build()
+               RowMappingImpl.builder().withRowValues(List.of(
+                    RowValueMappingImpl.builder().withColumn(id).withValue("1").build(),
+                    RowValueMappingImpl.builder().withColumn(desc).withValue("SameName").build())).build()
         )).build();
 
         InlineTableQueryMappingImpl i = InlineTableQueryMappingImpl.builder()
@@ -8951,19 +8948,19 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping catalogOriginal) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping catalogOriginal) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(catalogOriginal));
-            ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("Numeric").build();
-            ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("String").build();
-            InlineTableImpl itt = InlineTableImpl.builder()
+            result.addAll(super.catalogCubes(catalogOriginal));
+            ColumnMappingImpl promoId = ColumnMappingImpl.builder().withName("promo_id").withType("Numeric").build();
+            ColumnMappingImpl promoName = ColumnMappingImpl.builder().withName("promo_name").withType("String").build();
+            InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
-                   RowImpl.builder().withRowValues(List.of(
-                        RowValueImpl.builder().withColumn(promoId).withValue("0").build(),
-                        RowValueImpl.builder().withColumn(promoName).withValue("Promo0").build())).build(),
-                   RowImpl.builder().withRowValues(List.of(
-                           RowValueImpl.builder().withColumn(promoId).withValue("1").build())).build()
+                   RowMappingImpl.builder().withRowValues(List.of(
+                        RowValueMappingImpl.builder().withColumn(promoId).withValue("0").build(),
+                        RowValueMappingImpl.builder().withColumn(promoName).withValue("Promo0").build())).build(),
+                   RowMappingImpl.builder().withRowValues(List.of(
+                           RowValueMappingImpl.builder().withColumn(promoId).withValue("1").build())).build()
             )).build();
             InlineTableQueryMappingImpl itq = InlineTableQueryMappingImpl.builder()
             .withAlias("alt_promotion")
@@ -9111,9 +9108,9 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
                 .withName("Role1")
                 .withAccessCatalogGrants(List.of(
@@ -9310,8 +9307,8 @@ public class SchemaModifiers {
         protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
             List<DimensionConnectorMapping> result = new ArrayList<>();
             result.addAll(super.cubeDimensionConnectors(cube));
-            ColumnImpl foo = ColumnImpl.builder().withName("foo").withType("NUMERIC").build();
-            InlineTableImpl itt = InlineTableImpl.builder()
+            ColumnMappingImpl foo = ColumnMappingImpl.builder().withName("foo").withType("NUMERIC").build();
+            InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
             .withColumns(List.of(foo))
             .withRows(List.of()).build();
 
@@ -11231,57 +11228,57 @@ public class SchemaModifiers {
                             										.withUniqueMembers(true)
                             										.withNameExpression(SQLExpressionMappingImpl.builder()
                             											.withSqls(List.of(
-                            												SQLMappingImpl.builder()
+                            												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("oracle"))
-                            													.withStatement("\"fname\" || ' ' || \"lname\"\n")
+                            													.withSql("\"fname\" || ' ' || \"lname\"\n")
                             													.build(),
-                            												SQLMappingImpl.builder()
+                            												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("hive"))
-                            													.withStatement("`customer`.`fullname`\n")
+                            													.withSql("`customer`.`fullname`\n")
                             													.build(),
-                            												SQLMappingImpl.builder()
+                            												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("hsqldb"))
-                            													.withStatement("\"fname\" || ' ' || \"lname\"\n")
+                            													.withSql("\"fname\" || ' ' || \"lname\"\n")
                             													.build(),
-                            												SQLMappingImpl.builder()
+                            												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("access"))
-                            													.withStatement("fname + ' ' + lname\n")
+                            													.withSql("fname + ' ' + lname\n")
                             													.build(),
-                            												SQLMappingImpl.builder()
+                            												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("postgres"))
-                            													.withStatement("\"fname\" || ' ' || \"lname\"\n")
+                            													.withSql("\"fname\" || ' ' || \"lname\"\n")
                             													.build(),
-                            												SQLMappingImpl.builder()
+                            												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("mysql"))
-                            													.withStatement("CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)\n")
+                            													.withSql("CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)\n")
                             													.build(),
-                            												SQLMappingImpl.builder()
+                            												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("mssql"))
-                            													.withStatement("fname + ' ' + lname\n")
+                            													.withSql("fname + ' ' + lname\n")
                             													.build(),
-                            												SQLMappingImpl.builder()
+                            												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("derby"))
-                            													.withStatement("\"customer\".\"fullname\"\n")
+                            													.withSql("\"customer\".\"fullname\"\n")
                             													.build(),
-                            												SQLMappingImpl.builder()
+                            												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("db2"))
-                            													.withStatement("CONCAT(CONCAT(\"customer\".\"fname\", ' '), \"customer\".\"lname\")\n")
+                            													.withSql("CONCAT(CONCAT(\"customer\".\"fname\", ' '), \"customer\".\"lname\")\n")
                             													.build(),
-                            												SQLMappingImpl.builder()
+                            												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("luciddb"))
-                            													.withStatement("\"fname\" || ' ' || \"lname\"\n")
+                            													.withSql("\"fname\" || ' ' || \"lname\"\n")
                             													.build(),
-                            												SQLMappingImpl.builder()
+                            												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("neoview"))
-                            													.withStatement("\"customer\".\"fullname\"\n")
+                            													.withSql("\"customer\".\"fullname\"\n")
                             													.build(),
-                            												SQLMappingImpl.builder()
+                            												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("teradata"))
-                            													.withStatement("\"fname\" || ' ' || \"lname\"\n")
+                            													.withSql("\"fname\" || ' ' || \"lname\"\n")
                             													.build(),
-                            												SQLMappingImpl.builder()
+                            												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("generic"))
-                            													.withStatement("fullname")
+                            													.withSql("fullname")
                             													.build()
                             							                )).build())
                             										.withMemberProperties(List.of(
@@ -12000,8 +11997,8 @@ public class SchemaModifiers {
             + "</Schema>\n";
 
          */
-    	private static final ColumnImpl foo = ColumnImpl.builder().withName("foo").withType("INTEGER").build();
-    	private static final ColumnImpl bar = ColumnImpl.builder().withName("bar").withType("INTEGER").build();
+    	private static final ColumnMappingImpl foo = ColumnMappingImpl.builder().withName("foo").withType("INTEGER").build();
+    	private static final ColumnMappingImpl bar = ColumnMappingImpl.builder().withName("bar").withType("INTEGER").build();
 
     	private static final TableQueryMappingImpl t = TableQueryMappingImpl.builder()
     			.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
@@ -12334,9 +12331,9 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("Sales_Bug1410383")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -12466,9 +12463,9 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("Store5")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -12591,9 +12588,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("Sales_BracketInCubeCalcMemberName")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -12721,11 +12718,11 @@ public class SchemaModifiers {
             + "</Schema>";
 
          */
-    	private static final ColumnImpl storeIdX = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
-    	private static final ColumnImpl valueX = ColumnImpl.builder().withName("value").withType("VARCHAR").withCharOctetLength(30).build();
+    	private static final ColumnMappingImpl storeIdX = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
+    	private static final ColumnMappingImpl valueX = ColumnMappingImpl.builder().withName("value").withType("VARCHAR").withCharOctetLength(30).build();
     	//## ColumnNames: store_id,value
     	//## ColumnTypes: INTEGER,VARCHAR(30)
-    	private static final PhysicalTableImpl  storeX = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("store_y")
+    	private static final PhysicalTableMappingImpl  storeX = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("store_y")
                 .withColumns(List.of(
                         storeIdX, valueX
                         ))).build();
@@ -12747,11 +12744,11 @@ public class SchemaModifiers {
         ))
         .build();
 
-    	private static final ColumnImpl storeIdY = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
-    	private static final ColumnImpl valueY = ColumnImpl.builder().withName("value").withType("VARCHAR").withCharOctetLength(30).build();
+    	private static final ColumnMappingImpl storeIdY = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
+    	private static final ColumnMappingImpl valueY = ColumnMappingImpl.builder().withName("value").withType("VARCHAR").withCharOctetLength(30).build();
     	//## ColumnNames: store_id,value
     	//## ColumnTypes: INTEGER,VARCHAR(30)
-    	private static final PhysicalTableImpl  storeY = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("store_y")
+    	private static final PhysicalTableMappingImpl  storeY = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("store_y")
                 .withColumns(List.of(
                         storeIdY, valueY
                         ))).build();
@@ -12779,21 +12776,21 @@ public class SchemaModifiers {
         }
 
         protected CatalogMapping modifyCatalog(CatalogMapping catalog) {
-            ColumnImpl store_id_cheques = ColumnImpl.builder().withName("store_id").withType("INTEGER").build();
-            ColumnImpl prod_id_cheques = ColumnImpl.builder().withName("prod_id").withType("INTEGER").build();
-            ColumnImpl amount_cheques = ColumnImpl.builder().withName("amount").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
-            PhysicalTableImpl cheques = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("cheques")
+            ColumnMappingImpl store_id_cheques = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
+            ColumnMappingImpl prod_id_cheques = ColumnMappingImpl.builder().withName("prod_id").withType("INTEGER").build();
+            ColumnMappingImpl amount_cheques = ColumnMappingImpl.builder().withName("amount").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
+            PhysicalTableMappingImpl cheques = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("cheques")
                     .withColumns(List.of(
                             store_id_cheques, prod_id_cheques, amount_cheques
                             ))).build();
             //## TableName: agg_lp_595_cheques
             //## ColumnNames: firstprefix_value,secondprefix_value,amount,FACT_COUNT
             //## ColumnTypes: VARCHAR(30),VARCHAR(30),DECIMAL(10,2),INTEGER
-            ColumnImpl firstprefixValueAggLp595Cheques = ColumnImpl.builder().withName("firstprefix_value").withType("VARCHAR").withColumnSize(30).build();
-            ColumnImpl secondprefixValueAggLp595Cheques = ColumnImpl.builder().withName("secondprefix_value").withType("VARCHAR").withColumnSize(30).build();
-            ColumnImpl amountAggLp595Cheques = ColumnImpl.builder().withName("amount").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
-            ColumnImpl factCountAggLp595Cheques = ColumnImpl.builder().withName("FACT_COUNT").withType("INTEGER").build();
-            PhysicalTableImpl aggLp595Cheques = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("agg_lp_595_cheques")
+            ColumnMappingImpl firstprefixValueAggLp595Cheques = ColumnMappingImpl.builder().withName("firstprefix_value").withType("VARCHAR").withColumnSize(30).build();
+            ColumnMappingImpl secondprefixValueAggLp595Cheques = ColumnMappingImpl.builder().withName("secondprefix_value").withType("VARCHAR").withColumnSize(30).build();
+            ColumnMappingImpl amountAggLp595Cheques = ColumnMappingImpl.builder().withName("amount").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
+            ColumnMappingImpl factCountAggLp595Cheques = ColumnMappingImpl.builder().withName("FACT_COUNT").withType("INTEGER").build();
+            PhysicalTableMappingImpl aggLp595Cheques = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("agg_lp_595_cheques")
                     .withColumns(List.of(
                             firstprefixValueAggLp595Cheques, secondprefixValueAggLp595Cheques, amountAggLp595Cheques
                             ))).build();
@@ -13143,19 +13140,19 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
-            ColumnImpl promoId = ColumnImpl.builder().withName("promo_id").withType("Numeric").build();
-            ColumnImpl promoName = ColumnImpl.builder().withName("promo_name").withType("String").build();
-            InlineTableImpl itt = InlineTableImpl.builder()
+            result.addAll(super.catalogCubes(schema));
+            ColumnMappingImpl promoId = ColumnMappingImpl.builder().withName("promo_id").withType("Numeric").build();
+            ColumnMappingImpl promoName = ColumnMappingImpl.builder().withName("promo_name").withType("String").build();
+            InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
-                    RowImpl.builder().withRowValues(List.of(
-                            RowValueImpl.builder().withColumn(promoId).withValue("0").build())).build(),
-                   RowImpl.builder().withRowValues(List.of(
-                        RowValueImpl.builder().withColumn(promoId).withValue("1").build(),
-                        RowValueImpl.builder().withColumn(promoName).withValue("Promo1").build())).build()
+                    RowMappingImpl.builder().withRowValues(List.of(
+                            RowValueMappingImpl.builder().withColumn(promoId).withValue("0").build())).build(),
+                   RowMappingImpl.builder().withRowValues(List.of(
+                        RowValueMappingImpl.builder().withColumn(promoId).withValue("1").build(),
+                        RowValueMappingImpl.builder().withColumn(promoName).withValue("Promo1").build())).build()
             )).build();
 
             result.add(PhysicalCubeMappingImpl.builder()
@@ -13262,9 +13259,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("Store_NullsCollation")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -13285,13 +13282,13 @@ public class SchemaModifiers {
                         						.withUniqueMembers(true)
                         						.withOrdinalExpression(SQLExpressionMappingImpl.builder()
                         							.withSqls(List.of(
-                        								SQLMappingImpl.builder().withStatement("Iif(store_name = 'HQ', null, store_name)").withDialects(List.of("access")).build(),
-                        								SQLMappingImpl.builder().withStatement("case \"store_name\" when 'HQ' then null else \"store_name\" end").withDialects(List.of("oracle")).build(),
-                        								SQLMappingImpl.builder().withStatement("case \"store_name\" when 'HQ' then null else \"store_name\" end").withDialects(List.of("hsqldb")).build(),
-                        								SQLMappingImpl.builder().withStatement("case \"store\".\"store_name\" when 'HQ' then null else \"store\".\"store_name\" end").withDialects(List.of("db2")).build(),
-                        								SQLMappingImpl.builder().withStatement("case \"store_name\" when 'HQ' then null else \"store_name\" end").withDialects(List.of("luciddb")).build(),
-                        								SQLMappingImpl.builder().withStatement("case \"store_name\" when 'HQ' then null else \"store_name\" end").withDialects(List.of("netezza")).build(),
-                        								SQLMappingImpl.builder().withStatement("case store_name when 'HQ' then null else store_name end").withDialects(List.of("generic")).build()
+                        								SqlStatementMappingImpl.builder().withSql("Iif(store_name = 'HQ', null, store_name)").withDialects(List.of("access")).build(),
+                        								SqlStatementMappingImpl.builder().withSql("case \"store_name\" when 'HQ' then null else \"store_name\" end").withDialects(List.of("oracle")).build(),
+                        								SqlStatementMappingImpl.builder().withSql("case \"store_name\" when 'HQ' then null else \"store_name\" end").withDialects(List.of("hsqldb")).build(),
+                        								SqlStatementMappingImpl.builder().withSql("case \"store\".\"store_name\" when 'HQ' then null else \"store\".\"store_name\" end").withDialects(List.of("db2")).build(),
+                        								SqlStatementMappingImpl.builder().withSql("case \"store_name\" when 'HQ' then null else \"store_name\" end").withDialects(List.of("luciddb")).build(),
+                        								SqlStatementMappingImpl.builder().withSql("case \"store_name\" when 'HQ' then null else \"store_name\" end").withDialects(List.of("netezza")).build(),
+                        								SqlStatementMappingImpl.builder().withSql("case store_name when 'HQ' then null else store_name end").withDialects(List.of("generic")).build()
                         						)).build())
                         						.withMemberProperties(List.of(
                         							MemberPropertyMappingImpl.builder()
@@ -13344,9 +13341,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
                 .withName("Role1")
                 .withAccessCatalogGrants(List.of(
@@ -13421,9 +13418,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
                 .withName("Role1")
                 .withAccessCatalogGrants(List.of(
@@ -13561,11 +13558,11 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
             AccessRoleMappingImpl roleUSAmanager;
             AccessRoleMappingImpl roleParentUSAmanager;
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(roleUSAmanager = AccessRoleMappingImpl.builder()
                     .withName("USA manager")
                     .withAccessCatalogGrants(List.of(
@@ -13647,9 +13644,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(AccessRoleMappingImpl.builder()
                 .withName("Role1")
                 .withAccessCatalogGrants(List.of(
@@ -13718,9 +13715,9 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("Role1")
@@ -13786,9 +13783,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("Role1")
@@ -13842,9 +13839,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema).stream().filter(r -> !r.getName().equals("California manager")).toList());
+            result.addAll(super.catalogAccessRoles(schema).stream().filter(r -> !r.getName().equals("California manager")).toList());
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("California manager")
@@ -13910,9 +13907,9 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("Buggy Role")
@@ -13981,9 +13978,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("role1")
@@ -14061,9 +14058,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("VCRole")
@@ -14143,9 +14140,9 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             	AccessRoleMappingImpl.builder()
                 	.withName("role2")
@@ -14348,14 +14345,14 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<CubeMapping> schemaCubes(CatalogMapping Schema) {
+        protected List<CubeMapping> catalogCubes(CatalogMapping Schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.add(cube);
             return result;
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> res = new ArrayList<>();
             List<AccessRoleMappingImpl> roleUsages = new ArrayList<>();
             for (Position position : result.getAxes()[0].getPositions()) {
@@ -14485,9 +14482,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("REG1")
@@ -14560,9 +14557,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("CTO")
@@ -14642,9 +14639,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
@@ -14698,9 +14695,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
@@ -14779,9 +14776,9 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
@@ -14880,9 +14877,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
@@ -15012,9 +15009,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
@@ -15103,9 +15100,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Bacon")
@@ -15159,9 +15156,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
@@ -15223,9 +15220,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Role1")
@@ -15316,9 +15313,9 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Admin")
@@ -15394,9 +15391,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("test")
@@ -15484,9 +15481,9 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("dev")
@@ -15553,9 +15550,9 @@ public class SchemaModifiers {
 
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("dev")
@@ -15617,9 +15614,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             		AccessRoleMappingImpl.builder()
                         .withName("Admin")
@@ -15680,9 +15677,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
                 AccessRoleMappingImpl.builder()
                     .withName("Role1")
@@ -15750,9 +15747,9 @@ public class SchemaModifiers {
             this.policy = policy;
         }
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             	AccessRoleMappingImpl.builder()
                     .withName("Role1")
@@ -15820,9 +15817,9 @@ public class SchemaModifiers {
             this.policy = policy;
         }
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema).stream()
+            result.addAll(super.catalogAccessRoles(schema).stream()
                 .filter(r -> !"Role1".equals(r.getName())).toList());
             result.add(
             	AccessRoleMappingImpl.builder()
@@ -15901,9 +15898,9 @@ public class SchemaModifiers {
             this.policy = policy;
         }
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema).stream().filter(r -> !r.getName().equals("California manager")).toList());
+            result.addAll(super.catalogAccessRoles(schema).stream().filter(r -> !r.getName().equals("California manager")).toList());
             result.add(
                 AccessRoleMappingImpl.builder()
                     .withName("California manager")
@@ -15979,7 +15976,7 @@ public class SchemaModifiers {
             + "</Cube>";
          */
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
         	StandardDimensionMappingImpl store2Dimension = StandardDimensionMappingImpl.builder()
                     .withName("Store2")
                     .withHierarchies(List.of(
@@ -16005,7 +16002,7 @@ public class SchemaModifiers {
                     .build();
 
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema).stream()
+            result.addAll(super.catalogCubes(schema).stream()
                 .filter(c -> !"TinySales".equals(c.getName())).toList());
             result.add(tinySalesCube = PhysicalCubeMappingImpl.builder()
                 .withName("TinySales")
@@ -16064,9 +16061,9 @@ public class SchemaModifiers {
 
          */
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema)
+            result.addAll(super.catalogAccessRoles(schema)
                 .stream().filter(r -> !"test".equals(r.getName())).toList());
             result.add(
             	AccessRoleMappingImpl.builder()
@@ -16127,9 +16124,9 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             	AccessRoleMappingImpl.builder()
                     .withName("noBaseCubes")
@@ -16189,9 +16186,9 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             	AccessRoleMappingImpl.builder()
                     .withName("Role1")
@@ -16345,9 +16342,9 @@ public class SchemaModifiers {
 
          */
 
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(sales1Cube = PhysicalCubeMappingImpl.builder()
                 .withName("Sales1")
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
@@ -16613,9 +16610,9 @@ public class SchemaModifiers {
             + "</Role>");
         */
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             	AccessRoleMappingImpl.builder()
                     .withName("MR")
@@ -16679,9 +16676,9 @@ public class SchemaModifiers {
             super(catalog);
         }
 
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
                     AccessRoleMappingImpl.builder()
                     .withName("Role1")
@@ -16757,9 +16754,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
                     AccessRoleMappingImpl.builder()
                     .withName("Role1")
@@ -16911,9 +16908,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
                     AccessRoleMappingImpl.builder()
                     .withName("Role1")
@@ -17043,9 +17040,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
                     AccessRoleMappingImpl.builder()
                     .withName("Role1")
@@ -17324,9 +17321,9 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
                     AccessRoleMappingImpl.builder()
                     .withName("Sales Ragged")
@@ -17616,8 +17613,8 @@ public class SchemaModifiers {
                             .withLevelType(LevelType.TIME_YEARS)
                             .withKeyExpression(SQLExpressionMappingImpl.builder()
                             		.withSqls(List.of(
-                                                SQLMappingImpl.builder()
-                                                    .withStatement("cast(\"the_date\" as DATE)\n")
+                                                SqlStatementMappingImpl.builder()
+                                                    .withSql("cast(\"the_date\" as DATE)\n")
                                                     .build()
                                             ))
                             		.build())
@@ -17719,17 +17716,17 @@ public class SchemaModifiers {
                             .withUniqueMembers(true)
                             .withKeyExpression(SQLExpressionMappingImpl.builder()
                             		.withSqls(List.of(
-                                                SQLMappingImpl.builder()
+                                                SqlStatementMappingImpl.builder()
                                                 	.withDialects(List.of("mysql"))
-                                                    .withStatement("cast(`store_sqft` as UNSIGNED INTEGER) + " + Integer.MAX_VALUE)
+                                                    .withSql("cast(`store_sqft` as UNSIGNED INTEGER) + " + Integer.MAX_VALUE)
                                                     .build(),
-                                                SQLMappingImpl.builder()
+                                                SqlStatementMappingImpl.builder()
                                                     .withDialects(List.of("vertica"))
-                                                    .withStatement("cast(\"store_sqft\" as BIGINT) + " + Integer.MAX_VALUE)
+                                                    .withSql("cast(\"store_sqft\" as BIGINT) + " + Integer.MAX_VALUE)
                                                     .build(),
-                                                SQLMappingImpl.builder()
+                                                SqlStatementMappingImpl.builder()
                                                     .withDialects(List.of("oracle"))
-                                                    .withStatement("CAST(\"store_sqft\" + 2147483647 AS NUMBER(22))")
+                                                    .withSql("CAST(\"store_sqft\" + 2147483647 AS NUMBER(22))")
                                                     .build()
 
                                             ))
@@ -17762,9 +17759,9 @@ public class SchemaModifiers {
                                                 .withFormatString("Standard")
                                                 .withMeasureExpression(SQLExpressionMappingImpl.builder()
                                                     .withSqls(List.of(
-                                                        SQLMappingImpl.builder()
+                                                        SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("vertica"))
-                                                            .withStatement("CAST(\"unit_sales\" + 2147483647 AS NUMBER(22))")
+                                                            .withSql("CAST(\"unit_sales\" + 2147483647 AS NUMBER(22))")
                                                             .build()
                                                     )).build())
                                                 .build(),
@@ -18185,7 +18182,7 @@ public class SchemaModifiers {
         }
 
         @Override
-        protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+        protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
         	MeasureMappingImpl m = MeasureMappingImpl.builder()
             .withName("Unit Sales")
             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
@@ -18194,7 +18191,7 @@ public class SchemaModifiers {
             .build();
 
             List<CubeMapping> result = new ArrayList<>();
-            result.addAll(super.schemaCubes(schema));
+            result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
                 .withName("Foo")
                 .withDefaultMeasure(m)
@@ -19801,9 +19798,9 @@ public class SchemaModifiers {
 
         @Override
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
-        	ColumnImpl ordernumber = ColumnImpl.builder().withName("ORDERNUMBER").withType("INTEGER").build();
-        	ColumnImpl orderdate = ColumnImpl.builder().withName("ORDERDATE").withType("TIMESTAMP").build();
-            PhysicalTableImpl orders = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("orders")
+        	ColumnMappingImpl ordernumber = ColumnMappingImpl.builder().withName("ORDERNUMBER").withType("INTEGER").build();
+        	ColumnMappingImpl orderdate = ColumnMappingImpl.builder().withName("ORDERDATE").withType("TIMESTAMP").build();
+            PhysicalTableMappingImpl orders = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("orders")
                     .withColumns(List.of(
                             ordernumber, orderdate
                     ))).build();
@@ -20272,9 +20269,9 @@ public class SchemaModifiers {
          */
 
         @Override
-        protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+        protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             List<AccessRoleMapping> result = new ArrayList<>();
-            result.addAll(super.schemaAccessRoles(schema));
+            result.addAll(super.catalogAccessRoles(schema));
             result.add(
             	AccessRoleMappingImpl.builder()
                     .withName("CUBE_SCHEMA_ALL")
@@ -21117,9 +21114,9 @@ public class SchemaModifiers {
             ))
             .build();
 
-        	ColumnImpl unitSalesSalesFact1998 = ColumnImpl.builder().withName("unit_sales").withType("INTEGER").build();
-        	ColumnImpl customerIdSalesFact1998 = ColumnImpl.builder().withName("customer_id").withType("INTEGER").build();
-            PhysicalTableImpl salesFact1998 = ((PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("sales_fact_1998")
+        	ColumnMappingImpl unitSalesSalesFact1998 = ColumnMappingImpl.builder().withName("unit_sales").withType("INTEGER").build();
+        	ColumnMappingImpl customerIdSalesFact1998 = ColumnMappingImpl.builder().withName("customer_id").withType("INTEGER").build();
+            PhysicalTableMappingImpl salesFact1998 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("sales_fact_1998")
                     .withColumns(List.of(
                             unitSalesSalesFact1998, customerIdSalesFact1998
                     ))).build();

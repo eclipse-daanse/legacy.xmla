@@ -14,10 +14,8 @@
 package mondrian.rolap.util;
 
 import java.util.List;
-import java.util.Objects;
 
-import org.eclipse.daanse.rdb.structure.api.model.SqlStatement;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
 
 import mondrian.rolap.sql.SqlQuery;
 
@@ -26,9 +24,9 @@ public class SQLUtil {
      * Converts an array of SQL to a
      * {@link mondrian.rolap.sql.SqlQuery.CodeSet} object.
      */
-    public static SqlQuery.CodeSet toCodeSetSqlStatement(List<? extends SqlStatement> sqls) {
+    public static SqlQuery.CodeSet toCodeSetSqlStatement(List<? extends SqlStatementMapping> sqls) {
         SqlQuery.CodeSet codeSet = new SqlQuery.CodeSet();
-        for (SqlStatement sql : sqls) {
+        for (SqlStatementMapping sql : sqls) {
             for (String dialect : sql.getDialects()) {
                 codeSet.put(dialect, sql.getSql());
             }
@@ -36,28 +34,28 @@ public class SQLUtil {
         return codeSet;
     }
 
-    public static SqlQuery.CodeSet toCodeSet(List<? extends SQLMapping> sqls) {
+    public static SqlQuery.CodeSet toCodeSet(List<? extends SqlStatementMapping> sqls) {
         SqlQuery.CodeSet codeSet = new SqlQuery.CodeSet();
-        for (SQLMapping sql : sqls) {
+        for (SqlStatementMapping sql : sqls) {
             for (String dialect : sql.getDialects()) {
-                codeSet.put(dialect, sql.getStatement());
+                codeSet.put(dialect, sql.getSql());
             }
         }
         return codeSet;
     }
 
-    public static int hashCode(SQLMapping sql) {
+    public static int hashCode(SqlStatementMapping sql) {
         return sql.getDialects().hashCode();
     }
 
-    public boolean equals(SQLMapping sql, Object obj) {
-        if (!(obj instanceof SQLMapping that)) {
+    public boolean equals(SqlStatementMapping sql, Object obj) {
+        if (!(obj instanceof SqlStatementMapping that)) {
             return false;
         }
         if (sql.getDialects().size() != that.getDialects().size()) {
             return false;
         }
-        if (!sql.getStatement().equals(that.getStatement())) {
+        if (!sql.getSql().equals(that.getSql())) {
             return false;
         }
 

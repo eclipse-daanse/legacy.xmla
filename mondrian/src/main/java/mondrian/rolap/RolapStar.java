@@ -48,23 +48,23 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
-import org.eclipse.daanse.rdb.structure.pojo.InlineTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryOptimizationHintMapping;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryOptimizationHintMappingImpl;
 import org.slf4j.Logger;
@@ -258,7 +258,7 @@ public class RolapStar {
         }
         if(expression != null) {
             SqlQuery.CodeSet codeSet = new SqlQuery.CodeSet();
-            expression.getSqls().forEach(e -> e.getDialects().forEach(d -> codeSet.put(d, e.getStatement())));
+            expression.getSqls().forEach(e -> e.getDialects().forEach(d -> codeSet.put(d, e.getSql())));
             return codeSet.chooseQuery(query.getDialect());
         }
         return null;
@@ -326,7 +326,7 @@ public class RolapStar {
         	.withSqlWhereExpression(sql(tbl.getSqlWhereExpression(), possibleName, aliasOrName))
         	.build();
         } else if (rel instanceof SqlSelectQueryMapping view) {
-            return SqlSelectQueryMappingImpl.builder().withAlias(possibleName).withSql((SqlViewImpl) view.getSql()).build();
+            return SqlSelectQueryMappingImpl.builder().withAlias(possibleName).withSql((SqlViewMappingImpl) view.getSql()).build();
         } else if (rel instanceof InlineTableQueryMapping inlineTable) {
             return InlineTableQueryMappingImpl.builder()
             		.withAlias(possibleName)
@@ -337,11 +337,11 @@ public class RolapStar {
         }
     }
     
-    protected SQLMappingImpl sql(SQLMapping sql, String possibleName, String aliasOrName) {
+    protected SqlStatementMappingImpl sql(SqlStatementMapping sql, String possibleName, String aliasOrName) {
         if (sql != null) {
             List<String> dialects = sql.getDialects();
-            String statement = sql.getStatement();
-            return SQLMappingImpl.builder().withStatement(statement != null ?
+            String statement = sql.getSql();
+            return SqlStatementMappingImpl.builder().withSql(statement != null ?
                     statement.replace(aliasOrName, possibleName) : null).withDialects(dialects).build();
         }
         return null;
@@ -462,13 +462,13 @@ public class RolapStar {
                     JoinQueryMappingImpl.builder()
                     .withLeft(JoinedQueryElementMappingImpl.builder()
                     		.withAlias(left instanceof RelationalQueryMapping relation ? RelationUtil.getAlias(relation) : null)
-                    		.withKey(join.getLeft().getKey())
+                    		.withKey((ColumnMappingImpl) join.getLeft().getKey())
                     		.withQuery(PojoUtil.copy(left))
                     		.build())
 
                     .withRight(JoinedQueryElementMappingImpl.builder()
                     		.withAlias(right instanceof RelationalQueryMapping relation ? RelationUtil.getAlias(relation) : null)
-                    		.withKey(join.getRight().getKey())
+                    		.withKey((ColumnMappingImpl) join.getRight().getKey())
                     		.withQuery(PojoUtil.copy(right))
                     		.build())
                     .build();
@@ -1468,7 +1468,7 @@ public class RolapStar {
             }
         }
 
-        public org.eclipse.daanse.rdb.structure.api.model.Table getTable() {
+        public TableMapping getTable() {
             if (relation instanceof TableQueryMapping t) {
                 return t.getTable();
             } else {

@@ -78,24 +78,24 @@ import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
-import org.eclipse.daanse.rdb.structure.api.model.Column;
-import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
-import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
+import org.eclipse.daanse.rolap.mapping.api.model.AccessCatalogGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCubeGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessDimensionGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessHierarchyGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessMemberGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.AccessCatalogGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.NamedSetMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.ParameterMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -465,17 +465,17 @@ public class RolapCatalog implements Catalog {
 			}
 		}
 		
-		for (DatabaseSchema dbSchemaMapping : mappingCatalog2.getDbschemas()) {
+		for (DatabaseSchemaMapping dbSchemaMapping : mappingCatalog2.getDbschemas()) {
 			RolapDbSchema rolapDbSchema = new RolapDbSchema();
 			List<RolapDbTable> rolapDbTables = new ArrayList<>();
 			rolapDbSchema.setName(rolapDbSchema.getName());
 
-			for (Table table : dbSchemaMapping.getTables()) {
+			for (TableMapping table : dbSchemaMapping.getTables()) {
 				RolapDbTable rolapDbTable = new RolapDbTable();
 				List<RolapDbColumn> rolapDbColumns = new ArrayList<>();
 				rolapDbTable.setName(table.getName());
 
-				for (Column column : table.getColumns()) {
+				for (ColumnMapping column : table.getColumns()) {
 					RolapDbColumn rolapDbColumn = new RolapDbColumn();
 					rolapDbColumn.setName(column.getName());
 

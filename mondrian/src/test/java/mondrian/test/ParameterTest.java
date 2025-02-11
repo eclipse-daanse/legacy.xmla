@@ -1252,9 +1252,9 @@ class ParameterTest {
             }
 
             @Override
-            protected List<? extends ParameterMapping> schemaParameters(CatalogMapping schema) {
+            protected List<? extends ParameterMapping> catalogParameters(CatalogMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
-                result.addAll(super.schemaParameters(schema));
+                result.addAll(super.catalogParameters(schema));
                 result.add(ParameterMappingImpl.builder()
                     .withName("prop")
                     .withType(DataType.STRING)
@@ -1289,9 +1289,9 @@ class ParameterTest {
                 super(catalog);
             }
             @Override
-            protected List<? extends ParameterMapping> schemaParameters(CatalogMapping schema) {
+            protected List<? extends ParameterMapping> catalogParameters(CatalogMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
-                result.addAll(super.schemaParameters(schema));
+                result.addAll(super.catalogParameters(schema));
                 result.add(ParameterMappingImpl.builder()
                     .withName("foo")
                     .withType(DataType.NUMERIC)
@@ -1343,9 +1343,9 @@ class ParameterTest {
             }
 
             @Override
-            protected List<? extends ParameterMapping> schemaParameters(CatalogMapping schema) {
+            protected List<? extends ParameterMapping> catalogParameters(CatalogMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
-                result.addAll(super.schemaParameters(schema));
+                result.addAll(super.catalogParameters(schema));
                 result.add(ParameterMappingImpl.builder()
                     .withName("foo")
                     .withType(DataType.NUMERIC)
@@ -1383,9 +1383,9 @@ class ParameterTest {
             }
 
             @Override
-            protected List<? extends ParameterMapping> schemaParameters(CatalogMapping schema) {
+            protected List<? extends ParameterMapping> catalogParameters(CatalogMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
-                result.addAll(super.schemaParameters(schema));
+                result.addAll(super.catalogParameters(schema));
                 result.add(ParameterMappingImpl.builder()
                     .withName("Product Current Member")
                     .withType(DataType.NUMERIC)
@@ -1425,9 +1425,9 @@ class ParameterTest {
             }
 
             @Override
-            protected List<? extends ParameterMapping> schemaParameters(CatalogMapping schema) {
+            protected List<? extends ParameterMapping> catalogParameters(CatalogMapping schema) {
                 List<ParameterMapping> result = new ArrayList<>();
-                result.addAll(super.schemaParameters(schema));
+                result.addAll(super.catalogParameters(schema));
                 result.add(ParameterMappingImpl.builder()
                     .withName("Customer Current Member")
                     //.withType(DataType.NUMERIC) TODO "Member"

@@ -723,7 +723,7 @@ class AggregationOnDistinctCountMeasuresTest {
           }
 
           @Override
-          protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+          protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
         	  StandardDimensionMappingImpl warehouse2Dimension = StandardDimensionMappingImpl.builder()
               .withName("Warehouse2")
               .withHierarchies(List.of(
@@ -781,7 +781,7 @@ class AggregationOnDistinctCountMeasuresTest {
                           .build()
                   )).build()))
                   .build());
-              result.addAll(super.schemaCubes(schema));
+              result.addAll(super.catalogCubes(schema));
               return result;
 
           }
@@ -852,7 +852,7 @@ class AggregationOnDistinctCountMeasuresTest {
               super(c);
           }
 
-          protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+          protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
         	  StandardDimensionMappingImpl warehouse2Dimension = StandardDimensionMappingImpl.builder()
               .withName("Warehouse2")
               .withHierarchies(List.of(
@@ -882,7 +882,7 @@ class AggregationOnDistinctCountMeasuresTest {
               .build();
 
               List<CubeMapping> result = new ArrayList<>();
-              result.addAll(super.schemaCubes(schema));
+              result.addAll(super.catalogCubes(schema));
               result.add(PhysicalCubeMappingImpl.builder()
                   .withName("Warehouse2")
                   .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.INVENTORY_FACKT_1997_TABLE).build())
@@ -980,7 +980,7 @@ class AggregationOnDistinctCountMeasuresTest {
           }
 
           @Override
-          protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+          protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
         	  StandardDimensionMappingImpl warehouse2Dimension = StandardDimensionMappingImpl.builder()
               .withName("Warehouse2")
               .withHierarchies(List.of(
@@ -1008,7 +1008,7 @@ class AggregationOnDistinctCountMeasuresTest {
                       .build())).build();
 
               List<CubeMapping> result = new ArrayList<>();
-              result.addAll(super.schemaCubes(schema));
+              result.addAll(super.catalogCubes(schema));
               result.add(PhysicalCubeMappingImpl.builder()
                   .withName("Warehouse2")
                   .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.INVENTORY_FACKT_1997_TABLE).build())
@@ -1791,9 +1791,9 @@ class AggregationOnDistinctCountMeasuresTest {
           public TestMondrian906Modifier(CatalogMapping c) {
               super(c);
           }
-          protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+          protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
               List<CubeMapping> result = new ArrayList<>();
-              result.addAll(super.schemaCubes(schema));
+              result.addAll(super.catalogCubes(schema));
               result.add(VirtualCubeMappingImpl.builder()
                       .withName("Warehouse and Sales2")
                       .withDefaultMeasure((MeasureMappingImpl) look(FoodmartMappingSupplier.MEASURE_STORE_SALES))
@@ -1857,9 +1857,9 @@ class AggregationOnDistinctCountMeasuresTest {
           }
 
           @Override
-          protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+          protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
               List<AccessRoleMapping> result = new ArrayList<>();
-              result.addAll(super.schemaAccessRoles(schema));
+              result.addAll(super.catalogAccessRoles(schema));
               result.add(AccessRoleMappingImpl.builder()
                   .withName("Role1")
                   .withAccessCatalogGrants(List.of(

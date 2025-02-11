@@ -23,12 +23,12 @@ import java.util.Objects;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-import org.eclipse.daanse.rdb.structure.api.model.Column;
-import org.eclipse.daanse.rdb.structure.api.model.Table;
+import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,7 +107,7 @@ public class HierarchyUsage {
      * The foreign key by which this {@link Hierarchy} is joined to
      * the {@link #fact} table.
      */
-    private final Column foreignKey;
+    private final ColumnMapping foreignKey;
 
     /**
      * not NULL for DimensionUsage
@@ -313,7 +313,7 @@ public class HierarchyUsage {
     public String getName() {
         return this.name;
     }
-    public Column getForeignKey() {
+    public ColumnMapping getForeignKey() {
         return this.foreignKey;
     }
     public String getSource() {
@@ -472,7 +472,7 @@ public class HierarchyUsage {
      */
     private RelationalQueryMapping findJoinTable(
         RolapHierarchy hierarchy,
-        Table tab)
+        TableMapping tab)
     {
         final RelationalQueryMapping table;
         if (tab == null) {

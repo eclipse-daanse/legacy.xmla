@@ -29,9 +29,9 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -39,28 +39,27 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCubeGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessHierarchyGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessDimensionGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -74,7 +73,6 @@ import mondrian.olap.exceptions.RoleUnionGrantsException;
 import mondrian.olap.exceptions.UnknownRoleException;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.agg.SegmentCacheManager;
-import mondrian.rolap.util.RelationUtil;
 
 
 /**
@@ -278,11 +276,11 @@ class RolapCatalogTest {
         throws Exception {
       //Create the test fact
       RelationalQueryMapping fact = TableQueryMappingImpl.builder()
-      		  .withTable(((Builder) PhysicalTableImpl.builder().withName("getFactTable())")).build())
+      		  .withTable(((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("getFactTable())")).build())
       		  .withAlias("TableAlias")
-      		  .withSqlWhereExpression(SQLMappingImpl.builder()
+      		  .withSqlWhereExpression(SqlStatementMappingImpl.builder()
       				  .withDialects(List.of("mysql"))
-      				  .withStatement("`TableAlias`.`promotion_id` = 112")
+      				  .withSql("`TableAlias`.`promotion_id` = 112")
       				  .build())
       		  .build();
       List<String> rolapStarKey = RolapUtil.makeRolapStarKey(fact);
@@ -311,11 +309,11 @@ class RolapCatalogTest {
     void testGetStarFromRegistryByStarKey() throws Exception {
       //Create the test fact
       RelationalQueryMapping fact = TableQueryMappingImpl.builder()
-    		  .withTable(((Builder) PhysicalTableImpl.builder().withName("getFactTable())")).build())
+    		  .withTable(((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("getFactTable())")).build())
     		  .withAlias("TableAlias")
-    		  .withSqlWhereExpression(SQLMappingImpl.builder()
+    		  .withSqlWhereExpression(SqlStatementMappingImpl.builder()
     				  .withDialects(List.of("mysql"))
-    				  .withStatement("`TableAlias`.`promotion_id` = 112")
+    				  .withSql("`TableAlias`.`promotion_id` = 112")
     				  .build())
     		  .build();
       List<String> rolapStarKey = RolapUtil.makeRolapStarKey(fact);
@@ -333,7 +331,7 @@ class RolapCatalogTest {
     void testGetStarFromRegistryByFactTableName() throws Exception {
       //Create the test fact
       RelationalQueryMapping fact = TableQueryMappingImpl.builder()
-    		  .withTable(((Builder) PhysicalTableImpl.builder().withName("getFactTable())")).build())
+    		  .withTable(((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("getFactTable())")).build())
     		  .withAlias("TableAlias")
     		  .build();
 

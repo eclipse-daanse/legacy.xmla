@@ -1591,9 +1591,9 @@ protected void assertQuerySql(Connection connection,
           }
 
           @Override
-          protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+          protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
               List<AccessRoleMapping> result = new ArrayList<>();
-              result.addAll(super.schemaAccessRoles(schema));
+              result.addAll(super.catalogAccessRoles(schema));
               result.add(AccessRoleMappingImpl.builder()
                   .withName("F-MIS-BE-CLIENT")
                   .withAccessCatalogGrants(List.of(
@@ -1721,9 +1721,9 @@ protected void assertQuerySql(Connection connection,
               super(catalogMapping);
           }
 
-          protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+          protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
               List<AccessRoleMapping> result = new ArrayList<>();
-              result.addAll(super.schemaAccessRoles(schema));
+              result.addAll(super.catalogAccessRoles(schema));
               result.add(AccessRoleMappingImpl.builder()
                   .withName("Test")
                   .withAccessCatalogGrants(List.of(

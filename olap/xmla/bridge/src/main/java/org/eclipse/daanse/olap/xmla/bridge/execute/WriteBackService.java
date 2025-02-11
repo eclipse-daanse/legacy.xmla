@@ -39,16 +39,15 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.AllocationPolicy;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.api.result.Scenario;
-import org.eclipse.daanse.rdb.structure.api.model.SqlStatement;
-import org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlStatementImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
+import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
 
 import mondrian.olap.QueryImpl;
 import mondrian.rolap.RolapBaseCubeMeasure;
@@ -531,9 +530,9 @@ public class WriteBackService {
                     StringBuilder sql = new StringBuilder("select ").append(writebackTable.getColumns().stream().map( c -> c.getColumn().getName() )
                     .collect(Collectors.joining(", "))).append(" from ").append(mappingTable.getTable().getName());
                     sql.append(getWriteBackSql(dialect, writebackTable, sessionValues));
-                    SqlStatementImpl sqlStatement = SqlStatementImpl.builder().withSql(sql.toString()).withDialects(List.of("generic", dialect.getDialectName())).build();
-                    DatabaseSchemaImpl schema = DatabaseSchemaImpl.builder().withName(mappingTable.getTable().getSchema().getName()).build();
-                    SqlViewImpl sqlView = ((Builder) SqlViewImpl.builder().withSqlStatements(List.of(sqlStatement)).withsSchema(schema)).build();
+                    SqlStatementMappingImpl sqlStatement = SqlStatementMappingImpl.builder().withSql(sql.toString()).withDialects(List.of("generic", dialect.getDialectName())).build();
+                    DatabaseSchemaMappingImpl schema = DatabaseSchemaMappingImpl.builder().withName(mappingTable.getTable().getSchema().getName()).build();
+                    SqlViewMappingImpl sqlView = ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder().withSqlStatements(List.of(sqlStatement)).withsSchema(schema)).build();
                     changeFact(cube, SqlSelectQueryMappingImpl.builder().withSql(sqlView).withAlias(alias).build());
                 }
                 if (fact instanceof InlineTableQueryMapping mappingInlineTable) {
@@ -551,12 +550,12 @@ public class WriteBackService {
 
     private void changeFact(RolapCube cube, SqlSelectQueryMapping mappingView, Dialect dialect, RolapWritebackTable writebackTable, List<Map<String, Map.Entry<Datatype, Object>>> sessionValues) {
         if (mappingView.getSql() != null && mappingView.getSql().getSqlStatements() != null) {
-        	List<? extends SqlStatement> statements = mappingView.getSql().getSqlStatements().stream()
-                .map(sql -> SqlStatementImpl.builder()
+        	List<? extends SqlStatementMapping> statements = mappingView.getSql().getSqlStatements().stream()
+                .map(sql -> SqlStatementMappingImpl.builder()
                 		.withSql(new StringBuilder(sql.getSql()).append(getWriteBackSql(dialect, writebackTable, sessionValues)).toString())
                 		.withDialects(sql.getDialects()).build())
                 .toList();
-        	SqlViewImpl sqlView = ((Builder) SqlViewImpl.builder().withSqlStatements(statements).withsSchema((DatabaseSchemaImpl) mappingView.getSql().getSchema())).build();
+        	SqlViewMappingImpl sqlView = ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder().withSqlStatements(statements).withsSchema((DatabaseSchemaMappingImpl) mappingView.getSql().getSchema())).build();
             changeFact(cube, SqlSelectQueryMappingImpl.builder().withSql(sqlView).withAlias(mappingView.getAlias()).build());
         }
     }

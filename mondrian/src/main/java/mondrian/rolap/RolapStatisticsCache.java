@@ -19,9 +19,9 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 
 import mondrian.rolap.sql.SqlQuery;
@@ -66,7 +66,7 @@ public class RolapStatisticsCache {
 
     private long getTableCardinality(
         String catalog,
-        Table table)
+        TableMapping table)
     {
     	String schema = table.getSchema() != null ? table.getSchema().getName() : null;
         final List<String> key = Arrays.asList(catalog, schema, table.getName());
@@ -156,7 +156,7 @@ public class RolapStatisticsCache {
 
     private long getColumnCardinality(
         String catalog,
-        Table table,
+        TableMapping table,
         String column)
     {
     	String schema = table.getSchema() != null ? table.getSchema().getName() : null;

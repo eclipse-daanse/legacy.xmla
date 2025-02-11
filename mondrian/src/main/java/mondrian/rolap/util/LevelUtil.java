@@ -15,9 +15,9 @@ package mondrian.rolap.util;
 
 import java.util.Objects;
 
-import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 
 import mondrian.rolap.RolapColumn;
 
@@ -47,7 +47,7 @@ public class LevelUtil {
         }
     }
 
-    private static String getTableName(Table table) {
+    private static String getTableName(TableMapping table) {
         if (table != null) {
             return table.getName();
         }

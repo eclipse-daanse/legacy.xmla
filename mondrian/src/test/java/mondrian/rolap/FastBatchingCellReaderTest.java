@@ -47,7 +47,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -1033,9 +1033,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                   .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
                                   .withFormatString("#,##0")
                                   .withMeasureExpression(SQLExpressionMappingImpl.builder()
-                                		  .withSqls(List.of(SQLMappingImpl.builder()
+                                		  .withSqls(List.of(SqlStatementMappingImpl.builder()
                                 				  .withDialects(List.of("generic"))
-                                				  .withStatement("(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Owned')")
+                                				  .withSql("(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Owned')")
                                 				  .build()))
                                 		  .build())
                                   .build(),
@@ -1044,9 +1044,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                   .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
                                   .withFormatString("#,##0")
                                   .withMeasureExpression(SQLExpressionMappingImpl.builder()
-                                		  .withSqls(List.of(SQLMappingImpl.builder()
+                                		  .withSqls(List.of(SqlStatementMappingImpl.builder()
                                 				  .withDialects(List.of("generic"))
-                                				  .withStatement("(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')")
+                                				  .withSql("(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')")
                                 				  .build()))
                                 		  .build())
                                   .build(),
@@ -1055,9 +1055,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                   .withAggregatorType(MeasureAggregatorType.COUNT)
                                   .withFormatString("#,##0")
                                   .withMeasureExpression(SQLExpressionMappingImpl.builder()
-                                		  .withSqls(List.of(SQLMappingImpl.builder()
+                                		  .withSqls(List.of(SqlStatementMappingImpl.builder()
                                 				  .withDialects(List.of("generic"))
-                                				  .withStatement("(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')")
+                                				  .withSql("(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')")
                                 				  .build()))
                                 		  .build())
                                   .build(),
@@ -1066,9 +1066,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                   .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
                                   .withFormatString("#,##0")
                                   .withMeasureExpression(SQLExpressionMappingImpl.builder()
-                                		  .withSqls(List.of(SQLMappingImpl.builder()
+                                		  .withSqls(List.of(SqlStatementMappingImpl.builder()
                                 				  .withDialects(List.of("generic"))
-                                				  .withStatement("`store_id`+`warehouse_id`")
+                                				  .withSql("`store_id`+`warehouse_id`")
                                 				  .build()))
                                 		  .build())
                                   .build(),
@@ -1077,9 +1077,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                   .withAggregatorType(MeasureAggregatorType.COUNT)
                                   .withFormatString("#,##0")
                                   .withMeasureExpression(SQLExpressionMappingImpl.builder()
-                                		  .withSqls(List.of(SQLMappingImpl.builder()
+                                		  .withSqls(List.of(SqlStatementMappingImpl.builder()
                                 				  .withDialects(List.of("generic"))
-                                				  .withStatement("`store_id`+`warehouse_id`")
+                                				  .withSql("`store_id`+`warehouse_id`")
                                 				  .build()))
                                 		  .build())
                                   .build(),

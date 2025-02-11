@@ -30,13 +30,15 @@ import java.util.TreeMap;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
-import org.eclipse.daanse.rdb.structure.api.model.PhysicalTable;
-import org.eclipse.daanse.rdb.structure.api.model.SystemTable;
-import org.eclipse.daanse.rdb.structure.api.model.ViewTable;
+import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.PhysicalTableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.SystemTableMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.ViewTableMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -716,12 +718,12 @@ public class JdbcSchema {
         // mondriandef stuff
         public TableQueryMapping table;
 
-        private Table(final String name, String tableType, List<? extends org.eclipse.daanse.rdb.structure.api.model.Column> list) {
+        private Table(final String name, String tableType, List<? extends ColumnMapping> list) {
             this.name = name;
             this.tableUsageType = TableUsageType.UNKNOWN;
             this.tableType = tableType;
 
-			for (org.eclipse.daanse.rdb.structure.api.model.Column rdbColumn : list) {
+			for (ColumnMapping rdbColumn : list) {
 
 				String nameInner = rdbColumn.getName();
 				int type = JDBCType.valueOf(rdbColumn.getType()).getVendorTypeNumber();
@@ -927,7 +929,7 @@ public class JdbcSchema {
         }
     }
 
-    private DatabaseSchema databaseSchema;
+    private DatabaseSchemaMapping databaseSchema;
 
     /**
      * Tables by name. We use a sorted map so {@link #getTables()}'s output
@@ -936,7 +938,7 @@ public class JdbcSchema {
     private final SortedMap<String, Table> tables =
         new TreeMap<>();
 
-	public JdbcSchema(final DatabaseSchema databaseSchema) {
+	public JdbcSchema(final DatabaseSchemaMapping databaseSchema) {
 		this.databaseSchema = databaseSchema;
 		loadTables();
 	}
@@ -995,8 +997,8 @@ public class JdbcSchema {
      */
 	protected void loadTables() {
 
-		for (org.eclipse.daanse.rdb.structure.api.model.Table rdbTable : databaseSchema.getTables()) {
-			if (rdbTable instanceof PhysicalTable || rdbTable instanceof ViewTable || rdbTable instanceof SystemTable) {
+		for (TableMapping rdbTable : databaseSchema.getTables()) {
+			if (rdbTable instanceof PhysicalTableMapping || rdbTable instanceof ViewTableMapping || rdbTable instanceof SystemTableMapping) {
 				
 			Table table = new Table(rdbTable.getName(), rdbTable.getClass().getSimpleName(),rdbTable.getColumns());
 				getLogger().debug("Adding table {}", rdbTable.getName());

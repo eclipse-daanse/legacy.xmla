@@ -31,13 +31,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
-import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -45,20 +45,11 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.NamedSet;
-import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
-import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
-import org.eclipse.daanse.rdb.structure.pojo.InlineTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.RowImpl;
-import org.eclipse.daanse.rdb.structure.pojo.RowValueImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlStatementImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl;
-import org.eclipse.daanse.rdb.structure.pojo.SqlViewImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -68,21 +59,20 @@ import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MeasureGroupMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.NamedSetMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationForeignKeyMappingImpl;
@@ -92,10 +82,13 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AnnotationMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberPropertyMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.InlineTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
@@ -108,10 +101,14 @@ import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.NamedSetMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ParentChildLinkMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.RowMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.RowValueMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TimeDimensionMappingImpl;
@@ -130,13 +127,14 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mysql.cj.xdevapi.RowImpl;
+
 import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
+import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapCatalog;
-import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.aggmatcher.AggTableManager;
 import mondrian.spi.PropertyFormatter;
 import mondrian.util.Bug;
@@ -693,9 +691,9 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                	ColumnImpl yearly_income = ColumnImpl.builder().withName("yearly_income").withType("INTEGER").build();
-                	ColumnImpl customer_id = ColumnImpl.builder().withName("customer_id").withType("INTEGER").build();
-                    PhysicalTableImpl customer_not_found = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("customer_not_found")
+                	ColumnMappingImpl yearly_income = ColumnMappingImpl.builder().withName("yearly_income").withType("INTEGER").build();
+                	ColumnMappingImpl customer_id = ColumnMappingImpl.builder().withName("customer_id").withType("INTEGER").build();
+                    PhysicalTableMappingImpl customer_not_found = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("customer_not_found")
                             .withColumns(List.of(
                                     customer_id, yearly_income
                                     ))).build();
@@ -757,8 +755,8 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnImpl customer_id = ColumnImpl.builder().withName("customer_id").withType("INTEGER").build();
-                    PhysicalTableImpl customer_not_found = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("customer_not_found")
+                    ColumnMappingImpl customer_id = ColumnMappingImpl.builder().withName("customer_id").withType("INTEGER").build();
+                    PhysicalTableMappingImpl customer_not_found = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("customer_not_found")
                             .withColumns(List.of(
                                     customer_id
                                     ))).build();
@@ -818,8 +816,8 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnImpl yearly_income = ColumnImpl.builder().withName("yearly_income").withType("INTEGER").build();
-                    PhysicalTableImpl customer_not_found = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("customer_not_found")
+                    ColumnMappingImpl yearly_income = ColumnMappingImpl.builder().withName("yearly_income").withType("INTEGER").build();
+                    PhysicalTableMappingImpl customer_not_found = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("customer_not_found")
                             .withColumns(List.of(
                                     yearly_income
                                     ))).build();
@@ -1462,10 +1460,10 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnImpl sales_district_id = ColumnImpl.builder().withName("sales_district_id").withType("INTEGER").build();
-                ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withType("INTEGER").build();
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
+                PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 sales_region, sales_district_id, region_id
                                 ))).build();
@@ -1733,10 +1731,10 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnImpl sales_district_id = ColumnImpl.builder().withName("sales_district_id").withType("INTEGER").build();
-                ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withType("INTEGER").build();
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
+                PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 sales_region, sales_district_id, region_id
                                 ))).build();
@@ -2027,9 +2025,9 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
                                 ))).build();
@@ -2245,9 +2243,9 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
                                 ))).build();
@@ -2464,9 +2462,9 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
                                 ))).build();
@@ -2679,9 +2677,9 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
                                 ))).build();
@@ -3679,7 +3677,7 @@ class SchemaTest {
 
                 SqlSelectQueryMappingImpl v1 = SqlSelectQueryMappingImpl.builder()
                         .withAlias("FACT").withSql(
-                                ((Builder) SqlViewImpl.builder()
+                                ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
                                 .withColumns(List.of(
                                         FoodmartMappingSupplier.TIME_ID_COLUMN_IN_INVENTORY_FACKT_1997,
                                         FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_INVENTORY_FACKT_1997,
@@ -3690,10 +3688,10 @@ class SchemaTest {
                                  )))
                                 .withSqlStatements(
                                     List.of(
-                                    SqlStatementImpl.builder().withSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"").withDialects(List.of("generic")).build(),
-                                    SqlStatementImpl.builder().withSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"").withDialects(List.of("oracle")).build(),
-                                    SqlStatementImpl.builder().withSql("select * from `inventory_fact_1997` as `FOOBAR`").withDialects(List.of("mysql")).build(),
-                                    SqlStatementImpl.builder().withSql("select * from `inventory_fact_1997` as `FOOBAR`").withDialects(List.of("infobright")).build()
+                                    SqlStatementMappingImpl.builder().withSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"").withDialects(List.of("generic")).build(),
+                                    SqlStatementMappingImpl.builder().withSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"").withDialects(List.of("oracle")).build(),
+                                    SqlStatementMappingImpl.builder().withSql("select * from `inventory_fact_1997` as `FOOBAR`").withDialects(List.of("mysql")).build(),
+                                    SqlStatementMappingImpl.builder().withSql("select * from `inventory_fact_1997` as `FOOBAR`").withDialects(List.of("infobright")).build()
                                 ))
                                 .build()
                                 )
@@ -3716,7 +3714,7 @@ class SchemaTest {
                         .build();
                     SqlSelectQueryMappingImpl view = SqlSelectQueryMappingImpl.builder()
                                 .withAlias("FACT").withSql(
-                                        ((Builder) SqlViewImpl.builder()
+                                        ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
                                         .withColumns(List.of(
                                                 FoodmartMappingSupplier.TIME_ID_COLUMN_IN_INVENTORY_FACKT_1997,
                                                 FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_INVENTORY_FACKT_1997,
@@ -3727,10 +3725,10 @@ class SchemaTest {
                                          )))
                                         .withSqlStatements(
                                             List.of(
-                                            SqlStatementImpl.builder().withSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"").withDialects(List.of("generic")).build(),
-                                            SqlStatementImpl.builder().withSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"").withDialects(List.of("oracle")).build(),
-                                            SqlStatementImpl.builder().withSql("select * from `inventory_fact_1997` as `FOOBAR`").withDialects(List.of("mysql")).build(),
-                                            SqlStatementImpl.builder().withSql("select * from `inventory_fact_1997` as `FOOBAR`").withDialects(List.of("infobright")).build()
+                                            SqlStatementMappingImpl.builder().withSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"").withDialects(List.of("generic")).build(),
+                                            SqlStatementMappingImpl.builder().withSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"").withDialects(List.of("oracle")).build(),
+                                            SqlStatementMappingImpl.builder().withSql("select * from `inventory_fact_1997` as `FOOBAR`").withDialects(List.of("mysql")).build(),
+                                            SqlStatementMappingImpl.builder().withSql("select * from `inventory_fact_1997` as `FOOBAR`").withDialects(List.of("infobright")).build()
                                         ))
                                         .build()
                                         )
@@ -3901,7 +3899,7 @@ class SchemaTest {
 
                     SqlSelectQueryMappingImpl view = SqlSelectQueryMappingImpl.builder()
                         .withAlias("FACT").withSql(
-                                ((Builder) SqlViewImpl.builder()
+                                ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
                                 .withColumns(List.of(
                                         FoodmartMappingSupplier.TIME_ID_COLUMN_IN_INVENTORY_FACKT_1997,
                                         FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_INVENTORY_FACKT_1997,
@@ -3912,8 +3910,8 @@ class SchemaTest {
                                  )))
                                 .withSqlStatements(
                                     List.of(
-                                    SqlStatementImpl.builder().withSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"").withDialects(List.of("generic", "oracle")).build(),
-                                    SqlStatementImpl.builder().withSql("select * from `inventory_fact_1997` as `FOOBAR`").withDialects(List.of("mysql", "infobright")).build()
+                                    SqlStatementMappingImpl.builder().withSql("select * from \"inventory_fact_1997\" as \"FOOBAR\"").withDialects(List.of("generic", "oracle")).build(),
+                                    SqlStatementMappingImpl.builder().withSql("select * from `inventory_fact_1997` as `FOOBAR`").withDialects(List.of("mysql", "infobright")).build()
                                 ))
                                 .build()
                                 )
@@ -4047,15 +4045,15 @@ class SchemaTest {
 
                     SqlSelectQueryMappingImpl view = SqlSelectQueryMappingImpl.builder()
                             .withAlias("FACT").withSql(
-                                    ((Builder) SqlViewImpl.builder()
+                                    ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
                                     .withColumns(List.of(
                                             FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE,
                                             FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE
                                      )))
                                     .withSqlStatements(
                                         List.of(
-                                        SqlStatementImpl.builder().withSql("select * from \"store\" as \"FOOBAR\"").withDialects(List.of("generic", "oracle")).build(),
-                                        SqlStatementImpl.builder().withSql("select * from `store` as `FOOBAR`").withDialects(List.of("mysql", "infobright")).build()
+                                        SqlStatementMappingImpl.builder().withSql("select * from \"store\" as \"FOOBAR\"").withDialects(List.of("generic", "oracle")).build(),
+                                        SqlStatementMappingImpl.builder().withSql("select * from `store` as `FOOBAR`").withDialects(List.of("mysql", "infobright")).build()
                                     ))
                                     .build()
                                     )
@@ -6086,11 +6084,11 @@ class SchemaTest {
                 SqlSelectQueryMappingImpl v1 = SqlSelectQueryMappingImpl.builder()
                     .withAlias("customer")
                     .withSql(
-                            ((Builder) SqlViewImpl.builder()
+                            ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
                             .withColumns(List.of(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)))
                             .withSqlStatements(List.of(
-                                SqlStatementImpl.builder().withSql("SELECT * FROM customer").withDialects(List.of("generic")).build(),
-                                SqlStatementImpl.builder().withSql("SELECT * FROM \"customer\"").withDialects(
+                                SqlStatementMappingImpl.builder().withSql("SELECT * FROM customer").withDialects(List.of("generic")).build(),
+                                SqlStatementMappingImpl.builder().withSql("SELECT * FROM \"customer\"").withDialects(
                                 List.of("oracle", "derby", "hsqldb", "luciddb", "neoview", "netezza", "db2")).build()
                             ))
                     .build()).build();
@@ -6224,7 +6222,7 @@ class SchemaTest {
             }
             protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
                 List<AccessRoleMapping> result = new ArrayList<>();
-                result.addAll(super.schemaAccessRoles(schema));
+                result.addAll(super.catalogAccessRoles(schema));
                 result.add(AccessRoleMappingImpl.builder()
                     .withName("Role1")
                     .withAccessCatalogGrants(List.of(AccessCatalogGrantMappingImpl.builder().build()))
@@ -6338,7 +6336,7 @@ class SchemaTest {
             	AccessRoleMappingImpl role2;
             	AccessRoleMappingImpl role1Plus2;
                 List<AccessRoleMapping> result = new ArrayList<>();
-                result.addAll(super.schemaAccessRoles(schema));
+                result.addAll(super.catalogAccessRoles(schema));
                 result.add(role1 = AccessRoleMappingImpl.builder()
                     .withName("Role1")
                     .withAccessCatalogGrants(List.of(AccessCatalogGrantMappingImpl.builder().withAccess(AccessCatalog.ALL).build()))
@@ -6404,7 +6402,7 @@ class SchemaTest {
             protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
             	AccessRoleMappingImpl role1;
                 List<AccessRoleMapping> result = new ArrayList<>();
-                result.addAll(super.schemaAccessRoles(schema));
+                result.addAll(super.catalogAccessRoles(schema));
                 result.add(role1 = AccessRoleMappingImpl.builder()
                     .withName("Role1")
                     .withAccessCatalogGrants(List.of(AccessCatalogGrantMappingImpl.builder().withAccess(AccessCatalog.ALL).build()))
@@ -6446,11 +6444,11 @@ class SchemaTest {
                 super(catalog);
             }
 
-            protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+            protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             	AccessRoleMappingImpl role1;
             	AccessRoleMappingImpl role2;
                 List<AccessRoleMapping> result = new ArrayList<>();
-                result.addAll(super.schemaAccessRoles(schema));
+                result.addAll(super.catalogAccessRoles(schema));
                 result.add(role1 = AccessRoleMappingImpl.builder()
                     .withName("Role1")
                     .withAccessCatalogGrants(List.of(AccessCatalogGrantMappingImpl.builder().withAccess(AccessCatalog.ALL).build()))
@@ -6669,8 +6667,8 @@ class SchemaTest {
             public TestInvalidRoleErrorModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            protected AccessRoleMapping schemaDefaultAccessRole(CatalogMapping schema) {
-            	AccessRoleMapping role = super.schemaDefaultAccessRole(schema);
+            protected AccessRoleMapping catalogDefaultAccessRole(CatalogMapping schema) {
+            	AccessRoleMapping role = super.catalogDefaultAccessRole(schema);
                 if ("FoodMart".equals(schema.getName())) {
                     return AccessRoleMappingImpl.builder().withName("Unknown").build();
                 }
@@ -6725,24 +6723,24 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnImpl id = ColumnImpl.builder().withName("id").withType("Integer").build();
-                    ColumnImpl bin = ColumnImpl.builder().withName("bin").withType("Integer").build();
-                    ColumnImpl name = ColumnImpl.builder().withName("name").withType("String").withCharOctetLength(20).build();
-                    InlineTableImpl t = InlineTableImpl.builder()
+                    ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withType("Integer").build();
+                    ColumnMappingImpl bin = ColumnMappingImpl.builder().withName("bin").withType("Integer").build();
+                    ColumnMappingImpl name = ColumnMappingImpl.builder().withName("name").withType("String").withCharOctetLength(20).build();
+                    InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                     .withColumns(List.of(id, bin, name))
                     .withRows(List.of(
-                           RowImpl.builder().withRowValues(List.of(
-                                RowValueImpl.builder().withColumn(id).withValue("2").build(),
-                                RowValueImpl.builder().withColumn(bin).withValue("X'4546'").build(),
-                                RowValueImpl.builder().withColumn(name).withValue("Ben").build())).build(),
-                           RowImpl.builder().withRowValues(List.of(
-                                   RowValueImpl.builder().withColumn(id).withValue("3").build(),
-                                   RowValueImpl.builder().withColumn(bin).withValue("X'424344'").build(),
-                                   RowValueImpl.builder().withColumn(name).withValue("Bill").build())).build(),
-                           RowImpl.builder().withRowValues(List.of(
-                                   RowValueImpl.builder().withColumn(id).withValue("4").build(),
-                                   RowValueImpl.builder().withColumn(bin).withValue("X'424344'").build(),
-                                   RowValueImpl.builder().withColumn(name).withValue("Bill").build())).build()
+                           RowMappingImpl.builder().withRowValues(List.of(
+                                RowValueMappingImpl.builder().withColumn(id).withValue("2").build(),
+                                RowValueMappingImpl.builder().withColumn(bin).withValue("X'4546'").build(),
+                                RowValueMappingImpl.builder().withColumn(name).withValue("Ben").build())).build(),
+                           RowMappingImpl.builder().withRowValues(List.of(
+                        		   RowValueMappingImpl.builder().withColumn(id).withValue("3").build(),
+                        		   RowValueMappingImpl.builder().withColumn(bin).withValue("X'424344'").build(),
+                        		   RowValueMappingImpl.builder().withColumn(name).withValue("Bill").build())).build(),
+                           RowMappingImpl.builder().withRowValues(List.of(
+                        		   RowValueMappingImpl.builder().withColumn(id).withValue("4").build(),
+                        		   RowValueMappingImpl.builder().withColumn(bin).withValue("X'424344'").build(),
+                        		   RowValueMappingImpl.builder().withColumn(name).withValue("Bill").build())).build()
                     ))
                     .build();
                     InlineTableQueryMappingImpl inlineTable = InlineTableQueryMappingImpl
@@ -6870,20 +6868,20 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnImpl id = ColumnImpl.builder().withName("id").withType("Integer").build();
-                    ColumnImpl bigNum = ColumnImpl.builder().withName("big_num").withType("Integer").build();
-                    ColumnImpl name = ColumnImpl.builder().withName("name").withType("String").withCharOctetLength(20).build();
-                    InlineTableImpl t = InlineTableImpl.builder()
+                    ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withType("Integer").build();
+                    ColumnMappingImpl bigNum = ColumnMappingImpl.builder().withName("big_num").withType("Integer").build();
+                    ColumnMappingImpl name = ColumnMappingImpl.builder().withName("name").withType("String").withCharOctetLength(20).build();
+                    InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                     .withColumns(List.of(id, bigNum, name))
                     .withRows(List.of(
-                           RowImpl.builder().withRowValues(List.of(
-                                RowValueImpl.builder().withColumn(id).withValue("0").build(),
-                                RowValueImpl.builder().withColumn(bigNum).withValue("1234").build(),
-                                RowValueImpl.builder().withColumn(name).withValue("Ben").build())).build(),
-                           RowImpl.builder().withRowValues(List.of(
-                                   RowValueImpl.builder().withColumn(id).withValue("519").build(),
-                                   RowValueImpl.builder().withColumn(bigNum).withValue("1234567890123").build(),
-                                   RowValueImpl.builder().withColumn(name).withValue("Bill").build())).build()
+                           RowMappingImpl.builder().withRowValues(List.of(
+                        		   RowValueMappingImpl.builder().withColumn(id).withValue("0").build(),
+                        		   RowValueMappingImpl.builder().withColumn(bigNum).withValue("1234").build(),
+                        		   RowValueMappingImpl.builder().withColumn(name).withValue("Ben").build())).build(),
+                           RowMappingImpl.builder().withRowValues(List.of(
+                        		   RowValueMappingImpl.builder().withColumn(id).withValue("519").build(),
+                        		   RowValueMappingImpl.builder().withColumn(bigNum).withValue("1234567890123").build(),
+                        		   RowValueMappingImpl.builder().withColumn(name).withValue("Bill").build())).build()
                     ))
                     .build();
 
@@ -6985,16 +6983,16 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnImpl id = ColumnImpl.builder().withName("id").withType("INTEGER").build();
-                    ColumnImpl bigNum = ColumnImpl.builder().withName("big_num").withType("INTEGER").build();
-                    ColumnImpl name = ColumnImpl.builder().withName("name").withType("VARCHAR").withCharOctetLength(20).build();
-                    InlineTableImpl t = InlineTableImpl.builder()
+                    ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withType("INTEGER").build();
+                    ColumnMappingImpl bigNum = ColumnMappingImpl.builder().withName("big_num").withType("INTEGER").build();
+                    ColumnMappingImpl name = ColumnMappingImpl.builder().withName("name").withType("VARCHAR").withCharOctetLength(20).build();
+                    InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                     .withColumns(List.of(id, bigNum, name))
                     .withRows(List.of(
-                           RowImpl.builder().withRowValues(List.of(
-                                RowValueImpl.builder().withColumn(id).withValue("0").build(),
-                                RowValueImpl.builder().withColumn(bigNum).withValue("1234").build(),
-                                RowValueImpl.builder().withColumn(name).withValue("Ben").build())).build()
+                           RowMappingImpl.builder().withRowValues(List.of(
+                                RowValueMappingImpl.builder().withColumn(id).withValue("0").build(),
+                                RowValueMappingImpl.builder().withColumn(bigNum).withValue("1234").build(),
+                                RowValueMappingImpl.builder().withColumn(name).withValue("Ben").build())).build()
                     ))
                     .build();
 
@@ -7299,8 +7297,8 @@ class SchemaTest {
                 List<CubeMapping> cs = new ArrayList<>();
                 cs.addAll(super.cubes(cubes));
                 TableQueryMappingImpl table = TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
-                	.withSqlWhereExpression(SQLMappingImpl.builder()
-                			.withStatement("`sales_fact_1997`.`store_id` in (select distinct `store_id` from `store` where `store`.`store_state` = \"CA\")")
+                	.withSqlWhereExpression(SqlStatementMappingImpl.builder()
+                			.withSql("`sales_fact_1997`.`store_id` in (select distinct `store_id` from `store` where `store`.`store_state` = \"CA\")")
                 			.build()).build();
                 DimensionConnectorMappingImpl d1 = DimensionConnectorMappingImpl.builder()
                     .withOverrideDimensionName("Store")
@@ -7595,10 +7593,10 @@ class SchemaTest {
 
             @Override
             protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
-                ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnImpl sales_district_id = ColumnImpl.builder().withName("sales_district_id").withType("INTEGER").build();
-                PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withType("INTEGER").build();
+                PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region, sales_district_id
                                 ))).build();
@@ -8270,7 +8268,7 @@ class SchemaTest {
                         .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
                         .withUniqueMembers(true)
                         .withCaptionExpression(SQLExpressionMappingImpl.builder()
-                        	.withSqls(List.of(SQLMappingImpl.builder().withStatement("'foobar'").withDialects(List.of("generic")).build()))
+                        	.withSqls(List.of(SqlStatementMappingImpl.builder().withSql("'foobar'").withDialects(List.of("generic")).build()))
                         .build()).build();
 
                     HierarchyMappingImpl h = HierarchyMappingImpl.builder()
@@ -8466,11 +8464,11 @@ class SchemaTest {
                                 ))
                         		.build()))
                         .build();
-                    ColumnImpl salesStateProvince = ColumnImpl.builder().withName("sales_state_province").build();
+                    ColumnMappingImpl salesStateProvince = ColumnMappingImpl.builder().withName("sales_state_province").build();
                     SqlSelectQueryMappingImpl vv = SqlSelectQueryMappingImpl.builder()
                             .withAlias("sales_fact_1997_test")
                             .withSql(
-                                    ((Builder) SqlViewImpl.builder()
+                                    ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
                                     .withColumns(List.of(
                                         FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997,
                                         FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997,
@@ -8483,7 +8481,7 @@ class SchemaTest {
                                         salesStateProvince
                                     )))
                                     .withSqlStatements(List.of(
-                                        SqlStatementImpl.builder().withSql("select \"product_id\", \"time_id\", \"customer_id\", \"promotion_id\", " +
+                                        SqlStatementMappingImpl.builder().withSql("select \"product_id\", \"time_id\", \"customer_id\", \"promotion_id\", " +
                                                 "\"store_id\", \"store_sales\", \"store_cost\", \"unit_sales\", (select \"store_state\" " +
                                                 "from \"store\" where \"store_id\" = \"sales_fact_1997\".\"store_id\") as " +
                                                                                "\"sales_state_province\" from \"sales_fact_1997\"").withDialects(List.of("generic")).build()
@@ -9447,7 +9445,7 @@ class SchemaTest {
                 }
 
                 @Override
-                protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+                protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
                     result.add(PhysicalCubeMappingImpl.builder()
                         .withName("Foo")
@@ -9482,7 +9480,7 @@ class SchemaTest {
                                 .build()
                         )).build()))
                         .build());
-                    result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
+                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                     return result;
                 }
             }
@@ -9524,9 +9522,9 @@ class SchemaTest {
                     super(catalogMapping);
                 }
                 @Override
-                protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+                protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
-                    result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
+                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                     result.add(VirtualCubeMappingImpl.builder()
                         .withName("Foo")
                         .withDefaultMeasure((MemberMappingImpl) look(FoodmartMappingSupplier.MEASURE_STORE_SALES))
@@ -9578,7 +9576,7 @@ class SchemaTest {
                     super(catalogMapping);
                 }
                 @Override
-                protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+                protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
                     result.add(PhysicalCubeMappingImpl.builder()
                         .withName("Foo")
@@ -9616,7 +9614,7 @@ class SchemaTest {
                         	.build()
                         ))
                         .build());
-                    result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
+                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                     return result;
                 }
             }
@@ -9665,9 +9663,9 @@ class SchemaTest {
                     super(catalogMapping);
                 }
                 @Override
-                protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
+                protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
-                    result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
+                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                     result.add(VirtualCubeMappingImpl.builder()
                         .withName("Foo")
                         .withDefaultMeasure((MemberMappingImpl) look(FoodmartMappingSupplier.MEASURE_STORE_SALES))
@@ -9727,7 +9725,7 @@ class SchemaTest {
                 }
 
                 @Override
-                protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
+                protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
                     result.add(PhysicalCubeMappingImpl.builder()
                         .withName("Foo")
@@ -9771,7 +9769,7 @@ class SchemaTest {
                         	.build()
                         ))
                         .build());
-                    result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
+                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                     return result;
                 }
             }
@@ -9825,7 +9823,7 @@ class SchemaTest {
                 }
 
                 @Override
-                protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
+                protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
                     result.add(PhysicalCubeMappingImpl.builder()
                         .withName("Foo")
@@ -9865,7 +9863,7 @@ class SchemaTest {
                             	.build()
                         ))
                         .build());
-                    result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
+                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                     return result;
                 }
             }
@@ -9922,7 +9920,7 @@ class SchemaTest {
                 }
 
                 @Override
-                protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
+                protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
                     List<CubeMapping> result = new ArrayList<>();
                     result.add(PhysicalCubeMappingImpl.builder()
                         .withName("Foo")
@@ -9957,7 +9955,7 @@ class SchemaTest {
                                         .build()
                                 )).build()))
                         .build());
-                    result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
+                    result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                     return result;
                 }
             }
@@ -10020,7 +10018,7 @@ class SchemaTest {
                 super(catalog);
             }
             @Override
-            protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
             	TableQueryMappingImpl t = TableQueryMappingImpl.builder()
             			.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
@@ -10141,7 +10139,7 @@ class SchemaTest {
                     		.withMeasures(List.of(m))
                     		.build()))
                     .build());
-                result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
+                result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                 return result;
             }
         }
@@ -10226,7 +10224,7 @@ class SchemaTest {
             }
 
             @Override
-            protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
 
             	TableQueryMappingImpl t = TableQueryMappingImpl.builder()
@@ -10348,7 +10346,7 @@ class SchemaTest {
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                     		.withMeasures(List.of(m)).build()))
                     .build());
-                result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
+                result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                 return result;
             }
         }
@@ -10427,13 +10425,13 @@ class SchemaTest {
             .build();
 
             @Override
-            protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnImpl region_id = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnImpl sales_region = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnImpl sales_city = ColumnImpl.builder().withName("sales_city").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnImpl sales_district_id = ColumnImpl.builder().withName("sales_district_id").withType("INTEGER").build();
-                PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                ColumnMappingImpl sales_city = ColumnMappingImpl.builder().withName("sales_city").withType("VARCHAR").withCharOctetLength(30).build();
+                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withType("INTEGER").build();
+                PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region, sales_district_id
                                 ))).build();
@@ -10592,7 +10590,7 @@ class SchemaTest {
                     		.withMeasures(List.of(m))
                     		.build()))
                     .build());
-                result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
+                result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                 return result;
             }
         }
@@ -10833,7 +10831,7 @@ class SchemaTest {
             }
 
             @Override
-            protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
 
             	TableQueryMappingImpl t = TableQueryMappingImpl.builder()
@@ -10955,7 +10953,7 @@ class SchemaTest {
                     		.withMeasures(List.of(m))
                     		.build()))
                     .build());
-                result.addAll(super.schemaCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
+                result.addAll(super.catalogCubes(schema).stream().filter(c -> !"Foo".equals(c.getName())).toList());
                 return result;
             }
         }
@@ -11050,7 +11048,7 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("HR".equals(cube.getName())) {
-                        SQLMappingImpl sql = SQLMappingImpl.builder().withStatement("`position_title` + " + n).withDialects(
+                        SqlStatementMappingImpl sql = SqlStatementMappingImpl.builder().withSql("`position_title` + " + n).withDialects(
                             List.of("generic")).build();
                         SQLExpressionMappingImpl ex = SQLExpressionMappingImpl.builder().withSqls(List.of(sql)).build();
                         LevelMappingImpl level = LevelMappingImpl.builder()
@@ -11129,29 +11127,29 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnImpl lvl1Id = ColumnImpl.builder().withName("lvl_1_id").withType("INTEGER").build();
-                    ColumnImpl lvl1Name = ColumnImpl.builder().withName("lvl_1_name").withType("VARCHAR").withCharOctetLength(20).build();
-                    ColumnImpl lvl2Id = ColumnImpl.builder().withName("lvl_2_id").withType("INTEGER").build();
-                    ColumnImpl lvl2Name = ColumnImpl.builder().withName("lvl_2_name").withType("VARCHAR").withCharOctetLength(20).build();
-                    ColumnImpl lvl3Id = ColumnImpl.builder().withName("lvl_3_id").withType("INTEGER").build();
-                    ColumnImpl lvl3Name = ColumnImpl.builder().withName("lvl_3_name").withType("VARCHAR").withCharOctetLength(20).build();
-                    InlineTableImpl t = InlineTableImpl.builder()
+                    ColumnMappingImpl lvl1Id = ColumnMappingImpl.builder().withName("lvl_1_id").withType("INTEGER").build();
+                    ColumnMappingImpl lvl1Name = ColumnMappingImpl.builder().withName("lvl_1_name").withType("VARCHAR").withCharOctetLength(20).build();
+                    ColumnMappingImpl lvl2Id = ColumnMappingImpl.builder().withName("lvl_2_id").withType("INTEGER").build();
+                    ColumnMappingImpl lvl2Name = ColumnMappingImpl.builder().withName("lvl_2_name").withType("VARCHAR").withCharOctetLength(20).build();
+                    ColumnMappingImpl lvl3Id = ColumnMappingImpl.builder().withName("lvl_3_id").withType("INTEGER").build();
+                    ColumnMappingImpl lvl3Name = ColumnMappingImpl.builder().withName("lvl_3_name").withType("VARCHAR").withCharOctetLength(20).build();
+                    InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                     .withColumns(List.of(lvl1Id, lvl1Name, lvl2Id, lvl2Name, lvl3Id, lvl3Name))
                     .withRows(List.of(
-                           RowImpl.builder().withRowValues(List.of(
-                                RowValueImpl.builder().withColumn(lvl1Id).withValue("1").build(),
-                                RowValueImpl.builder().withColumn(lvl1Name).withValue("level 1").build(),
-                                RowValueImpl.builder().withColumn(lvl1Id).withValue("1").build(),
-                                RowValueImpl.builder().withColumn(lvl1Name).withValue("level 2 - 1").build(),
-                                RowValueImpl.builder().withColumn(lvl1Id).withValue("112").build(),
-                                RowValueImpl.builder().withColumn(lvl1Name).withValue("level 3 - 1").build())).build(),
-                           RowImpl.builder().withRowValues(List.of(
-                                   RowValueImpl.builder().withColumn(lvl1Id).withValue("1").build(),
-                                   RowValueImpl.builder().withColumn(lvl1Name).withValue("level 1").build(),
-                                   RowValueImpl.builder().withColumn(lvl1Id).withValue("1").build(),
-                                   RowValueImpl.builder().withColumn(lvl1Name).withValue("level 2 - 1").build(),
-                                   RowValueImpl.builder().withColumn(lvl1Id).withValue("114").build(),
-                                   RowValueImpl.builder().withColumn(lvl1Name).withValue("level 3 - 1").build())).build()
+                           RowMappingImpl.builder().withRowValues(List.of(
+                                RowValueMappingImpl.builder().withColumn(lvl1Id).withValue("1").build(),
+                                RowValueMappingImpl.builder().withColumn(lvl1Name).withValue("level 1").build(),
+                                RowValueMappingImpl.builder().withColumn(lvl1Id).withValue("1").build(),
+                                RowValueMappingImpl.builder().withColumn(lvl1Name).withValue("level 2 - 1").build(),
+                                RowValueMappingImpl.builder().withColumn(lvl1Id).withValue("112").build(),
+                                RowValueMappingImpl.builder().withColumn(lvl1Name).withValue("level 3 - 1").build())).build(),
+                           RowMappingImpl.builder().withRowValues(List.of(
+                                   RowValueMappingImpl.builder().withColumn(lvl1Id).withValue("1").build(),
+                                   RowValueMappingImpl.builder().withColumn(lvl1Name).withValue("level 1").build(),
+                                   RowValueMappingImpl.builder().withColumn(lvl1Id).withValue("1").build(),
+                                   RowValueMappingImpl.builder().withColumn(lvl1Name).withValue("level 2 - 1").build(),
+                                   RowValueMappingImpl.builder().withColumn(lvl1Id).withValue("114").build(),
+                                   RowValueMappingImpl.builder().withColumn(lvl1Name).withValue("level 3 - 1").build())).build()
                     ))
                     .build();
                         InlineTableQueryMappingImpl i = InlineTableQueryMappingImpl.builder()
@@ -11338,7 +11336,7 @@ class SchemaTest {
                                 		JoinQueryMappingImpl.builder()
                                     	.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_EMPLOYEE)
                             				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
-                            						.withSqlWhereExpression(SQLMappingImpl.builder().withStatement("1 = 1").withDialects(List.of("generic")).build())
+                            						.withSqlWhereExpression(SqlStatementMappingImpl.builder().withSql("1 = 1").withDialects(List.of("generic")).build())
                             						.build())
                             				.build())
                                     	.withRight(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -11429,7 +11427,7 @@ class SchemaTest {
                                 		JoinQueryMappingImpl.builder()
                                     	.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.POSITION_ID_COLUMN_IN_EMPLOYEE)
                             				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
-                            						.withSqlWhereExpression(SQLMappingImpl.builder().withStatement("1 = 1").build())
+                            						.withSqlWhereExpression(SqlStatementMappingImpl.builder().withSql("1 = 1").build())
                             						.build())
                             				.build())
                                     	.withRight(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.POSITION_ID_COLUMN_IN_POSITION)
@@ -11463,7 +11461,7 @@ class SchemaTest {
                                 		JoinQueryMappingImpl.builder()
                                     	.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_EMPLOYEE)
                             				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
-                            						.withSqlWhereExpression(SQLMappingImpl.builder().withStatement("1 = 1").build())
+                            						.withSqlWhereExpression(SqlStatementMappingImpl.builder().withSql("1 = 1").build())
                             						.build())
                             				.build())
                                     	.withRight(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -11493,7 +11491,7 @@ class SchemaTest {
                                 .withAllMemberName("All Position")
                                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
-                						.withSqlWhereExpression(SQLMappingImpl.builder().withStatement("1 = 1").build())
+                						.withSqlWhereExpression(SqlStatementMappingImpl.builder().withSql("1 = 1").build())
                 						.build())
                                 .withLevels(List.of(
                                     LevelMappingImpl.builder()
@@ -11523,7 +11521,7 @@ class SchemaTest {
                                 .withAllMemberName("All Employees")
                                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
-                						.withSqlWhereExpression(SQLMappingImpl.builder().withStatement("1 = 1").build())
+                						.withSqlWhereExpression(SqlStatementMappingImpl.builder().withSql("1 = 1").build())
                 						.build())
                                 .withLevels(List.of(
                                     LevelMappingImpl.builder()
@@ -11726,7 +11724,7 @@ class SchemaTest {
             }
 
             @Override
-            protected List<CubeMapping> schemaCubes(CatalogMapping schema) {
+            protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
                 MeasureMappingImpl mA = MeasureMappingImpl.builder()
                 .withName("Unit Sales")
@@ -11745,8 +11743,8 @@ class SchemaTest {
                     .withName("CubeA")
                     .withDefaultMeasure(mA)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).withAlias("TableAlias")
-                    		.withSqlWhereExpression(SQLMappingImpl.builder()
-                    				.withStatement("`TableAlias`.`promotion_id` = 108")
+                    		.withSqlWhereExpression(SqlStatementMappingImpl.builder()
+                    				.withSql("`TableAlias`.`promotion_id` = 108")
                     				.withDialects(List.of("mysql"))
                     				.build()).build())
                     .withDimensionConnectors(List.of(
@@ -11781,8 +11779,8 @@ class SchemaTest {
                     .withName("CubeB")
                     .withDefaultMeasure(mB)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).withAlias("TableAlias")
-                    		.withSqlWhereExpression(SQLMappingImpl.builder()
-                    				.withStatement("`TableAlias`.`promotion_id` = 112")
+                    		.withSqlWhereExpression(SqlStatementMappingImpl.builder()
+                    				.withSql("`TableAlias`.`promotion_id` = 112")
                     				.withDialects(List.of("mysql"))
                     				.build()).build())
                     .withDimensionConnectors(List.of(
@@ -11805,7 +11803,7 @@ class SchemaTest {
                             .build()
                     )).build()))
                     .build());
-                result.addAll(super.schemaCubes(schema));
+                result.addAll(super.catalogCubes(schema));
                 return result;
             }
         }
@@ -11889,9 +11887,9 @@ class SchemaTest {
             }
 
             @Override
-            protected List<AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+            protected List<AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
                 List<AccessRoleMapping> result = new ArrayList<>();
-                result.addAll(super.schemaAccessRoles(schema));
+                result.addAll(super.catalogAccessRoles(schema));
                 result.add(
                 	AccessRoleMappingImpl.builder()
                         .withName("admin")

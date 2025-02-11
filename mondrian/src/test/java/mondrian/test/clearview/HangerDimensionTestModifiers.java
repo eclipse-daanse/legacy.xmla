@@ -17,19 +17,19 @@ package mondrian.test.clearview;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
-import org.eclipse.daanse.rdb.structure.pojo.InlineTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.RowImpl;
-import org.eclipse.daanse.rdb.structure.pojo.RowValueImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.InlineTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.RowMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.RowValueMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 
 public class HangerDimensionTestModifiers {
@@ -60,12 +60,12 @@ public class HangerDimensionTestModifiers {
          */
 
         protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
-            ColumnImpl hangerKey = ColumnImpl.builder().withName("HANGER_KEY").withType("NUMERIC").build();
-            InlineTableImpl t = InlineTableImpl.builder()
+            ColumnMappingImpl hangerKey = ColumnMappingImpl.builder().withName("HANGER_KEY").withType("NUMERIC").build();
+            InlineTableMappingImpl t = InlineTableMappingImpl.builder()
             .withColumns(List.of(hangerKey))
             .withRows(List.of(
-                   RowImpl.builder().withRowValues(List.of(
-                        RowValueImpl.builder().withColumn(hangerKey).withValue("1").build())).build()
+                   RowMappingImpl.builder().withRowValues(List.of(
+                        RowValueMappingImpl.builder().withColumn(hangerKey).withValue("1").build())).build()
             ))
             .build();
 

@@ -82,9 +82,8 @@ import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.impl.IdentifierNode;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
-import org.eclipse.daanse.rdb.structure.api.model.Column;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
-import org.eclipse.daanse.rolap.mapping.api.model.ActionMappingMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.ActionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberPropertyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -111,6 +110,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.WritebackMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.WritebackTableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.pojo.AnnotationMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
@@ -470,7 +470,7 @@ public class RolapCube extends CubeBase {
         checkOrdinals(cubeMapping.getName(), measureList);
         loadAggGroup(cubeMapping);
 
-        for(ActionMappingMapping mappingAction: cubeMapping.getAction()) {
+        for(ActionMapping mappingAction: cubeMapping.getAction()) {
             if(mappingAction instanceof DrillThroughActionMapping mappingDrillThroughAction) {
                 List<DrillThroughColumn> columns = new ArrayList<>();
 
@@ -2633,7 +2633,7 @@ public class RolapCube extends CubeBase {
             if (rightDepth > leftDepth) {
                 // switch
                 String leftAlias = getLeftAlias(join);
-                Column leftKey = join.getLeft().getKey();;
+                ColumnMappingImpl leftKey = join.getLeft().getKey();;
                 QueryMappingImpl left = copy(left(join));
                 QueryMappingImpl right = copy(right(join));
                 join.getLeft().setAlias(getRightAlias(join));
@@ -2674,9 +2674,9 @@ public class RolapCube extends CubeBase {
                 JoinedQueryElementMappingImpl right = join.getRight();
                 JoinedQueryElementMappingImpl left = join.getLeft();
                 right.setAlias(getRightAlias(jleft));
-                right.setKey(jleft.getRight().getKey());
+                right.setKey((ColumnMappingImpl) jleft.getRight().getKey());
                 left.setAlias(getLeftAlias(jleft));
-                left.setKey(jleft.getLeft().getKey());
+                left.setKey((ColumnMappingImpl) jleft.getLeft().getKey());
             }
         }
     }

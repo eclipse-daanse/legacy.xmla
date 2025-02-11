@@ -88,7 +88,7 @@ public class OtherDiscoverService {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(OtherDiscoverService.class);
     private static final String DBLITERAL = "DBLITERAL_";
-    private static List<Class<? extends Enum>> enums = List.of(
+    private static List<Class<? extends Enum<?>>> enums = List.of(
         AccessEnum.class,
         AuthenticationModeEnum.class,
         ProviderTypeEnum.class,
@@ -96,7 +96,7 @@ public class OtherDiscoverService {
         //mondrian have 4 enums
     );
 
-    private static List<Class> classes = List.of(
+    private static List<Class<?>> classes = List.of(
         //DbSchema
         DbSchemaCatalogsRequest.class,
         DbSchemaColumnsRequest.class,
@@ -164,10 +164,9 @@ public class OtherDiscoverService {
 				enumDescription = null;
 			}
 
-			Enumerator e = (Enumerator) c.getAnnotation(
-                Enumerator.class);
-            Set<Enum> elements = EnumSet.allOf(c);
-            for (Enum en : elements) {
+			Enumerator e = (Enumerator) c.getAnnotation(Enumerator.class);
+            Set<Enum<?>> elements = EnumSet.allOf(c);
+            for (Enum<?> en : elements) {
                 Method[] ms = c.getMethods();
                 List<Method> methods = ms == null ? List.of() : Arrays.asList(ms);
                 Optional<Method> method = methods.stream().filter(m -> m.getName().equals("getValue")).findFirst();
@@ -262,7 +261,7 @@ public class OtherDiscoverService {
     public List<DiscoverSchemaRowsetsResponseRow> discoverSchemaRowsets(DiscoverSchemaRowsetsRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         Optional<String> schemaName = request.restrictions().schemaName();
         List<DiscoverSchemaRowsetsResponseRow> result = new ArrayList<>();
-        for (Class c : classes) {
+        for (Class<?> c : classes) {
             Operation o = (Operation) c.getAnnotation(
                 Operation.class);
             if(!schemaName.isPresent() || schemaName.get().equals(o.name())) {
@@ -276,7 +275,7 @@ public class OtherDiscoverService {
                 List<Restriction> restrictions = new ArrayList<>();
                 for (Method method : methods) {
                     if (method.getName().equals("restrictions")) {
-                        Class cl = method.getReturnType();
+                        Class<?> cl = method.getReturnType();
                         Method[] restrictionMethods = cl.getMethods();
                         List<org.eclipse.daanse.xmla.api.annotation.Restriction> rList = Arrays.stream(restrictionMethods).filter(mm -> mm.isAnnotationPresent(org.eclipse.daanse.xmla.api.annotation.Restriction.class))
                             .map(mm -> mm.getAnnotation(org.eclipse.daanse.xmla.api.annotation.Restriction.class))

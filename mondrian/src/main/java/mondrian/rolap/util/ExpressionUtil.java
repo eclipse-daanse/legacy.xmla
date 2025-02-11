@@ -15,9 +15,9 @@ package mondrian.rolap.util;
 
 import java.util.Objects;
 
-import mondrian.rolap.RolapColumn;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 
+import mondrian.rolap.RolapColumn;
 import mondrian.rolap.sql.SqlQuery;
 
 public class ExpressionUtil {
@@ -64,15 +64,15 @@ public class ExpressionUtil {
     public static String genericExpression(SQLExpressionMapping expression) {
             for (int i = 0; i < expression.getSqls().size(); i++) {
                 if (expression.getSqls().get(i).getDialects().stream().anyMatch(d ->  "generic".equals(d))) {
-                    return expression.getSqls().get(i).getStatement();
+                    return expression.getSqls().get(i).getSql();
                 }
             }
-            return expression.getSqls().get(0).getStatement();
+            return expression.getSqls().get(0).getSql();
     }
 
     public static String toString(SQLExpressionMapping expression) {
     	if (expression != null && expression.getSqls() != null && !expression.getSqls().isEmpty()) {
-    		return expression.getSqls().get(0).getStatement();
+    		return expression.getSqls().get(0).getSql();
     	}
     	return null;
     }

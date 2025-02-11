@@ -328,13 +328,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.rdb.structure.modifier.pojo</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eclipse.daanse</groupId>
 			<artifactId>org.eclipse.daanse.rolap.mapping.modifier.common</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>

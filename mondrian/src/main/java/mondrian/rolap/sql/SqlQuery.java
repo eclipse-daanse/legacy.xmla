@@ -29,8 +29,8 @@ import java.util.Set;
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rdb.structure.api.model.Column;
-import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
+import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
@@ -388,7 +388,7 @@ public class SqlQuery {
                 getSchemaName(table.getTable().getSchema()),
                 table.getTable().getName(),
                 tableAlias,
-                table.getSqlWhereExpression() == null ? null : table.getSqlWhereExpression().getStatement(),
+                table.getSqlWhereExpression() == null ? null : table.getSqlWhereExpression().getSql(),
                 getHintMap(table),
                 failIfExists);
 
@@ -406,7 +406,7 @@ public class SqlQuery {
         }
     }
 
-    private String getSchemaName(DatabaseSchema schema) {
+    private String getSchemaName(DatabaseSchemaMapping schema) {
         if (schema != null) {
             return schema.getName();
         }
@@ -416,10 +416,10 @@ public class SqlQuery {
 	private boolean addJoin(
         QueryMapping left,
         String leftAlias,
-        Column leftKey,
+        ColumnMapping leftKey,
         QueryMapping right,
         String rightAlias,
-        Column rightKey,
+        ColumnMapping rightKey,
         boolean failIfExists)
     {
         boolean addLeft = addFrom(left, leftAlias, failIfExists);
@@ -778,9 +778,9 @@ public class SqlQuery {
     private void flatten(
         List<RelInfo> relations,
         QueryMapping root,
-        Column leftKey,
+        ColumnMapping leftKey,
         String leftAlias,
-        Column rightKey,
+        ColumnMapping rightKey,
         String rightAlias)
     {
         if (root instanceof JoinQueryMapping join) {
@@ -1040,16 +1040,16 @@ public class SqlQuery {
 
     private static class RelInfo {
         final RelationalQueryMapping relation;
-        final Column leftKey;
+        final ColumnMapping leftKey;
         final String leftAlias;
-        final Column rightKey;
+        final ColumnMapping rightKey;
         final String rightAlias;
 
         public RelInfo(
             RelationalQueryMapping relation,
-            Column leftKey,
+            ColumnMapping leftKey,
             String leftAlias,
-            Column rightKey,
+            ColumnMapping rightKey,
             String rightAlias)
         {
             this.relation = relation;

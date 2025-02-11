@@ -38,8 +38,6 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
-import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
@@ -50,6 +48,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
@@ -58,8 +57,9 @@ import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -1334,37 +1334,37 @@ class TestAggregationManager extends BatchTestCase {
                                 .withUniqueMembers(true)
                                 .withKeyExpression(SQLExpressionMappingImpl.builder()
                                 		.withSqls(List.of(
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("oracle"))
-                                            .withStatement("\"store_country\"")
+                                            .withSql("\"store_country\"")
                                             .build(),
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("hsqldb"))
-                                            .withStatement("\"store_country\"")
+                                            .withSql("\"store_country\"")
                                             .build(),
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("derby"))
-                                            .withStatement("\"store_country\"")
+                                            .withSql("\"store_country\"")
                                             .build(),
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("luciddb"))
-                                            .withStatement("\"store_country\"")
+                                            .withSql("\"store_country\"")
                                             .build(),
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("mysql"))
-                                            .withStatement("`store_country`")
+                                            .withSql("`store_country`")
                                             .build(),
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("netezza"))
-                                            .withStatement("\"store_country\"")
+                                            .withSql("\"store_country\"")
                                             .build(),
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("neoview"))
-                                            .withStatement("\"store_country\"")
+                                            .withSql("\"store_country\"")
                                             .build(),
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("generic"))
-                                            .withStatement("store_country")
+                                            .withSql("store_country")
                                             .build()
                                         )).build())
                                 .build()
@@ -1385,25 +1385,25 @@ class TestAggregationManager extends BatchTestCase {
                                 .withUniqueMembers(true)
                                 .withKeyExpression(SQLExpressionMappingImpl.builder()
                                     .withSqls(List.of(
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("oracle"))
-                                            .withStatement("\"store_country\"")
+                                            .withSql("\"store_country\"")
                                             .build(),
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("derby"))
-                                            .withStatement("\"store_country\"")
+                                            .withSql("\"store_country\"")
                                             .build(),
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("luciddb"))
-                                            .withStatement("\"store_country\"")
+                                            .withSql("\"store_country\"")
                                             .build(),
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("mysql"))
-                                            .withStatement("`store_country`")
+                                            .withSql("`store_country`")
                                             .build(),
-                                        SQLMappingImpl.builder()
+                                        SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("generic"))
-                                            .withStatement("store_country")
+                                            .withSql("store_country")
                                             .build()
                                     )).build())
                                     .build()))
@@ -2887,11 +2887,11 @@ class TestAggregationManager extends BatchTestCase {
                         .withAggregatorType(MeasureAggregatorType.SUM)
                         .withFormatString("Standard")
                         .build();
-                ColumnImpl salesRegion = ColumnImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnImpl salesCity = ColumnImpl.builder().withName("sales_city").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnImpl salesDistrictId = ColumnImpl.builder().withName("sales_district_id").withType("INTEGER").build();
-                ColumnImpl regionId = ColumnImpl.builder().withName("region_id").withType("INTEGER").build();
-                PhysicalTableImpl region = ((org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder) PhysicalTableImpl.builder().withName("region")
+                ColumnMappingImpl salesRegion = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                ColumnMappingImpl salesCity = ColumnMappingImpl.builder().withName("sales_city").withType("VARCHAR").withCharOctetLength(30).build();
+                ColumnMappingImpl salesDistrictId = ColumnMappingImpl.builder().withName("sales_district_id").withType("INTEGER").build();
+                ColumnMappingImpl regionId = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
+                PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 salesRegion, salesCity, salesDistrictId, regionId
                                 ))).build();

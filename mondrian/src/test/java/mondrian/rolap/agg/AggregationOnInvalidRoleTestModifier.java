@@ -16,38 +16,37 @@ package mondrian.rolap.agg;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
-import org.eclipse.daanse.rdb.structure.api.model.Table;
-import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 
@@ -84,34 +83,34 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
 
     //## ColumnNames: customer_id,customer_name
     //## ColumnTypes: INTEGER,VARCHAR(45):null
-    private static ColumnImpl customerIdMondrian2225Customer = ColumnImpl.builder().withName("customer_id").withType("INTEGER").build();
-    private static ColumnImpl customerNameMondrian2225Customer = ColumnImpl.builder().withName("customer_name").withType("VARCHAR").withColumnSize(45).build();
-    private static PhysicalTableImpl mondrian2225Customer = ((Builder) PhysicalTableImpl.builder().withName("mondrian2225_customer")
+    private static ColumnMappingImpl customerIdMondrian2225Customer = ColumnMappingImpl.builder().withName("customer_id").withType("INTEGER").build();
+    private static ColumnMappingImpl customerNameMondrian2225Customer = ColumnMappingImpl.builder().withName("customer_name").withType("VARCHAR").withColumnSize(45).build();
+    private static PhysicalTableMappingImpl mondrian2225Customer = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("mondrian2225_customer")
             .withColumns(List.of(customerIdMondrian2225Customer, customerNameMondrian2225Customer))).build();
 
     //## ColumnNames: product_ID,customer_id,fact
     //## ColumnTypes: INTEGER,INTEGER,INTEGER
-    private static ColumnImpl productIdMondrian2225Fact = ColumnImpl.builder().withName("product_ID").withType("INTEGER").build();
-    private static ColumnImpl customerIdMondrian2225Fact = ColumnImpl.builder().withName("customer_id").withType("INTEGER").build();
-    private static ColumnImpl factMondrian2225Fact = ColumnImpl.builder().withName("fact").withType("INTEGER").build();
-    private static PhysicalTableImpl mondrian2225Fact = ((Builder) PhysicalTableImpl.builder().withName("mondrian2225_fact")
+    private static ColumnMappingImpl productIdMondrian2225Fact = ColumnMappingImpl.builder().withName("product_ID").withType("INTEGER").build();
+    private static ColumnMappingImpl customerIdMondrian2225Fact = ColumnMappingImpl.builder().withName("customer_id").withType("INTEGER").build();
+    private static ColumnMappingImpl factMondrian2225Fact = ColumnMappingImpl.builder().withName("fact").withType("INTEGER").build();
+    private static PhysicalTableMappingImpl mondrian2225Fact = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("mondrian2225_fact")
             .withColumns(List.of(productIdMondrian2225Fact, customerIdMondrian2225Fact, factMondrian2225Fact))).build();
 
     //## TableName: mondrian2225_dim
     //## ColumnNames: product_id,product_code,product_sub_code
     //## ColumnTypes: INTEGER,VARCHAR(45):null,VARCHAR(45):null
-    private static ColumnImpl productIdMondrian2225Dim = ColumnImpl.builder().withName("product_id").withType("INTEGER").build();
-    private static ColumnImpl productCodeMondrian2225Dim = ColumnImpl.builder().withName("product_code").withType("VARCHAR").withColumnSize(45).build();
-    private static PhysicalTableImpl mondrian2225Dim = ((Builder) PhysicalTableImpl.builder().withName("mondrian2225_dim")
+    private static ColumnMappingImpl productIdMondrian2225Dim = ColumnMappingImpl.builder().withName("product_id").withType("INTEGER").build();
+    private static ColumnMappingImpl productCodeMondrian2225Dim = ColumnMappingImpl.builder().withName("product_code").withType("VARCHAR").withColumnSize(45).build();
+    private static PhysicalTableMappingImpl mondrian2225Dim = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("mondrian2225_dim")
             .withColumns(List.of(productIdMondrian2225Fact, customerIdMondrian2225Fact, factMondrian2225Fact))).build();
 
     //## TableName: mondrian2225_agg
     //## ColumnNames: dim_code,fact_measure,fact_count
     //## ColumnTypes: VARCHAR(45):null,DECIMAL(10,2),INTEGER
-    private static ColumnImpl dimCodeMondrian2225Agg = ColumnImpl.builder().withName("dim_code").withType("VARCHAR").withColumnSize(45).withNullable(true).build();
-    private static ColumnImpl factMeasureMondrian2225Agg = ColumnImpl.builder().withName("fact_measure").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
-    private static ColumnImpl factCountMondrian2225Agg = ColumnImpl.builder().withName("fact_count").withType("INTEGER").build();
-    private static PhysicalTableImpl mondrian2225Agg = ((Builder) PhysicalTableImpl.builder().withName("mondrian2225_agg")
+    private static ColumnMappingImpl dimCodeMondrian2225Agg = ColumnMappingImpl.builder().withName("dim_code").withType("VARCHAR").withColumnSize(45).withNullable(true).build();
+    private static ColumnMappingImpl factMeasureMondrian2225Agg = ColumnMappingImpl.builder().withName("fact_measure").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
+    private static ColumnMappingImpl factCountMondrian2225Agg = ColumnMappingImpl.builder().withName("fact_count").withType("INTEGER").build();
+    private static PhysicalTableMappingImpl mondrian2225Agg = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("mondrian2225_agg")
             .withColumns(List.of(dimCodeMondrian2225Agg, factMeasureMondrian2225Agg, factCountMondrian2225Agg))).build();
 
     private static LevelMappingImpl firstNameLevel = LevelMappingImpl.builder()
@@ -212,17 +211,17 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
     .build();
 
     @Override
-    protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+    protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
         List<CubeMapping> result = new ArrayList<>();
-        result.addAll(super.schemaCubes(schema));
+        result.addAll(super.catalogCubes(schema));
         result.add(mondrian2225);
         return result;
 
     }
 
     @Override
-    protected List<? extends Table> databaseSchemaTables(DatabaseSchema databaseSchema) {
-        List<Table> result = new ArrayList();
+    protected List<? extends TableMapping> databaseSchemaTables(DatabaseSchemaMapping databaseSchema) {
+        List<TableMapping> result = new ArrayList();
         result.addAll(super.databaseSchemaTables(databaseSchema));
         result.addAll(List.of(mondrian2225Agg, mondrian2225Customer, mondrian2225Fact, mondrian2225Dim));
         return result;
@@ -243,7 +242,7 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
 
     protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
         List<AccessRoleMapping> result = new ArrayList<>();
-        result.addAll(super.schemaAccessRoles(schema));
+        result.addAll(super.catalogAccessRoles(schema));
         result.add(AccessRoleMappingImpl.builder()
             .withName("Test")
             .withAccessCatalogGrants(List.of(

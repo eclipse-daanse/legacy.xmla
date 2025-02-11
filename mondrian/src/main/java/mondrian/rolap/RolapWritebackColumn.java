@@ -10,17 +10,17 @@
 
 package mondrian.rolap;
 
-import org.eclipse.daanse.rdb.structure.api.model.Column;
+import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 
 public abstract class RolapWritebackColumn{
 
-    protected final Column column;
+    protected final ColumnMapping column;
 
-    protected RolapWritebackColumn(Column column) {
+    protected RolapWritebackColumn(ColumnMapping column) {
         this.column = column;
     }
 
-    public Column getColumn() {
+    public ColumnMapping getColumn() {
         return column;
     }
 }

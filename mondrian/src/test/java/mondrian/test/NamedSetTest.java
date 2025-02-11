@@ -875,7 +875,7 @@ class NamedSetTest {
             
             protected List<? extends NamedSetMapping> schemaNamedSets(CatalogMapping schema) {
                 List<NamedSetMapping> result = new ArrayList<>();
-                result.addAll(super.schemaNamedSets(schema));
+                result.addAll(super.catalogNamedSets(schema));
                 result.add(NamedSetMappingImpl.builder()
                     .withName("Bad")
                     .withFormula("{[Store].[USA].[WA].Children}}")
@@ -1325,7 +1325,7 @@ class NamedSetTest {
         }
         protected List<? extends NamedSetMapping> schemaNamedSets(CatalogMapping schema) {
             List<NamedSetMapping> result = new ArrayList<>();
-            result.addAll(super.schemaNamedSets(schema));
+            result.addAll(super.catalogNamedSets(schema));
             result.add(NamedSetMappingImpl.builder()
                     .withName("CA Cities")
                     .withFormula("{[Store].[USA].[CA].Children}")
@@ -1349,7 +1349,7 @@ class NamedSetTest {
         
         protected List<? extends NamedSetMapping> schemaNamedSets(CatalogMapping schema) {
             List<NamedSetMapping> result = new ArrayList<>();
-            result.addAll(super.schemaNamedSets(schema));
+            result.addAll(super.catalogNamedSets(schema));
             result.add(NamedSetMappingImpl.builder()
                     .withName("CA Cities")
                     .withFormula("{[Store].[USA].[CA].Children}")

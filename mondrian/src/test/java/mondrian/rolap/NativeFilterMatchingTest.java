@@ -378,7 +378,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
 
             protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping catalogMapping) {
                 List<AccessRoleMapping> result = new ArrayList<>();
-                result.addAll(super.schemaAccessRoles(catalogMapping));
+                result.addAll(super.catalogAccessRoles(catalogMapping));
                 result.add(AccessRoleMappingImpl.builder()
                     .withName("test")
                     .withAccessCatalogGrants(List.of(

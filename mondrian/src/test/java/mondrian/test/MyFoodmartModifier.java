@@ -46,7 +46,8 @@ import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ParentChildLinkMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TimeDimensionMappingImpl;
@@ -720,10 +721,10 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                         .withLevelType(LevelType.TIME_YEARS)
                         .withCaptionExpression(SQLExpressionMappingImpl.builder()
                             .withSqls(List.of(
-                                SQLMappingImpl.builder().withDialects(List.of("access")).withStatement("cstr(the_year) + '-12-31'").build(),
-                                SQLMappingImpl.builder().withDialects(List.of("mysql")).withStatement("concat(cast(`the_year` as char(4)), '-12-31')").build(),
-                                SQLMappingImpl.builder().withDialects(List.of("derby")).withStatement("'foobar'").build(),
-                                SQLMappingImpl.builder().withDialects(List.of("generic")).withStatement("\"the_year\" || '-12-31'").build()
+                                SqlStatementMappingImpl.builder().withDialects(List.of("access")).withSql("cstr(the_year) + '-12-31'").build(),
+                                SqlStatementMappingImpl.builder().withDialects(List.of("mysql")).withSql("concat(cast(`the_year` as char(4)), '-12-31')").build(),
+                                SqlStatementMappingImpl.builder().withDialects(List.of("derby")).withSql("'foobar'").build(),
+                                SqlStatementMappingImpl.builder().withDialects(List.of("generic")).withSql("\"the_year\" || '-12-31'").build()
                             )).build())
                         .build(),
                     LevelMappingImpl.builder()
@@ -962,25 +963,25 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                                 .withUniqueMembers(true)
                                                 .withKeyExpression(SQLExpressionMappingImpl.builder()
                                                     .withSqls(List.of(
-                                                        SQLMappingImpl.builder()
+                                                        SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("oracle"))
-                                                            .withStatement("\"fname\" || ' ' || \"lname\"\n")
+                                                            .withSql("\"fname\" || ' ' || \"lname\"\n")
                                                             .build(),
-                                                        SQLMappingImpl.builder()
+                                                        SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("access"))
-                                                            .withStatement("fname, ' ', lname\n")
+                                                            .withSql("fname, ' ', lname\n")
                                                             .build(),
-                                                        SQLMappingImpl.builder()
+                                                        SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("postgres"))
-                                                            .withStatement("\"fname\" || ' ' || \"lname\"\n")
+                                                            .withSql("\"fname\" || ' ' || \"lname\"\n")
                                                             .build(),
-                                                        SQLMappingImpl.builder()
+                                                        SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("mysql"))
-                                                            .withStatement("CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)\n")
+                                                            .withSql("CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)\n")
                                                             .build(),
-                                                        SQLMappingImpl.builder()
+                                                        SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("mssql"))
-                                                            .withStatement("fname, ' ', lname\n")
+                                                            .withSql("fname, ' ', lname\n")
                                                             .build()
                                                     )).build())
                                                 .withMemberProperties(List.of(
@@ -1800,29 +1801,29 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                                 .withKeyExpression(SQLExpressionMappingImpl
                                                     .builder()
                                                     .withSqls(List.of(
-                                                        SQLMappingImpl.builder()
+                                                        SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("oracle"))
-                                                            .withStatement("\"fname\" || ' ' || \"lname\"\n")
+                                                            .withSql("\"fname\" || ' ' || \"lname\"\n")
                                                             .build(),
-                                                        SQLMappingImpl.builder()
+                                                        SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("access"))
-                                                            .withStatement("fname, ' ', lname\n")
+                                                            .withSql("fname, ' ', lname\n")
                                                             .build(),
-                                                        SQLMappingImpl.builder()
+                                                        SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("postgres"))
-                                                            .withStatement("\"fname\" || ' ' || \"lname\"")
+                                                            .withSql("\"fname\" || ' ' || \"lname\"")
                                                             .build(),
-                                                        SQLMappingImpl.builder()
+                                                        SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("mysql"))
-                                                            .withStatement("CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)\n")
+                                                            .withSql("CONCAT(`customer`.`fname`, ' ', `customer`.`lname`)\n")
                                                             .build(),
-                                                        SQLMappingImpl.builder()
+                                                        SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("mssql"))
-                                                            .withStatement("fname, ' ', lname\n")
+                                                            .withSql("fname, ' ', lname\n")
                                                             .build(),
-                                                        SQLMappingImpl.builder()
+                                                        SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("generic"))
-                                                            .withStatement("\"lname\"\n")
+                                                            .withSql("\"lname\"\n")
                                                             .build()
 
                                                     )).build())

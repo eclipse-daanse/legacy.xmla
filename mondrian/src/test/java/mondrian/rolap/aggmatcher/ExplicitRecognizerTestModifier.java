@@ -16,10 +16,10 @@ package mondrian.rolap.aggmatcher;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.daanse.rdb.structure.api.model.Column;
-import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
-import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
@@ -28,6 +28,7 @@ import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
@@ -145,8 +146,8 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
     .withFormatString("#,###")
     .build();
 
-    protected List<? extends Table> databaseSchemaTables(DatabaseSchema databaseSchema) {
-        List<Table> result = new ArrayList();
+    protected List<? extends TableMapping> databaseSchemaTables(DatabaseSchemaMapping databaseSchema) {
+        List<TableMapping> result = new ArrayList();
         result.addAll(super.databaseSchemaTables(databaseSchema));
         result.addAll(getDdatabaseSchemaTables());
         return result;
@@ -260,23 +261,23 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
                                         .withLevels(List.of(
                                             LevelMappingImpl.builder()
                                                 .withName("Year")
-                                                .withColumn(getYearCol())
+                                                .withColumn((ColumnMappingImpl) getYearCol())
                                                 .withType(DataType.NUMERIC)
                                                 .withUniqueMembers(true)
                                                 .withLevelType(LevelType.TIME_YEARS)
                                                 .build(),
                                             LevelMappingImpl.builder()
                                                 .withName("Quarter")
-                                                .withColumn(getQuarterCol())
+                                                .withColumn((ColumnMappingImpl) getQuarterCol())
                                                 .withUniqueMembers(false)
                                                 .withLevelType(LevelType.TIME_QUARTERS)
                                                 .build(),
                                             LevelMappingImpl.builder()
                                                 .withName("Month")
-                                                .withColumn(getMonthCol())
-                                                .withCaptionColumn(getMonthCaptionCol())
-                                                .withOrdinalColumn(getMonthOrdinalCol())
-                                                .withNameColumn(getMonthNameCol())
+                                                .withColumn((ColumnMappingImpl) getMonthCol())
+                                                .withCaptionColumn((ColumnMappingImpl) getMonthCaptionCol())
+                                                .withOrdinalColumn((ColumnMappingImpl) getMonthOrdinalCol())
+                                                .withNameColumn((ColumnMappingImpl) getMonthNameCol())
                                                 .withUniqueMembers(false)
                                                 .withType(DataType.NUMERIC)
                                                 .withLevelType(LevelType.TIME_MONTHS)
@@ -346,27 +347,27 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
         return List.of();
     }
 
-    protected Column getMonthOrdinalCol() {
+    protected ColumnMapping getMonthOrdinalCol() {
         return null;
     }
 
-    protected Column getMonthCaptionCol() {
+    protected ColumnMapping getMonthCaptionCol() {
         return null;
     }
 
-    protected Column getQuarterCol() {
+    protected ColumnMapping getQuarterCol() {
         return null;
     }
 
-    protected Column getMonthNameCol() {
+    protected ColumnMapping getMonthNameCol() {
         return null;
     }
 
-    protected Column getMonthCol() {
+    protected ColumnMapping getMonthCol() {
         return null;
     }
 
-    protected Column getYearCol() {
+    protected ColumnMapping getYearCol() {
         return null;
     }
 
@@ -382,7 +383,7 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
         return null;
     }
 
-    protected List<Table> getDdatabaseSchemaTables() {
+    protected List<TableMapping> getDdatabaseSchemaTables() {
         return List.of();
     }
 }

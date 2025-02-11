@@ -28,14 +28,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.NameSegment;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.rdb.structure.api.model.Column;
-import org.eclipse.daanse.rdb.structure.api.model.Table;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationColumnNameMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationExcludeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationForeignKeyMapping;
@@ -46,12 +44,15 @@ import org.eclipse.daanse.rolap.mapping.api.model.AggregationMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationNameMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationPatternMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationTableMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelPropertyMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -577,7 +578,7 @@ public class ExplicitRules {
 
 
             if (aggTable.getAggregationMeasureFactCounts() != null) {
-                Map<Column, Column> measuresFactCount =
+                Map<ColumnMapping, ColumnMapping> measuresFactCount =
                         tableDef.getMeasuresFactCount();
                 for (AggregationMeasureFactCountMapping measureFact
                         : aggTable.getAggregationMeasureFactCounts())
@@ -640,7 +641,7 @@ public class ExplicitRules {
          */
         private static void handleNameColumn(AggregationLevelMapping aggLevel) {
         	AggregationLevelPropertyMapping nameProp =
-        			AggregationLevelPropertyMappingImpl.builder().withName(Property.NAME_PROPERTY.getName()).withColumn(aggLevel.getNameColumn()).build();
+        			AggregationLevelPropertyMappingImpl.builder().withName(Property.NAME_PROPERTY.getName()).withColumn((ColumnMappingImpl) aggLevel.getNameColumn()).build();
         	//TODO
             //aggLevel.getAggregationLevelProperties().add(nameProp);
         }
@@ -659,10 +660,10 @@ public class ExplicitRules {
         public static void addLevelTo(
             final TableDef tableDef,
             final String name,
-            final Column columnName,
+            final ColumnMapping columnName,
             final boolean collapsed,
-            Column ordinalColumn,
-            Column captionColumn,
+            ColumnMapping ordinalColumn,
+            ColumnMapping captionColumn,
             List<? extends AggregationLevelPropertyMapping> properties)
         {
             Level level = tableDef.new Level(
@@ -674,7 +675,7 @@ public class ExplicitRules {
         public static void addMeasureTo(
             final ExplicitRules.TableDef tableDef,
             final String name,
-            final Column column,
+            final ColumnMapping column,
             final String rollupType)
         {
             Measure measure = tableDef.new Measure(name, column, rollupType);
@@ -687,12 +688,12 @@ public class ExplicitRules {
          */
         class Level {
             private final String name;
-            private final Column column;
+            private final ColumnMapping column;
             private final boolean collapsed;
             private RolapLevel rlevel;
-            private final Column ordinalColumn;
-            private final Column captionColumn;
-            private final Map<String, Column> properties;
+            private final ColumnMapping ordinalColumn;
+            private final ColumnMapping captionColumn;
+            private final Map<String, ColumnMapping> properties;
             private final static String unknownLevelName =
                 "Context ''{0}'': The Hierarchy Level ''{1}'' does not have a Level named ''{2}''";
             private final static String badLevelNameFormat =
@@ -702,10 +703,10 @@ public class ExplicitRules {
 
             Level(
                 final String name,
-                final Column column,
+                final ColumnMapping column,
                 final boolean collapsed,
-                Column ordinalColumn,
-                Column captionColumn,
+                ColumnMapping ordinalColumn,
+                ColumnMapping captionColumn,
                 List<? extends AggregationLevelPropertyMapping> properties)
             {
                 this.name = name;
@@ -716,10 +717,10 @@ public class ExplicitRules {
                 this.properties = makePropertyMap(properties);
             }
 
-            private Map<String, Column> makePropertyMap(
+            private Map<String, ColumnMapping> makePropertyMap(
                 List<? extends AggregationLevelPropertyMapping> properties)
             {
-                Map<String, Column> map = new HashMap<>();
+                Map<String, ColumnMapping> map = new HashMap<>();
                 for (AggregationLevelPropertyMapping prop : properties) {
                     map.put(prop.getName(), prop.getColumn());
                 }
@@ -736,7 +737,7 @@ public class ExplicitRules {
             /**
              * Get the foreign key column name of the aggregate table.
              */
-            public Column getColumn() {
+            public ColumnMapping getColumn() {
                 return column;
             }
 
@@ -773,7 +774,7 @@ public class ExplicitRules {
                 msgRecorder.pushContextName("Level");
                 try {
                     String nameInner = getName();
-                    Column columnInner = getColumn();
+                    ColumnMapping columnInner = getColumn();
                     checkAttributeString(msgRecorder, nameInner, "name");
                     checkAttributeString(msgRecorder, columnInner.getName(), "column");
 
@@ -847,15 +848,15 @@ public class ExplicitRules {
             }
 
 
-            public Column getOrdinalColumn() {
+            public ColumnMapping getOrdinalColumn() {
                 return ordinalColumn;
             }
 
-            public Column getCaptionColumn() {
+            public ColumnMapping getCaptionColumn() {
                 return captionColumn;
             }
 
-            public Map<String, Column> getProperties() {
+            public Map<String, ColumnMapping> getProperties() {
                 return properties;
             }
         }
@@ -918,7 +919,7 @@ public class ExplicitRules {
         class Measure {
             private final String name;
             private String symbolicName;
-            private final Column column;
+            private final ColumnMapping column;
             private final RollupType explicitRollupType;
             private RolapStar.Measure rolapMeasure;
             private final static String badMeasureName =
@@ -931,7 +932,7 @@ public class ExplicitRules {
 
             Measure(
                 final String name,
-                final Column column, final String rollupType)
+                final ColumnMapping column, final String rollupType)
             {
                 this.name = name;
                 this.column = column;
@@ -957,7 +958,7 @@ public class ExplicitRules {
             /**
              * Get the aggregate table column name.
              */
-            public Column getColumn() {
+            public ColumnMapping getColumn() {
                 return column;
             }
 
@@ -985,7 +986,7 @@ public class ExplicitRules {
                 msgRecorder.pushContextName("Measure");
                 try {
                     String nameInner = getName();
-                    Column column = getColumn();
+                    ColumnMapping column = getColumn();
                     checkAttributeString(msgRecorder, nameInner, "name");
                     checkAttributeString(msgRecorder, column.getName(), "column");
 
@@ -1071,10 +1072,10 @@ public class ExplicitRules {
         protected final int id;
         protected final boolean ignoreCase;
         protected final ExplicitRules.Group aggGroup;
-        protected Column factCountColumn;
-        protected Map<Column, Column> measuresFactCount = new HashMap<>();
-        protected List<Column> ignoreColumns;
-        private Map<Column, Column> foreignKeyMap;
+        protected ColumnMapping factCountColumn;
+        protected Map<ColumnMapping, ColumnMapping> measuresFactCount = new HashMap<>();
+        protected List<ColumnMapping> ignoreColumns;
+        private Map<ColumnMapping, ColumnMapping> foreignKeyMap;
         private List<Level> levels;
         private List<Measure> measures;
         protected int approxRowCount = Integer.MIN_VALUE;
@@ -1126,25 +1127,25 @@ public class ExplicitRules {
         /**
          * Get the name of the fact count column.
          */
-        protected Column getFactCountColumn() {
+        protected ColumnMapping getFactCountColumn() {
             return factCountColumn;
         }
 
         /**
          * Set the name of the fact count column.
          */
-        protected void setFactCountColumn(final Column factCountColumn) {
+        protected void setFactCountColumn(final ColumnMapping factCountColumn) {
             this.factCountColumn = factCountColumn;
         }
 
-        public Map<Column, Column> getMeasuresFactCount() {
+        public Map<ColumnMapping, ColumnMapping> getMeasuresFactCount() {
             return measuresFactCount;
         }
 
         /**
          * Get an Iterator over all ignore column name entries.
          */
-        protected Iterator<Column> getIgnoreColumns() {
+        protected Iterator<ColumnMapping> getIgnoreColumns() {
             return ignoreColumns.iterator();
         }
 
@@ -1169,11 +1170,11 @@ public class ExplicitRules {
             return new Recognizer.Matcher() {
                 @Override
 				public boolean matches(final String name) {
-                    for (Iterator<Column> it =
+                    for (Iterator<ColumnMapping> it =
                             ExplicitRules.TableDef.this.getIgnoreColumns();
                         it.hasNext();)
                     {
-                    	Column ignoreName = it.next();
+                    	ColumnMapping ignoreName = it.next();
                         if (isIgnoreCase()) {
                             if (ignoreName.getName().equalsIgnoreCase(name)) {
                                 return true;
@@ -1197,7 +1198,7 @@ public class ExplicitRules {
                 @Override
 				public boolean matches(String name) {
                     // Match is case insensitive
-                    final Column factCountColumnInner = TableDef.this.factCountColumn;
+                    final ColumnMapping factCountColumnInner = TableDef.this.factCountColumn;
                     return factCountColumnInner != null && factCountColumnInner.getName() != null
                         && factCountColumnInner.getName().equalsIgnoreCase(name);
                 }
@@ -1208,9 +1209,9 @@ public class ExplicitRules {
             return new Recognizer.Matcher() {
                 @Override
                 public boolean matches(String name) {
-                    HashSet<Column> measuresFactCountSet =
+                    HashSet<ColumnMapping> measuresFactCountSet =
                             new HashSet<>(measuresFactCount.values());
-                    return measuresFactCountSet.stream().filter(Objects::nonNull).map(Column::getName).anyMatch(n -> name.equals(n));
+                    return measuresFactCountSet.stream().filter(Objects::nonNull).map(ColumnMapping::getName).anyMatch(n -> name.equals(n));
                 }
             };
         }
@@ -1243,7 +1244,7 @@ public class ExplicitRules {
         /**
          * Adds the name of an aggregate table column that is to be ignored.
          */
-        protected void addIgnoreColumn(final Column ignoreName) {
+        protected void addIgnoreColumn(final ColumnMapping ignoreName) {
             if (this.ignoreColumns == EMPTY_LIST) {
                 this.ignoreColumns = new ArrayList<>();
             }
@@ -1267,8 +1268,8 @@ public class ExplicitRules {
          * Get the name of the aggregate table's foreign key column that matches
          * the base fact table's foreign key column or return null.
          */
-        protected Column getAggregateFK(final String baseFK) {
-        	Optional<Map.Entry<Column, Column>> op = this.foreignKeyMap.entrySet().stream().filter(e -> baseFK.equals(e.getKey().getName())).findFirst();
+        protected ColumnMapping getAggregateFK(final String baseFK) {
+        	Optional<Map.Entry<ColumnMapping, ColumnMapping>> op = this.foreignKeyMap.entrySet().stream().filter(e -> baseFK.equals(e.getKey().getName())).findFirst();
             if (op.isPresent()) {
             	return op.get().getValue();
             }
@@ -1391,9 +1392,9 @@ public class ExplicitRules {
                 RolapStar star = getStar();
                 RolapStar.Table factTable = star.getFactTable();
                 String tableName = factTable.getAlias();
-                for (Map.Entry<Column, Column> e : foreignKeyMap.entrySet()) {
-                	Column baseFKName = e.getKey();
-                	Column aggFKName = e.getValue();
+                for (Map.Entry<ColumnMapping, ColumnMapping> e : foreignKeyMap.entrySet()) {
+                	ColumnMapping baseFKName = e.getKey();
+                	ColumnMapping aggFKName = e.getValue();
 
                     if (namesToObjects.containsKey(baseFKName.getName())) {
                         msgRecorder.reportError(
@@ -1488,10 +1489,10 @@ public class ExplicitRules {
             return name;
         }
 
-        private final Table name;
+        private final TableMapping name;
 
         public NameTableDef(
-            final Table name,
+            final TableMapping name,
             final String approxRowCount,
             final boolean ignoreCase,
             final ExplicitRules.Group group)

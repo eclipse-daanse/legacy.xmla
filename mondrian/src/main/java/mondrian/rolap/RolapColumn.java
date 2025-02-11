@@ -3,10 +3,9 @@ package mondrian.rolap;
 import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.daanse.rdb.structure.api.model.Column;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLMapping;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLMappingImpl;
+import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 
 public class RolapColumn implements SQLExpressionMapping {
 
@@ -28,9 +27,9 @@ public class RolapColumn implements SQLExpressionMapping {
     }
 
     @Override
-	public List<? extends SQLMapping> getSqls() {
-		return List.of(SQLMappingImpl.builder()
-				.withStatement( table == null ? name : new StringBuilder(table).append(".").append(name).toString())
+	public List<? extends SqlStatementMapping> getSqls() {
+		return List.of(SqlStatementMappingImpl.builder()
+				.withSql( table == null ? name : new StringBuilder(table).append(".").append(name).toString())
 				.withDialects(List.of("generic"))
 				.build());
 	}

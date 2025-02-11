@@ -24,12 +24,6 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.daanse</groupId>
-      <artifactId>org.eclipse.daanse.rdb.structure.check</artifactId>
-      <version>${revision}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.daanse</groupId>
       <artifactId>org.eclipse.daanse.jdbc.db.api</artifactId>
     </dependency>
     <dependency>
@@ -40,12 +34,6 @@
       <groupId>org.eclipse.daanse</groupId>
       <artifactId>org.eclipse.daanse.jdbc.db.core</artifactId>
     </dependency>
-      <dependency>
-          <groupId>org.eclipse.daanse</groupId>
-          <artifactId>org.eclipse.daanse.olap.rolap.dbmapper.provider.modifier.jaxb</artifactId>
-          <version>${revision}</version>
-          <scope>compile</scope>
-      </dependency>
   </dependencies>
 
 </project>

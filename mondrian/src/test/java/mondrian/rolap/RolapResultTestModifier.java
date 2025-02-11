@@ -16,20 +16,19 @@ package mondrian.rolap;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 
@@ -125,39 +124,39 @@ public class RolapResultTestModifier extends PojoMappingModifier {
      */
 
     @Override
-    protected List<? extends CubeMapping> schemaCubes(CatalogMapping schema) {
+    protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
     	//## TableName: FT1
     	//## ColumnNames: d1_id,d2_id,value
     	//## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2)
-        ColumnImpl d1IdFt1 = ColumnImpl.builder().withName("d1_id").withType("INTEGER").build();
-        ColumnImpl d2IdFt1 = ColumnImpl.builder().withName("d2_id").withType("INTEGER").build();
-        ColumnImpl valueFt1 = ColumnImpl.builder().withName("value").withType("NUMERIC").withColumnSize(10).withDecimalDigits(2).build();
-        PhysicalTableImpl ft1 = ((Builder) PhysicalTableImpl.builder().withName("FT1")
+        ColumnMappingImpl d1IdFt1 = ColumnMappingImpl.builder().withName("d1_id").withType("INTEGER").build();
+        ColumnMappingImpl d2IdFt1 = ColumnMappingImpl.builder().withName("d2_id").withType("INTEGER").build();
+        ColumnMappingImpl valueFt1 = ColumnMappingImpl.builder().withName("value").withType("NUMERIC").withColumnSize(10).withDecimalDigits(2).build();
+        PhysicalTableMappingImpl ft1 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("FT1")
                 .withColumns(List.of(d1IdFt1, d2IdFt1, valueFt1))).build();
         //## ColumnNames: d1_id,d2_id,value,vextra
         //## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2),DECIMAL(10,2):null
-        ColumnImpl d1IdFt2 = ColumnImpl.builder().withName("d1_id").withType("INTEGER").build();
-        ColumnImpl d2IdFt2 = ColumnImpl.builder().withName("d2_id").withType("INTEGER").build();
-        ColumnImpl valueFt2 = ColumnImpl.builder().withName("value").withType("NUMERIC").withColumnSize(10).withDecimalDigits(2).build();
-        ColumnImpl vextraFt2 = ColumnImpl.builder().withName("vextra").withType("NUMERIC").withColumnSize(10).withDecimalDigits(2).build();
-        PhysicalTableImpl ft2 = ((Builder) PhysicalTableImpl.builder().withName("FT2")
+        ColumnMappingImpl d1IdFt2 = ColumnMappingImpl.builder().withName("d1_id").withType("INTEGER").build();
+        ColumnMappingImpl d2IdFt2 = ColumnMappingImpl.builder().withName("d2_id").withType("INTEGER").build();
+        ColumnMappingImpl valueFt2 = ColumnMappingImpl.builder().withName("value").withType("NUMERIC").withColumnSize(10).withDecimalDigits(2).build();
+        ColumnMappingImpl vextraFt2 = ColumnMappingImpl.builder().withName("vextra").withType("NUMERIC").withColumnSize(10).withDecimalDigits(2).build();
+        PhysicalTableMappingImpl ft2 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("FT2")
                 .withColumns(List.of(d1IdFt2, d2IdFt2, valueFt2))).build();
 
         //## ColumnNames: d1_id,name
         //## ColumnTypes: INTEGER,VARCHAR(20)
-        ColumnImpl d1IdD1 = ColumnImpl.builder().withName("d1_id").withType("INTEGER").build();
-        ColumnImpl nameD1 = ColumnImpl.builder().withName("name").withType("VARCHAR").withCharOctetLength(20).build();
-        PhysicalTableImpl d1 = ((Builder) PhysicalTableImpl.builder().withName("D1")
+        ColumnMappingImpl d1IdD1 = ColumnMappingImpl.builder().withName("d1_id").withType("INTEGER").build();
+        ColumnMappingImpl nameD1 = ColumnMappingImpl.builder().withName("name").withType("VARCHAR").withCharOctetLength(20).build();
+        PhysicalTableMappingImpl d1 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("D1")
                 .withColumns(List.of(d1IdD1, nameD1))).build();
         //## ColumnNames: d2_id,name
         //## ColumnTypes: INTEGER,VARCHAR(20)
-        ColumnImpl d2IdD2 = ColumnImpl.builder().withName("d2_id").withType("INTEGER").build();
-        ColumnImpl nameD2 = ColumnImpl.builder().withName("name").withType("VARCHAR").withCharOctetLength(20).build();
-        PhysicalTableImpl d2 = ((Builder) PhysicalTableImpl.builder().withName("D2")
+        ColumnMappingImpl d2IdD2 = ColumnMappingImpl.builder().withName("d2_id").withType("INTEGER").build();
+        ColumnMappingImpl nameD2 = ColumnMappingImpl.builder().withName("name").withType("VARCHAR").withCharOctetLength(20).build();
+        PhysicalTableMappingImpl d2 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("D2")
                 .withColumns(List.of(d2IdD2, nameD2))).build();
 
         List<CubeMapping> result = new ArrayList<>();
-        result.addAll(super.schemaCubes(schema));
+        result.addAll(super.catalogCubes(schema));
         result.add(PhysicalCubeMappingImpl.builder()
             .withName("FTAll")
             .withQuery(TableQueryMappingImpl.builder().withTable(ft1).build())

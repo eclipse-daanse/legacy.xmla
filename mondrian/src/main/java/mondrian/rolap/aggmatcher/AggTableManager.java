@@ -21,13 +21,12 @@ import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
-import org.eclipse.daanse.rdb.structure.api.model.DatabaseSchema;
-import org.eclipse.daanse.rdb.structure.pojo.ColumnImpl;
-import org.eclipse.daanse.rdb.structure.pojo.DatabaseSchemaImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl;
-import org.eclipse.daanse.rdb.structure.pojo.PhysicalTableImpl.Builder;
+import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryOptimizationHintMappingImpl;
 import org.slf4j.Logger;
@@ -38,8 +37,8 @@ import mondrian.olap.Util.PropertyList;
 import mondrian.recorder.ListRecorder;
 import mondrian.recorder.MessageRecorder;
 import mondrian.recorder.RecorderException;
-import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapCatalog;
+import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.util.PojoUtil;
 
@@ -169,14 +168,14 @@ public class AggTableManager {
 //            connectionProps.aggregateScanCatalog();
             Optional<String> oAaggregateScanSchema=    connectionProps.aggregateScanSchema();
  
-			List<? extends DatabaseSchema> schemas = ((RolapContext) context).getCatalogMapping()
+			List<? extends DatabaseSchemaMapping> schemas = ((RolapContext) context).getCatalogMapping()
 					.getDbschemas();
 
-			DatabaseSchema databaseSchema = schemas.getFirst();
+			DatabaseSchemaMapping databaseSchema = schemas.getFirst();
 			if (oAaggregateScanSchema.isPresent()) {
 				String aaggregateScanSchema = oAaggregateScanSchema.get();
 
-				for (DatabaseSchema dbs : schemas) {
+				for (DatabaseSchemaMapping dbs : schemas) {
 					if (dbs.getName().equals(aaggregateScanSchema)) {
 						databaseSchema = dbs;
 						break;
@@ -213,7 +212,7 @@ public class AggTableManager {
                     // are measure or foreign key columns
 
                     bindToStar(dbFactTable, star, msgRecorder);
-                    DatabaseSchemaImpl schemaInner = getDatabaseSchema(dbFactTable.table.getTable().getSchema());
+                    DatabaseSchemaMappingImpl schemaInner = getDatabaseSchema(dbFactTable.table.getTable().getSchema());
                     
                     // Now look at all tables in the database and per table,
                     // first see if it is a match for an aggregate table for
@@ -222,8 +221,8 @@ public class AggTableManager {
 
                     for (JdbcSchema.Table dbTable : db.getTables()) {
                         String name = dbTable.getName();
-                        List<ColumnImpl> columns =  dbTable.getColumns().stream().map(c -> ColumnImpl.builder().withName(c.getName()).withType(c.getTypeName()).build()).toList();
-                        PhysicalTableImpl t = ((Builder) PhysicalTableImpl.builder().withName(name).withColumns(columns).withsSchema(schemaInner)).build();
+                        List<ColumnMappingImpl> columns =  dbTable.getColumns().stream().map(c -> ColumnMappingImpl.builder().withName(c.getName()).withType(c.getTypeName()).build()).toList();
+                        PhysicalTableMappingImpl t = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName(name).withColumns(columns).withsSchema(schemaInner)).build();
 
                         // Do the catalog schema aggregate excludes, exclude
                         // this table name.
@@ -300,9 +299,9 @@ public class AggTableManager {
         }
     }
 
-    private DatabaseSchemaImpl getDatabaseSchema(DatabaseSchema schema) {
+    private DatabaseSchemaMappingImpl getDatabaseSchema(DatabaseSchemaMapping schema) {
         if (schema != null) {
-            return DatabaseSchemaImpl.builder().withName(schema.getName()).withId(schema.getId()).build(); //TODO add tables?
+            return DatabaseSchemaMappingImpl.builder().withName(schema.getName()).withId(schema.getId()).build(); //TODO add tables?
         }
         return null;
     }
@@ -347,15 +346,15 @@ public class AggTableManager {
 
             QueryMapping relation =
                 star.getFactTable().getRelation();
-            DatabaseSchemaImpl schemaInner = null;
+            DatabaseSchemaMappingImpl schemaInner = null;
             List<TableQueryOptimizationHintMappingImpl> tableHints = null;
             if (relation instanceof TableQueryMapping table) {
                 schemaInner = getDatabaseSchema(table.getTable().getSchema());
                 tableHints = PojoUtil.getOptimizationHints(table.getOptimizationHints());
             }
             String tableName = dbFactTable.getName();
-            List<ColumnImpl> columns =  dbFactTable.getColumns().stream().map(c -> ColumnImpl.builder().withName(c.getName()).withType(c.getTypeName()).build()).toList();
-            PhysicalTableImpl t = ((Builder) PhysicalTableImpl.builder().withName(tableName).withColumns(columns).withsSchema(schemaInner)).build();
+            List<ColumnMappingImpl> columns =  dbFactTable.getColumns().stream().map(c -> ColumnMappingImpl.builder().withName(c.getName()).withType(c.getTypeName()).build()).toList();
+            PhysicalTableMappingImpl t = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName(tableName).withColumns(columns).withsSchema(schemaInner)).build();
 
             String alias = null;
             dbFactTable.table = TableQueryMappingImpl.builder().withTable(t).withAlias(alias).withOptimizationHints(tableHints).build();

@@ -78,6 +78,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
+import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
 import org.slf4j.Logger;
@@ -1219,8 +1220,8 @@ public class RolapHierarchy extends HierarchyBase {
         peerHier.allLevelName = getAllLevelName();
         peerHier.sharedHierarchyName = getSharedHierarchyName();
         JoinQueryMappingImpl join = JoinQueryMappingImpl.builder()
-        		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(clos.getParentColumn()).withQuery(PojoUtil.copy(clos.getTable())).build())
-        		.withRight(JoinedQueryElementMappingImpl.builder().withKey(clos.getChildColumn()).withQuery(PojoUtil.copy(relation)).build())
+        		.withLeft(JoinedQueryElementMappingImpl.builder().withKey((ColumnMappingImpl) clos.getParentColumn()).withQuery(PojoUtil.copy(clos.getTable())).build())
+        		.withRight(JoinedQueryElementMappingImpl.builder().withKey((ColumnMappingImpl) clos.getChildColumn()).withQuery(PojoUtil.copy(relation)).build())
         		.build();
         peerHier.relation = join;
 
