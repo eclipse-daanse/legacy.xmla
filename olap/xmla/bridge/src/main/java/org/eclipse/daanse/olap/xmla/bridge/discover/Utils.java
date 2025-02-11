@@ -320,7 +320,7 @@ public class Utils {
 
 
 	static List<DbSchemaSchemataResponseRowR> getDbSchemaSchemataResponseRow(Catalog catalog, String schemaNameReq,String schemaOwnerRequ) {
-		return catalog.getDbSchemas().stream().filter(dbs->dbs.getName().equals(schemaNameReq))
+		return catalog.getDbSchemas().stream().filter(dbs->(schemaNameReq == null || dbs.getName().equals(schemaNameReq)))
 				.map(dbs -> new DbSchemaSchemataResponseRowR(catalog.getName(), dbs.getName(), "")).toList();
 	}
 

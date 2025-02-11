@@ -34,5 +34,12 @@
             <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
+       <dependency>
+            <groupId>org.eclipse.daanse</groupId>
+            <artifactId>org.eclipse.daanse.olap.action.impl</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

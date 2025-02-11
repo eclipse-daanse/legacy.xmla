@@ -144,7 +144,7 @@ public class OtherDiscoverService {
 
             result.add(new DiscoverDataSourcesResponseRowR(
             		"DataSource of "+catalog.getName(),
-                Optional.empty(),
+                Optional.ofNullable(catalog.getDescription()),
                 Optional.empty(),
                 Optional.empty(),
                 null,
@@ -225,7 +225,7 @@ public class OtherDiscoverService {
         List<DiscoverPropertiesResponseRow> result = new ArrayList<>();
         for (PropertyDefinition propertyDefinition
             : PropertyDefinition.class.getEnumConstants()) {
-            if ( !propertyNames.contains(propertyDefinition.name()) ) {
+            if ( !propertyNames.isEmpty() && !propertyNames.contains(propertyDefinition.name()) ) {
                 continue;
             }
             String propertyValue = "";
