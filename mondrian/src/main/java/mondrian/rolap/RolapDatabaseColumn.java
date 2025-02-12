@@ -1,8 +1,8 @@
 package mondrian.rolap;
 
-import org.eclipse.daanse.olap.api.element.DbColumn;
+import org.eclipse.daanse.olap.api.element.DatabaseColumn;
 
-public class RolapDbColumn implements DbColumn{
+public class RolapDatabaseColumn implements DatabaseColumn{
 	private String name;
 
 

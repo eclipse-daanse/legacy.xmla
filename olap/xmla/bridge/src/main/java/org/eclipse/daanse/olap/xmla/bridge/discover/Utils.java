@@ -32,8 +32,8 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.DrillThroughAction;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
-import org.eclipse.daanse.olap.api.element.DbSchema;
-import org.eclipse.daanse.olap.api.element.DbTable;
+import org.eclipse.daanse.olap.api.element.DatabaseSchema;
+import org.eclipse.daanse.olap.api.element.DatabaseTable;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.KPI;
@@ -320,7 +320,7 @@ public class Utils {
 
 
 	static List<DbSchemaSchemataResponseRowR> getDbSchemaSchemataResponseRow(Catalog catalog, String schemaNameReq,String schemaOwnerRequ) {
-		return catalog.getDbSchemas().stream().filter(dbs->(schemaNameReq == null || dbs.getName().equals(schemaNameReq)))
+		return catalog.getDatabaseSchemas().stream().filter(dbs->(schemaNameReq == null || dbs.getName().equals(schemaNameReq)))
 				.map(dbs -> new DbSchemaSchemataResponseRowR(catalog.getName(), dbs.getName(), "")).toList();
 	}
 
@@ -512,7 +512,7 @@ public class Utils {
         Optional<String> oTableName,
    		Optional<String> oTableType
     ) {
-    	List<? extends DbSchema> dbSchemas= catalog.getDbSchemas();
+    	List<? extends DatabaseSchema> dbSchemas= catalog.getDatabaseSchemas();
     	String catalogName = catalog.getName();
         List<DbSchemaTablesResponseRow> result = new ArrayList<>();
 
@@ -566,13 +566,13 @@ public class Utils {
     }
 
     private static void populateDbSchemasForDbSchemaTables(String catalogName, String schemaName,
-        List<? extends DbSchema> dbSchemas, List<DbSchemaTablesResponseRow> result) {
+        List<? extends DatabaseSchema> dbSchemas, List<DbSchemaTablesResponseRow> result) {
         if (dbSchemas != null) {
-            for (DbSchema dbSchema
+            for (DatabaseSchema dbSchema
                     : dbSchemas) {
-                List<? extends DbTable> tables = dbSchema.getDbTables();
+                List<? extends DatabaseTable> tables = dbSchema.getDbTables();
                 if (tables != null) {
-                    for (DbTable table : tables) {
+                    for (DatabaseTable table : tables) {
                         if (table instanceof PhysicalTableMapping || table instanceof SystemTableMapping) {
                             String tableName = table.getName();
                             result.add(new  DbSchemaTablesResponseRowR(

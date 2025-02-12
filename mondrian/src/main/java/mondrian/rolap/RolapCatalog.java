@@ -62,7 +62,7 @@ import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
-import org.eclipse.daanse.olap.api.element.DbSchema;
+import org.eclipse.daanse.olap.api.element.DatabaseSchema;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -150,7 +150,7 @@ public class RolapCatalog implements Catalog {
 	 */
 	private final Map<DimensionMapping, RolapHierarchy> mapSharedHierarchyNameToHierarchy = new HashMap<>();
 
-	private List<RolapDbSchema> rolapDbSchemas = new ArrayList<>();
+	private List<RolapDatabaseSchema> rolapDbSchemas = new ArrayList<>();
 
 	/**
 	 * The default role for connections to this schema.
@@ -466,17 +466,17 @@ public class RolapCatalog implements Catalog {
 		}
 		
 		for (DatabaseSchemaMapping dbSchemaMapping : mappingCatalog2.getDbschemas()) {
-			RolapDbSchema rolapDbSchema = new RolapDbSchema();
-			List<RolapDbTable> rolapDbTables = new ArrayList<>();
+			RolapDatabaseSchema rolapDbSchema = new RolapDatabaseSchema();
+			List<RolapDatabaseTable> rolapDbTables = new ArrayList<>();
 			rolapDbSchema.setName(rolapDbSchema.getName());
 
 			for (TableMapping table : dbSchemaMapping.getTables()) {
-				RolapDbTable rolapDbTable = new RolapDbTable();
-				List<RolapDbColumn> rolapDbColumns = new ArrayList<>();
+				RolapDatabaseTable rolapDbTable = new RolapDatabaseTable();
+				List<RolapDatabaseColumn> rolapDbColumns = new ArrayList<>();
 				rolapDbTable.setName(table.getName());
 
 				for (ColumnMapping column : table.getColumns()) {
-					RolapDbColumn rolapDbColumn = new RolapDbColumn();
+					RolapDatabaseColumn rolapDbColumn = new RolapDatabaseColumn();
 					rolapDbColumn.setName(column.getName());
 
 					rolapDbColumns.add(rolapDbColumn);
@@ -960,7 +960,7 @@ public class RolapCatalog implements Catalog {
 	}
 
 	@Override
-	public List<? extends DbSchema> getDbSchemas() {
+	public List<? extends DatabaseSchema> getDatabaseSchemas() {
 		return rolapDbSchemas;
 	}
 

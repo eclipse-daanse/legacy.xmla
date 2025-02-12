@@ -32,7 +32,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ContextGroup;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
-import org.eclipse.daanse.olap.api.element.DbSchema;
+import org.eclipse.daanse.olap.api.element.DatabaseSchema;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -97,10 +97,10 @@ class DbSchemaDiscoverServiceTest {
     private Dimension dim2;
 
     @Mock
-    private DbSchema dbSchema1;
+    private DatabaseSchema dbSchema1;
     
     @Mock
-    private DbSchema dbSchema2;
+    private DatabaseSchema dbSchema2;
     
     @Mock
     private Hierarchy hierar1;
@@ -309,7 +309,7 @@ class DbSchemaDiscoverServiceTest {
         when(dbSchema2.getName()).thenReturn("dbSchema2Name");
 
         when(catalog.getName()).thenReturn("schema2Name");
-        when(catalog.getDbSchemas()).thenAnswer(setupDummyListAnswer(dbSchema1, dbSchema2));
+        when(catalog.getDatabaseSchemas()).thenAnswer(setupDummyListAnswer(dbSchema1, dbSchema2));
         
         List<DbSchemaSchemataResponseRow> rows = service.dbSchemaSchemata(request, requestMetaData, userPrincipal);
         

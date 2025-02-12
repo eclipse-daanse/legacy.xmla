@@ -2,21 +2,21 @@ package mondrian.rolap;
 
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.element.DbColumn;
-import org.eclipse.daanse.olap.api.element.DbTable;
+import org.eclipse.daanse.olap.api.element.DatabaseColumn;
+import org.eclipse.daanse.olap.api.element.DatabaseTable;
 
-public class RolapDbTable implements DbTable {
+public class RolapDatabaseTable implements DatabaseTable {
 
 	private String name;
 	private String description;
 
-	private List<DbColumn> dbColumns;
+	private List<DatabaseColumn> dbColumns;
 
-	public List<DbColumn> getDbColumns() {
+	public List<DatabaseColumn> getDbColumns() {
 		return dbColumns;
 	}
 
-	public void setDbColumns(List<DbColumn> dbColumns) {
+	public void setDbColumns(List<DatabaseColumn> dbColumns) {
 		this.dbColumns = dbColumns;
 	}
 

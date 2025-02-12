@@ -120,5 +120,5 @@ public interface Catalog extends MetaElement {
 
 	List<String> getAccessRoles();
 	
-	List<? extends DbSchema> getDbSchemas();
+	List<? extends DatabaseSchema> getDatabaseSchemas();
 }
