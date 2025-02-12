@@ -28,6 +28,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -360,6 +361,7 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
     @Override
     protected CatalogMapping modifyCatalog(CatalogMapping mappingSchemaOriginal) {
         return CatalogMappingImpl.builder()
+            .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(mappingSchemaOriginal))
             .withName("FoodMart")
             .withCubes(List.of(
             	PhysicalCubeMappingImpl.builder()

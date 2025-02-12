@@ -85,6 +85,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberPropertyMappingImpl
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -4428,6 +4429,7 @@ class SchemaTest {
 
             	 return CatalogMappingImpl.builder()
             			 .withName("FoodMart")
+                         .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas( catalog2))
                          .withCubes(List.of(c))
                          .build();
             }
@@ -4664,6 +4666,7 @@ class SchemaTest {
 
             	 return CatalogMappingImpl.builder()
             			 .withName("FoodMart")
+                         .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas( catalog2))
                          .withCubes(List.of(c))
                          .build();
             }
@@ -6220,7 +6223,8 @@ class SchemaTest {
             public TestInvalidSchemaAccess(CatalogMapping catalog) {
                 super(catalog);
             }
-            protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+            @Override
+            protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
                 List<AccessRoleMapping> result = new ArrayList<>();
                 result.addAll(super.catalogAccessRoles(schema));
                 result.add(AccessRoleMappingImpl.builder()
@@ -6331,7 +6335,8 @@ class SchemaTest {
                 super(catalog);
             }
 
-            protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+            @Override
+            protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             	AccessRoleMappingImpl role1;
             	AccessRoleMappingImpl role2;
             	AccessRoleMappingImpl role1Plus2;
@@ -6399,7 +6404,8 @@ class SchemaTest {
                 super(catalog);
             }
 
-            protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+            @Override
+            protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
             	AccessRoleMappingImpl role1;
                 List<AccessRoleMapping> result = new ArrayList<>();
                 result.addAll(super.catalogAccessRoles(schema));
@@ -7904,6 +7910,7 @@ class SchemaTest {
 
            	 	return CatalogMappingImpl.builder()
         			 .withName(schemaName)
+                     .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas( catalog2))
         			 .withDescription("Schema to test descriptions and captions")
         			 .withAnnotations(List.of(
                          AnnotationMappingImpl.builder()
@@ -8538,6 +8545,7 @@ class SchemaTest {
                         .build();
                     return CatalogMappingImpl.builder()
                         .withName("Test_DimensionUsage")
+                        .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas( schemaMappingOriginal))
                         .withCubes(List.of(
                             c1, c2, vc
                         ))
@@ -8901,7 +8909,8 @@ class SchemaTest {
                 super(catalog);
             }
 
-            protected List<CatalogMapping> catalogSchemas(CatalogMapping catalog2) {
+            @Override
+            protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
                 LevelMappingImpl l1 = LevelMappingImpl.builder()
                         .withName("Product Family")
                         .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
@@ -9030,10 +9039,11 @@ class SchemaTest {
                                 ))
                         		.build()))
                         .build();
-           	 	return List.of(CatalogMappingImpl.builder()
+           	 	return CatalogMappingImpl.builder()
         			 .withName("FoodMart")
+                     .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas( catalog2))
                      .withCubes(List.of(c))
-                     .build());
+                     .build();
 
             }
 
@@ -11570,6 +11580,7 @@ class SchemaTest {
                         .build();
                     return CatalogMappingImpl.builder()
                         .withName("FoodMart")
+                        .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas( schemaMappingOriginal))
                         .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("HR")
@@ -12062,6 +12073,7 @@ class SchemaTest {
 
                     return CatalogMappingImpl.builder()
                         .withName("FoodMart")
+                        .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas( schemaMappingOriginal))
                         .withCubes(List.of(c1))
                         .build();
 

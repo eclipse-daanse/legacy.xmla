@@ -46,6 +46,7 @@ import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMa
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -5815,7 +5816,8 @@ class NonEmptyTest extends BatchTestCase {
               super(catalog);
           }
 
-          protected List<CatalogMapping> catalogSchemas(CatalogMapping catalog2) {
+          @Override
+          protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	  MeasureGroupMappingImpl mgSales = MeasureGroupMappingImpl.builder().build();
               MeasureMappingImpl m = MeasureMappingImpl.builder()
             		  .withName("Unit Sales")
@@ -5850,8 +5852,9 @@ class NonEmptyTest extends BatchTestCase {
               mgSales.setPhysicalCube(salesCube);
               cm.setPhysicalCube(salesCube);
 
-              return List.of(CatalogMappingImpl.builder()
+              return CatalogMappingImpl.builder()
             		  .withName("FoodMart")
+                      .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                       .withCubes(List.of(
                     		  salesCube,
                               VirtualCubeMappingImpl.builder()
@@ -5868,7 +5871,7 @@ class NonEmptyTest extends BatchTestCase {
                                   .withReferencedCalculatedMembers(List.of(cm))
                                   .build()
                           ))
-            		  .build());
+            		  .build();
           }
 
       }

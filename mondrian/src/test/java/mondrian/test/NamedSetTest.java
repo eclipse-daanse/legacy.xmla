@@ -872,16 +872,17 @@ class NamedSetTest {
             public TestBadNamedSetModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            
-            protected List<? extends NamedSetMapping> schemaNamedSets(CatalogMapping schema) {
+
+            @Override
+            protected List<? extends NamedSetMapping> catalogNamedSets(CatalogMapping schema) {
                 List<NamedSetMapping> result = new ArrayList<>();
                 result.addAll(super.catalogNamedSets(schema));
                 result.add(NamedSetMappingImpl.builder()
                     .withName("Bad")
                     .withFormula("{[Store].[USA].[WA].Children}}")
                     .build());
-                return result;                
-            }            
+                return result;
+            }
         }
         /*
         String baseSchema = TestUtil.getRawSchema(context);
@@ -912,7 +913,7 @@ class NamedSetTest {
         queryString =
             "with set [Foo] as ' [Store].CurrentMember  '"
             + "select {[Foo]} on columns from [Sales]";
-        pattern = "Set expression '[Foo]' must be a set";                   
+        pattern = "Set expression '[Foo]' must be a set";
         assertQueryThrows(connection, queryString, pattern);
 
         // Formula for a named set must not be a dimension.
@@ -1323,7 +1324,9 @@ class NamedSetTest {
         public NamedSetsInCubeModifier(CatalogMapping catalogMapping) {
             super(catalogMapping);
         }
-        protected List<? extends NamedSetMapping> schemaNamedSets(CatalogMapping schema) {
+
+        @Override
+        protected List<? extends NamedSetMapping> catalogNamedSets(CatalogMapping schema) {
             List<NamedSetMapping> result = new ArrayList<>();
             result.addAll(super.catalogNamedSets(schema));
             result.add(NamedSetMappingImpl.builder()
@@ -1335,7 +1338,7 @@ class NamedSetTest {
                     .withFormula("TopCount([CA Cities], 2, [Measures].[Unit Sales])")
                     .build());
                 return result;
-        }    
+        }
     }
 
 
@@ -1346,8 +1349,9 @@ class NamedSetTest {
         public NamedSetsInCubeAndSchemaModifier(CatalogMapping catalogMapping) {
             super(catalogMapping);
         }
-        
-        protected List<? extends NamedSetMapping> schemaNamedSets(CatalogMapping schema) {
+
+        @Override
+        protected List<? extends NamedSetMapping> catalogNamedSets(CatalogMapping schema) {
             List<NamedSetMapping> result = new ArrayList<>();
             result.addAll(super.catalogNamedSets(schema));
             result.add(NamedSetMappingImpl.builder()
@@ -1375,7 +1379,8 @@ class NamedSetTest {
         public MixedNamedSetSchemaModifier(CatalogMapping catalogMapping) {
             super(catalogMapping);
         }
-        
+
+        @Override
         protected List<? extends NamedSetMapping> cubeNamedSets(CubeMapping cube) {
             List<NamedSetMapping> result = new ArrayList<>();
             result.addAll(super.cubeNamedSets(cube));

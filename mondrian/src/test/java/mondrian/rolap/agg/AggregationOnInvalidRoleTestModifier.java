@@ -240,7 +240,8 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
 
      */
 
-    protected List<? extends AccessRoleMapping> schemaAccessRoles(CatalogMapping schema) {
+    @Override
+    protected List<? extends AccessRoleMapping> catalogAccessRoles(CatalogMapping schema) {
         List<AccessRoleMapping> result = new ArrayList<>();
         result.addAll(super.catalogAccessRoles(schema));
         result.add(AccessRoleMappingImpl.builder()

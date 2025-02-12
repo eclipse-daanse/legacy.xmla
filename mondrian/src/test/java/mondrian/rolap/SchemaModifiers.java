@@ -65,6 +65,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.CellFormatterMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -2621,6 +2622,7 @@ public class SchemaModifiers {
 
                 return CatalogMappingImpl.builder()
                     .withName("FoodMart")
+                    .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas( catalog2))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Sales_Bug_441")
@@ -2719,6 +2721,7 @@ public class SchemaModifiers {
         	MeasureMappingImpl mUnitSales1;
             return CatalogMappingImpl.builder()
             		.withName("FoodMart")
+            		.withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
             		.withCubes(List.of(
             			cubeSales = PhysicalCubeMappingImpl.builder()
                         	.withName("Sales")
@@ -3652,6 +3655,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             return CatalogMappingImpl.builder()
             		.withName("custom")
+                    .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas( catalog2))
                     .withCubes(List.of(sales1Cube))
                     	.withAccessRoles(List.of(
                     		AccessRoleMappingImpl.builder()
@@ -3783,6 +3787,7 @@ public class SchemaModifiers {
         	PhysicalCubeMappingImpl salesCube;
             return CatalogMappingImpl.builder()
             		.withName("FoodMart")
+                    .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas( catalog2))
                     .withCubes(List.of(
                     	salesCube = PhysicalCubeMappingImpl.builder()
                             .withName("Sales")
@@ -4632,6 +4637,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             return CatalogMappingImpl.builder()
             		.withName("FoodMart 2442")
+                    .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas( catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("Sales")
@@ -4755,6 +4761,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             return CatalogMappingImpl.builder()
             		.withName("FoodMart 2285")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("Sales")
@@ -4997,6 +5004,7 @@ public class SchemaModifiers {
         	CalculatedMemberMappingImpl mWarehouseSalesCalc;
             return CatalogMappingImpl.builder()
             		.withName("tiny")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Sales")
@@ -5181,6 +5189,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             return CatalogMappingImpl.builder()
             		.withName("FoodMart 2399 Rollup Type")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Sales")
@@ -5312,6 +5321,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             return CatalogMappingImpl.builder()
             		.withName("FoodMart 2399 Rollup Type")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Sales")
@@ -5442,6 +5452,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             return CatalogMappingImpl.builder()
             		.withName("FoodMart 2399 Rollup Type")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Sales")
@@ -6277,6 +6288,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog) {
             return CatalogMappingImpl.builder()
                     .withName("Foo")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Bar")
@@ -6353,6 +6365,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog) {
             return CatalogMappingImpl.builder()
                     .withName("snowflake bug")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Bug")
@@ -6503,6 +6516,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog) {
             return CatalogMappingImpl.builder()
                     .withName("FoodMart")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog))
                     .withCubes(List.of(
                     	PhysicalCubeMappingImpl.builder()
                         .withName("Sales")
@@ -7163,6 +7177,7 @@ public class SchemaModifiers {
         	MeasureMappingImpl mWarehouseSales;
             return CatalogMappingImpl.builder()
                     .withName("FoodMart")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Sales")
@@ -8072,6 +8087,7 @@ public class SchemaModifiers {
         	CalculatedMemberMappingImpl cmRecurse;
             return CatalogMappingImpl.builder()
                     .withName("FoodMart")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog))
                     .withCubes(List.of(
                     	cubeSales = PhysicalCubeMappingImpl.builder()
                             .withName("Sales")
@@ -10573,6 +10589,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             return CatalogMappingImpl.builder()
                     .withName("AMC")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Foo")
@@ -10675,6 +10692,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             return CatalogMappingImpl.builder()
                     .withName("FoodMart")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Sales")
@@ -10807,6 +10825,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             return CatalogMappingImpl.builder()
             		.withName("FoodMart")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("Sales")
@@ -11076,9 +11095,10 @@ public class SchemaModifiers {
 
         @Override
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
-        	return 
+        	return
         			CatalogMappingImpl.builder()
                     .withName("FooSchema")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Sales_Foo")
@@ -11549,6 +11569,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             return CatalogMappingImpl.builder()
                     .withName("custom")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Sales1")
@@ -11678,6 +11699,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             return CatalogMappingImpl.builder()
                     .withName("FoodMart")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Sales")
@@ -11836,6 +11858,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
             return CatalogMappingImpl.builder()
                     .withName("AMC")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Foo")
@@ -12252,6 +12275,7 @@ public class SchemaModifiers {
 
             return CatalogMappingImpl.builder()
                     .withName("custom")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                     	cubeSales1,
                     	cubeSales2,
@@ -12797,6 +12821,7 @@ public class SchemaModifiers {
 
             return CatalogMappingImpl.builder()
                     .withName("usagePrefixTest")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas( catalog))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Cheques")
@@ -13078,6 +13103,7 @@ public class SchemaModifiers {
 
             return CatalogMappingImpl.builder()
                     .withName("MYFoodmart")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog))
                     .withCubes(List.of(cubeSales, cubeWarehouse,
                        VirtualCubeMappingImpl.builder()
                             .withEnabled(true)
@@ -17183,6 +17209,7 @@ public class SchemaModifiers {
         	PhysicalCubeMappingImpl warehouse2Cube;
         	return CatalogMappingImpl.builder()
                     .withName("FoodMart.DimAndMeasure.Role")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                     	warehouse1Cube = PhysicalCubeMappingImpl.builder()
                             .withName("Warehouse1")
@@ -17408,6 +17435,7 @@ public class SchemaModifiers {
 
         	return CatalogMappingImpl.builder()
                     .withName("FoodMart 2358")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("Sales")
@@ -17516,6 +17544,7 @@ public class SchemaModifiers {
 
         	return CatalogMappingImpl.builder()
                     .withName("FoodMart")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("Sales")
@@ -17633,6 +17662,7 @@ public class SchemaModifiers {
 
         	return CatalogMappingImpl.builder()
                     .withName("FoodMart")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("DateLiteralTest")
@@ -17699,7 +17729,7 @@ public class SchemaModifiers {
         public DialectTestModifier2(CatalogMapping catalog) {
             super(catalog);
         }
-        
+
         @Override
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	TimeDimensionMappingImpl storeSqftDimension = TimeDimensionMappingImpl.builder()
@@ -17739,6 +17769,7 @@ public class SchemaModifiers {
 
         	return CatalogMappingImpl.builder()
                     .withName("FoodMart")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("BigIntTest")
@@ -17907,6 +17938,7 @@ public class SchemaModifiers {
 
         	return CatalogMappingImpl.builder()
                     .withName("FoodMart")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("dsad")
@@ -17992,6 +18024,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	return CatalogMappingImpl.builder()
                     .withName("FoodMartSalesOnly")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("SalesShort")
@@ -18092,6 +18125,7 @@ public class SchemaModifiers {
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	return CatalogMappingImpl.builder()
                     .withName("FoodMartSalesOnly")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("SalesShort")
@@ -18355,6 +18389,7 @@ public class SchemaModifiers {
 
         	return CatalogMappingImpl.builder()
                     .withName("FoodMart")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("Warehouse and Sales")
@@ -18836,6 +18871,7 @@ public class SchemaModifiers {
         	LevelMappingImpl countryLevel;
         	return CatalogMappingImpl.builder()
                     .withName("SteelWheels")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                     		steelWheelsSalesCube = PhysicalCubeMappingImpl.builder()
                                 .withName("SteelWheelsSales")
@@ -19655,6 +19691,7 @@ public class SchemaModifiers {
 
         	return CatalogMappingImpl.builder()
                     .withName("test_namecolumn")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("SteelWheelsSales1")
@@ -19806,6 +19843,7 @@ public class SchemaModifiers {
                     ))).build();
         	return CatalogMappingImpl.builder()
                     .withName("FooBar")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("Foo")
@@ -20057,6 +20095,7 @@ public class SchemaModifiers {
 
         	return CatalogMappingImpl.builder()
                     .withName("SteelWheels")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                             PhysicalCubeMappingImpl.builder()
                                 .withName("SteelWheelsSales")
@@ -20457,9 +20496,10 @@ public class SchemaModifiers {
             ))
         .build();
 
-        	return 
+        	return
         		CatalogMappingImpl.builder()
                     .withName("SteelWheels")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withDescription("1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2")
                     .withCubes(List.of(
                     	customersCube = PhysicalCubeMappingImpl.builder()
@@ -20659,9 +20699,10 @@ public class SchemaModifiers {
             ))
         .build();
 
-        	return 
+        	return
         			CatalogMappingImpl.builder()
                     .withName("SteelWheels")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withDescription("1 admin role, 1 user role. For testing MemberGrant with caching in 5.1.2")
                     .withCubes(List.of(
                        	customersCube = PhysicalCubeMappingImpl.builder()
@@ -20914,9 +20955,10 @@ public class SchemaModifiers {
             .build();
 
 
-        	return 
+        	return
         			CatalogMappingImpl.builder()
                     .withName("rolesTest")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                     	rolesTest1 = PhysicalCubeMappingImpl.builder()
                             .withName("rolesTest1")
@@ -21128,9 +21170,10 @@ public class SchemaModifiers {
             .withFormatString("Standard")
             .build();
 
-        	return 
+        	return
         			CatalogMappingImpl.builder()
                     .withName("foodmart-xmla-alias-bug")
+                   .withDbSchemas((List<DatabaseSchemaMappingImpl>) catalogDatabaseSchemas(catalog2))
                     .withCubes(List.of(
                         PhysicalCubeMappingImpl.builder()
                             .withName("Sales")
