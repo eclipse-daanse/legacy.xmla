@@ -650,10 +650,6 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
             writer.write(catalogName);
             writer.write(" : ");
             writer.write(ENTER);
-            if (catalog.getDocumentation() != null && catalog.getDocumentation().getValue() != null) {
-                writer.write(catalog.getDocumentation().getValue());
-                writer.write(ENTER);
-            }
             String cubes = catalog.getCubes().stream().map(c -> c.getName())
                 .collect(Collectors.joining(", "));
             writer.write("---");
