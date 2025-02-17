@@ -50,7 +50,7 @@ public interface Role {
      * || return == Access.NONE
      * || return == Access.ALL_DIMENSIONS
      */
-    Access getAccess(Catalog schema);
+    AccessCatalog getAccess(Catalog schema);
 
     /**
      * Returns the access this role has to a given cube.
@@ -58,7 +58,7 @@ public interface Role {
      * @pre cube != null
      * @post return == Access.ALL || return == Access.NONE
      */
-    Access getAccess(Cube cube);
+    AccessCube getAccess(Cube cube);
 
 
     /**
@@ -67,7 +67,7 @@ public interface Role {
      * @pre dimension != null
      * @post Access.instance().isValid(return)
      */
-    Access getAccess(Dimension dimension);
+    AccessDimension getAccess(Dimension dimension);
 
     /**
      * Returns the access this role has to a given hierarchy.
@@ -77,7 +77,7 @@ public interface Role {
      *   || return == Access.ALL
      *   || return == Access.CUSTOM
      */
-    Access getAccess(Hierarchy hierarchy);
+    AccessHierarchy getAccess(Hierarchy hierarchy);
 
     /**
      * Returns the details of this hierarchy's access, or null if the hierarchy
@@ -93,7 +93,7 @@ public interface Role {
      * @pre level != null
      * @post Access.instance().isValid(return)
      */
-    Access getAccess(Level level);
+    AccessMember getAccess(Level level);
 
     /**
      * Returns the access this role has to a given member.
@@ -104,7 +104,7 @@ public interface Role {
      *    || return == Access.ALL
      *    || return == Access.CUSTOM
      */
-    Access getAccess(Member member);
+    AccessMember getAccess(Member member);
 
     /**
      * Returns the access this role has to a given named set.
@@ -113,7 +113,7 @@ public interface Role {
      * @pre isMutable()
      * @post return == Access.NONE || return == Access.ALL
      */
-    Access getAccess(NamedSet set);
+    AccessMember getAccess(NamedSet set);
 
     /**
      * Returns whether this role is allowed to see a given element.

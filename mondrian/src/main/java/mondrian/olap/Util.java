@@ -29,9 +29,6 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.lang.ref.Reference;
 import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -98,7 +95,7 @@ import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -220,7 +217,7 @@ public class Util {
      */
     @SuppressWarnings("java:S1872")
     public static final boolean RETROWOVEN =
-        Access.class.getSuperclass().getName().equals(
+        AccessMember.class.getSuperclass().getName().equals(
             "net.sourceforge.retroweaver.runtime.java.lang.Enum");
 
     private static final UtilCompatible compatible;

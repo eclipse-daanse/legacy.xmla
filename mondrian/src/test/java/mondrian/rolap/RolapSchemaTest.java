@@ -32,7 +32,6 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
-import org.eclipse.daanse.olap.api.access.Access;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -184,7 +183,7 @@ class RolapCatalogTest {
         mondrian.olap.RoleImpl role = new mondrian.olap.RoleImpl();
 
         schema.handleCatalogGrant(role, grant);
-        assertEquals(Access.CUSTOM, role.getAccess(schema));
+        assertEquals(org.eclipse.daanse.olap.api.access.AccessCatalog.CUSTOM, role.getAccess(schema));
         verify(schema, times(2))
             .handleCubeGrant(eq(role), any(AccessCubeGrantMapping.class));
     }
@@ -242,8 +241,8 @@ class RolapCatalogTest {
 
         schema.handleCubeGrant(role, grant);
 
-        assertEquals(Access.CUSTOM, role.getAccess(cube));
-        assertEquals(Access.NONE, role.getAccess(dimension));
+        assertEquals(org.eclipse.daanse.olap.api.access.AccessCube.CUSTOM, role.getAccess(cube));
+        assertEquals(org.eclipse.daanse.olap.api.access.AccessDimension.NONE, role.getAccess(dimension));
         verify(schema, times(1))
             .handleHierarchyGrant(
                 eq(role),
@@ -254,12 +253,12 @@ class RolapCatalogTest {
 
     @Test
     void testHandleHierarchyGrant_ValidMembers() {
-        doTestHandleHierarchyGrant(Access.CUSTOM, Access.ALL);
+        doTestHandleHierarchyGrant(org.eclipse.daanse.olap.api.access.AccessHierarchy.CUSTOM, org.eclipse.daanse.olap.api.access.AccessMember.ALL);
     }
 
     @Test
     void testHandleHierarchyGrant_NoValidMembers() {
-        doTestHandleHierarchyGrant(Access.NONE, null);
+        doTestHandleHierarchyGrant(org.eclipse.daanse.olap.api.access.AccessHierarchy.NONE, null);
     }
 
     @Test
@@ -398,8 +397,8 @@ class RolapCatalogTest {
 
 
     private void doTestHandleHierarchyGrant(
-        Access expectedHierarchyAccess,
-        Access expectedMemberAccess)
+        org.eclipse.daanse.olap.api.access.AccessHierarchy expectedHierarchyAccess,
+        org.eclipse.daanse.olap.api.access.AccessMember expectedMemberAccess)
     {
         RolapCatalog schema = createSchema();
         RolapCube cube = mockCube(schema);

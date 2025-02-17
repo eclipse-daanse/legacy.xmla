@@ -145,7 +145,7 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
 
 	@Override
 	public Optional<String> getDescription() {
-		return Optional.ofNullable(getCatalogMapping().getName());
+		return Optional.ofNullable(getCatalogMapping().getDescription());
 	}
 
 

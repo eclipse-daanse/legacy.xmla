@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Formula;
@@ -757,7 +757,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
         }
 
         @Override
-		public Map<? extends Member, Access> getMemberChildren(
+		public Map<? extends Member, AccessMember> getMemberChildren(
             List<RolapMember> parentMembers,
             List<RolapMember> children,
             MemberChildrenConstraint constraint)
@@ -1059,7 +1059,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
         }
 
         @Override
-		public Map<? extends Member, Access> getMemberChildren(
+		public Map<? extends Member, AccessMember> getMemberChildren(
             List<RolapMember> parentMembers,
             List<RolapMember> children,
             MemberChildrenConstraint constraint)

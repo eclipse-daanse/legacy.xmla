@@ -26,7 +26,7 @@ import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -373,7 +373,7 @@ public abstract class DelegatingCatalogReader implements CatalogReader {
     }
 
     @Override
-	public Map<? extends Member, Access> getMemberChildrenWithDetails(
+	public Map<? extends Member, AccessMember> getMemberChildrenWithDetails(
         Member member,
         Evaluator evaluator)
     {
