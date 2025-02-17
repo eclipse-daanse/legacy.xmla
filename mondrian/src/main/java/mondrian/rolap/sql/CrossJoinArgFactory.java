@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.BracesOperationAtom;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -541,7 +541,7 @@ public class CrossJoinArgFactory {
         // converted to SQL when RollupPolicy=FULL. (We could be smarter; we
         // don't currently notice when we don't look below the rolled up level
         // therefore no access-control is needed.
-        final Access access = role.getAccess(level.getHierarchy());
+        final AccessHierarchy access = role.getAccess(level.getHierarchy());
         switch (access) {
         case ALL:
             break;
@@ -588,7 +588,7 @@ public class CrossJoinArgFactory {
         // converted to SQL when RollupPolicy=FULL. (We could be smarter; we
         // don't currently notice when we don't look below the rolled up level
         // therefore no access-control is needed.
-        final Access access = role.getAccess(level.getHierarchy());
+        final AccessHierarchy access = role.getAccess(level.getHierarchy());
         switch (access) {
         case ALL:
             break;
@@ -673,8 +673,8 @@ public class CrossJoinArgFactory {
         // converted to SQL. (We could be smarter; we don't currently notice
         // when the member is in a part of the hierarchy that is not
         // access-controlled.)
-        final Access access = role.getAccess(level.getHierarchy());
-        if (!Access.ALL.equals(access)) {
+        final AccessHierarchy access = role.getAccess(level.getHierarchy());
+        if (!AccessHierarchy.ALL.equals(access)) {
             return null;
         }
         return new CrossJoinArg[]{

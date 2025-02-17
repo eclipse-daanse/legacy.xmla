@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.daanse.olap.api.Segment;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.element.Member;
 
 import mondrian.olap.Util;
@@ -242,7 +242,7 @@ class CacheMemberReader implements MemberReader, MemberCache {
     }
 
     @Override
-	public Map<? extends Member, Access> getMemberChildren(
+	public Map<? extends Member, AccessMember> getMemberChildren(
         RolapMember member,
         List<RolapMember> children,
         MemberChildrenConstraint constraint)
@@ -264,7 +264,7 @@ class CacheMemberReader implements MemberReader, MemberCache {
     }
 
     @Override
-	public Map<? extends Member, Access> getMemberChildren(
+	public Map<? extends Member, AccessMember> getMemberChildren(
         List<RolapMember> parentMembers,
         List<RolapMember> children,
         MemberChildrenConstraint constraint)

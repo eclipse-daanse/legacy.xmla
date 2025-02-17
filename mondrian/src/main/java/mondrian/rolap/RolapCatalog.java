@@ -57,7 +57,11 @@ import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.Segment;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessCatalog;
+import org.eclipse.daanse.olap.api.access.AccessCube;
+import org.eclipse.daanse.olap.api.access.AccessDimension;
+import org.eclipse.daanse.olap.api.access.AccessHierarchy;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
 import org.eclipse.daanse.olap.api.element.Catalog;
@@ -543,7 +547,7 @@ public class RolapCatalog implements Catalog {
 
 	// package-local visibility for testing purposes
 	void handleCatalogGrant(RoleImpl role, AccessCatalogGrantMapping schemaGrantMapings) {
-		role.grant(this, getAccess(schemaGrantMapings.getAccess().getValue(), schemaAllowed));
+		role.grant(this, getAccessCatalog(schemaGrantMapings.getAccess().getValue(), schemaAllowed));
 		for (AccessCubeGrantMapping cubeGrant : schemaGrantMapings.getCubeGrants()) {
 			handleCubeGrant(role, cubeGrant);
 		}
@@ -556,7 +560,7 @@ public class RolapCatalog implements Catalog {
 			throw Util.newError(
 					new StringBuilder("Unknown cube '").append(cubeGrant.getCube().getName()).append("'").toString());
 		}
-		role.grant(cube, getAccess(cubeGrant.getAccess().name(), cubeAllowed));
+		role.grant(cube, getAccessCube(cubeGrant.getAccess().name(), cubeAllowed));
 
 		CatalogReader reader = cube.getCatalogReader(null);
 		for (AccessDimensionGrantMapping accessDimGrantMapping : cubeGrant.getDimensionGrants()) {
@@ -572,7 +576,7 @@ public class RolapCatalog implements Catalog {
 			} else {
 				dimension = lookup(cube, reader, DataType.DIMENSION, "Measures");
 			}
-			role.grant(dimension, getAccess(accessDimGrantMapping.getAccess().name(), dimensionAllowed));
+			role.grant(dimension, getAccessDimension(accessDimGrantMapping.getAccess().name(), dimensionAllowed));
 		}
 
 		for (AccessHierarchyGrantMapping hierarchyGrant : cubeGrant.getHierarchyGrants()) {
@@ -590,7 +594,7 @@ public class RolapCatalog implements Catalog {
 			hierarchy = lookup(cube, reader, DataType.HIERARCHY, "[Measures]");
 		}
 
-		final Access hierarchyAccess = getAccess(hierarchyGrant.getAccess().name(), hierarchyAllowed);
+		final AccessHierarchy hierarchyAccess = getAccessHierarchy(hierarchyGrant.getAccess().name(), hierarchyAllowed);
 		// Level topLevel = findLevelForHierarchyGrant(
 		// cube, reader, hierarchyAccess, hierarchyGrant.getTopLevel(), "topLevel");
 		Level topLevel = cube.lookupLevel(hierarchyGrant.getTopLevel(), hierarchy);
@@ -615,7 +619,7 @@ public class RolapCatalog implements Catalog {
 
 		int membersRejected = 0;
 		if (!hierarchyGrant.getMemberGrants().isEmpty()) {
-			if (hierarchyAccess != Access.CUSTOM) {
+			if (hierarchyAccess != AccessHierarchy.CUSTOM) {
 				throw Util.newError("You may only specify <MemberGrant> if <Hierarchy> has access='custom'");
 			}
 
@@ -634,7 +638,7 @@ public class RolapCatalog implements Catalog {
 					throw Util.newError(new StringBuilder("Member '").append(member).append("' is not in hierarchy '")
 							.append(hierarchy).append("'").toString());
 				}
-				role.grant(member, getAccess(memberGrant.getAccess().name(), memberAllowed));
+				role.grant(member, getAccessMember(memberGrant.getAccess().name(), memberAllowed));
 			}
 		}
 
@@ -644,7 +648,7 @@ public class RolapCatalog implements Catalog {
 						"Rolling back grants of Hierarchy '{}' to NONE, because it contains no valid restricted members",
 						hierarchy.getUniqueName());
 			}
-			role.grant(hierarchy, Access.NONE, null, null, rollupPolicy);
+			role.grant(hierarchy, AccessHierarchy.NONE, null, null, rollupPolicy);
 		}
 	}
 
@@ -654,26 +658,58 @@ public class RolapCatalog implements Catalog {
 		return (T) reader.lookupCompound(cube, segments, true, category);
 	}
 
-	private Level findLevelForHierarchyGrant(RolapCube cube, CatalogReader schemaReader, Access hierarchyAccess,
+	private Level findLevelForHierarchyGrant(RolapCube cube, CatalogReader schemaReader, AccessHierarchy hierarchyAccess,
 			LevelMapping levelMapping, String desc) {
 		if (levelMapping == null) {
 			return null;
 		}
 
-		if (hierarchyAccess != Access.CUSTOM) {
+		if (hierarchyAccess != AccessHierarchy.CUSTOM) {
 			throw Util.newError(
 					new StringBuilder("You may only specify '").append(desc).append("' if access='custom'").toString());
 		}
 		return lookup(cube, schemaReader, DataType.LEVEL, levelMapping.getName());
 	}
 
-	private Access getAccess(String accessString, Set<Access> allowed) {
-		final Access access = Access.valueOf(accessString.toUpperCase());
-		if (allowed.contains(access)) {
-			return access; // value is ok
-		}
-		throw Util.newError(new StringBuilder("Bad value access='").append(accessString).append("'").toString());
-	}
+   private AccessCatalog getAccessCatalog(String accessString, Set<AccessCatalog> allowed) {
+        final AccessCatalog access = AccessCatalog.valueOf(accessString.toUpperCase());
+        if (allowed.contains(access)) {
+            return access; // value is ok
+        }
+        throw Util.newError(new StringBuilder("Bad value access='").append(accessString).append("'").toString());
+    }
+
+   private AccessCube getAccessCube(String accessString, Set<AccessCube> allowed) {
+       final AccessCube access = AccessCube.valueOf(accessString.toUpperCase());
+       if (allowed.contains(access)) {
+           return access; // value is ok
+       }
+       throw Util.newError(new StringBuilder("Bad value access='").append(accessString).append("'").toString());
+   }
+
+   private AccessDimension getAccessDimension(String accessString, Set<AccessDimension> allowed) {
+       final AccessDimension access = AccessDimension.valueOf(accessString.toUpperCase());
+       if (allowed.contains(access)) {
+           return access; // value is ok
+       }
+       throw Util.newError(new StringBuilder("Bad value access='").append(accessString).append("'").toString());
+   }
+
+   private AccessHierarchy getAccessHierarchy(String accessString, Set<AccessHierarchy> allowed) {
+       final AccessHierarchy access = AccessHierarchy.valueOf(accessString.toUpperCase());
+       if (allowed.contains(access)) {
+           return access; // value is ok
+       }
+       throw Util.newError(new StringBuilder("Bad value access='").append(accessString).append("'").toString());
+   }
+
+   private AccessMember getAccessMember(String accessString, Set<AccessMember> allowed) {
+       final AccessMember access = AccessMember.valueOf(accessString.toUpperCase());
+       if (allowed.contains(access)) {
+           return access; // value is ok
+       }
+       throw Util.newError(new StringBuilder("Bad value access='").append(accessString).append("'").toString());
+   }
 
 	/**
 	 * Finds a cube called <code>cube</code> in this schema; if no cube exists,
