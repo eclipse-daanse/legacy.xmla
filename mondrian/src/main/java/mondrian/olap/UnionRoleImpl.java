@@ -12,7 +12,11 @@ package mondrian.olap;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessCatalog;
+import org.eclipse.daanse.olap.api.access.AccessCube;
+import org.eclipse.daanse.olap.api.access.AccessDimension;
+import org.eclipse.daanse.olap.api.access.AccessHierarchy;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.AllHierarchyAccess;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
@@ -80,11 +84,11 @@ class UnionRoleImpl implements Role {
     }
 
     @Override
-	public Access getAccess(Catalog schema) {
-        Access access = Access.NONE;
+	public AccessCatalog getAccess(Catalog schema) {
+        AccessCatalog access = AccessCatalog.NONE;
         for (Role role : roleList) {
             access = max(access, role.getAccess(schema));
-            if (access == Access.ALL) {
+            if (access == AccessCatalog.ALL) {
                 break;
             }
         }
@@ -110,11 +114,11 @@ class UnionRoleImpl implements Role {
     }
 
     @Override
-	public Access getAccess(Cube cube) {
-        Access access = Access.NONE;
+	public AccessCube getAccess(Cube cube) {
+        AccessCube access = AccessCube.NONE;
         for (Role role : roleList) {
             access = max(access, role.getAccess(cube));
-            if (access == Access.ALL) {
+            if (access == AccessCube.ALL) {
                 break;
             }
         }
@@ -125,11 +129,11 @@ class UnionRoleImpl implements Role {
     }
 
     @Override
-	public Access getAccess(Dimension dimension) {
-        Access access = Access.NONE;
+	public AccessDimension getAccess(Dimension dimension) {
+        AccessDimension access = AccessDimension.NONE;
         for (Role role : roleList) {
             access = max(access, role.getAccess(dimension));
-            if (access == Access.ALL) {
+            if (access == AccessDimension.ALL) {
                 break;
             }
         }
@@ -139,11 +143,11 @@ class UnionRoleImpl implements Role {
     }
 
     @Override
-	public Access getAccess(Hierarchy hierarchy) {
-        Access access = Access.NONE;
+	public AccessHierarchy getAccess(Hierarchy hierarchy) {
+        AccessHierarchy access = AccessHierarchy.NONE;
         for (Role role : roleList) {
             access = max(access, role.getAccess(hierarchy));
-            if (access == Access.ALL) {
+            if (access == AccessHierarchy.ALL) {
                 break;
             }
         }
@@ -177,11 +181,11 @@ class UnionRoleImpl implements Role {
     }
 
     @Override
-	public Access getAccess(Level level) {
-        Access access = Access.NONE;
+	public AccessMember getAccess(Level level) {
+        AccessMember access = AccessMember.NONE;
         for (Role role : roleList) {
             access = max(access, role.getAccess(level));
-            if (access == Access.ALL) {
+            if (access == AccessMember.ALL) {
                 break;
             }
         }
@@ -192,26 +196,26 @@ class UnionRoleImpl implements Role {
     }
 
     @Override
-	public Access getAccess(Member member) {
+	public AccessMember getAccess(Member member) {
         assert member != null;
         HierarchyAccess hierarchyAccess =
             getAccessDetails(member.getHierarchy());
         if (hierarchyAccess != null) {
             return hierarchyAccess.getAccess(member);
         }
-        final Access access = getAccess(member.getDimension());
+        final AccessDimension access = getAccess(member.getDimension());
         LOGGER.debug(
             "Access level {} granted to member {} because of a union of roles.",
             access, member.getUniqueName());
-        return access;
+        return AccessUtil.getAccessMember(access);
     }
 
     @Override
-	public Access getAccess(NamedSet set) {
-        Access access = Access.NONE;
+	public AccessMember getAccess(NamedSet set) {
+        AccessMember access = AccessMember.NONE;
         for (Role role : roleList) {
             access = max(access, role.getAccess(set));
-            if (access == Access.ALL) {
+            if (access == AccessMember.ALL) {
                 break;
             }
         }
@@ -255,13 +259,13 @@ class UnionRoleImpl implements Role {
         }
 
         @Override
-		public Access getAccess(Member member) {
-            Access access = Access.NONE;
+		public AccessMember getAccess(Member member) {
+            AccessMember access = AccessMember.NONE;
             final int roleCount = roleList.size();
             for (int i = 0; i < roleCount; i++) {
                 Role role = roleList.get(i);
                 access = max(access, role.getAccess(member));
-                if (access == Access.ALL) {
+                if (access == AccessMember.ALL) {
                     break;
                 }
             }
@@ -303,7 +307,7 @@ class UnionRoleImpl implements Role {
                     HierarchyAccess hierarchyAccess = list.get(i);
                     if (hierarchyAccess instanceof AllHierarchyAccess
                         ? ((AllHierarchyAccess) hierarchyAccess).getAccess()
-                        != Access.NONE : true)
+                        != AccessHierarchy.NONE : true)
                     {
                         int currentDepth =
                             hierarchyAccess.getBottomLevelDepth();
@@ -350,15 +354,15 @@ class UnionRoleImpl implements Role {
             // If any of the roles return all the members,
             // we assume that all descendants are accessible when
             // we create a union of these roles.
-            final Access unionAccess = getAccess(member);
-            if (unionAccess == Access.ALL) {
+            final AccessMember unionAccess = getAccess(member);
+            if (unionAccess == AccessMember.ALL) {
                 return false;
             }
-            if (unionAccess == Access.NONE) {
+            if (unionAccess == AccessMember.NONE) {
                 return true;
             }
             for (HierarchyAccess hierarchyAccess : list) {
-                if (hierarchyAccess.getAccess(member) == Access.CUSTOM
+                if (hierarchyAccess.getAccess(member) == AccessMember.CUSTOM
                     && !hierarchyAccess.hasInaccessibleDescendants(member))
                 {
                     return false;

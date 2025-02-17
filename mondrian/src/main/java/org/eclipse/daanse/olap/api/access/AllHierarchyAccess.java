@@ -25,5 +25,5 @@ public interface AllHierarchyAccess extends HierarchyAccess {
      *
      * @return the access to the hierarchy.
      */
-    Access getAccess();
+    AccessHierarchy getAccess();
 }

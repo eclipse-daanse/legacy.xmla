@@ -37,7 +37,8 @@ import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessHierarchy;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
@@ -938,7 +939,7 @@ public class RolapHierarchy extends HierarchyBase {
      * @post return != null
      */
     MemberReader createMemberReader(Role role) {
-        final Access access = role.getAccess(this);
+        final AccessHierarchy access = role.getAccess(this);
         final OperationAtom internalOperationAtom = new InternalOperationAtom("$x");
         final FunctionMetaData functionMetaData = new FunctionMetaDataR(internalOperationAtom, "x",
                 DataType.NUMERIC, new FunctionParameterR[] { });
@@ -1054,7 +1055,7 @@ public class RolapHierarchy extends HierarchyBase {
     List<Member> getLowestMembersForAccess(
         Evaluator evaluator,
         HierarchyAccess hAccess,
-        Map<Member, Access> membersWithAccess)
+        Map<Member, AccessMember> membersWithAccess)
     {
         if (membersWithAccess == null) {
             membersWithAccess =
@@ -1064,20 +1065,20 @@ public class RolapHierarchy extends HierarchyBase {
                         .getExpanding());
         }
         boolean goesLower = false;
-        for (Map.Entry<Member, Access> entry : membersWithAccess.entrySet()) {
+        for (Map.Entry<Member, AccessMember> entry : membersWithAccess.entrySet()) {
             Member member = entry.getKey();
-            Access access = membersWithAccess.get(member);
+            AccessMember access = membersWithAccess.get(member);
             if (access == null) {
                 access = hAccess.getAccess(member);
             }
-            if (access != Access.ALL) {
+            if (access != AccessMember.ALL) {
                 goesLower = true;
                 break;
             }
         }
         if (goesLower) {
             // We still have to go one more level down.
-            Map<Member, Access> newMap =
+            Map<Member, AccessMember> newMap =
                 new HashMap<>();
             for (Member member : membersWithAccess.keySet()) {
                 int savepoint = evaluator.savepoint();
@@ -1507,7 +1508,7 @@ public class RolapHierarchy extends HierarchyBase {
         }
 
         @Override
-		public Map<? extends Member, Access> getMemberChildren(
+		public Map<? extends Member, AccessMember> getMemberChildren(
             RolapMember member,
             List<RolapMember> memberChildren,
             MemberChildrenConstraint constraint)
@@ -1519,7 +1520,7 @@ public class RolapHierarchy extends HierarchyBase {
         }
 
         @Override
-		public Map<? extends Member, Access> getMemberChildren(
+		public Map<? extends Member, AccessMember> getMemberChildren(
             List<RolapMember> parentMembers,
             List<RolapMember> children,
             MemberChildrenConstraint constraint)
@@ -1530,7 +1531,7 @@ public class RolapHierarchy extends HierarchyBase {
                 constraint);
         }
 
-        public RolapMember substitute(RolapMember member, Access access) {
+        public RolapMember substitute(RolapMember member, AccessMember access) {
             if (member instanceof MultiCardinalityDefaultMember)
             {
                 return new LimitedRollupMember(
@@ -1541,7 +1542,7 @@ public class RolapHierarchy extends HierarchyBase {
                     hierarchyAccess);
             }
             if (member != null
-                && (access == Access.CUSTOM || hierarchyAccess
+                && (access == AccessMember.CUSTOM || hierarchyAccess
                     .hasInaccessibleDescendants(member)))
             {
                 // Member is visible, but at least one of its

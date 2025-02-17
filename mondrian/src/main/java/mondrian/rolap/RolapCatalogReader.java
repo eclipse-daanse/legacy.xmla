@@ -31,7 +31,8 @@ import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessHierarchy;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -711,7 +712,7 @@ public class RolapCatalogReader
         assert hierarchy != null;
         // If the whole hierarchy is inaccessible, return the intrinsic default
         // member. This is important to construct a evaluator.
-        if (role.getAccess(hierarchy) == Access.NONE) {
+        if (role.getAccess(hierarchy) == AccessHierarchy.NONE) {
             return hierarchy.getDefaultMember();
         }
         return getMemberReader(hierarchy).getDefaultMember();
@@ -731,7 +732,7 @@ public class RolapCatalogReader
             // level.
             final Level childLevel = level.getChildLevel();
             return (childLevel != null)
-                && (role.getAccess(childLevel) != Access.NONE);
+                && (role.getAccess(childLevel) != AccessMember.NONE);
         }
     }
 
@@ -821,7 +822,7 @@ ElevatorSimplifyer.simplifyEvaluator(calc, evaluator);
     }
 
     @Override
-	public Map<? extends Member, Access> getMemberChildrenWithDetails(
+	public Map<? extends Member, AccessMember> getMemberChildrenWithDetails(
         Member member,
         Evaluator evaluator)
     {

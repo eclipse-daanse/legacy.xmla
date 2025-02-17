@@ -72,7 +72,7 @@ class IsFunDefTest {
             " (Store.[USA], Gender.[M]) IS (Store.[USA])",
             false );
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(),
-            " (Store.[USA], Gender.[M]) IS Store.[USA]", "Sales",
+                "Sales", " (Store.[USA], Gender.[M]) IS Store.[USA]",
             false );
     }
 

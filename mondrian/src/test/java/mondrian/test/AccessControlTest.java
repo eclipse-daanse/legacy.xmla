@@ -27,7 +27,11 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.CatalogReader;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessCatalog;
+import org.eclipse.daanse.olap.api.access.AccessCube;
+import org.eclipse.daanse.olap.api.access.AccessDimension;
+import org.eclipse.daanse.olap.api.access.AccessHierarchy;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
@@ -62,7 +66,6 @@ import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapHierarchy.LimitedRollupMember;
-import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 
 /**
@@ -125,7 +128,7 @@ class AccessControlTest {
             (Dimension) schemaReader.lookupCompound(
                 salesCube, IdImpl.toList("Gender"), true,
                 DataType.DIMENSION);
-        role.grant(genderDimension, Access.NONE);
+        role.grant(genderDimension, AccessDimension.NONE);
         role.makeImmutable();
         connection.setRole(role);
         TestUtil.assertAxisThrows(
@@ -370,31 +373,31 @@ class AccessControlTest {
     	context.getCatalogCache().clear();
         final Connection connection = getRestrictedConnection(context);
         // because CA has access
-        assertMemberAccess(connection, Access.CUSTOM, "[Store].[USA]");
-        assertMemberAccess(connection, Access.CUSTOM, "[Store].[Mexico]");
-        assertMemberAccess(connection, Access.NONE, "[Store].[Mexico].[DF]");
+        assertMemberAccess(connection, AccessMember.CUSTOM, "[Store].[USA]");
+        assertMemberAccess(connection, AccessMember.CUSTOM, "[Store].[Mexico]");
+        assertMemberAccess(connection, AccessMember.NONE, "[Store].[Mexico].[DF]");
         assertMemberAccess(
-            connection, Access.NONE, "[Store].[Mexico].[DF].[Mexico City]");
-        assertMemberAccess(connection, Access.NONE, "[Store].[Canada]");
+            connection, AccessMember.NONE, "[Store].[Mexico].[DF].[Mexico City]");
+        assertMemberAccess(connection, AccessMember.NONE, "[Store].[Canada]");
         assertMemberAccess(
-            connection, Access.NONE, "[Store].[Canada].[BC].[Vancouver]");
+            connection, AccessMember.NONE, "[Store].[Canada].[BC].[Vancouver]");
         assertMemberAccess(
-            connection, Access.ALL, "[Store].[USA].[CA].[Los Angeles]");
+            connection, AccessMember.ALL, "[Store].[USA].[CA].[Los Angeles]");
         assertMemberAccess(
-            connection, Access.NONE, "[Store].[USA].[CA].[San Diego]");
+            connection, AccessMember.NONE, "[Store].[USA].[CA].[San Diego]");
         // USA deny supercedes OR grant
         assertMemberAccess(
-            connection, Access.NONE, "[Store].[USA].[OR].[Portland]");
+            connection, AccessMember.NONE, "[Store].[USA].[OR].[Portland]");
         assertMemberAccess(
-            connection, Access.NONE, "[Store].[USA].[WA].[Seattle]");
-        assertMemberAccess(connection, Access.NONE, "[Store].[USA].[WA]");
+            connection, AccessMember.NONE, "[Store].[USA].[WA].[Seattle]");
+        assertMemberAccess(connection, AccessMember.NONE, "[Store].[USA].[WA]");
         // above top level
-        assertMemberAccess(connection, Access.NONE, "[Store].[All Stores]");
+        assertMemberAccess(connection, AccessMember.NONE, "[Store].[All Stores]");
     }
 
     private void assertMemberAccess(
         final Connection connection,
-        Access expectedAccess,
+        AccessMember expectedAccess,
         String memberName)
     {
         final Role role = connection.getRole(); // restricted
@@ -406,26 +409,26 @@ class AccessControlTest {
         final Member member =
             schemaReader.getMemberByUniqueName(
                 Util.parseIdentifier(memberName), true);
-        final Access actualAccess = role.getAccess(member);
+        final AccessMember actualAccess = role.getAccess(member);
         assertEquals(expectedAccess, actualAccess, memberName);
     }
 
     private void assertCubeAccess(
         final Connection connection,
-        Access expectedAccess,
+        AccessCube expectedAccess,
         String cubeName)
     {
         final Role role = connection.getRole();
         Catalog schema = connection.getCatalog();
         final boolean fail = true;
         Cube cube = schema.lookupCube(cubeName, fail);
-        final Access actualAccess = role.getAccess(cube);
+        final AccessCube actualAccess = role.getAccess(cube);
         assertEquals(expectedAccess, actualAccess, cubeName);
     }
 
     private void assertHierarchyAccess(
         final Connection connection,
-        Access expectedAccess,
+        AccessHierarchy expectedAccess,
         String cubeName,
         String hierarchyName)
     {
@@ -440,7 +443,7 @@ class AccessControlTest {
                 cube, Util.parseIdentifier(hierarchyName), fail,
                 DataType.HIERARCHY);
 
-        final Access actualAccess = role.getAccess(hierarchy);
+        final AccessHierarchy actualAccess = role.getAccess(hierarchy);
         assertEquals(expectedAccess, actualAccess, cubeName);
     }
 
@@ -989,14 +992,14 @@ class AccessControlTest {
             new IdImpl.NameSegmentImpl("Store", Quoting.UNQUOTED), false);
 
         RoleImpl role = new RoleImpl();
-        role.grant(schema, Access.NONE);
-        role.grant(salesCube, Access.NONE);
+        role.grant(schema, AccessCatalog.NONE);
+        role.grant(salesCube, AccessCube.NONE);
         // For using hierarchy Measures in #assertExprThrows
         RollupPolicy rollupPolicy = RollupPolicy.FULL;
         role.grant(
-            measuresInSales, Access.ALL, null, null, rollupPolicy);
-        role.grant(warehouseCube, Access.NONE);
-        role.grant(storeInWarehouse.getDimension(), Access.ALL);
+            measuresInSales, AccessHierarchy.ALL, null, null, rollupPolicy);
+        role.grant(warehouseCube, AccessCube.NONE);
+        role.grant(storeInWarehouse.getDimension(), AccessDimension.ALL);
 
         role.makeImmutable();
         connection.setRole(role);
@@ -1038,46 +1041,46 @@ class AccessControlTest {
             salesCube.getCatalogReader(null).withLocus();
         Hierarchy storeHierarchy = salesCube.lookupHierarchy(
             new IdImpl.NameSegmentImpl("Store", Quoting.UNQUOTED), false);
-        role.grant(schema, Access.ALL_DIMENSIONS);
-        role.grant(salesCube, Access.ALL);
+        role.grant(schema, AccessCatalog.ALL_DIMENSIONS);
+        role.grant(salesCube, AccessCube.ALL);
         Level nationLevel =
             Util.lookupHierarchyLevel(storeHierarchy, "Store Country");
         RollupPolicy rollupPolicy = RollupPolicy.FULL;
         role.grant(
-            storeHierarchy, Access.CUSTOM, nationLevel, null, rollupPolicy);
+            storeHierarchy, AccessHierarchy.CUSTOM, nationLevel, null, rollupPolicy);
         role.grant(
             schemaReader.getMemberByUniqueName(
                 Util.parseIdentifier("[Store].[All Stores].[USA].[OR]"), fail),
-            Access.ALL);
+            AccessMember.ALL);
         role.grant(
             schemaReader.getMemberByUniqueName(
                 Util.parseIdentifier("[Store].[All Stores].[USA]"), fail),
-            Access.CUSTOM);
+            AccessMember.CUSTOM);
         role.grant(
             schemaReader.getMemberByUniqueName(
                 Util.parseIdentifier(
                     "[Store].[All Stores].[USA].[CA].[San Francisco]"), fail),
-            Access.ALL);
+            AccessMember.ALL);
         role.grant(
             schemaReader.getMemberByUniqueName(
                 Util.parseIdentifier(
                     "[Store].[All Stores].[USA].[CA].[Los Angeles]"), fail),
-            Access.ALL);
+            AccessMember.ALL);
         role.grant(
             schemaReader.getMemberByUniqueName(
                 Util.parseIdentifier(
                     "[Store].[All Stores].[Mexico]"), fail),
-            Access.ALL);
+            AccessMember.ALL);
         role.grant(
             schemaReader.getMemberByUniqueName(
                 Util.parseIdentifier(
                     "[Store].[All Stores].[Mexico].[DF]"), fail),
-            Access.NONE);
+            AccessMember.NONE);
         role.grant(
             schemaReader.getMemberByUniqueName(
                 Util.parseIdentifier(
                     "[Store].[All Stores].[Canada]"), fail),
-            Access.NONE);
+            AccessMember.NONE);
         if (restrictCustomers) {
             Hierarchy customersHierarchy =
                 salesCube.lookupHierarchy(
@@ -1089,7 +1092,7 @@ class AccessControlTest {
                 Util.lookupHierarchyLevel(customersHierarchy, "City");
             role.grant(
                 customersHierarchy,
-                Access.CUSTOM,
+                AccessHierarchy.CUSTOM,
                 stateProvinceLevel,
                 customersCityLevel,
                 rollupPolicy);
@@ -1097,7 +1100,7 @@ class AccessControlTest {
 
         // No access to HR cube.
         Cube hrCube = schema.lookupCube("HR", fail);
-        role.grant(hrCube, Access.NONE);
+        role.grant(hrCube, AccessCube.NONE);
 
         role.makeImmutable();
         connection.setRole(role);
@@ -1484,9 +1487,9 @@ class AccessControlTest {
         // Both can see [Sales]
         // Role1 only see [Warehouse]
         // Neither can see [Warehouse and Sales]
-        assertCubeAccess(connection, Access.ALL, "Sales");
-        assertCubeAccess(connection, Access.ALL, "Warehouse");
-        assertCubeAccess(connection, Access.NONE, "Warehouse and Sales");
+        assertCubeAccess(connection, AccessCube.ALL, "Sales");
+        assertCubeAccess(connection, AccessCube.ALL, "Warehouse");
+        assertCubeAccess(connection, AccessCube.NONE, "Warehouse and Sales");
 
         // Hierarchy access:
         // Both can see [Customers] with Custom access
@@ -1494,13 +1497,13 @@ class AccessControlTest {
         // Role1 can see [Promotion Media], Role2 cannot
         // Neither can see [Marital Status]
         assertHierarchyAccess(
-            connection, Access.CUSTOM, "Sales", "[Customers]");
+            connection, AccessHierarchy.CUSTOM, "Sales", "[Customers]");
         assertHierarchyAccess(
-            connection, Access.ALL, "Sales", "[Store]");
+            connection, AccessHierarchy.ALL, "Sales", "[Store]");
         assertHierarchyAccess(
-            connection, Access.ALL, "Sales", "[Promotion Media]");
+            connection, AccessHierarchy.ALL, "Sales", "[Promotion Media]");
         assertHierarchyAccess(
-            connection, Access.NONE, "Sales", "[Marital Status]");
+            connection, AccessHierarchy.NONE, "Sales", "[Marital Status]");
 
         // Rollup policy is the greater of Role1's partian and Role2's hidden
         final HierarchyAccess hierarchyAccess =
@@ -1515,18 +1518,18 @@ class AccessControlTest {
 
         // Member access:
         // both can see [USA]
-        assertMemberAccess(connection, Access.CUSTOM, "[Customers].[USA]");
+        assertMemberAccess(connection, AccessMember.CUSTOM, "[Customers].[USA]");
         // Role1 can see [CA], Role2 cannot
-        assertMemberAccess(connection, Access.CUSTOM, "[Customers].[USA].[CA]");
+        assertMemberAccess(connection, AccessMember.CUSTOM, "[Customers].[USA].[CA]");
         // Role1 cannoy see [USA].[OR].[Portland], Role2 can
         assertMemberAccess(
-            connection, Access.ALL, "[Customers].[USA].[OR].[Portland]");
+            connection, AccessMember.ALL, "[Customers].[USA].[OR].[Portland]");
         // Role1 cannot see [USA].[OR], Role2 can see it by virtue of [Portland]
         assertMemberAccess(
-            connection, Access.CUSTOM, "[Customers].[USA].[OR]");
+            connection, AccessMember.CUSTOM, "[Customers].[USA].[OR]");
         // Neither can see Beaverton
         assertMemberAccess(
-            connection, Access.NONE, "[Customers].[USA].[OR].[Beaverton]");
+            connection, AccessMember.NONE, "[Customers].[USA].[OR].[Beaverton]");
 
         // Rollup policy
         String mdx = "select Hierarchize(\n"
@@ -1614,11 +1617,11 @@ class AccessControlTest {
         Connection connection = foodMartContext.getConnection(props);
 
         // Can access [Sales]?
-        assertCubeAccess(connection, Access.ALL, "Sales");
+        assertCubeAccess(connection, AccessCube.ALL, "Sales");
 
         // Has custom access to [Customers]?
         assertHierarchyAccess
-                (connection, Access.CUSTOM, "Sales", "[Customers]");
+                (connection, AccessHierarchy.CUSTOM, "Sales", "[Customers]");
 
         final HierarchyAccess hierarchyAccess =
                 getHierarchyAccess(connection, "Sales", "[Customers]");
@@ -1628,10 +1631,10 @@ class AccessControlTest {
         assertEquals(4, hierarchyAccess.getBottomLevelDepth());
 
         // Can see [USA]?
-        assertMemberAccess(connection, Access.ALL, "[Customers].[USA]");
+        assertMemberAccess(connection, AccessMember.ALL, "[Customers].[USA]");
 
         // Cannot see [Mexico]?
-        assertMemberAccess(connection, Access.NONE, "[Customers].[Mexico]");
+        assertMemberAccess(connection, AccessMember.NONE, "[Customers].[Mexico]");
     }
 
     /**
@@ -1959,10 +1962,10 @@ class AccessControlTest {
         ConnectionProps props = new RolapConnectionPropsR(List.of("California manager"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
     	Connection connection = foodMartContext.getConnection(props);
         assertHierarchyAccess(
-    		connection, Access.NONE, "Sales", "Store");
+    		connection, AccessHierarchy.NONE, "Sales", "Store");
         assertHierarchyAccess(
     		connection,
-            Access.CUSTOM,
+            AccessHierarchy.CUSTOM,
             "Sales Ragged",
             "Store");
     }
@@ -2585,14 +2588,14 @@ class AccessControlTest {
     	Connection connection = foodMartContext.getConnection(props);
         assertMemberAccess(
         		connection,
-                Access.NONE,
+                AccessMember.NONE,
                 "[Measures].[Store Cost]");
 
         props = new RolapConnectionPropsR(List.of("Role1", "Role2"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
     	connection = foodMartContext.getConnection(props);
         assertMemberAccess(
         		connection,
-            Access.NONE,
+            AccessMember.NONE,
             "[Measures].[Store Cost]");
     }
 
@@ -2711,10 +2714,10 @@ class AccessControlTest {
 
         private void defineGrantsForUser(Catalog schema) {
             RoleImpl role = (RoleImpl)this.role;
-            role.grant(schema, Access.NONE);
+            role.grant(schema, AccessCatalog.NONE);
 
             Cube cube = schema.lookupCube("HR", true);
-            role.grant(cube, Access.ALL);
+            role.grant(cube, AccessCube.ALL);
 
             Hierarchy hierarchy = cube.lookupHierarchy(
                 new IdImpl.NameSegmentImpl("Employees"), false);
@@ -2722,8 +2725,8 @@ class AccessControlTest {
             Level[] levels = hierarchy.getLevels();
             Level topLevel = levels[1];
 
-            role.grant(hierarchy, Access.CUSTOM, null, null, RollupPolicy.FULL);
-            role.grant(hierarchy.getAllMember(), Access.NONE);
+            role.grant(hierarchy, AccessHierarchy.CUSTOM, null, null, RollupPolicy.FULL);
+            role.grant(hierarchy.getAllMember(), AccessMember.NONE);
 
             boolean foundMember = false;
 
@@ -2734,7 +2737,7 @@ class AccessControlTest {
             for (Member member : members) {
                 if (member.getUniqueName().contains("[" + repName + "]")) {
                     foundMember = true;
-                    role.grant(member, Access.ALL);
+                    role.grant(member, AccessMember.ALL);
                 }
             }
             assertTrue(foundMember);

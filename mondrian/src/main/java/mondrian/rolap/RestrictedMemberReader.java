@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -108,7 +108,7 @@ public class RestrictedMemberReader extends DelegatingMemberReader {
     }
 
     @Override
-	public Map<? extends Member, Access> getMemberChildren(
+	public Map<? extends Member, AccessMember> getMemberChildren(
         RolapMember parentMember,
         List<RolapMember> children,
         MemberChildrenConstraint constraint)
@@ -130,7 +130,7 @@ public class RestrictedMemberReader extends DelegatingMemberReader {
     }
 
     @Override
-	public Map<? extends Member, Access> getMemberChildren(
+	public Map<? extends Member, AccessMember> getMemberChildren(
         List<RolapMember> parentMembers,
         List<RolapMember> children,
         MemberChildrenConstraint constraint)
@@ -140,14 +140,14 @@ public class RestrictedMemberReader extends DelegatingMemberReader {
         return processMemberChildren(fullChildren, children, constraint);
     }
 
-    Map<RolapMember, Access> processMemberChildren(
+    Map<RolapMember, AccessMember> processMemberChildren(
         List<RolapMember> fullChildren,
         List<RolapMember> children,
         MemberChildrenConstraint constraint)
     {
         // todo: optimize if parentMember is beyond last level
         List<RolapMember> grandChildren = null;
-        Map<RolapMember, Access> memberToAccessMap =
+        Map<RolapMember, AccessMember> memberToAccessMap =
             new LinkedHashMap<>();
         for (int i = 0; i < fullChildren.size(); i++) {
             RolapMember member = fullChildren.get(i);
@@ -176,11 +176,11 @@ public class RestrictedMemberReader extends DelegatingMemberReader {
 
             // Filter out children which are invisible because of
             // access-control.
-            final Access access;
+            final AccessMember access;
             if (hierarchyAccess != null) {
                 access = hierarchyAccess.getAccess(member);
             } else {
-                access = Access.ALL;
+                access = AccessMember.ALL;
             }
             switch (access) {
             case NONE:
@@ -215,8 +215,8 @@ public class RestrictedMemberReader extends DelegatingMemberReader {
             return false;
         }
         if (hierarchyAccess != null) {
-            final Access access = hierarchyAccess.getAccess(member);
-            return access != Access.NONE;
+            final AccessMember access = hierarchyAccess.getAccess(member);
+            return access != AccessMember.NONE;
         }
         return true;
     }
@@ -274,8 +274,8 @@ public class RestrictedMemberReader extends DelegatingMemberReader {
         RolapMember defaultMember =
             (RolapMember) getHierarchy().getDefaultMember();
         if (defaultMember != null) {
-            Access i = hierarchyAccess.getAccess(defaultMember);
-            if (i != Access.NONE) {
+            AccessMember i = hierarchyAccess.getAccess(defaultMember);
+            if (i != AccessMember.NONE) {
                 return defaultMember;
             }
         }
@@ -284,8 +284,8 @@ public class RestrictedMemberReader extends DelegatingMemberReader {
         RolapMember firstAvailableRootMember = null;
         boolean singleAvailableRootMember = false;
         for (RolapMember rootMember : rootMembers) {
-            Access i = hierarchyAccess.getAccess(rootMember);
-            if (i != Access.NONE) {
+            AccessMember i = hierarchyAccess.getAccess(rootMember);
+            if (i != AccessMember.NONE) {
                 if (firstAvailableRootMember == null) {
                     firstAvailableRootMember = rootMember;
                     singleAvailableRootMember = true;
@@ -330,7 +330,7 @@ public class RestrictedMemberReader extends DelegatingMemberReader {
         }
         // Skip over non-accessible parents.
         if (parentMember != null) {
-            if (hierarchyAccess.getAccess(parentMember) == Access.NONE) {
+            if (hierarchyAccess.getAccess(parentMember) == AccessMember.NONE) {
                 return null;
             }
         }

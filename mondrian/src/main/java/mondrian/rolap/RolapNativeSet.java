@@ -21,7 +21,7 @@ import java.util.Map;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.CatalogReader;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -355,13 +355,13 @@ public abstract class RolapNativeSet extends RolapNative {
       if ( constraint.getEvaluator() == null ) {
         return false;
       }
-      Access access =
+      AccessHierarchy access =
         constraint
           .getEvaluator()
           .getCatalogReader()
           .getRole()
           .getAccess( hierarchy );
-      return access == Access.CUSTOM;
+      return access == AccessHierarchy.CUSTOM;
     }
 
     private java.util.function.Predicate<Member> memberInaccessiblePredicate() {
@@ -493,7 +493,7 @@ public abstract class RolapNativeSet extends RolapNative {
         final Member contextMember;
         if ( hierarchy.hasAll()
           || schemaReader.getRole()
-          .getAccess( hierarchy ) == Access.ALL ) {
+          .getAccess( hierarchy ) == AccessHierarchy.ALL ) {
           // The hierarchy may have access restrictions.
           // If it does, calling .substitute() will retrieve an
           // appropriate LimitedRollupMember.

@@ -58,7 +58,8 @@ import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessHierarchy;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -3261,7 +3262,7 @@ public class RolapCube extends CubeBase {
 		public List<Member> getCalculatedMembers(Hierarchy hierarchy) {
             ArrayList<Member> list = new ArrayList<>();
 
-            if (getRole().getAccess(hierarchy) == Access.NONE) {
+            if (getRole().getAccess(hierarchy) == AccessHierarchy.NONE) {
                 return list;
             }
 
@@ -3277,7 +3278,7 @@ public class RolapCube extends CubeBase {
 		public List<Member> getCalculatedMembers(Level level) {
             List<Member> list = new ArrayList<>();
 
-            if (getRole().getAccess(level) == Access.NONE) {
+            if (getRole().getAccess(level) == AccessMember.NONE) {
                 return list;
             }
 

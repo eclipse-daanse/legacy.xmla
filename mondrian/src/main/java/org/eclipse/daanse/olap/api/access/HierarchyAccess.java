@@ -36,7 +36,7 @@ public interface HierarchyAccess {
      * @param member Member.
      * @return Return current role's access to member.
      */
-    Access getAccess(Member member);
+    AccessMember getAccess(Member member);
 
     /**
      * Returns the depth of the highest level to which the current Role has

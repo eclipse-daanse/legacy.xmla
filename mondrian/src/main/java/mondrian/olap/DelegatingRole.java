@@ -9,7 +9,11 @@
 
 package mondrian.olap;
 
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessCatalog;
+import org.eclipse.daanse.olap.api.access.AccessCube;
+import org.eclipse.daanse.olap.api.access.AccessDimension;
+import org.eclipse.daanse.olap.api.access.AccessHierarchy;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -47,22 +51,22 @@ public class DelegatingRole implements Role {
     }
 
     @Override
-	public Access getAccess(Catalog schema) {
+	public AccessCatalog getAccess(Catalog schema) {
         return role.getAccess(schema);
     }
 
     @Override
-	public Access getAccess(Cube cube) {
+	public AccessCube getAccess(Cube cube) {
         return role.getAccess(cube);
     }
 
     @Override
-	public Access getAccess(Dimension dimension) {
+	public AccessDimension getAccess(Dimension dimension) {
         return role.getAccess(dimension);
     }
 
     @Override
-	public Access getAccess(Hierarchy hierarchy) {
+	public AccessHierarchy getAccess(Hierarchy hierarchy) {
         return role.getAccess(hierarchy);
     }
 
@@ -79,17 +83,17 @@ public class DelegatingRole implements Role {
     }
 
     @Override
-	public Access getAccess(Level level) {
+	public AccessMember getAccess(Level level) {
         return role.getAccess(level);
     }
 
     @Override
-	public Access getAccess(Member member) {
+	public AccessMember getAccess(Member member) {
         return role.getAccess(member);
     }
 
     @Override
-	public Access getAccess(NamedSet set) {
+	public AccessMember getAccess(NamedSet set) {
         return role.getAccess(set);
     }
 

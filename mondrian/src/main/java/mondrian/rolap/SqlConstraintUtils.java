@@ -33,7 +33,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.CatalogReader;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -526,7 +526,7 @@ public class SqlConstraintUtils {
             if ( !availableMember.isAll() ) {
               slicerMembers.add( (RolapMember) availableMember );
             }
-            hasCustom |= role.getAccess( availableMember ) == Access.CUSTOM;
+            hasCustom |= role.getAccess( availableMember ) == AccessMember.CUSTOM;
           }
           if ( !slicerMembers.isEmpty() ) {
             roleMembers.put( affectedLevel, slicerMembers );

@@ -38,7 +38,7 @@ import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -1515,14 +1515,14 @@ public class FunUtil extends Util {
     }
   }
 
-  public static Map<Member, Access> getNonEmptyMemberChildrenWithDetails(
+  public static Map<Member, AccessMember> getNonEmptyMemberChildrenWithDetails(
     Evaluator evaluator, Member member ) {
     CatalogReader sr = evaluator.getCatalogReader();
     if ( evaluator.isNonEmpty() ) {
-      return (Map<Member, Access>)
+      return (Map<Member, AccessMember>)
         sr.getMemberChildrenWithDetails( member, evaluator );
     } else {
-      return (Map<Member, Access>)
+      return (Map<Member, AccessMember>)
         sr.getMemberChildrenWithDetails( member, null );
     }
   }

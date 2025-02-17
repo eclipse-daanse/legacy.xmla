@@ -19,7 +19,11 @@ import java.util.Set;
 
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.CatalogReader;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessCatalog;
+import org.eclipse.daanse.olap.api.access.AccessCube;
+import org.eclipse.daanse.olap.api.access.AccessDimension;
+import org.eclipse.daanse.olap.api.access.AccessHierarchy;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
 
 /**
@@ -29,24 +33,24 @@ import org.eclipse.daanse.olap.api.access.Role;
  */
 public interface Catalog extends MetaElement {
 
-     static final Set<Access> schemaAllowed =
+     static final Set<AccessCatalog> schemaAllowed =
         EnumSet.of(
-            Access.NONE,
-            Access.ALL,
-            Access.ALL_DIMENSIONS,
-            Access.CUSTOM);
+            AccessCatalog.NONE,
+            AccessCatalog.ALL,
+            AccessCatalog.ALL_DIMENSIONS,
+            AccessCatalog.CUSTOM);
 
-     static final Set<Access> cubeAllowed =
-        EnumSet.of(Access.NONE, Access.ALL, Access.CUSTOM);
+     static final Set<AccessCube> cubeAllowed =
+        EnumSet.of(AccessCube.NONE, AccessCube.ALL, AccessCube.CUSTOM);
 
-     static final Set<Access> dimensionAllowed =
-        EnumSet.of(Access.NONE, Access.ALL, Access.CUSTOM);
+     static final Set<AccessDimension> dimensionAllowed =
+        EnumSet.of(AccessDimension.NONE, AccessDimension.ALL, AccessDimension.CUSTOM);
 
-     static final Set<Access> hierarchyAllowed =
-        EnumSet.of(Access.NONE, Access.ALL, Access.CUSTOM);
+     static final Set<AccessHierarchy> hierarchyAllowed =
+        EnumSet.of(AccessHierarchy.NONE, AccessHierarchy.ALL, AccessHierarchy.CUSTOM);
 
-     static final Set<Access> memberAllowed =
-        EnumSet.of(Access.NONE, Access.ALL);
+     static final Set<AccessMember> memberAllowed =
+        EnumSet.of(AccessMember.NONE, AccessMember.ALL);
     
     /**
      * Returns the name of this schema.

@@ -43,7 +43,7 @@ import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.Validator;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -1741,15 +1741,15 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         }
 
         @Override
-		public Map<? extends Member, Access> getMemberChildrenWithDetails(
+		public Map<? extends Member, AccessMember> getMemberChildrenWithDetails(
                 Member member,
                 Evaluator evaluator)
         {
             //Must be RolapMember, not LimitedRollupMember
             Member rolapMember = query.getRolapMember(member);
-            Map<Member, Access> sourceMembers = (Map<Member, Access>)super.getMemberChildrenWithDetails(rolapMember, evaluator);
-            HashMap<Member, Access> newMembers = new HashMap<>();
-            for(Map.Entry<Member, Access> entry : sourceMembers.entrySet()) {
+            Map<Member, AccessMember> sourceMembers = (Map<Member, AccessMember>)super.getMemberChildrenWithDetails(rolapMember, evaluator);
+            HashMap<Member, AccessMember> newMembers = new HashMap<>();
+            for(Map.Entry<Member, AccessMember> entry : sourceMembers.entrySet()) {
                 Member subcubeMember = query.getSubcubeMember(entry.getKey(), false);
                 if(subcubeMember != null) {
                     newMembers.put(subcubeMember, entry.getValue());
