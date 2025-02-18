@@ -31,12 +31,16 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
+import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.CacheControl;
@@ -93,6 +97,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DrillThroughActionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DrillThroughAttributeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MeasureGroupMapping;
@@ -103,6 +108,8 @@ import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.WritebackAttributeMapping;
@@ -111,10 +118,14 @@ import org.eclipse.daanse.rolap.mapping.api.model.WritebackTableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.pojo.AnnotationMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.QueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,6 +168,8 @@ public class RolapCube extends CubeBase {
     private final RolapCatalog schema;
     private final MetaData metaData;
     private final RolapHierarchy measuresHierarchy;
+    
+    private RelationalQueryMapping restoreFact = null;
 
     /** For SQL generator. Fact table. */
     private RelationalQueryMapping fact;
@@ -3670,5 +3683,75 @@ public class RolapCube extends CubeBase {
 	public List<? extends KPI> getKPIs() {
 		return kpis;
 	}
+
+    public void modifyFact(List<Map<String, Entry<Datatype, Object>>> sessionValues) {
+            RelationalQueryMapping fact = getFact();
+            restoreFact = fact;
+            Optional<RolapWritebackTable> oWritebackTable = getWritebackTable();
+            Dialect dialect = getContext().getDialect();
+            if (oWritebackTable.isPresent()) {
+                RolapWritebackTable writebackTable = oWritebackTable.get();
+                if (getWritebackTable() != null && getWritebackTable().isPresent()) {
+                    if (fact instanceof TableQueryMapping mappingTable) {
+                        String alias = mappingTable.getAlias() != null ? mappingTable.getAlias() : mappingTable.getTable().getName();
+                        StringBuilder sql = new StringBuilder("select ").append(writebackTable.getColumns().stream().map( c -> c.getColumn().getName() )
+                        .collect(Collectors.joining(", "))).append(" from ").append(mappingTable.getTable().getName());
+                        sql.append(getWriteBackSql(dialect, writebackTable, sessionValues));
+                        SqlStatementMappingImpl sqlStatement = SqlStatementMappingImpl.builder().withSql(sql.toString()).withDialects(List.of("generic", dialect.getDialectName())).build();
+                        DatabaseSchemaMappingImpl schema = DatabaseSchemaMappingImpl.builder().withName(mappingTable.getTable().getSchema().getName()).build();
+                        SqlViewMappingImpl sqlView = ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder().withSqlStatements(List.of(sqlStatement)).withsSchema(schema)).build();
+                        changeFact(SqlSelectQueryMappingImpl.builder().withSql(sqlView).withAlias(alias).build());
+                    }
+                    if (fact instanceof InlineTableQueryMapping mappingInlineTable) {
+                        RelationalQueryMapping mappingRelation = RolapUtil.convertInlineTableToRelation(mappingInlineTable, getContext().getDialect());
+                        if (mappingRelation instanceof SqlSelectQueryMapping mappingView) {
+                            changeFact(mappingView, dialect, writebackTable, sessionValues);
+                        }
+                    }
+                    if (fact instanceof SqlSelectQueryMapping mappingView) {
+                        changeFact(mappingView, dialect, writebackTable, sessionValues);
+                    }
+                }
+            }
+    }
+    
+    private void changeFact(SqlSelectQueryMapping mappingView, Dialect dialect, RolapWritebackTable writebackTable, List<Map<String, Map.Entry<Datatype, Object>>> sessionValues) {
+        if (mappingView.getSql() != null && mappingView.getSql().getSqlStatements() != null) {
+            List<? extends SqlStatementMapping> statements = mappingView.getSql().getSqlStatements().stream()
+                .map(sql -> SqlStatementMappingImpl.builder()
+                        .withSql(new StringBuilder(sql.getSql()).append(getWriteBackSql(dialect, writebackTable, sessionValues)).toString())
+                        .withDialects(sql.getDialects()).build())
+                .toList();
+            SqlViewMappingImpl sqlView = ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder().withSqlStatements(statements).withsSchema((DatabaseSchemaMappingImpl) mappingView.getSql().getSchema())).build();
+            changeFact(SqlSelectQueryMappingImpl.builder().withSql(sqlView).withAlias(mappingView.getAlias()).build());
+        }
+    }
+
+    private void changeFact(SqlSelectQueryMappingImpl sqls) {
+        setFact(sqls);
+        register();
+    }
+
+    private CharSequence getWriteBackSql(Dialect dialect, RolapWritebackTable writebackTable, List<Map<String, Map.Entry<Datatype, Object>>> sessionValues) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" union all select ");
+        sql.append(writebackTable.getColumns().stream().map( c -> c.getColumn().getName() )
+            .collect(Collectors.joining(", "))).append(" from ")
+            .append(writebackTable.getName());
+        if (sessionValues != null && !sessionValues.isEmpty()) {
+            sql.append(dialect.generateUnionAllSql(sessionValues));
+        }
+        return sql;
+    }
+    
+
+    public void restoreFact() {
+        if (restoreFact != null) {
+            setFact(restoreFact);
+            restoreFact = null;
+            register();
+        }
+        
+    }
 
 }

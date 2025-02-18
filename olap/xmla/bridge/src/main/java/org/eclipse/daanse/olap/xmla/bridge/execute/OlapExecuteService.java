@@ -60,7 +60,6 @@ import org.eclipse.daanse.olap.xmla.bridge.discover.DBSchemaDiscoverService;
 import org.eclipse.daanse.olap.xmla.bridge.discover.MDSchemaDiscoverService;
 import org.eclipse.daanse.olap.xmla.bridge.discover.OtherDiscoverService;
 import org.eclipse.daanse.olap.xmla.bridge.discover.Utils;
-import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;
 import org.eclipse.daanse.xmla.api.XmlaException;
@@ -274,7 +273,8 @@ public class OlapExecuteService implements ExecuteService {
 
     private StatementResponse executeQuery(StatementRequest statementRequest,  Query query) {
         ScenarioSession session = ScenarioSession.getWithoutCheck(statementRequest.sessionId());
-        RelationalQueryMapping fact = null;
+        //RelationalQueryMapping fact = null;
+        Cube cube = query.getCube();
         try {
         Scenario scenario;
         if (session != null) {
@@ -291,10 +291,11 @@ public class OlapExecuteService implements ExecuteService {
             query.getConnection().setScenario(scenario);
 
         }
-        if (query.getCube() instanceof RolapCube rolapCube) {
+        if (cube instanceof RolapCube rolapCube) {
             scenario.setWriteBackTable(rolapCube.getWritebackTable());
-            fact = rolapCube.getFact();
-            writeBackService.modifyFact((RolapCube) query.getCube(), scenario.getSessionValues());
+            //fact = rolapCube.getFact();
+            rolapCube.modifyFact(scenario.getSessionValues());
+            //writeBackService.modifyFact((RolapCube) query.getCube(), scenario.getSessionValues());
         }
         Statement statement = query.getConnection().createStatement();
         String mdx = statementRequest.command().statement();
@@ -321,9 +322,8 @@ public class OlapExecuteService implements ExecuteService {
         return null;
         }
         finally {
-            if (fact != null) {
-                ((RolapCube)query.getCube()).setFact(fact);
-                ((RolapCube)query.getCube()).register();
+            if (cube instanceof RolapCube rolapCube) {
+                rolapCube.restoreFact();
             }
         }
     }
@@ -714,12 +714,15 @@ public class OlapExecuteService implements ExecuteService {
         final int[] rowCountSlot = enableRowCount ? new int[]{0} : null;
         Statement statement;
         ResultSet resultSet = null;
-        RelationalQueryMapping fact = null;
         RolapCube cube = null;
+        Cube c = null;
         ScenarioSession session = ScenarioSession.getWithoutCheck(statementRequest.sessionId());
+        if (drillThrough.getQuery() != null) {
+            c = drillThrough.getQuery().getCube();
+        }
         try {
-            if (drillThrough.getQuery() != null && drillThrough.getQuery().getCube() != null &&
-                drillThrough.getQuery().getCube() instanceof RolapCube rolapCube) {
+            if (c != null &&
+                c instanceof RolapCube rolapCube) {
                 cube = rolapCube;
                 Scenario scenario;
                 if (session != null) {
@@ -733,8 +736,7 @@ public class OlapExecuteService implements ExecuteService {
                 }
                 if (connection.getScenario() != null) {
                     scenario.setWriteBackTable(rolapCube.getWritebackTable());
-                    fact = rolapCube.getFact();
-                    writeBackService.modifyFact(rolapCube, scenario.getSessionValues());
+                    rolapCube.modifyFact(scenario.getSessionValues());
                 }
             }
             statement = connection.createStatement();
@@ -753,9 +755,8 @@ public class OlapExecuteService implements ExecuteService {
                 HSB_DRILL_THROUGH_SQL_FAULT_FS,
                 e);
         } finally {
-            if (fact != null && cube != null) {
-                cube.setFact(fact);
-                cube.register();
+            if (cube != null) {
+                cube.restoreFact();
             }
             if (resultSet != null) {
                 try {

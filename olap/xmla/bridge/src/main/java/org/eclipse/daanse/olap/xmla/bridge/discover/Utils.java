@@ -43,11 +43,6 @@ import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.result.Property;
 import org.eclipse.daanse.olap.api.result.Property.TypeFlag;
-import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.PhysicalTableMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SystemTableMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;
 import org.eclipse.daanse.xmla.api.VarType;
@@ -172,7 +167,7 @@ public class Utils {
             for (Member measure  : cube.getMeasures()) {
                 Boolean visible = true;
                Object o= measure.getPropertyValue("$visible");
-                  
+
                 if (o!=null) {
                     visible = Boolean.valueOf(o.toString());
                 }
@@ -334,7 +329,7 @@ public class Utils {
         Optional<CubeSourceEnum> cubeSource,
         RequestMetaData metaData,
         UserPrincipal userPrincipal) {
-    
+
             return getMdSchemaCubesResponseRow(catalog, cubeName, baseCubeName,
                     cubeSource)
                 ;
@@ -488,16 +483,6 @@ public class Utils {
         return cubes;
     }
 
-    private static List<VirtualCubeMapping> getMappingVirtualCubeWithFilter(List<VirtualCubeMapping> cubes, Optional<String> cubeName) {
-        if (cubes != null) {
-            if (cubeName.isPresent()) {
-                return cubes.stream().filter(c -> cubeName.get().equals(c.getName())).toList();
-            }
-            return cubes;
-        }
-        return List.of();
-    }
-
     static boolean isDataTypeCond(XmlaConstants.DBType wstr, Optional<LevelDbTypeEnum> oLevelDbType) {
         if (oLevelDbType.isPresent()) {
             return wstr.xmlaOrdinal() == oLevelDbType.get().ordinal();
@@ -517,8 +502,8 @@ public class Utils {
         List<DbSchemaTablesResponseRow> result = new ArrayList<>();
 
         for(Cube cube: catalog.getCubes()) {
-        	
-       
+
+
             String desc = cube.getDescription();
             if (desc == null) {
 				desc =
@@ -538,7 +523,7 @@ public class Utils {
                     Optional.empty()
                 ));
             }
-       
+
         if (isTableType(oTableType, SYSTEM_TABLE)) {
                 for (Dimension dimension : cube.getDimensions()) {
                     populateDimensionForDbSchemaTables(
@@ -559,8 +544,8 @@ public class Utils {
                     );
             }
         }
-        
-        
+
+
         return result;
 
     }
@@ -573,19 +558,17 @@ public class Utils {
                 List<? extends DatabaseTable> tables = dbSchema.getDbTables();
                 if (tables != null) {
                     for (DatabaseTable table : tables) {
-                        if (table instanceof PhysicalTableMapping || table instanceof SystemTableMapping) {
-                            String tableName = table.getName();
-                            result.add(new  DbSchemaTablesResponseRowR(
-                            Optional.of(catalogName),
-                            Optional.ofNullable(dbSchema.getName()),
-                            Optional.of(tableName),
-                            Optional.of(SCHEMA),
-                            Optional.empty(),
-                            Optional.ofNullable(table.getDescription()),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty()));
-                        }
+                        String tableName = table.getName();
+                        result.add(new  DbSchemaTablesResponseRowR(
+                        Optional.of(catalogName),
+                        Optional.ofNullable(dbSchema.getName()),
+                        Optional.of(tableName),
+                        Optional.of(SCHEMA),
+                        Optional.empty(),
+                        Optional.ofNullable(table.getDescription()),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty()));
                     }
                 }
            }
@@ -760,7 +743,7 @@ public class Utils {
         RequestMetaData metaData,
         UserPrincipal userPrincipal
     ) {
-            return 
+            return
             		getMdSchemaMeasureGroupDimensionsResponseRow(catalog, oCubeName,
                     oMeasureGroupName, oDimensionUniqueName, oDimensionVisibility);
     }
@@ -781,8 +764,8 @@ public class Utils {
         Optional<TreeOpEnum> oTreeOp,
         Optional<Boolean> emitInvisibleMembers
     ) {
-    
-     
+
+
 
             return getMdSchemaMembersResponseRow(catalog, oSchemaName, oCubeName,
                     oDimensionUniqueName, oHierarchyUniqueName, oLevelUniqueName, oLevelNumber,
@@ -796,7 +779,7 @@ public class Utils {
         Optional<String> oCubeName,
         Optional<String> oKpiName
     ) {
-      
+
         return getMdSchemaKpisResponseRow( catalog, oCubeName, oKpiName);
     }
 
@@ -814,7 +797,7 @@ public class Utils {
 
             return getMdSchemaSetsResponseRow(catalog,null, oCubeName, oSetName, oScope, oCubeSource,
                     oHierarchyUniqueName);
-        
+
 
     }
 
@@ -1693,24 +1676,6 @@ public class Utils {
         return levels;
     }
 
-    private static List<HierarchyMapping> getHierarchiesWithFilter(
-        List<HierarchyMapping> hierarchies,
-        Optional<String> oHierarchyUniqueName
-    ) {
-        if (oHierarchyUniqueName.isPresent()) {
-            return hierarchies.stream().filter(h -> h.getName().equals(oHierarchyUniqueName.get())).toList();
-        }
-        return hierarchies;
-    }
-
-    private static List<DimensionMapping> getMappingCubeDimensionsWithFilter(
-        List<DimensionMapping> dimensions, Optional<String> oDimensionUniqueName
-    ) {
-        if (oDimensionUniqueName.isPresent()) {
-            return dimensions.stream().filter(d -> oDimensionUniqueName.get().equals(d.getName())).toList();
-        }
-        return dimensions;
-    }
 
     static List<DbSchemaSourceTablesResponseRow> getDbSchemaSourceTablesResponseRow(
         Catalog catalog,
@@ -2356,11 +2321,11 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalo
 
             // DATA_TYPE DBType best guess is string
             DBType dbType = XmlaConstants.DBType.WSTR;
-            org.eclipse.daanse.rolap.mapping.api.model.enums.DataType datatype = (org.eclipse.daanse.rolap.mapping.api.model.enums.DataType) m.getPropertyValue(Property.StandardCellProperty.DATATYPE.getName());
+            String datatype = (String) m.getPropertyValue(Property.StandardCellProperty.DATATYPE.getName());
             if (datatype != null) {
-                if (datatype.equals(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.INTEGER)) {
+                if (datatype.equals("Integer")) {
                     dbType = XmlaConstants.DBType.I4;
-                } else if (datatype.equals(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)) {
+                } else if (datatype.equals("Numeric")) {
                     dbType = XmlaConstants.DBType.R8;
                 } else {
                     dbType = XmlaConstants.DBType.WSTR;

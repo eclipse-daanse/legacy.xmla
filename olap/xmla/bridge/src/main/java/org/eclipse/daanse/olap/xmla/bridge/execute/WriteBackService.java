@@ -39,15 +39,6 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.AllocationPolicy;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.api.result.Scenario;
-import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
-import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
 
 import mondrian.olap.QueryImpl;
 import mondrian.rolap.RolapBaseCubeMeasure;
@@ -57,7 +48,6 @@ import mondrian.rolap.RolapCubeHierarchy;
 import mondrian.rolap.RolapCubeMember;
 import mondrian.rolap.RolapHierarchy;
 import mondrian.rolap.RolapMember;
-import mondrian.rolap.RolapUtil;
 import mondrian.rolap.RolapWritebackAttribute;
 import mondrian.rolap.RolapWritebackColumn;
 import mondrian.rolap.RolapWritebackMeasure;
@@ -518,62 +508,4 @@ public class WriteBackService {
         return Optional.empty();
     }
 
-    public void modifyFact(RolapCube cube, List<Map<String, Map.Entry<Datatype, Object>>> sessionValues) {
-        RelationalQueryMapping fact = cube.getFact();
-        Optional<RolapWritebackTable> oWritebackTable = cube.getWritebackTable();
-        Dialect dialect = cube.getContext().getDialect();
-        if (oWritebackTable.isPresent()) {
-            RolapWritebackTable writebackTable = oWritebackTable.get();
-            if (cube.getWritebackTable() != null && cube.getWritebackTable().isPresent()) {
-                if (fact instanceof TableQueryMapping mappingTable) {
-                    String alias = mappingTable.getAlias() != null ? mappingTable.getAlias() : mappingTable.getTable().getName();
-                    StringBuilder sql = new StringBuilder("select ").append(writebackTable.getColumns().stream().map( c -> c.getColumn().getName() )
-                    .collect(Collectors.joining(", "))).append(" from ").append(mappingTable.getTable().getName());
-                    sql.append(getWriteBackSql(dialect, writebackTable, sessionValues));
-                    SqlStatementMappingImpl sqlStatement = SqlStatementMappingImpl.builder().withSql(sql.toString()).withDialects(List.of("generic", dialect.getDialectName())).build();
-                    DatabaseSchemaMappingImpl schema = DatabaseSchemaMappingImpl.builder().withName(mappingTable.getTable().getSchema().getName()).build();
-                    SqlViewMappingImpl sqlView = ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder().withSqlStatements(List.of(sqlStatement)).withsSchema(schema)).build();
-                    changeFact(cube, SqlSelectQueryMappingImpl.builder().withSql(sqlView).withAlias(alias).build());
-                }
-                if (fact instanceof InlineTableQueryMapping mappingInlineTable) {
-                    RelationalQueryMapping mappingRelation = RolapUtil.convertInlineTableToRelation(mappingInlineTable, cube.getContext().getDialect());
-                    if (mappingRelation instanceof SqlSelectQueryMapping mappingView) {
-                        changeFact(cube, mappingView, dialect, writebackTable, sessionValues);
-                    }
-                }
-                if (fact instanceof SqlSelectQueryMapping mappingView) {
-                    changeFact(cube, mappingView, dialect, writebackTable, sessionValues);
-                }
-            }
-        }
-    }
-
-    private void changeFact(RolapCube cube, SqlSelectQueryMapping mappingView, Dialect dialect, RolapWritebackTable writebackTable, List<Map<String, Map.Entry<Datatype, Object>>> sessionValues) {
-        if (mappingView.getSql() != null && mappingView.getSql().getSqlStatements() != null) {
-        	List<? extends SqlStatementMapping> statements = mappingView.getSql().getSqlStatements().stream()
-                .map(sql -> SqlStatementMappingImpl.builder()
-                		.withSql(new StringBuilder(sql.getSql()).append(getWriteBackSql(dialect, writebackTable, sessionValues)).toString())
-                		.withDialects(sql.getDialects()).build())
-                .toList();
-        	SqlViewMappingImpl sqlView = ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder().withSqlStatements(statements).withsSchema((DatabaseSchemaMappingImpl) mappingView.getSql().getSchema())).build();
-            changeFact(cube, SqlSelectQueryMappingImpl.builder().withSql(sqlView).withAlias(mappingView.getAlias()).build());
-        }
-    }
-
-    private void changeFact(RolapCube cube, SqlSelectQueryMappingImpl sqls) {
-        cube.setFact(sqls);
-        cube.register();
-    }
-
-    private CharSequence getWriteBackSql(Dialect dialect, RolapWritebackTable writebackTable, List<Map<String, Map.Entry<Datatype, Object>>> sessionValues) {
-        StringBuilder sql = new StringBuilder();
-        sql.append(" union all select ");
-        sql.append(writebackTable.getColumns().stream().map( c -> c.getColumn().getName() )
-            .collect(Collectors.joining(", "))).append(" from ")
-            .append(writebackTable.getName());
-        if (sessionValues != null && !sessionValues.isEmpty()) {
-            sql.append(dialect.generateUnionAllSql(sessionValues));
-        }
-        return sql;
-    }
 }

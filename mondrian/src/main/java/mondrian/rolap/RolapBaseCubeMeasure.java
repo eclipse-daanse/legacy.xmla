@@ -150,7 +150,7 @@ public class RolapBaseCubeMeasure
         if (RolapBaseCubeMeasure.DataType.valueOf(datatype.getValue()) == null) {
             throw new CastInvalidTypeException(datatype.getValue());
         }
-        setProperty(Property.DATATYPE.name, datatype);
+        setProperty(Property.DATATYPE.name, datatype.getValue());
     }
 
     @Override
@@ -195,7 +195,7 @@ public class RolapBaseCubeMeasure
     public Datatype getDatatype() {
         Object datatype = getPropertyValue(Property.DATATYPE.name);
         try {
-            return Datatype.fromValue(((org.eclipse.daanse.rolap.mapping.api.model.enums.DataType) datatype).getValue());
+            return Datatype.fromValue((String) datatype);
         } catch (ClassCastException e) {
             return Datatype.STRING;
         } catch (IllegalArgumentException e) {
