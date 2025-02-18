@@ -34,7 +34,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -577,7 +577,7 @@ public interface CatalogReader {
      * Called by {@link Hierarchy} when determining the lowest access
      * level of a Role within a hierarchy.
      */
-    Map<? extends Member, Access>
+    Map<? extends Member, AccessMember>
         getMemberChildrenWithDetails(Member member, Evaluator evaluator);
 
     Context getContext();

@@ -17,7 +17,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Member;
 
@@ -57,7 +57,7 @@ class SmartRestrictedMemberReader extends RestrictedMemberReader {
     final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     @Override
-    public Map<? extends Member, Access> getMemberChildren(
+    public Map<? extends Member, AccessMember> getMemberChildren(
         RolapMember member,
         List<RolapMember> children,
         MemberChildrenConstraint constraint)
@@ -90,7 +90,7 @@ class SmartRestrictedMemberReader extends RestrictedMemberReader {
             // Get a write lock.
             lock.writeLock().lock();
 
-            Map<? extends Member, Access> membersWithAccessDetails =
+            Map<? extends Member, AccessMember> membersWithAccessDetails =
                 super.getMemberChildren(
                     member,
                     children,
@@ -109,10 +109,10 @@ class SmartRestrictedMemberReader extends RestrictedMemberReader {
     }
 
     private static class AccessAwareMemberList {
-        private final Map<? extends Member, Access> accessMap;
+        private final Map<? extends Member, AccessMember> accessMap;
         private final Collection<RolapMember> children;
         public AccessAwareMemberList(
-            Map<? extends Member, Access> accessMap,
+            Map<? extends Member, AccessMember> accessMap,
             Collection<RolapMember> children)
         {
             this.accessMap = accessMap;

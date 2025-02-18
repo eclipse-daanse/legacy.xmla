@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.eclipse.daanse.olap.api.Segment;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,7 +174,7 @@ public class NoCacheMemberReader implements MemberReader, MemberCache {
     }
 
     @Override
-	public Map<? extends Member, Access> getMemberChildren(
+	public Map<? extends Member, AccessMember> getMemberChildren(
         final RolapMember parentMember,
         final List<RolapMember> children,
         final MemberChildrenConstraint constraint)
@@ -195,7 +195,7 @@ public class NoCacheMemberReader implements MemberReader, MemberCache {
     }
 
     @Override
-	public Map<? extends Member, Access> getMemberChildren(
+	public Map<? extends Member, AccessMember> getMemberChildren(
         final List<RolapMember> parentMembers,
         final List<RolapMember> children,
         final MemberChildrenConstraint constraint)

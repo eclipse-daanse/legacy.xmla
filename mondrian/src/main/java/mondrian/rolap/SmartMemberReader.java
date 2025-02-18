@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.eclipse.daanse.olap.api.Segment;
-import org.eclipse.daanse.olap.api.access.Access;
+import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.element.Member;
 
 import mondrian.olap.Util;
@@ -182,7 +182,7 @@ public class SmartMemberReader implements MemberReader {
     }
 
     @Override
-	public Map<? extends Member, Access> getMemberChildren(
+	public Map<? extends Member, AccessMember> getMemberChildren(
         RolapMember parentMember,
         List<RolapMember> children,
         MemberChildrenConstraint constraint)
@@ -203,7 +203,7 @@ public class SmartMemberReader implements MemberReader {
     }
 
     @Override
-	public Map<? extends Member, Access> getMemberChildren(
+	public Map<? extends Member, AccessMember> getMemberChildren(
         List<RolapMember> parentMembers,
         List<RolapMember> children,
         MemberChildrenConstraint constraint)
