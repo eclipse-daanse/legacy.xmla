@@ -27,8 +27,6 @@ public class AccessUtil {
             return AccessDimension.NONE;
         case CUSTOM:
             return AccessDimension.CUSTOM;
-        case ALL_DIMENSIONS:
-            return AccessDimension.ALL_DIMENSIONS;
         default:
             return AccessDimension.NONE;
         }
@@ -42,8 +40,6 @@ public class AccessUtil {
             return AccessMember.CUSTOM;
         case ALL:
             return AccessMember.ALL;
-        case ALL_DIMENSIONS:
-            return AccessMember.ALL_DIMENSIONS;
         default:
             return AccessMember.NONE;
         }
@@ -55,12 +51,8 @@ public class AccessUtil {
             return AccessMember.NONE;
         case CUSTOM:
             return AccessMember.CUSTOM;
-        case RESTRICTED:
-            return AccessMember.RESTRICTED;
         case ALL:
             return AccessMember.ALL;
-        case ALL_DIMENSIONS:
-            return AccessMember.ALL_DIMENSIONS;
         default:
             return AccessMember.NONE;
         }

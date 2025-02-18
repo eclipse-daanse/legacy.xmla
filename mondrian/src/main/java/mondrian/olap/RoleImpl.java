@@ -914,7 +914,7 @@ public class RoleImpl implements Role {
         @Override
 		public AccessMember getAccess(Member member) {
             if (this.access != AccessHierarchy.CUSTOM) {
-                return getAccessMember(this.access);
+                return AccessUtil.getAccessMember(this.access);
             }
             MemberAccess mAccess =
                 memberGrants.get(member.getUniqueName());
@@ -1004,23 +1004,6 @@ public class RoleImpl implements Role {
                 "Access denided to member {} because none of its parents allow access to it.",
                 member.getUniqueName());
             return AccessMember.NONE;
-        }
-
-        private AccessMember getAccessMember(AccessHierarchy access) {
-            switch (access) {
-            case NONE:
-                return AccessMember.NONE;
-            case CUSTOM:
-                return AccessMember.CUSTOM;
-            case RESTRICTED:
-                return AccessMember.RESTRICTED;
-            case ALL:
-                return AccessMember.ALL;
-            case ALL_DIMENSIONS:
-                return AccessMember.ALL_DIMENSIONS;
-            default:
-                return AccessMember.NONE;
-            }
         }
 
         @Override

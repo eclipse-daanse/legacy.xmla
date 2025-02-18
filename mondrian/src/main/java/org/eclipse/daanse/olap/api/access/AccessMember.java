@@ -17,9 +17,17 @@ public enum AccessMember {
     NONE,
     /** All access to an object and its children. */
     ALL,
+    /**
+     * A grant that covers none of the children
+     * unless explicitly granted.
+     */
     CUSTOM,
-    ALL_DIMENSIONS,
+    /**
+     * Grant that covers all children except those denied.
+     * (internal use only)
+     */
     RESTRICTED;
+
     @Override
     public String toString() {
         return this.name();
