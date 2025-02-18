@@ -360,6 +360,27 @@ public class RolapCube extends CubeBase {
         }
     }
 
+    private void fillKpiIfExist(CubeMapping cube) {
+        if (cube != null && cube.getKpis() != null) {
+            cube.getKpis().stream().forEach(kpiMapping -> {
+                RolapKPI kpi = new RolapKPI();
+                kpi.setName(kpiMapping.getName());
+                kpi.setDisplayFolder(kpiMapping.getDisplayFolder());
+                kpi.setCurrentTimeMember(kpiMapping.getCurrentTimeMember());
+                kpi.setTrend(kpiMapping.getTrend());
+                kpi.setWeight(kpiMapping.getWeight());
+                kpi.setTrendGraphic(kpiMapping.getTrendGraphic());
+                kpi.setStatusGraphic(kpiMapping.getStatusGraphic());
+                kpi.setParentKpiID(kpiMapping.getParentKpiID());
+                kpi.setValue(kpiMapping.getValue());
+                kpi.setGoal(kpiMapping.getGoal());
+                kpi.setStatus(kpiMapping.getStatus());
+                kpi.setDescription(kpiMapping.getDescription());
+                kpis.add(kpi);
+            });
+        }
+    }
+
     /**
      * Creates a <code>RolapCube</code> from a regular cube.
      */
@@ -381,7 +402,7 @@ public class RolapCube extends CubeBase {
             cubeMapping.getDimensionConnectors(),
             RolapMetaData.createMetaData(cubeMapping.getAnnotations()), context);
         schema.addCube(cubeMapping,this);
-
+        fillKpiIfExist(cubeMapping);
         if (getFact() == null) {
             throw Util.newError(
                 new StringBuilder("Must specify fact table of cube '").append(getName()).append("'").toString());
@@ -774,6 +795,7 @@ public class RolapCube extends CubeBase {
             RolapMetaData.createMetaData(mappingVirtualCube.getAnnotations()),
             context);
         schema.addCube(mappingVirtualCube, this);
+        fillKpiIfExist(mappingVirtualCube);
         // Since Measure and VirtualCubeMeasure cannot
         // be treated as the same, measure creation cannot be done in a common
         // constructor.

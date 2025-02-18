@@ -127,8 +127,8 @@ public class PojoUtil {
             QueryMappingImpl left = copy(left(join));
             QueryMappingImpl right = copy(right(join));
             return JoinQueryMappingImpl.builder()
-            		.withLeft(JoinedQueryElementMappingImpl.builder().withAlias(getLeftAlias(join)).withKey((ColumnMappingImpl) join.getLeft().getKey()).withQuery(left).build())
-            		.withRight(JoinedQueryElementMappingImpl.builder().withAlias(getRightAlias(join)).withKey((ColumnMappingImpl) join.getRight().getKey()).withQuery(right).build())
+            		.withLeft(JoinedQueryElementMappingImpl.builder().withAlias(getLeftAlias(join)).withKey(getColumn(join.getLeft().getKey())).withQuery(left).build())
+            		.withRight(JoinedQueryElementMappingImpl.builder().withAlias(getRightAlias(join)).withKey(getColumn(join.getRight().getKey())).withQuery(right).build())
             		.build();
         } else {
             throw Util.newInternal(BAD_RELATION_TYPE + relation);
