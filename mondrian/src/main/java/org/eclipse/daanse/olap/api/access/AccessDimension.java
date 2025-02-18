@@ -22,8 +22,6 @@ public enum AccessDimension {
      */
     CUSTOM,
     /** Access to all shared dimensions (applies to schema grant). */
-    ALL_DIMENSIONS,
-    /** All access to an object and its children. */
     ALL;
     @Override
     public String toString() {

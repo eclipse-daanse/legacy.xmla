@@ -20,13 +20,6 @@ public enum AccessHierarchy {
      * unless explicitly granted.
      */
     CUSTOM,
-    /**
-     * Grant that covers all children except those denied.
-     * (internal use only)
-     */
-    RESTRICTED,
-    /** Access to all shared dimensions (applies to schema grant). */
-    ALL_DIMENSIONS,
     /** All access to an object and its children. */
     ALL;
     @Override
