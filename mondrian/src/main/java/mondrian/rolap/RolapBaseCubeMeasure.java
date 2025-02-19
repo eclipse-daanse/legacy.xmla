@@ -16,6 +16,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 
 import mondrian.olap.Property;
 import mondrian.olap.StringLiteralImpl;
@@ -91,7 +92,7 @@ public class RolapBaseCubeMeasure
         String formatString,
         SQLExpressionMapping expression,
         String aggregatorName,
-        org.eclipse.daanse.rolap.mapping.api.model.enums.DataType datatype,
+        InternalDataType datatype,
         MetaData metadata)
     {
         super(parentMember, level, name, null, MemberType.MEASURE);
@@ -142,9 +143,9 @@ public class RolapBaseCubeMeasure
             if (aggregator == RolapAggregator.Count
                 || aggregator == RolapAggregator.DistinctCount)
             {
-                datatype = org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.INTEGER;
+                datatype = InternalDataType.INTEGER;
             } else {
-                datatype = org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC;
+                datatype = InternalDataType.NUMERIC;
             }
         }
         if (RolapBaseCubeMeasure.DataType.valueOf(datatype.getValue()) == null) {
@@ -197,9 +198,9 @@ public class RolapBaseCubeMeasure
         try {
             return Datatype.fromValue((String) datatype);
         } catch (ClassCastException e) {
-            return Datatype.STRING;
+            return Datatype.VARCHAR;
         } catch (IllegalArgumentException e) {
-            return Datatype.STRING;
+            return Datatype.VARCHAR;
         }
     }
 }

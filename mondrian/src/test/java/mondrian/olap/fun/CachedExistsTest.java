@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
@@ -386,7 +386,7 @@ class CachedExistsTest{
                                                 LevelMappingImpl.builder()
                                                     .withName("Year")
                                                     .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                    .withType(DataType.NUMERIC)
+                                                    .withType(InternalDataType.NUMERIC)
                                                     .withUniqueMembers(true)
                                                     .withLevelType(LevelType.TIME_YEARS)
                                                     .build()
@@ -401,7 +401,7 @@ class CachedExistsTest{
                                                 LevelMappingImpl.builder()
                                                     .withName("Year")
                                                     .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                    .withType(DataType.NUMERIC)
+                                                    .withType(InternalDataType.NUMERIC)
                                                     .withUniqueMembers(true)
                                                     .withLevelType(LevelType.TIME_YEARS)
                                                     .build()
@@ -416,7 +416,7 @@ class CachedExistsTest{
                                                 LevelMappingImpl.builder()
                                                     .withName("Year")
                                                     .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                    .withType(DataType.NUMERIC)
+                                                    .withType(InternalDataType.NUMERIC)
                                                     .withUniqueMembers(true)
                                                     .withLevelType(LevelType.TIME_YEARS)
                                                     .build()

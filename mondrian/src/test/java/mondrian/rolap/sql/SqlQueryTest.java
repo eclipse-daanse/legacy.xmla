@@ -37,7 +37,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
@@ -733,7 +733,7 @@ class SqlQueryTest  extends BatchTestCase {
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Salary").withColumn(FoodmartMappingSupplier.SALARY_COLUMN_IN_EMPLOYEE)
-                                            .withType(DataType.NUMERIC).withUniqueMembers(true)
+                                            .withType(InternalDataType.NUMERIC).withUniqueMembers(true)
                                             .withApproxRowCount("10000000")
                                             .withCaptionExpression(
                                                 SQLExpressionMappingImpl.builder()
@@ -878,7 +878,7 @@ class SqlQueryTest  extends BatchTestCase {
                             			.withLevels(List.of(
                             				LevelMappingImpl.builder()
                                             .withName("Gender").withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
-                                            .withType(DataType.NUMERIC).withUniqueMembers(true)
+                                            .withType(InternalDataType.NUMERIC).withUniqueMembers(true)
                                             .withApproxRowCount("2")
                                             .build()
                                     ))

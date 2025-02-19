@@ -49,7 +49,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
@@ -2133,7 +2133,7 @@ class AggregationOnDistinctCountMeasuresTest {
                           LevelMappingImpl.builder()
                               .withName("Year")
                               .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                              .withType(DataType.NUMERIC)
+                              .withType(InternalDataType.NUMERIC)
                               .withUniqueMembers(true)
                               .withLevelType(LevelType.TIME_YEARS)
                               .build(),
@@ -2146,7 +2146,7 @@ class AggregationOnDistinctCountMeasuresTest {
                           LevelMappingImpl.builder()
                               .withName("Month")
                               .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
-                              .withType(DataType.NUMERIC)
+                              .withType(InternalDataType.NUMERIC)
                               .withUniqueMembers(false)
                               .withLevelType(LevelType.TIME_MONTHS)
                               .build()

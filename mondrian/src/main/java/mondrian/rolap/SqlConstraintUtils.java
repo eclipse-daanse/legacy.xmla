@@ -1369,7 +1369,7 @@ public class SqlConstraintUtils {
         column = column.getNameColumn();
         // The schema doesn't specify the datatype of the name column,
         // but we presume that it is a string.
-        datatype = Datatype.STRING;
+        datatype = Datatype.VARCHAR;
       }
       if ( aggStar != null ) {
         // this makes the assumption that the name column is the same
@@ -1395,7 +1395,7 @@ public class SqlConstraintUtils {
       } else {
         // The schema doesn't specify the datatype of the name column,
         // but we presume that it is a string.
-        datatype = Datatype.STRING;
+        datatype = Datatype.VARCHAR;
       }
       columnString = getExpression( exp, query );
     }
@@ -1426,7 +1426,7 @@ public class SqlConstraintUtils {
         final StringBuilder buf = new StringBuilder();
         query.getDialect().quote( buf, columnValue, datatype );
         CharSequence value = buf;
-        if ( caseSensitive && datatype == Datatype.STRING) {
+        if ( caseSensitive && datatype == Datatype.VARCHAR) {
           // Some databases (like DB2) compare case-sensitive.
           // We convert
           // the value to upper-case in the DBMS (e.g. UPPER('Foo'))
@@ -1440,7 +1440,7 @@ public class SqlConstraintUtils {
       }
     }
 
-    if ( caseSensitive && datatype == Datatype.STRING && !SystemWideProperties.instance().CaseSensitive ) {
+    if ( caseSensitive && datatype == Datatype.VARCHAR && !SystemWideProperties.instance().CaseSensitive ) {
         columnStringBuilder = query.getDialect().wrapIntoSqlUpperCaseFunction( columnStringBuilder );
     }
 

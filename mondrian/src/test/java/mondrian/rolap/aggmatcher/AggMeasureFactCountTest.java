@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
@@ -326,7 +327,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 + "</AggName>\n";
         */
         // aggregation tables are used, but with general fact count column
-        // test uses aggregation column because right now we use reference to column. 
+        // test uses aggregation column because right now we use reference to column.
         // previous we used column as string and mondriam used "fact_count" because "unit_SALES" != unit_sales "StOrE_cosT" != "store_cost" "STORE_SALES" != "store_sales"
         // right now it un-possible because right now we use reference to column
         String aggSql = ""
@@ -355,7 +356,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         ((TestConfig)context.getConfig()).setDisableCaching(true);
         prepareContext(context);
-        ColumnMappingImpl notExist = ColumnMappingImpl.builder().withName("not_exist").withType("INTEGER").build();
+        ColumnMappingImpl notExist = ColumnMappingImpl.builder().withName("not_exist").withType(ColumnDataType.INTEGER).build();
         List<AggregationTableMappingImpl> aggTables = List.of(
             AggregationNameMappingImpl.builder()
                 .withName(AggMeasureFactCountTestModifier.aggC6FactCsv2016)
@@ -508,7 +509,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         ((TestConfig)context.getConfig()).setDisableCaching(true);
         prepareContext(context);
-        ColumnMappingImpl notExist = ColumnMappingImpl.builder().withName("not_exist").withType("INTEGER").build();
+        ColumnMappingImpl notExist = ColumnMappingImpl.builder().withName("not_exist").withType(ColumnDataType.INTEGER).build();
         List<AggregationTableMappingImpl> aggTables = List.of(
             AggregationNameMappingImpl.builder()
                 .withName(AggMeasureFactCountTestModifier.aggC6FactCsv2016)

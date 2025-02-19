@@ -19,7 +19,8 @@ import java.util.List;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
@@ -74,17 +75,17 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                                 MemberPropertyMappingImpl.builder().withName("Store Type").withColumn(FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE).build(),
                                 MemberPropertyMappingImpl.builder().withName("Store Manager").withColumn(FoodmartMappingSupplier.STORE_MANAGER_COLUMN_IN_STORE).build(),
                                 MemberPropertyMappingImpl.builder().withName("Store Sqft").withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                    .withDataType(DataType.NUMERIC).build(),
+                                    .withDataType(InternalDataType.NUMERIC).build(),
                                 MemberPropertyMappingImpl.builder().withName("Grocery Sqft").withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE)
-                                    .withDataType(DataType.NUMERIC).build(),
+                                    .withDataType(InternalDataType.NUMERIC).build(),
                                 MemberPropertyMappingImpl.builder().withName("Frozen Sqft").withColumn(FoodmartMappingSupplier.FROZEN_SQFT_COLUMN_IN_STORE)
-                                    .withDataType(DataType.NUMERIC).build(),
+                                    .withDataType(InternalDataType.NUMERIC).build(),
                                 MemberPropertyMappingImpl.builder().withName("Meat Sqft").withColumn(FoodmartMappingSupplier.MEAT_SQFT_COLUMN_IN_STORE)
-                                    .withDataType(DataType.NUMERIC).build(),
+                                    .withDataType(InternalDataType.NUMERIC).build(),
                                 MemberPropertyMappingImpl.builder().withName("Has coffee bar").withColumn(FoodmartMappingSupplier.COFFEE_BAR_COLUMN_IN_STORE)
-                                    .withDataType(DataType.BOOLEAN).build(),
+                                    .withDataType(InternalDataType.BOOLEAN).build(),
                                 MemberPropertyMappingImpl.builder().withName("Street address").withColumn(FoodmartMappingSupplier.STREET_ADDRESS_COLUMN_IN_STORE)
-                                .withDataType(DataType.STRING).build()
+                                .withDataType(InternalDataType.STRING).build()
                                 ))
                             .build()
                     ))
@@ -92,12 +93,12 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
             ))
 			.build();
 
-    public static final ColumnMappingImpl TIME_ID_COLUMN_IN_TIME_CSV = ColumnMappingImpl.builder().withName("time_id").withType("INTEGER").build();
-    public static final ColumnMappingImpl THE_YEAR_COLUMN_IN_TIME_CSV = ColumnMappingImpl.builder().withName("the_year").withType("SMALLINT").build();
-    public static final ColumnMappingImpl MONTH_OF_YEAR_COLUMN_IN_TIME_CSV = ColumnMappingImpl.builder().withName("month_of_year").withType("SMALLINT").build();
-    public static final ColumnMappingImpl QUARTER_COLUMN_IN_TIME_CSV = ColumnMappingImpl.builder().withName("quarter").withType("VARCHAR").withCharOctetLength(30).build();
-    public static final ColumnMappingImpl DAY_OF_MONTH_COLUMN_TIME_CSV = ColumnMappingImpl.builder().withName("day_of_month").withType("SMALLINT").build();
-    public static final ColumnMappingImpl WEEK_OF_YEAR_COLUMN_IN_TIME_CSV = ColumnMappingImpl.builder().withName("week_of_year").withType("INTEGER").build();
+    public static final ColumnMappingImpl TIME_ID_COLUMN_IN_TIME_CSV = ColumnMappingImpl.builder().withName("time_id").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl THE_YEAR_COLUMN_IN_TIME_CSV = ColumnMappingImpl.builder().withName("the_year").withType(ColumnDataType.SMALLINT).build();
+    public static final ColumnMappingImpl MONTH_OF_YEAR_COLUMN_IN_TIME_CSV = ColumnMappingImpl.builder().withName("month_of_year").withType(ColumnDataType.SMALLINT).build();
+    public static final ColumnMappingImpl QUARTER_COLUMN_IN_TIME_CSV = ColumnMappingImpl.builder().withName("quarter").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    public static final ColumnMappingImpl DAY_OF_MONTH_COLUMN_TIME_CSV = ColumnMappingImpl.builder().withName("day_of_month").withType(ColumnDataType.SMALLINT).build();
+    public static final ColumnMappingImpl WEEK_OF_YEAR_COLUMN_IN_TIME_CSV = ColumnMappingImpl.builder().withName("week_of_year").withType(ColumnDataType.INTEGER).build();
     public static final PhysicalTableMappingImpl TIME_CSV_TABLE = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("time_csv")
             .withColumns(List.of(
                     TIME_ID_COLUMN_IN_TIME_CSV,
@@ -111,14 +112,14 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
     //## TableName: fact_csv_2016
     //## ColumnNames: product_id,time_id,customer_id,promotion_id,store_id,store_sales,store_cost,unit_sales
     //## ColumnTypes: INTEGER,INTEGER,INTEGER,INTEGER,INTEGER,DECIMAL(10,4):null,DECIMAL(10,4):null,DECIMAL(10,4):null
-    public static final ColumnMappingImpl PRODUCT_ID_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("product_id").withType("INTEGER").build();
-    public static final ColumnMappingImpl TIME_ID_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("time_id").withType("INTEGER").build();
-    public static final ColumnMappingImpl CUSTOMER_ID_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("customer_id").withType("INTEGER").build();
-    public static final ColumnMappingImpl PROMOTION_ID_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("promotion_id").withType("INTEGER").build();
-    public static final ColumnMappingImpl STORE_ID_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
-    public static final ColumnMappingImpl STORE_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("store_sales").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
-    public static final ColumnMappingImpl STORE_COST_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("store_cost").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
-    public static final ColumnMappingImpl UNIT_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("unit_sales").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnMappingImpl PRODUCT_ID_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("product_id").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl TIME_ID_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("time_id").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl CUSTOMER_ID_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("customer_id").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl PROMOTION_ID_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("promotion_id").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl STORE_ID_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("store_id").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl STORE_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("store_sales").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnMappingImpl STORE_COST_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("store_cost").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnMappingImpl UNIT_SALES_COLUMN_IN_FACT_CSV_2016 = ColumnMappingImpl.builder().withName("unit_sales").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
     public static final PhysicalTableMappingImpl FACT_CSV_2016_TABLE = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("fact_csv_2016")
             .withColumns(List.of(
             		PRODUCT_ID_COLUMN_IN_FACT_CSV_2016,
@@ -135,17 +136,17 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
     //## TableName: agg_c_6_fact_csv_2016
     //## ColumnNames: month_of_year,quarter,the_year,store_sales,store_cost,unit_sales,customer_count,fact_count,store_sales_fact_count,store_cost_fact_count,unit_sales_fact_count
     //## ColumnTypes: SMALLINT,VARCHAR(30),SMALLINT,DECIMAL(10,4):null,DECIMAL(10,4):null,DECIMAL(10,4):null,INTEGER,INTEGER,INTEGER,INTEGER,INTEGER
-    public static final ColumnMappingImpl monthOfYearAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("month_of_year").withType("INTEGER").build();
-    public static final ColumnMappingImpl quarterAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("quarter").withType("VARCHAR").withCharOctetLength(30).build();
-    public static final ColumnMappingImpl theYearAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("the_year").withType("INTEGER").build();
-    public static final ColumnMappingImpl storeSalesAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("store_sales").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
-    public static final ColumnMappingImpl storeCostAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("store_cost").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
-    public static final ColumnMappingImpl unitSalesAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("unit_sales").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
-    public static final ColumnMappingImpl customerCountAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("customer_count").withType("INTEGER").build();
-    public static final ColumnMappingImpl factCountAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("fact_count").withType("INTEGER").build();
-    public static final ColumnMappingImpl storeSalesFactCountAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("store_sales_fact_count").withType("INTEGER").build();
-    public static final ColumnMappingImpl storeCostFactCountAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("store_cost_fact_count").withType("INTEGER").build();
-    public static final ColumnMappingImpl unitSalesFactCountAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("unit_sales_fact_count").withType("INTEGER").build();
+    public static final ColumnMappingImpl monthOfYearAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("month_of_year").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl quarterAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("quarter").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    public static final ColumnMappingImpl theYearAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("the_year").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl storeSalesAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("store_sales").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnMappingImpl storeCostAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("store_cost").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnMappingImpl unitSalesAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("unit_sales").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnMappingImpl customerCountAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("customer_count").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl factCountAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("fact_count").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl storeSalesFactCountAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("store_sales_fact_count").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl storeCostFactCountAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("store_cost_fact_count").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl unitSalesFactCountAggC6FactCsv2016 = ColumnMappingImpl.builder().withName("unit_sales_fact_count").withType(ColumnDataType.INTEGER).build();
     public static final PhysicalTableMappingImpl aggC6FactCsv2016 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("agg_c_6_fact_csv_2016")
             .withColumns(List.of(
                     monthOfYearAggC6FactCsv2016,
@@ -164,17 +165,17 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
     //## TableName: agg_csv_different_column_names
     //## ColumnNames: month_of_year,quarter,the_year,store_sales,store_cost,unit_sales,customer_count,fact_count,ss_fc,sc_fc,us_fc
     //## ColumnTypes: SMALLINT,VARCHAR(30),SMALLINT,DECIMAL(10,4):null,DECIMAL(10,4):null,DECIMAL(10,4):null,INTEGER,INTEGER,INTEGER,INTEGER,INTEGER
-    public static final ColumnMappingImpl monthOfYearAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("month_of_year").withType("INTEGER").build();
-    public static final ColumnMappingImpl quarterAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("quarter").withType("VARCHAR").withCharOctetLength(30).build();
-    public static final ColumnMappingImpl theYearAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("the_year").withType("INTEGER").build();
-    public static final ColumnMappingImpl storeSalesAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("store_sales").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
-    public static final ColumnMappingImpl storeCostAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("store_cost").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
-    public static final ColumnMappingImpl unitSalesAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("unit_sales").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
-    public static final ColumnMappingImpl customerCountAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("customer_count").withType("INTEGER").build();
-    public static final ColumnMappingImpl factCountAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("fact_count").withType("INTEGER").build();
-    public static final ColumnMappingImpl ssFcAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("ss_fc").withType("INTEGER").build();
-    public static final ColumnMappingImpl scFcAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("sc_fc").withType("INTEGER").build();
-    public static final ColumnMappingImpl usFcAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("us_fc").withType("INTEGER").build();
+    public static final ColumnMappingImpl monthOfYearAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("month_of_year").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl quarterAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("quarter").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    public static final ColumnMappingImpl theYearAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("the_year").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl storeSalesAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("store_sales").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnMappingImpl storeCostAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("store_cost").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnMappingImpl unitSalesAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("unit_sales").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnMappingImpl customerCountAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("customer_count").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl factCountAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("fact_count").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl ssFcAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("ss_fc").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl scFcAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("sc_fc").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl usFcAggCsvDifferentColumnNames = ColumnMappingImpl.builder().withName("us_fc").withType(ColumnDataType.INTEGER).build();
     public static final PhysicalTableMappingImpl aggCsvDifferentColumnNames = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("agg_csv_different_column_names")
             .withColumns(List.of(
                     monthOfYearAggCsvDifferentColumnNames,
@@ -193,17 +194,17 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
     //## TableName: agg_csv_divide_by_zero
     //## ColumnNames: month_of_year,quarter,the_year,store_sales,store_cost,unit_sales,customer_count,fact_count,store_sales_fact_count,store_cost_fact_count,unit_sales_fact_count
     //## ColumnTypes: SMALLINT,VARCHAR(30),SMALLINT,DECIMAL(10,4):null,DECIMAL(10,4):null,DECIMAL(10,4):null,INTEGER,INTEGER,INTEGER,INTEGER,INTEGER
-    public static final ColumnMappingImpl monthOfYearAggCsvDivideByZero = ColumnMappingImpl.builder().withName("month_of_year").withType("INTEGER").build();
-    public static final ColumnMappingImpl quarterAggCsvDivideByZero = ColumnMappingImpl.builder().withName("quarter").withType("VARCHAR").withCharOctetLength(30).build();
-    public static final ColumnMappingImpl theYearAggCsvDivideByZero = ColumnMappingImpl.builder().withName("the_year").withType("INTEGER").build();
-    public static final ColumnMappingImpl storeSalesAggCsvDivideByZero = ColumnMappingImpl.builder().withName("store_sales").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
-    public static final ColumnMappingImpl storeCostAggCsvDivideByZero = ColumnMappingImpl.builder().withName("store_cost").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
-    public static final ColumnMappingImpl unitSalesAggCsvDivideByZero = ColumnMappingImpl.builder().withName("unit_sales").withType("DECIMAL").withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
-    public static final ColumnMappingImpl customerCountAggCsvDivideByZero = ColumnMappingImpl.builder().withName("customer_count").withType("INTEGER").build();
-    public static final ColumnMappingImpl factCountAggCsvDivideByZero = ColumnMappingImpl.builder().withName("fact_count").withType("INTEGER").build();
-    public static final ColumnMappingImpl storeSalesFactCountAggCsvDivideByZero = ColumnMappingImpl.builder().withName("store_sales_fact_count").withType("INTEGER").build();
-    public static final ColumnMappingImpl storeCostFactCountAggCsvDivideByZero = ColumnMappingImpl.builder().withName("store_cost_fact_count").withType("INTEGER").build();
-    public static final ColumnMappingImpl unitSalesFactCountAggCsvDivideByZero = ColumnMappingImpl.builder().withName("unit_sales_fact_count").withType("INTEGER").build();
+    public static final ColumnMappingImpl monthOfYearAggCsvDivideByZero = ColumnMappingImpl.builder().withName("month_of_year").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl quarterAggCsvDivideByZero = ColumnMappingImpl.builder().withName("quarter").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    public static final ColumnMappingImpl theYearAggCsvDivideByZero = ColumnMappingImpl.builder().withName("the_year").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl storeSalesAggCsvDivideByZero = ColumnMappingImpl.builder().withName("store_sales").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnMappingImpl storeCostAggCsvDivideByZero = ColumnMappingImpl.builder().withName("store_cost").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnMappingImpl unitSalesAggCsvDivideByZero = ColumnMappingImpl.builder().withName("unit_sales").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).withNullable(true).build();
+    public static final ColumnMappingImpl customerCountAggCsvDivideByZero = ColumnMappingImpl.builder().withName("customer_count").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl factCountAggCsvDivideByZero = ColumnMappingImpl.builder().withName("fact_count").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl storeSalesFactCountAggCsvDivideByZero = ColumnMappingImpl.builder().withName("store_sales_fact_count").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl storeCostFactCountAggCsvDivideByZero = ColumnMappingImpl.builder().withName("store_cost_fact_count").withType(ColumnDataType.INTEGER).build();
+    public static final ColumnMappingImpl unitSalesFactCountAggCsvDivideByZero = ColumnMappingImpl.builder().withName("unit_sales_fact_count").withType(ColumnDataType.INTEGER).build();
     public static final PhysicalTableMappingImpl aggCsvDivideByZero = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("agg_csv_divide_by_zero")
             .withColumns(List.of(
                     monthOfYearAggCsvDivideByZero,
@@ -230,7 +231,7 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                         LevelMappingImpl.builder()
                             .withName("Year")
                             .withColumn(THE_YEAR_COLUMN_IN_TIME_CSV)
-                            .withType(DataType.NUMERIC)
+                            .withType(InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
                             .withLevelType(LevelType.TIME_YEARS)
                             .build(),
@@ -244,7 +245,7 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                             .withName("Month")
                             .withColumn(MONTH_OF_YEAR_COLUMN_IN_TIME_CSV)
                             .withUniqueMembers(false)
-                            .withType(DataType.NUMERIC)
+                            .withType(InternalDataType.NUMERIC)
                             .withLevelType(LevelType.TIME_MONTHS)
                             .build()
                     ))
@@ -258,21 +259,21 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                         LevelMappingImpl.builder()
                             .withName("Year")
                             .withColumn(THE_YEAR_COLUMN_IN_TIME_CSV)
-                            .withType(DataType.NUMERIC)
+                            .withType(InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
                             .withLevelType(LevelType.TIME_YEARS)
                             .build(),
                         LevelMappingImpl.builder()
                             .withName("Week")
                             .withColumn(WEEK_OF_YEAR_COLUMN_IN_TIME_CSV)
-                            .withType(DataType.NUMERIC)
+                            .withType(InternalDataType.NUMERIC)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.TIME_WEEKS)
                             .build(),
                         LevelMappingImpl.builder()
                             .withName("Day")
                             .withColumn(DAY_OF_MONTH_COLUMN_TIME_CSV)
-                            .withType(DataType.NUMERIC)
+                            .withType(InternalDataType.NUMERIC)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.TIME_DAYS)
                             .build()

@@ -63,6 +63,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
@@ -376,7 +377,7 @@ class SchemaTest {
                         .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                         .withNameColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                         .withColumn(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
-                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .build();
                     LevelMappingImpl level2 = LevelMappingImpl
@@ -692,8 +693,8 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                	ColumnMappingImpl yearly_income = ColumnMappingImpl.builder().withName("yearly_income").withType("INTEGER").build();
-                	ColumnMappingImpl customer_id = ColumnMappingImpl.builder().withName("customer_id").withType("INTEGER").build();
+                	ColumnMappingImpl yearly_income = ColumnMappingImpl.builder().withName("yearly_income").withType(ColumnDataType.INTEGER).build();
+                	ColumnMappingImpl customer_id = ColumnMappingImpl.builder().withName("customer_id").withType(ColumnDataType.INTEGER).build();
                     PhysicalTableMappingImpl customer_not_found = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("customer_not_found")
                             .withColumns(List.of(
                                     customer_id, yearly_income
@@ -756,7 +757,7 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnMappingImpl customer_id = ColumnMappingImpl.builder().withName("customer_id").withType("INTEGER").build();
+                    ColumnMappingImpl customer_id = ColumnMappingImpl.builder().withName("customer_id").withType(ColumnDataType.INTEGER).build();
                     PhysicalTableMappingImpl customer_not_found = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("customer_not_found")
                             .withColumns(List.of(
                                     customer_id
@@ -817,7 +818,7 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnMappingImpl yearly_income = ColumnMappingImpl.builder().withName("yearly_income").withType("INTEGER").build();
+                    ColumnMappingImpl yearly_income = ColumnMappingImpl.builder().withName("yearly_income").withType(ColumnDataType.INTEGER).build();
                     PhysicalTableMappingImpl customer_not_found = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("customer_not_found")
                             .withColumns(List.of(
                                     yearly_income
@@ -1461,9 +1462,9 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withType("INTEGER").build();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withType(ColumnDataType.INTEGER).build();
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType(ColumnDataType.INTEGER).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 sales_region, sales_district_id, region_id
@@ -1549,7 +1550,7 @@ class SchemaTest {
                     .withName("Name")
                     .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-                    .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                    .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
                     .build();
 
@@ -1579,7 +1580,7 @@ class SchemaTest {
                     .withName("Name")
                     .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-                    .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                    .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
                     .build();
 
@@ -1732,9 +1733,9 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withType("INTEGER").build();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withType(ColumnDataType.INTEGER).build();
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType(ColumnDataType.INTEGER).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 sales_region, sales_district_id, region_id
@@ -1841,7 +1842,7 @@ class SchemaTest {
                     .withName("Name")
                     .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-                    .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                    .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
                     .build();
                 HierarchyMappingImpl h11 = HierarchyMappingImpl
@@ -2026,8 +2027,8 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType(ColumnDataType.INTEGER).build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
@@ -2106,7 +2107,7 @@ class SchemaTest {
                         .withName("Name")
                         .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .build();
 
@@ -2244,8 +2245,8 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType(ColumnDataType.INTEGER).build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
@@ -2326,7 +2327,7 @@ class SchemaTest {
                         .withName("Name")
                         .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .build();
 
@@ -2463,8 +2464,8 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType(ColumnDataType.INTEGER).build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
@@ -2544,7 +2545,7 @@ class SchemaTest {
                         .withName("Name")
                         .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .build();
 
@@ -2678,8 +2679,8 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType(ColumnDataType.INTEGER).build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
@@ -3701,7 +3702,7 @@ class SchemaTest {
                         .withName("Warehouse ID")
                         .withColumn(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_INVENTORY_FACKT_1997)
                         .withUniqueMembers(true)
-                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .build();
                     HierarchyMappingImpl h1 = HierarchyMappingImpl.builder()
                         .withQuery(v1)
@@ -4349,7 +4350,7 @@ class SchemaTest {
                     LevelMappingImpl l11 = LevelMappingImpl.builder()
                         .withName("Year")
                         .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .withLevelType(LevelType.TIME_YEARS)
                         .build();
@@ -4363,7 +4364,7 @@ class SchemaTest {
                         .withName("Month")
                         .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                         .withUniqueMembers(false)
-                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withLevelType(LevelType.TIME_MONTHS)
                         .build();
 
@@ -4390,7 +4391,7 @@ class SchemaTest {
                     LevelMappingImpl l22 = LevelMappingImpl.builder()
                         .withName("month")
                         .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
-                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .build();
 
                     HierarchyMappingImpl h21 = HierarchyMappingImpl.builder()
@@ -4568,7 +4569,7 @@ class SchemaTest {
                     LevelMappingImpl l11 = LevelMappingImpl.builder()
                         .withName("Year")
                         .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .withLevelType(LevelType.TIME_YEARS)
                         .build();
@@ -4582,7 +4583,7 @@ class SchemaTest {
                         .withName("Month")
                         .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                         .withUniqueMembers(false)
-                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withLevelType(LevelType.TIME_MONTHS)
                         .build();
 
@@ -6627,7 +6628,7 @@ class SchemaTest {
                         .builder()
                         .withName("Store Sqft")
                         .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .build();
                     HierarchyMappingImpl hierarchy = HierarchyMappingImpl
@@ -6729,9 +6730,9 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withType("Integer").build();
-                    ColumnMappingImpl bin = ColumnMappingImpl.builder().withName("bin").withType("Integer").build();
-                    ColumnMappingImpl name = ColumnMappingImpl.builder().withName("name").withType("String").withCharOctetLength(20).build();
+                    ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withType(ColumnDataType.INTEGER).build();
+                    ColumnMappingImpl bin = ColumnMappingImpl.builder().withName("bin").withType(ColumnDataType.INTEGER).build();
+                    ColumnMappingImpl name = ColumnMappingImpl.builder().withName("name").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
                     InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                     .withColumns(List.of(id, bin, name))
                     .withRows(List.of(
@@ -6874,9 +6875,9 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withType("Integer").build();
-                    ColumnMappingImpl bigNum = ColumnMappingImpl.builder().withName("big_num").withType("Integer").build();
-                    ColumnMappingImpl name = ColumnMappingImpl.builder().withName("name").withType("String").withCharOctetLength(20).build();
+                    ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withType(ColumnDataType.INTEGER).build();
+                    ColumnMappingImpl bigNum = ColumnMappingImpl.builder().withName("big_num").withType(ColumnDataType.INTEGER).build();
+                    ColumnMappingImpl name = ColumnMappingImpl.builder().withName("name").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
                     InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                     .withColumns(List.of(id, bigNum, name))
                     .withRows(List.of(
@@ -6900,7 +6901,7 @@ class SchemaTest {
                             .builder()
                             .withName("Level1")
                             .withColumn(bigNum)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.INTEGER)
+                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.INTEGER)
                             .build();
                         LevelMappingImpl level2 = LevelMappingImpl
                             .builder()
@@ -6989,9 +6990,9 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withType("INTEGER").build();
-                    ColumnMappingImpl bigNum = ColumnMappingImpl.builder().withName("big_num").withType("INTEGER").build();
-                    ColumnMappingImpl name = ColumnMappingImpl.builder().withName("name").withType("VARCHAR").withCharOctetLength(20).build();
+                    ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withType(ColumnDataType.INTEGER).build();
+                    ColumnMappingImpl bigNum = ColumnMappingImpl.builder().withName("big_num").withType(ColumnDataType.INTEGER).build();
+                    ColumnMappingImpl name = ColumnMappingImpl.builder().withName("name").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
                     InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                     .withColumns(List.of(id, bigNum, name))
                     .withRows(List.of(
@@ -7011,7 +7012,7 @@ class SchemaTest {
                             .builder()
                             .withName("Level1")
                             .withColumn(bigNum)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.INTEGER)
+                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.INTEGER)
                             //.internalType(InternalTypeEnum.fromValue("char"))
                             .build();
                         LevelMappingImpl level2 = LevelMappingImpl
@@ -7145,7 +7146,7 @@ class SchemaTest {
                             .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                             .withNameColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
                             .build();
                         HierarchyMappingImpl hierarchy = HierarchyMappingImpl
@@ -7220,7 +7221,7 @@ class SchemaTest {
                             .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                             .withNameColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
                             .build();
                         HierarchyMappingImpl hierarchy = HierarchyMappingImpl
@@ -7445,18 +7446,18 @@ class SchemaTest {
                 if ("Sales".equals(cube.getName())) {
                         LevelMappingImpl l1 = LevelMappingImpl.builder()
                             .withName("Years").withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(true)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withLevelType(LevelType.TIME_YEARS).build();
                         LevelMappingImpl l2 = LevelMappingImpl.builder()
                             .withName("Half year").withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
                             .withLevelType(LevelType.fromValue(timeHalfYear)).build();
                         LevelMappingImpl l3 = LevelMappingImpl.builder()
                             .withName("Hours").withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withLevelType(LevelType.TIME_HOURS).build();
                         LevelMappingImpl l4 = LevelMappingImpl.builder()
                             .withName("Quarter hours").withColumn(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withLevelType(LevelType.TIME_UNDEFINED).build();
                         HierarchyMappingImpl h = HierarchyMappingImpl.builder()
                             .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
@@ -7490,18 +7491,18 @@ class SchemaTest {
                 		String type = timeHalfYear.equals("TimeUndefined") ? "TimeUnspecified" : timeHalfYear;
                         LevelMappingImpl l1 = LevelMappingImpl.builder()
                             .withName("Years").withColumn(FoodmartMappingSupplier.THE_DATE_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(true)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withLevelType(LevelType.TIME_YEARS).build();
                         LevelMappingImpl l2 = LevelMappingImpl.builder()
                             .withName("Half year").withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
                             .withLevelType(LevelType.fromValue(timeHalfYear)).build();
                         LevelMappingImpl l3 = LevelMappingImpl.builder()
                             .withName("Hours").withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withLevelType(LevelType.TIME_HOURS).build();
                         LevelMappingImpl l4 = LevelMappingImpl.builder()
                             .withName("Quarter hours").withColumn(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withLevelType(LevelType.fromValue("TimeUnspecified")).build();
                         HierarchyMappingImpl h = HierarchyMappingImpl.builder()
                             .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
@@ -7599,9 +7600,9 @@ class SchemaTest {
 
             @Override
             protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withType("INTEGER").build();
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType(ColumnDataType.INTEGER).build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withType(ColumnDataType.INTEGER).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region, sales_district_id
@@ -7625,7 +7626,7 @@ class SchemaTest {
                                     LevelMappingImpl.builder()
                                         .withName("Year")
                                         .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                                         .withUniqueMembers(true)
                                         .withLevelType(LevelType.TIME_YEARS)
                                         .build(),
@@ -7639,7 +7640,7 @@ class SchemaTest {
                                         .withName("Month")
                                         .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                                         .withUniqueMembers(false)
-                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                                         .withLevelType(LevelType.TIME_MONTHS)
                                         .build()
                                     ))
@@ -8394,7 +8395,7 @@ class SchemaTest {
                                     LevelMappingImpl.builder()
                                         .withName("country")
                                         .withColumn(FoodmartMappingSupplier.STORE_CITY_COLUMN_IN_STORE)
-                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.STRING)
+                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.STRING)
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -8402,7 +8403,7 @@ class SchemaTest {
                                     stateLevel = LevelMappingImpl.builder()
                                         .withName("state")
                                         .withColumn(FoodmartMappingSupplier.STORE_STATE_COLUMN_IN_STORE)
-                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.STRING)
+                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.STRING)
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -8410,7 +8411,7 @@ class SchemaTest {
                                     LevelMappingImpl.builder()
                                         .withName("city")
                                         .withColumn(FoodmartMappingSupplier.STORE_CITY_COLUMN_IN_STORE)
-                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.STRING)
+                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.STRING)
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -8432,7 +8433,7 @@ class SchemaTest {
                                     LevelMappingImpl.builder()
                                         .withName("product_name")
                                         .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
-                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.STRING)
+                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.STRING)
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -8464,7 +8465,7 @@ class SchemaTest {
                         				unitsales1Measure = MeasureMappingImpl.builder()
                                         .withName("unitsales1")
                                         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                        .withDatatype(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                                        .withDatatype(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                                         .withAggregatorType(MeasureAggregatorType.SUM)
                                         .withVisible(true)
                                         .build()
@@ -8519,7 +8520,7 @@ class SchemaTest {
                         				unitsales2Measure = MeasureMappingImpl.builder()
                                         .withName("unitsales2")
                                         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                        .withDatatype(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                                        .withDatatype(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                                         .withAggregatorType(MeasureAggregatorType.SUM)
                                         .withVisible(true)
                                         .build()
@@ -8809,7 +8810,7 @@ class SchemaTest {
                             .withName("Product Class")
                             .withTable(FoodmartMappingSupplier.STORE_TABLE)
                             .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
                             .build();
                     LevelMappingImpl l6 = LevelMappingImpl.builder()
@@ -8939,7 +8940,7 @@ class SchemaTest {
                         .withName("Product Class")
                         .withTable(FoodmartMappingSupplier.STORE_TABLE)
                         .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
-                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .build();
                     LevelMappingImpl l6 = LevelMappingImpl.builder()
@@ -9001,7 +9002,7 @@ class SchemaTest {
                                         	LevelMappingImpl.builder()
                                                 .withName("Year")
                                                 .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                                                .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                                                 .withUniqueMembers(true)
                                                 .withLevelType(LevelType.TIME_YEARS)
                                                 .build(),
@@ -9015,7 +9016,7 @@ class SchemaTest {
                                                 .withName("Month")
                                                 .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                                                 .withUniqueMembers(false)
-                                                .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                                                .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                                                 .withLevelType(LevelType.TIME_MONTHS)
                                                 .build()
                                         ))
@@ -9171,7 +9172,7 @@ class SchemaTest {
                             .withName("Product Class")
                             .withTable(FoodmartMappingSupplier.STORE_TABLE)
                             .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
-                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                            .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
                             .build();
                     LevelMappingImpl l6 = LevelMappingImpl.builder()
@@ -10437,10 +10438,10 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnMappingImpl sales_city = ColumnMappingImpl.builder().withName("sales_city").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withType("INTEGER").build();
+                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withType(ColumnDataType.INTEGER).build();
+                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                ColumnMappingImpl sales_city = ColumnMappingImpl.builder().withName("sales_city").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withType(ColumnDataType.INTEGER).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region, sales_district_id
@@ -11137,12 +11138,12 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnMappingImpl lvl1Id = ColumnMappingImpl.builder().withName("lvl_1_id").withType("INTEGER").build();
-                    ColumnMappingImpl lvl1Name = ColumnMappingImpl.builder().withName("lvl_1_name").withType("VARCHAR").withCharOctetLength(20).build();
-                    ColumnMappingImpl lvl2Id = ColumnMappingImpl.builder().withName("lvl_2_id").withType("INTEGER").build();
-                    ColumnMappingImpl lvl2Name = ColumnMappingImpl.builder().withName("lvl_2_name").withType("VARCHAR").withCharOctetLength(20).build();
-                    ColumnMappingImpl lvl3Id = ColumnMappingImpl.builder().withName("lvl_3_id").withType("INTEGER").build();
-                    ColumnMappingImpl lvl3Name = ColumnMappingImpl.builder().withName("lvl_3_name").withType("VARCHAR").withCharOctetLength(20).build();
+                    ColumnMappingImpl lvl1Id = ColumnMappingImpl.builder().withName("lvl_1_id").withType(ColumnDataType.INTEGER).build();
+                    ColumnMappingImpl lvl1Name = ColumnMappingImpl.builder().withName("lvl_1_name").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+                    ColumnMappingImpl lvl2Id = ColumnMappingImpl.builder().withName("lvl_2_id").withType(ColumnDataType.INTEGER).build();
+                    ColumnMappingImpl lvl2Name = ColumnMappingImpl.builder().withName("lvl_2_name").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+                    ColumnMappingImpl lvl3Id = ColumnMappingImpl.builder().withName("lvl_3_id").withType(ColumnDataType.INTEGER).build();
+                    ColumnMappingImpl lvl3Name = ColumnMappingImpl.builder().withName("lvl_3_name").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
                     InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                     .withColumns(List.of(lvl1Id, lvl1Name, lvl2Id, lvl2Name, lvl3Id, lvl3Name))
                     .withRows(List.of(
@@ -11390,32 +11391,32 @@ class SchemaTest {
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Store Sqft")
                                                 .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                                .withDataType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                                                .withDataType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Grocery Sqft")
                                                 .withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE)
-                                                .withDataType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                                                .withDataType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Frozen Sqft")
                                                 .withColumn(FoodmartMappingSupplier.FROZEN_SQFT_COLUMN_IN_STORE)
-                                                .withDataType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                                                .withDataType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Meat Sqft")
                                                 .withColumn(FoodmartMappingSupplier.MEAT_SQFT_COLUMN_IN_STORE)
-                                                .withDataType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                                                .withDataType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Has coffee bar")
                                                 .withColumn(FoodmartMappingSupplier.COFFEE_BAR_COLUMN_IN_STORE)
-                                                .withDataType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.BOOLEAN)
+                                                .withDataType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.BOOLEAN)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Street address")
                                                 .withColumn(FoodmartMappingSupplier.STREET_ADDRESS_COLUMN_IN_STORE)
-                                                .withDataType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.STRING)
+                                                .withDataType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.STRING)
                                                 .build()
                                         ))
                                         .build()
@@ -11536,7 +11537,7 @@ class SchemaTest {
                                 .withLevels(List.of(
                                     LevelMappingImpl.builder()
                                         .withName("Employee Id")
-                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC)
+                                        .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                                         .withUniqueMembers(true)
                                         .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                         .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)

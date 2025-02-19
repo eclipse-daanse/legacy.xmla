@@ -39,7 +39,7 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
@@ -781,7 +781,7 @@ class NonEmptyTest extends BatchTestCase {
                 			.withName("Media")
                 			.withColumn(FoodmartMappingSupplier.MEDIA_TYPE_COLUMN_IN_PROMOTION)
                 			.withAggregatorType(MeasureAggregatorType.MAX)
-                			.withDatatype(DataType.STRING)
+                			.withDatatype(InternalDataType.STRING)
                 			.build()
                 	))
                     .build()
@@ -891,7 +891,7 @@ class NonEmptyTest extends BatchTestCase {
                        						LevelMappingImpl.builder()
                   						  			.withName("Name")
                   						  			.withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-                  						  			.withType(DataType.NUMERIC)
+                  						  			.withType(InternalDataType.NUMERIC)
                   						  			.withUniqueMembers(true)
                   						  			.build()
               						  	))
@@ -5778,32 +5778,32 @@ class NonEmptyTest extends BatchTestCase {
                               MemberPropertyMappingImpl.builder()
                                   .withName("Store Sqft")
                                   .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                  .withDataType(DataType.NUMERIC)
+                                  .withDataType(InternalDataType.NUMERIC)
                                   .build(),
                               MemberPropertyMappingImpl.builder()
                                   .withName("Grocery Sqft")
                                   .withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE)
-                                  .withDataType(DataType.NUMERIC)
+                                  .withDataType(InternalDataType.NUMERIC)
                                   .build(),
                               MemberPropertyMappingImpl.builder()
                                   .withName("Frozen Sqft")
                                   .withColumn(FoodmartMappingSupplier.FROZEN_SQFT_COLUMN_IN_STORE)
-                                  .withDataType(DataType.NUMERIC)
+                                  .withDataType(InternalDataType.NUMERIC)
                                   .build(),
                               MemberPropertyMappingImpl.builder()
                                   .withName("Meat Sqft")
                                   .withColumn(FoodmartMappingSupplier.MEAT_SQFT_COLUMN_IN_STORE)
-                                  .withDataType(DataType.NUMERIC)
+                                  .withDataType(InternalDataType.NUMERIC)
                                   .build(),
                               MemberPropertyMappingImpl.builder()
                                   .withName("Has coffee bar")
                                   .withColumn(FoodmartMappingSupplier.COFFEE_BAR_COLUMN_IN_STORE)
-                                  .withDataType(DataType.BOOLEAN)
+                                  .withDataType(InternalDataType.BOOLEAN)
                                   .build(),
                               MemberPropertyMappingImpl.builder()
                                   .withName("Street address")
                                   .withColumn(FoodmartMappingSupplier.STREET_ADDRESS_COLUMN_IN_STORE)
-                                  .withDataType(DataType.STRING)
+                                  .withDataType(InternalDataType.STRING)
                                   .build()
                         		  ))
                           .build()

@@ -40,6 +40,7 @@ import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
@@ -2887,10 +2888,10 @@ class TestAggregationManager extends BatchTestCase {
                         .withAggregatorType(MeasureAggregatorType.SUM)
                         .withFormatString("Standard")
                         .build();
-                ColumnMappingImpl salesRegion = ColumnMappingImpl.builder().withName("sales_region").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnMappingImpl salesCity = ColumnMappingImpl.builder().withName("sales_city").withType("VARCHAR").withCharOctetLength(30).build();
-                ColumnMappingImpl salesDistrictId = ColumnMappingImpl.builder().withName("sales_district_id").withType("INTEGER").build();
-                ColumnMappingImpl regionId = ColumnMappingImpl.builder().withName("region_id").withType("INTEGER").build();
+                ColumnMappingImpl salesRegion = ColumnMappingImpl.builder().withName("sales_region").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                ColumnMappingImpl salesCity = ColumnMappingImpl.builder().withName("sales_city").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                ColumnMappingImpl salesDistrictId = ColumnMappingImpl.builder().withName("sales_district_id").withType(ColumnDataType.INTEGER).build();
+                ColumnMappingImpl regionId = ColumnMappingImpl.builder().withName("region_id").withType(ColumnDataType.INTEGER).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 salesRegion, salesCity, salesDistrictId, regionId

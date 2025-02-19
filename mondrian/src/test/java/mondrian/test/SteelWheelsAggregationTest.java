@@ -21,7 +21,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
@@ -87,7 +87,7 @@ class SteelWheelsAggregationTest {
     .withName("Name")
     .withVisible(true)
     .withColumn(SteelwheelsSupplier.CONTACTLASTNAME_COLUMN_IN_CUSTOMER_W_TER)
-    .withType(DataType.STRING)
+    .withType(InternalDataType.STRING)
     .withUniqueMembers(false)
     .withLevelType(LevelType.REGULAR)
     .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -98,7 +98,7 @@ class SteelWheelsAggregationTest {
     .withName("Address")
     .withVisible(true)
     .withColumn(SteelwheelsSupplier.ADDRESSLINE1_COLUMN_IN_CUSTOMER_W_TER)
-    .withType(DataType.STRING)
+    .withType(InternalDataType.STRING)
     .withUniqueMembers(false)
     .withLevelType(LevelType.REGULAR)
     .withHideMemberIfType(HideMemberIfType.NEVER)

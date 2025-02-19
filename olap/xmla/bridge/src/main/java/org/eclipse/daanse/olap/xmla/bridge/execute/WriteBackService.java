@@ -57,7 +57,7 @@ public class WriteBackService {
 
     public void commit(Scenario scenario, Connection con, String userId) {
         if (scenario.getWriteBackTable().isPresent()) {
-        	
+
             RolapWritebackTable writebackTable = scenario.getWriteBackTable().get();
             DataSource dataSource = con.getDataSource();
             Dialect dialect = con.getContext().getDialect();
@@ -84,10 +84,10 @@ public class WriteBackService {
                         dialect.quote(sql, en.getValue().getValue(), en.getValue().getKey());
                     }
                     sql.append(", ");
-                    dialect.quote(sql, UUID.randomUUID(), Datatype.STRING);
+                    dialect.quote(sql, UUID.randomUUID(), Datatype.VARCHAR);
                     if (userId != null) {
                         sql.append(", ");
-                        dialect.quote(sql, userId, Datatype.STRING);
+                        dialect.quote(sql, userId, Datatype.VARCHAR);
                     }
                     sql.append(")");
                     statement.execute(sql.toString());
@@ -364,7 +364,7 @@ public class WriteBackService {
                             }
                         }
                         if (column instanceof RolapWritebackAttribute rolapWritebackAttribute) {
-                            mRes.put(rolapWritebackAttribute.getColumn().getName(), Map.entry(Datatype.STRING, key));
+                            mRes.put(rolapWritebackAttribute.getColumn().getName(), Map.entry(Datatype.VARCHAR, key));
                         }
                     }
                     res.add(mRes);
@@ -382,7 +382,7 @@ public class WriteBackService {
                             }
                         }
                         if (column instanceof RolapWritebackAttribute rolapWritebackAttribute) {
-                            mRes.put(rolapWritebackAttribute.getColumn().getName(), Map.entry(Datatype.STRING, key));
+                            mRes.put(rolapWritebackAttribute.getColumn().getName(), Map.entry(Datatype.VARCHAR, key));
                         }
                     }
                     res.add(mRes);

@@ -20,7 +20,8 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
@@ -45,62 +46,62 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
 
     //## ColumnNames: prod_id,store_id,amount
     //## ColumnTypes: INTEGER,INTEGER,INTEGER
-    ColumnMappingImpl prodIdFact = ColumnMappingImpl.builder().withName("prod_id").withType("INTEGER").build();
-    ColumnMappingImpl storeIdFact = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
-    ColumnMappingImpl amountFact = ColumnMappingImpl.builder().withName("amount").withType("INTEGER").build();
+    ColumnMappingImpl prodIdFact = ColumnMappingImpl.builder().withName("prod_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl storeIdFact = ColumnMappingImpl.builder().withName("store_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl amountFact = ColumnMappingImpl.builder().withName("amount").withType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl fact = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("fact")
             .withColumns(List.of(prodIdFact, storeIdFact, amountFact))).build();
     //## TableName: store_csv
     //## ColumnNames: store_id,value
     //## ColumnTypes: INTEGER,INTEGER
-    ColumnMappingImpl storeIdStoreCsv = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
-    ColumnMappingImpl valueStoreCsv = ColumnMappingImpl.builder().withName("value").withType("INTEGER").build();
+    ColumnMappingImpl storeIdStoreCsv = ColumnMappingImpl.builder().withName("store_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl valueStoreCsv = ColumnMappingImpl.builder().withName("value").withType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl storeCsv = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("store_csv")
             .withColumns(List.of(storeIdStoreCsv, valueStoreCsv))).build();
     //## TableName: product_csv
     //## ColumnNames: prod_id,prod_cat,name1,color
     //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30),VARCHAR(30)
-    ColumnMappingImpl prodIdProductCsv = ColumnMappingImpl.builder().withName("prod_id").withType("INTEGER").build();
-    ColumnMappingImpl prodCatProductCsv = ColumnMappingImpl.builder().withName("prod_cat").withType("INTEGER").build();
-    ColumnMappingImpl name1ProductCsv = ColumnMappingImpl.builder().withName("name1").withType("VARCHAR").withCharOctetLength(30).build();
-    ColumnMappingImpl colorProductCsv = ColumnMappingImpl.builder().withName("color").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnMappingImpl prodIdProductCsv = ColumnMappingImpl.builder().withName("prod_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl prodCatProductCsv = ColumnMappingImpl.builder().withName("prod_cat").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl name1ProductCsv = ColumnMappingImpl.builder().withName("name1").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl colorProductCsv = ColumnMappingImpl.builder().withName("color").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalTableMappingImpl productCsv = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("product_csv")
             .withColumns(List.of(prodIdProductCsv, prodCatProductCsv))).build();
     //## TableName: cat
     //## ColumnNames: cat,name3,ord,cap
     //## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30)
-    ColumnMappingImpl catCat = ColumnMappingImpl.builder().withName("cat").withType("INTEGER").build();
-    ColumnMappingImpl name3Cat = ColumnMappingImpl.builder().withName("name3").withType("VARCHAR").withCharOctetLength(30).build();
-    ColumnMappingImpl ordCat = ColumnMappingImpl.builder().withName("ord").withType("INTEGER").build();
-    ColumnMappingImpl capCat = ColumnMappingImpl.builder().withName("cap").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnMappingImpl catCat = ColumnMappingImpl.builder().withName("cat").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl name3Cat = ColumnMappingImpl.builder().withName("name3").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl ordCat = ColumnMappingImpl.builder().withName("ord").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl capCat = ColumnMappingImpl.builder().withName("cap").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalTableMappingImpl cat = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("cat")
             .withColumns(List.of(catCat, name3Cat, ordCat, capCat))).build();
     //## TableName: product_cat
     //## ColumnNames: prod_cat,cat,name2,ord,cap
     //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30),INTEGER,VARCHAR(30)
-    ColumnMappingImpl prodCatProductCat = ColumnMappingImpl.builder().withName("prod_cat").withType("INTEGER").build();
-    ColumnMappingImpl catProductCat = ColumnMappingImpl.builder().withName("cat").withType("INTEGER").build();
-    ColumnMappingImpl name2ProductCat = ColumnMappingImpl.builder().withName("name2").withType("VARCHAR").withCharOctetLength(30).build();
-    ColumnMappingImpl ordProductCat = ColumnMappingImpl.builder().withName("ord").withType("INTEGER").build();
-    ColumnMappingImpl capProductCat = ColumnMappingImpl.builder().withName("cap").withType("INTEGER").build();
+    ColumnMappingImpl prodCatProductCat = ColumnMappingImpl.builder().withName("prod_cat").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl catProductCat = ColumnMappingImpl.builder().withName("cat").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl name2ProductCat = ColumnMappingImpl.builder().withName("name2").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl ordProductCat = ColumnMappingImpl.builder().withName("ord").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl capProductCat = ColumnMappingImpl.builder().withName("cap").withType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl productCat = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("product_cat")
             .withColumns(List.of(catCat, name3Cat, ordCat, capCat))).build();
 
     //## ColumnNames: category,product_category,amount,fact_count
     //## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,INTEGER
-    ColumnMappingImpl categoryTestLpXxxFact = ColumnMappingImpl.builder().withName("category").withType("INTEGER").build();
-    ColumnMappingImpl productCategoryTestLpXxxFact = ColumnMappingImpl.builder().withName("product_category").withType("VARCHAR").withCharOctetLength(30).build();
-    ColumnMappingImpl amountTestLpXxxFact = ColumnMappingImpl.builder().withName("amount").withType("INTEGER").build();
-    ColumnMappingImpl factCountTestLpXxxFact = ColumnMappingImpl.builder().withName("fact_count").withType("INTEGER").build();
+    ColumnMappingImpl categoryTestLpXxxFact = ColumnMappingImpl.builder().withName("category").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl productCategoryTestLpXxxFact = ColumnMappingImpl.builder().withName("product_category").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl amountTestLpXxxFact = ColumnMappingImpl.builder().withName("amount").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl factCountTestLpXxxFact = ColumnMappingImpl.builder().withName("fact_count").withType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl testLpXxxFact = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("test_lp_xxx_fact")
             .withColumns(List.of(categoryTestLpXxxFact, productCategoryTestLpXxxFact, amountTestLpXxxFact, factCountTestLpXxxFact))).build();
 
     //## TableName: test_lp_xx2_fact
     //## ColumnNames: prodname,amount,fact_count
     //## ColumnTypes: VARCHAR(30),INTEGER,INTEGER
-    ColumnMappingImpl prodnameTestLpXx2Fact = ColumnMappingImpl.builder().withName("prodname").withType("VARCHAR").withCharOctetLength(30).build();
-    ColumnMappingImpl amountTestLpXx2Fact = ColumnMappingImpl.builder().withName("amount").withType("INTEGER").build();
-    ColumnMappingImpl factCountTestLpXx2Fact = ColumnMappingImpl.builder().withName("fact_count").withType("INTEGER").build();
+    ColumnMappingImpl prodnameTestLpXx2Fact = ColumnMappingImpl.builder().withName("prodname").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl amountTestLpXx2Fact = ColumnMappingImpl.builder().withName("amount").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl factCountTestLpXx2Fact = ColumnMappingImpl.builder().withName("fact_count").withType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl testLpXx2Fact = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("test_lp_xx2_fact")
             .withColumns(List.of(prodnameTestLpXx2Fact, amountTestLpXx2Fact, factCountTestLpXx2Fact))).build();
 
@@ -275,7 +276,7 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
                                     .withCaptionColumn(capCat)
                                     .withNameColumn(name3Cat)
                                     .withUniqueMembers(false)
-                                    .withType(DataType.NUMERIC)
+                                    .withType(InternalDataType.NUMERIC)
                                     .build(),
                                 LevelMappingImpl.builder()
                                     .withName("Product Category")

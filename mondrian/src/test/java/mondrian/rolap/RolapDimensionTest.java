@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -59,7 +59,7 @@ class RolapDimensionTest {
     	    .withVisible(true)
             .withMemberProperties(List.of())
             .withUniqueMembers(true)
-            .withType(DataType.STRING)
+            .withType(InternalDataType.STRING)
             .withHideMemberIfType(HideMemberIfType.NEVER)
             .withLevelType(LevelType.REGULAR)
     		.build();

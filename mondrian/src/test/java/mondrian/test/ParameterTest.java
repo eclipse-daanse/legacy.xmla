@@ -46,7 +46,7 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.ParameterMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.ParameterMappingImpl;
 import org.junit.jupiter.api.Disabled;
@@ -1257,7 +1257,7 @@ class ParameterTest {
                 result.addAll(super.catalogParameters(schema));
                 result.add(ParameterMappingImpl.builder()
                     .withName("prop")
-                    .withType(DataType.STRING)
+                    .withType(InternalDataType.STRING)
                     .withDefaultValue("'foo bar'")
                     .build());
                 return result;
@@ -1294,17 +1294,17 @@ class ParameterTest {
                 result.addAll(super.catalogParameters(schema));
                 result.add(ParameterMappingImpl.builder()
                     .withName("foo")
-                    .withType(DataType.NUMERIC)
+                    .withType(InternalDataType.NUMERIC)
                     .withDefaultValue("1")
                     .build());
                 result.add(ParameterMappingImpl.builder()
                         .withName("bar")
-                        .withType(DataType.NUMERIC)
+                        .withType(InternalDataType.NUMERIC)
                         .withDefaultValue("2")
                         .build());
                 result.add(ParameterMappingImpl.builder()
                         .withName("foo")
-                        .withType(DataType.NUMERIC)
+                        .withType(InternalDataType.NUMERIC)
                         .withDefaultValue("3")
                         .build());
 
@@ -1348,7 +1348,7 @@ class ParameterTest {
                 result.addAll(super.catalogParameters(schema));
                 result.add(ParameterMappingImpl.builder()
                     .withName("foo")
-                    .withType(DataType.NUMERIC)
+                    .withType(InternalDataType.NUMERIC)
                     .withDefaultValue("1")
                     .build());
                 return result;
@@ -1388,7 +1388,7 @@ class ParameterTest {
                 result.addAll(super.catalogParameters(schema));
                 result.add(ParameterMappingImpl.builder()
                     .withName("Product Current Member")
-                    .withType(DataType.NUMERIC)
+                    .withType(InternalDataType.NUMERIC)
                     .withDefaultValue("[Product].DefaultMember.Children(2)")
                     .build());
                 return result;
@@ -1430,7 +1430,7 @@ class ParameterTest {
                 result.addAll(super.catalogParameters(schema));
                 result.add(ParameterMappingImpl.builder()
                     .withName("Customer Current Member")
-                    //.withType(DataType.NUMERIC) TODO "Member"
+                    //.withType(InternalDataType.NUMERIC) TODO "Member"
                     .withDefaultValue("[Customers].DefaultMember.Children.Item(2)")
                     .build());
                 return result;

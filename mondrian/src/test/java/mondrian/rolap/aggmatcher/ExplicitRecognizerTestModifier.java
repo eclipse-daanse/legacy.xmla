@@ -20,7 +20,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
@@ -188,7 +188,7 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
                         	MemberPropertyMappingImpl.builder()
                                 .withName("Street address")
                                 .withColumn(FoodmartMappingSupplier.STREET_ADDRESS_COLUMN_IN_STORE)
-                                .withDataType(DataType.STRING)
+                                .withDataType(InternalDataType.STRING)
                                 .build()
                         ))
                         .build()
@@ -264,7 +264,7 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
                                             LevelMappingImpl.builder()
                                                 .withName("Year")
                                                 .withColumn((ColumnMappingImpl) getYearCol())
-                                                .withType(DataType.NUMERIC)
+                                                .withType(InternalDataType.NUMERIC)
                                                 .withUniqueMembers(true)
                                                 .withLevelType(LevelType.TIME_YEARS)
                                                 .build(),
@@ -281,7 +281,7 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
                                                 .withOrdinalColumn((ColumnMappingImpl) getMonthOrdinalCol())
                                                 .withNameColumn((ColumnMappingImpl) getMonthNameCol())
                                                 .withUniqueMembers(false)
-                                                .withType(DataType.NUMERIC)
+                                                .withType(InternalDataType.NUMERIC)
                                                 .withLevelType(LevelType.TIME_MONTHS)
                                                 .withMemberProperties(getMonthProp())
                                                 .build()

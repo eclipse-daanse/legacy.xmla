@@ -37,7 +37,8 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
@@ -271,7 +272,7 @@ public class SchemaModifiers {
                         						.withName("Store Type")
                         						.withVisible(true)
                         						.withColumn(FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE)
-                        						.withType(DataType.STRING)
+                        						.withType(InternalDataType.STRING)
                         						.withUniqueMembers(true)
                         						.withLevelType(LevelType.REGULAR)
                         						.withHideMemberIfType(HideMemberIfType.NEVER)
@@ -302,7 +303,7 @@ public class SchemaModifiers {
                         						.withName("Has coffee bar")
                         						.withVisible(true)
                         						.withColumn(FoodmartMappingSupplier.COFFEE_BAR_COLUMN_IN_STORE)
-                        						.withType(DataType.BOOLEAN)
+                        						.withType(InternalDataType.BOOLEAN)
                         						.withUniqueMembers(true)
                         						.withLevelType(LevelType.REGULAR)
                         						.withHideMemberIfType(HideMemberIfType.NEVER)
@@ -1386,7 +1387,7 @@ public class SchemaModifiers {
                 LevelMappingImpl level1 = LevelMappingImpl
                     .builder()
                     .withName("Closure")
-                    .withType(DataType.NUMERIC)
+                    .withType(InternalDataType.NUMERIC)
                     .withUniqueMembers(false)
                     .withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE)
                     .withColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
@@ -1394,7 +1395,7 @@ public class SchemaModifiers {
                 LevelMappingImpl level2 = LevelMappingImpl
                     .builder()
                     .withName("Employee")
-                    .withType(DataType.NUMERIC)
+                    .withType(InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
                     .withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE)
                     .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
@@ -1479,7 +1480,7 @@ public class SchemaModifiers {
                 LevelMappingImpl level2 = LevelMappingImpl
                     .builder()
                     .withName("Employee Id")
-                    .withType(DataType.NUMERIC)
+                    .withType(InternalDataType.NUMERIC)
                     .withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
                     .withUniqueMembers(true)
                     .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
@@ -1574,7 +1575,7 @@ public class SchemaModifiers {
     	                .withLevels(List.of(
                             LevelMappingImpl.builder()
                                 .withName("Employee Id")
-                                .withType(DataType.NUMERIC)
+                                .withType(InternalDataType.NUMERIC)
                                 .withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
                                 .withUniqueMembers(true)
                                 .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
@@ -1763,7 +1764,7 @@ public class SchemaModifiers {
                 LevelMappingImpl level = LevelMappingImpl
                     .builder()
                     .withName("Employee Id")
-                    .withType(DataType.NUMERIC)
+                    .withType(InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
                     .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                     .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
@@ -1854,7 +1855,7 @@ public class SchemaModifiers {
                 LevelMappingImpl level = LevelMappingImpl
                     .builder()
                     .withName("Employee Id")
-                    .withType(DataType.NUMERIC)
+                    .withType(InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
                     .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                     .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
@@ -1989,7 +1990,7 @@ public class SchemaModifiers {
                                 	.withLevels(List.of(
                                 		LevelMappingImpl.builder()
                                         	.withName("Employee Id")
-                                        	.withType(DataType.NUMERIC)
+                                        	.withType(InternalDataType.NUMERIC)
                                         	.withUniqueMembers(true)
                                         	.withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                         	.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
@@ -2095,7 +2096,7 @@ public class SchemaModifiers {
                         				.withLevels(List.of(
                         					LevelMappingImpl.builder()
                         						.withName("Employee Id")
-                        						.withType(DataType.NUMERIC)
+                        						.withType(InternalDataType.NUMERIC)
                         						.withUniqueMembers(true)
                         						.withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                         						.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
@@ -2171,7 +2172,7 @@ public class SchemaModifiers {
                 .withLevels(List.of(
                     LevelMappingImpl.builder()
                         .withName("Employee Name")
-                        .withType(DataType.NUMERIC)
+                        .withType(InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                         .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
@@ -2361,7 +2362,7 @@ public class SchemaModifiers {
                         				.withLevels(List.of(
                         					LevelMappingImpl.builder()
                         					.withName("Employee Id")
-                        					.withType(DataType.NUMERIC)
+                        					.withType(InternalDataType.NUMERIC)
                         					.withUniqueMembers(true)
                         					.withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                         					.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
@@ -2446,7 +2447,7 @@ public class SchemaModifiers {
                             			.withLevels(List.of(
                             				LevelMappingImpl.builder()
                             				.withName("Employee Id")
-                            				.withType(DataType.NUMERIC)
+                            				.withType(InternalDataType.NUMERIC)
                             				.withUniqueMembers(true)
                             				.withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                             				.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
@@ -2536,15 +2537,15 @@ public class SchemaModifiers {
             + "  <Cube name='Sales_Bug_441' cache='true' enabled='true'>\n"
             + "    <Table name='sales_fact_1997'/>\n"
             + "    <DimensionUsage source='Employee' name='Employee' foreignKey='store_id' highCardinality='false'/>\n"
-            + "    <Measure name='Store Sales' column='store_sales' datatype='Numeric' formatString='#,###.00' aggregator='sum' visible='true'/>\n"
+            + "    <Measure name='Store Sales' column='store_sales' InternalDataType='Numeric' formatString='#,###.00' aggregator='sum' visible='true'/>\n"
             + "  </Cube>\n"
             + "</Schema>");
 
          */
 
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
-            ColumnMappingImpl storeId = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
-            ColumnMappingImpl employeeId = ColumnMappingImpl.builder().withName("employee_id").withType("INTEGER").build();
+            ColumnMappingImpl storeId = ColumnMappingImpl.builder().withName("store_id").withType(ColumnDataType.INTEGER).build();
+            ColumnMappingImpl employeeId = ColumnMappingImpl.builder().withName("employee_id").withType(ColumnDataType.INTEGER).build();
             InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
             .withColumns(List.of(storeId, employeeId))
             .withRows(List.of(
@@ -2604,7 +2605,7 @@ public class SchemaModifiers {
                                 .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
                                 .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                                 .withNullParentValue("nullParentValue")
-                                .withType(DataType.INTEGER)
+                                .withType(InternalDataType.INTEGER)
                                 .withUniqueMembers(true)
                                 .withLevelType(LevelType.REGULAR)
                                 .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -2641,7 +2642,7 @@ public class SchemaModifiers {
                                         MeasureMappingImpl.builder()
                                             .withName("Store Sales")
                                             .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                            .withDatatype(DataType.NUMERIC)
+                                            .withDatatype(InternalDataType.NUMERIC)
                                             .withFormatString("#,###.00")
                                             .withAggregatorType(MeasureAggregatorType.SUM)
                                             .withVisible(true)
@@ -2926,7 +2927,7 @@ public class SchemaModifiers {
                 								LevelMappingImpl.builder()
                 									.withName("Year")
                 									.withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                									.withType(DataType.NUMERIC)
+                									.withType(InternalDataType.NUMERIC)
                 									.withUniqueMembers(true)
                 									.withLevelType(LevelType.TIME_YEARS)
                 									.build(),
@@ -2940,7 +2941,7 @@ public class SchemaModifiers {
                 									.withName("Month")
                 									.withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                 									.withUniqueMembers(false)
-                									.withType(DataType.NUMERIC)
+                									.withType(InternalDataType.NUMERIC)
                 									.withOrdinalColumn(FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY)
                 									.withLevelType(LevelType.TIME_MONTHS)
                 									.build()
@@ -2964,7 +2965,7 @@ public class SchemaModifiers {
                         						.withName("Month")
                         						.withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                         						.withUniqueMembers(false)
-                        						.withType(DataType.NUMERIC)
+                        						.withType(InternalDataType.NUMERIC)
                         						.withOrdinalColumn(FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY)
                         						.withLevelType(LevelType.TIME_MONTHS)
                         						.build()
@@ -3058,7 +3059,7 @@ public class SchemaModifiers {
                                 LevelMappingImpl.builder()
                                     .withName("Store Name")
                                     .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
-                                    .withType(DataType.NUMERIC)
+                                    .withType(InternalDataType.NUMERIC)
                                     .withNameColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                                     .withUniqueMembers(false)
                                     .build()
@@ -3179,17 +3180,17 @@ public class SchemaModifiers {
                                         MemberPropertyMappingImpl.builder()
                                             .withName("Store Sqft")
                                             .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                            .withDataType(DataType.NUMERIC)
+                                            .withDataType(InternalDataType.NUMERIC)
                                             .build(),
                                         MemberPropertyMappingImpl.builder()
                                             .withName("Has coffee bar")
                                             .withColumn(FoodmartMappingSupplier.COFFEE_BAR_COLUMN_IN_STORE)
-                                            .withDataType(DataType.BOOLEAN)
+                                            .withDataType(InternalDataType.BOOLEAN)
                                             .build(),
                                         MemberPropertyMappingImpl.builder()
                                             .withName("Street address")
                                             .withColumn(FoodmartMappingSupplier.STREET_ADDRESS_COLUMN_IN_STORE)
-                                            .withDataType(DataType.STRING)
+                                            .withDataType(InternalDataType.STRING)
                                             .build()
                                     ))
                                     .build()
@@ -3416,7 +3417,7 @@ public class SchemaModifiers {
                             			LevelMappingImpl.builder()
                                             .withName("Year")
                                             .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                            .withType(DataType.NUMERIC)
+                                            .withType(InternalDataType.NUMERIC)
                                             .withUniqueMembers(true)
                                             .withLevelType(LevelType.TIME_YEARS)
                                             .build(),
@@ -3430,7 +3431,7 @@ public class SchemaModifiers {
                                             .withName("Month")
                                             .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                                             .withUniqueMembers(false)
-                                            .withType(DataType.NUMERIC)
+                                            .withType(InternalDataType.NUMERIC)
                                             .withLevelType(LevelType.TIME_MONTHS)
                                             .build()
                             	))
@@ -3584,13 +3585,13 @@ public class SchemaModifiers {
 		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
 		.withLevels(List.of(
 			LevelMappingImpl.builder()
-				.withName("Year").withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY).withType(DataType.NUMERIC).withUniqueMembers(true).withLevelType(LevelType.TIME_YEARS)
+				.withName("Year").withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY).withType(InternalDataType.NUMERIC).withUniqueMembers(true).withLevelType(LevelType.TIME_YEARS)
 				.build(),
 			LevelMappingImpl.builder()
 				.withName("Quarter").withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false).withLevelType(LevelType.TIME_QUARTERS)
 				.build(),
 			LevelMappingImpl.builder()
-				.withName("Month").withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false).withType(DataType.NUMERIC).withLevelType(LevelType.TIME_MONTHS)
+				.withName("Month").withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false).withType(InternalDataType.NUMERIC).withLevelType(LevelType.TIME_MONTHS)
 				.build()
 		))
 		.build();
@@ -3754,7 +3755,7 @@ public class SchemaModifiers {
 		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
 		.withLevels(List.of(
 			LevelMappingImpl.builder()
-				.withName("Year").withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY).withType(DataType.NUMERIC).withUniqueMembers(true).withLevelType(LevelType.TIME_YEARS)
+				.withName("Year").withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY).withType(InternalDataType.NUMERIC).withUniqueMembers(true).withLevelType(LevelType.TIME_YEARS)
 				.build(),
 			LevelMappingImpl.builder()
 				.withName("Quarter").withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false).withLevelType(LevelType.TIME_QUARTERS)
@@ -4381,7 +4382,7 @@ public class SchemaModifiers {
                                         .withVisible(true)
                                         .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                         .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                        .withType(DataType.INTEGER)
+                                        .withType(InternalDataType.INTEGER)
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -4398,7 +4399,7 @@ public class SchemaModifiers {
                                         .withVisible(true)
                                         .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                         .withColumn(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
-                                        .withType(DataType.STRING)
+                                        .withType(InternalDataType.STRING)
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -4415,7 +4416,7 @@ public class SchemaModifiers {
                                         .withVisible(true)
                                         .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                         .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                        .withType(DataType.INTEGER)
+                                        .withType(InternalDataType.INTEGER)
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -4694,7 +4695,7 @@ public class SchemaModifiers {
                                                                     .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
                                                                     .withNameColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
                                                                     .withOrdinalColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                                    .withType(DataType.NUMERIC)
+                                                                    .withType(InternalDataType.NUMERIC)
                                                                     .withUniqueMembers(true)
                                                                     .withLevelType(LevelType.TIME_YEARS)
                                                                     .build(),
@@ -4824,7 +4825,7 @@ public class SchemaModifiers {
                                                                     .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                                                                     .withNameColumn(FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY)
                                                                     .withUniqueMembers(false)
-                                                                    .withType(DataType.NUMERIC)
+                                                                    .withType(InternalDataType.NUMERIC)
                                                                     .withLevelType(LevelType.TIME_MONTHS)
                                                                     .build(),
                                                                 LevelMappingImpl.builder()
@@ -4832,7 +4833,7 @@ public class SchemaModifiers {
                                                                     .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                                                                     .withNameColumn(FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY)
                                                                     .withUniqueMembers(false)
-                                                                    .withType(DataType.NUMERIC)
+                                                                    .withType(InternalDataType.NUMERIC)
                                                                     .withLevelType(LevelType.TIME_MONTHS)
                                                                     .build()
                                                             ))
@@ -4912,7 +4913,7 @@ public class SchemaModifiers {
 		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
 		.withLevels(List.of(
 			LevelMappingImpl.builder()
-				.withName("Year").withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY).withType(DataType.NUMERIC).withUniqueMembers(true).withLevelType(LevelType.TIME_YEARS)
+				.withName("Year").withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY).withType(InternalDataType.NUMERIC).withUniqueMembers(true).withLevelType(LevelType.TIME_YEARS)
 				.build(),
 			LevelMappingImpl.builder()
 				.withName("Quarter").withUniqueMembers(false).withLevelType(LevelType.TIME_QUARTERS)
@@ -5211,7 +5212,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Year")
                                                         .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                        .withType(DataType.NUMERIC)
+                                                        .withType(InternalDataType.NUMERIC)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.TIME_YEARS)
                                                         .build(),
@@ -5343,7 +5344,7 @@ public class SchemaModifiers {
                                                         LevelMappingImpl.builder()
                                                             .withName("Year")
                                                             .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                            .withType(DataType.NUMERIC)
+                                                            .withType(InternalDataType.NUMERIC)
                                                             .withUniqueMembers(true)
                                                             .withLevelType(LevelType.TIME_YEARS)
                                                             .build(),
@@ -5474,7 +5475,7 @@ public class SchemaModifiers {
                                                         LevelMappingImpl.builder()
                                                             .withName("Year")
                                                             .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                            .withType(DataType.NUMERIC)
+                                                            .withType(InternalDataType.NUMERIC)
                                                             .withUniqueMembers(true)
                                                             .withLevelType(LevelType.TIME_YEARS)
                                                             .build(),
@@ -6498,7 +6499,7 @@ public class SchemaModifiers {
                     LevelMappingImpl.builder()
                         .withName("Store Sqft")
                         .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                        .withType(DataType.NUMERIC)
+                        .withType(InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .build()
                 ))
@@ -6947,7 +6948,7 @@ public class SchemaModifiers {
                             .withLevels(List.of(
                                 LevelMappingImpl.builder()
                                     .withName("Employee Id")
-                                    .withType(DataType.NUMERIC)
+                                    .withType(InternalDataType.NUMERIC)
                                     .withUniqueMembers(true)
                                     .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                     .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
@@ -7116,7 +7117,7 @@ public class SchemaModifiers {
                     LevelMappingImpl.builder()
                         .withName("Year")
                         .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                        .withType(DataType.NUMERIC)
+                        .withType(InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .withLevelType(LevelType.TIME_YEARS)
                         .build(),
@@ -7617,7 +7618,7 @@ public class SchemaModifiers {
                 								.withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE_RAGGED)
                 								.withCaptionColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE_RAGGED)
                 								.withUniqueMembers(true)
-                								.withType(DataType.INTEGER)
+                								.withType(InternalDataType.INTEGER)
                 								.build()
                 						))
                 						.build()
@@ -7646,7 +7647,7 @@ public class SchemaModifiers {
                 								.withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                 								.withCaptionColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                 								.withUniqueMembers(true)
-                								.withType(DataType.NUMERIC)
+                								.withType(InternalDataType.NUMERIC)
                 								.build()
                 						))
                 						.build()
@@ -8062,14 +8063,14 @@ public class SchemaModifiers {
                     LevelMappingImpl.builder()
                         .withName("Year")
                         .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                        .withType(DataType.NUMERIC)
+                        .withType(InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .withLevelType(LevelType.TIME_YEARS)
                         .build(),
                     LevelMappingImpl.builder()
                         .withName("Quarter")
                         .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY)
-                        .withType(DataType.STRING)
+                        .withType(InternalDataType.STRING)
                         .withUniqueMembers(false)
                         .withLevelType(LevelType.TIME_QUARTERS)
                         .build()
@@ -8348,7 +8349,7 @@ public class SchemaModifiers {
                 		MeasureMappingImpl.builder()
                 			.withName("typeMeasure")
                 			.withAggregatorType(aggregator)
-                			.withDatatype(type != null ? DataType.fromValue(type) : null)
+                			.withDatatype(type != null ? InternalDataType.fromValue(type) : null)
                 			.withMeasureExpression(SQLExpressionMappingImpl.builder()
                 					.withSqls(List.of(
                 						SqlStatementMappingImpl.builder()
@@ -8410,7 +8411,7 @@ public class SchemaModifiers {
             List<DimensionConnectorMapping> result = new ArrayList<>();
             result.addAll(super.cubeDimensionConnectors(cube));
             if ("Sales".equals(cube.getName())) {
-            	ColumnMappingImpl nuStoreId = ColumnMappingImpl.builder().withName("NuStore_id").withType("INTEGER").withTable(FoodmartMappingSupplier.STORE_TABLE).build();
+            	ColumnMappingImpl nuStoreId = ColumnMappingImpl.builder().withName("NuStore_id").withType(ColumnDataType.INTEGER).withTable(FoodmartMappingSupplier.STORE_TABLE).build();
             	result.add(DimensionConnectorMappingImpl.builder()
             		.withOverrideDimensionName("NuStore")
             		.withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
@@ -8454,32 +8455,32 @@ public class SchemaModifiers {
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("NuStore Sqft")
                                                         .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Grocery Sqft")
                                                         .withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Frozen Sqft")
                                                         .withColumn(FoodmartMappingSupplier.FROZEN_SQFT_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Meat Sqft")
                                                         .withColumn(FoodmartMappingSupplier.MEAT_SQFT_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Has coffee bar")
                                                         .withColumn(FoodmartMappingSupplier.COFFEE_BAR_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.BOOLEAN)
+                                                        .withDataType(InternalDataType.BOOLEAN)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Street address")
                                                         .withColumn(FoodmartMappingSupplier.STREET_ADDRESS_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.STRING)
+                                                        .withDataType(InternalDataType.STRING)
                                                         .build()
                                                  ))
                                                 .build()
@@ -8513,32 +8514,32 @@ public class SchemaModifiers {
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("NuStore Sqft")
                                                         .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Grocery Sqft")
                                                         .withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Frozen Sqft")
                                                         .withColumn(FoodmartMappingSupplier.FROZEN_SQFT_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Meat Sqft")
                                                         .withColumn(FoodmartMappingSupplier.MEAT_SQFT_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Has coffee bar")
                                                         .withColumn(FoodmartMappingSupplier.COFFEE_BAR_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.BOOLEAN)
+                                                        .withDataType(InternalDataType.BOOLEAN)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Street address")
                                                         .withColumn(FoodmartMappingSupplier.STREET_ADDRESS_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.STRING)
+                                                        .withDataType(InternalDataType.STRING)
                                                         .build()
                                                  ))
                                                 .build()
@@ -8579,7 +8580,7 @@ public class SchemaModifiers {
             List<DimensionConnectorMapping> result = new ArrayList<>();
             result.addAll(super.cubeDimensionConnectors(cube));
             if ("Sales".equals(cube.getName())) {
-            	ColumnMappingImpl nuStoreId = ColumnMappingImpl.builder().withName("NuStore_id").withType("INTEGER").withTable(FoodmartMappingSupplier.STORE_TABLE).build();
+            	ColumnMappingImpl nuStoreId = ColumnMappingImpl.builder().withName("NuStore_id").withType(ColumnDataType.INTEGER).withTable(FoodmartMappingSupplier.STORE_TABLE).build();
             	result.add(DimensionConnectorMappingImpl.builder()
             		.withOverrideDimensionName("NuStore")
             		.withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
@@ -8694,7 +8695,7 @@ public class SchemaModifiers {
             								//.withCaption("Account")
             								.withColumn(FoodmartMappingSupplier.ACCOUNT_NUM_COLUMN_IN_CUSTOMER)
                                             .withUniqueMembers(true)
-                                            .withType(DataType.STRING)
+                                            .withType(InternalDataType.STRING)
                                             .build()
             						))
             						.build()
@@ -8720,7 +8721,7 @@ public class SchemaModifiers {
                 								.withName("Store Name")
                 								.withColumn(FoodmartMappingSupplier.STORE_NUMBER_COLUMN_IN_STORE)
                                                 .withUniqueMembers(true)
-                                                .withType(DataType.NUMERIC)
+                                                .withType(InternalDataType.NUMERIC)
                                                 .withOrdinalColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                                                 .build()
                 						))
@@ -8823,8 +8824,8 @@ public class SchemaModifiers {
              + "</Dimension>"));
             */
 
-        ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withType("NUMERIC").build();
-        ColumnMappingImpl desc = ColumnMappingImpl.builder().withName("desc").withType("VARCHAR").build();
+        ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withType(ColumnDataType.NUMERIC).build();
+        ColumnMappingImpl desc = ColumnMappingImpl.builder().withName("desc").withType(ColumnDataType.VARCHAR).build();
         InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
         .withColumns(List.of(id, desc))
         .withRows(List.of(
@@ -8967,8 +8968,8 @@ public class SchemaModifiers {
         protected List<? extends CubeMapping> catalogCubes(CatalogMapping catalogOriginal) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.catalogCubes(catalogOriginal));
-            ColumnMappingImpl promoId = ColumnMappingImpl.builder().withName("promo_id").withType("Numeric").build();
-            ColumnMappingImpl promoName = ColumnMappingImpl.builder().withName("promo_name").withType("String").build();
+            ColumnMappingImpl promoId = ColumnMappingImpl.builder().withName("promo_id").withType(ColumnDataType.NUMERIC).build();
+            ColumnMappingImpl promoName = ColumnMappingImpl.builder().withName("promo_name").withType(ColumnDataType.VARCHAR).build();
             InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
@@ -9323,7 +9324,7 @@ public class SchemaModifiers {
         protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
             List<DimensionConnectorMapping> result = new ArrayList<>();
             result.addAll(super.cubeDimensionConnectors(cube));
-            ColumnMappingImpl foo = ColumnMappingImpl.builder().withName("foo").withType("NUMERIC").build();
+            ColumnMappingImpl foo = ColumnMappingImpl.builder().withName("foo").withType(ColumnDataType.NUMERIC).build();
             InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
             .withColumns(List.of(foo))
             .withRows(List.of()).build();
@@ -10847,7 +10848,7 @@ public class SchemaModifiers {
                                                     .withLevels(List.of(
                                                         LevelMappingImpl.builder()
                                                             .withName("Year").withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                            .withType(DataType.NUMERIC)
+                                                            .withType(InternalDataType.NUMERIC)
                                                             .withUniqueMembers(true)
                                                             .withLevelType(LevelType.TIME_YEARS)
                                                             .build(),
@@ -11121,14 +11122,14 @@ public class SchemaModifiers {
                                                         LevelMappingImpl.builder()
                                                             .withName("Year")
                                                             .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                            .withType(DataType.NUMERIC)
+                                                            .withType(InternalDataType.NUMERIC)
                                                             .withUniqueMembers(true)
                                                             .withLevelType(LevelType.TIME_YEARS)
                                                             .build(),
                                                         LevelMappingImpl.builder()
                                                             .withName("Week")
                                                             .withColumn(FoodmartMappingSupplier.WEEK_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                            .withType(DataType.NUMERIC)
+                                                            .withType(InternalDataType.NUMERIC)
                                                             .withUniqueMembers(false)
                                                             .withLevelType(LevelType.TIME_WEEKS)
                                                             .build(),
@@ -11136,7 +11137,7 @@ public class SchemaModifiers {
                                                             .withName("Day")
                                                             .withColumn(FoodmartMappingSupplier.DAY_OF_MONTH_COLUMN_TIME_BY_DAY)
                                                             .withUniqueMembers(false)
-                                                            .withType(DataType.NUMERIC)
+                                                            .withType(InternalDataType.NUMERIC)
                                                             .withLevelType(LevelType.TIME_DAYS)
                                                             .build()
                                                     ))
@@ -11244,7 +11245,7 @@ public class SchemaModifiers {
                             									LevelMappingImpl.builder()
                             										.withName("Name")
                             										.withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-                            										.withType(DataType.NUMERIC)
+                            										.withType(InternalDataType.NUMERIC)
                             										.withUniqueMembers(true)
                             										.withNameExpression(SQLExpressionMappingImpl.builder()
                             											.withSqls(List.of(
@@ -11533,7 +11534,7 @@ public class SchemaModifiers {
                             LevelMappingImpl.builder()
                                 .withName("Year")
                                 .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                .withType(DataType.NUMERIC)
+                                .withType(InternalDataType.NUMERIC)
                                 .withUniqueMembers(true)
                                 .withLevelType(LevelType.TIME_YEARS)
                                 .build(),
@@ -11547,14 +11548,14 @@ public class SchemaModifiers {
                                 .withName("Month")
                                 .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                                 .withUniqueMembers(true)
-                                .withType(DataType.NUMERIC)
+                                .withType(InternalDataType.NUMERIC)
                                 .withLevelType(LevelType.TIME_MONTHS)
                                 .build(),
                             LevelMappingImpl.builder()
                                 .withName("Day")
                                 .withColumn(FoodmartMappingSupplier.DAY_OF_MONTH_COLUMN_TIME_BY_DAY)
                                 .withUniqueMembers(false)
-                                .withType(DataType.NUMERIC)
+                                .withType(InternalDataType.NUMERIC)
                                 .withLevelType(LevelType.TIME_DAYS)
                                 .build()
                         ))
@@ -11720,7 +11721,7 @@ public class SchemaModifiers {
                                                         LevelMappingImpl.builder()
                                                             .withName("Year")
                                                             .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                            .withType(DataType.NUMERIC)
+                                                            .withType(InternalDataType.NUMERIC)
                                                             .withUniqueMembers(true)
                                                             .withLevelType(LevelType.TIME_YEARS)
                                                             .build(),
@@ -12020,8 +12021,8 @@ public class SchemaModifiers {
             + "</Schema>\n";
 
          */
-    	private static final ColumnMappingImpl foo = ColumnMappingImpl.builder().withName("foo").withType("INTEGER").build();
-    	private static final ColumnMappingImpl bar = ColumnMappingImpl.builder().withName("bar").withType("INTEGER").build();
+    	private static final ColumnMappingImpl foo = ColumnMappingImpl.builder().withName("foo").withType(ColumnDataType.INTEGER).build();
+    	private static final ColumnMappingImpl bar = ColumnMappingImpl.builder().withName("bar").withType(ColumnDataType.INTEGER).build();
 
     	private static final TableQueryMappingImpl t = TableQueryMappingImpl.builder()
     			.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
@@ -12126,7 +12127,7 @@ public class SchemaModifiers {
                 .withLevels(List.of(
                     LevelMappingImpl.builder()
                         .withName("Year").withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                        .withType(DataType.NUMERIC)
+                        .withType(InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .withLevelType(LevelType.TIME_YEARS)
                         .build(),
@@ -12138,7 +12139,7 @@ public class SchemaModifiers {
                     LevelMappingImpl.builder()
                         .withName("Month").withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                         .withUniqueMembers(false)
-                        .withType(DataType.NUMERIC)
+                        .withType(InternalDataType.NUMERIC)
                         .withLevelType(LevelType.TIME_MONTHS)
                         .build()
                 ))
@@ -12151,20 +12152,20 @@ public class SchemaModifiers {
                 .withLevels(List.of(
                     LevelMappingImpl.builder()
                         .withName("Year").withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                        .withType(DataType.NUMERIC)
+                        .withType(InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .withLevelType(LevelType.TIME_YEARS)
                         .build(),
                     LevelMappingImpl.builder()
                         .withName("Week").withColumn(FoodmartMappingSupplier.WEEK_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                         .withUniqueMembers(false)
-                        .withType(DataType.NUMERIC)
+                        .withType(InternalDataType.NUMERIC)
                         .withLevelType(LevelType.TIME_WEEKS)
                         .build(),
                     LevelMappingImpl.builder()
                         .withName("Day").withColumn(FoodmartMappingSupplier.DAY_OF_MONTH_COLUMN_TIME_BY_DAY)
                         .withUniqueMembers(false)
-                        .withType(DataType.NUMERIC)
+                        .withType(InternalDataType.NUMERIC)
                         .withLevelType(LevelType.TIME_DAYS)
                         .build()
                 ))
@@ -12742,8 +12743,8 @@ public class SchemaModifiers {
             + "</Schema>";
 
          */
-    	private static final ColumnMappingImpl storeIdX = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
-    	private static final ColumnMappingImpl valueX = ColumnMappingImpl.builder().withName("value").withType("VARCHAR").withCharOctetLength(30).build();
+    	private static final ColumnMappingImpl storeIdX = ColumnMappingImpl.builder().withName("store_id").withType(ColumnDataType.INTEGER).build();
+    	private static final ColumnMappingImpl valueX = ColumnMappingImpl.builder().withName("value").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     	//## ColumnNames: store_id,value
     	//## ColumnTypes: INTEGER,VARCHAR(30)
     	private static final PhysicalTableMappingImpl  storeX = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("store_y")
@@ -12768,8 +12769,8 @@ public class SchemaModifiers {
         ))
         .build();
 
-    	private static final ColumnMappingImpl storeIdY = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
-    	private static final ColumnMappingImpl valueY = ColumnMappingImpl.builder().withName("value").withType("VARCHAR").withCharOctetLength(30).build();
+    	private static final ColumnMappingImpl storeIdY = ColumnMappingImpl.builder().withName("store_id").withType(ColumnDataType.INTEGER).build();
+    	private static final ColumnMappingImpl valueY = ColumnMappingImpl.builder().withName("value").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     	//## ColumnNames: store_id,value
     	//## ColumnTypes: INTEGER,VARCHAR(30)
     	private static final PhysicalTableMappingImpl  storeY = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("store_y")
@@ -12800,9 +12801,9 @@ public class SchemaModifiers {
         }
 
         protected CatalogMapping modifyCatalog(CatalogMapping catalog) {
-            ColumnMappingImpl store_id_cheques = ColumnMappingImpl.builder().withName("store_id").withType("INTEGER").build();
-            ColumnMappingImpl prod_id_cheques = ColumnMappingImpl.builder().withName("prod_id").withType("INTEGER").build();
-            ColumnMappingImpl amount_cheques = ColumnMappingImpl.builder().withName("amount").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
+            ColumnMappingImpl store_id_cheques = ColumnMappingImpl.builder().withName("store_id").withType(ColumnDataType.INTEGER).build();
+            ColumnMappingImpl prod_id_cheques = ColumnMappingImpl.builder().withName("prod_id").withType(ColumnDataType.INTEGER).build();
+            ColumnMappingImpl amount_cheques = ColumnMappingImpl.builder().withName("amount").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
             PhysicalTableMappingImpl cheques = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("cheques")
                     .withColumns(List.of(
                             store_id_cheques, prod_id_cheques, amount_cheques
@@ -12810,10 +12811,10 @@ public class SchemaModifiers {
             //## TableName: agg_lp_595_cheques
             //## ColumnNames: firstprefix_value,secondprefix_value,amount,FACT_COUNT
             //## ColumnTypes: VARCHAR(30),VARCHAR(30),DECIMAL(10,2),INTEGER
-            ColumnMappingImpl firstprefixValueAggLp595Cheques = ColumnMappingImpl.builder().withName("firstprefix_value").withType("VARCHAR").withColumnSize(30).build();
-            ColumnMappingImpl secondprefixValueAggLp595Cheques = ColumnMappingImpl.builder().withName("secondprefix_value").withType("VARCHAR").withColumnSize(30).build();
-            ColumnMappingImpl amountAggLp595Cheques = ColumnMappingImpl.builder().withName("amount").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
-            ColumnMappingImpl factCountAggLp595Cheques = ColumnMappingImpl.builder().withName("FACT_COUNT").withType("INTEGER").build();
+            ColumnMappingImpl firstprefixValueAggLp595Cheques = ColumnMappingImpl.builder().withName("firstprefix_value").withType(ColumnDataType.VARCHAR).withColumnSize(30).build();
+            ColumnMappingImpl secondprefixValueAggLp595Cheques = ColumnMappingImpl.builder().withName("secondprefix_value").withType(ColumnDataType.VARCHAR).withColumnSize(30).build();
+            ColumnMappingImpl amountAggLp595Cheques = ColumnMappingImpl.builder().withName("amount").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
+            ColumnMappingImpl factCountAggLp595Cheques = ColumnMappingImpl.builder().withName("FACT_COUNT").withType(ColumnDataType.INTEGER).build();
             PhysicalTableMappingImpl aggLp595Cheques = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("agg_lp_595_cheques")
                     .withColumns(List.of(
                             firstprefixValueAggLp595Cheques, secondprefixValueAggLp595Cheques, amountAggLp595Cheques
@@ -12940,7 +12941,7 @@ public class SchemaModifiers {
            						.withName("Store ID")
            						.withVisible(true)
            						.withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
-           						.withType(DataType.STRING)
+           						.withType(InternalDataType.STRING)
            						.withUniqueMembers(true)
                                 .withLevelType(LevelType.REGULAR)
                                 .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -12965,7 +12966,7 @@ public class SchemaModifiers {
            						.withName("Year")
            						.withVisible(true)
            						.withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-           						.withType(DataType.NUMERIC)
+           						.withType(InternalDataType.NUMERIC)
            						.withUniqueMembers(true)
                                 .withLevelType(LevelType.TIME_YEARS)
                                 .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -12974,7 +12975,7 @@ public class SchemaModifiers {
            						.withName("Quarter")
            						.withVisible(true)
            						.withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY)
-           						.withType(DataType.STRING)
+           						.withType(InternalDataType.STRING)
            						.withUniqueMembers(false)
                                 .withLevelType(LevelType.TIME_QUARTERS)
                                 .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -12984,7 +12985,7 @@ public class SchemaModifiers {
                					.withVisible(true)
                					.withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                					.withNameColumn(FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY)
-               					.withType(DataType.INTEGER)
+               					.withType(InternalDataType.INTEGER)
                					.withUniqueMembers(false)
                                 .withLevelType(LevelType.TIME_MONTHS)
                                 .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -13009,7 +13010,7 @@ public class SchemaModifiers {
            						.withName("Warehouse Name")
            						.withVisible(true)
            						.withColumn(FoodmartMappingSupplier.WAREHOUSE_NAME_COLUMN_IN_WAREHOUSE)
-           						.withType(DataType.STRING)
+           						.withType(InternalDataType.STRING)
            						.withUniqueMembers(true)
                                 .withLevelType(LevelType.REGULAR)
                                 .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -13169,8 +13170,8 @@ public class SchemaModifiers {
         protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.catalogCubes(schema));
-            ColumnMappingImpl promoId = ColumnMappingImpl.builder().withName("promo_id").withType("Numeric").build();
-            ColumnMappingImpl promoName = ColumnMappingImpl.builder().withName("promo_name").withType("String").build();
+            ColumnMappingImpl promoId = ColumnMappingImpl.builder().withName("promo_id").withType(ColumnDataType.NUMERIC).build();
+            ColumnMappingImpl promoName = ColumnMappingImpl.builder().withName("promo_name").withType(ColumnDataType.VARCHAR).build();
             InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
@@ -13320,7 +13321,7 @@ public class SchemaModifiers {
                         							MemberPropertyMappingImpl.builder()
                         								.withName("Store Sqft")
                         								.withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                        								.withDataType(DataType.NUMERIC)
+                        								.withDataType(InternalDataType.NUMERIC)
                         								.build()
                         						))
                         						.build()
@@ -14235,7 +14236,7 @@ public class SchemaModifiers {
         	LevelMappingImpl.builder()
     		 	.withName("Name")
     		    .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-    		    .withType(DataType.NUMERIC)
+    		    .withType(InternalDataType.NUMERIC)
                 .withUniqueMembers(true)
                 .build()
 		))
@@ -14264,7 +14265,7 @@ public class SchemaModifiers {
         	LevelMappingImpl.builder()
     		 	.withName("Name")
     		    .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-    		    .withType(DataType.NUMERIC)
+    		    .withType(InternalDataType.NUMERIC)
                 .withUniqueMembers(true)
                 .build()
 		))
@@ -14293,7 +14294,7 @@ public class SchemaModifiers {
         	LevelMappingImpl.builder()
     		 	.withName("Name")
     		    .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-    		    .withType(DataType.NUMERIC)
+    		    .withType(InternalDataType.NUMERIC)
                 .withUniqueMembers(true)
                 .build()
 		))
@@ -16393,7 +16394,7 @@ public class SchemaModifiers {
                                         .withName("Country")
                                         .withVisible(true)
                                         .withColumn(FoodmartMappingSupplier.COUNTRY_COLUMN_IN_CUSTOMER)
-                                        .withType(DataType.STRING)
+                                        .withType(InternalDataType.STRING)
                                         .withUniqueMembers(true)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -16402,7 +16403,7 @@ public class SchemaModifiers {
                                         .withName("State Province")
                                         .withVisible(true)
                                         .withColumn(FoodmartMappingSupplier.STATE_PROVINCE_COLUMN_IN_CUSTOMER)
-                                        .withType(DataType.STRING)
+                                        .withType(InternalDataType.STRING)
                                         .withUniqueMembers(true)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -16411,7 +16412,7 @@ public class SchemaModifiers {
                                         .withName("City")
                                         .withVisible(true)
                                         .withColumn(FoodmartMappingSupplier.CITY_COLUMN_IN_CUSTOMER)
-                                        .withType(DataType.STRING)
+                                        .withType(InternalDataType.STRING)
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -16420,7 +16421,7 @@ public class SchemaModifiers {
                                         .withName("Name1")
                                         .withVisible(true)
                                         .withColumn(FoodmartMappingSupplier.FNAME_COLUMN_IN_CUSTOMER)
-                                        .withType(DataType.STRING)
+                                        .withType(InternalDataType.STRING)
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -16428,22 +16429,22 @@ public class SchemaModifiers {
                                         	MemberPropertyMappingImpl.builder()
                                                 .withName("Gender")
                                                 .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
-                                                .withDataType(DataType.STRING)
+                                                .withDataType(InternalDataType.STRING)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Marital Status")
                                                 .withColumn(FoodmartMappingSupplier.MARITAL_STATUS_COLUMN_IN_CUSTOMER)
-                                                .withDataType(DataType.STRING)
+                                                .withDataType(InternalDataType.STRING)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Education")
                                                 .withColumn(FoodmartMappingSupplier.EDUCATION_COLUMN_IN_CUSTOMER)
-                                                .withDataType(DataType.STRING)
+                                                .withDataType(InternalDataType.STRING)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Yearly Income")
                                                 .withColumn(FoodmartMappingSupplier.YEARLY_INCOME_COLUMN_IN_CUSTOMER)
-                                                .withDataType(DataType.STRING)
+                                                .withDataType(InternalDataType.STRING)
                                                 .build()
                                         ))
                                         .build(),
@@ -16451,7 +16452,7 @@ public class SchemaModifiers {
                                         .withName("First Name")
                                         .withVisible(true)
                                         .withColumn(FoodmartMappingSupplier.FNAME_COLUMN_IN_CUSTOMER)
-                                        .withType(DataType.STRING)
+                                        .withType(InternalDataType.STRING)
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -16469,7 +16470,7 @@ public class SchemaModifiers {
                                         .withName("Gender")
                                         .withVisible(true)
                                         .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
-                                        .withType(DataType.STRING)
+                                        .withType(InternalDataType.STRING)
                                         .withUniqueMembers(true)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -16494,7 +16495,7 @@ public class SchemaModifiers {
                                         .withName("Marital Status")
                                         .withVisible(true)
                                         .withColumn(FoodmartMappingSupplier.MARITAL_STATUS_COLUMN_IN_CUSTOMER)
-                                        .withType(DataType.STRING)
+                                        .withType(InternalDataType.STRING)
                                         .withUniqueMembers(true)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -16527,7 +16528,7 @@ public class SchemaModifiers {
                                         .withName("Store ID")
                                         .withVisible(true)
                                         .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
-                                        .withType(DataType.STRING)
+                                        .withType(InternalDataType.STRING)
                                         .withUniqueMembers(true)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -16536,7 +16537,7 @@ public class SchemaModifiers {
                                         .withName("Store Country")
                                         .withVisible(true)
                                         .withColumn(FoodmartMappingSupplier.STORE_COUNTRY_COLUMN_IN_STORE)
-                                        .withType(DataType.STRING)
+                                        .withType(InternalDataType.STRING)
                                         .withUniqueMembers(true)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -16545,7 +16546,7 @@ public class SchemaModifiers {
                                         .withName("Store State")
                                         .withVisible(true)
                                         .withColumn(FoodmartMappingSupplier.STORE_STATE_COLUMN_IN_STORE)
-                                        .withType(DataType.STRING)
+                                        .withType(InternalDataType.STRING)
                                         .withUniqueMembers(true)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -16554,7 +16555,7 @@ public class SchemaModifiers {
                                         .withName("Store City")
                                         .withVisible(true)
                                         .withColumn(FoodmartMappingSupplier.STORE_CITY_COLUMN_IN_STORE)
-                                        .withType(DataType.STRING)
+                                        .withType(InternalDataType.STRING)
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -16563,7 +16564,7 @@ public class SchemaModifiers {
                                         .withName("Store Name")
                                         .withVisible(true)
                                         .withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
-                                        .withType(DataType.STRING)
+                                        .withType(InternalDataType.STRING)
                                         .withUniqueMembers(true)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -16571,42 +16572,42 @@ public class SchemaModifiers {
                                         	MemberPropertyMappingImpl.builder()
                                                 .withName("Store Type")
                                                 .withColumn(FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE)
-                                                .withDataType(DataType.STRING)
+                                                .withDataType(InternalDataType.STRING)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Store Manager")
                                                 .withColumn(FoodmartMappingSupplier.STORE_MANAGER_COLUMN_IN_STORE)
-                                                .withDataType(DataType.STRING)
+                                                .withDataType(InternalDataType.STRING)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Store Sqft")
                                                 .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                                .withDataType(DataType.NUMERIC)
+                                                .withDataType(InternalDataType.NUMERIC)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Grocery Sqft")
                                                 .withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE)
-                                                .withDataType(DataType.NUMERIC)
+                                                .withDataType(InternalDataType.NUMERIC)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Frozen Sqft")
                                                 .withColumn(FoodmartMappingSupplier.FROZEN_SQFT_COLUMN_IN_STORE)
-                                                .withDataType(DataType.NUMERIC)
+                                                .withDataType(InternalDataType.NUMERIC)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Meat Sqft")
                                                 .withColumn(FoodmartMappingSupplier.MEAT_SQFT_COLUMN_IN_STORE)
-                                                .withDataType(DataType.NUMERIC)
+                                                .withDataType(InternalDataType.NUMERIC)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Has coffee bar")
                                                 .withColumn(FoodmartMappingSupplier.COFFEE_BAR_COLUMN_IN_STORE)
-                                                .withDataType(DataType.BOOLEAN)
+                                                .withDataType(InternalDataType.BOOLEAN)
                                                 .build(),
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Street address")
                                                 .withColumn(FoodmartMappingSupplier.STREET_ADDRESS_COLUMN_IN_STORE)
-                                                .withDataType(DataType.STRING)
+                                                .withDataType(InternalDataType.STRING)
                                                 .build()
                                         ))
                                         .build()
@@ -17410,7 +17411,7 @@ public class SchemaModifiers {
                         LevelMappingImpl.builder()
                             .withName("Year")
                             .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                            .withType(DataType.NUMERIC)
+                            .withType(InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
                             .withLevelType(LevelType.TIME_YEARS)
                             .build(),
@@ -17425,7 +17426,7 @@ public class SchemaModifiers {
                             .withName("Month")
                             .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                             .withUniqueMembers(false)
-                            .withType(DataType.NUMERIC)
+                            .withType(InternalDataType.NUMERIC)
                             .withLevelType(LevelType.TIME_MONTHS)
                             .build()
                     ))
@@ -17512,7 +17513,7 @@ public class SchemaModifiers {
                         LevelMappingImpl.builder()
                             .withName("Year")
                             .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                            .withType(DataType.NUMERIC)
+                            .withType(InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
                             .withLevelType(LevelType.TIME_YEARS)
                             .build(),
@@ -17527,7 +17528,7 @@ public class SchemaModifiers {
                             .withName("Month")
                             .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                             .withUniqueMembers(false)
-                            .withType(DataType.NUMERIC)
+                            .withType(InternalDataType.NUMERIC)
                             .withLevelType(LevelType.TIME_MONTHS)
                             .build()
                     ))
@@ -17637,7 +17638,7 @@ public class SchemaModifiers {
                         LevelMappingImpl.builder()
                             .withName("Day")
                             .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                            .withType(DataType.DATE)
+                            .withType(InternalDataType.DATE)
                             .withUniqueMembers(true)
                             .withLevelType(LevelType.TIME_YEARS)
                             .withKeyExpression(SQLExpressionMappingImpl.builder()
@@ -17742,7 +17743,7 @@ public class SchemaModifiers {
                     .withLevels(List.of(
                         LevelMappingImpl.builder()
                             .withName("StoreSqft")
-                            .withType(DataType.NUMERIC)
+                            .withType(InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
                             .withKeyExpression(SQLExpressionMappingImpl.builder()
                             		.withSqls(List.of(
@@ -17875,7 +17876,7 @@ public class SchemaModifiers {
                             .withName("Frozen sqft")
                             .withUniqueMembers(false)
                             .withColumn(FoodmartMappingSupplier.FROZEN_SQFT_COLUMN_IN_STORE)
-                            .withType(DataType.NUMERIC)
+                            .withType(InternalDataType.NUMERIC)
                             .build()
                     ))
                     .build()
@@ -17893,7 +17894,7 @@ public class SchemaModifiers {
                                     .withName("Grocery sqft")
                                     .withUniqueMembers(false)
                                     .withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE)
-                                    .withType(DataType.NUMERIC)
+                                    .withType(InternalDataType.NUMERIC)
                                     .build()
                             ))
                             .build()
@@ -17911,7 +17912,7 @@ public class SchemaModifiers {
                                     .withName("Meat sqft")
                                     .withUniqueMembers(false)
                                     .withColumn(FoodmartMappingSupplier.MEAT_SQFT_COLUMN_IN_STORE)
-                                    .withType(DataType.NUMERIC)
+                                    .withType(InternalDataType.NUMERIC)
                                     .build()
                             ))
                             .build()
@@ -17929,7 +17930,7 @@ public class SchemaModifiers {
                                     .withName("Store sqft")
                                     .withUniqueMembers(false)
                                     .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                    .withType(DataType.NUMERIC)
+                                    .withType(InternalDataType.NUMERIC)
                                     .build()
                             ))
                             .build()
@@ -18046,7 +18047,7 @@ public class SchemaModifiers {
                                                         .withDescription("Customer Level Description")
                                                         .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                                                         .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_CUSTOMER)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .build()
                                                 ))
@@ -18069,7 +18070,7 @@ public class SchemaModifiers {
                                                         .withDescription("Product Level Description")
                                                         .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                                         .withNameColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .build()
                                                 ))
@@ -18146,7 +18147,7 @@ public class SchemaModifiers {
                                                         //.withCaption("Customer Level Caption")
                                                         .withDescription("Customer Level Description")
                                                         .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .build()
                                                 ))
@@ -18168,7 +18169,7 @@ public class SchemaModifiers {
                                                         //.withCaption("Product Level Caption")
                                                         .withDescription("Product Level Description")
                                                         .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .build()
                                                 ))
@@ -18435,7 +18436,7 @@ public class SchemaModifiers {
                                                             MemberPropertyMappingImpl.builder()
                                                                 .withName("Store Sqft")
                                                                 .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                                                .withDataType(DataType.NUMERIC)
+                                                                .withDataType(InternalDataType.NUMERIC)
                                                                 .build()
                                                         ))
                                                         .build()
@@ -18457,21 +18458,21 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Year2")
                                                         .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                        .withType(DataType.NUMERIC)
+                                                        .withType(InternalDataType.NUMERIC)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.TIME_YEARS)
                                                         .build(),
                                                     LevelMappingImpl.builder()
                                                         .withName("Week")
                                                         .withColumn(FoodmartMappingSupplier.WEEK_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                        .withType(DataType.NUMERIC)
+                                                        .withType(InternalDataType.NUMERIC)
                                                         .withUniqueMembers(false)
                                                         .withLevelType(LevelType.TIME_WEEKS)
                                                         .build(),
                                                     LevelMappingImpl.builder()
                                                         .withName("Date2")
                                                         .withColumn(FoodmartMappingSupplier.DAY_OF_MONTH_COLUMN_TIME_BY_DAY)
-                                                        .withType(DataType.NUMERIC)
+                                                        .withType(InternalDataType.NUMERIC)
                                                         .withUniqueMembers(false)
                                                         .withLevelType(LevelType.TIME_DAYS)
                                                         .build()
@@ -18484,7 +18485,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Year2")
                                                         .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                        .withType(DataType.NUMERIC)
+                                                        .withType(InternalDataType.NUMERIC)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.TIME_YEARS)
                                                         .build(),
@@ -18498,7 +18499,7 @@ public class SchemaModifiers {
                                                         .withName("Month")
                                                         .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                                                         .withNameColumn(FoodmartMappingSupplier.THE_MONTH_COLUMN_IN_TIME_BY_DAY)
-                                                        .withType(DataType.NUMERIC)
+                                                        .withType(InternalDataType.NUMERIC)
                                                         .withUniqueMembers(false)
                                                         .withLevelType(LevelType.TIME_MONTHS)
                                                         .build()
@@ -18671,7 +18672,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Name")
                                                         .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
-                                                        .withType(DataType.NUMERIC)
+                                                        .withType(InternalDataType.NUMERIC)
                                                         .withUniqueMembers(true)
                                                         .build()
                                                 ))
@@ -18692,7 +18693,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Store Sqft")
                                                         .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                                        .withType(DataType.NUMERIC)
+                                                        .withType(InternalDataType.NUMERIC)
                                                         .withUniqueMembers(true)
                                                         .build()
                                                 ))
@@ -18894,7 +18895,7 @@ public class SchemaModifiers {
                                                 	territoryLevel = LevelMappingImpl.builder()
                                                         .withName("Territory")
                                                         .withColumn(SteelwheelsSupplier.TERRITORY_COLUMN_IN_CUSTOMER_W_TER)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -18918,7 +18919,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("State Province")
                                                         .withColumn(SteelwheelsSupplier.STATE_COLUMN_IN_CUSTOMER_W_TER)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
                                                         .withAnnotations(List.of(
@@ -18939,7 +18940,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("City")
                                                         .withColumn(SteelwheelsSupplier.CITY_COLUMN_IN_CUSTOMER_W_TER)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
                                                         .withAnnotations(List.of(
@@ -18977,7 +18978,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Customer")
                                                         .withColumn(SteelwheelsSupplier.CUSTOMERNAME_COLUMN_IN_CUSTOMER_W_TER)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -18985,32 +18986,32 @@ public class SchemaModifiers {
                                                         	MemberPropertyMappingImpl.builder()
                                                                 .withName("Customer Number")
                                                                 .withColumn(SteelwheelsSupplier.CUSTOMERNUMBER_COLUMN_IN_CUSTOMER_W_TER)
-                                                                .withDataType(DataType.NUMERIC)
+                                                                .withDataType(InternalDataType.NUMERIC)
                                                                 .build(),
                                                             MemberPropertyMappingImpl.builder()
                                                                 .withName("Contact First Name")
                                                                 .withColumn(SteelwheelsSupplier.CONTACTFIRSTNAME_COLUMN_IN_CUSTOMER_W_TER)
-                                                                .withDataType(DataType.STRING)
+                                                                .withDataType(InternalDataType.STRING)
                                                                 .build(),
                                                             MemberPropertyMappingImpl.builder()
                                                                 .withName("Contact Last Name")
                                                                 .withColumn(SteelwheelsSupplier.CONTACTLASTNAME_COLUMN_IN_CUSTOMER_W_TER)
-                                                                .withDataType(DataType.STRING)
+                                                                .withDataType(InternalDataType.STRING)
                                                                 .build(),
                                                             MemberPropertyMappingImpl.builder()
                                                                 .withName("Phone")
                                                                 .withColumn(SteelwheelsSupplier.PHONE_COLUMN_IN_CUSTOMER_W_TER)
-                                                                .withDataType(DataType.STRING)
+                                                                .withDataType(InternalDataType.STRING)
                                                                 .build(),
                                                             MemberPropertyMappingImpl.builder()
                                                                 .withName("Address")
                                                                 .withColumn(SteelwheelsSupplier.ADDRESSLINE1_COLUMN_IN_CUSTOMER_W_TER)
-                                                                .withDataType(DataType.STRING)
+                                                                .withDataType(InternalDataType.STRING)
                                                                 .build(),
                                                             MemberPropertyMappingImpl.builder()
                                                                 .withName("Credit Limit")
                                                                 .withColumn(SteelwheelsSupplier.CREDITLIMIT_COLUMN_IN_CUSTOMER_W_TER)
-                                                                .withDataType(DataType.NUMERIC)
+                                                                .withDataType(InternalDataType.NUMERIC)
                                                                 .build()
 
                                                         ))
@@ -19037,7 +19038,7 @@ public class SchemaModifiers {
                                                         .withName("Line")
                                                         .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                                                         .withColumn(SteelwheelsSupplier.PRODUCTCODE_COLUMN_IN_PRODUCTS)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(false)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19046,7 +19047,7 @@ public class SchemaModifiers {
                                                         .withName("Vendor")
                                                         .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                                                         .withColumn(SteelwheelsSupplier.PRODUCTVENDOR_COLUMN_IN_PRODUCTS)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(false)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19055,7 +19056,7 @@ public class SchemaModifiers {
                                                         .withName("Product")
                                                         .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                                                         .withColumn(SteelwheelsSupplier.PRODUCTNAME_COLUMN_IN_PRODUCTS)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19063,17 +19064,17 @@ public class SchemaModifiers {
                                                         	MemberPropertyMappingImpl.builder()
                                                                 .withName("Code")
                                                                 .withColumn(SteelwheelsSupplier.PRODUCTCODE_COLUMN_IN_PRODUCTS)
-                                                                .withDataType(DataType.STRING)
+                                                                .withDataType(InternalDataType.STRING)
                                                                 .build(),
                                                             MemberPropertyMappingImpl.builder()
                                                                 .withName("Vendor")
                                                                 .withColumn(SteelwheelsSupplier.PRODUCTVENDOR_COLUMN_IN_PRODUCTS)
-                                                                .withDataType(DataType.STRING)
+                                                                .withDataType(InternalDataType.STRING)
                                                                 .build(),
                                                             MemberPropertyMappingImpl.builder()
                                                                 .withName("Description")
                                                                 .withColumn(SteelwheelsSupplier.PRODUCTDESCRIPTION_COLUMN_IN_PRODUCTS)
-                                                                .withDataType(DataType.STRING)
+                                                                .withDataType(InternalDataType.STRING)
                                                                 .build()
 
                                                         ))
@@ -19098,7 +19099,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Years")
                                                         .withColumn(SteelwheelsSupplier.YEAR_ID_COLUMN_IN_TIME)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.TIME_YEARS)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19113,7 +19114,7 @@ public class SchemaModifiers {
                                                         .withName("Quarters")
                                                         .withColumn(SteelwheelsSupplier.QTR_NAME_COLUMN_IN_TIME)
                                                         .withOrdinalColumn(SteelwheelsSupplier.QTR_ID_COLUMN_IN_TIME)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(false)
                                                         .withLevelType(LevelType.TIME_QUARTERS)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19128,7 +19129,7 @@ public class SchemaModifiers {
                                                         .withName("Months")
                                                         .withColumn(SteelwheelsSupplier.MONTH_NAME_COLUMN_IN_TIME)
                                                         .withOrdinalColumn(SteelwheelsSupplier.MONTH_ID_COLUMN_IN_TIME)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(false)
                                                         .withLevelType(LevelType.TIME_MONTHS)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19157,7 +19158,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Type")
                                                         .withColumn(SteelwheelsSupplier.STATUS_COLUMN_IN_ORDER_FACT)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19478,7 +19479,7 @@ public class SchemaModifiers {
                                 LevelMappingImpl.builder()
                                     .withName("Territory")
                                     .withColumn(SteelwheelsSupplier.TERRITORY_COLUMN_IN_CUSTOMER_W_TER)
-                                    .withType(DataType.STRING)
+                                    .withType(InternalDataType.STRING)
                                     .withUniqueMembers(true)
                                     .withLevelType(LevelType.REGULAR)
                                     .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19486,7 +19487,7 @@ public class SchemaModifiers {
                                 LevelMappingImpl.builder()
                                     .withName("Country")
                                     .withColumn(SteelwheelsSupplier.COUNTRY_COLUMN_IN_CUSTOMER_W_TER)
-                                    .withType(DataType.STRING)
+                                    .withType(InternalDataType.STRING)
                                     .withUniqueMembers(true)
                                     .withLevelType(LevelType.REGULAR)
                                     .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19494,7 +19495,7 @@ public class SchemaModifiers {
                                 LevelMappingImpl.builder()
                                     .withName("State Province")
                                     .withColumn(SteelwheelsSupplier.STATE_COLUMN_IN_CUSTOMER_W_TER)
-                                    .withType(DataType.STRING)
+                                    .withType(InternalDataType.STRING)
                                     .withUniqueMembers(true)
                                     .withLevelType(LevelType.REGULAR)
                                     .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19502,7 +19503,7 @@ public class SchemaModifiers {
                                 LevelMappingImpl.builder()
                                     .withName("City")
                                     .withColumn(SteelwheelsSupplier.CITY_COLUMN_IN_CUSTOMER_W_TER)
-                                    .withType(DataType.STRING)
+                                    .withType(InternalDataType.STRING)
                                     .withUniqueMembers(true)
                                     .withLevelType(LevelType.REGULAR)
                                     .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19525,7 +19526,7 @@ public class SchemaModifiers {
                     		LevelMappingImpl.builder()
                             	.withName("Customer")
                             	.withColumn(SteelwheelsSupplier.CUSTOMERNAME_COLUMN_IN_CUSTOMER_W_TER)
-                            	.withType(DataType.STRING)
+                            	.withType(InternalDataType.STRING)
                             	.withUniqueMembers(true)
                             	.withLevelType(LevelType.REGULAR)
                             	.withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19533,32 +19534,32 @@ public class SchemaModifiers {
                             		MemberPropertyMappingImpl.builder()
                             			.withName("Customer Number")
                             			.withColumn(SteelwheelsSupplier.CUSTOMERNUMBER_COLUMN_IN_CUSTOMER_W_TER)
-                            			.withDataType(DataType.NUMERIC)
+                            			.withDataType(InternalDataType.NUMERIC)
                             			.build(),
                             		MemberPropertyMappingImpl.builder()
                                     	.withName("Contact First Name")
                                     	.withColumn(SteelwheelsSupplier.CONTACTFIRSTNAME_COLUMN_IN_CUSTOMER_W_TER)
-                                    	.withDataType(DataType.NUMERIC)
+                                    	.withDataType(InternalDataType.NUMERIC)
                                     	.build(),
                                     MemberPropertyMappingImpl.builder()
                                     	.withName("Contact Last Name")
                                     	.withColumn(SteelwheelsSupplier.CONTACTLASTNAME_COLUMN_IN_CUSTOMER_W_TER)
-                                    	.withDataType(DataType.STRING)
+                                    	.withDataType(InternalDataType.STRING)
                                     	.build(),
                                     MemberPropertyMappingImpl.builder()
                                     	.withName("Phone")
                                     	.withColumn(SteelwheelsSupplier.PHONE_COLUMN_IN_CUSTOMER_W_TER)
-                                    	.withDataType(DataType.STRING)
+                                    	.withDataType(InternalDataType.STRING)
                                     	.build(),
                                     MemberPropertyMappingImpl.builder()
                                     	.withName("Address")
                                     	.withColumn(SteelwheelsSupplier.ADDRESSLINE1_COLUMN_IN_CUSTOMER_W_TER)
-                                    	.withDataType(DataType.STRING)
+                                    	.withDataType(InternalDataType.STRING)
                                     	.build(),
                                     MemberPropertyMappingImpl.builder()
                                     	.withName("Credit Limit")
                                     	.withColumn(SteelwheelsSupplier.CREDITLIMIT_COLUMN_IN_CUSTOMER_W_TER)
-                                    	.withDataType(DataType.NUMERIC)
+                                    	.withDataType(InternalDataType.NUMERIC)
                                     	.build()
                             ))
                             .build()
@@ -19580,7 +19581,7 @@ public class SchemaModifiers {
                             .withName("Line")
                             .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                             .withColumn(SteelwheelsSupplier.PRODUCTLINE_COLUMN_IN_PRODUCTS)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19589,7 +19590,7 @@ public class SchemaModifiers {
                             .withName("Vendor")
                             .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                             .withColumn(SteelwheelsSupplier.PRODUCTVENDOR_COLUMN_IN_PRODUCTS)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19598,7 +19599,7 @@ public class SchemaModifiers {
                             .withName("Product")
                             .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                             .withColumn(SteelwheelsSupplier.PRODUCTNAME_COLUMN_IN_PRODUCTS)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(true)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19606,17 +19607,17 @@ public class SchemaModifiers {
                             	MemberPropertyMappingImpl.builder()
                                     .withName("Code")
                                     .withColumn(SteelwheelsSupplier.PRODUCTCODE_COLUMN_IN_PRODUCTS)
-                                    .withDataType(DataType.STRING)
+                                    .withDataType(InternalDataType.STRING)
                                     .build(),
                                 MemberPropertyMappingImpl.builder()
                                     .withName("Vendor")
                                     .withColumn(SteelwheelsSupplier.PRODUCTVENDOR_COLUMN_IN_PRODUCTS)
-                                    .withDataType(DataType.STRING)
+                                    .withDataType(InternalDataType.STRING)
                                     .build(),
                                 MemberPropertyMappingImpl.builder()
                                     .withName("Description")
                                     .withColumn(SteelwheelsSupplier.PRODUCTDESCRIPTION_COLUMN_IN_PRODUCTS)
-                                    .withDataType(DataType.STRING)
+                                    .withDataType(InternalDataType.STRING)
                                     .build()
                             ))
                             .build()
@@ -19638,7 +19639,7 @@ public class SchemaModifiers {
                     		LevelMappingImpl.builder()
                             .withName("Years")
                             .withColumn(SteelwheelsSupplier.YEAR_ID_COLUMN_IN_TIME)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(true)
                             .withLevelType(LevelType.TIME_YEARS)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19648,7 +19649,7 @@ public class SchemaModifiers {
                             .withColumn(SteelwheelsSupplier.QTR_ID_COLUMN_IN_TIME)
                             .withNameColumn(SteelwheelsSupplier.QTR_NAME_COLUMN_IN_TIME)
                             .withOrdinalColumn(SteelwheelsSupplier.QTR_ID_COLUMN_IN_TIME)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.TIME_QUARTERS)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19658,7 +19659,7 @@ public class SchemaModifiers {
                             .withColumn(SteelwheelsSupplier.MONTH_ID_COLUMN_IN_TIME)
                             .withNameColumn(SteelwheelsSupplier.MONTH_NAME_COLUMN_IN_TIME)
                             .withOrdinalColumn(SteelwheelsSupplier.MONTH_ID_COLUMN_IN_TIME)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.TIME_MONTHS)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19679,7 +19680,7 @@ public class SchemaModifiers {
                     		LevelMappingImpl.builder()
                             .withName("Type")
                             .withColumn(SteelwheelsSupplier.STATUS_COLUMN_IN_ORDER_FACT)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(true)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -19835,8 +19836,8 @@ public class SchemaModifiers {
 
         @Override
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
-        	ColumnMappingImpl ordernumber = ColumnMappingImpl.builder().withName("ORDERNUMBER").withType("INTEGER").build();
-        	ColumnMappingImpl orderdate = ColumnMappingImpl.builder().withName("ORDERDATE").withType("TIMESTAMP").build();
+        	ColumnMappingImpl ordernumber = ColumnMappingImpl.builder().withName("ORDERNUMBER").withType(ColumnDataType.INTEGER).build();
+        	ColumnMappingImpl orderdate = ColumnMappingImpl.builder().withName("ORDERDATE").withType(ColumnDataType.TIMESTAMP).build();
             PhysicalTableMappingImpl orders = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("orders")
                     .withColumns(List.of(
                             ordernumber, orderdate
@@ -19864,13 +19865,13 @@ public class SchemaModifiers {
                                                 	LevelMappingImpl.builder()
                                                         .withName("Order")
                                                         .withColumn(ordernumber)
-                                                        .withType(DataType.INTEGER)
+                                                        .withType(InternalDataType.INTEGER)
                                                         .withUniqueMembers(true)
                                                         .withMemberProperties(List.of(
                                                         	MemberPropertyMappingImpl.builder()
                                                                 .withName("OrderDate")
                                                                 .withColumn(orderdate)
-                                                                .withDataType(DataType.TIMESTAMP)
+                                                                .withDataType(InternalDataType.TIMESTAMP)
                                                                 .build()
                                                         ))
                                                         .build()
@@ -19893,7 +19894,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Customer")
                                                         .withColumn(SteelwheelsSupplier.CUSTOMERNAME_COLUMN_IN_CUSTOMER_W_TER)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20047,7 +20048,7 @@ public class SchemaModifiers {
                             .withName("Line")
                             .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                             .withColumn(SteelwheelsSupplier.PRODUCTLINE_COLUMN_IN_PRODUCTS)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20056,7 +20057,7 @@ public class SchemaModifiers {
                             .withName("Vendor")
                             .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                             .withColumn(SteelwheelsSupplier.PRODUCTVENDOR_COLUMN_IN_PRODUCTS)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20065,7 +20066,7 @@ public class SchemaModifiers {
                             .withName("Product")
                             .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                             .withColumn(SteelwheelsSupplier.PRODUCTNAME_COLUMN_IN_PRODUCTS)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(true)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20073,17 +20074,17 @@ public class SchemaModifiers {
                                 MemberPropertyMappingImpl.builder()
                                     .withName("Code")
                                     .withColumn(SteelwheelsSupplier.PRODUCTCODE_COLUMN_IN_PRODUCTS)
-                                    .withDataType(DataType.STRING)
+                                    .withDataType(InternalDataType.STRING)
                                     .build(),
                                 MemberPropertyMappingImpl.builder()
                                     .withName("Vendor")
                                     .withColumn(SteelwheelsSupplier.PRODUCTVENDOR_COLUMN_IN_PRODUCTS)
-                                    .withDataType(DataType.STRING)
+                                    .withDataType(InternalDataType.STRING)
                                     .build(),
                                 MemberPropertyMappingImpl.builder()
                                     .withName("Description")
                                     .withColumn(SteelwheelsSupplier.PRODUCTDESCRIPTION_COLUMN_IN_PRODUCTS)
-                                    .withDataType(DataType.STRING)
+                                    .withDataType(InternalDataType.STRING)
                                     .build()
                             ))
                             .build()
@@ -20118,7 +20119,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Territory")
                                                         .withColumn(SteelwheelsSupplier.TERRITORY_COLUMN_IN_CUSTOMER_W_TER)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20126,7 +20127,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Country")
                                                         .withColumn(SteelwheelsSupplier.COUNTRY_COLUMN_IN_CUSTOMER_W_TER)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20134,7 +20135,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("State Province")
                                                         .withColumn(SteelwheelsSupplier.STATE_COLUMN_IN_CUSTOMER_W_TER)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20142,7 +20143,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("City")
                                                         .withColumn(SteelwheelsSupplier.CITY_COLUMN_IN_CUSTOMER_W_TER)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20166,7 +20167,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Customer")
                                                         .withColumn(SteelwheelsSupplier.CUSTOMERNAME_COLUMN_IN_CUSTOMER_W_TER)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20195,7 +20196,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Years")
                                                         .withColumn(SteelwheelsSupplier.YEAR_ID_COLUMN_IN_TIME)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.TIME_YEARS)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20204,7 +20205,7 @@ public class SchemaModifiers {
                                                         .withName("Quarters")
                                                         .withColumn(SteelwheelsSupplier.QTR_NAME_COLUMN_IN_TIME)
                                                         .withOrdinalColumn(SteelwheelsSupplier.QTR_ID_COLUMN_IN_TIME)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(false)
                                                         .withLevelType(LevelType.TIME_QUARTERS)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20213,7 +20214,7 @@ public class SchemaModifiers {
                                                         .withName("Months")
                                                         .withColumn(SteelwheelsSupplier.MONTH_NAME_COLUMN_IN_TIME)
                                                         .withOrdinalColumn(SteelwheelsSupplier.MONTH_ID_COLUMN_IN_TIME)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(false)
                                                         .withLevelType(LevelType.TIME_MONTHS)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20236,7 +20237,7 @@ public class SchemaModifiers {
                                                     LevelMappingImpl.builder()
                                                         .withName("Type")
                                                         .withColumn(SteelwheelsSupplier.STATUS_COLUMN_IN_ORDER_FACT)
-                                                        .withType(DataType.STRING)
+                                                        .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
                                                         .withLevelType(LevelType.REGULAR)
                                                         .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20475,7 +20476,7 @@ public class SchemaModifiers {
                             .withName("Address")
                             .withVisible(true)
                             .withColumn(SteelwheelsSupplier.ADDRESSLINE1_COLUMN_IN_CUSTOMER_W_TER)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20485,7 +20486,7 @@ public class SchemaModifiers {
                             .withName("Name")
                             .withVisible(true)
                             .withColumn(SteelwheelsSupplier.CONTACTLASTNAME_COLUMN_IN_CUSTOMER_W_TER)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20678,7 +20679,7 @@ public class SchemaModifiers {
                             .withName("Address")
                             .withVisible(true)
                             .withColumn(SteelwheelsSupplier.ADDRESSLINE1_COLUMN_IN_CUSTOMER_W_TER)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20688,7 +20689,7 @@ public class SchemaModifiers {
                             .withName("Name")
                             .withVisible(true)
                             .withColumn(SteelwheelsSupplier.CONTACTLASTNAME_COLUMN_IN_CUSTOMER_W_TER)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20919,7 +20920,7 @@ public class SchemaModifiers {
                             .withName("Level1")
                             .withVisible(true)
                             .withColumn(SteelwheelsSupplier.PRODUCTLINE_COLUMN_IN_PRODUCTS)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -20944,7 +20945,7 @@ public class SchemaModifiers {
                             .withName("Level2")
                             .withVisible(true)
                             .withColumn(SteelwheelsSupplier.CUSTOMERNAME_COLUMN_IN_CUSTOMER_W_TER)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -21146,7 +21147,7 @@ public class SchemaModifiers {
                         LevelMappingImpl.builder()
                             .withName("Country")
                             .withColumn(FoodmartMappingSupplier.COUNTRY_COLUMN_IN_CUSTOMER)
-                            .withType(DataType.STRING)
+                            .withType(InternalDataType.STRING)
                             .withUniqueMembers(true)
                             .withLevelType(LevelType.REGULAR)
                             .withHideMemberIfType(HideMemberIfType.NEVER)
@@ -21156,8 +21157,8 @@ public class SchemaModifiers {
             ))
             .build();
 
-        	ColumnMappingImpl unitSalesSalesFact1998 = ColumnMappingImpl.builder().withName("unit_sales").withType("INTEGER").build();
-        	ColumnMappingImpl customerIdSalesFact1998 = ColumnMappingImpl.builder().withName("customer_id").withType("INTEGER").build();
+        	ColumnMappingImpl unitSalesSalesFact1998 = ColumnMappingImpl.builder().withName("unit_sales").withType(ColumnDataType.INTEGER).build();
+        	ColumnMappingImpl customerIdSalesFact1998 = ColumnMappingImpl.builder().withName("customer_id").withType(ColumnDataType.INTEGER).build();
             PhysicalTableMappingImpl salesFact1998 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("sales_fact_1998")
                     .withColumns(List.of(
                             unitSalesSalesFact1998, customerIdSalesFact1998

@@ -20,6 +20,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
@@ -43,98 +44,98 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
 
     //## ColumnNames: line_id,unit_sales
     //## ColumnTypes: INTEGER,INTEGER
-	ColumnMappingImpl lineIdFooFact = ColumnMappingImpl.builder().withName("line_id").withType("INTEGER").build();
-	ColumnMappingImpl unitSalesFooFact = ColumnMappingImpl.builder().withName("unit_sales").withType("INTEGER").build();
+	ColumnMappingImpl lineIdFooFact = ColumnMappingImpl.builder().withName("line_id").withType(ColumnDataType.INTEGER).build();
+	ColumnMappingImpl unitSalesFooFact = ColumnMappingImpl.builder().withName("unit_sales").withType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl fooFact = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("foo_fact")
             .withColumns(List.of(lineIdFooFact, unitSalesFooFact))).build();
     //## TableName: line
     //## ColumnNames: line_id,line_name
     //## ColumnTypes: INTEGER,VARCHAR(30)
-    ColumnMappingImpl lineIdLine = ColumnMappingImpl.builder().withName("line_id").withType("INTEGER").build();
-    ColumnMappingImpl lineNameLine = ColumnMappingImpl.builder().withName("line_name").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnMappingImpl lineIdLine = ColumnMappingImpl.builder().withName("line_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl lineNameLine = ColumnMappingImpl.builder().withName("line_name").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalTableMappingImpl line = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("line")
             .withColumns(List.of(lineIdLine))).build();
     //## TableName: line_tenant
     //## ColumnNames: line_id,tenant_id
     //## ColumnTypes: INTEGER,INTEGER
-    ColumnMappingImpl lineIdLineTenant = ColumnMappingImpl.builder().withName("line_id").withType("INTEGER").build();
-    ColumnMappingImpl tenantIdLineTenant = ColumnMappingImpl.builder().withName("tenant_id").withType("INTEGER").build();
+    ColumnMappingImpl lineIdLineTenant = ColumnMappingImpl.builder().withName("line_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl tenantIdLineTenant = ColumnMappingImpl.builder().withName("tenant_id").withType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl lineTenant = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("line_tenant")
             .withColumns(List.of(lineIdLineTenant, tenantIdLineTenant))).build();
     //## TableName: tenant
     //## ColumnNames: tenant_id,tenant_name
     //## ColumnTypes: INTEGER,VARCHAR(30)
-    ColumnMappingImpl tenantIdTenant = ColumnMappingImpl.builder().withName("tenant_id").withType("INTEGER").build();
-    ColumnMappingImpl tenantNameTenant = ColumnMappingImpl.builder().withName("tenant_name").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnMappingImpl tenantIdTenant = ColumnMappingImpl.builder().withName("tenant_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl tenantNameTenant = ColumnMappingImpl.builder().withName("tenant_name").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalTableMappingImpl tenant = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("tenant")
             .withColumns(List.of(lineIdLineTenant, tenantIdLineTenant))).build();
     //## TableName: line_line_class
     //## ColumnNames: line_id,line_class_id
     //## ColumnTypes: INTEGER,INTEGER
-    ColumnMappingImpl lineIdLineLineClass = ColumnMappingImpl.builder().withName("line_id").withType("INTEGER").build();
-    ColumnMappingImpl lineClassIdLineLineClass = ColumnMappingImpl.builder().withName("line_class_id").withType("INTEGER").build();
+    ColumnMappingImpl lineIdLineLineClass = ColumnMappingImpl.builder().withName("line_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl lineClassIdLineLineClass = ColumnMappingImpl.builder().withName("line_class_id").withType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl lineLineClass = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("line_line_class")
             .withColumns(List.of(lineIdLineLineClass, lineClassIdLineLineClass))).build();
     //## TableName: distributor
     //## ColumnNames: distributor_id,distributor_name
     //## ColumnTypes: INTEGER,VARCHAR(30)
-    ColumnMappingImpl distributorIdDistributor = ColumnMappingImpl.builder().withName("distributor_id").withType("INTEGER").build();
-    ColumnMappingImpl distributorNameDistributor = ColumnMappingImpl.builder().withName("distributor_name").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnMappingImpl distributorIdDistributor = ColumnMappingImpl.builder().withName("distributor_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl distributorNameDistributor = ColumnMappingImpl.builder().withName("distributor_name").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalTableMappingImpl distributor = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("distributor")
             .withColumns(List.of(distributorIdDistributor, distributorNameDistributor))).build();
     //## TableName: line_class_distributor
     //## ColumnNames: line_class_id,distributor_id
     //## ColumnTypes: INTEGER,INTEGER
-    ColumnMappingImpl lineClassIdLineClassDistributor = ColumnMappingImpl.builder().withName("line_class_id").withType("INTEGER").build();
-    ColumnMappingImpl distributorIdLineClassDistributor = ColumnMappingImpl.builder().withName("distributor_id").withType("INTEGER").build();
+    ColumnMappingImpl lineClassIdLineClassDistributor = ColumnMappingImpl.builder().withName("line_class_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl distributorIdLineClassDistributor = ColumnMappingImpl.builder().withName("distributor_id").withType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl lineClassDistributor = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("line_class_distributor")
             .withColumns(List.of(lineClassIdLineClassDistributor, distributorIdLineClassDistributor))).build();
     //## TableName: line_class
     //## ColumnNames: line_class_id,line_class_name
     //## ColumnTypes: INTEGER,VARCHAR(30)
-    ColumnMappingImpl lineClassIdLineClass = ColumnMappingImpl.builder().withName("line_class_id").withType("INTEGER").build();
-    ColumnMappingImpl lineClassNameLineClass = ColumnMappingImpl.builder().withName("line_class_name").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnMappingImpl lineClassIdLineClass = ColumnMappingImpl.builder().withName("line_class_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl lineClassNameLineClass = ColumnMappingImpl.builder().withName("line_class_name").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalTableMappingImpl lineClass = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("line_class")
             .withColumns(List.of(lineClassIdLineClass, lineClassNameLineClass))).build();
     //## TableName: network
     //## ColumnNames: network_id,network_name
     //## ColumnTypes: INTEGER,VARCHAR(30)
-    ColumnMappingImpl networkIdNetwork = ColumnMappingImpl.builder().withName("network_id").withType("INTEGER").build();
-    ColumnMappingImpl networkNameNetwork = ColumnMappingImpl.builder().withName("network_name").withType("VARCHAR").withCharOctetLength(30).build();
+    ColumnMappingImpl networkIdNetwork = ColumnMappingImpl.builder().withName("network_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl networkNameNetwork = ColumnMappingImpl.builder().withName("network_name").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalTableMappingImpl network = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("network")
             .withColumns(List.of(networkIdNetwork, networkNameNetwork))).build();
     //## TableName: line_class_network
     //## ColumnNames: line_class_id,network_id
     //## ColumnTypes: INTEGER,INTEGER
-    ColumnMappingImpl lineClassIdLineClassNetwork = ColumnMappingImpl.builder().withName("line_class_id").withType("INTEGER").build();
-    ColumnMappingImpl networkIdLineClassNetwork = ColumnMappingImpl.builder().withName("network_id").withType("INTEGER").build();
+    ColumnMappingImpl lineClassIdLineClassNetwork = ColumnMappingImpl.builder().withName("line_class_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl networkIdLineClassNetwork = ColumnMappingImpl.builder().withName("network_id").withType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl lineClassNetwork = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("line_class_network")
             .withColumns(List.of(lineClassIdLineClassNetwork, networkIdLineClassNetwork))).build();
 
     //## TableName: agg_tenant
     //## ColumnNames: tenant_id,unit_sales,fact_count
     //## ColumnTypes: INTEGER,INTEGER,INTEGER
-    ColumnMappingImpl tenantIdAggTenant = ColumnMappingImpl.builder().withName("tenant_id").withType("INTEGER").build();
-    ColumnMappingImpl unitSalesAggTenant = ColumnMappingImpl.builder().withName("unit_sales").withType("INTEGER").build();
-    ColumnMappingImpl factCountAggTenant = ColumnMappingImpl.builder().withName("fact_count").withType("INTEGER").build();
+    ColumnMappingImpl tenantIdAggTenant = ColumnMappingImpl.builder().withName("tenant_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl unitSalesAggTenant = ColumnMappingImpl.builder().withName("unit_sales").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl factCountAggTenant = ColumnMappingImpl.builder().withName("fact_count").withType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl aggTenant = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("agg_tenant")
             .withColumns(List.of(tenantIdAggTenant, unitSalesAggTenant, factCountAggTenant))).build();
 
     //## TableName: agg_line_class
     //## ColumnNames: line_class_id,unit_sales,fact_count
     //## ColumnTypes: INTEGER,INTEGER,INTEGER
-    ColumnMappingImpl lineClassIdAggLineClass = ColumnMappingImpl.builder().withName("line_class_id").withType("INTEGER").build();
-    ColumnMappingImpl unitSalesAggLineClass = ColumnMappingImpl.builder().withName("unit_sales").withType("INTEGER").build();
-    ColumnMappingImpl factCountAggLineClass = ColumnMappingImpl.builder().withName("fact_count").withType("INTEGER").build();
+    ColumnMappingImpl lineClassIdAggLineClass = ColumnMappingImpl.builder().withName("line_class_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl unitSalesAggLineClass = ColumnMappingImpl.builder().withName("unit_sales").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl factCountAggLineClass = ColumnMappingImpl.builder().withName("fact_count").withType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl aggLineClass = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("agg_line_class")
             .withColumns(List.of(lineClassIdAggLineClass, unitSalesAggLineClass, factCountAggLineClass))).build();
 
     //## TableName: agg_10_foo_fact
     //## ColumnNames: line_class_id,unit_sales,fact_count
     //## ColumnTypes: INTEGER,INTEGER,INTEGER
-    ColumnMappingImpl lineClassIdAgg10FooFact = ColumnMappingImpl.builder().withName("line_class_id").withType("INTEGER").build();
-    ColumnMappingImpl unitSalesAgg10FooFact = ColumnMappingImpl.builder().withName("unit_sales").withType("INTEGER").build();
-    ColumnMappingImpl factCountAgg10FooFact = ColumnMappingImpl.builder().withName("fact_count").withType("INTEGER").build();
+    ColumnMappingImpl lineClassIdAgg10FooFact = ColumnMappingImpl.builder().withName("line_class_id").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl unitSalesAgg10FooFact = ColumnMappingImpl.builder().withName("unit_sales").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl factCountAgg10FooFact = ColumnMappingImpl.builder().withName("fact_count").withType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl agg10FooFact = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("agg_10_foo_fact")
             .withColumns(List.of(lineClassIdAgg10FooFact, unitSalesAgg10FooFact, factCountAgg10FooFact))).build();
 
@@ -285,7 +286,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
     protected List<? extends TableMapping> databaseSchemaTables(DatabaseSchemaMapping databaseSchema) {
         List<TableMapping> result = new ArrayList();
         result.addAll(super.databaseSchemaTables(databaseSchema));
-        result.addAll(List.of(fooFact, line, lineTenant, tenant, lineLineClass, distributor, lineClassDistributor, 
+        result.addAll(List.of(fooFact, line, lineTenant, tenant, lineLineClass, distributor, lineClassDistributor,
         		lineClass, network, lineClassNetwork, aggTenant, aggLineClass, agg10FooFact));
         return result;
     }

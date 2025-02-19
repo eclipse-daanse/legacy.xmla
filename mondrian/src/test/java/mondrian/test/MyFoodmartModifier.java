@@ -20,7 +20,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
@@ -656,12 +656,12 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                         .withMemberProperties(List.of(
                         	MemberPropertyMappingImpl.builder().withName("Store Type").withColumn(FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE).build(),
                             MemberPropertyMappingImpl.builder().withName("Store Manager").withColumn(FoodmartMappingSupplier.STORE_MANAGER_COLUMN_IN_STORE).build(),
-                            MemberPropertyMappingImpl.builder().withName("Store Sqft").withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE).withDataType(DataType.NUMERIC).build(),
-                            MemberPropertyMappingImpl.builder().withName("Grocery Sqft").withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE).withDataType(DataType.NUMERIC).build(),
-                            MemberPropertyMappingImpl.builder().withName("Frozen Sqft").withColumn(FoodmartMappingSupplier.FROZEN_SQFT_COLUMN_IN_STORE).withDataType(DataType.NUMERIC).build(),
-                            MemberPropertyMappingImpl.builder().withName("Meat Sqft").withColumn(FoodmartMappingSupplier.MEAT_SQFT_COLUMN_IN_STORE).withDataType(DataType.NUMERIC).build(),
-                            MemberPropertyMappingImpl.builder().withName("Has coffee bar").withColumn(FoodmartMappingSupplier.COFFEE_BAR_COLUMN_IN_STORE).withDataType(DataType.BOOLEAN).build(),
-                            MemberPropertyMappingImpl.builder().withName("Street address").withColumn(FoodmartMappingSupplier.STREET_ADDRESS_COLUMN_IN_STORE).withDataType(DataType.STRING).build()
+                            MemberPropertyMappingImpl.builder().withName("Store Sqft").withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE).withDataType(InternalDataType.NUMERIC).build(),
+                            MemberPropertyMappingImpl.builder().withName("Grocery Sqft").withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE).withDataType(InternalDataType.NUMERIC).build(),
+                            MemberPropertyMappingImpl.builder().withName("Frozen Sqft").withColumn(FoodmartMappingSupplier.FROZEN_SQFT_COLUMN_IN_STORE).withDataType(InternalDataType.NUMERIC).build(),
+                            MemberPropertyMappingImpl.builder().withName("Meat Sqft").withColumn(FoodmartMappingSupplier.MEAT_SQFT_COLUMN_IN_STORE).withDataType(InternalDataType.NUMERIC).build(),
+                            MemberPropertyMappingImpl.builder().withName("Has coffee bar").withColumn(FoodmartMappingSupplier.COFFEE_BAR_COLUMN_IN_STORE).withDataType(InternalDataType.BOOLEAN).build(),
+                            MemberPropertyMappingImpl.builder().withName("Street address").withColumn(FoodmartMappingSupplier.STREET_ADDRESS_COLUMN_IN_STORE).withDataType(InternalDataType.STRING).build()
                         ))
                         .build()
                 ))
@@ -717,7 +717,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                     LevelMappingImpl.builder()
                         .withName("Year")
                         .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                        .withType(DataType.NUMERIC)
+                        .withType(InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .withLevelType(LevelType.TIME_YEARS)
                         .withCaptionExpression(SQLExpressionMappingImpl.builder()
@@ -737,7 +737,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                     LevelMappingImpl.builder()
                         .withName("Month")
                         .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
-                        .withType(DataType.NUMERIC)
+                        .withType(InternalDataType.NUMERIC)
                         .withUniqueMembers(false)
                         .withLevelType(LevelType.TIME_MONTHS)
                         .build()
@@ -1312,7 +1312,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                             LevelMappingImpl.builder()
                                                 .withName("Year")
                                                 .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                .withType(DataType.NUMERIC)
+                                                .withType(InternalDataType.NUMERIC)
                                                 .withUniqueMembers(true)
                                                 .withLevelType(LevelType.TIME_YEARS)
                                                 .build(),
@@ -1326,7 +1326,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                                 .withName("Month")
                                                 .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
                                                 .withUniqueMembers(false)
-                                                .withType(DataType.NUMERIC)
+                                                .withType(InternalDataType.NUMERIC)
                                                 .withLevelType(LevelType.TIME_MONTHS)
                                                 .build()
                                         ))
@@ -1389,32 +1389,32 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Store Sqft")
                                                         .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Grocery Sqft")
                                                         .withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Frozen Sqft")
                                                         .withColumn(FoodmartMappingSupplier.FROZEN_SQFT_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Meat Sqft")
                                                         .withColumn(FoodmartMappingSupplier.MEAT_SQFT_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Has coffee bar")
                                                         .withColumn(FoodmartMappingSupplier.COFFEE_BAR_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.BOOLEAN)
+                                                        .withDataType(InternalDataType.BOOLEAN)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Street address")
                                                         .withColumn(FoodmartMappingSupplier.STREET_ADDRESS_COLUMN_IN_STORE)
-                                                        .withDataType(DataType.STRING)
+                                                        .withDataType(InternalDataType.STRING)
                                                         .build()
                                                 ))
                                                 .build()
@@ -1546,7 +1546,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                         .withLevels(List.of(
                                             LevelMappingImpl.builder()
                                                 .withName("Employee Id")
-                                                .withType(DataType.NUMERIC)
+                                                .withType(InternalDataType.NUMERIC)
                                                 .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                                 .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                                                 .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
@@ -1675,32 +1675,32 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Store Sqft")
                                                         .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE_RAGGED)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Grocery Sqft")
                                                         .withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE_RAGGED)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Frozen Sqft")
                                                         .withColumn(FoodmartMappingSupplier.FROZEN_SQFT_COLUMN_IN_STORE_RAGGED)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Meat Sqft")
                                                         .withColumn(FoodmartMappingSupplier.MEAT_SQFT_COLUMN_IN_STORE_RAGGED)
-                                                        .withDataType(DataType.NUMERIC)
+                                                        .withDataType(InternalDataType.NUMERIC)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Has coffee bar")
                                                         .withColumn(FoodmartMappingSupplier.COFFEE_BAR_COLUMN_IN_STORE_RAGGED)
-                                                        .withDataType(DataType.BOOLEAN)
+                                                        .withDataType(InternalDataType.BOOLEAN)
                                                         .build(),
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Street address")
                                                         .withColumn(FoodmartMappingSupplier.STREET_ADDRESS_COLUMN_IN_STORE_RAGGED)
-                                                        .withDataType(DataType.STRING)
+                                                        .withDataType(InternalDataType.STRING)
                                                         .build()
                                                 ))
                                                 .build()

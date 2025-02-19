@@ -541,7 +541,7 @@ public class RolapUtil {
         List<String> columnTypes = new ArrayList<>();
         for (int i = 0; i < columnCount; i++) {
             columnNames.add(inlineTable.getTable().getColumns().get(i).getName());
-            columnTypes.add(inlineTable.getTable().getColumns().get(i).getType());
+            columnTypes.add(inlineTable.getTable().getColumns().get(i).getType().getValue());
         }
         List<String[]> valueList = new ArrayList<>();
         for (RowMapping row : inlineTable.getTable().getRows()) {

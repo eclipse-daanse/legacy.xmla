@@ -38,7 +38,7 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
@@ -342,7 +342,7 @@ TestUtil.flushSchemaCache(conn);
         	                                    LevelMappingImpl.builder()
         	                                        .withName("Year")
         	                                        .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-        	                                        .withType(DataType.NUMERIC)
+        	                                        .withType(InternalDataType.NUMERIC)
         	                                        .withUniqueMembers(true)
         	                                        .withLevelType(LevelType.TIME_YEARS)
         	                                        .build(),
@@ -356,7 +356,7 @@ TestUtil.flushSchemaCache(conn);
         	                                        .withName("Month")
         	                                        .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
         	                                        .withUniqueMembers(false)
-        	                                        .withType(DataType.NUMERIC)
+        	                                        .withType(InternalDataType.NUMERIC)
         	                                        .withLevelType(LevelType.TIME_MONTHS)
         	                                        .build()
         	                                ))
@@ -445,14 +445,14 @@ TestUtil.flushSchemaCache(conn);
                                             LevelMappingImpl.builder()
                                                 .withName("Year")
                                                 .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                .withType(DataType.NUMERIC)
+                                                .withType(InternalDataType.NUMERIC)
                                                 .withUniqueMembers(true)
                                                 .withLevelType(LevelType.TIME_YEARS)
                                                 .build(),
                                             LevelMappingImpl.builder()
                                             	.withName("Week")
                                                 .withColumn(FoodmartMappingSupplier.WEEK_OF_YEAR_COLUMN_IN_TIME_BY_DAY)
-                                                .withType(DataType.NUMERIC)
+                                                .withType(InternalDataType.NUMERIC)
                                                 .withUniqueMembers(false)
                                                 .withLevelType(LevelType.TIME_WEEKS)
                                                 .build(),
@@ -460,7 +460,7 @@ TestUtil.flushSchemaCache(conn);
                                                 .withName("Day")
                                                 .withColumn(FoodmartMappingSupplier.DAY_OF_MONTH_COLUMN_TIME_BY_DAY)
                                                 .withUniqueMembers(false)
-                                                .withType(DataType.NUMERIC)
+                                                .withType(InternalDataType.NUMERIC)
                                                 .withLevelType(LevelType.TIME_DAYS)
                                                 .build()
                                         ))

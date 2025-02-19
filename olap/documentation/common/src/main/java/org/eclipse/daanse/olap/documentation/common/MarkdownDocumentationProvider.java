@@ -1426,7 +1426,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
             if (columnList != null) {
                 for (ColumnMapping c : columnList) {
                     String columnName = c.getName();
-                    String type = c.getType();
+                    String type = c.getType() != null ? c.getType().getValue() : "";
                     String flag = NEGATIVE_FLAG;
                     writer.write(type);
                     writer.write(" ");
@@ -1480,7 +1480,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                 }
                 for (ColumnMapping c : missedColumns) {
                     String columnName = c.getName();
-                    String type = c.getType();
+                    String type = c.getType() != null ? c.getType().getValue() : "";
                     String flag = NEGATIVE_FLAG;
                     writer.write(type);
                     writer.write(" ");

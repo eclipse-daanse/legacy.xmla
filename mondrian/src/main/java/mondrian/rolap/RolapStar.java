@@ -336,7 +336,7 @@ public class RolapStar {
             throw new UnsupportedOperationException();
         }
     }
-    
+
     protected SqlStatementMappingImpl sql(SqlStatementMapping sql, String possibleName, String aliasOrName) {
         if (sql != null) {
             List<String> dialects = sql.getDialects();
@@ -346,7 +346,7 @@ public class RolapStar {
         }
         return null;
     }
-    
+
     protected List<TableQueryOptimizationHintMappingImpl> tableQueryOptimizationHints(
             List<? extends TableQueryOptimizationHintMapping> optimizationHints
         ) {
@@ -1526,7 +1526,7 @@ public class RolapStar {
                     level,
                     level.getName(),
                     level.getNameExp(),
-                    Datatype.STRING,
+                    Datatype.VARCHAR,
                     null,
                     null,
                     null,
@@ -1577,7 +1577,7 @@ public class RolapStar {
         private Datatype convertPropertyType(Property.Datatype type) {
             switch (type) {
                 case TYPE_STRING:
-                    return Datatype.STRING;
+                    return Datatype.VARCHAR;
                 case TYPE_NUMERIC:
                     return Datatype.NUMERIC;
                 case TYPE_INTEGER:
@@ -1593,9 +1593,9 @@ public class RolapStar {
                 case TYPE_TIMESTAMP:
                      return Datatype.TIMESTAMP;
                 case TYPE_OTHER:
-                     return Datatype.STRING;
+                     return Datatype.VARCHAR;
                 default:
-                    return Datatype.STRING;
+                    return Datatype.VARCHAR;
             }
         }
 

@@ -18,7 +18,8 @@ import java.util.List;
 
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.DataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
@@ -73,27 +74,27 @@ public class Checkin_7634Modifier extends PojoMappingModifier {
     @Override
     protected List<? extends CubeMapping> catalogCubes(CatalogMapping schemaMappingOriginal) {
         List<CubeMapping> result = new ArrayList<>();
-        ColumnMappingImpl cust_loc_id_geography7631 = ColumnMappingImpl.builder().withName("cust_loc_id").withType("INTEGER").build();
-        ColumnMappingImpl state_cd = ColumnMappingImpl.builder().withName("state_cd").withType("VARCHAR").withCharOctetLength(20).build();
-        ColumnMappingImpl city_nm = ColumnMappingImpl.builder().withName("city_nm").withType("VARCHAR").withCharOctetLength(20).build();
-        ColumnMappingImpl zip_cd = ColumnMappingImpl.builder().withName("zip_cd").withType("VARCHAR").withCharOctetLength(20).build();
+        ColumnMappingImpl cust_loc_id_geography7631 = ColumnMappingImpl.builder().withName("cust_loc_id").withType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl state_cd = ColumnMappingImpl.builder().withName("state_cd").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+        ColumnMappingImpl city_nm = ColumnMappingImpl.builder().withName("city_nm").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+        ColumnMappingImpl zip_cd = ColumnMappingImpl.builder().withName("zip_cd").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
         PhysicalTableMappingImpl geography7631 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("geography7631")
                 .withColumns(List.of(
                         cust_loc_id_geography7631, state_cd, city_nm, zip_cd
                         ))).build();
-        ColumnMappingImpl cust_loc_id_table7634 = ColumnMappingImpl.builder().withName("cust_loc_id").withType("INTEGER").build();
-        ColumnMappingImpl prod_id_table7634 = ColumnMappingImpl.builder().withName("prod_id").withType("INTEGER").build();
-        ColumnMappingImpl first_table7634 = ColumnMappingImpl.builder().withName("first").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
-        ColumnMappingImpl request_value_table7634 = ColumnMappingImpl.builder().withName("request_value").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
-        ColumnMappingImpl shipped_value_table7634 = ColumnMappingImpl.builder().withName("shipped_value").withType("DECIMAL").withColumnSize(10).withDecimalDigits(2).build();
+        ColumnMappingImpl cust_loc_id_table7634 = ColumnMappingImpl.builder().withName("cust_loc_id").withType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl prod_id_table7634 = ColumnMappingImpl.builder().withName("prod_id").withType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl first_table7634 = ColumnMappingImpl.builder().withName("first").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
+        ColumnMappingImpl request_value_table7634 = ColumnMappingImpl.builder().withName("request_value").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
+        ColumnMappingImpl shipped_value_table7634 = ColumnMappingImpl.builder().withName("shipped_value").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
         PhysicalTableMappingImpl table7634 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("table7634")
                 .withColumns(List.of(
                         cust_loc_id_table7634, prod_id_table7634, first_table7634, request_value_table7634, shipped_value_table7634
                         ))).build();
-        ColumnMappingImpl prod_id_prod7631 = ColumnMappingImpl.builder().withName("prod_id").withType("INTEGER").build();
-        ColumnMappingImpl class_prod7631 = ColumnMappingImpl.builder().withName("class").withType("INTEGER").build();
-        ColumnMappingImpl brand_prod7631 = ColumnMappingImpl.builder().withName("brand").withType("INTEGER").build();
-        ColumnMappingImpl item_prod7631 = ColumnMappingImpl.builder().withName("item").withType("INTEGER").build();
+        ColumnMappingImpl prod_id_prod7631 = ColumnMappingImpl.builder().withName("prod_id").withType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl class_prod7631 = ColumnMappingImpl.builder().withName("class").withType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl brand_prod7631 = ColumnMappingImpl.builder().withName("brand").withType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl item_prod7631 = ColumnMappingImpl.builder().withName("item").withType(ColumnDataType.INTEGER).build();
         PhysicalTableMappingImpl prod7631 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("prod7631")
                 .withColumns(List.of(
                 		prod_id_prod7631, class_prod7631, brand_prod7631, item_prod7631
@@ -119,19 +120,19 @@ public class Checkin_7634Modifier extends PojoMappingModifier {
                                 LevelMappingImpl.builder()
                                     .withColumn(state_cd)
                                     .withName("State")
-                                    .withType(DataType.STRING)
+                                    .withType(InternalDataType.STRING)
                                     .withUniqueMembers(true)
                                     .build(),
                                 LevelMappingImpl.builder()
                                     .withColumn(city_nm)
                                     .withName("City")
-                                    .withType(DataType.STRING)
+                                    .withType(InternalDataType.STRING)
                                     .withUniqueMembers(true)
                                     .build(),
                                 LevelMappingImpl.builder()
                                     .withColumn(zip_cd)
                                     .withName("Zip Code")
-                                    .withType(DataType.STRING)
+                                    .withType(InternalDataType.STRING)
                                     .withUniqueMembers(true)
                                     .build()
                             ))
@@ -154,19 +155,19 @@ public class Checkin_7634Modifier extends PojoMappingModifier {
                                 LevelMappingImpl.builder()
                                     .withColumn(class_prod7631)
                                     .withName("Class")
-                                    .withType(DataType.STRING)
+                                    .withType(InternalDataType.STRING)
                                     .withUniqueMembers(true)
                                     .build(),
                                 LevelMappingImpl.builder()
                                     .withColumn(brand_prod7631)
                                     .withName("Brand")
-                                    .withType(DataType.STRING)
+                                    .withType(InternalDataType.STRING)
                                     .withUniqueMembers(true)
                                     .build(),
                                 LevelMappingImpl.builder()
                                     .withColumn(item_prod7631)
                                     .withName("Item")
-                                    .withType(DataType.STRING)
+                                    .withType(InternalDataType.STRING)
                                     .withUniqueMembers(true)
                                     .build()
                             ))

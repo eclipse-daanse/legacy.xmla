@@ -127,7 +127,7 @@ public class RolapCatalog implements Catalog {
 	static final Logger LOGGER = LoggerFactory.getLogger(RolapCatalog.class);
 
 	private String name;
-	
+
 	private String description;
 
 	/**
@@ -350,7 +350,7 @@ public class RolapCatalog implements Catalog {
 
 	/**
 	 * Returns this schema instance unique ID.
-	 * 
+	 *
 	 * @return A string representing the schema ID.
 	 */
 	@Override
@@ -360,7 +360,7 @@ public class RolapCatalog implements Catalog {
 
 	/**
 	 * Returns this schema instance unique key.
-	 * 
+	 *
 	 * @return a {@link CacheKey}.
 	 */
 	public CacheKey getKey() {
@@ -399,9 +399,9 @@ public class RolapCatalog implements Catalog {
 				throw new OlapRuntimeException(MessageFormat.format(duplicateSchemaParameter, name));
 			}
 			Type type;
-			if (org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.STRING == mappingParameter.getType()) {
+			if (org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.STRING == mappingParameter.getType()) {
 				type = StringType.INSTANCE;
-			} else if (org.eclipse.daanse.rolap.mapping.api.model.enums.DataType.NUMERIC == mappingParameter
+			} else if (org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC == mappingParameter
 					.getType()) {
 				type = NumericType.INSTANCE;
 			} else {
@@ -468,7 +468,7 @@ public class RolapCatalog implements Catalog {
 				defaultRole = role;
 			}
 		}
-		
+
 		for (DatabaseSchemaMapping dbSchemaMapping : mappingCatalog2.getDbschemas()) {
 			RolapDatabaseSchema rolapDbSchema = new RolapDatabaseSchema();
 			List<RolapDatabaseTable> rolapDbTables = new ArrayList<>();
@@ -794,7 +794,7 @@ public class RolapCatalog implements Catalog {
 
 	/**
 	 * Adds a cube to the cube name map.
-	 * 
+	 *
 	 * @param cubeMapping
 	 * @see #lookupCube(String)
 	 */

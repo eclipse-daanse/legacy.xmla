@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
@@ -164,10 +165,10 @@ public class AggTableManager {
         ListRecorder msgRecorder = new ListRecorder();
         try {
             DefaultRules rules = DefaultRules.getInstance();
-            
+
 //            connectionProps.aggregateScanCatalog();
             Optional<String> oAaggregateScanSchema=    connectionProps.aggregateScanSchema();
- 
+
 			List<? extends DatabaseSchemaMapping> schemas = ((RolapContext) context).getCatalogMapping()
 					.getDbschemas();
 
@@ -213,7 +214,7 @@ public class AggTableManager {
 
                     bindToStar(dbFactTable, star, msgRecorder);
                     DatabaseSchemaMappingImpl schemaInner = getDatabaseSchema(dbFactTable.table.getTable().getSchema());
-                    
+
                     // Now look at all tables in the database and per table,
                     // first see if it is a match for an aggregate table for
                     // this fact table and second see if its columns match
@@ -221,7 +222,7 @@ public class AggTableManager {
 
                     for (JdbcSchema.Table dbTable : db.getTables()) {
                         String name = dbTable.getName();
-                        List<ColumnMappingImpl> columns =  dbTable.getColumns().stream().map(c -> ColumnMappingImpl.builder().withName(c.getName()).withType(c.getTypeName()).build()).toList();
+                        List<ColumnMappingImpl> columns =  dbTable.getColumns().stream().map(c -> ColumnMappingImpl.builder().withName(c.getName()).withType(ColumnDataType.valueOf(c.getTypeName())).build()).toList();
                         PhysicalTableMappingImpl t = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName(name).withColumns(columns).withsSchema(schemaInner)).build();
 
                         // Do the catalog schema aggregate excludes, exclude
@@ -353,7 +354,7 @@ public class AggTableManager {
                 tableHints = PojoUtil.getOptimizationHints(table.getOptimizationHints());
             }
             String tableName = dbFactTable.getName();
-            List<ColumnMappingImpl> columns =  dbFactTable.getColumns().stream().map(c -> ColumnMappingImpl.builder().withName(c.getName()).withType(c.getTypeName()).build()).toList();
+            List<ColumnMappingImpl> columns =  dbFactTable.getColumns().stream().map(c -> ColumnMappingImpl.builder().withName(c.getName()).withType(ColumnDataType.valueOf(c.getTypeName())).build()).toList();
             PhysicalTableMappingImpl t = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName(tableName).withColumns(columns).withsSchema(schemaInner)).build();
 
             String alias = null;

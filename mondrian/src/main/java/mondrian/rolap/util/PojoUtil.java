@@ -25,6 +25,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.SqlViewMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryOptimizationHintMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
@@ -241,7 +242,7 @@ public class PojoUtil {
 	private static ColumnMappingImpl getColumn(ColumnMapping column) {
         if (column != null) {
             String name = column.getName();
-            String type = column.getType();
+            ColumnDataType type = column.getType();
             Integer columnSize = column.getColumnSize();
             Integer decimalDigits = column.getDecimalDigits();
             Integer numPrecRadix = column.getNumPrecRadix();

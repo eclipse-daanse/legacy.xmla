@@ -39,6 +39,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.SystemTableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.ViewTableMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,7 +163,7 @@ public class JdbcSchema {
             return Datatype.TIMESTAMP;
         case Types.CHAR, Types.VARCHAR:
         default:
-            return Datatype.STRING;
+            return Datatype.VARCHAR;
         }
     }
 
@@ -692,7 +693,7 @@ public class JdbcSchema {
             }
         }
 
-        
+
         /** Name of table. */
         private final String name;
 
@@ -726,8 +727,8 @@ public class JdbcSchema {
 			for (ColumnMapping rdbColumn : list) {
 
 				String nameInner = rdbColumn.getName();
-				int type = JDBCType.valueOf(rdbColumn.getType()).getVendorTypeNumber();
-				String typeName = rdbColumn.getType();
+				int type = JDBCType.valueOf(rdbColumn.getType().name()).getVendorTypeNumber();
+				ColumnDataType typeName = rdbColumn.getType();
 				Integer columnSize = rdbColumn.getColumnSize() == null ? 0 : rdbColumn.getColumnSize();
 				Integer decimalDigits = rdbColumn.getDecimalDigits() == null ? 0 : rdbColumn.getDecimalDigits();
 				int numPrecRadix = rdbColumn.getNumPrecRadix() == null ? 0 : rdbColumn.getNumPrecRadix();
@@ -736,7 +737,7 @@ public class JdbcSchema {
 
 				Column column = new Column(nameInner);
 				column.setType(type);
-				column.setTypeName(typeName);
+				column.setTypeName(typeName.name());
 				column.setColumnSize(columnSize);
 				column.setDecimalDigits(decimalDigits);
 				column.setNumPrecRadix(numPrecRadix);
@@ -999,14 +1000,14 @@ public class JdbcSchema {
 
 		for (TableMapping rdbTable : databaseSchema.getTables()) {
 			if (rdbTable instanceof PhysicalTableMapping || rdbTable instanceof ViewTableMapping || rdbTable instanceof SystemTableMapping) {
-				
+
 			Table table = new Table(rdbTable.getName(), rdbTable.getClass().getSimpleName(),rdbTable.getColumns());
 				getLogger().debug("Adding table {}", rdbTable.getName());
 				tables.put(table.getName(), table);
 			}
 		}
 	}
-	
+
 
 
 
