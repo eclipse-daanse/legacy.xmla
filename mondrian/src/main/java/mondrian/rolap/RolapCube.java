@@ -63,6 +63,7 @@ import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
+import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.KPI;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -133,7 +134,6 @@ import org.slf4j.LoggerFactory;
 import mondrian.mdx.MdxVisitorImpl;
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.CubeBase;
-import mondrian.olap.DimensionType;
 import mondrian.olap.FormulaImpl;
 import mondrian.olap.IdImpl;
 import mondrian.olap.NameResolverImpl;
@@ -2896,7 +2896,7 @@ public class RolapCube extends CubeBase {
      * @param hierarchy virtual hierarchy
      * @return base cube hierarchy if found
      */
-    RolapHierarchy findBaseCubeHierarchy(RolapHierarchy hierarchy) {
+    public RolapHierarchy findBaseCubeHierarchy(RolapHierarchy hierarchy) {
         for (int i = 0; i < getDimensions().length; i++) {
             Dimension dimension = getDimensions()[i];
             if (dimension.getName().equals(
@@ -3116,7 +3116,7 @@ public class RolapCube extends CubeBase {
      * @param calc Compiled expression
      */
     public RolapMember createCalculatedMember(
-        RolapHierarchy hierarchy,
+        Hierarchy hierarchy,
         String name,
         Calc calc
     )

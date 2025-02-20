@@ -123,4 +123,6 @@ public interface Cube extends OlapElement, MetaElement {
 	 * @return List of hierarchies
 	 */
 	List<Hierarchy> getHierarchies();
+
+
 }

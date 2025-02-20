@@ -4,13 +4,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import mondrian.rolap.RolapWritebackTable;
-
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Connection;
-
-import mondrian.rolap.RolapMember;
+import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
+
+import mondrian.rolap.RolapWritebackTable;
 
 /**
  * Context for a set of writeback operations.
@@ -45,7 +44,7 @@ public interface Scenario {
 
     void setCellValue(
         Connection connection,
-        List<RolapMember> members,
+        List<Member> members,
         double newValue,
         double currentValue,
         AllocationPolicy allocationPolicy,

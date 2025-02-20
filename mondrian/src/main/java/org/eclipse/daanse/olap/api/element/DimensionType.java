@@ -9,7 +9,7 @@
 // Copyright (C) 2005-2017 Hitachi Vantara and others
 // All Rights Reserved.
 */
-package mondrian.olap;
+package org.eclipse.daanse.olap.api.element;
 
 /**
  * Enumerates the types of dimensions.

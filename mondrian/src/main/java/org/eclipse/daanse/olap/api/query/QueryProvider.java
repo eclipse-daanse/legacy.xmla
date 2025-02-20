@@ -13,7 +13,6 @@
  */
 package org.eclipse.daanse.olap.api.query;
 
-import mondrian.olap.QueryAxisImpl;
 import org.eclipse.daanse.mdx.model.api.DMVStatement;
 import org.eclipse.daanse.mdx.model.api.DrillthroughStatement;
 import org.eclipse.daanse.mdx.model.api.ExplainStatement;

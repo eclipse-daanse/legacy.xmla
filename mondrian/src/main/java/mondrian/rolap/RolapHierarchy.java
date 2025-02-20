@@ -43,6 +43,7 @@ import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
 import org.eclipse.daanse.olap.api.element.Dimension;
+import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.LevelType;
@@ -90,7 +91,6 @@ import mondrian.calc.impl.UnaryTupleList;
 import mondrian.mdx.HierarchyExpressionImpl;
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.mdx.UnresolvedFunCallImpl;
-import mondrian.olap.DimensionType;
 import mondrian.olap.HierarchyBase;
 import mondrian.olap.IdImpl;
 import mondrian.olap.InvalidHierarchyException;
@@ -1321,6 +1321,7 @@ public class RolapHierarchy extends HierarchyBase {
      *
      * @return Ordinal of this hierarchy in its cube
      */
+    @Override
     public int getOrdinalInCube() {
         // This is temporary to verify that all calls to this method are for
         // the measures hierarchy. For all other hierarchies, the context will

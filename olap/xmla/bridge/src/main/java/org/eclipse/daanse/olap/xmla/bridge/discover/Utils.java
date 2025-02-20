@@ -35,6 +35,7 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.DatabaseSchema;
 import org.eclipse.daanse.olap.api.element.DatabaseTable;
 import org.eclipse.daanse.olap.api.element.Dimension;
+import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.KPI;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -108,7 +109,6 @@ import org.eclipse.daanse.xmla.model.record.discover.mdschema.sets.MdSchemaSetsR
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.DimensionType;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapAggregator;

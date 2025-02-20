@@ -14,10 +14,10 @@ package mondrian.rolap;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.element.Catalog;
+import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 
-import mondrian.olap.DimensionType;
 import mondrian.olap.HierarchyBase;
 
 /**

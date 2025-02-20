@@ -821,7 +821,7 @@ public TupleList readTuples(
   private Map<TargetBase, List<RolapCube>> getTargetToCubeMap(
     List<TargetBase> targets, Query query ) {
     assert ( (RolapCube) query.getCube() ).isVirtual();
-    Collection<RolapCube> cubesFromQuery = query.getBaseCubes();
+    Collection<RolapCube> cubesFromQuery = query.getBaseCubes().stream().map( RolapCube.class::cast ).toList();
     assert cubesFromQuery != null;
     Collection<RolapCube> baseCubesAssociatedWithVirtual =
       getBaseCubeCollection( query );

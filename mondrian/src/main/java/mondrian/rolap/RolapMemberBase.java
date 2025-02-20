@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Dimension;
+import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -35,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.mdx.ResolvedFunCallImpl;
-import mondrian.olap.DimensionType;
 import mondrian.olap.MemberBase;
 import mondrian.olap.Property;
 import mondrian.olap.Util;

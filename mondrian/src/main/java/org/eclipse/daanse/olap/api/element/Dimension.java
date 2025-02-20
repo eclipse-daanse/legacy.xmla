@@ -15,8 +15,6 @@
 
 package org.eclipse.daanse.olap.api.element;
 
-import mondrian.olap.DimensionType;
-
 /**
  * A <code>Dimension</code> represents a dimension of a cube.
  *

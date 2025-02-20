@@ -13,11 +13,10 @@
  */
 package mondrian.rolap.util;
 
+import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.StandardDimensionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TimeDimensionMapping;
-
-import mondrian.olap.DimensionType;
 
 public class DimensionTypeUtil {
 

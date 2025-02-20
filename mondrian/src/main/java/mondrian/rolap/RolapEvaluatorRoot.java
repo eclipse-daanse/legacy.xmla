@@ -17,21 +17,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.calc.api.compiler.ParameterSlot;
+import org.eclipse.daanse.olap.impl.ScenarioImpl;
 
 import mondrian.olap.SolveOrderMode;
 import mondrian.olap.Util;
-import org.eclipse.daanse.olap.impl.ScenarioImpl;
 
 /**
  * Context at the root of a tree of evaluators.
@@ -47,7 +48,7 @@ class RolapEvaluatorRoot {
   final Map<Object, Object> tmpExpResultCache = new HashMap<>();
   final RolapCube cube;
   final Connection connection;
-  final RolapCatalogReader schemaReader;
+  final CatalogReader schemaReader;
   final Map<CompiledExpKey, Calc> compiledExps = new HashMap<>();
   final Statement statement;
   final Query query;
@@ -99,12 +100,12 @@ public RolapEvaluatorRoot( Statement statement ) {
     this.solveOrderMode =
         Util.lookup( SolveOrderMode.class, connection.getContext().getConfig().solveOrderMode().toUpperCase(),
             SolveOrderMode.ABSOLUTE );
-    this.schemaReader = (RolapCatalogReader)query.getCatalogReader( true );
+    this.schemaReader = query.getCatalogReader( true );
     this.queryStartTime = new Date();
     List<RolapMember> list = new ArrayList<>();
     nonAllPositions = new int[cube.getHierarchies().size()];
     nonAllPositionCount = 0;
-    for ( RolapHierarchy hierarchy : cube.getHierarchies() ) {
+    for ( Hierarchy hierarchy : cube.getHierarchies() ) {
       RolapMember defaultMember = (RolapMember) schemaReader.getHierarchyDefaultMember( hierarchy );
       assert defaultMember != null;
 

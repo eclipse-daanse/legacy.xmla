@@ -14,6 +14,7 @@ package mondrian.rolap;
 
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
+import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.MetaData;
@@ -26,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.olap.DimensionBase;
-import mondrian.olap.DimensionType;
 import mondrian.olap.Util;
 import mondrian.olap.exceptions.NonTimeLevelInTimeHierarchyException;
 import mondrian.olap.exceptions.TimeLevelInNonTimeHierarchyException;

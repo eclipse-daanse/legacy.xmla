@@ -18,9 +18,8 @@ import java.io.PrintWriter;
 
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Execution;
+import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Query;
-
-import mondrian.rolap.RolapMember;
 
 /**
  * A <code>Result</code> is the result of running an MDX query. See {@link
@@ -45,5 +44,5 @@ public interface Result {
 
     Execution getExecution();
 
-    RolapMember[] getCellMembers(int[] coordinates);
+    Member[] getCellMembers(int[] coordinates);
 }

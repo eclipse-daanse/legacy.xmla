@@ -18,8 +18,6 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 
-import mondrian.olap.SystemWideProperties;
-
 /**
  * A <code>Hierarchy</code> is a set of members, organized into levels.
  */
@@ -90,4 +88,14 @@ public interface Hierarchy extends OlapElement, MetaElement {
     String origin();
 
     List<Member> getRootMembers();
+	/**
+	 * Returns the ordinal of this hierarchy in its cube.
+	 *
+	 * <p>Temporarily defined against RolapHierarchy; will be moved to
+	 * RolapCubeHierarchy as soon as the measures hierarchy is a
+	 * RolapCubeHierarchy.
+	 *
+	 * @return Ordinal of this hierarchy in its cube
+	 */
+	int getOrdinalInCube();
 }

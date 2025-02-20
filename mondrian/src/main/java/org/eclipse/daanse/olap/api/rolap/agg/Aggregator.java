@@ -19,7 +19,6 @@ import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 
-import mondrian.spi.SegmentBody;
 
 /**
  * Describes an aggregation operator, such as "sum" or "count".

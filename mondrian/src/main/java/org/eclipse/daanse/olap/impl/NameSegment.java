@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.result.Olap4jUtil;
 
 /**
  * Component in a compound identifier that describes the name of an object.

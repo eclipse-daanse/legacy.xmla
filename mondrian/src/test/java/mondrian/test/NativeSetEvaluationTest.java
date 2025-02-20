@@ -26,24 +26,24 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -70,8 +70,6 @@ import mondrian.olap.SystemWideProperties;
 import mondrian.rolap.BatchTestCase;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapHierarchy;
-import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.util.Bug;
 
@@ -2099,7 +2097,7 @@ protected void assertQuerySql(Connection connection,
     RolapConnection con = (RolapConnection) rest.getQuery().getConnection();
     CacheControl cacheControl = con.getCacheControl( null );
 
-    for ( RolapHierarchy hier : cube.getHierarchies() ) {
+    for ( Hierarchy hier : cube.getHierarchies() ) {
       if ( hier.hasAll() ) {
         cacheControl.flush(
           cacheControl.createMemberSet( hier.getAllMember(), true ) );

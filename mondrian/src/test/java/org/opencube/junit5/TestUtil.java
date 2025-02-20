@@ -1352,8 +1352,8 @@ public class TestUtil {
 						expression,
 						scalar,
 						scalar ? null : ResultStyle.ITERABLE );
-		final List<RolapHierarchy> hierarchies =
-				( (RolapCube) query.getCube() ).getHierarchies();
+		final List<Hierarchy> hierarchies =
+				query.getCube().getHierarchies();
 		StringBuilder buf = new StringBuilder( "{" );
 		int dependCount = 0;
 		for ( Hierarchy hierarchy : hierarchies ) {

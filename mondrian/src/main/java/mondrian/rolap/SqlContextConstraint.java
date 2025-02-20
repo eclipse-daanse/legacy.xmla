@@ -95,8 +95,8 @@ public class SqlContextConstraint
         }
         if (cube.isVirtual()) {
             Query query = context.getQuery();
-            Set<RolapCube> baseCubes = new HashSet<>();
-            List<RolapCube> baseCubeList = new ArrayList<>();
+            Set<Cube> baseCubes = new HashSet<>();
+            List<Cube> baseCubeList = new ArrayList<>();
             if (!findVirtualCubeBaseCubes(query, baseCubes, baseCubeList)) {
                 return false;
             }
@@ -143,8 +143,8 @@ public class SqlContextConstraint
      */
     private static boolean findVirtualCubeBaseCubes(
         Query query,
-        Set<RolapCube> baseCubes,
-        List<RolapCube> baseCubeList)
+        Set<Cube> baseCubes,
+        List<Cube> baseCubeList)
     {
         // Gather the unique set of level-to-column maps corresponding
         // to the underlying star/cube where the measure column
@@ -178,8 +178,8 @@ public class SqlContextConstraint
      */
     private static void addMeasure(
         RolapStoredMeasure measure,
-        Set<RolapCube> baseCubes,
-        List<RolapCube> baseCubeList)
+        Set<Cube> baseCubes,
+        List<Cube> baseCubeList)
     {
         RolapCube baseCube = measure.getCube();
         if (baseCubes.add(baseCube)) {
@@ -195,8 +195,8 @@ public class SqlContextConstraint
      */
     private static void findMeasures(
         Expression exp,
-        Set<RolapCube> baseCubes,
-        List<RolapCube> baseCubeList)
+        Set<Cube> baseCubes,
+        List<Cube> baseCubeList)
     {
         if (exp instanceof MemberExpression memberExpr) {
             Member member = memberExpr.getMember();

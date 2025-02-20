@@ -364,11 +364,12 @@ public Result execute( Query query ) {
       try {
         statement.start( execution );
         ( (RolapCube) query.getCube() ).clearCachedAggregations( true );
-        result = new RolapResult( execution, true );
+        RolapResult  rolapResult = new RolapResult( execution, true );
+        result = rolapResult;
         int i = 0;
         for ( QueryAxis axis : query.getAxes() ) {
           if ( axis.isNonEmpty() ) {
-            result = new NonEmptyResult( result, execution, i );
+            result = new NonEmptyResult( rolapResult, execution, i );
           }
           ++i;
         }
@@ -534,7 +535,7 @@ public Context getContext() {
    */
   static class NonEmptyResult extends ResultBase {
 
-    final Result underlying;
+    final RolapResult underlying;
     private final int axis;
     private final Map<Integer, Integer> map;
     /**
@@ -549,7 +550,7 @@ public Context getContext() {
      * @param execution Execution context
      * @param axis      Which axis to make non-empty
      */
-    NonEmptyResult( Result result, Execution execution, int axis ) {
+    NonEmptyResult( RolapResult result, Execution execution, int axis ) {
       super( execution, result.getAxes().clone() );
 
       this.underlying = result;

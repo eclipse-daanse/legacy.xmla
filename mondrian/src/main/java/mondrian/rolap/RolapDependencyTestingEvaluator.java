@@ -428,7 +428,7 @@ public class RolapDependencyTestingEvaluator extends RolapEvaluator {
          */
         private Hierarchy[] getIndependentHierarchies(Calc calc) {
             List<Hierarchy> list = new ArrayList<>();
-            final List<RolapHierarchy> hierarchies =
+            final List<Hierarchy> hierarchies =
                 ((RolapCube) getValidator().getQuery().getCube())
                     .getHierarchies();
             for (Hierarchy hierarchy : hierarchies) {

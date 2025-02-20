@@ -86,7 +86,7 @@ public class ScenarioImpl implements Scenario {
     @Override
     public void setCellValue(
         Connection connection,
-        List<RolapMember> members,
+        List<Member> members,
         double newValue,
         double currentValue,
         AllocationPolicy allocationPolicy,
@@ -166,7 +166,7 @@ public class ScenarioImpl implements Scenario {
         WritebackCell writebackCell =
             new WritebackCell(
                 baseCube,
-                new ArrayList<RolapMember>(members),
+                new ArrayList<Member>(members),
                 constrainedColumnsBitKey,
                 compactKeyValues,
                 newValue,
@@ -233,7 +233,7 @@ public class ScenarioImpl implements Scenario {
         // Add a value to the [Scenario] dimension of every cube that has
         // writeback enabled.
         for (RolapCube cube : schema.getCubeList()) {
-            for (RolapHierarchy hierarchy : cube.getHierarchies()) {
+            for (Hierarchy hierarchy : cube.getHierarchies()) {
                 if (isScenario(hierarchy)) {
                     member =
                         cube.createCalculatedMember(
@@ -294,7 +294,7 @@ public class ScenarioImpl implements Scenario {
      * @return Number of atomic cells in cell
      */
     private static double computeAtomicCellCount(
-        RolapCube cube, List<RolapMember> memberList)
+        RolapCube cube, List<Member> memberList)
     {
         // Implementation generates and executes a recursive MDX query. This
         // may not be the most efficient implementation, but achieves the
@@ -381,7 +381,7 @@ public class ScenarioImpl implements Scenario {
          */
         WritebackCell(
             RolapCube cube,
-            List<RolapMember> members,
+            List<Member> members,
             BitKey constrainedColumnsBitKey,
             Object[] keyValues,
             double newValue,
@@ -400,13 +400,13 @@ public class ScenarioImpl implements Scenario {
             // Build the array of members by ordinal. If a member is not
             // specified for a particular dimension, use the 'all' member (not
             // necessarily the same as the default member).
-            final List<RolapHierarchy> hierarchyList = cube.getHierarchies();
+            final List<Hierarchy> hierarchyList = cube.getHierarchies();
             this.membersByOrdinal = new Member[hierarchyList.size()];
             for (int i = 0; i < membersByOrdinal.length; i++) {
                 membersByOrdinal[i] = hierarchyList.get(i).getDefaultMember();
             }
-            for (RolapMember member : members) {
-                final RolapHierarchy hierarchy = member.getHierarchy();
+            for (Member member : members) {
+                final Hierarchy hierarchy = member.getHierarchy();
                 if (isScenario(hierarchy)) {
                     assert member.isAll();
                 }

@@ -104,7 +104,7 @@ public class RolapNativeFilter extends RolapNativeSet {
       SqlTupleReader sqlTupleReader = new SqlTupleReader( this );
 
       Role role = evaluator.getCatalogReader().getRole();
-      RolapCatalogReader reader = new RolapCatalogReader( context,role, evaluator.getCatalogReader().getCatalog() );
+      RolapCatalogReader reader = new RolapCatalogReader( context,role, (RolapCatalog) evaluator.getCatalogReader().getCatalog() );
 
       for ( CrossJoinArg arg : args ) {
         addLevel( sqlTupleReader, reader, arg );

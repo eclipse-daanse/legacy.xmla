@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.result.Olap4jUtil;
 
 /**
  * Utilities for parsing fully-qualified member names, tuples, member lists,

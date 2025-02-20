@@ -26,6 +26,7 @@ import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Dimension;
+import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -41,7 +42,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.DimensionType;
 import mondrian.olap.IdImpl;
 import mondrian.olap.LevelBase;
 import mondrian.olap.Property;

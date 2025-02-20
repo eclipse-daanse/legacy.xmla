@@ -3,11 +3,11 @@ package mondrian.calc.impl;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.calc.api.Calc;
 
 import mondrian.rolap.RolapEvaluator;
-import mondrian.rolap.RolapHierarchy;
 
 public class ElevatorSimplifyer {
 	/**
@@ -32,8 +32,8 @@ public class ElevatorSimplifyer {
 		}
 		int changeCount = 0;
 		Evaluator ev = evaluator;
-		final List<RolapHierarchy> hierarchies = ((RolapEvaluator) evaluator).getCube().getHierarchies();
-		for (final RolapHierarchy hierarchy : hierarchies) {
+		final List<Hierarchy> hierarchies = ((RolapEvaluator) evaluator).getCube().getHierarchies();
+		for (final Hierarchy hierarchy : hierarchies) {
 			final Member member = ev.getContext(hierarchy);
 			if (member.isAll() || calc.dependsOn(hierarchy)) {
 				continue;

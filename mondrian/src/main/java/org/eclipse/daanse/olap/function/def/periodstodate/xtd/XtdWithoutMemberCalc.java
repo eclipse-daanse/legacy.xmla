@@ -46,6 +46,6 @@ public class XtdWithoutMemberCalc extends AbstractListCalc {
 
 	@Override
 	public boolean dependsOn(Hierarchy hierarchy) {
-		return hierarchy.getDimension().getDimensionType() == mondrian.olap.DimensionType.TIME_DIMENSION;
+		return hierarchy.getDimension().getDimensionType() == org.eclipse.daanse.olap.api.element.DimensionType.TIME_DIMENSION;
 	}
 }

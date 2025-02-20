@@ -3,14 +3,13 @@ package org.eclipse.daanse.olap.function.def.dimensions.numeric;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.api.IntegerCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedHierarchyCalc;
 
 import mondrian.olap.fun.FunUtil;
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapHierarchy;
 
 public class DimensionNumericCalc extends AbstractProfilingNestedHierarchyCalc {
 
@@ -24,9 +23,9 @@ public class DimensionNumericCalc extends AbstractProfilingNestedHierarchyCalc {
 		return nthHierarchy(evaluator, n);
 	}
 
-	private RolapHierarchy nthHierarchy(Evaluator evaluator, Integer n) {
-		RolapCube cube = (RolapCube) evaluator.getCube();
-		List<RolapHierarchy> hierarchies = cube.getHierarchies();
+	private Hierarchy nthHierarchy(Evaluator evaluator, Integer n) {
+		Cube cube = evaluator.getCube();
+		List<Hierarchy> hierarchies = cube.getHierarchies();
 		if (n >= hierarchies.size() || n < 0) {
 			throw FunUtil.newEvalException(DimensionsNumericFunDef.functionalMetaData,
 					new StringBuilder("Index '").append(n).append("' out of bounds").toString());
