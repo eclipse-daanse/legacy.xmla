@@ -2416,6 +2416,7 @@ public class RolapCube extends CubeBase {
      *
      * @return List of hierarchies
      */
+    @Override
     public List<RolapHierarchy> getHierarchies() {
         return hierarchyList;
     }
@@ -3369,7 +3370,7 @@ public class RolapCube extends CubeBase {
             final List<NameResolverImpl.Namespace> list =
                 new ArrayList<>();
             list.add(this);
-            list.addAll(schema.getCatalogReader().getNamespaces());
+            list.addAll(catalog.getCatalogReader().getNamespaces());
             return list;
         }
 

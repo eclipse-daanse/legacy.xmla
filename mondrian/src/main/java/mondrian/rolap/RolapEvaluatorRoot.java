@@ -47,7 +47,7 @@ class RolapEvaluatorRoot {
   final Map<Object, Object> tmpExpResultCache = new HashMap<>();
   final RolapCube cube;
   final Connection connection;
-  final CatalogReader schemaReader;
+  final RolapCatalogReader schemaReader;
   final Map<CompiledExpKey, Calc> compiledExps = new HashMap<>();
   final Statement statement;
   final Query query;
@@ -99,7 +99,7 @@ public RolapEvaluatorRoot( Statement statement ) {
     this.solveOrderMode =
         Util.lookup( SolveOrderMode.class, connection.getContext().getConfig().solveOrderMode().toUpperCase(),
             SolveOrderMode.ABSOLUTE );
-    this.schemaReader = query.getCatalogReader( true );
+    this.schemaReader = (RolapCatalogReader)query.getCatalogReader( true );
     this.queryStartTime = new Date();
     List<RolapMember> list = new ArrayList<>();
     nonAllPositions = new int[cube.getHierarchies().size()];

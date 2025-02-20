@@ -186,7 +186,7 @@ public class RolapCatalog implements Catalog {
 
 	private CatalogMapping mappingCatalog;
 
-	final List<RolapCatalogParameter> parameterList = new ArrayList<>();
+	protected final List<RolapCatalogParameter> parameterList = new ArrayList<>();
 
 	private Date catalogLoadDate;
 
@@ -827,6 +827,7 @@ public class RolapCatalog implements Catalog {
 		return mapNameToSet.get(name);
 	}
 
+	@Override
 	public NamedSet getNamedSet(IdentifierSegment segment) {
 		// FIXME: write a map that efficiently maps segment->value, taking
 		// into account case-sensitivity etc.
@@ -973,6 +974,7 @@ public class RolapCatalog implements Catalog {
 	 * Connection for purposes of parsing and validation. Careful! It won't have the
 	 * correct locale or access-control profile.
 	 */
+	@Override
 	public RolapConnection getInternalConnection() {
 		return internalConnection;
 	}

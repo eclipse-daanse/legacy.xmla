@@ -30,6 +30,7 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.BracesOperationAtom
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.InfixOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
@@ -39,7 +40,6 @@ import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.ProfileHandler;
 import org.eclipse.daanse.olap.api.QueryTiming;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.Validator;
@@ -100,6 +100,7 @@ import mondrian.olap.exceptions.MdxAxisShowSubtotalsNotSupportedException;
 import mondrian.olap.exceptions.ParameterIsNotModifiableException;
 import mondrian.olap.exceptions.UnknownParameterException;
 import mondrian.rolap.RolapCube;
+//import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapEvaluator;
 import mondrian.rolap.RolapHierarchy;
 import mondrian.rolap.RolapMember;
@@ -199,7 +200,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
      * Used for virtual cubes.
      * Comtains a list of base cubes related to a virtual cube
      */
-    private List<RolapCube> baseCubes;
+    private List<Cube> baseCubes;
 
     /**
      * If true, enforce validation even when ignoreInvalidMembers is set.
@@ -604,7 +605,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
 
         if(this.subcube != null) {
 
-            for(Hierarchy hierarchy : ((RolapCube) getCube()).getHierarchies()) {
+            for(Hierarchy hierarchy : getCube().getHierarchies()) {
 
                 org.eclipse.daanse.olap.api.element.Level[] levels = hierarchy.getLevels();
                 org.eclipse.daanse.olap.api.element.Level lastLevel = levels[levels.length - 1];
@@ -738,7 +739,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         }
 
         // Make sure that no hierarchy is used on more than one axis.
-        for (Hierarchy hierarchy : ((RolapCube) getCube()).getHierarchies()) {
+        for (Hierarchy hierarchy :  getCube().getHierarchies()) {
             int useCount = 0;
             for (QueryAxis axis : allAxes()) {
                 if (axis.getSet().getType().usesHierarchy(hierarchy, true)) {
@@ -1542,7 +1543,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
      *
      * @param baseCubes set of base cubes
      */
-    public void setBaseCubes(List<RolapCube> baseCubes) {
+    public void setBaseCubes(List<Cube> baseCubes) {
         this.baseCubes = baseCubes;
     }
 
@@ -1552,7 +1553,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
      *
      * @return set of base cubes
      */
-    public List<RolapCube> getBaseCubes() {
+    public List<Cube> getBaseCubes() {
         return baseCubes;
     }
 

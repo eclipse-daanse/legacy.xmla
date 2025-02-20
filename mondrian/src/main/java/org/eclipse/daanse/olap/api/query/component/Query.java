@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -33,8 +33,6 @@ import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
-
-import mondrian.rolap.RolapCube;
 
 public non-sealed interface Query extends QueryComponent {
 
@@ -84,11 +82,11 @@ public non-sealed interface Query extends QueryComponent {
 
     Validator createValidator();
 
-    Collection<RolapCube> getBaseCubes();
+    Collection<Cube> getBaseCubes();
 
     void addMeasuresMembers(OlapElement olapElement);
 
-    void setBaseCubes(List<RolapCube> baseCubeList);
+    void setBaseCubes(List<Cube> baseCubeList);
 
     boolean nativeCrossJoinVirtualCube();
 

@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
@@ -32,10 +33,10 @@ import org.eclipse.daanse.olap.api.NameResolver;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -47,8 +48,6 @@ import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.api.Calc;
 
-import mondrian.rolap.RolapCatalog;
-
 public class SpyCatalogReader implements CatalogReader {
 
 	private CatalogReader delegate;
@@ -58,7 +57,7 @@ public class SpyCatalogReader implements CatalogReader {
 	}
 
 	@Override
-	public RolapCatalog getCatalog() {
+	public Catalog getCatalog() {
 		return delegate.getCatalog();
 	}
 

@@ -25,7 +25,6 @@ import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
 import org.eclipse.daanse.olap.api.query.QueryProvider;
-import org.eclipse.daanse.olap.api.result.Scenario;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
 
 /**

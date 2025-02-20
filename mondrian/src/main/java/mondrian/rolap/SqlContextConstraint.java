@@ -57,7 +57,7 @@ public class SqlContextConstraint
     implements MemberChildrenConstraint, TupleConstraint
 {
     private final List<Object> cacheKey;
-    private Evaluator evaluator;
+    private RolapEvaluator evaluator;
     private boolean strict;
 
     /**
@@ -373,7 +373,7 @@ public class SqlContextConstraint
     }
 
     @Override
-	public Evaluator getEvaluator() {
+	public RolapEvaluator getEvaluator() {
         return evaluator;
     }
 

@@ -24,6 +24,8 @@ import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 
+import mondrian.rolap.RolapHierarchy;
+
 /**
  * Cube.
  *
@@ -112,4 +114,14 @@ public interface Cube extends OlapElement, MetaElement {
         Level level, boolean approximate, boolean materialize);
 
     List<? extends KPI> getKPIs();
+
+	/**
+	 * Returns a list of all hierarchies in this cube, in order of dimension.
+	 *
+	 * <p>TODO: Make this method return RolapCubeHierarchy, when the measures
+	 * hierarchy is a RolapCubeHierarchy.
+	 *
+	 * @return List of hierarchies
+	 */
+	List<RolapHierarchy> getHierarchies();
 }

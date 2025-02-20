@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.DataSource;
 
-import mondrian.olap.SystemProperty;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
@@ -29,12 +29,12 @@ import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -52,10 +52,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.calc.impl.ElevatorSimplifyer;
-import mondrian.olap.SystemWideProperties;
 import mondrian.olap.NameResolverImpl;
 import mondrian.olap.NullLiteralImpl;
 import mondrian.olap.ParameterImpl;
+import mondrian.olap.SystemProperty;
+import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.sql.MemberChildrenConstraint;
 import mondrian.rolap.sql.TupleConstraint;
@@ -75,7 +76,7 @@ public class RolapCatalogReader
     protected final Role role;
     private final Map<Hierarchy, MemberReader> hierarchyReaders =
         new ConcurrentHashMap<>();
-    protected final RolapCatalog schema;
+    protected final RolapCatalog catalog;
     private final SqlConstraintFactory sqlConstraintFactory =
         SqlConstraintFactory.instance();
     private Context context;
@@ -86,15 +87,15 @@ public class RolapCatalogReader
      * Creates a RolapCatalogReader.
      *
      * @param role Role for access control, must not be null
-     * @param schema Schema
+     * @param catalog Schema
      */
-    RolapCatalogReader(Context context, Role role, RolapCatalog schema) {
+    RolapCatalogReader(Context context, Role role, RolapCatalog catalog) {
         assert role != null : "precondition: role != null";
-        assert schema != null;
+        assert catalog != null;
         assert context != null;
         this.context=context;
         this.role = role;
-        this.schema = schema;
+        this.catalog = catalog;
     }
 
     @Override
@@ -418,10 +419,10 @@ public class RolapCatalogReader
 	public CatalogReader withoutAccessControl() {
         assert this.getClass() == RolapCatalogReader.class
             : new StringBuilder("Subclass ").append(getClass()).append(" must override").toString();
-        if (role == schema.getDefaultRole()) {
+        if (role == catalog.getDefaultRole()) {
             return this;
         }
-        return new RolapCatalogReader(context,schema.getDefaultRole(), schema);
+        return new RolapCatalogReader(context,catalog.getDefaultRole(), catalog);
     }
 
     @Override
@@ -533,7 +534,7 @@ public class RolapCatalogReader
             // Named sets defined at the schema level do not, of course, belong
             // to a cube. But if parent is a cube, this indicates that the name
             // has not been qualified.
-            element = schema.getNamedSet(segment);
+            element = catalog.getNamedSet(segment);
         }
         return element;
     }
@@ -617,7 +618,7 @@ public class RolapCatalogReader
             return null;
         }
         final String name = ((NameSegment) nameParts.get(0)).getName();
-        return schema.getNamedSet(name);
+        return catalog.getNamedSet(name);
     }
 
     @Override
@@ -743,8 +744,8 @@ public class RolapCatalogReader
 
     @Override
 	public Cube[] getCubes() {
-        List<RolapCube> cubes = schema.getCubeList();
-        List<Cube> visibleCubes = new ArrayList<>(cubes.size());
+        Cube[] cubes = catalog.getCubes();
+        List<Cube> visibleCubes = new ArrayList<>(cubes.length);
 
         for (Cube cube : cubes) {
             if (role.canAccess(cube)) {
@@ -777,7 +778,7 @@ public class RolapCatalogReader
         RolapEvaluator revaluator = (RolapEvaluator)
 ElevatorSimplifyer.simplifyEvaluator(calc, evaluator);
         if (evaluator.nativeEnabled()) {
-            return schema.getNativeRegistry().createEvaluator(
+            return catalog.getNativeRegistry().createEvaluator(
                 revaluator, fun, args, context.getConfig().enableNativeFilter());
         }
         return null;
@@ -786,7 +787,7 @@ ElevatorSimplifyer.simplifyEvaluator(calc, evaluator);
     @Override
 	public Parameter getParameter(String name) {
         // Scan through schema parameters.
-        for (RolapCatalogParameter parameter : schema.parameterList) {
+        for (Parameter parameter : catalog.getParameters()) {
             if (Util.equalName(parameter.getName(), name)) {
                 return parameter;
             }
@@ -806,18 +807,18 @@ ElevatorSimplifyer.simplifyEvaluator(calc, evaluator);
 
     @Override
 	public DataSource getDataSource() {
-        return schema.getInternalConnection().getDataSource();
+        return catalog.getInternalConnection().getDataSource();
     }
 
     @Override
 	public RolapCatalog getCatalog() {
-        return schema;
+        return catalog;
     }
 
     @Override
 	public CatalogReader withLocus() {
         return RolapUtil.locusCatalogReader(
-            schema.getInternalConnection(),
+            catalog.getInternalConnection(),
             this);
     }
 

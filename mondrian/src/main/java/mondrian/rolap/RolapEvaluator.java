@@ -409,7 +409,7 @@ public final Query getQuery() {
   }
 
   @Override
-public final CatalogReader getCatalogReader() {
+public final RolapCatalogReader getCatalogReader() {
     return root.schemaReader;
   }
 

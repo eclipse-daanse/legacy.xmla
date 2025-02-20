@@ -12109,8 +12109,8 @@ class SchemaTest {
         withSchema(context, TestMondrian1275Modifier::new);
         final RolapConnection rolapConn = (RolapConnection) context.getConnectionWithDefaultRole();
         final CatalogReader schemaReader = rolapConn.getCatalogReader();
-        final RolapCatalog schema = schemaReader.getCatalog();
-        for (RolapCube cube : schema.getCubeList()) {
+        final Catalog schema = schemaReader.getCatalog();
+        for (Cube cube : schema.getCubes()) {
             Dimension dim = cube.getDimensions()[1];
             final MetaData metaData = dim.getMetaData();
             assertEquals(1, metaData.size());

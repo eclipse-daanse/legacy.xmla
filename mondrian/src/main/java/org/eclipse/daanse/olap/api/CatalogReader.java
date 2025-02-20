@@ -36,6 +36,7 @@ import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -46,8 +47,6 @@ import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.api.Calc;
-
-import mondrian.rolap.RolapCatalog;
 
 /**
  * A <code>CatalogReader</code> queries schema objects ({@link Catalog},
@@ -76,7 +75,7 @@ public interface CatalogReader {
      *
      * @return Schema, never null
      */
-    RolapCatalog getCatalog();
+    Catalog getCatalog();
 
     /**
      * Returns the access-control profile that this <code>CatalogReader</code>

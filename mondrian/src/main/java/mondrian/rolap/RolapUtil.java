@@ -34,6 +34,7 @@ import java.util.function.Consumer;
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Locus;
@@ -120,7 +121,7 @@ public class RolapUtil {
      * @return Wrapped schema reader
      */
     public static CatalogReader locusCatalogReader(
-        RolapConnection connection,
+        Connection connection,
         final CatalogReader schemaReader)
     {
         final Statement statement = connection.getInternalStatement();

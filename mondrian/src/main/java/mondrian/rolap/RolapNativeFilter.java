@@ -99,7 +99,7 @@ public class RolapNativeFilter extends RolapNativeSet {
     }
 
     public boolean isSuported( Context context ) {
-      Evaluator evaluator = this.getEvaluator();
+      RolapEvaluator evaluator = this.getEvaluator();
       SqlQuery testQuery = SqlQuery.newQuery( context, "testQuery" );
       SqlTupleReader sqlTupleReader = new SqlTupleReader( this );
 

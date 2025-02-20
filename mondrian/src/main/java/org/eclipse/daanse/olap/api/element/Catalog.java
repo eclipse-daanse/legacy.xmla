@@ -19,12 +19,15 @@ import java.util.Set;
 
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.access.AccessCatalog;
 import org.eclipse.daanse.olap.api.access.AccessCube;
 import org.eclipse.daanse.olap.api.access.AccessDimension;
 import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
+
+import mondrian.rolap.RolapConnection;
 
 /**
  * A <code>Catalog</code> is a collection of cubes, shared dimensions, and roles.
@@ -125,4 +128,14 @@ public interface Catalog extends MetaElement {
 	List<String> getAccessRoles();
 	
 	List<? extends DatabaseSchema> getDatabaseSchemas();
+
+
+	/**
+	 * Connection for purposes of parsing and validation. Careful! It won't have the
+	 * correct locale or access-control profile.
+	 */
+	RolapConnection getInternalConnection();
+
+
+	NamedSet getNamedSet(IdentifierSegment segment);
 }

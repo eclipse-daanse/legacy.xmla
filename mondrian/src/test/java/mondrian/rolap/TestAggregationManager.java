@@ -3624,15 +3624,17 @@ class TestAggregationManager extends BatchTestCase {
          */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier7::new);
         Connection connection = context.getConnectionWithDefaultRole();
-        RolapStar star = connection.getCatalogReader()
-            .getCatalog().getRolapStarRegistry().getStar("sales_fact_1997");
+        
+		RolapCatalog rolapCatalog = (RolapCatalog) connection.getCatalogReader().getCatalog();
+        RolapStar star = rolapCatalog.getRolapStarRegistry().getStar("sales_fact_1997");
         AggStar aggStar1 = getAggStar(star, "agg_c_10_sales_fact_1997");
         AggStar aggStarSpy = spy(
             getAggStar(star, "agg_c_10_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(chooseAggregateByVolume)).thenReturn(0l);
-        connection.getCatalogReader()
-            .getCatalog().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
+        
+		RolapCatalog rolapCatalog2 = (RolapCatalog) connection.getCatalogReader().getCatalog();
+		rolapCatalog2.getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
         boolean[] rollup = { false };
         AggStar returnedStar = AggregationManager
             .findAgg(
@@ -3704,14 +3706,17 @@ class TestAggregationManager extends BatchTestCase {
         */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier3::new);
 
-        RolapStar star = context.getConnectionWithDefaultRole().getCatalogReader()
-            .getCatalog().getRolapStarRegistry().getStar("sales_fact_1997");
+        RolapCatalog rolapCatalog = (RolapCatalog) context.getConnectionWithDefaultRole().getCatalogReader()
+                .getCatalog();
+        RolapStar star = rolapCatalog.getRolapStarRegistry().getStar("sales_fact_1997");
         AggStar aggStarSpy = spy(
             getAggStar(star, "agg_c_special_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(context.getConfig().chooseAggregateByVolume())).thenReturn(0l);
-        context.getConnectionWithDefaultRole().getCatalogReader()
-            .getCatalog().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
+        
+        RolapCatalog rolapCatalog2 = (RolapCatalog) context.getConnectionWithDefaultRole().getCatalogReader()
+                .getCatalog();
+        rolapCatalog2.getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
 
         boolean[] rollup = { false };
         AggStar returnedStar = AggregationManager
@@ -3804,14 +3809,19 @@ class TestAggregationManager extends BatchTestCase {
                 + "</Schema>");
          */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier4::new);
-        RolapStar star = context.getConnectionWithDefaultRole().getCatalogReader()
-            .getCatalog().getRolapStarRegistry().getStar("sales_fact_1997");
+        
+        RolapCatalog rolapCatalog = (RolapCatalog) context.getConnectionWithDefaultRole().getCatalogReader()
+                .getCatalog();
+        RolapStar star = rolapCatalog.getRolapStarRegistry().getStar("sales_fact_1997");
         AggStar aggStarSpy = spy(
             getAggStar(star, "agg_g_ms_pcat_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(context.getConfig().chooseAggregateByVolume())).thenReturn(0l);
-        context.getConnectionWithDefaultRole().getCatalogReader()
-            .getCatalog().getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
+        
+        RolapCatalog rolapCatalog2 = (RolapCatalog) context.getConnectionWithDefaultRole().getCatalogReader()
+                .getCatalog();
+        
+        rolapCatalog2.getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
         boolean[] rollup = { false };
         AggStar returnedStar = AggregationManager
             .findAgg(
