@@ -3109,20 +3109,6 @@ public class Util {
     }
 
     /**
-     * Make a BigDecimal from a double. On JDK 1.5 or later, the BigDecimal
-     * precision reflects the precision of the double while with JDK 1.4
-     * this is not the case.
-     *
-     * @param d the input double
-     * @return the BigDecimal
-     */
-    public static BigDecimal makeBigDecimalFromDouble(double d) {
-        return BigDecimal.valueOf(d);
-    }
-
-
-
-    /**
      * Compiles a script to yield a Java interface.
      *
      * <p>Only valid JDK 1.6 and higher; fails on JDK 1.5 and earlier.</p>

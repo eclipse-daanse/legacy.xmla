@@ -13,11 +13,10 @@
  */
 package org.eclipse.daanse.olap.xmla.bridge.execute;
 
-import mondrian.olap.Util;
-import org.eclipse.daanse.xmla.api.common.properties.XsdType;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import org.eclipse.daanse.xmla.api.common.properties.XsdType;
 
 /**
  * Takes a DataType String (null, Integer, Numeric or non-null)
@@ -229,8 +228,7 @@ class ValueInfo {
                     double dval = bd.doubleValue();
                     // make with same scale as Double
                     try {
-                        BigDecimal bd2 =
-                            Util.makeBigDecimalFromDouble(dval);
+                        BigDecimal bd2 =BigDecimal.valueOf(dval);
                         // Can it be a double
                         // Must use compareTo - see BigDecimal.equals
                         if (bd.compareTo(bd2) == 0) {
@@ -329,8 +327,7 @@ class ValueInfo {
                 double dval = bd.doubleValue();
                 // make with same scale as Double
                 try {
-                    BigDecimal bd2 =
-                        Util.makeBigDecimalFromDouble(dval);
+                    BigDecimal bd2 =  BigDecimal.valueOf(dval);
                     // Can it be a double
                     // Must use compareTo - see BigDecimal.equals
                     if (bd.compareTo(bd2) == 0) {
