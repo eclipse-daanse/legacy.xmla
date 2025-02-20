@@ -38,7 +38,6 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.api.Syntax;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MemberFormatter;
@@ -68,7 +67,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.spi.CellFormatter;
 import mondrian.spi.PropertyFormatter;
@@ -1639,10 +1637,10 @@ public class UdfTest {
             return "Returns its argument plus one";
         }
 
-        @Override
-		public Syntax getSyntax() {
-            return Syntax.Function;
-        }
+//        @Override
+//		public Syntax getSyntax() {
+//            return Syntax.Function;
+//        }
 
         @Override
 		public Type getReturnType(Type[] parameterTypes) {
@@ -1720,10 +1718,10 @@ public class UdfTest {
                 + "either addsone to, or subtracts one from, its argument";
         }
 
-        @Override
-		public Syntax getSyntax() {
-            return Syntax.Function;
-        }
+//        @Override
+//		public Syntax getSyntax() {
+//            return Syntax.Function;
+//        }
 
         @Override
 		public Type getReturnType(Type[] parameterTypes) {
@@ -1768,10 +1766,10 @@ public class UdfTest {
             return "Returns N copies of its string argument";
         }
 
-        @Override
-		public Syntax getSyntax() {
-            return Syntax.Function;
-        }
+//        @Override
+//		public Syntax getSyntax() {
+//            return Syntax.Function;
+//        }
 
         @Override
 		public Type getReturnType(Type[] parameterTypes) {
@@ -1835,10 +1833,10 @@ public class UdfTest {
                 + "First parameter - any member from any hierarchy";
         }
 
-        @Override
-		public Syntax getSyntax() {
-            return Syntax.Function;
-        }
+//        @Override
+//		public Syntax getSyntax() {
+//            return Syntax.Function;
+//        }
 
         @Override
 		public Type getReturnType(Type[] parameterTypes) {
@@ -1905,11 +1903,11 @@ public class UdfTest {
 		public Type getReturnType(Type[] arg0) {
             return arg0[0];
         }
-
-        @Override
-		public Syntax getSyntax() {
-            return Syntax.Function;
-        }
+//
+//        @Override
+//		public Syntax getSyntax() {
+//            return Syntax.Function;
+//        }
     }
 
     /**
@@ -1967,10 +1965,10 @@ public class UdfTest {
             return StringType.INSTANCE;
         }
 
-        @Override
-		public Syntax getSyntax() {
-            return Syntax.Function;
-        }
+//        @Override
+//		public Syntax getSyntax() {
+//            return Syntax.Function;
+//        }
     }
 
     /**

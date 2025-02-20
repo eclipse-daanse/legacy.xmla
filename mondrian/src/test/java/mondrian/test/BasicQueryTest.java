@@ -61,12 +61,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.api.Syntax;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -100,9 +99,8 @@ import mondrian.olap.Property;
 import mondrian.olap.QueryCanceledException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapCatalog;
-import mondrian.rolap.RolapCatalogCache;
+import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapUtil;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.server.ExecutionImpl;
@@ -5270,10 +5268,10 @@ public class BasicQueryTest {
       return "Returns its argument plus one but sleeps 1 ms first";
     }
 
-    @Override
-	public Syntax getSyntax() {
-      return Syntax.Function;
-    }
+//	@Override
+//	public Syntax getSyntax() {
+//		return Syntax.Function;
+//	}
 
     @Override
 	public Type getReturnType( Type[] parameterTypes ) {
@@ -5318,10 +5316,10 @@ public class BasicQueryTest {
       return "Counts the current number of threads using this thing.";
     }
 
-    @Override
-	public Syntax getSyntax() {
-      return Syntax.Function;
-    }
+//    @Override
+//	public Syntax getSyntax() {
+//      return Syntax.Function;
+//    }
 
     @Override
 	public Type getReturnType( Type[] parameterTypes ) {

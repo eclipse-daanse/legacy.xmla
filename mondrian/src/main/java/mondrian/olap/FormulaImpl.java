@@ -17,15 +17,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-
-import mondrian.olap.exceptions.MdxMemberExpIsSetException;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.PrefixOperationAtom;
-import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Segment;
-import org.eclipse.daanse.olap.api.Syntax;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -50,6 +46,7 @@ import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.mdx.MdxVisitorImpl;
+import mondrian.olap.exceptions.MdxMemberExpIsSetException;
 import mondrian.rolap.RolapCalculatedMember;
 
 

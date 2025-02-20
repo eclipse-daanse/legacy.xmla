@@ -27,7 +27,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.Syntax;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
@@ -873,10 +872,10 @@ public class PerformanceTest {
       return "Counts the number of times it is called.";
     }
 
-    @Override
-	public Syntax getSyntax() {
-      return Syntax.Function;
-    }
+//    @Override
+//	public Syntax getSyntax() {
+//      return Syntax.Function;
+//    }
 
     @Override
 	public Type getReturnType( Type[] parameterTypes ) {

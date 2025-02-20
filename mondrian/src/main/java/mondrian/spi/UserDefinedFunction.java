@@ -14,7 +14,6 @@ package mondrian.spi;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.Syntax;
 import org.eclipse.daanse.olap.api.type.Type;
 
 /**
@@ -45,11 +44,6 @@ public interface UserDefinedFunction {
      */
     public String getDescription();
 
-    /**
-     * Returns the syntactic type of the user-defined function.
-     * Usually {@link Syntax#Function}.
-     */
-    public Syntax getSyntax();
 
     /**
      * Returns an array of the types of the parameters of this function.
