@@ -2417,8 +2417,8 @@ public class RolapCube extends CubeBase {
      * @return List of hierarchies
      */
     @Override
-    public List<RolapHierarchy> getHierarchies() {
-        return hierarchyList;
+    public List<Hierarchy> getHierarchies() {
+        return hierarchyList.stream().map(Hierarchy.class::cast).collect(Collectors.toList());
     }
 
     public boolean isLoadInProgress() {

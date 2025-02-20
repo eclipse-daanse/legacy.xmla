@@ -17,9 +17,10 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.IdentifierSegment;
+import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.access.AccessCatalog;
 import org.eclipse.daanse.olap.api.access.AccessCube;
 import org.eclipse.daanse.olap.api.access.AccessDimension;
@@ -27,7 +28,7 @@ import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
 
-import mondrian.rolap.RolapConnection;
+//import mondrian.rolap.RolapConnection;
 
 /**
  * A <code>Catalog</code> is a collection of cubes, shared dimensions, and roles.
@@ -134,7 +135,7 @@ public interface Catalog extends MetaElement {
 	 * Connection for purposes of parsing and validation. Careful! It won't have the
 	 * correct locale or access-control profile.
 	 */
-	RolapConnection getInternalConnection();
+	Connection getInternalConnection();
 
 
 	NamedSet getNamedSet(IdentifierSegment segment);

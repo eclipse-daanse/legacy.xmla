@@ -24,7 +24,6 @@ import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 
-import mondrian.rolap.RolapHierarchy;
 
 /**
  * Cube.
@@ -123,5 +122,5 @@ public interface Cube extends OlapElement, MetaElement {
 	 *
 	 * @return List of hierarchies
 	 */
-	List<RolapHierarchy> getHierarchies();
+	List<Hierarchy> getHierarchies();
 }

@@ -34,6 +34,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.AllocationPolicy;
@@ -112,13 +113,13 @@ public class WriteBackService {
                 result.add((RolapMember) oMeasure.get());
             }
             if (memberUniqueNames.size() > 1) {
-                List<RolapHierarchy> hierarchies = ((RolapCube) cube).getHierarchies();
+                List<Hierarchy> hierarchies = ((RolapCube) cube).getHierarchies();
                 if (hierarchies != null) {
                     for (int i = 1; i < memberUniqueNames.size(); i++) {
                         String memberUniqueName = memberUniqueNames.get(i);
                         String hierarchyName = getHierarchyName(memberUniqueName);
                         List<String> memberNames = getMemberNames(memberUniqueName);
-                        Optional<RolapHierarchy> oh =
+                        Optional<Hierarchy> oh =
                             hierarchies.stream().filter(h -> h.getName().equals(hierarchyName)).findFirst();
                         if (oh.isPresent()) {
                             Optional<RolapMember> oRm = getRolapHierarchy(oh.get().getLevels(), memberNames,
@@ -236,7 +237,7 @@ public class WriteBackService {
                     if (oMember.isPresent() && oMember.get() instanceof RolapBaseCubeMeasure rolapBaseCubeMeasure) {
                         if (!tuples.isEmpty()) {
                             String hierarchyName = tuples.get(0);
-                            Optional<RolapHierarchy> oRolapHierarchy =
+                            Optional<Hierarchy> oRolapHierarchy =
                                 rolapCube.getHierarchies().stream()
                                     .filter(h -> h.getName().equals(hierarchyName)).findFirst();
                             List<String> ls = new ArrayList<>();
@@ -253,9 +254,9 @@ public class WriteBackService {
                                 res.addAll(allocateData(data, measureName, (Double) value, equalAllocation, writebackTable));
                             }
                         } else {
-                            List<RolapHierarchy> hs = rolapCube.getHierarchies();
+                            List<Hierarchy> hs = rolapCube.getHierarchies();
                             if (hs != null && hs.stream().anyMatch(h -> h instanceof RolapCubeHierarchy)) {
-                                for (RolapHierarchy h : hs) {
+                                for (Hierarchy h : hs) {
                                     if (h instanceof RolapCubeHierarchy rolapCubeHierarchy) {
                                         Level[] levels = rolapCubeHierarchy.getLevels();
                                         if (levels != null && levels.length > 0) {
