@@ -1,21 +1,8 @@
 package org.eclipse.daanse.olap.impl;
 
-import mondrian.mdx.ResolvedFunCallImpl;
-import mondrian.olap.QueryImpl;
-import mondrian.olap.Util;
-import mondrian.rolap.BitKey;
-import mondrian.rolap.RolapCalculatedMember;
-import mondrian.rolap.RolapConnection;
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapCubeLevel;
-import mondrian.rolap.RolapCubeMember;
-import mondrian.rolap.RolapEvaluator;
-import mondrian.rolap.RolapHierarchy;
-import mondrian.rolap.RolapMember;
-import mondrian.rolap.RolapCatalog;
-import mondrian.rolap.RolapStar;
-import mondrian.rolap.RolapStoredMeasure;
-import mondrian.rolap.RolapWritebackTable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Connection;
@@ -30,10 +17,20 @@ import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import mondrian.mdx.ResolvedFunCallImpl;
+import mondrian.olap.QueryImpl;
+import mondrian.olap.Util;
+import mondrian.rolap.BitKey;
+import mondrian.rolap.RolapCalculatedMember;
+import mondrian.rolap.RolapCatalog;
+import mondrian.rolap.RolapConnection;
+import mondrian.rolap.RolapCube;
+import mondrian.rolap.RolapCubeLevel;
+import mondrian.rolap.RolapCubeMember;
+import mondrian.rolap.RolapEvaluator;
+import mondrian.rolap.RolapMember;
+import mondrian.rolap.RolapStar;
+import mondrian.rolap.RolapStoredMeasure;
 
 public class ScenarioImpl implements Scenario {
 
@@ -41,14 +38,14 @@ public class ScenarioImpl implements Scenario {
 
     private final List<ScenarioImpl.WritebackCell> writebackCells =
         new ArrayList<>();
+    
+    private String cubeName;
 
     private RolapMember member;
 
     private static int nextId;
 
     private List<Map<String, Map.Entry<Datatype, Object>>> sessionValues = new ArrayList<>();
-
-    private Optional<RolapWritebackTable> writebackTable = Optional.empty();
 
     /**
      * Creates a ScenarioImpl.
@@ -71,6 +68,14 @@ public class ScenarioImpl implements Scenario {
     @Override
     public String toString() {
         return "scenario #" + id;
+    }
+
+    public String getCubeName() {
+        return cubeName;
+    }
+
+    public void setCubeName(String cubeName) {
+        this.cubeName = cubeName;
     }
 
     /**
@@ -188,16 +193,6 @@ public class ScenarioImpl implements Scenario {
     @Override
     public List<Map<String, Map.Entry<Datatype, Object>>> getSessionValues() {
         return sessionValues;
-    }
-
-    @Override
-    public void setWriteBackTable(Optional<RolapWritebackTable> writebackTable) {
-        this.writebackTable = writebackTable;
-    }
-
-    @Override
-    public Optional<RolapWritebackTable> getWriteBackTable() {
-        return this.writebackTable;
     }
 
     /**
@@ -631,4 +626,11 @@ public class ScenarioImpl implements Scenario {
             }
         }
     }
+
+    @Override
+    public void clear() {
+        getWritebackCells().clear();
+        sessionValues.clear();
+    }
+
 }

@@ -81,6 +81,7 @@ import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.MemberProperty;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.api.result.AllocationPolicy;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.element.OlapMetaData;
@@ -171,7 +172,7 @@ public class RolapCube extends CubeBase {
     private final RolapCatalog schema;
     private final MetaData metaData;
     private final RolapHierarchy measuresHierarchy;
-    
+
     private RelationalQueryMapping restoreFact = null;
 
     /** For SQL generator. Fact table. */
@@ -3718,7 +3719,7 @@ public class RolapCube extends CubeBase {
                 }
             }
     }
-    
+
     private void changeFact(SqlSelectQueryMapping mappingView, Dialect dialect, RolapWritebackTable writebackTable, List<Map<String, Map.Entry<Datatype, Object>>> sessionValues) {
         if (mappingView.getSql() != null && mappingView.getSql().getSqlStatements() != null) {
             List<? extends SqlStatementMapping> statements = mappingView.getSql().getSqlStatements().stream()
@@ -3747,7 +3748,7 @@ public class RolapCube extends CubeBase {
         }
         return sql;
     }
-    
+
 
     public void restoreFact() {
         if (restoreFact != null) {
@@ -3755,7 +3756,17 @@ public class RolapCube extends CubeBase {
             restoreFact = null;
             register();
         }
-        
+
     }
 
+    public void commit(List<Map<String, Map.Entry<Datatype, Object>>> sessionValues, String userId) {
+        WritebackUtil.commit(this, schema.getInternalConnection(), sessionValues, userId);
+    }
+    
+    public List<Map<String, Entry<Datatype, Object>>> getAllocationValues(String tupleString, Object value, AllocationPolicy allocationPolicy) {
+        return WritebackUtil.getAllocationValues(this,
+                tupleString,
+                value,
+                allocationPolicy);
+    }
 }

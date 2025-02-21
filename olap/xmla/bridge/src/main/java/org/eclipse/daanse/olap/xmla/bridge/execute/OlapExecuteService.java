@@ -158,8 +158,6 @@ import org.eclipse.daanse.xmla.model.record.mddataset.RowSetR;
 import org.eclipse.daanse.xmla.model.record.xmla_empty.EmptyresultR;
 
 import mondrian.olap.UpdateImpl;
-import mondrian.rolap.RolapConnectionPropsR;
-import mondrian.rolap.RolapCube;
 
 public class OlapExecuteService implements ExecuteService {
 
@@ -170,7 +168,6 @@ public class OlapExecuteService implements ExecuteService {
     private final DBSchemaDiscoverService dbSchemaService;
     private final MDSchemaDiscoverService mdSchemaService;
     private final OtherDiscoverService otherDiscoverService;
-    private final WriteBackService writeBackService;
 
     public OlapExecuteService(ContextListSupplyer contextsListSupplyer, ActionService actionService, ContextGroupXmlaServiceConfig config) {
         this.contextsListSupplyer = contextsListSupplyer;
@@ -178,7 +175,6 @@ public class OlapExecuteService implements ExecuteService {
         dbSchemaService = new DBSchemaDiscoverService(contextsListSupplyer);
         mdSchemaService = new MDSchemaDiscoverService(contextsListSupplyer, actionService);
         otherDiscoverService = new OtherDiscoverService(contextsListSupplyer, config);
-        writeBackService = new WriteBackService();
     }
 
     @Override
@@ -246,7 +242,7 @@ public class OlapExecuteService implements ExecuteService {
 				Context context = oContext.get();
 				String statement = statementRequest.command().statement();
 				if (statement != null && statement.length() > 0) {
-                    Connection connection = context.getConnection(new RolapConnectionPropsR(userPrincipal.roles()));
+                    Connection connection = context.getConnection(userPrincipal.roles());
 					QueryComponent queryComponent = connection.parseStatement(statement);
 
 					if (queryComponent instanceof DrillThrough drillThrough) {
@@ -254,7 +250,7 @@ public class OlapExecuteService implements ExecuteService {
 					} else if (queryComponent instanceof CalculatedFormula calculatedFormula) {
 						return executeCalculatedFormula(connection, calculatedFormula);
 					} else if (queryComponent instanceof DmvQuery dmvQuery) {
-						return executeDmvQuery(connection ,dmvQuery,  userPrincipal, metaData, statementRequest); // toto: remove  userPrincipal, metaData, 
+						return executeDmvQuery(connection ,dmvQuery,  userPrincipal, metaData, statementRequest); // toto: remove  userPrincipal, metaData,
 					} else if (queryComponent instanceof Refresh refresh) {
 						return executeRefresh(connection, refresh);
 					} else if (queryComponent instanceof Update update) {
@@ -291,12 +287,9 @@ public class OlapExecuteService implements ExecuteService {
             query.getConnection().setScenario(scenario);
 
         }
-        if (cube instanceof RolapCube rolapCube) {
-            scenario.setWriteBackTable(rolapCube.getWritebackTable());
-            //fact = rolapCube.getFact();
-            rolapCube.modifyFact(scenario.getSessionValues());
-            //writeBackService.modifyFact((RolapCube) query.getCube(), scenario.getSessionValues());
-        }
+
+        //scenario.setWriteBackTable(cube.getWritebackTable());
+        cube.modifyFact(scenario.getSessionValues());
         Statement statement = query.getConnection().createStatement();
         String mdx = statementRequest.command().statement();
         if ((mdx != null) && (mdx.length() != 0)) {
@@ -322,9 +315,7 @@ public class OlapExecuteService implements ExecuteService {
         return null;
         }
         finally {
-            if (cube instanceof RolapCube rolapCube) {
-                rolapCube.restoreFact();
-            }
+            cube.restoreFact();
         }
     }
 
@@ -343,9 +334,14 @@ public class OlapExecuteService implements ExecuteService {
 		} else if (transactionCommand.getCommand() == Command.COMMIT) {
             ScenarioSession session = ScenarioSession.get(sessionId);
             Scenario scenario = session.getScenario();
-            writeBackService.commit(scenario, connection,userId);
-            scenario.getWritebackCells().clear();
-            scenario.getSessionValues().clear();
+            Cube[]cubes = connection.getCatalog().getCubes();
+            if (cubes != null) {
+                for (Cube cube : cubes) {
+                    cube.commit(scenario.getSessionValues(), userId);
+                }
+            }
+            //writeBackService.commit(scenario, connection, userId);
+            scenario.clear();
         }
         return new StatementResponseR(null, null);
     }
@@ -395,7 +391,8 @@ public class OlapExecuteService implements ExecuteService {
                     );
                     Cell cell = cellSet.getCell(Arrays.asList(0));
                     AllocationPolicy allocationPolicy = convertAllocation(updateClauseImpl.getAllocation());
-                    List<Map<String, Map.Entry<Datatype, Object>>> values = writeBackService.getAllocationValues(tupleString, cell.getValue(), allocationPolicy, update.getCubeName(), connection);
+                    Cube cube = connection.getCatalog().lookupCube(update.getCubeName(), true);
+                    List<Map<String, Map.Entry<Datatype, Object>>> values = cube.getAllocationValues(tupleString, cell.getValue(), allocationPolicy);
                     scenario.getSessionValues().addAll(values);
                     connection.getCacheControl(null).flushSchemaCache();
                 }
@@ -714,16 +711,13 @@ public class OlapExecuteService implements ExecuteService {
         final int[] rowCountSlot = enableRowCount ? new int[]{0} : null;
         Statement statement;
         ResultSet resultSet = null;
-        RolapCube cube = null;
         Cube c = null;
         ScenarioSession session = ScenarioSession.getWithoutCheck(statementRequest.sessionId());
         if (drillThrough.getQuery() != null) {
             c = drillThrough.getQuery().getCube();
         }
         try {
-            if (c != null &&
-                c instanceof RolapCube rolapCube) {
-                cube = rolapCube;
+            if (c != null) {
                 Scenario scenario;
                 if (session != null) {
                     scenario = session.getScenario();
@@ -732,11 +726,10 @@ public class OlapExecuteService implements ExecuteService {
                 	session = ScenarioSession.create(statementRequest.sessionId());
                 	scenario = drillThrough.getQuery().getConnection().createScenario();
                 	drillThrough.getQuery().getConnection().setScenario(scenario);
-            
+
                 }
                 if (connection.getScenario() != null) {
-                    scenario.setWriteBackTable(rolapCube.getWritebackTable());
-                    rolapCube.modifyFact(scenario.getSessionValues());
+                    c.modifyFact(scenario.getSessionValues());
                 }
             }
             statement = connection.createStatement();
@@ -755,8 +748,8 @@ public class OlapExecuteService implements ExecuteService {
                 HSB_DRILL_THROUGH_SQL_FAULT_FS,
                 e);
         } finally {
-            if (cube != null) {
-                cube.restoreFact();
+            if (c != null) {
+                c.restoreFact();
             }
             if (resultSet != null) {
                 try {

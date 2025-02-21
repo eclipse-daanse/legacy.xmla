@@ -2,14 +2,11 @@ package org.eclipse.daanse.olap.api.result;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
-
-import mondrian.rolap.RolapWritebackTable;
 
 /**
  * Context for a set of writeback operations.
@@ -52,7 +49,5 @@ public interface Scenario {
 
     List<Map<String, Map.Entry<Datatype, Object>>> getSessionValues();
 
-    void setWriteBackTable(Optional<RolapWritebackTable> writebackTable);
-
-    Optional<RolapWritebackTable> getWriteBackTable();
+    void clear();
 }
