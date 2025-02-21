@@ -38,9 +38,13 @@ public class PropertyImpl implements IMondrianOlap4jProperty {
             cellNames.add(property.getName());
         }
 
-        for (mondrian.olap.Property o
-            : mondrian.olap.Property.enumeration.getValuesSortedByName())
+        for (Map.Entry<String, mondrian.olap.Property> e
+            : mondrian.olap.Property.properiesMap.entrySet()
+            .stream()
+            .sorted(Map.Entry.comparingByKey()).toList()
+            )
         {
+            mondrian.olap.Property o = e.getValue();
             if (o.isMemberProperty()
                 && !memberNames.contains(o.getName()))
             {

@@ -122,10 +122,10 @@ public class RolapBaseCubeMeasure
 
         // Validate aggregator.
         this.aggregator =
-            RolapAggregator.enumeration.getValue(aggregatorName, false);
+            RolapAggregator.aggregatorsMap.get(aggregatorName);
         if (this.aggregator == null) {
             StringBuilder buf = new StringBuilder();
-            for (String aggName : RolapAggregator.enumeration.getNames()) {
+            for (String aggName : RolapAggregator.aggregatorsMap.keySet()) {
                 if (buf.length() > 0) {
                     buf.append(", ");
                 }

@@ -10,7 +10,9 @@
 */
 package mondrian.rolap;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Evaluator;
@@ -19,7 +21,7 @@ import org.eclipse.daanse.olap.api.rolap.agg.Aggregator;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 
-import mondrian.olap.EnumeratedValues;
+import mondrian.olap.Value;
 import mondrian.olap.fun.FunUtil;
 
 /**
@@ -28,8 +30,34 @@ import mondrian.olap.fun.FunUtil;
  * @author jhyde
  * @since Jul 9, 2003
  */
-public abstract class RolapAggregator extends EnumeratedValues.BasicValue implements Aggregator {
+public abstract class RolapAggregator implements Value, Aggregator {
   private static int index = 0;
+  public String name;
+  public int ordinal;
+  public String description;
+
+  @Override
+  public String getName() {
+      return name;
+  }
+
+  @Override
+  public int getOrdinal() {
+      return ordinal;
+  }
+
+  @Override
+  public String getDescription() {
+      return description;
+  }
+
+  /**
+   * Returns the value's name.
+   */
+  @Override
+  public String toString() {
+      return name;
+  }
 
   public static final RolapAggregator Sum = new RolapAggregator( "sum", index++, false ) {
     @Override
@@ -94,6 +122,7 @@ public abstract class RolapAggregator extends EnumeratedValues.BasicValue implem
 	public Object aggregate( Evaluator evaluator, TupleList members, Calc exp ) {
       return FunUtil.count( evaluator, members, false );
     }
+
   };
 
   public static final RolapAggregator Min = new RolapAggregator( "min", index++, false ) {
@@ -236,8 +265,16 @@ public abstract class RolapAggregator extends EnumeratedValues.BasicValue implem
   /**
    * List of all valid aggregation operators.
    */
-  public static final EnumeratedValues<RolapAggregator> enumeration =
-      new EnumeratedValues<>( new RolapAggregator[] { Sum, Count, Min, Max, Avg, DistinctCount } );
+  public static final Map<String, RolapAggregator> aggregatorsMap = new HashMap<String, RolapAggregator>() {
+      {
+          put(Sum.name, Sum);
+          put(Count.getName(), Count);
+          put(Min.getName(), Min);
+          put(Max.getName(), Max);
+          put(Avg.getName(), Avg);
+          put(DistinctCount.getName(), DistinctCount);
+      }
+  };
 
   /**
    * This is the base class for implementing aggregators over sum and average columns in an aggregate table. These
@@ -388,7 +425,9 @@ public abstract class RolapAggregator extends EnumeratedValues.BasicValue implem
   private final boolean distinct;
 
   protected RolapAggregator( String name, int ordinal, boolean distinct ) {
-    super( name, ordinal, null );
+    this.name = name;
+    this.ordinal = ordinal;
+    description = null;
     this.distinct = distinct;
   }
 

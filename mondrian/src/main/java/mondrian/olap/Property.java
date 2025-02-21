@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.olap.api.query.component.Expression;
-
 import mondrian.spi.PropertyFormatter;
 
 /**
@@ -64,7 +63,50 @@ import mondrian.spi.PropertyFormatter;
  *
  * @author jhyde
  */
-public class Property extends EnumeratedValues.BasicValue {
+public class Property implements Value {
+
+    public String name;
+    public int ordinal;
+    public String description;
+
+    // ~ Data members ---------------------------------------------------------
+    /**
+     * The datatype of the property.
+     */
+    private final Datatype type;
+
+    /**
+     * Whether the property is internal.
+     */
+    private final boolean internal;
+    private final boolean member;
+    private final boolean cell;
+
+    private static int nextOrdinal = 100;
+
+    // ~ Methods --------------------------------------------------------------
+
+    /**
+     * Creates a property definition. If ordinal is negative, generates a
+     * unique positive ordinal.
+     */
+    protected Property(
+        String name,
+        Datatype type,
+        int ordinal,
+        boolean internal,
+        boolean member,
+        boolean cell,
+        String description)
+    {
+        this.name = name;
+        this.ordinal = ordinal < 0 ? nextOrdinal++ : ordinal;
+        this.description = description;
+        this.type = type;
+        this.internal = internal;
+        this.member = member;
+        this.cell = cell;
+    }
 
     public enum Datatype {
         TYPE_STRING(null),
@@ -719,45 +761,6 @@ public class Property extends EnumeratedValues.BasicValue {
         new HashSet<>(
             Arrays.asList(
                 "format", "format_string", "FORMAT", FORMAT_STRING.name));
-
-    // ~ Data members ---------------------------------------------------------
-
-    /**
-     * The datatype of the property.
-     */
-    private final Datatype type;
-
-    /**
-     * Whether the property is internal.
-     */
-    private final boolean internal;
-    private final boolean member;
-    private final boolean cell;
-
-    private static int nextOrdinal = 100;
-
-    // ~ Methods --------------------------------------------------------------
-
-    /**
-     * Creates a property definition. If ordinal is negative, generates a
-     * unique positive ordinal.
-     */
-    protected Property(
-        String name,
-        Datatype type,
-        int ordinal,
-        boolean internal,
-        boolean member,
-        boolean cell,
-        String description)
-    {
-        super(name, ordinal < 0 ? nextOrdinal++ : ordinal, description);
-        this.type = type;
-        this.internal = internal;
-        this.member = member;
-        this.cell = cell;
-    }
-
     /**
      * Returns the datatype of the property.
      */
@@ -804,57 +807,55 @@ public class Property extends EnumeratedValues.BasicValue {
         return ordinal < MAX_ORDINAL;
     }
 
-    public static final EnumeratedValues<Property> enumeration =
-        new EnumeratedValues<>(
-            new Property[] {
-                FORMAT_EXP_PARSED,
-                AGGREGATION_TYPE,
-                NAME_PROPERTY,
-                CAPTION,
-                FORMULA,
-                CATALOG_NAME,
-                SCHEMA_NAME,
-                CUBE_NAME,
-                DIMENSION_UNIQUE_NAME,
-                HIERARCHY_UNIQUE_NAME,
-                LEVEL_UNIQUE_NAME,
-                LEVEL_NUMBER,
-                MEMBER_UNIQUE_NAME,
-                MEMBER_NAME,
-                MEMBER_TYPE,
-                MEMBER_GUID,
-                MEMBER_CAPTION,
-                MEMBER_ORDINAL,
-                CHILDREN_CARDINALITY,
-                PARENT_LEVEL,
-                PARENT_UNIQUE_NAME,
-                PARENT_COUNT,
-                DESCRIPTION_PROPERTY,
-                VISIBLE,
-                CELL_FORMATTER,
-                CELL_FORMATTER_SCRIPT,
-                CELL_FORMATTER_SCRIPT_LANGUAGE,
-                BACK_COLOR,
-                CELL_EVALUATION_LIST,
-                CELL_ORDINAL,
-                FORE_COLOR,
-                FONT_NAME,
-                FONT_SIZE,
-                FONT_FLAGS,
-                FORMAT_STRING,
-                FORMATTED_VALUE,
-                NON_EMPTY_BEHAVIOR,
-                SOLVE_ORDER,
-                VALUE,
-                DATATYPE,
-                MEMBER_KEY,
-                KEY,
-                SCENARIO,
-                DISPLAY_FOLDER,
-                FORMAT_EXP,
-                ACTION_TYPE,
-                DRILLTHROUGH_COUNT,
-            });
+    public static final Map<String, Property> properiesMap = new HashMap<String, Property>(){{
+        put(FORMAT_EXP_PARSED.name, FORMAT_EXP_PARSED);
+        put(AGGREGATION_TYPE.name, AGGREGATION_TYPE);
+        put(NAME_PROPERTY.name, NAME_PROPERTY);
+        put(CAPTION.name,CAPTION);
+        put(FORMULA.name,FORMULA);
+        put(CATALOG_NAME.name,CATALOG_NAME);
+        put(SCHEMA_NAME.name,SCHEMA_NAME);
+        put(CUBE_NAME.name,CUBE_NAME);
+        put(DIMENSION_UNIQUE_NAME.name,DIMENSION_UNIQUE_NAME);
+        put(HIERARCHY_UNIQUE_NAME.name,HIERARCHY_UNIQUE_NAME);
+        put(LEVEL_UNIQUE_NAME.name,LEVEL_UNIQUE_NAME);
+        put(LEVEL_NUMBER.name,LEVEL_NUMBER);
+        put(MEMBER_UNIQUE_NAME.name,MEMBER_UNIQUE_NAME);
+        put(MEMBER_NAME.name,MEMBER_NAME);
+        put(MEMBER_TYPE.name,MEMBER_TYPE);
+        put(MEMBER_GUID.name,MEMBER_GUID);
+        put(MEMBER_CAPTION.name,MEMBER_CAPTION);
+        put(MEMBER_ORDINAL.name,MEMBER_ORDINAL);
+        put(CHILDREN_CARDINALITY.name,CHILDREN_CARDINALITY);
+        put(PARENT_LEVEL.name,PARENT_LEVEL);
+        put(PARENT_UNIQUE_NAME.name,PARENT_UNIQUE_NAME);
+        put(PARENT_COUNT.name,PARENT_COUNT);
+        put(DESCRIPTION_PROPERTY.name,DESCRIPTION_PROPERTY);
+        put(VISIBLE.name,VISIBLE);
+        put(CELL_FORMATTER.name,CELL_FORMATTER);
+        put(CELL_FORMATTER_SCRIPT.name,CELL_FORMATTER_SCRIPT);
+        put(CELL_FORMATTER_SCRIPT_LANGUAGE.name,CELL_FORMATTER_SCRIPT_LANGUAGE);
+        put(BACK_COLOR.name,BACK_COLOR);
+        put(CELL_EVALUATION_LIST.name,CELL_EVALUATION_LIST);
+        put(CELL_ORDINAL.name,CELL_ORDINAL);
+        put(FORE_COLOR.name,FORE_COLOR);
+        put(FONT_NAME.name,FONT_NAME);
+        put(FONT_SIZE.name,FONT_SIZE);
+        put(FONT_FLAGS.name,FONT_FLAGS);
+        put(FORMAT_STRING.name,FORMAT_STRING);
+        put(FORMATTED_VALUE.name,FORMATTED_VALUE);
+        put(NON_EMPTY_BEHAVIOR.name,NON_EMPTY_BEHAVIOR);
+        put(SOLVE_ORDER.name,SOLVE_ORDER);
+        put(VALUE.name,VALUE);
+        put(DATATYPE.name,DATATYPE);
+        put(MEMBER_KEY.name,MEMBER_KEY);
+        put(KEY.name,KEY);
+        put(SCENARIO.name,SCENARIO);
+        put(DISPLAY_FOLDER.name,DISPLAY_FOLDER);
+        put(FORMAT_EXP.name,FORMAT_EXP);
+        put(ACTION_TYPE.name,ACTION_TYPE);
+        put(DRILLTHROUGH_COUNT.name,DRILLTHROUGH_COUNT);
+    }};
 
     private static final int MAX_ORDINAL = 56;
 
@@ -864,11 +865,10 @@ public class Property extends EnumeratedValues.BasicValue {
         synonyms.put("FORMAT", FORMAT_STRING);
 
         // Populate map of upper-case property names.
-        for (String propertyName : enumeration.getNames()) {
-            final Property property = enumeration.getValue(propertyName, true);
+        for (Map.Entry<String, Property> e  : properiesMap.entrySet()) {
             mapUpperNameToProperties.put(
-                propertyName.toUpperCase(), property);
-            assert property.getOrdinal() < MAX_ORDINAL;
+                e.getKey().toUpperCase(), e.getValue());
+            assert e.getValue().getOrdinal() < MAX_ORDINAL;
         }
 
         // Add synonyms.
@@ -888,14 +888,39 @@ public class Property extends EnumeratedValues.BasicValue {
      */
     public static Property lookup(String name, boolean matchCase) {
         if (matchCase) {
-            Property property = enumeration.getValue(name, false);
-            if (property != null) {
-                return property;
+            if (properiesMap.containsKey(name)) {
+                Property property = properiesMap.get(name);
+                if (property != null) {
+                    return property;
+                }
             }
             return synonyms.get(name);
         } else {
             // No need to check synonyms separately - the map contains them.
             return mapUpperNameToProperties.get(name.toUpperCase());
         }
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public int getOrdinal() {
+        return ordinal;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Returns the value's name.
+     */
+    @Override
+    public String toString() {
+        return name;
     }
 }
