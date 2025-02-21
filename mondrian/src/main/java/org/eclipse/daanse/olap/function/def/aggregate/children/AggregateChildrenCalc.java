@@ -27,7 +27,7 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCa
 import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 
 import mondrian.calc.impl.UnaryTupleList;
-import mondrian.olap.Property;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.fun.FunUtil;
 
 public class AggregateChildrenCalc extends AbstractProfilingNestedUnknownCalc {
@@ -51,7 +51,7 @@ public class AggregateChildrenCalc extends AbstractProfilingNestedUnknownCalc {
         Member member = evaluator.getPreviousContext(hierarchy);
         List<Member> members = new ArrayList<>();
         evaluator.getCatalogReader().getParentChildContributingChildren(member.getDataMember(), hierarchy, members);
-        Aggregator aggregator = (Aggregator) evaluator.getProperty(Property.AGGREGATION_TYPE.name, null);
+        Aggregator aggregator = (Aggregator) evaluator.getProperty(StandardProperty.AGGREGATION_TYPE.getName(), null);
         if (aggregator == null) {
             throw FunUtil.newEvalException(null, new StringBuilder("Could not find an aggregator in the current ")
                     .append("evaluation context").toString());

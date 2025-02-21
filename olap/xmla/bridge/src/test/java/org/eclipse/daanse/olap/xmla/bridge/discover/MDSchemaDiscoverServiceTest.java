@@ -772,8 +772,8 @@ class MDSchemaDiscoverServiceTest {
 
         MdSchemaPropertiesRequest request = mock(MdSchemaPropertiesRequest.class);
         MdSchemaPropertiesRestrictions restrictions = mock(MdSchemaPropertiesRestrictions.class);
-        mondrian.olap.Property property1 = mock(mondrian.olap.Property.class);
-        mondrian.olap.Property property2 = mock(mondrian.olap.Property.class);
+        mondrian.olap.AbstractProperty property1 = mock(mondrian.olap.AbstractProperty.class);
+        mondrian.olap.AbstractProperty property2 = mock(mondrian.olap.AbstractProperty.class);
 
         when(request.restrictions()).thenReturn(restrictions);
         when(restrictions.catalogName()).thenReturn(Optional.of("foo"));

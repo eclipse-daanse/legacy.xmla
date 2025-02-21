@@ -21,9 +21,9 @@ import java.util.stream.Stream;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.DimensionType;
@@ -32,6 +32,7 @@ import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
@@ -42,9 +43,10 @@ import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import mondrian.olap.AbstractProperty;
 import mondrian.olap.IdImpl;
 import mondrian.olap.LevelBase;
-import mondrian.olap.Property;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.Util;
 import mondrian.olap.exceptions.NonTimeLevelInTimeHierarchyException;
 import mondrian.olap.exceptions.TimeLevelInNonTimeHierarchyException;
@@ -208,12 +210,12 @@ public class RolapLevel extends LevelBase {
             }
         }
         this.properties = properties;
-        List<Property> list = new ArrayList<>();
+        List<AbstractProperty> list = new ArrayList<>();
         for (Level level = this; level != null;
              level = level.getParentLevel())
         {
-            final Property[] levelProperties = level.getProperties();
-            for (final Property levelProperty : levelProperties) {
+            final AbstractProperty[] levelProperties = level.getProperties();
+            for (final AbstractProperty levelProperty : levelProperties) {
                 Property existingProperty = lookupProperty(
                     list, levelProperty.getName());
                 if (existingProperty == null) {
@@ -340,7 +342,7 @@ public class RolapLevel extends LevelBase {
         return nameExp;
     }
 
-    private Property lookupProperty(List<Property> list, String propertyName) {
+    private Property lookupProperty(List<AbstractProperty> list, String propertyName) {
         for (Property property : list) {
             if (property.getName().equals(propertyName)) {
                 return property;
@@ -416,9 +418,9 @@ public class RolapLevel extends LevelBase {
         if (nameExp != null) {
             list.add(
                 new RolapProperty(
-                    Property.NAME_PROPERTY.name, Property.Datatype.TYPE_STRING,
+                		StandardProperty.NAME.getName(), Property.Datatype.TYPE_STRING,
                     nameExp, null, null, null, true,
-                    Property.NAME_PROPERTY.description, null));
+                    StandardProperty.NAME.getDescription(), null));
         }
         for (int i = 0; i < xmlLevel.getMemberProperties().size(); i++) {
         	MemberPropertyMapping xmlProperty = xmlLevel.getMemberProperties().get(i);
@@ -446,7 +448,7 @@ public class RolapLevel extends LevelBase {
         return list.toArray(new RolapProperty[list.size()]);
     }
 
-    private static Property.Datatype convertPropertyTypeNameToCode(
+    private static AbstractProperty.Datatype convertPropertyTypeNameToCode(
         String type)
     {
         if ("String".equals(type)) {

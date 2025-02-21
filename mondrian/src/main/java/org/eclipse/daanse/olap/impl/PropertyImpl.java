@@ -4,11 +4,14 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.result.Datatype;
 import org.eclipse.daanse.olap.api.result.IMondrianOlap4jProperty;
 import org.eclipse.daanse.olap.api.result.Property;
+
+import mondrian.olap.StandardProperty;
 
 public class PropertyImpl implements IMondrianOlap4jProperty {
 
@@ -38,13 +41,14 @@ public class PropertyImpl implements IMondrianOlap4jProperty {
             cellNames.add(property.getName());
         }
 
-        for (Map.Entry<String, mondrian.olap.Property> e
-            : mondrian.olap.Property.properiesMap.entrySet()
-            .stream()
-            .sorted(Map.Entry.comparingByKey()).toList()
+         Map<String,StandardProperty> map=    StandardProperty.STANDARD_PROPERTIES
+        .stream().sorted((p1,p2)->p1.getName().compareTo(p2.getName())).collect(Collectors.toMap(p-> p.getName(),p->p));
+      
+        for (Map.Entry<String,StandardProperty> e
+            : map.entrySet()
             )
         {
-            mondrian.olap.Property o = e.getValue();
+            mondrian.olap.AbstractProperty o = e.getValue();
             if (o.isMemberProperty()
                 && !memberNames.contains(o.getName()))
             {
@@ -62,15 +66,15 @@ public class PropertyImpl implements IMondrianOlap4jProperty {
         }
     }
 
-    final mondrian.olap.Property property;
+    final org.eclipse.daanse.olap.api.element.Property property;
 
     org.eclipse.daanse.olap.api.element.Level level;
 
-    PropertyImpl(mondrian.olap.Property property) {
+    PropertyImpl(org.eclipse.daanse.olap.api.element.Property property) {
         this.property = property;
     }
 
-    PropertyImpl(mondrian.olap.Property property, org.eclipse.daanse.olap.api.element.Level level) {
+    PropertyImpl(org.eclipse.daanse.olap.api.element.Property property, org.eclipse.daanse.olap.api.element.Level level) {
         this(property);
         this.level = level;
     }
@@ -78,7 +82,7 @@ public class PropertyImpl implements IMondrianOlap4jProperty {
 
     @Override
     public String getName() {
-        return property.name;
+        return property.getName();
     }
 
     @Override

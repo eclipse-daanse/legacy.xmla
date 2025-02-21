@@ -10,8 +10,8 @@
 */
 package mondrian.rolap;
 
-import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
@@ -20,7 +20,7 @@ import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
 
 import mondrian.mdx.HierarchyExpressionImpl;
 import mondrian.mdx.ResolvedFunCallImpl;
-import mondrian.olap.Property;
+import mondrian.olap.StandardProperty;
 import mondrian.util.Bug;
 
 /**
@@ -185,36 +185,35 @@ public class RolapCubeMember
     @Override
 	public Object getPropertyValue(String propertyName, boolean matchCase) {
         // we need to wrap these children as rolap cube members
-        Property property = Property.lookup(propertyName, matchCase);
+        StandardProperty property = StandardProperty.lookup(propertyName, matchCase);
         if (property != null) {
-            switch (property.ordinal) {
-            case Property.DIMENSION_UNIQUE_NAME_ORDINAL:
+             if( property == StandardProperty.DIMENSION_UNIQUE_NAME) {
                 return getDimension().getUniqueName();
 
-            case Property.HIERARCHY_UNIQUE_NAME_ORDINAL:
+            } else if( property == StandardProperty.HIERARCHY_UNIQUE_NAME){
                 return getHierarchy().getUniqueName();
 
-            case Property.LEVEL_UNIQUE_NAME_ORDINAL:
+            } else if( property == StandardProperty.LEVEL_UNIQUE_NAME){
                 return getLevel().getUniqueName();
 
-            case Property.MEMBER_UNIQUE_NAME_ORDINAL:
+            } else if( property == StandardProperty.MEMBER_UNIQUE_NAME){
                 return getUniqueName();
 
-            case Property.MEMBER_NAME_ORDINAL:
+            } else if( property == StandardProperty.MEMBER_NAME){
                 return getName();
 
-            case Property.MEMBER_CAPTION_ORDINAL:
+            } else if( property == StandardProperty.MEMBER_CAPTION){
                 return getCaption();
 
-            case Property.PARENT_UNIQUE_NAME_ORDINAL:
+            } else if( property == StandardProperty.PARENT_UNIQUE_NAME){
                 return parentCubeMember == null
                     ? null
                     : parentCubeMember.getUniqueName();
 
-            case Property.MEMBER_KEY_ORDINAL, Property.KEY_ORDINAL:
+            } else if( property == StandardProperty.MEMBER_KEY|| property== StandardProperty.KEY){
                 return this == this.getHierarchy().getAllMember() ? 0
-                    : getKey();
-            default:
+                    : getKey();}
+            else {
                 return member.getPropertyValue(propertyName, matchCase);
             }
         }

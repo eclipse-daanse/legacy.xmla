@@ -24,7 +24,8 @@ import org.eclipse.daanse.olap.api.query.component.Expression;
 
 import mondrian.mdx.MemberExpressionImpl;
 import mondrian.mdx.UnresolvedFunCallImpl;
-import mondrian.olap.Property;
+import mondrian.olap.AbstractProperty;
+import mondrian.olap.StandardProperty;
 import mondrian.rolap.RolapLevel;
 import mondrian.rolap.RolapMember;
 import mondrian.rolap.RolapMemberBase;
@@ -162,15 +163,15 @@ public class VisualTotalMember  extends RolapMemberBase {
 
     @Override
     public Object getPropertyValue(String propertyName, boolean matchCase) {
-        Property property = Property.lookup(propertyName, matchCase);
+        AbstractProperty property = StandardProperty.lookup(propertyName, matchCase);
         if (property == null) {
             return null;
         }
-        switch (property.ordinal) {
-        case Property.CHILDREN_CARDINALITY_ORDINAL:
-            return member.getPropertyValue(propertyName, matchCase);
-        default:
-            return super.getPropertyValue(propertyName, matchCase);
+        
+        if(property == StandardProperty.CHILDREN_CARDINALITY) {
+            return member.getPropertyValue(propertyName, matchCase);}
+        else {
+        	return super.getPropertyValue(propertyName, matchCase);
         }
     }
 }

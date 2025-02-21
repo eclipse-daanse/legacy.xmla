@@ -16,6 +16,8 @@ package mondrian.rolap.util;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberPropertyMapping;
 
+import mondrian.olap.StandardProperty;
+
 public class CalculatedMemberUtil {
 
     private CalculatedMemberUtil() {
@@ -33,7 +35,7 @@ public class CalculatedMemberUtil {
     public static String getFormatString(CalculatedMemberMapping calculatedMember) {
         for (CalculatedMemberPropertyMapping prop : calculatedMember.getCalculatedMemberProperties()) {
             if (prop.getName().equals(
-                mondrian.olap.Property.FORMAT_STRING.name))
+                StandardProperty.FORMAT_STRING.getName()))
             {
                 return prop.getValue();
             }

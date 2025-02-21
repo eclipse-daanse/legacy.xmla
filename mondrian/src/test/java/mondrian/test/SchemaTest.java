@@ -131,7 +131,8 @@ import org.slf4j.LoggerFactory;
 
 import com.mysql.cj.xdevapi.RowImpl;
 
-import mondrian.olap.Property;
+import mondrian.olap.StandardProperty;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapCatalog;
@@ -8173,13 +8174,13 @@ class SchemaTest {
         assertEquals("Measure description", measure.getDescription());
         assertEquals(
             measure.getDescription(),
-            measure.getPropertyValue(Property.DESCRIPTION_PROPERTY.name));
+            measure.getPropertyValue(StandardProperty.DESCRIPTION_PROPERTY.getName()));
         assertEquals(
             measure.getCaption(),
-            measure.getPropertyValue(Property.CAPTION.name));
+            measure.getPropertyValue(StandardProperty.CAPTION.getName()));
         assertEquals(
             measure.getCaption(),
-            measure.getPropertyValue(Property.MEMBER_CAPTION.name));
+            measure.getPropertyValue(StandardProperty.MEMBER_CAPTION.getName()));
         checkAnnotations(measure.getMetaData(), "a", "Measure");
 
         // The implicitly created [Fact Count] measure
@@ -8187,7 +8188,7 @@ class SchemaTest {
         assertEquals("Fact Count", factCountMeasure.getName());
         assertEquals(
             false,
-            factCountMeasure.getPropertyValue(Property.VISIBLE.name));
+            factCountMeasure.getPropertyValue(StandardProperty.VISIBLE.getName()));
         checkAnnotations(
             factCountMeasure.getMetaData(), "Internal Use",
             "For internal use");
@@ -8198,13 +8199,13 @@ class SchemaTest {
         assertEquals("Calc member description", calcMeasure.getDescription());
         assertEquals(
             calcMeasure.getDescription(),
-            calcMeasure.getPropertyValue(Property.DESCRIPTION_PROPERTY.name));
+            calcMeasure.getPropertyValue(StandardProperty.DESCRIPTION_PROPERTY.getName()));
         assertEquals(
             calcMeasure.getCaption(),
-            calcMeasure.getPropertyValue(Property.CAPTION.name));
+            calcMeasure.getPropertyValue(StandardProperty.CAPTION.getName()));
         assertEquals(
             calcMeasure.getCaption(),
-            calcMeasure.getPropertyValue(Property.MEMBER_CAPTION.name));
+            calcMeasure.getPropertyValue(StandardProperty.MEMBER_CAPTION.getName()));
         checkAnnotations(calcMeasure.getMetaData(), "a", "Calc member");
 
         final NamedSet namedSet = cube.getNamedSets()[0];
@@ -8233,13 +8234,13 @@ class SchemaTest {
         assertEquals("Measure description", measure2.getDescription());
         assertEquals(
             measure2.getDescription(),
-            measure2.getPropertyValue(Property.DESCRIPTION_PROPERTY.name));
+            measure2.getPropertyValue(StandardProperty.DESCRIPTION_PROPERTY.getName()));
         assertEquals(
             measure2.getCaption(),
-            measure2.getPropertyValue(Property.CAPTION.name));
+            measure2.getPropertyValue(StandardProperty.CAPTION.getName()));
         assertEquals(
             measure2.getCaption(),
-            measure2.getPropertyValue(Property.MEMBER_CAPTION.name));
+            measure2.getPropertyValue(StandardProperty.MEMBER_CAPTION.getName()));
         checkAnnotations(
             measure2.getMetaData(), "a", "Measure");
     }

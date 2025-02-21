@@ -12,16 +12,15 @@ package mondrian.rolap;
 
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.query.component.Expression;
-
-import mondrian.olap.Property;
 
 /**
  * Implementation of {@link mondrian.rolap.RolapMember} that delegates all calls

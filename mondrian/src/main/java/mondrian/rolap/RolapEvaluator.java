@@ -44,7 +44,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.calc.impl.DelegatingTupleList;
-import mondrian.olap.Property;
+import mondrian.olap.AbstractProperty;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
@@ -1001,7 +1002,7 @@ public final Object getProperty( String name, Object defaultValue ) {
    */
   @Override
 public final String getFormatString() {
-    final Expression formatExp = (Expression) getProperty( Property.FORMAT_EXP_PARSED.name, null );
+    final Expression formatExp = (Expression) getProperty( StandardProperty.FORMAT_EXP_PARSED.getName(), null );
     if ( formatExp == null ) {
       return "Standard";
     }

@@ -1891,7 +1891,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
                 parent, names, failIfNotFound, category, matchType);
             if (olapElement instanceof Member member) {
                 final Formula formula = (Formula)
-                    member.getPropertyValue(Property.FORMULA.name);
+                    member.getPropertyValue(StandardProperty.FORMULA.getName());
                 if (formula != null) {
                     // This is a calculated member defined against the cube.
                     // Create a free-standing formula using the same

@@ -104,6 +104,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
@@ -1215,10 +1216,10 @@ public class Util {
         // Now try a standard property.
         boolean caseSensitive =
             SystemWideProperties.instance().CaseSensitive;
-        final Property property = Property.lookup(propertyName, caseSensitive);
+        final Property property = StandardProperty.lookup(propertyName, caseSensitive);
         if (property != null
             && property.isMemberProperty()
-            && property.isStandard())
+        )
         {
             return property;
         }

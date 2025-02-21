@@ -21,7 +21,6 @@ import org.eclipse.daanse.olap.api.rolap.agg.Aggregator;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 
-import mondrian.olap.Value;
 import mondrian.olap.fun.FunUtil;
 
 /**
@@ -30,23 +29,20 @@ import mondrian.olap.fun.FunUtil;
  * @author jhyde
  * @since Jul 9, 2003
  */
-public abstract class RolapAggregator implements Value, Aggregator {
+public abstract class RolapAggregator implements Aggregator {
   private static int index = 0;
   public String name;
   public int ordinal;
   public String description;
 
-  @Override
   public String getName() {
       return name;
   }
 
-  @Override
   public int getOrdinal() {
       return ordinal;
   }
 
-  @Override
   public String getDescription() {
       return description;
   }

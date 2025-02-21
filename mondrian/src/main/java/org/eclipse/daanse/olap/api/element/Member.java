@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 
-import mondrian.olap.Property;
+import mondrian.olap.AbstractProperty;
 
 /**
  * A <code>Member</code> is a 'point' on a dimension of a cube. Examples are

@@ -41,6 +41,7 @@ import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MemberFormatter;
+import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.CellSet;
@@ -64,7 +65,6 @@ import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.SchemaModifiers;
@@ -1527,11 +1527,11 @@ public class UdfTest {
                 + "from [Sales]");
         final Member member =
             result.getAxes().get(0).getPositions().get(0).getMembers().get(0);
-        final mondrian.olap.Property property = Arrays.stream(member.getProperties()).filter(p -> "Medium".equals(p.name)).findFirst()
+        final org.eclipse.daanse.olap.api.element.Property property = Arrays.stream(member.getProperties()).filter(p -> "Medium".equals(p.getName())).findFirst()
             .orElseThrow(() -> new RuntimeException("property with name \"Medium\" is absent"));
         assertEquals(
             "foo0/Medium/No Mediabar",
-            member.getPropertyFormattedValue(property.name));
+            member.getPropertyFormattedValue(property.getName()));
     }
 
     /**
@@ -1569,11 +1569,11 @@ public class UdfTest {
         final Member member =
             result.getAxes().get(0).getPositions().get(0).getMembers().get(0);
         final Property property = Arrays.stream(member.getProperties())
-            .filter(p -> "Medium".equals(p.name)).findFirst()
+            .filter(p -> "Medium".equals(p.getName())).findFirst()
             .orElseThrow(() -> new RuntimeException("Property with name \"Medium\" is absent"));
         assertEquals(
             "foo0/Medium/No Mediabar",
-            member.getPropertyFormattedValue(property.name));
+            member.getPropertyFormattedValue(property.getName()));
     }
 
     /**
@@ -1615,11 +1615,11 @@ public class UdfTest {
         final Member member =
             result.getAxes().get(0).getPositions().get(0).getMembers().get(0);
         final
-        mondrian.olap.Property property = Arrays.stream(member.getProperties()).filter(p -> "Medium".equals(p.name))
-            .findFirst().orElseThrow(() -> new RuntimeException("Propertywith name \"Medium\" is absent"));
+        org.eclipse.daanse.olap.api.element.Property property = Arrays.stream(member.getProperties()).filter(p -> "Medium".equals(p.getName()))
+            .findFirst().orElseThrow(() -> new RuntimeException("Property with name \"Medium\" is absent"));
         assertEquals(
             "foo0/Medium/No Mediabar",
-            member.getPropertyFormattedValue(property.name));
+            member.getPropertyFormattedValue(property.getName()));
     }
 
 

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
@@ -36,7 +37,6 @@ import org.mockito.Answers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import mondrian.olap.Property;
 import mondrian.rolap.aggmatcher.AggStar;
 import mondrian.rolap.aggmatcher.JdbcSchema;
 import mondrian.rolap.sql.SqlQuery;

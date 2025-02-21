@@ -94,7 +94,8 @@ import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.HierarchyBase;
 import mondrian.olap.IdImpl;
 import mondrian.olap.InvalidHierarchyException;
-import mondrian.olap.Property;
+import mondrian.olap.StandardProperty;
+import mondrian.olap.AbstractProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
@@ -1372,7 +1373,7 @@ public class RolapHierarchy extends HierarchyBase {
 
         @Override
 		public synchronized void setProperty(String name, Object value) {
-            if (name.equals(Property.CELL_FORMATTER.getName())) {
+            if (name.equals(StandardProperty.CELL_FORMATTER.getName())) {
                 String cellFormatterClass = (String) value;
                 FormatterCreateContext formatterContext =
                     new FormatterCreateContext.Builder(getUniqueName())
@@ -1382,9 +1383,9 @@ public class RolapHierarchy extends HierarchyBase {
                     FormatterFactory.instance()
                         .createCellFormatter(formatterContext));
             }
-            if (name.equals(Property.CELL_FORMATTER_SCRIPT.name)) {
+            if (name.equals(StandardProperty.CELL_FORMATTER_SCRIPT.getName())) {
                 String language = (String) getPropertyValue(
-                    Property.CELL_FORMATTER_SCRIPT_LANGUAGE.name);
+                		StandardProperty.CELL_FORMATTER_SCRIPT_LANGUAGE.getName());
                 String scriptText = (String) value;
                 FormatterCreateContext formatterContext =
                     new FormatterCreateContext.Builder(getUniqueName())

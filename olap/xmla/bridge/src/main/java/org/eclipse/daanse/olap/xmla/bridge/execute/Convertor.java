@@ -461,7 +461,7 @@ public class Convertor {
         final Statement statement = cellSet.getStatement();
         for (QueryComponent queryPart : statement.getQuery().getCellProperties()) {
             org.eclipse.daanse.olap.api.query.component.CellProperty cellProperty = (org.eclipse.daanse.olap.api.query.component.CellProperty) queryPart;
-            mondrian.olap.Property property = mondrian.olap.Property.lookup(cellProperty.toString(), matchCase);
+            org.eclipse.daanse.olap.api.element.Property property = mondrian.olap.StandardProperty.lookup(cellProperty.toString(), matchCase);
             String propertyName = ((NameSegment)
                 mondrian.olap.Util.parseIdentifier(cellProperty.toString()).get(0)).getName();
             queryCellPropertyNames.add(propertyName);

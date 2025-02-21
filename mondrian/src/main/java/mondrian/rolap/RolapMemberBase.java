@@ -16,8 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.NameSegment;
+import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -25,7 +26,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
-import org.eclipse.daanse.olap.api.element.Catalog;
+import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.element.OlapMetaData;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.MemberBase;
-import mondrian.olap.Property;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.Util;
 import mondrian.server.LocusImpl;
 import mondrian.spi.PropertyFormatter;
@@ -139,7 +140,7 @@ public class RolapMemberBase
         {
             // Save memory by only saving the name as a property if it's
             // different from the key.
-            setProperty(Property.NAME_PROPERTY.name, name);
+            setProperty(StandardProperty.NAME.getName(), name);
         } else if (key != null) {
             setUniqueName(key);
         }
@@ -187,7 +188,7 @@ public class RolapMemberBase
         }
 
         // falling back to member name, as it's done in MemberBase
-        Object name = getPropertyValue(Property.NAME_PROPERTY.name);
+        Object name = getPropertyValue(StandardProperty.NAME.getName());
 
         // falling back to member key, as it's done in #getName()
         return name != null ? name : key;
@@ -307,7 +308,7 @@ public class RolapMemberBase
     @Override
 	public String getName() {
         final Object name =
-            getPropertyValue(Property.NAME_PROPERTY.name);
+            getPropertyValue(StandardProperty.NAME.getName());
         return (name != null)
             ? String.valueOf(name)
             : keyToString(key);
@@ -326,7 +327,7 @@ public class RolapMemberBase
      */
     @Override
 	public synchronized void setProperty(String name, Object value) {
-        if (name.equals(Property.CAPTION.name)) {
+        if (name.equals(StandardProperty.CAPTION.getName())) {
             setCaption((String)value);
             return;
         }
@@ -335,14 +336,14 @@ public class RolapMemberBase
             // the empty map is shared and immutable; create our own
             mapPropertyNameToValue = new HashMap<String, Object>();
         }
-        if (name.equals(Property.NAME_PROPERTY.name)) {
+        if (name.equals(StandardProperty.NAME.getName())) {
             if (value == null) {
                 value = RolapUtil.mdxNullLiteral();
             }
             setUniqueName(value);
         }
 
-        if (name.equals(Property.MEMBER_ORDINAL.name)) {
+        if (name.equals(StandardProperty.MEMBER_ORDINAL.getName())) {
             String ordinal = (String) value;
             if (ordinal.startsWith("\"") && ordinal.endsWith("\"")) {
                 ordinal = ordinal.substring(1, ordinal.length() - 1);
@@ -361,69 +362,60 @@ public class RolapMemberBase
 
     @Override
 	public Object getPropertyValue(String propertyName, boolean matchCase) {
-        Property property = Property.lookup(propertyName, matchCase);
+        StandardProperty property = StandardProperty.lookup(propertyName, matchCase);
         if (property != null) {
             Catalog schema;
             Member parentMember;
             List<RolapMember> list;
-            switch (property.ordinal) {
-            case Property.NAME_ORDINAL:
+            if(property== StandardProperty.NAME) {
                 // Do NOT call getName() here. This property is internal,
                 // and must fall through to look in the property list.
-                break;
 
-            case Property.CAPTION_ORDINAL:
+            }else if(property==  StandardProperty.CAPTION){
                 return getCaption();
 
-            case Property.CONTRIBUTING_CHILDREN_ORDINAL:
-                list = new ArrayList<>();
-                getHierarchy().getMemberReader().getMemberChildren(this, list);
-                return list;
-
-            case Property.CATALOG_NAME_ORDINAL:
+            }else if(property==  StandardProperty.CATALOG_NAME){
                 // TODO: can't go from member to connection thence to
                 // Connection.getCatalogName()
-                break;
 
-            case Property.SCHEMA_NAME_ORDINAL:
+            }else if(property==  StandardProperty.SCHEMA_NAME){
                 schema = getHierarchy().getDimension().getCatalog();
                 return schema.getName();
 
-            case Property.CUBE_NAME_ORDINAL:
+            }else if(property==  StandardProperty.CUBE_NAME){
                 // TODO: can't go from member to cube cube yet
-                break;
 
-            case Property.DIMENSION_UNIQUE_NAME_ORDINAL:
+            }else if(property==  StandardProperty.DIMENSION_UNIQUE_NAME){
                 return getHierarchy().getDimension().getUniqueName();
 
-            case Property.HIERARCHY_UNIQUE_NAME_ORDINAL:
+            }else if(property==  StandardProperty.HIERARCHY_UNIQUE_NAME){
                 return getHierarchy().getUniqueName();
 
-            case Property.LEVEL_UNIQUE_NAME_ORDINAL:
+            }else if(property==  StandardProperty.LEVEL_UNIQUE_NAME){
                 return getLevel().getUniqueName();
 
-            case Property.LEVEL_NUMBER_ORDINAL:
+            }else if(property==  StandardProperty.LEVEL_NUMBER){
                 return getLevel().getDepth();
 
-            case Property.MEMBER_UNIQUE_NAME_ORDINAL:
+            }else if(property==  StandardProperty.MEMBER_UNIQUE_NAME){
                 return getUniqueName();
 
-            case Property.MEMBER_NAME_ORDINAL:
+            }else if(property==  StandardProperty.MEMBER_NAME){
                 return getName();
 
-            case Property.MEMBER_TYPE_ORDINAL:
+            }else if(property==  StandardProperty.MEMBER_TYPE){
                 return getMemberType().ordinal();
 
-            case Property.MEMBER_GUID_ORDINAL:
+            }else if(property==  StandardProperty.MEMBER_GUID){
                 return null;
 
-            case Property.MEMBER_CAPTION_ORDINAL:
+            }else if(property==  StandardProperty.MEMBER_CAPTION){
                 return getCaption();
 
-            case Property.MEMBER_ORDINAL_ORDINAL:
+            }else if(property==  StandardProperty.MEMBER_ORDINAL){
                 return getOrdinal();
 
-            case Property.CHILDREN_CARDINALITY_ORDINAL:
+            }else if(property==  StandardProperty.CHILDREN_CARDINALITY){
                 return LocusImpl.execute(
                     ((RolapCatalog) level.getDimension().getCatalog())
                         .getInternalConnection(),
@@ -446,23 +438,23 @@ public class RolapMemberBase
                     }
                 );
 
-            case Property.PARENT_LEVEL_ORDINAL:
+            }else if(property==  StandardProperty.PARENT_LEVEL){
                 parentMember = getParentMember();
                 return parentMember == null
                     ? 0
                     : parentMember.getLevel().getDepth();
 
-            case Property.PARENT_UNIQUE_NAME_ORDINAL:
+            }else if(property==  StandardProperty.PARENT_UNIQUE_NAME){
                 parentMember = getParentMember();
                 return parentMember == null
                     ? null
                     : parentMember.getUniqueName();
 
-            case Property.PARENT_COUNT_ORDINAL:
+            }else if(property==  StandardProperty.PARENT_COUNT){
                 parentMember = getParentMember();
                 return parentMember == null ? 0 : 1;
 
-            case Property.VISIBLE_ORDINAL:
+            }else if(property==  StandardProperty.VISIBLE){
                 final Object visProp =
                     getPropertyFromMap(propertyName, matchCase);
                 if (visProp != null) {
@@ -473,20 +465,16 @@ public class RolapMemberBase
                 // Default behavior is to return isVisible.
                 return isVisible();
 
-            case Property.MEMBER_KEY_ORDINAL:
-            case Property.KEY_ORDINAL:
+            }else if(property==  StandardProperty.MEMBER_KEY){
+            }else if(property==  StandardProperty.KEY){
                 return this == this.getHierarchy().getAllMember()
                     ? 0
                     : getKey();
 
-            case Property.SCENARIO_ORDINAL:
+            }else if(property==  StandardProperty.SCENARIO){
                 return ScenarioImpl.forMember(this);
-
-            default:
-                break;
-                // fall through
-            }
-        }
+                }
+    }
         return getPropertyFromMap(propertyName, matchCase);
     }
 

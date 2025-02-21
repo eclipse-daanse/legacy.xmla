@@ -95,8 +95,9 @@ import org.slf4j.Logger;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.olap.IdImpl;
-import mondrian.olap.Property;
+import mondrian.olap.AbstractProperty;
 import mondrian.olap.QueryCanceledException;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapCatalog;
@@ -3859,15 +3860,15 @@ public class BasicQueryTest {
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier20::new);
     CatalogReader scr = context.getConnectionWithDefaultRole().getCatalog().lookupCube( cubeName, true ).getCatalogReader( null );
     Member member = scr.getMemberByUniqueName( IdImpl.toList( "Measures", "Unit Sales" ), true );
-    Object visible = member.getPropertyValue( Property.VISIBLE.name );
+    Object visible = member.getPropertyValue( StandardProperty.VISIBLE.getName() );
     assertEquals( Boolean.FALSE, visible );
 
     member = scr.getMemberByUniqueName( IdImpl.toList( "Measures", "Store Cost" ), true );
-    visible = member.getPropertyValue( Property.VISIBLE.name );
+    visible = member.getPropertyValue( StandardProperty.VISIBLE.getName() );
     assertEquals( Boolean.TRUE, visible );
 
     member = scr.getMemberByUniqueName( IdImpl.toList( "Measures", "Profit" ), true );
-    visible = member.getPropertyValue( Property.VISIBLE.name );
+    visible = member.getPropertyValue( StandardProperty.VISIBLE.getName() );
     assertEquals( Boolean.FALSE, visible );
   }
 

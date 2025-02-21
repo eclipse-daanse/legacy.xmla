@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -41,7 +41,7 @@ import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 
 import mondrian.calc.impl.UnaryTupleList;
-import mondrian.olap.Property;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
@@ -100,7 +100,7 @@ public class AggregateCalc  extends AbstractProfilingNestedUnknownCalc {
     {
         Aggregator aggregator =
             (Aggregator) evaluator.getProperty(
-                Property.AGGREGATION_TYPE.name, null);
+            		StandardProperty.AGGREGATION_TYPE.getName(), null);
         if (aggregator == null) {
             throw FunUtil.newEvalException(
                 null,

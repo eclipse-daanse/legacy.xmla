@@ -20,6 +20,7 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
+import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -27,7 +28,6 @@ import org.eclipse.daanse.olap.api.query.component.Literal;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.osgi.service.component.annotations.Component;
 
-import mondrian.olap.Property;
 import mondrian.olap.Util;
 
 /**

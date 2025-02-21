@@ -56,7 +56,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.Property;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.recorder.MessageRecorder;
@@ -641,7 +641,7 @@ public class ExplicitRules {
          */
         private static void handleNameColumn(AggregationLevelMapping aggLevel) {
         	AggregationLevelPropertyMapping nameProp =
-        			AggregationLevelPropertyMappingImpl.builder().withName(Property.NAME_PROPERTY.getName()).withColumn((ColumnMappingImpl) aggLevel.getNameColumn()).build();
+        			AggregationLevelPropertyMappingImpl.builder().withName(StandardProperty.NAME.getName()).withColumn((ColumnMappingImpl) aggLevel.getNameColumn()).build();
         	//TODO
             //aggLevel.getAggregationLevelProperties().add(nameProp);
         }

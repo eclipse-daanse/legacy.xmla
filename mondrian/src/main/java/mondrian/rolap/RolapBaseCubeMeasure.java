@@ -18,7 +18,8 @@ import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 
-import mondrian.olap.Property;
+import mondrian.olap.StandardProperty;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.StringLiteralImpl;
 import mondrian.olap.exceptions.CastInvalidTypeException;
 import mondrian.spi.CellFormatter;
@@ -103,21 +104,21 @@ public class RolapBaseCubeMeasure
         this.expression = expression;
         if (description != null) {
             setProperty(
-                Property.DESCRIPTION_PROPERTY.name,
+                StandardProperty.DESCRIPTION_PROPERTY.getName(),
                 description);
         }
         if (formatString == null) {
             formatString = "";
         } else {
             setProperty(
-                Property.FORMAT_STRING.name,
+                StandardProperty.FORMAT_STRING.getName(),
                 formatString);
         }
         setProperty(
-            Property.FORMAT_EXP_PARSED.name,
+            StandardProperty.FORMAT_EXP_PARSED.getName(),
             StringLiteralImpl.create(formatString));
         setProperty(
-            Property.FORMAT_EXP.name,
+            StandardProperty.FORMAT_EXP.getName(),
             formatString);
 
         // Validate aggregator.
@@ -138,7 +139,7 @@ public class RolapBaseCubeMeasure
                 buf.toString()));
         }
 
-        setProperty(Property.AGGREGATION_TYPE.name, aggregator);
+        setProperty(StandardProperty.AGGREGATION_TYPE.getName(), aggregator);
         if (datatype == null) {
             if (aggregator == RolapAggregator.Count
                 || aggregator == RolapAggregator.DistinctCount)
@@ -151,7 +152,7 @@ public class RolapBaseCubeMeasure
         if (RolapBaseCubeMeasure.DataType.valueOf(datatype.getValue()) == null) {
             throw new CastInvalidTypeException(datatype.getValue());
         }
-        setProperty(Property.DATATYPE.name, datatype.getValue());
+        setProperty(StandardProperty.DATATYPE.getName(), datatype.getValue());
     }
 
     @Override
@@ -194,7 +195,7 @@ public class RolapBaseCubeMeasure
     }
 
     public Datatype getDatatype() {
-        Object datatype = getPropertyValue(Property.DATATYPE.name);
+        Object datatype = getPropertyValue(StandardProperty.DATATYPE.getName());
         try {
             return Datatype.fromValue((String) datatype);
         } catch (ClassCastException e) {

@@ -156,7 +156,7 @@ public MemberType getMemberType() {
 
   @Override
 public String getDescription() {
-    return (String) getPropertyValue( Property.DESCRIPTION_PROPERTY.name );
+    return (String) getPropertyValue( StandardProperty.DESCRIPTION_PROPERTY.getName() );
   }
 
   @Override

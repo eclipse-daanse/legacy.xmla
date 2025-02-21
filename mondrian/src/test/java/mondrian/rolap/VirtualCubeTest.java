@@ -58,7 +58,8 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.olap.Property;
+import mondrian.olap.AbstractProperty;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.test.SqlPattern;
 
@@ -799,7 +800,7 @@ class VirtualCubeTest extends BatchTestCase {
         assertEquals(expectedName, measure.getName());
         assertEquals(
             expectedVisibility,
-            measure.getPropertyValue(Property.VISIBLE.name));
+            measure.getPropertyValue(StandardProperty.VISIBLE.getName()));
     }
 
     /**

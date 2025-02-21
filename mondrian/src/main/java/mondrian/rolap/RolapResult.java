@@ -27,13 +27,13 @@ import java.util.Set;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.InternalOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Parameter;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.DimensionType;
@@ -81,12 +81,13 @@ import mondrian.calc.impl.ListTupleList;
 import mondrian.calc.impl.TupleCollections;
 import mondrian.mdx.MdxVisitorImpl;
 import mondrian.mdx.ResolvedFunCallImpl;
+import mondrian.olap.AbstractProperty;
 import mondrian.olap.ExpCacheDescriptorImpl;
 import mondrian.olap.MemberBase;
-import mondrian.olap.Property;
 import mondrian.olap.ResourceLimitExceededException;
 import mondrian.olap.ResultBase;
 import mondrian.olap.ResultLimitExceededException;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.fun.MondrianEvaluationException;
@@ -650,7 +651,7 @@ public class RolapResult extends ResultBase {
       if(!(cellProperties.length == 1
               && ((NameSegment)
               mondrian.olap.Util.parseIdentifier(cellProperties[0].toString()).get(0)).getName().equalsIgnoreCase(
-              mondrian.olap.Property.CELL_ORDINAL.getName()    ))) {
+            		  StandardProperty.CELL_ORDINAL.getName()    ))) {
         final Locus locus = new LocusImpl( execution, null, "Loading cells" );
         LocusImpl.push( locus );
         try {
@@ -724,10 +725,10 @@ public class RolapResult extends ResultBase {
         new CompoundSlicerRolapMember( (RolapMember) member.getHierarchy().getNullMember(), calc, formatter,
             tupleList, solveOrder );
 
-    placeholderMember.setProperty( Property.FORMAT_STRING.getName(), member.getPropertyValue( Property.FORMAT_STRING
+    placeholderMember.setProperty( StandardProperty.FORMAT_STRING.getName(), member.getPropertyValue( StandardProperty.FORMAT_STRING
         .getName() ) );
-    placeholderMember.setProperty( Property.FORMAT_EXP_PARSED.getName(), member.getPropertyValue(
-        Property.FORMAT_EXP_PARSED.getName() ) );
+    placeholderMember.setProperty( StandardProperty.FORMAT_EXP_PARSED.getName(), member.getPropertyValue(
+    		StandardProperty.FORMAT_EXP_PARSED.getName() ) );
 
     if ( setAxis ) {
       TupleList dummyList = TupleCollections.createList( 1 );

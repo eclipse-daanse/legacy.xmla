@@ -74,7 +74,7 @@ import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.calc.impl.UnaryTupleList;
 import mondrian.mdx.HierarchyExpressionImpl;
-import mondrian.olap.Property;
+import mondrian.olap.AbstractProperty;
 import mondrian.olap.ResultStyleException;
 import mondrian.olap.Util;
 import mondrian.olap.exceptions.CousinHierarchyMismatchException;
@@ -1971,7 +1971,7 @@ public class FunUtil extends Util {
     }
 
     @Override
-	public Property[] getProperties() {
+	public AbstractProperty[] getProperties() {
       throw new UnsupportedOperationException();
     }
 

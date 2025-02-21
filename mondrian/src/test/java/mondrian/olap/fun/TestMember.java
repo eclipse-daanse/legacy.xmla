@@ -24,7 +24,7 @@ import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 
-import mondrian.olap.Property;
+import mondrian.olap.AbstractProperty;
 
 /**
  * Mock implementation of {@link Member} for testing.
@@ -160,7 +160,7 @@ public void setProperty( String name, Object value ) {
   }
 
   @Override
-public Property[] getProperties() {
+public AbstractProperty[] getProperties() {
     throw new UnsupportedOperationException();
   }
 

@@ -160,9 +160,9 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
             Expression formatExp = getFormatExp(validator);
             if (formatExp != null) {
                 mdxMember.setProperty(
-                    Property.FORMAT_EXP_PARSED.name, formatExp);
+                    StandardProperty.FORMAT_EXP_PARSED.getName(), formatExp);
                 mdxMember.setProperty(
-                    Property.FORMAT_EXP.name, Util.unparse(formatExp));
+                		StandardProperty.FORMAT_EXP.getName(), Util.unparse(formatExp));
             }
 
             final List<MemberProperty> memberPropertyList =
@@ -173,7 +173,7 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
             for (int i = 0; i < memberPropertyList.size(); i++) {
                 MemberProperty memberProperty = memberPropertyList.get(i);
                 if (memberProperty.getName().equals(
-                        Property.CELL_FORMATTER_SCRIPT_LANGUAGE.name))
+                		StandardProperty.CELL_FORMATTER_SCRIPT_LANGUAGE.getName()))
                 {
                     memberPropertyList.remove(i);
                     memberPropertyList.add(0, memberProperty);
@@ -183,7 +183,7 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
             // For each property of the formula, make it a property of the
             // member.
             for (MemberProperty memberProperty : memberPropertyList) {
-                if (Property.FORMAT_PROPERTIES.contains(
+                if (StandardProperty.FORMAT_PROPERTIES.contains(
                         memberProperty.getName()))
                 {
                     continue; // we already dealt with format_string props
@@ -454,7 +454,7 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
      */
     @Override
     public Number getSolveOrder() {
-        return getIntegerMemberProperty(Property.SOLVE_ORDER.name);
+        return getIntegerMemberProperty(StandardProperty.SOLVE_ORDER.getName());
     }
 
     /**
@@ -515,7 +515,7 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
     private Expression getFormatExp(Validator validator) {
         // If they have specified a format string (which they can do under
         // several names) return that.
-        for (String prop : Property.FORMAT_PROPERTIES) {
+        for (String prop : StandardProperty.FORMAT_PROPERTIES) {
             Expression formatExp = getMemberProperty(prop);
             if (formatExp != null) {
                 return formatExp;
@@ -686,7 +686,7 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
 
         private Expression getFormula(Member member) {
             return (Expression)
-                member.getPropertyValue(Property.FORMAT_EXP_PARSED.name);
+                member.getPropertyValue(StandardProperty.FORMAT_EXP_PARSED.getName());
         }
     }
 }

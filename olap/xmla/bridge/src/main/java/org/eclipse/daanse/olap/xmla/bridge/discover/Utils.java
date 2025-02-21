@@ -110,7 +110,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
 import mondrian.rolap.RolapAggregator;
 import mondrian.rolap.RolapStoredMeasure;
 
@@ -127,7 +126,7 @@ public class Utils {
 
     static Optional<String> getRoles(List<String> roles) {
         if (roles != null) {
-			return Optional.of(roles.stream().collect(Collectors.joining(",")));
+        	return Optional.of(roles.stream().collect(Collectors.joining(",")));
         }
         return Optional.empty();
     }
@@ -139,10 +138,10 @@ public class Utils {
         Optional<String> oColumnName,
         Optional<ColumnOlapTypeEnum> oColumnOlapType){
 
-		return Stream.of(catalog.getCubes()).sorted(Comparator.comparing(Cube::getName)).flatMap(
-				c -> getDbSchemaColumnsResponseRow(catalog.getName(), null, c, oTableName, oColumnName, oColumnOlapType)
-						.stream())
-				.toList();
+        return Stream.of(catalog.getCubes()).sorted(Comparator.comparing(Cube::getName)).flatMap(
+                c -> getDbSchemaColumnsResponseRow(catalog.getName(), null, c, oTableName, oColumnName, oColumnOlapType)
+                        .stream())
+                .toList();
     }
 
     static List<DbSchemaColumnsResponseRow> getDbSchemaColumnsResponseRow(
@@ -315,8 +314,8 @@ public class Utils {
 
 
 	static List<DbSchemaSchemataResponseRowR> getDbSchemaSchemataResponseRow(Catalog catalog, String schemaNameReq,String schemaOwnerRequ) {
-		return catalog.getDatabaseSchemas().stream().filter(dbs->(schemaNameReq == null || dbs.getName().equals(schemaNameReq)))
-				.map(dbs -> new DbSchemaSchemataResponseRowR(catalog.getName(), dbs.getName(), "")).toList();
+        return catalog.getDatabaseSchemas().stream().filter(dbs->(schemaNameReq == null || dbs.getName().equals(schemaNameReq)))
+                .map(dbs -> new DbSchemaSchemataResponseRowR(catalog.getName(), dbs.getName(), "")).toList();
 	}
 
 
@@ -347,12 +346,12 @@ public class Utils {
         List<FunctionMetaData> fmList = c.getFunctionService().getFunctionMetaDatas();
         StringBuilder buf = new StringBuilder(50);
         for (FunctionMetaData fm : fmList) {
-			if (fm.operationAtom() instanceof EmptyOperationAtom//
-					|| fm.operationAtom() instanceof InternalOperationAtom//
-					|| fm.operationAtom() instanceof ParenthesesOperationAtom//
-			) {
-				continue;
-			}
+        	if (fm.operationAtom() instanceof EmptyOperationAtom//
+                	|| fm.operationAtom() instanceof InternalOperationAtom//
+                	|| fm.operationAtom() instanceof ParenthesesOperationAtom//
+        	) {
+                continue;
+        	}
 
             DataType[] paramCategories = fm.parameterDataTypes();
             DataType returnCategory = fm.returnCategory();
@@ -422,8 +421,8 @@ public class Utils {
         Optional<CubeSourceEnum> cubeSource
     ) {
             List<Cube> cubes = Arrays.asList(catalog.getCubes());
-			return Utils.getCubesWithFilter(cubes, cubeName).stream()
-					.flatMap(cube -> getMdSchemaCubesResponseRow(catalog.getName(), cube).stream()).toList();
+        	return Utils.getCubesWithFilter(cubes, cubeName).stream()
+                	.flatMap(cube -> getMdSchemaCubesResponseRow(catalog.getName(), cube).stream()).toList();
 	    }
 
     private static List<MdSchemaCubesResponseRow> getMdSchemaCubesResponseRow(
@@ -492,10 +491,10 @@ public class Utils {
 
 
     public static List<DbSchemaTablesResponseRow> getDbSchemaTablesResponseRow(
-   		Catalog catalog,
+           Catalog catalog,
         Optional<String> oTableSchema,
         Optional<String> oTableName,
-   		Optional<String> oTableType
+           Optional<String> oTableType
     ) {
     	List<? extends DatabaseSchema> dbSchemas= catalog.getDatabaseSchemas();
     	String catalogName = catalog.getName();
@@ -506,7 +505,7 @@ public class Utils {
 
             String desc = cube.getDescription();
             if (desc == null) {
-				desc =
+                desc =
                     new StringBuilder(catalogName).append(" - ")
                         .append(cube.getName()).append(" Cube").toString();
             }
@@ -728,8 +727,8 @@ public class Utils {
         RequestMetaData metaData,
         UserPrincipal userPrincipal
 	) {
-		return getMdSchemaDimensionsResponseRow(catalog.getName(), catalog, oCubeName, oDimensionName,
-				oDimensionUniqueName, cubeSource, oDimensionVisibility, deep);
+        return getMdSchemaDimensionsResponseRow(catalog.getName(), catalog, oCubeName, oDimensionName,
+                oDimensionUniqueName, cubeSource, oDimensionVisibility, deep);
 
 	}
 
@@ -744,7 +743,7 @@ public class Utils {
         UserPrincipal userPrincipal
     ) {
             return
-            		getMdSchemaMeasureGroupDimensionsResponseRow(catalog, oCubeName,
+                    getMdSchemaMeasureGroupDimensionsResponseRow(catalog, oCubeName,
                     oMeasureGroupName, oDimensionUniqueName, oDimensionVisibility);
     }
 
@@ -1575,85 +1574,46 @@ public class Utils {
         if (level.isAll()) {
             return LevelTypeEnum.ALL;
         }
-        switch (level.getLevelType()) {
-            case REGULAR:
-                return LevelTypeEnum.REGULAR;
-            case TIME_YEARS:
-                return LevelTypeEnum.TIME_YEARS;
-            case TIME_HALF_YEARS:
-                return LevelTypeEnum.TIME_HALF_YEARS;
-            case TIME_QUARTERS:
-                return LevelTypeEnum.TIME_QUARTERS;
-            case TIME_MONTHS:
-                return LevelTypeEnum.TIME; //TODO
-            case TIME_WEEKS:
-                return LevelTypeEnum.TIME_WEEKS;
-            case TIME_DAYS:
-                return LevelTypeEnum.TIME_DAYS;
-            case TIME_HOURS:
-                return LevelTypeEnum.TIME; //TODO
-            case TIME_MINUTES:
-                return LevelTypeEnum.TIME; //TODO
-            case TIME_SECONDS:
-                return LevelTypeEnum.TIME_SECONDS;
-            case TIME_UNDEFINED:
-                return LevelTypeEnum.TIME_UNDEFINED;
-            case GEO_CONTINENT:
-                return LevelTypeEnum.GEOGRAPHY_CONTINENT;
-            case GEO_REGION:
-                return LevelTypeEnum.GEOGRAPHY_REGION;
-            case GEO_COUNTRY:
-                return LevelTypeEnum.GEOGRAPHY_COUNTRY;
-            case GEO_STATE_OR_PROVINCE:
-                return LevelTypeEnum.GEOGRAPHY_STATE_OR_PROVINCE;
-            case GEO_COUNTY:
-                return LevelTypeEnum.GEOGRAPHY_COUNTY;
-            case GEO_CITY:
-                return LevelTypeEnum.GEOGRAPHY_CITY;
-            case GEO_POSTALCODE:
-                return LevelTypeEnum.POSTAL_CODE;
-            case GEO_POINT:
-                return LevelTypeEnum.GEOGRAPHY_POINT;
-            case ORG_UNIT:
-                return LevelTypeEnum.ORGANIZATION_UNIT;
-            case BOM_RESOURCE:
-                return LevelTypeEnum.BILL_OF_MATERIAL_RESOURCE;
-            case QUANTITATIVE:
-                return LevelTypeEnum.QUANTITATIVE;
-            case ACCOUNT:
-                return LevelTypeEnum.ACCOUNT;
-            case CUSTOMER:
-                return LevelTypeEnum.CUSTOMER;
-            case CUSTOMER_GROUP:
-                return LevelTypeEnum.CUSTOMER_GROUP;
-            case CUSTOMER_HOUSEHOLD:
-                return LevelTypeEnum.CUSTOMER_HOUSEHOLD;
-            case PRODUCT:
-                return LevelTypeEnum.PRODUCT;
-            case PRODUCT_GROUP:
-                return LevelTypeEnum.PRODUCT_GROUP;
-            case SCENARIO:
-                return LevelTypeEnum.SCENARIO;
-            case UTILITY:
-                return LevelTypeEnum.UTILITY;
-            case PERSON:
-                return LevelTypeEnum.PERSON;
-            case COMPANY:
-                return LevelTypeEnum.COMPANY;
-            case CURRENCY_SOURCE:
-                return LevelTypeEnum.CURRENCY_SOURCE;
-            case CURRENCY_DESTINATION:
-                return LevelTypeEnum.CURRENCY_DESTINATION;
-            case CHANNEL:
-                return LevelTypeEnum.CHANNEL;
-            case REPRESENTATIVE:
-                return LevelTypeEnum.REPRESENTATIVE;
-            case PROMOTION:
-                return LevelTypeEnum.PROMOTION;
-            case NULL:
-            default:
-                throw Util.unexpected(level.getLevelType());
-        }
+        return switch (level.getLevelType()) {
+        case REGULAR -> LevelTypeEnum.REGULAR;
+        case TIME_YEARS -> LevelTypeEnum.TIME_YEARS;
+        case TIME_HALF_YEARS -> LevelTypeEnum.TIME_HALF_YEARS;
+        case TIME_QUARTERS -> LevelTypeEnum.TIME_QUARTERS;
+        case TIME_MONTHS -> LevelTypeEnum.TIME; //TODO
+        case TIME_WEEKS -> LevelTypeEnum.TIME_WEEKS;
+        case TIME_DAYS -> LevelTypeEnum.TIME_DAYS;
+        case TIME_HOURS -> LevelTypeEnum.TIME; //TODO
+        case TIME_MINUTES -> LevelTypeEnum.TIME; //TODO
+        case TIME_SECONDS -> LevelTypeEnum.TIME_SECONDS;
+        case TIME_UNDEFINED -> LevelTypeEnum.TIME_UNDEFINED;
+        case GEO_CONTINENT -> LevelTypeEnum.GEOGRAPHY_CONTINENT;
+        case GEO_REGION -> LevelTypeEnum.GEOGRAPHY_REGION;
+        case GEO_COUNTRY -> LevelTypeEnum.GEOGRAPHY_COUNTRY;
+        case GEO_STATE_OR_PROVINCE -> LevelTypeEnum.GEOGRAPHY_STATE_OR_PROVINCE;
+        case GEO_COUNTY -> LevelTypeEnum.GEOGRAPHY_COUNTY;
+        case GEO_CITY -> LevelTypeEnum.GEOGRAPHY_CITY;
+        case GEO_POSTALCODE -> LevelTypeEnum.POSTAL_CODE;
+        case GEO_POINT -> LevelTypeEnum.GEOGRAPHY_POINT;
+        case ORG_UNIT -> LevelTypeEnum.ORGANIZATION_UNIT;
+        case BOM_RESOURCE -> LevelTypeEnum.BILL_OF_MATERIAL_RESOURCE;
+        case QUANTITATIVE -> LevelTypeEnum.QUANTITATIVE;
+        case ACCOUNT -> LevelTypeEnum.ACCOUNT;
+        case CUSTOMER -> LevelTypeEnum.CUSTOMER;
+        case CUSTOMER_GROUP -> LevelTypeEnum.CUSTOMER_GROUP;
+        case CUSTOMER_HOUSEHOLD -> LevelTypeEnum.CUSTOMER_HOUSEHOLD;
+        case PRODUCT -> LevelTypeEnum.PRODUCT;
+        case PRODUCT_GROUP -> LevelTypeEnum.PRODUCT_GROUP;
+        case SCENARIO -> LevelTypeEnum.SCENARIO;
+        case UTILITY -> LevelTypeEnum.UTILITY;
+        case PERSON -> LevelTypeEnum.PERSON;
+        case COMPANY -> LevelTypeEnum.COMPANY;
+        case CURRENCY_SOURCE -> LevelTypeEnum.CURRENCY_SOURCE;
+        case CURRENCY_DESTINATION -> LevelTypeEnum.CURRENCY_DESTINATION;
+        case CHANNEL -> LevelTypeEnum.CHANNEL;
+        case REPRESENTATIVE -> LevelTypeEnum.REPRESENTATIVE;
+        case PROMOTION -> LevelTypeEnum.PROMOTION;
+        case NULL -> LevelTypeEnum.REGULAR;//Does not exist in Xmla
+        };
     }
 
     private static List<Level> getLevelsWithFilterByName(
@@ -2142,7 +2102,7 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalo
         Optional<CubeSourceEnum> oCubeSource,
         Optional<VisibilityEnum> oPropertyVisibility
     ) {
-        List<mondrian.olap.Property> properties = level.getProperties() == null ? List.of() :
+        List<mondrian.olap.AbstractProperty> properties = level.getProperties() == null ? List.of() :
          Arrays.asList(level.getProperties());
         return getPropertiesWithFilterByUniqueName(properties, oPropertyName)
             .stream().filter(p -> p != null)
@@ -2150,8 +2110,8 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalo
             .toList();
     }
 
-    private static List<mondrian.olap.Property> getPropertiesWithFilterByUniqueName(
-        List<mondrian.olap.Property> properties,
+    private static List<mondrian.olap.AbstractProperty> getPropertiesWithFilterByUniqueName(
+        List<mondrian.olap.AbstractProperty> properties,
         Optional<String> oPropertyName
     ) {
         if (oPropertyName.isPresent()) {
@@ -2165,7 +2125,7 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalo
         String schemaName,
         Cube cube,
         Level level,
-        mondrian.olap.Property property
+        org.eclipse.daanse.olap.api.element.Property property
     ) {
         Hierarchy hierarchy = level.getHierarchy();
         Dimension dimension = hierarchy.getDimension();
@@ -2209,7 +2169,7 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalo
 
     }
 
-    private static LevelDbTypeEnum getDBTypeFromProperty(mondrian.olap.Property prop) {
+    private static LevelDbTypeEnum getDBTypeFromProperty(org.eclipse.daanse.olap.api.element.Property prop) {
     	if (prop.getType() != null) {
         switch (prop.getType()) {
             case TYPE_STRING:

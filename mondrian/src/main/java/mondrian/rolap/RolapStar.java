@@ -73,7 +73,7 @@ import org.slf4j.LoggerFactory;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
-import mondrian.olap.Property;
+import mondrian.olap.AbstractProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.agg.Aggregation;
@@ -1574,7 +1574,7 @@ public class RolapStar {
             return column;
         }
 
-        private Datatype convertPropertyType(Property.Datatype type) {
+        private Datatype convertPropertyType(AbstractProperty.Datatype type) {
             switch (type) {
                 case TYPE_STRING:
                     return Datatype.VARCHAR;
@@ -1679,7 +1679,7 @@ public class RolapStar {
                 if (table == null) {
                     throw Util.newError(
                         new StringBuilder("Level '").append(level.getUniqueName())
-                            .append("' Property '").append(property.name)
+                            .append("' Property '").append(property.getName())
                             .append("' of cube '")
                             .append(this)
                             .append("' is invalid: table '").append(tableName)

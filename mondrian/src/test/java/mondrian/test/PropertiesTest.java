@@ -23,6 +23,7 @@ import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.query.component.Id;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
@@ -34,7 +35,7 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.olap.IdImpl;
-import mondrian.olap.Property;
+import mondrian.olap.AbstractProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.rolap.SchemaModifiers;
 
@@ -350,7 +351,7 @@ class PropertiesTest {
         Cube cube = optionalCube.orElseThrow(() -> new RuntimeException("Cube with name Foo absent"));
         Optional<Dimension> optionalDimension  = Arrays.stream(cube.getDimensions()).filter(d -> d.getName().equals("Promotions")).findFirst();
         Dimension dimension = optionalDimension.orElseThrow(() -> new RuntimeException("Dimension with name Foo absent"));
-        Optional<Property> optionalProperty = Arrays.stream(dimension.getHierarchies()[0].getLevels()[1].getProperties())
+        Optional<AbstractProperty> optionalProperty = Arrays.stream(dimension.getHierarchies()[0].getLevels()[1].getProperties())
             .filter(p -> p.getName().equals("BarProp")).findFirst();
         Property property =  optionalProperty.orElseThrow(() -> new RuntimeException("Property with name BarProp absent"));
         assertEquals(

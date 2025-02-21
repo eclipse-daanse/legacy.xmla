@@ -17,7 +17,8 @@ import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.element.OlapMetaData;
 
 import mondrian.olap.FormulaImpl;
-import mondrian.olap.Property;
+import mondrian.olap.StandardProperty;
+import mondrian.olap.AbstractProperty;
 import mondrian.olap.Util;
 
 /**
@@ -66,10 +67,10 @@ public class RolapCalculatedMember extends RolapMemberBase {
 
     @Override
 	public Object getPropertyValue(String propertyName, boolean matchCase) {
-        if (Util.equalWithMatchCaseOption(propertyName, Property.FORMULA.name, matchCase)) {
+        if (Util.equalWithMatchCaseOption(propertyName, StandardProperty.FORMULA.getName(), matchCase)) {
             return formula;
         } else if (Util.equalWithMatchCaseOption(
-                propertyName, Property.CHILDREN_CARDINALITY.name, matchCase))
+                propertyName, StandardProperty.CHILDREN_CARDINALITY.getName(), matchCase))
         {
             // Looking up children is unnecessary for calculated member.
             // If do that, SQLException will be thrown.
@@ -87,7 +88,7 @@ public class RolapCalculatedMember extends RolapMemberBase {
     @Override
 	public boolean isCalculatedInQuery() {
         final String memberScope =
-            (String) getPropertyValue(Property.MEMBER_SCOPE.name);
+            (String) getPropertyValue(StandardProperty.MEMBER_SCOPE.getName());
         return memberScope == null
             || memberScope.equals("QUERY");
     }

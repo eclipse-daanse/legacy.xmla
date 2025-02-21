@@ -26,7 +26,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.Property;
+import mondrian.olap.AbstractProperty;
 import mondrian.spi.PropertyFormatter;
 
 /**
@@ -34,7 +34,7 @@ import mondrian.spi.PropertyFormatter;
  *
  * @author jhyde
  */
-public class RolapProperty extends Property implements OlapElement {
+public class RolapProperty extends AbstractProperty implements OlapElement {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RolapProperty.class);
     private final static String mdxPropertyName = "property ''{0}''";
@@ -76,7 +76,7 @@ public class RolapProperty extends Property implements OlapElement {
         String description,
         RolapLevel level)
     {
-        super(name, type, -1, internal, false, false, description);
+        super(name, type, internal, false, false, description);
         this.exp = exp;
         this.caption = caption;
         this.formatter = formatter;
@@ -130,7 +130,7 @@ public class RolapProperty extends Property implements OlapElement {
     @Override
     public String getUniqueName() {
         if (level != null) {
-            return makeFqName(level.getUniqueName(), name);
+            return makeFqName(level.getUniqueName(), getName());
         }
         return null;
     }

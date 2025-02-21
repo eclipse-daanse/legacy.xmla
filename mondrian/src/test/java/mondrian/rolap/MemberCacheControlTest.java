@@ -40,6 +40,7 @@ import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.AxisOrdinal;
 import org.eclipse.daanse.olap.api.query.component.Query;
@@ -58,7 +59,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 
 import mondrian.olap.IdImpl;
-import mondrian.olap.Property;
 import mondrian.olap.SystemWideProperties;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.server.ExecutionImpl;

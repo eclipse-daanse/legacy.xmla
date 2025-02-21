@@ -22,7 +22,7 @@ import org.eclipse.daanse.olap.api.element.MemberFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import mondrian.olap.Property;
+import mondrian.olap.StandardProperty;
 import mondrian.spi.PropertyFormatter;
 
 /**
@@ -163,7 +163,7 @@ class RolapMemberBaseTest {
      */
     @Test
     void testShouldReturnMemberNameIfCaptionValueIsNotPresent() {
-        rolapMemberBase.setProperty(Property.NAME_PROPERTY.name, MEMBER_NAME);
+        rolapMemberBase.setProperty(StandardProperty.NAME.getName(), MEMBER_NAME);
 
         Object captionValue = rolapMemberBase.getCaptionValue();
 

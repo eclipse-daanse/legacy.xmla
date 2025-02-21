@@ -71,6 +71,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.CellProperty;
@@ -137,11 +138,12 @@ import mondrian.olap.CubeBase;
 import mondrian.olap.FormulaImpl;
 import mondrian.olap.IdImpl;
 import mondrian.olap.NameResolverImpl;
-import mondrian.olap.Property;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.QueryAxisImpl;
 import mondrian.olap.QueryImpl;
 import mondrian.olap.RoleImpl;
 import mondrian.olap.SetBase;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.exceptions.BadMeasureSourceException;
@@ -733,7 +735,7 @@ public class RolapCube extends CubeBase {
         if (!Util.isEmpty(measureMapping.getName())) {
             // there is a special caption string
             measure.setProperty(
-                Property.CAPTION.name,
+                StandardProperty.CAPTION.getName(),
                 measureMapping.getName());
         }
 
@@ -742,11 +744,11 @@ public class RolapCube extends CubeBase {
         if (visible == null) {
             visible = Boolean.TRUE;
         }
-        measure.setProperty(Property.VISIBLE.name, visible);
+        measure.setProperty(StandardProperty.VISIBLE.getName(), visible);
 
-        measure.setProperty(Property.DISPLAY_FOLDER.name, measureMapping.getDisplayFolder());
+        measure.setProperty(StandardProperty.DISPLAY_FOLDER.getName(), measureMapping.getDisplayFolder());
 
-        measure.setProperty(Property.BACK_COLOR.name, measureMapping.getBackColor());
+        measure.setProperty(StandardProperty.BACK_COLOR.getName(), measureMapping.getBackColor());
 
         List<String> propNames = new ArrayList<>();
         List<String> propExprs = new ArrayList<>();
@@ -756,7 +758,7 @@ public class RolapCube extends CubeBase {
             String propName = propNames.get(j);
             final Object propExpr = propExprs.get(j);
             measure.setProperty(propName, propExpr);
-            if (propName.equals(Property.MEMBER_ORDINAL.name)
+            if (propName.equals(StandardProperty.MEMBER_ORDINAL.getName())
                 && propExpr instanceof String expr && expr.startsWith("\"")
                 && expr.endsWith("\""))
             {
@@ -874,11 +876,11 @@ public class RolapCube extends CubeBase {
                             visible = Boolean.TRUE;
                         }
                         virtualCubeMeasure.setProperty(
-                            Property.VISIBLE.name,
+                            StandardProperty.VISIBLE.getName(),
                             visible);
                         // Inherit caption from the "real" measure
                         virtualCubeMeasure.setProperty(
-                            Property.CAPTION.name,
+                            StandardProperty.CAPTION.getName(),
                             cubeMeasure.getCaption());
                         origMeasureList.add(virtualCubeMeasure);
                         //Set the actual virtual cube measure
@@ -1091,7 +1093,7 @@ public class RolapCube extends CubeBase {
 	            Boolean visible = mappingMeasure.isVisible();
 	            if(visible != null) {
 	            	calcMeasure.setProperty(
-	                        Property.VISIBLE.name,
+	                        StandardProperty.VISIBLE.getName(),
 	                        visible);
 	            }
         	}
@@ -1433,29 +1435,29 @@ public class RolapCube extends CubeBase {
         if (visible == null) {
             visible = Boolean.TRUE;
         }
-        member.setProperty(Property.VISIBLE.name, visible);
+        member.setProperty(StandardProperty.VISIBLE.getName(), visible);
 
-        member.setProperty(Property.DISPLAY_FOLDER.name, mappingCalcMember.getDisplayFolder());
+        member.setProperty(StandardProperty.DISPLAY_FOLDER.getName(), mappingCalcMember.getDisplayFolder());
 
         if (mappingCalcMember.getName() != null
             && mappingCalcMember.getName().length() > 0)
         {
             member.setProperty(
-                Property.CAPTION.name, mappingCalcMember.getName());
+                StandardProperty.CAPTION.getName(), mappingCalcMember.getName());
         }
 
         if (mappingCalcMember.getDescription() != null
             && mappingCalcMember.getDescription().length() > 0)
         {
             member.setProperty(
-                Property.DESCRIPTION_PROPERTY.name, mappingCalcMember.getDescription());
+                StandardProperty.DESCRIPTION_PROPERTY.getName(), mappingCalcMember.getDescription());
         }
 
         if (getFormatString(mappingCalcMember) != null
             && getFormatString(mappingCalcMember).length() > 0)
         {
             member.setProperty(
-                Property.FORMAT_STRING.name, getFormatString(mappingCalcMember));
+                StandardProperty.FORMAT_STRING.getName(), getFormatString(mappingCalcMember));
         }
 
         final RolapMember member1 = RolapUtil.strip(member);
@@ -1583,7 +1585,7 @@ public class RolapCube extends CubeBase {
 
         if (mappingCalcMember.getCellFormatter() != null) {
             if (mappingCalcMember.getCellFormatter().getRef() != null) {
-                propNames.add(Property.CELL_FORMATTER.name);
+                propNames.add(StandardProperty.CELL_FORMATTER.getName());
                 propExprs.add(
                     Util.quoteForMdx(mappingCalcMember.getCellFormatter().getRef()));
             }
@@ -1616,14 +1618,14 @@ public class RolapCube extends CubeBase {
         // determine the value of Member.isCalculatedInQuery
         buf.append(",")
             .append(Util.NL);
-        Util.quoteMdxIdentifier(Property.MEMBER_SCOPE.name, buf);
+        Util.quoteMdxIdentifier(StandardProperty.MEMBER_SCOPE.getName(), buf);
         buf.append(" = 'CUBE'");
 
         // Assign the member an ordinal higher than all of the stored measures.
-        if (!propNames.contains(Property.MEMBER_ORDINAL.getName())) {
+        if (!propNames.contains(StandardProperty.MEMBER_ORDINAL.getName())) {
             buf.append(",")
                 .append(Util.NL)
-                .append(Property.MEMBER_ORDINAL)
+                .append(StandardProperty.MEMBER_ORDINAL)
                 .append(" = ")
                 .append(measureCount + j);
         }
@@ -1634,7 +1636,7 @@ public class RolapCube extends CubeBase {
         String name,
         String expr)
     {
-        Property prop = Property.lookup(name, false);
+        Property prop = StandardProperty.lookup(name, false);
         if (prop != null
             && prop.getType().isNumeric()
             && isSurroundedWithQuotes(expr)
@@ -1656,7 +1658,7 @@ public class RolapCube extends CubeBase {
         if (getFormatString(mappingCalcMember) != null) {
             buf.append(",")
                 .append(Util.NL)
-                .append(Property.FORMAT_STRING.name)
+                .append(StandardProperty.FORMAT_STRING.getName())
                 .append(" = ")
                 .append(Util.quoteForMdx(getFormatString(mappingCalcMember)));
         }

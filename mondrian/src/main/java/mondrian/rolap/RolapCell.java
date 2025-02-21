@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Connection;
@@ -32,11 +31,9 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
-import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEvent;
-import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEventCommon;
 import org.eclipse.daanse.olap.api.query.component.DimensionExpression;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
@@ -62,7 +59,7 @@ import org.slf4j.Logger;
 
 import mondrian.mdx.MdxVisitorImpl;
 import mondrian.mdx.ResolvedFunCallImpl;
-import mondrian.olap.Property;
+import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.agg.AndPredicate;
@@ -587,16 +584,16 @@ public class RolapCell implements Cell {
 	public Object getPropertyValue(String propertyName) {
         final boolean matchCase =
             SystemWideProperties.instance().CaseSensitive;
-        Property property = Property.lookup(propertyName, matchCase);
+        StandardProperty property = StandardProperty.lookup(propertyName, matchCase);
         Object defaultValue = null;
         String formatString = null;
         if (property != null) {
-            switch (property.ordinal) {
-            case Property.CELL_ORDINAL_ORDINAL:
-                return result.getCellOrdinal(pos);
-            case Property.VALUE_ORDINAL:
+            if(property == StandardProperty.CELL_ORDINAL) {
+            	                return result.getCellOrdinal(pos);
+            	
+            }else if(property == StandardProperty.VALUE) {
                 return getValue();
-            case Property.FORMAT_STRING_ORDINAL:
+            }else if(property == StandardProperty.FORMAT_STRING) {
                 if (ci.formatString == null) {
                     final Evaluator evaluator = result.getRootEvaluator();
                     final int savepoint = evaluator.savepoint();
@@ -608,20 +605,18 @@ public class RolapCell implements Cell {
                     }
                 }
                 return ci.formatString;
-            case Property.FORMATTED_VALUE_ORDINAL:
+            }else if(property == StandardProperty.FORMATTED_VALUE) {
                 return getFormattedValue();
-            case Property.FONT_FLAGS_ORDINAL:
+            }else if(property == StandardProperty.FONT_FLAGS) {
                 defaultValue = 0;
-                break;
-            case Property.SOLVE_ORDER_ORDINAL:
+            }else if(property == StandardProperty.SOLVE_ORDER) {
                 defaultValue = 0;
-                break;
-            case Property.ACTION_TYPE_ORDINAL:
+            }else if(property == StandardProperty.ACTION_TYPE) {
                 return canDrillThrough() ? MDACTION_TYPE_DRILLTHROUGH : 0;
-            case Property.DRILLTHROUGH_COUNT_ORDINAL:
+            }else if(property == StandardProperty.DRILLTHROUGH_COUNT) {
                 return canDrillThrough() ? getDrillThroughCount() : -1;
-            case Property.BACK_COLOR_ORDINAL:
-                formatString = (String)getPropertyValue(Property.FORMAT_STRING.getName());
+            }else if(property == StandardProperty.BACK_COLOR) {
+                formatString = (String)getPropertyValue(StandardProperty.FORMAT_STRING.getName());
                 if(formatString == null) {
                     return null;
                 }
@@ -629,7 +624,7 @@ public class RolapCell implements Cell {
                     String[] pair = part.split("=");
                     if(pair.length == 2
                             && pair[0] != null
-                            && pair[0].toUpperCase().equals(Property.BACK_COLOR.getName())) {
+                            && pair[0].toUpperCase().equals(StandardProperty.BACK_COLOR.getName())) {
                         return pair[1];
                     }
                 }
@@ -647,8 +642,8 @@ public class RolapCell implements Cell {
 //                    rolapEvaluator.restore(savepoint);
 //                }
 //                return backColor;
-            case Property.FORE_COLOR_ORDINAL:
-                formatString = (String)getPropertyValue(Property.FORMAT_STRING.getName());
+            }else if(property == StandardProperty.FORE_COLOR) {
+                formatString = (String)getPropertyValue(StandardProperty.FORMAT_STRING.getName());
                 if(formatString == null) {
                     return null;
                 }
@@ -656,14 +651,16 @@ public class RolapCell implements Cell {
                     String[] pair = part.split("=");
                     if(pair.length == 2
                             && pair[0] != null
-                            && pair[0].toUpperCase().equals(Property.FORE_COLOR.getName())) {
+                            && pair[0].toUpperCase().equals(StandardProperty.FORE_COLOR.getName())) {
                         return pair[1];
                     }
                 }
                 return null;
-            default:
-                // fall through
-            }
+                }
+                else {
+                	// fall through
+                }
+                	
         }
         final Evaluator evaluator = result.getRootEvaluator();
         final int savepoint = evaluator.savepoint();
@@ -697,7 +694,7 @@ public class RolapCell implements Cell {
             Member member = members[i];
             if (ScenarioImpl.isScenario(member.getHierarchy())) {
                 scenario =
-                    (org.eclipse.daanse.olap.api.result.Scenario) member.getPropertyValue(Property.SCENARIO.name);
+                    (org.eclipse.daanse.olap.api.result.Scenario) member.getPropertyValue(StandardProperty.SCENARIO.getName());
                 members[i] = (RolapMember) member.getHierarchy().getAllMember();
             } else if (member.isCalculated()) {
                 throw Util.newError(
