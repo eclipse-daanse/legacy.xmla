@@ -55,6 +55,7 @@ import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.access.Role;
+import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
@@ -369,7 +370,7 @@ public Result execute( Query query ) {
         int i = 0;
         for ( QueryAxis axis : query.getAxes() ) {
           if ( axis.isNonEmpty() ) {
-            result = new NonEmptyResult( rolapResult, execution, i );
+              result = new NonEmptyResult( result, execution, i );
           }
           ++i;
         }
@@ -535,7 +536,7 @@ public Context getContext() {
    */
   static class NonEmptyResult extends ResultBase {
 
-    final RolapResult underlying;
+    final Result underlying;
     private final int axis;
     private final Map<Integer, Integer> map;
     /**
@@ -550,7 +551,7 @@ public Context getContext() {
      * @param execution Execution context
      * @param axis      Which axis to make non-empty
      */
-    NonEmptyResult( RolapResult result, Execution execution, int axis ) {
+    NonEmptyResult( Result result, Execution execution, int axis ) {
       super( execution, result.getAxes().clone() );
 
       this.underlying = result;
@@ -642,7 +643,7 @@ public Context getContext() {
     }
 
       @Override
-      public RolapMember[] getCellMembers(int[] coordinates) {
+      public Member[] getCellMembers(int[] coordinates) {
           return underlying.getCellMembers(coordinates);
       }
   }
