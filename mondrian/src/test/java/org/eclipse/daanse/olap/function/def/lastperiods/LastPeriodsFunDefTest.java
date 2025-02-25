@@ -30,95 +30,95 @@ class LastPeriodsFunDefTest {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(0, [Time].[1998])", "" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(1, [Time].[1998])", "[Time].[1998]" );
+            "LastPeriods(1, [Time].[1998])", "[Time].[Time].[1998]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(-1, [Time].[1998])", "[Time].[1998]" );
+            "LastPeriods(-1, [Time].[1998])", "[Time].[Time].[1998]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(2, [Time].[1998])",
-            "[Time].[1997]\n" + "[Time].[1998]" );
+            "[Time].[Time].[1997]\n" + "[Time].[Time].[1998]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(-2, [Time].[1997])",
-            "[Time].[1997]\n" + "[Time].[1998]" );
+            "[Time].[Time].[1997]\n" + "[Time].[Time].[1998]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(5000, [Time].[1998])",
-            "[Time].[1997]\n" + "[Time].[1998]" );
+            "[Time].[Time].[1997]\n" + "[Time].[Time].[1998]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(-5000, [Time].[1997])",
-            "[Time].[1997]\n" + "[Time].[1998]" );
+            "[Time].[Time].[1997]\n" + "[Time].[Time].[1998]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(2, [Time].[1998].[Q2])",
-            "[Time].[1998].[Q1]\n" + "[Time].[1998].[Q2]" );
+            "[Time].[Time].[1998].[Q1]\n" + "[Time].[Time].[1998].[Q2]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(4, [Time].[1998].[Q2])",
-            "[Time].[1997].[Q3]\n"
-                + "[Time].[1997].[Q4]\n"
-                + "[Time].[1998].[Q1]\n"
-                + "[Time].[1998].[Q2]" );
+            "[Time].[Time].[1997].[Q3]\n"
+                + "[Time].[Time].[1997].[Q4]\n"
+                + "[Time].[Time].[1998].[Q1]\n"
+                + "[Time].[Time].[1998].[Q2]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(-2, [Time].[1997].[Q2])",
-            "[Time].[1997].[Q2]\n" + "[Time].[1997].[Q3]" );
+            "[Time].[Time].[1997].[Q2]\n" + "[Time].[Time].[1997].[Q3]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(-4, [Time].[1997].[Q2])",
-            "[Time].[1997].[Q2]\n"
-                + "[Time].[1997].[Q3]\n"
-                + "[Time].[1997].[Q4]\n"
-                + "[Time].[1998].[Q1]" );
+            "[Time].[Time].[1997].[Q2]\n"
+                + "[Time].[Time].[1997].[Q3]\n"
+                + "[Time].[Time].[1997].[Q4]\n"
+                + "[Time].[Time].[1998].[Q1]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(5000, [Time].[1998].[Q2])",
-            "[Time].[1997].[Q1]\n"
-                + "[Time].[1997].[Q2]\n"
-                + "[Time].[1997].[Q3]\n"
-                + "[Time].[1997].[Q4]\n"
-                + "[Time].[1998].[Q1]\n"
-                + "[Time].[1998].[Q2]" );
+            "[Time].[Time].[1997].[Q1]\n"
+                + "[Time].[Time].[1997].[Q2]\n"
+                + "[Time].[Time].[1997].[Q3]\n"
+                + "[Time].[Time].[1997].[Q4]\n"
+                + "[Time].[Time].[1998].[Q1]\n"
+                + "[Time].[Time].[1998].[Q2]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(-5000, [Time].[1998].[Q2])",
-            "[Time].[1998].[Q2]\n"
-                + "[Time].[1998].[Q3]\n"
-                + "[Time].[1998].[Q4]" );
+            "[Time].[Time].[1998].[Q2]\n"
+                + "[Time].[Time].[1998].[Q3]\n"
+                + "[Time].[Time].[1998].[Q4]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(2, [Time].[1998].[Q2].[5])",
-            "[Time].[1998].[Q2].[4]\n" + "[Time].[1998].[Q2].[5]" );
+            "[Time].[Time].[1998].[Q2].[4]\n" + "[Time].[Time].[1998].[Q2].[5]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(12, [Time].[1998].[Q2].[5])",
-            "[Time].[1997].[Q2].[6]\n"
-                + "[Time].[1997].[Q3].[7]\n"
-                + "[Time].[1997].[Q3].[8]\n"
-                + "[Time].[1997].[Q3].[9]\n"
-                + "[Time].[1997].[Q4].[10]\n"
-                + "[Time].[1997].[Q4].[11]\n"
-                + "[Time].[1997].[Q4].[12]\n"
-                + "[Time].[1998].[Q1].[1]\n"
-                + "[Time].[1998].[Q1].[2]\n"
-                + "[Time].[1998].[Q1].[3]\n"
-                + "[Time].[1998].[Q2].[4]\n"
-                + "[Time].[1998].[Q2].[5]" );
+            "[Time].[Time].[1997].[Q2].[6]\n"
+                + "[Time].[Time].[1997].[Q3].[7]\n"
+                + "[Time].[Time].[1997].[Q3].[8]\n"
+                + "[Time].[Time].[1997].[Q3].[9]\n"
+                + "[Time].[Time].[1997].[Q4].[10]\n"
+                + "[Time].[Time].[1997].[Q4].[11]\n"
+                + "[Time].[Time].[1997].[Q4].[12]\n"
+                + "[Time].[Time].[1998].[Q1].[1]\n"
+                + "[Time].[Time].[1998].[Q1].[2]\n"
+                + "[Time].[Time].[1998].[Q1].[3]\n"
+                + "[Time].[Time].[1998].[Q2].[4]\n"
+                + "[Time].[Time].[1998].[Q2].[5]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(-2, [Time].[1998].[Q2].[4])",
-            "[Time].[1998].[Q2].[4]\n" + "[Time].[1998].[Q2].[5]" );
+            "[Time].[Time].[1998].[Q2].[4]\n" + "[Time].[Time].[1998].[Q2].[5]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(-12, [Time].[1997].[Q2].[6])",
-            "[Time].[1997].[Q2].[6]\n"
-                + "[Time].[1997].[Q3].[7]\n"
-                + "[Time].[1997].[Q3].[8]\n"
-                + "[Time].[1997].[Q3].[9]\n"
-                + "[Time].[1997].[Q4].[10]\n"
-                + "[Time].[1997].[Q4].[11]\n"
-                + "[Time].[1997].[Q4].[12]\n"
-                + "[Time].[1998].[Q1].[1]\n"
-                + "[Time].[1998].[Q1].[2]\n"
-                + "[Time].[1998].[Q1].[3]\n"
-                + "[Time].[1998].[Q2].[4]\n"
-                + "[Time].[1998].[Q2].[5]" );
+            "[Time].[Time].[1997].[Q2].[6]\n"
+                + "[Time].[Time].[1997].[Q3].[7]\n"
+                + "[Time].[Time].[1997].[Q3].[8]\n"
+                + "[Time].[Time].[1997].[Q3].[9]\n"
+                + "[Time].[Time].[1997].[Q4].[10]\n"
+                + "[Time].[Time].[1997].[Q4].[11]\n"
+                + "[Time].[Time].[1997].[Q4].[12]\n"
+                + "[Time].[Time].[1998].[Q1].[1]\n"
+                + "[Time].[Time].[1998].[Q1].[2]\n"
+                + "[Time].[Time].[1998].[Q1].[3]\n"
+                + "[Time].[Time].[1998].[Q2].[4]\n"
+                + "[Time].[Time].[1998].[Q2].[5]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(2, [Gender].[M])",
-            "[Gender].[F]\n" + "[Gender].[M]" );
+            "[Gender].[Gender].[F]\n" + "[Gender].[Gender].[M]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(-2, [Gender].[F])",
-            "[Gender].[F]\n" + "[Gender].[M]" );
+            "[Gender].[Gender].[F]\n" + "[Gender].[Gender].[M]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "LastPeriods(2, [Gender])", "[Gender].[All Gender]" );
+            "LastPeriods(2, [Gender])", "[Gender].[Gender].[All Gender]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(2, [Gender].Parent)", "" );
     }

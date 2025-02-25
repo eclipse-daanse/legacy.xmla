@@ -141,7 +141,7 @@ class IgnoreUnrelatedDimensionsTest {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Unit Sales VM] AS "
             + "'ValidMeasure([Measures].[Unit Sales])', SOLVE_ORDER = 3000 "
-            + "MEMBER Gender.G AS 'AGGREGATE(CROSSJOIN({[Gender].[Gender].MEMBERS},"
+            + "MEMBER Gender.G AS 'AGGREGATE(CROSSJOIN({[Gender].[Gender].[Gender].MEMBERS},"
             + "[WAREHOUSE].[STATE PROVINCE].MEMBERS))'"
             + "SELECT "
             + "{[MEASURES].[Unit Sales VM]} ON 0,"
@@ -152,7 +152,7 @@ class IgnoreUnrelatedDimensionsTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales VM]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[G]}\n"
+            + "{[Gender].[Gender].[G]}\n"
             + "Row #0: 266,773\n");
     }
 
@@ -175,7 +175,7 @@ class IgnoreUnrelatedDimensionsTest {
             + "Axis #1:\n"
             + "{[Measures].[Total Sales]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[G]}\n"
+            + "{[Gender].[Gender].[G]}\n"
             + "Row #0: 30,405.602\n");
     }
 
@@ -206,7 +206,7 @@ class IgnoreUnrelatedDimensionsTest {
             + "Axis #1:\n"
             + "{[Measures].[Total Sales]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[G]}\n"
+            + "{[Gender].[Gender].[G]}\n"
             + "Row #0: 30,405.602\n");
     }
 
@@ -230,7 +230,7 @@ class IgnoreUnrelatedDimensionsTest {
             + "{[Measures].[Warehouse Sales]} ON 0"
             + " FROM [WAREHOUSE AND SALES 3] where ([Gender].[M])",
             "Axis #0:\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Warehouse Sales]}\n"
             + "Row #0: 196,770.888\n");
@@ -256,8 +256,8 @@ class IgnoreUnrelatedDimensionsTest {
             + "{[Education Level].[Graduate Degree],"
             + "[Education Level].[High School Degree]}",
             "Axis #0:\n"
-            + "{[Education Level].[Graduate Degree]}\n"
-            + "{[Education Level].[High School Degree]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree]}\n"
+            + "{[Education Level].[Education Level].[High School Degree]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Warehouse Sales]}\n"
             + "Row #0: 196,770.888\n");
@@ -283,10 +283,10 @@ class IgnoreUnrelatedDimensionsTest {
             + "[Education Level].[High School Degree]},"
             + "  {[Warehouse].[USA].[WA], [Warehouse].[USA].[CA]} )",
             "Axis #0:\n"
-            + "{[Education Level].[Graduate Degree], [Warehouse].[USA].[WA]}\n"
-            + "{[Education Level].[Graduate Degree], [Warehouse].[USA].[CA]}\n"
-            + "{[Education Level].[High School Degree], [Warehouse].[USA].[WA]}\n"
-            + "{[Education Level].[High School Degree], [Warehouse].[USA].[CA]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree], [Warehouse].[Warehouse].[USA].[WA]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree], [Warehouse].[Warehouse].[USA].[CA]}\n"
+            + "{[Education Level].[Education Level].[High School Degree], [Warehouse].[Warehouse].[USA].[WA]}\n"
+            + "{[Education Level].[Education Level].[High School Degree], [Warehouse].[Warehouse].[USA].[CA]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Warehouse Sales]}\n"
             + "Row #0: 157,935.834\n");
@@ -316,8 +316,8 @@ class IgnoreUnrelatedDimensionsTest {
             + " {[Education Level].[Graduate Degree],"
             + "[Education Level].[High School Degree]} ",
             "Axis #0:\n"
-            + "{[Education Level].[Graduate Degree]}\n"
-            + "{[Education Level].[High School Degree]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree]}\n"
+            + "{[Education Level].[Education Level].[High School Degree]}\n"
             + "Axis #1:\n"
             + "{[Measures].[bothCubes]}\n"
             + "Row #0: 243,135\n");
@@ -334,10 +334,10 @@ class IgnoreUnrelatedDimensionsTest {
             + "[Education Level].[High School Degree]},"
             + "  {[Warehouse].[USA].[WA], [Warehouse].[USA].[CA]} )",
             "Axis #0:\n"
-            + "{[Education Level].[Graduate Degree], [Warehouse].[USA].[WA]}\n"
-            + "{[Education Level].[Graduate Degree], [Warehouse].[USA].[CA]}\n"
-            + "{[Education Level].[High School Degree], [Warehouse].[USA].[WA]}\n"
-            + "{[Education Level].[High School Degree], [Warehouse].[USA].[CA]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree], [Warehouse].[Warehouse].[USA].[WA]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree], [Warehouse].[Warehouse].[USA].[CA]}\n"
+            + "{[Education Level].[Education Level].[High School Degree], [Warehouse].[Warehouse].[USA].[WA]}\n"
+            + "{[Education Level].[Education Level].[High School Degree], [Warehouse].[Warehouse].[USA].[CA]}\n"
             + "Axis #1:\n"
             + "{[Measures].[bothCubes]}\n"
             + "Row #0: 157,936\n");
@@ -356,8 +356,8 @@ class IgnoreUnrelatedDimensionsTest {
             + " {[Education Level].[Graduate Degree],"
             + "[Education Level].[High School Degree]}) ",
             "Axis #0:\n"
-            + "{[Measures].[Warehouse Sales], [Education Level].[Graduate Degree]}\n"
-            + "{[Measures].[Warehouse Sales], [Education Level].[High School Degree]}\n"
+            + "{[Measures].[Warehouse Sales], [Education Level].[Education Level].[Graduate Degree]}\n"
+            + "{[Measures].[Warehouse Sales], [Education Level].[Education Level].[High School Degree]}\n"
             + "196,770.888");
     }
 
@@ -380,7 +380,7 @@ class IgnoreUnrelatedDimensionsTest {
             + "{[Measures].[Unit Sales VM]}\n"
             + "{[Measures].[Store Cost]}\n"
             + "Axis #2:\n"
-            + "{[Product].[G]}\n"
+            + "{[Product].[Product].[G]}\n"
             + "Row #0: 266,773\n"
             + "Row #0: 225,627.23\n");
     }
@@ -428,13 +428,13 @@ class IgnoreUnrelatedDimensionsTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales VM]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[M], [Warehouse].[Mexico].[DF].[Mexico City].[Freeman And Co]}\n"
-            + "{[Gender].[M], [Warehouse].[Canada].[BC].[Vancouver].[Bellmont Distributing]}\n"
-            + "{[Gender].[M], [Warehouse].[COG_OQP_USR_Aggregate(WAREHOUSE SET)]}\n"
-            + "{[Gender].[F], [Warehouse].[Mexico].[DF].[Mexico City].[Freeman And Co]}\n"
-            + "{[Gender].[F], [Warehouse].[Canada].[BC].[Vancouver].[Bellmont Distributing]}\n"
-            + "{[Gender].[F], [Warehouse].[COG_OQP_USR_Aggregate(WAREHOUSE SET)]}\n"
-            + "{[Gender].[COG_OQP_USR_Aggregate(Gender SET)], [Warehouse].[All Warehouses]}\n"
+            + "{[Gender].[Gender].[M], [Warehouse].[Warehouse].[Mexico].[DF].[Mexico City].[Freeman And Co]}\n"
+            + "{[Gender].[Gender].[M], [Warehouse].[Warehouse].[Canada].[BC].[Vancouver].[Bellmont Distributing]}\n"
+            + "{[Gender].[Gender].[M], [Warehouse].[Warehouse].[COG_OQP_USR_Aggregate(WAREHOUSE SET)]}\n"
+            + "{[Gender].[Gender].[F], [Warehouse].[Warehouse].[Mexico].[DF].[Mexico City].[Freeman And Co]}\n"
+            + "{[Gender].[Gender].[F], [Warehouse].[Warehouse].[Canada].[BC].[Vancouver].[Bellmont Distributing]}\n"
+            + "{[Gender].[Gender].[F], [Warehouse].[Warehouse].[COG_OQP_USR_Aggregate(WAREHOUSE SET)]}\n"
+            + "{[Gender].[Gender].[COG_OQP_USR_Aggregate(Gender SET)], [Warehouse].[Warehouse].[All Warehouses]}\n"
             + "Row #0: 135,215\n"
             + "Row #1: 135,215\n"
             + "Row #2: 135,215\n"
@@ -492,13 +492,13 @@ class IgnoreUnrelatedDimensionsTest {
             + "{[Measures].[Unit Sales VM]}\n"
             + "{[Measures].[VirtualMeasure]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink], [Warehouse].[USA].[OR]}\n"
-            + "{[Product].[Drink], [Warehouse].[USA].[WA]}\n"
-            + "{[Product].[Drink], [Warehouse].[COG_OQP_USR_Aggregate(Warehouse set)]}\n"
-            + "{[Product].[Food], [Warehouse].[USA].[OR]}\n"
-            + "{[Product].[Food], [Warehouse].[USA].[WA]}\n"
-            + "{[Product].[Food], [Warehouse].[COG_OQP_USR_Aggregate(Warehouse set)]}\n"
-            + "{[Product].[COG_OQP_USR_Aggregate(Product Set)1], [Warehouse].[All Warehouses]}\n"
+            + "{[Product].[Product].[Drink], [Warehouse].[Warehouse].[USA].[OR]}\n"
+            + "{[Product].[Product].[Drink], [Warehouse].[Warehouse].[USA].[WA]}\n"
+            + "{[Product].[Product].[Drink], [Warehouse].[Warehouse].[COG_OQP_USR_Aggregate(Warehouse set)]}\n"
+            + "{[Product].[Product].[Food], [Warehouse].[Warehouse].[USA].[OR]}\n"
+            + "{[Product].[Product].[Food], [Warehouse].[Warehouse].[USA].[WA]}\n"
+            + "{[Product].[Product].[Food], [Warehouse].[Warehouse].[COG_OQP_USR_Aggregate(Warehouse set)]}\n"
+            + "{[Product].[Product].[COG_OQP_USR_Aggregate(Product Set)1], [Warehouse].[Warehouse].[All Warehouses]}\n"
             + "Row #0: 2,057.231\n"
             + "Row #0: 24,597\n"
             + "Row #0: 0.084\n"
@@ -551,8 +551,8 @@ class IgnoreUnrelatedDimensionsTest {
             + "Axis #1:\n"
             + "{[Measures].[Total Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[AggSP1_1]}\n"
-            + "{[Product].[AggSP1_2]}\n"
+            + "{[Product].[Product].[AggSP1_1]}\n"
+            + "{[Product].[Product].[AggSP1_2]}\n"
             + "Row #0: 762,009.02\n"
             + "Row #1: 762,009.02\n");
     }

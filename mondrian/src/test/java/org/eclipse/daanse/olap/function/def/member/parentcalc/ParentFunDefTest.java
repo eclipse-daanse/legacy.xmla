@@ -37,10 +37,10 @@ class ParentFunDefTest {
         Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
             "[Gender].Parent",
-            "{[Gender]}" );
+            "{[Gender].[Gender]}" );
         assertMemberExprDependsOn(connection, "[Gender].[M].Parent", "{}" );
         assertAxisReturns(connection, "Sales",
-            "{[Store].[USA].[CA].Parent}", "[Store].[USA]" );
+            "{[Store].[USA].[CA].Parent}", "[Store].[Store].[USA]" );
         // root member has null parent
         assertAxisReturns(connection, "Sales", "{[Store].[All Stores].Parent}", "" );
         // parent of null member is null
@@ -57,34 +57,34 @@ class ParentFunDefTest {
             "" );
         assertAxisReturns(connection, "HR",
             "[Employees].[Sheri Nowmer].Parent",
-            "[Employees].[All Employees]" );
+            "[Employees].[Employees].[All Employees]" );
         assertAxisReturns(connection, "HR",
             "[Employees].[Sheri Nowmer].[Derrick Whelply].Parent",
-            "[Employees].[Sheri Nowmer]" );
+            "[Employees].[Employees].[Sheri Nowmer]" );
         assertAxisReturns(connection, "HR",
             "[Employees].Members.Item(3)",
-            "[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker]" );
+            "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker]" );
         assertAxisReturns(connection, "HR",
             "[Employees].Members.Item(3).Parent",
-            "[Employees].[Sheri Nowmer].[Derrick Whelply]" );
+            "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]" );
         assertAxisReturns(connection, "HR",
             "[Employees].AllMembers.Item(3).Parent",
-            "[Employees].[Sheri Nowmer].[Derrick Whelply]" );
+            "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]" );
 
         // Ascendants(<Member>) applied to parent-child hierarchy accessed via
         // <Level>.Members
         assertAxisReturns(connection, "HR",
             "Ascendants([Employees].Members.Item(73))",
-            "[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Jacqueline Wyllie].[Ralph Mccoy].[Bertha "
+            "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Jacqueline Wyllie].[Ralph Mccoy].[Bertha "
                 + "Jameson].[James Bailey]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Jacqueline Wyllie].[Ralph Mccoy].[Bertha "
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Jacqueline Wyllie].[Ralph Mccoy].[Bertha "
                 + "Jameson]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Jacqueline Wyllie].[Ralph Mccoy]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Jacqueline Wyllie]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
-                + "[Employees].[Sheri Nowmer]\n"
-                + "[Employees].[All Employees]" );
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Jacqueline Wyllie].[Ralph Mccoy]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Jacqueline Wyllie]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
+                + "[Employees].[Employees].[Sheri Nowmer]\n"
+                + "[Employees].[Employees].[All Employees]" );
     }
 
     @ParameterizedTest

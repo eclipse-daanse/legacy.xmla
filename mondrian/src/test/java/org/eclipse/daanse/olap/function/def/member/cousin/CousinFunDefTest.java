@@ -34,7 +34,7 @@ class CousinFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCousin1(Context context) {
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "Cousin([1997].[Q4],[1998])", "Sales" );
-        assertEquals( "[Time].[1998].[Q4]", member.getUniqueName() );
+        assertEquals( "[Time].[Time].[1998].[Q4]", member.getUniqueName() );
     }
 
     @ParameterizedTest
@@ -42,7 +42,7 @@ class CousinFunDefTest {
     void testCousin2(Context context) {
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
             "Cousin([1997].[Q4].[12],[1998].[Q1])", "Sales" );
-        assertEquals( "[Time].[1998].[Q1].[3]", member.getUniqueName() );
+        assertEquals( "[Time].[Time].[1998].[Q1].[3]", member.getUniqueName() );
     }
 
     @ParameterizedTest
@@ -71,7 +71,7 @@ class CousinFunDefTest {
         // of the 1st child (DF)
         // of Mexico
         assertEquals(
-            "[Customers].[Mexico].[DF].[Tixapan].[Annmarie Hill]",
+            "[Customers].[Customers].[Mexico].[DF].[Tixapan].[Annmarie Hill]",
             member.getUniqueName() );
     }
 
@@ -97,8 +97,8 @@ class CousinFunDefTest {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Cousin([Time].[1997], [Gender].[M])",
             MessageFormat.format(cousinHierarchyMismatch,
-                "[Time].[1997]",
-                "[Gender].[M]" ), "Sales" );
+                "[Time].[Time].[1997]",
+                "[Gender].[Gender].[M]" ), "Sales" );
     }
 
 }

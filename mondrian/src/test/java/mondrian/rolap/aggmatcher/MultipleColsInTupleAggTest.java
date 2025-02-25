@@ -137,8 +137,8 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             + "Axis #1:\n"
             + "{[Measures].[Total]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Cat One].[Prod Cat One],"
-            + " [Store].[All Stores]}\n"
+            + "{[Product].[Product].[Cat One].[Prod Cat One],"
+            + " [Store].[Store].[All Stores]}\n"
             + "Row #0: 15\n");
     }
 
@@ -166,7 +166,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Product].[Cat Two]}\n"
+            + "{[Product].[Product].[Cat Two]}\n"
             + "Row #0: 33\n");
         //  CurrentMember.Name should map to
         // `test_lp_xxx_fact`.`product_category`, with 2 member matches
@@ -179,8 +179,8 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Product].[Cat Two].[Prod Cat Two]}\n"
-            + "{[Product].[Cat One].[Prod Cat Two]}\n"
+            + "{[Product].[Product].[Cat Two].[Prod Cat Two]}\n"
+            + "{[Product].[Product].[Cat One].[Prod Cat Two]}\n"
             + "Row #0: 16\n"
             + "Row #0: 18\n");
         // .Caption is defined as `product_cat`.`cap`.
@@ -194,7 +194,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Product].[Cat One].[Prod Cat Two]}\n"
+            + "{[Product].[Product].[Cat One].[Prod Cat Two]}\n"
             + "Row #0: 18\n");
     }
 
@@ -216,8 +216,8 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
         // agg star back to the dim table.  This test also uses the bottom
         // level of the dim
         final String query = "select "
-            + "Filter([Product].[Product Name].members, "
-            + "Product.CurrentMember.Caption MATCHES (\"(?i).*Two.*\") )"
+            + "Filter([Product].[Product].[Product Name].members, "
+            + "Product.Product.CurrentMember.Caption MATCHES (\"(?i).*Two.*\") )"
             + " on columns "
             + "from [Fact] ";
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -225,7 +225,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Product].[Cat One].[Prod Cat One].[Two]}\n"
+            + "{[Product].[Product].[Cat One].[Prod Cat One].[Two]}\n"
             + "Row #0: 6\n");
 
         // check generated sql only for native evaluation
@@ -279,8 +279,8 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
                       + "`test_lp_xx2_fact`.`prodname` ASC"), null)});
         }
         Axis axis = executeAxis(context.getConnectionWithDefaultRole(), "Fact",
-            "Filter([Product].[Product Name].members, "
-            + "Product.CurrentMember.Caption MATCHES (\"(?i).*Two.*\") )");
+            "Filter([Product].[Product].[Product Name].members, "
+            + "Product.Product.CurrentMember.Caption MATCHES (\"(?i).*Two.*\") )");
         assertEquals(
             "Black",
             ((RolapAxis) axis).getTupleList().get(0).get(0)
@@ -308,8 +308,8 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             + "Axis #1:\n"
             + "{[Measures].[Total]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Cat One].[Prod Cat Two]}\n"
-            + "{[Product].[Cat One].[Prod Cat One]}\n"
+            + "{[Product].[Product].[Cat One].[Prod Cat Two]}\n"
+            + "{[Product].[Product].[Cat One].[Prod Cat One]}\n"
             + "Row #0: 18\n"
             + "Row #1: 15\n");
     }

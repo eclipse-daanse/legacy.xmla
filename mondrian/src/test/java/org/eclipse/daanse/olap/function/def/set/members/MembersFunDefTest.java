@@ -35,13 +35,13 @@ class MembersFunDefTest {
         // <Level>.members
         assertAxisReturns(connection, "Sales",
             "{[Customers].[Country].Members}",
-            "[Customers].[Canada]\n"
-                + "[Customers].[Mexico]\n"
-                + "[Customers].[USA]" );
+            "[Customers].[Customers].[Canada]\n"
+                + "[Customers].[Customers].[Mexico]\n"
+                + "[Customers].[Customers].[USA]" );
 
         // <Level>.members applied to 'all' level
         assertAxisReturns(connection, "Sales",
-            "{[Customers].[(All)].Members}", "[Customers].[All Customers]" );
+            "{[Customers].[(All)].Members}", "[Customers].[Customers].[All Customers]" );
 
         // <Level>.members applied to measures dimension
         // Note -- no cube-level calculated members are present
@@ -126,7 +126,7 @@ class MembersFunDefTest {
     void testHierarchyMembers(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertAxisReturns(connection, "Sales",
-            "Head({[Time.Weekly].Members}, 10)",
+            "Head({[Time].[Weekly].Members}, 10)",
             "[Time].[Weekly].[All Weeklys]\n"
                 + "[Time].[Weekly].[1997]\n"
                 + "[Time].[Weekly].[1997].[1]\n"
@@ -138,7 +138,7 @@ class MembersFunDefTest {
                 + "[Time].[Weekly].[1997].[1].[20]\n"
                 + "[Time].[Weekly].[1997].[2]" );
         assertAxisReturns(connection, "Sales",
-            "Tail({[Time.Weekly].Members}, 5)",
+            "Tail({[Time].[Weekly].Members}, 5)",
             "[Time].[Weekly].[1998].[51].[5]\n"
                 + "[Time].[Weekly].[1998].[51].[29]\n"
                 + "[Time].[Weekly].[1998].[51].[30]\n"

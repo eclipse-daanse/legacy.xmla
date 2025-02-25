@@ -32,7 +32,6 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -49,11 +48,6 @@ import mondrian.test.DiffRepository;
  * @since Sep 27, 2006
  */
 class CacheControlTest {
-
-    @BeforeEach
-    public void beforeEach() {
-        SystemWideProperties.instance().SsasCompatibleNaming = false;
-    }
 
     @AfterEach
     public void afterEach() {
@@ -100,44 +94,44 @@ class CacheControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time].[1997]}\n"
-            + "{[Time].[1997].[Q1]}\n"
-            + "{[Time].[1997].[Q1].[1]}\n"
-            + "{[Time].[1997].[Q1].[2]}\n"
-            + "{[Time].[1997].[Q1].[3]}\n"
-            + "{[Time].[1997].[Q2]}\n"
-            + "{[Time].[1997].[Q2].[4]}\n"
-            + "{[Time].[1997].[Q2].[5]}\n"
-            + "{[Time].[1997].[Q2].[6]}\n"
-            + "{[Time].[1997].[Q3]}\n"
-            + "{[Time].[1997].[Q3].[7]}\n"
-            + "{[Time].[1997].[Q3].[8]}\n"
-            + "{[Time].[1997].[Q3].[9]}\n"
-            + "{[Time].[1997].[Q4]}\n"
-            + "{[Time].[1997].[Q4].[10]}\n"
-            + "{[Time].[1997].[Q4].[11]}\n"
-            + "{[Time].[1997].[Q4].[12]}\n"
-            + "{[Time].[1998]}\n"
-            + "{[Time].[1998].[Q1]}\n"
-            + "{[Time].[1998].[Q1].[1]}\n"
-            + "{[Time].[1998].[Q1].[2]}\n"
-            + "{[Time].[1998].[Q1].[3]}\n"
-            + "{[Time].[1998].[Q2]}\n"
-            + "{[Time].[1998].[Q2].[4]}\n"
-            + "{[Time].[1998].[Q2].[5]}\n"
-            + "{[Time].[1998].[Q2].[6]}\n"
-            + "{[Time].[1998].[Q3]}\n"
-            + "{[Time].[1998].[Q3].[7]}\n"
-            + "{[Time].[1998].[Q3].[8]}\n"
-            + "{[Time].[1998].[Q3].[9]}\n"
-            + "{[Time].[1998].[Q4]}\n"
-            + "{[Time].[1998].[Q4].[10]}\n"
-            + "{[Time].[1998].[Q4].[11]}\n"
-            + "{[Time].[1998].[Q4].[12]}\n"
+            + "{[Time].[Time].[1997]}\n"
+            + "{[Time].[Time].[1997].[Q1]}\n"
+            + "{[Time].[Time].[1997].[Q1].[1]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2]}\n"
+            + "{[Time].[Time].[1997].[Q1].[3]}\n"
+            + "{[Time].[Time].[1997].[Q2]}\n"
+            + "{[Time].[Time].[1997].[Q2].[4]}\n"
+            + "{[Time].[Time].[1997].[Q2].[5]}\n"
+            + "{[Time].[Time].[1997].[Q2].[6]}\n"
+            + "{[Time].[Time].[1997].[Q3]}\n"
+            + "{[Time].[Time].[1997].[Q3].[7]}\n"
+            + "{[Time].[Time].[1997].[Q3].[8]}\n"
+            + "{[Time].[Time].[1997].[Q3].[9]}\n"
+            + "{[Time].[Time].[1997].[Q4]}\n"
+            + "{[Time].[Time].[1997].[Q4].[10]}\n"
+            + "{[Time].[Time].[1997].[Q4].[11]}\n"
+            + "{[Time].[Time].[1997].[Q4].[12]}\n"
+            + "{[Time].[Time].[1998]}\n"
+            + "{[Time].[Time].[1998].[Q1]}\n"
+            + "{[Time].[Time].[1998].[Q1].[1]}\n"
+            + "{[Time].[Time].[1998].[Q1].[2]}\n"
+            + "{[Time].[Time].[1998].[Q1].[3]}\n"
+            + "{[Time].[Time].[1998].[Q2]}\n"
+            + "{[Time].[Time].[1998].[Q2].[4]}\n"
+            + "{[Time].[Time].[1998].[Q2].[5]}\n"
+            + "{[Time].[Time].[1998].[Q2].[6]}\n"
+            + "{[Time].[Time].[1998].[Q3]}\n"
+            + "{[Time].[Time].[1998].[Q3].[7]}\n"
+            + "{[Time].[Time].[1998].[Q3].[8]}\n"
+            + "{[Time].[Time].[1998].[Q3].[9]}\n"
+            + "{[Time].[Time].[1998].[Q4]}\n"
+            + "{[Time].[Time].[1998].[Q4].[10]}\n"
+            + "{[Time].[Time].[1998].[Q4].[11]}\n"
+            + "{[Time].[Time].[1998].[Q4].[12]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink]}\n"
-            + "{[Product].[Food]}\n"
-            + "{[Product].[Non-Consumable]}\n"
+            + "{[Product].[Product].[Drink]}\n"
+            + "{[Product].[Product].[Food]}\n"
+            + "{[Product].[Product].[Non-Consumable]}\n"
             + "Row #0: 24,597\n"
             + "Row #0: 5,976\n"
             + "Row #0: 1,910\n"
@@ -280,12 +274,12 @@ class CacheControlTest {
         assertEquals(
             "Union("
             + "Crossjoin("
-            + "Member([Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]), "
-            + "Member([Time].[1997].[Q1]), "
+            + "Member([Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]), "
+            + "Member([Time].[Time].[1997].[Q1]), "
             + "Member([Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales], [Measures].[Sales Count], [Measures].[Customer Count], [Measures].[Promotion Sales])), "
             + "Crossjoin("
-            + "Member([Product].[Drink].[Dairy]), "
-            + "Member([Time].[1997].[Q1]), "
+            + "Member([Product].[Product].[Drink].[Dairy]), "
+            + "Member([Time].[Time].[1997].[Q1]), "
             + "Member([Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales], [Measures].[Sales Count], [Measures].[Customer Count], [Measures].[Promotion Sales])))",
             normalizedRegion.toString());
     }
@@ -298,39 +292,39 @@ class CacheControlTest {
     void testFlush(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
-            "SELECT {[Product].[Product Department].MEMBERS} ON AXIS(0),\n"
-            + "{{[Gender].[Gender].MEMBERS}, {[Gender].[All Gender]}} ON AXIS(1)\n"
+            "SELECT {[Product].[Product].[Product Department].MEMBERS} ON AXIS(0),\n"
+            + "{{[Gender].[Gender].[Gender].MEMBERS}, {[Gender].[Gender].[All Gender]}} ON AXIS(1)\n"
             + "FROM [Sales 2] WHERE {[Measures].[Unit Sales]}",
             "Axis #0:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #1:\n"
-            + "{[Product].[Drink].[Alcoholic Beverages]}\n"
-            + "{[Product].[Drink].[Beverages]}\n"
-            + "{[Product].[Drink].[Dairy]}\n"
-            + "{[Product].[Food].[Baked Goods]}\n"
-            + "{[Product].[Food].[Baking Goods]}\n"
-            + "{[Product].[Food].[Breakfast Foods]}\n"
-            + "{[Product].[Food].[Canned Foods]}\n"
-            + "{[Product].[Food].[Canned Products]}\n"
-            + "{[Product].[Food].[Dairy]}\n"
-            + "{[Product].[Food].[Deli]}\n"
-            + "{[Product].[Food].[Eggs]}\n"
-            + "{[Product].[Food].[Frozen Foods]}\n"
-            + "{[Product].[Food].[Meat]}\n"
-            + "{[Product].[Food].[Produce]}\n"
-            + "{[Product].[Food].[Seafood]}\n"
-            + "{[Product].[Food].[Snack Foods]}\n"
-            + "{[Product].[Food].[Snacks]}\n"
-            + "{[Product].[Food].[Starchy Foods]}\n"
-            + "{[Product].[Non-Consumable].[Carousel]}\n"
-            + "{[Product].[Non-Consumable].[Checkout]}\n"
-            + "{[Product].[Non-Consumable].[Health and Hygiene]}\n"
-            + "{[Product].[Non-Consumable].[Household]}\n"
-            + "{[Product].[Non-Consumable].[Periodicals]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+            + "{[Product].[Product].[Drink].[Beverages]}\n"
+            + "{[Product].[Product].[Drink].[Dairy]}\n"
+            + "{[Product].[Product].[Food].[Baked Goods]}\n"
+            + "{[Product].[Product].[Food].[Baking Goods]}\n"
+            + "{[Product].[Product].[Food].[Breakfast Foods]}\n"
+            + "{[Product].[Product].[Food].[Canned Foods]}\n"
+            + "{[Product].[Product].[Food].[Canned Products]}\n"
+            + "{[Product].[Product].[Food].[Dairy]}\n"
+            + "{[Product].[Product].[Food].[Deli]}\n"
+            + "{[Product].[Product].[Food].[Eggs]}\n"
+            + "{[Product].[Product].[Food].[Frozen Foods]}\n"
+            + "{[Product].[Product].[Food].[Meat]}\n"
+            + "{[Product].[Product].[Food].[Produce]}\n"
+            + "{[Product].[Product].[Food].[Seafood]}\n"
+            + "{[Product].[Product].[Food].[Snack Foods]}\n"
+            + "{[Product].[Product].[Food].[Snacks]}\n"
+            + "{[Product].[Product].[Food].[Starchy Foods]}\n"
+            + "{[Product].[Product].[Non-Consumable].[Carousel]}\n"
+            + "{[Product].[Product].[Non-Consumable].[Checkout]}\n"
+            + "{[Product].[Product].[Non-Consumable].[Health and Hygiene]}\n"
+            + "{[Product].[Product].[Non-Consumable].[Household]}\n"
+            + "{[Product].[Product].[Non-Consumable].[Periodicals]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[F]}\n"
-            + "{[Gender].[M]}\n"
-            + "{[Gender].[All Gender]}\n"
+            + "{[Gender].[Gender].[F]}\n"
+            + "{[Gender].[Gender].[M]}\n"
+            + "{[Gender].[Gender].[All Gender]}\n"
             + "Row #0: 3,439\n"
             + "Row #0: 6,776\n"
             + "Row #0: 1,987\n"
@@ -628,12 +622,12 @@ class CacheControlTest {
 
         final CellRegion regionTimeQ1 =
             cacheControl.createMemberRegion(memberQ1, true);
-        assertEquals("Member([Time].[1997].[Q1])", regionTimeQ1.toString());
+        assertEquals("Member([Time].[Time].[1997].[Q1])", regionTimeQ1.toString());
 
         final CellRegion regionProductBeer =
             cacheControl.createMemberRegion(memberBeer, false);
         assertEquals(
-            "Member([Product].[Drink]."
+            "Member([Product].[Product].[Drink]."
             + "[Alcoholic Beverages].[Beer and Wine].[Beer])",
             regionProductBeer.toString());
 
@@ -645,14 +639,14 @@ class CacheControlTest {
                 regionProductBeer,
                 regionProductDairy);
         assertEquals(
-            "Union(Member([Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]), Member([Product].[Drink].[Dairy]))",
+            "Union(Member([Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]), Member([Product].[Product].[Drink].[Dairy]))",
             regionProductUnion.toString());
 
         final CellRegion regionProductXTime =
             cacheControl.createCrossjoinRegion(
                 regionProductUnion, regionTimeQ1);
         assertEquals(
-            "Crossjoin(Union(Member([Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]), Member([Product].[Drink].[Dairy])), Member([Time].[1997].[Q1]))",
+            "Crossjoin(Union(Member([Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]), Member([Product].[Product].[Drink].[Dairy])), Member([Time].[Time].[1997].[Q1]))",
             regionProductXTime.toString());
 
         try {
@@ -692,7 +686,7 @@ class CacheControlTest {
 
         final CellRegion regionTimeQ1 =
             cacheControl.createMemberRegion(memberQ1, true);
-        assertEquals("Member([Time].[1997].[Q1])", regionTimeQ1.toString());
+        assertEquals("Member([Time].[Time].[1997].[Q1])", regionTimeQ1.toString());
 
         final CellRegion measuresRegion =
             cacheControl.createMeasuresRegion(salesCube);
@@ -724,7 +718,7 @@ class CacheControlTest {
             cacheControl.createMemberRegion(
                 true, memberApril, false, null, true);
         assertEquals(
-            "Range([Time].[1997].[Q2].[4] inclusive to null)",
+            "Range([Time].[Time].[1997].[Q2].[4] inclusive to null)",
             regionTimeApril.toString());
 
         final CellRegion measuresRegion =
@@ -755,7 +749,7 @@ class CacheControlTest {
         final CellRegion region1997 =
             cacheControl.createMemberRegion(member1997, true);
         assertEquals(
-            "Member([Time].[1997])",
+            "Member([Time].[Time].[1997])",
             region1997.toString());
 
         final CellRegion measuresRegion =
@@ -793,7 +787,7 @@ class CacheControlTest {
             cacheControl.createMemberRegion(
                 true, memberDrink, true, memberFood, true);
         assertEquals(
-            "Range([Product].[Drink] inclusive to [Product].[Food] inclusive)",
+            "Range([Product].[Product].[Drink] inclusive to [Product].[Product].[Food] inclusive)",
             regionProductFoodDrink.toString());
 
         final CellRegion regionFemale =
@@ -916,8 +910,8 @@ class CacheControlTest {
         assertNotNull(regionTimeXProduct);
         assertEquals(2, regionTimeXProduct.getDimensionality().size());
         assertEquals(
-            "Crossjoin(Member([Time].[1997].[Q1]), "
-            + "Member([Product].[Drink].[Alcoholic Beverages]."
+            "Crossjoin(Member([Time].[Time].[1997].[Q1]), "
+            + "Member([Product].[Product].[Drink].[Alcoholic Beverages]."
             + "[Beer and Wine]))",
             regionTimeXProduct.toString());
 
@@ -1055,10 +1049,10 @@ class CacheControlTest {
                 regionGenderFemale);
         assertEquals(
             "Crossjoin("
-            + "Member([Time].[1997].[Q1]), "
-            + "Member([Product].[Drink].[Alcoholic Beverages]."
+            + "Member([Time].[Time].[1997].[Q1]), "
+            + "Member([Product].[Product].[Drink].[Alcoholic Beverages]."
             + "[Beer and Wine].[Beer]), "
-            + "Member([Gender].[F]))",
+            + "Member([Gender].[Gender].[F]))",
             regionTimeXProductXGender.toString());
         assertEquals(
             "[[Time], [Product], [Gender]]",
@@ -1072,10 +1066,10 @@ class CacheControlTest {
                 regionGenderFemale);
         assertEquals(
             "Crossjoin("
-            + "Member([Time].[1997].[Q1]), "
-            + "Member([Product].[Drink].[Alcoholic Beverages]"
+            + "Member([Time].[Time].[1997].[Q1]), "
+            + "Member([Product].[Product].[Drink].[Alcoholic Beverages]"
             + ".[Beer and Wine].[Beer]), "
-            + "Member([Gender].[F]))",
+            + "Member([Gender].[Gender].[F]))",
             regionTimeXProductXGender2.toString());
         assertEquals(
             "[[Time], [Product], [Gender]]",
@@ -1088,9 +1082,9 @@ class CacheControlTest {
                 regionTimeXProduct);
         assertEquals(
             "Crossjoin("
-            + "Member([Gender].[F]), "
-            + "Member([Time].[1997].[Q1]), "
-            + "Member([Product].[Drink].[Alcoholic Beverages]"
+            + "Member([Gender].[Gender].[F]), "
+            + "Member([Time].[Time].[1997].[Q1]), "
+            + "Member([Product].[Product].[Drink].[Alcoholic Beverages]"
             + ".[Beer and Wine].[Beer]))",
             regionGenderXTimeXProduct.toString());
         assertEquals(
@@ -1166,17 +1160,17 @@ class CacheControlTest {
         assertEquals(
             "Union("
             + "Crossjoin("
-            + "Member([Marital Status].[S]), "
+            + "Member([Marital Status].[Marital Status].[S]), "
             + "Union("
             + "Crossjoin("
-            + "Member([Gender].[F]), "
-            + "Member([Time].[1997].[Q1])), "
-            + "Crossjoin(Member([Gender].[M]), "
-            + "Member([Time].[1997].[Q2])))), "
+            + "Member([Gender].[Gender].[F]), "
+            + "Member([Time].[Time].[1997].[Q1])), "
+            + "Crossjoin(Member([Gender].[Gender].[M]), "
+            + "Member([Time].[Time].[1997].[Q2])))), "
             + "Crossjoin("
-            + "Member([Marital Status].[S]), "
-            + "Member([Gender].[F]), "
-            + "Member([Time].[1997].[Q1])))",
+            + "Member([Marital Status].[Marital Status].[S]), "
+            + "Member([Gender].[Gender].[F]), "
+            + "Member([Time].[Time].[1997].[Q1])))",
             region.toString());
 
         final CellRegion normalizedRegion =
@@ -1184,9 +1178,9 @@ class CacheControlTest {
                 (CacheControlImpl.CellRegionImpl) region);
         assertEquals(
             "Union("
-            + "Crossjoin(Member([Marital Status].[S]), Member([Gender].[F]), Member([Time].[1997].[Q1])), "
-            + "Crossjoin(Member([Marital Status].[S]), Member([Gender].[M]), Member([Time].[1997].[Q2])), "
-            + "Crossjoin(Member([Marital Status].[S]), Member([Gender].[F]), Member([Time].[1997].[Q1])))",
+            + "Crossjoin(Member([Marital Status].[Marital Status].[S]), Member([Gender].[Gender].[F]), Member([Time].[Time].[1997].[Q1])), "
+            + "Crossjoin(Member([Marital Status].[Marital Status].[S]), Member([Gender].[Gender].[M]), Member([Time].[Time].[1997].[Q2])), "
+            + "Crossjoin(Member([Marital Status].[Marital Status].[S]), Member([Gender].[Gender].[F]), Member([Time].[Time].[1997].[Q1])))",
             normalizedRegion.toString());
     }
 
@@ -1233,7 +1227,7 @@ class CacheControlTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA]}\n"
+            + "{[Store].[Store].[USA]}\n"
             + "Row #0: 266,773\n");
 
         if (context.getConfig().disableCaching()) {

@@ -167,7 +167,7 @@ class ScenarioTest {
             checkThrowable(
                 e,
                 "Cannot write to cell: one of the coordinates "
-                + "([Product].[FoodDrink]) is a calculated member");
+                + "([Product].[Product].[FoodDrink]) is a calculated member");
         }
     }
 
@@ -278,11 +278,11 @@ class ScenarioTest {
             + "from [Sales]"
             + "where [Scenario].[" + id + "]",
             "Axis #0:\n"
-            + "{[Scenario].[" + id + "]}\n"
+            + "{[Scenario].[Scenario].[" + id + "]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink]}\n"
+            + "{[Product].[Product].[Drink]}\n"
             + "Row #0: 23,597\n");
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -294,22 +294,22 @@ class ScenarioTest {
             + "from [Sales]"
             + "where [Scenario].[" + id + "]",
             "Axis #0:\n"
-            + "{[Scenario].[" + id + "]}\n"
+            + "{[Scenario].[Scenario].[" + id + "]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink]}\n"
-            + "{[Product].[Food]}\n"
-            + "{[Product].[Non-Consumable]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages]}\n"
-            + "{[Product].[Drink].[Beverages]}\n"
-            + "{[Product].[Drink].[Dairy]}\n"
-            + "{[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda]}\n"
-            + "{[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Excellent]}\n"
-            + "{[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Fabulous]}\n"
-            + "{[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Skinner]}\n"
-            + "{[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Token]}\n"
-            + "{[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Washington]}\n"
+            + "{[Product].[Product].[Drink]}\n"
+            + "{[Product].[Product].[Food]}\n"
+            + "{[Product].[Product].[Non-Consumable]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+            + "{[Product].[Product].[Drink].[Beverages]}\n"
+            + "{[Product].[Product].[Drink].[Dairy]}\n"
+            + "{[Product].[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda]}\n"
+            + "{[Product].[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Excellent]}\n"
+            + "{[Product].[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Fabulous]}\n"
+            + "{[Product].[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Skinner]}\n"
+            + "{[Product].[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Token]}\n"
+            + "{[Product].[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Washington]}\n"
             + (allocationPolicy == AllocationPolicy.EQUAL_INCREMENT
                 ? "Row #0: 23,597\n"
                   + "Row #1: 191,940\n"
@@ -446,7 +446,7 @@ class ScenarioTest {
         final Scenario scenario = connection.createScenario();
         connection.setScenario(scenario);
         final String id = scenario.getId();
-        final String scenarioUniqueName = "[Scenario].[" + id + "]";
+        final String scenarioUniqueName = "[Scenario].[Scenario].[" + id + "]";
         final Statement pstmt = connection.createStatement();
 
         // With bug MONDRIAN-815, got an NPE here, because cell (0, 1) has a
@@ -460,16 +460,16 @@ class ScenarioTest {
                 + " [Time].[1997], " + scenarioUniqueName + ")");
         assertEqualsVerbose(
             "Axis #0:\n"
-            + "{[Customers].[USA].[CA].[San Francisco], [Time].[1997], "
+            + "{[Customers].[Customers].[USA].[CA].[San Francisco], [Time].[Time].[1997], "
             + scenarioUniqueName
             + "}\n"
             + "Axis #1:\n"
-            + "{[Gender].[All Gender]}\n"
-            + "{[Gender].[F]}\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[All Gender]}\n"
+            + "{[Gender].[Gender].[F]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink].[Beverages]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages]}\n"
+            + "{[Product].[Product].[Drink].[Beverages]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages]}\n"
             + "Row #0: 2\n"
             + "Row #0: \n"
             + "Row #0: 2\n"
@@ -489,16 +489,16 @@ class ScenarioTest {
             + " [Time].[1997], " + scenarioUniqueName + ")");
         assertEqualsVerbose(
             "Axis #0:\n"
-            + "{[Customers].[USA].[CA].[San Francisco], [Time].[1997], "
+            + "{[Customers].[Customers].[USA].[CA].[San Francisco], [Time].[Time].[1997], "
             + scenarioUniqueName
             + "}\n"
             + "Axis #1:\n"
-            + "{[Gender].[All Gender]}\n"
-            + "{[Gender].[F]}\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[All Gender]}\n"
+            + "{[Gender].[Gender].[F]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink].[Alcoholic Beverages]}\n"
-            + "{[Product].[Drink].[Beverages]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+            + "{[Product].[Product].[Drink].[Beverages]}\n"
             + "Row #0: 10\n"
             + "Row #0: 5\n"
             + "Row #0: 5\n"

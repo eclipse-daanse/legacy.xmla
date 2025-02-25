@@ -213,15 +213,15 @@ protected void assertQuerySql(Connection connection,
     }
     static final String result =
       "Axis #0:\n"
-        + "{[Time.Weekly].[x]}\n"
+        + "{[Time].[Weekly].[x]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Store Sales]}\n"
         + "{[Measures].[x1]}\n"
         + "{[Measures].[x2]}\n"
         + "{[Measures].[x3]}\n"
         + "Axis #2:\n"
-        + "{[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].[Hermanos Green Pepper]}\n"
-        + "{[Product].[Non-Consumable].[Health and Hygiene].[Bathroom Products].[Mouthwash].[Hilltop].[Hilltop Mint "
+        + "{[Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].[Hermanos Green Pepper]}\n"
+        + "{[Product].[Product].[Non-Consumable].[Health and Hygiene].[Bathroom Products].[Mouthwash].[Hilltop].[Hilltop Mint "
         + "Mouthwash]}\n"
         + "Row #0: 737.26\n"
         + "Row #0: 281.78\n"
@@ -249,15 +249,15 @@ protected void assertQuerySql(Connection connection,
 
     final String mdx =
       "with\n"
-        + "member [Time.Weekly].x as Aggregate({[Time.Weekly].[1997].[1] : [Time.Weekly].[1997].[39]}, [Measures]"
+        + "member [Time].[Weekly].x as Aggregate({[Time].[Weekly].[1997].[1] : [Time].[Weekly].[1997].[39]}, [Measures]"
         + ".[Store Sales])\n"
-        + "member Measures.x1 as ([Time].[1997].[Q1], [Measures].[Store Sales])\n"
-        + "member Measures.x2 as ([Time].[1997].[Q2], [Measures].[Store Sales])\n"
-        + "member Measures.x3 as ([Time].[1997].[Q3], [Measures].[Store Sales])\n"
-        + " set products as TopCount(Product.[Product Name].Members, 2, Measures.[Store Sales])\n"
+        + "member Measures.x1 as ([Time].[Time].[1997].[Q1], [Measures].[Store Sales])\n"
+        + "member Measures.x2 as ([Time].[Time].[1997].[Q2], [Measures].[Store Sales])\n"
+        + "member Measures.x3 as ([Time].[Time].[1997].[Q3], [Measures].[Store Sales])\n"
+        + " set products as TopCount(Product.Product.[Product Name].Members, 2, Measures.[Store Sales])\n"
         + " SELECT NON EMPTY products ON 1,\n"
         + "NON EMPTY {[Measures].[Store Sales], Measures.x1, Measures.x2, Measures.x3} ON 0\n"
-        + "FROM [Sales] where [Time.Weekly].x";
+        + "FROM [Sales] where [Time].[Weekly].x";
 
     Connection connection = context.getConnectionWithDefaultRole();
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
@@ -287,15 +287,15 @@ protected void assertQuerySql(Connection connection,
       context.getConfig().useAggregates()
         && context.getConfig().readAggregates();
     final String mdx =
-      "with set TO_AGGREGATE as '{[Time.Weekly].[1997].[1] : [Time.Weekly].[1997].[39]}'\n"
-        + "member [Time.Weekly].x as Aggregate(TO_AGGREGATE, [Measures].[Store Sales])\n"
-        + "member Measures.x1 as ([Time].[1997].[Q1], [Measures].[Store Sales])\n"
-        + "member Measures.x2 as ([Time].[1997].[Q2], [Measures].[Store Sales])\n"
-        + "member Measures.x3 as ([Time].[1997].[Q3], [Measures].[Store Sales])\n"
-        + " set products as TopCount(Product.[Product Name].Members, 2, Measures.[Store Sales])\n"
+      "with set TO_AGGREGATE as '{[Time].[Weekly].[1997].[1] : [Time].[Weekly].[1997].[39]}'\n"
+        + "member [Time].[Weekly].x as Aggregate(TO_AGGREGATE, [Measures].[Store Sales])\n"
+        + "member Measures.x1 as ([Time].[Time].[1997].[Q1], [Measures].[Store Sales])\n"
+        + "member Measures.x2 as ([Time].[Time].[1997].[Q2], [Measures].[Store Sales])\n"
+        + "member Measures.x3 as ([Time].[Time].[1997].[Q3], [Measures].[Store Sales])\n"
+        + " set products as TopCount(Product.Product.[Product Name].Members, 2, Measures.[Store Sales])\n"
         + " SELECT NON EMPTY products ON 1,\n"
         + "NON EMPTY {[Measures].[Store Sales], Measures.x1, Measures.x2, Measures.x3} ON 0\n"
-        + "FROM [Sales] where [Time.Weekly].x";
+        + "FROM [Sales] where [Time].[Weekly].x";
     Connection connection = context.getConnectionWithDefaultRole();
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
     SqlPattern mysqlPattern = useAgg ? new SqlPattern(
@@ -323,13 +323,13 @@ protected void assertQuerySql(Connection connection,
         && context.getConfig().readAggregates();
     final String mdx =
       "with\n"
-        + "  set QUARTERS as Descendants([Time].[1997], [Time].[Time].[Quarter])\n"
-        + "  member Time.x as Aggregate(QUARTERS, [Measures].[Store Sales])\n"
-        + "  set products as Filter([Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].Children, "
+        + "  set QUARTERS as Descendants([Time].[Time].[1997], [Time].[Time].[Quarter])\n"
+        + "  member Time.Time.x as Aggregate(QUARTERS, [Measures].[Store Sales])\n"
+        + "  set products as Filter([Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].Children, "
         + "[Measures].[Store Sales] > 700)\n"
         + "  SELECT NON EMPTY products ON 1,\n"
         + "  NON EMPTY {[Measures].[Store Sales]} ON 0\n"
-        + "  FROM [Sales] where Time.x";
+        + "  FROM [Sales] where Time.Time.x";
 
     final String mysqlQuery =
       "select\n"
@@ -405,14 +405,14 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Time].[x]}\n"
+        + "{[Time].[Time].[x]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Store Sales]}\n"
         + "Axis #2:\n"
-        + "{[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].[Hermanos Broccoli]}\n"
-        + "{[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].[Hermanos Green Pepper]}\n"
-        + "{[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].[Hermanos New Potatos]}\n"
-        + "{[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].[Hermanos Prepared Salad]}\n"
+        + "{[Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].[Hermanos Broccoli]}\n"
+        + "{[Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].[Hermanos Green Pepper]}\n"
+        + "{[Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].[Hermanos New Potatos]}\n"
+        + "{[Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].[Hermanos Prepared Salad]}\n"
         + "Row #0: 742.73\n"
         + "Row #1: 922.54\n"
         + "Row #2: 703.80\n"
@@ -434,13 +434,13 @@ protected void assertQuerySql(Connection connection,
         && context.getConfig().readAggregates();
     final String mdx =
       "WITH\n"
-        + "  SET TC AS 'TopCount([Product].[Drink].[Alcoholic Beverages].Children, 3, [Measures].[Unit Sales] )'\n"
-        + "  MEMBER [Time].[Slicer] as [Time].[1997]\n"
-        + "  MEMBER [Store Type].[Slicer] as [Store Type].[Store Type].[Deluxe Supermarket]\n"
+        + "  SET TC AS 'TopCount([Product].[Product].[Drink].[Alcoholic Beverages].Children, 3, [Measures].[Unit Sales] )'\n"
+        + "  MEMBER [Time].[Time].[Slicer] as [Time].[Time].[1997]\n"
+        + "  MEMBER [Store Type].[Store Type].[Slicer] as [Store Type].[Store Type].[Store Type].[Deluxe Supermarket]\n"
         + "\n"
         + "  SELECT NON EMPTY [Measures].[Unit Sales] on 0,\n"
         + "    TC ON 1 \n"
-        + "  FROM [Sales] WHERE {([Time].[Slicer], [Store Type].[Slicer])}\n";
+        + "  FROM [Sales] WHERE {([Time].[Time].[Slicer], [Store Type].[Store Type].[Slicer])}\n";
 
     String mysqlQuery =
       "select\n"
@@ -516,11 +516,11 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Time].[Slicer], [Store Type].[Slicer]}\n"
+        + "{[Time].[Time].[Slicer], [Store Type].[Store Type].[Slicer]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Unit Sales]}\n"
         + "Axis #2:\n"
-        + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]}\n"
+        + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]}\n"
         + "Row #0: 1,910\n" );
   }
 
@@ -644,14 +644,14 @@ protected void assertQuerySql(Connection connection,
         && context.getConfig().readAggregates();
     final String mdx =
       "WITH\n"
-        + "  SET TC AS 'TopCount([Product].[Drink].[Alcoholic Beverages].Children, 3, [Measures].[Unit Sales] )'\n"
-        + "  MEMBER [Time].[Slicer] as [Time].[1997]\n"
-        + "  MEMBER [Store Type].[Slicer] as [Store Type].[Store Type].[Deluxe Supermarket] + [Store Type].[Store "
+        + "  SET TC AS 'TopCount([Product].[Product].[Drink].[Alcoholic Beverages].Children, 3, [Measures].[Unit Sales] )'\n"
+        + "  MEMBER [Time].[Time].[Slicer] as [Time].[Time].[1997]\n"
+        + "  MEMBER [Store Type].[Store Type].[Slicer] as [Store Type].[Store Type].[Deluxe Supermarket] + [Store Type].[Store "
         + "Type].[Gourmet Supermarket]\n"
         + "\n"
         + "  SELECT NON EMPTY [Measures].[Unit Sales] on 0,\n"
         + "    TC ON 1 \n"
-        + "  FROM [Sales] WHERE {([Time].[Slicer], [Store Type].[Slicer])}\n";
+        + "  FROM [Sales] WHERE {([Time].[Time].[Slicer], [Store Type].[Store Type].[Slicer])}\n";
 
     String mysqlQuery =
       "select\n"
@@ -727,11 +727,11 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Time].[Slicer], [Store Type].[Slicer]}\n"
+        + "{[Time].[Time].[Slicer], [Store Type].[Store Type].[Slicer]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Unit Sales]}\n"
         + "Axis #2:\n"
-        + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]}\n"
+        + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]}\n"
         + "Row #0: 2,435\n" );
   }
 
@@ -745,7 +745,7 @@ protected void assertQuerySql(Connection connection,
     final String mdx =
       "WITH\n"
         + "  SET TC AS 'TopCount([Product].[Drink].[Alcoholic Beverages].Children, 3)'\n"
-        + "  MEMBER [Store Type].[Store Type].[Slicer] as Aggregate([Store Type].[Store Type].Members)\n"
+        + "  MEMBER [Store Type].[Store Type].[Store Type].[Slicer] as Aggregate([Store Type].[Store Type].[Store Type].Members)\n"
         + "\n"
         + "  SELECT NON EMPTY [Measures].[Unit Sales] on 0,\n"
         + "    TC ON 1 \n"
@@ -753,11 +753,11 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Store Type].[Slicer]}\n"
+        + "{[Store Type].[Store Type].[Slicer]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Unit Sales]}\n"
         + "Axis #2:\n"
-        + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]}\n"
+        + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]}\n"
         + "Row #0: 6,838\n" );
   }
 
@@ -776,8 +776,8 @@ protected void assertQuerySql(Connection connection,
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Customers].[Canada]}\n"
-        + "{[Customers].[Mexico]}\n"
+        + "{[Customers].[Customers].[Canada]}\n"
+        + "{[Customers].[Customers].[Mexico]}\n"
         + "Row #0: \n"
         + "Row #0: \n" );
     // TopCount should return in natural order, not order of measure val
@@ -787,8 +787,8 @@ protected void assertQuerySql(Connection connection,
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Product].[Drink].[Alcoholic Beverages]}\n"
-        + "{[Product].[Drink].[Beverages]}\n"
+        + "{[Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+        + "{[Product].[Product].[Drink].[Beverages]}\n"
         + "Row #0: 6,838\n"
         + "Row #0: 13,573\n" );
   }
@@ -858,11 +858,11 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Product].[Top Drinks]}\n"
+        + "{[Product].[Product].[Top Drinks]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Unit Sales]}\n"
         + "Axis #2:\n"
-        + "{[Customers].[USA]}\n"
+        + "{[Customers].[Customers].[USA]}\n"
         + "Row #0: 20,411\n" );
   }
 
@@ -882,14 +882,14 @@ protected void assertQuerySql(Connection connection,
     }
     final String mdx =
       "WITH\n"
-        + "  SET CJ AS NonEmptyCrossJoin([Store Type].[Store Type].Members, {[Measures].[Unit Sales]})\n"
-        + "  SET TC AS 'TopCount([Store Type].[Store Type].Members, 10, [Measures].[Unit Sales])'\n"
+        + "  SET CJ AS NonEmptyCrossJoin([Store Type].[Store Type].[Store Type].Members, {[Measures].[Unit Sales]})\n"
+        + "  SET TC AS 'TopCount([Store Type].[Store Type].[Store Type].Members, 10, [Measures].[Unit Sales])'\n"
         + "  SET TIME_DEP AS 'Generate(CJ, {[Time].[Time].CurrentMember})' \n"
         + "  MEMBER [Time].[Time].[Slicer] as Aggregate(TIME_DEP)\n"
         + "\n"
         + "  SELECT NON EMPTY [Measures].[Unit Sales] on 0,\n"
         + "    TC ON 1 \n"
-        + "  FROM [Sales] where [Time].[Slicer]\n";
+        + "  FROM [Sales] where [Time].[Time].[Slicer]\n";
     assertQueryThrows(context.getConnectionWithDefaultRole(), mdx, "evaluating itself" );
   }
 
@@ -912,15 +912,15 @@ protected void assertQuerySql(Connection connection,
 
     final String result =
       "Axis #0:\n"
-        + "{[Time].[1997].[Q1], [Store Type].[Supermarket]}\n"
-        + "{[Time].[1997].[Q2], [Store Type].[Supermarket]}\n"
-        + "{[Time].[1997].[Q1], [Store Type].[Deluxe Supermarket]}\n"
-        + "{[Time].[1997].[Q1], [Store Type].[Gourmet Supermarket]}\n"
+        + "{[Time].[Time].[1997].[Q1], [Store Type].[Store Type].[Supermarket]}\n"
+        + "{[Time].[Time].[1997].[Q2], [Store Type].[Store Type].[Supermarket]}\n"
+        + "{[Time].[Time].[1997].[Q1], [Store Type].[Store Type].[Deluxe Supermarket]}\n"
+        + "{[Time].[Time].[1997].[Q1], [Store Type].[Store Type].[Gourmet Supermarket]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Store Sales]}\n"
         + "Axis #2:\n"
-        + "{[Product].[Food].[Snack Foods].[Snack Foods].[Dried Fruit].[Fort West].[Fort West Raspberry Fruit Roll]}\n"
-        + "{[Product].[Food].[Canned Foods].[Canned Soup].[Soup].[Bravo].[Bravo Noodle Soup]}\n"
+        + "{[Product].[Product].[Food].[Snack Foods].[Snack Foods].[Dried Fruit].[Fort West].[Fort West Raspberry Fruit Roll]}\n"
+        + "{[Product].[Product].[Food].[Canned Foods].[Canned Soup].[Soup].[Bravo].[Bravo Noodle Soup]}\n"
         + "Row #0: 372.36\n"
         + "Row #1: 365.20\n";
 
@@ -951,17 +951,17 @@ protected void assertQuerySql(Connection connection,
 
     String result =
       "Axis #0:\n"
-        + "{[Time].[1997].[Q1], [Store Type].[Deluxe Supermarket]}\n"
-        + "{[Time].[1997].[Q1], [Store Type].[Gourmet Supermarket]}\n"
-        + "{[Time].[1997].[Q1], [Store Type].[Supermarket]}\n"
-        + "{[Time].[1997].[Q2], [Store Type].[Deluxe Supermarket]}\n"
-        + "{[Time].[1997].[Q2], [Store Type].[Gourmet Supermarket]}\n"
-        + "{[Time].[1997].[Q2], [Store Type].[Supermarket]}\n"
+        + "{[Time].[Time].[1997].[Q1], [Store Type].[Store Type].[Deluxe Supermarket]}\n"
+        + "{[Time].[Time].[1997].[Q1], [Store Type].[Store Type].[Gourmet Supermarket]}\n"
+        + "{[Time].[Time].[1997].[Q1], [Store Type].[Store Type].[Supermarket]}\n"
+        + "{[Time].[Time].[1997].[Q2], [Store Type].[Store Type].[Deluxe Supermarket]}\n"
+        + "{[Time].[Time].[1997].[Q2], [Store Type].[Store Type].[Gourmet Supermarket]}\n"
+        + "{[Time].[Time].[1997].[Q2], [Store Type].[Store Type].[Supermarket]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Store Sales]}\n"
         + "Axis #2:\n"
-        + "{[Product].[Food].[Eggs].[Eggs].[Eggs].[Urban].[Urban Small Eggs]}\n"
-        + "{[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].[Hermanos Green Pepper]}\n"
+        + "{[Product].[Product].[Food].[Eggs].[Eggs].[Eggs].[Urban].[Urban Small Eggs]}\n"
+        + "{[Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos].[Hermanos Green Pepper]}\n"
         + "Row #0: 460.02\n"
         + "Row #1: 420.74\n";
 
@@ -981,13 +981,13 @@ protected void assertQuerySql(Connection connection,
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
 
     final String mdx =
-      "with member [Time.Weekly].x as Aggregate([Time.Weekly].[1997].Children) "
+      "with member [Time].[Weekly].x as Aggregate([Time].[Weekly].[1997].Children) "
         + "set products as "
-        + "'TopCount([Product].[Product Department].Members, 2, "
+        + "'TopCount([Product].[Product].[Product Department].Members, 2, "
         + "[Measures].[Store Sales])' "
         + "select NON EMPTY {[Measures].[Store Sales]} ON COLUMNS, "
         + "NON EMPTY [products] ON ROWS "
-        + " from [Sales] where [Time.Weekly].[x]";
+        + " from [Sales] where [Time].[Weekly].[x]";
 
     final String mysql =
       "select\n"
@@ -1037,12 +1037,12 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Time.Weekly].[x]}\n"
+        + "{[Time].[Weekly].[x]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Store Sales]}\n"
         + "Axis #2:\n"
-        + "{[Product].[Food].[Produce]}\n"
-        + "{[Product].[Food].[Snack Foods]}\n"
+        + "{[Product].[Product].[Food].[Produce]}\n"
+        + "{[Product].[Product].[Food].[Snack Foods]}\n"
         + "Row #0: 82,248.42\n"
         + "Row #1: 67,609.82\n" );
   }
@@ -1082,22 +1082,22 @@ protected void assertQuerySql(Connection connection,
         + " </Cube>";
     // slicer with multiple elements and two All members
     final String mdx =
-      "with member [AltStore].[AllSlicer] as 'Aggregate({[AltStore].[All]})'\n"
-        + " member [AltStore.City].[SetSlicer] as 'Aggregate({[AltStore.City].[San Francisco], [AltStore.City].[San "
+      "with member [AltStore].[AltStore].[AllSlicer] as 'Aggregate({[AltStore].[AltStore].[All]})'\n"
+        + " member [AltStore].[City].[SetSlicer] as 'Aggregate({[AltStore].[City].[San Francisco], [AltStore].[City].[San "
         + "Diego]})'\n"
-        + " member [AltStore.State].[AllSlicer] as 'Aggregate({[AltStore.State].[All]})'\n"
-        + "select {[Time].[1997].[Q1]} ON COLUMNS,\n"
-        + " NON EMPTY TopCount(Product.[Product Name].Members, 2, Measures.[Store Sales]) ON ROWS\n"
+        + " member [AltStore].[State].[AllSlicer] as 'Aggregate({[AltStore].[State].[All]})'\n"
+        + "select {[Time].[Time].[1997].[Q1]} ON COLUMNS,\n"
+        + " NON EMPTY TopCount(Product.Product.[Product Name].Members, 2, Measures.[Store Sales]) ON ROWS\n"
         + "from [3StoreHCube]\n"
-        + "where ([AltStore].[AllSlicer], [AltStore.City].[SetSlicer], [AltStore.State].[AllSlicer])\n";
+        + "where ([AltStore].[AltStore].[AllSlicer], [AltStore].[City].[SetSlicer], [AltStore].[State].[AllSlicer])\n";
     String result =
       "Axis #0:\n"
-        + "{[AltStore].[AllSlicer], [AltStore.City].[SetSlicer], [AltStore.State].[AllSlicer]}\n"
+        + "{[AltStore].[AltStore].[AllSlicer], [AltStore].[City].[SetSlicer], [AltStore].[State].[AllSlicer]}\n"
         + "Axis #1:\n"
-        + "{[Time].[1997].[Q1]}\n"
+        + "{[Time].[Time].[1997].[Q1]}\n"
         + "Axis #2:\n"
-        + "{[Product].[Food].[Deli].[Meat].[Bologna].[Red Spade].[Red Spade Low Fat Bologna]}\n"
-        + "{[Product].[Non-Consumable].[Health and Hygiene].[Bathroom Products].[Mouthwash].[Hilltop].[Hilltop Mint "
+        + "{[Product].[Product].[Food].[Deli].[Meat].[Bologna].[Red Spade].[Red Spade Low Fat Bologna]}\n"
+        + "{[Product].[Product].[Non-Consumable].[Health and Hygiene].[Bathroom Products].[Mouthwash].[Hilltop].[Hilltop Mint "
         + "Mouthwash]}\n"
         + "Row #0: 51.60\n"
         + "Row #1: 28.96\n";
@@ -1236,7 +1236,7 @@ protected void assertQuerySql(Connection connection,
     final String mdx =
       "select NON EMPTY [Customers].[USA].[CA].[San Francisco].Children ON COLUMNS \n"
         + "from [Sales] \n"
-        + "where ([Time].[1997].[Q1] : [Time].[1997].[Q3]) \n";
+        + "where ([Time].[Time].[1997].[Q1] : [Time].[Time].[1997].[Q3]) \n";
 
     final String mysql =
       "select\n"
@@ -1291,17 +1291,17 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Time].[1997].[Q1]}\n"
-        + "{[Time].[1997].[Q2]}\n"
-        + "{[Time].[1997].[Q3]}\n"
+        + "{[Time].[Time].[1997].[Q1]}\n"
+        + "{[Time].[Time].[1997].[Q2]}\n"
+        + "{[Time].[Time].[1997].[Q3]}\n"
         + "Axis #1:\n"
-        + "{[Customers].[USA].[CA].[San Francisco].[Dennis Messer]}\n"
-        + "{[Customers].[USA].[CA].[San Francisco].[Esther Logsdon]}\n"
-        + "{[Customers].[USA].[CA].[San Francisco].[Karen Moreland]}\n"
-        + "{[Customers].[USA].[CA].[San Francisco].[Kent Brant]}\n"
-        + "{[Customers].[USA].[CA].[San Francisco].[Louise Wakefield]}\n"
-        + "{[Customers].[USA].[CA].[San Francisco].[Reta Mikalas]}\n"
-        + "{[Customers].[USA].[CA].[San Francisco].[Tammy Mihalek]}\n"
+        + "{[Customers].[Customers].[USA].[CA].[San Francisco].[Dennis Messer]}\n"
+        + "{[Customers].[Customers].[USA].[CA].[San Francisco].[Esther Logsdon]}\n"
+        + "{[Customers].[Customers].[USA].[CA].[San Francisco].[Karen Moreland]}\n"
+        + "{[Customers].[Customers].[USA].[CA].[San Francisco].[Kent Brant]}\n"
+        + "{[Customers].[Customers].[USA].[CA].[San Francisco].[Louise Wakefield]}\n"
+        + "{[Customers].[Customers].[USA].[CA].[San Francisco].[Reta Mikalas]}\n"
+        + "{[Customers].[Customers].[USA].[CA].[San Francisco].[Tammy Mihalek]}\n"
         + "Row #0: 8\n"
         + "Row #0: 3\n"
         + "Row #0: 13\n"
@@ -1390,14 +1390,14 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Time].[1997], [Product].[Drink]}\n"
-        + "{[Time].[1997], [Product].[Food]}\n"
+        + "{[Time].[Time].[1997], [Product].[Product].[Drink]}\n"
+        + "{[Time].[Time].[1997], [Product].[Product].[Food]}\n"
         + "Axis #1:\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Mary Francis Benigar]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[James Horvat]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Wildon Cameron]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Ida Rodriguez]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Joann Mramor]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Mary Francis Benigar]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[James Horvat]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Wildon Cameron]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Ida Rodriguez]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Joann Mramor]}\n"
         + "Row #0: 427\n"
         + "Row #0: 384\n"
         + "Row #0: 366\n"
@@ -1413,10 +1413,10 @@ protected void assertQuerySql(Connection connection,
     ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
     ((TestConfig)context.getConfig()).setUseAggregates(false);
     final String mdx =
-      "select TopCount([Customers].[Name].members, 5, "
+      "select TopCount([Customers].[Customers].[Name].members, 5, "
         + "measures.[unit sales]) ON COLUMNS \n"
         + "  from sales where \n"
-        + "  {[Time.Weekly].[1997].[48].[17] :[Time.Weekly].[1997].[48].[20]} ";
+        + "  {[Time].[Weekly].[1997].[48].[17] : [Time].[Weekly].[1997].[48].[20]} ";
 
     final String mysql =
       "select\n"
@@ -1481,16 +1481,16 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Time.Weekly].[1997].[48].[17]}\n"
-        + "{[Time.Weekly].[1997].[48].[18]}\n"
-        + "{[Time.Weekly].[1997].[48].[19]}\n"
-        + "{[Time.Weekly].[1997].[48].[20]}\n"
+        + "{[Time].[Weekly].[1997].[48].[17]}\n"
+        + "{[Time].[Weekly].[1997].[48].[18]}\n"
+        + "{[Time].[Weekly].[1997].[48].[19]}\n"
+        + "{[Time].[Weekly].[1997].[48].[20]}\n"
         + "Axis #1:\n"
-        + "{[Customers].[USA].[WA].[Yakima].[Joanne Skuderna]}\n"
-        + "{[Customers].[USA].[WA].[Yakima].[Paula Stevens]}\n"
-        + "{[Customers].[USA].[WA].[Everett].[Sarah Miller]}\n"
-        + "{[Customers].[USA].[OR].[Albany].[Kathryn Chamberlin]}\n"
-        + "{[Customers].[USA].[OR].[Salem].[Scott Pavicich]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Yakima].[Joanne Skuderna]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Yakima].[Paula Stevens]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Everett].[Sarah Miller]}\n"
+        + "{[Customers].[Customers].[USA].[OR].[Albany].[Kathryn Chamberlin]}\n"
+        + "{[Customers].[Customers].[USA].[OR].[Salem].[Scott Pavicich]}\n"
         + "Row #0: 37\n"
         + "Row #0: 32\n"
         + "Row #0: 29\n"
@@ -1508,13 +1508,13 @@ protected void assertQuerySql(Connection connection,
         + "{[Product].[Food].[Snacks].[Candy].[Gum].[Atomic].[Atomic Bubble Gum],\n"
         + "[Product].[Food].[Snacks].[Candy].[Gum].[Choice].[Choice Bubble Gum]}",
       "Axis #0:\n"
-        + "{[Product].[Food].[Snacks].[Candy].[Gum].[Atomic].[Atomic Bubble Gum]}\n"
-        + "{[Product].[Food].[Snacks].[Candy].[Gum].[Choice].[Choice Bubble Gum]}\n"
+        + "{[Product].[Product].[Food].[Snacks].[Candy].[Gum].[Atomic].[Atomic Bubble Gum]}\n"
+        + "{[Product].[Product].[Food].[Snacks].[Candy].[Gum].[Choice].[Choice Bubble Gum]}\n"
         + "Axis #1:\n"
-        + "{[Customers].[USA].[WA].[Spokane].[David Cocadiz]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Peter Von Breymann]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[David Cocadiz]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Peter Von Breymann]}\n"
         + "Axis #2:\n"
-        + "{[Time].[1997].[Q1].[1], [Store].[USA].[WA].[Spokane], [Gender].[F], [Marital Status].[M]}\n"
+        + "{[Time].[Time].[1997].[Q1].[1], [Store].[Store].[USA].[WA].[Spokane], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
         + "Row #0: 4\n"
         + "Row #0: 3\n" );
     assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1523,32 +1523,32 @@ protected void assertQuerySql(Connection connection,
         + "[Marital Status].M on 1 from sales where "
         + "   { [Product].[Food], [Product].[Drink] }",
       "Axis #0:\n"
-        + "{[Product].[Food]}\n"
-        + "{[Product].[Drink]}\n"
+        + "{[Product].[Product].[Food]}\n"
+        + "{[Product].[Product].[Drink]}\n"
         + "Axis #1:\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Abbie Carlbon]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Bob Alexander]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Dauna Barton]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[David Cocadiz]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[David Hassard]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Dawn Laner]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Donna Weisinger]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Fran McEvilly]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[James Horvat]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[John Lenorovitz]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Linda Combs]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Luther Moran]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Martha Griego]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Peter Von Breymann]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Richard Callahan]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Robert Vaughn]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Shirley Gottbehuet]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Stanley Marks]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Suzanne Davis]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Takiko Collins]}\n"
-        + "{[Customers].[USA].[WA].[Spokane].[Virginia Bell]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Abbie Carlbon]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Bob Alexander]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Dauna Barton]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[David Cocadiz]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[David Hassard]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Dawn Laner]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Donna Weisinger]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Fran McEvilly]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[James Horvat]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[John Lenorovitz]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Linda Combs]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Luther Moran]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Martha Griego]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Peter Von Breymann]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Richard Callahan]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Robert Vaughn]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Shirley Gottbehuet]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Stanley Marks]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Suzanne Davis]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Takiko Collins]}\n"
+        + "{[Customers].[Customers].[USA].[WA].[Spokane].[Virginia Bell]}\n"
         + "Axis #2:\n"
-        + "{[Time].[1997].[Q1].[1], [Store].[USA].[WA].[Spokane], [Gender].[F], [Marital Status].[M]}\n"
+        + "{[Time].[Time].[1997].[Q1].[1], [Store].[Store].[USA].[WA].[Spokane], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
         + "Row #0: 25\n"
         + "Row #0: 17\n"
         + "Row #0: 17\n"
@@ -1812,14 +1812,14 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Time].[1997].[Q1]}\n"
-        + "{[Time].[1997].[Q2]}\n"
+        + "{[Time].[Time].[1997].[Q1]}\n"
+        + "{[Time].[Time].[1997].[Q2]}\n"
         + "Axis #1:\n"
         + "{[Measures].[TotalVal]}\n"
         + "Axis #2:\n"
-        + "{[Product].[Drink]}\n"
-        + "{[Product].[Food]}\n"
-        + "{[Product].[Non-Consumable]}\n"
+        + "{[Product].[Product].[Drink]}\n"
+        + "{[Product].[Product].[Food]}\n"
+        + "{[Product].[Product].[Non-Consumable]}\n"
         + "Row #0: 10,152\n"
         + "Row #1: 90,413\n"
         + "Row #2: 23,813\n" );
@@ -1925,14 +1925,14 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Product].[Non-Consumable], [Time].[1997].[Q1]}\n"
-        + "{[Product].[Drink], [Time].[1997].[Q2]}\n"
+        + "{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q1]}\n"
+        + "{[Product].[Product].[Drink], [Time].[Time].[1997].[Q2]}\n"
         + "Axis #1:\n"
         + "{[Measures].[TotalVal]}\n"
         + "{[Measures].[Unit Sales]}\n"
         + "Axis #2:\n"
-        + "{[Gender].[All Gender]}\n"
-        + "{[Gender].[All Gender].[NoSlicer]}\n"
+        + "{[Gender].[Gender].[All Gender]}\n"
+        + "{[Gender].[Gender].[All Gender].[NoSlicer]}\n"
         + "Row #0: 12,730\n"
         + "Row #0: 18,401\n"
         + "Row #1: 6,557\n"
@@ -1949,14 +1949,14 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Product].[Non-Consumable], [Time].[1997].[Q1]}\n"
-        + "{[Product].[Drink], [Time].[1997].[Q2]}\n"
+        + "{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q1]}\n"
+        + "{[Product].[Product].[Drink], [Time].[Time].[1997].[Q2]}\n"
         + "Axis #1:\n"
         + "{[Measures].[TotalVal]}\n"
         + "{[Measures].[Unit Sales]}\n"
         + "Axis #2:\n"
-        + "{[Gender].[All Gender]}\n"
-        + "{[Gender].[All Gender].[SomeSlicer]}\n"
+        + "{[Gender].[Gender].[All Gender]}\n"
+        + "{[Gender].[Gender].[All Gender].[SomeSlicer]}\n"
         + "Row #0: 15,056\n"
         + "Row #0: 18,401\n"
         + "Row #1: 3,045\n"
@@ -1975,15 +1975,15 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Product].[Non-Consumable], [Time].[1997].[Q1]}\n"
-        + "{[Product].[Non-Consumable], [Time].[1997].[Q2]}\n"
-        + "{[Product].[Drink], [Time].[1997].[Q1]}\n"
-        + "{[Product].[Drink], [Time].[1997].[Q2]}\n"
+        + "{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q1]}\n"
+        + "{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q2]}\n"
+        + "{[Product].[Product].[Drink], [Time].[Time].[1997].[Q1]}\n"
+        + "{[Product].[Product].[Drink], [Time].[Time].[1997].[Q2]}\n"
         + "Axis #1:\n"
         + "{[Measures].[TotalVal]}\n"
         + "Axis #2:\n"
-        + "{[Gender].[F]}\n"
-        + "{[Gender].[M]}\n"
+        + "{[Gender].[Gender].[F]}\n"
+        + "{[Gender].[Gender].[M]}\n"
         + "Row #0: 16,729\n"
         + "Row #1: 17,044\n" );
   }
@@ -2000,13 +2000,13 @@ protected void assertQuerySql(Connection connection,
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
-        + "{[Time].[1997].[Q1]}\n"
-        + "{[Time].[1997].[Q2].[4]}\n"
+        + "{[Time].[Time].[1997].[Q1]}\n"
+        + "{[Time].[Time].[1997].[Q2].[4]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Unit Sales]}\n"
         + "Axis #2:\n"
-        + "{[Store].[USA].[OR].[Salem]}\n"
-        + "{[Store].[USA].[WA].[Tacoma]}\n"
+        + "{[Store].[Store].[USA].[OR].[Salem]}\n"
+        + "{[Store].[Store].[USA].[WA].[Tacoma]}\n"
         + "Row #0: 14,683\n"
         + "Row #1: 10,950\n" );
   }
@@ -2018,13 +2018,13 @@ protected void assertQuerySql(Connection connection,
       "with member measures.avgQtrs as 'avg( filter( time.quarter.members, measures.[unit sales] < 200))' "
         + "select measures.avgQtrs * gender.members on 0 from sales where head( product.[product name].members, 3)",
       "Axis #0:\n"
-        + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Imported Beer]}\n"
-        + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Light Beer]}\n"
-        + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl].[Pearl Imported Beer]}\n"
+        + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Imported Beer]}\n"
+        + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Light Beer]}\n"
+        + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl].[Pearl Imported Beer]}\n"
         + "Axis #1:\n"
-        + "{[Measures].[avgQtrs], [Gender].[All Gender]}\n"
-        + "{[Measures].[avgQtrs], [Gender].[F]}\n"
-        + "{[Measures].[avgQtrs], [Gender].[M]}\n"
+        + "{[Measures].[avgQtrs], [Gender].[Gender].[All Gender]}\n"
+        + "{[Measures].[avgQtrs], [Gender].[Gender].[F]}\n"
+        + "{[Measures].[avgQtrs], [Gender].[Gender].[M]}\n"
         + "Row #0: 111\n"
         + "Row #0: 58\n"
         + "Row #0: 53\n" );
@@ -2041,12 +2041,12 @@ protected void assertQuerySql(Connection connection,
       "select [Measures].[Unit Sales] on columns, Filter([Time].[1997].Children, [Measures].[Unit Sales] < 12335) on "
         + "rows from [Sales] where {([Product].[Drink],[Store].[USA].[CA]),([Product].[Food],[Store].[USA].[OR])}",
       "Axis #0:\n"
-        + "{[Product].[Drink], [Store].[USA].[CA]}\n"
-        + "{[Product].[Food], [Store].[USA].[OR]}\n"
+        + "{[Product].[Product].[Drink], [Store].[Store].[USA].[CA]}\n"
+        + "{[Product].[Product].[Food], [Store].[Store].[USA].[OR]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Unit Sales]}\n"
         + "Axis #2:\n"
-        + "{[Time].[1997].[Q2]}\n"
+        + "{[Time].[Time].[1997].[Q2]}\n"
         + "Row #0: 12,334\n" );
   }
 
@@ -2063,7 +2063,7 @@ protected void assertQuerySql(Connection connection,
       return;
     }
     final String mdx =
-      "select filter( gender.gender.members, measures.[Unit Sales] > 0) on 0 from sales ";
+      "select filter( gender.gender.gender.members, measures.[Unit Sales] > 0) on 0 from sales ";
 
     final String query = "select\n"
       + "    `customer`.`gender` as `c0`\n"
@@ -2167,8 +2167,8 @@ protected void assertQuerySql(Connection connection,
 	  withSchema(context, SchemaModifiers.NativeSetEvaluationTestModifier::new);
 
       String mdx = ""
-      + "with member Measures.q1Sales as '([PurchaseDate].[1997].[Q1], Measures.[Unit Sales])'\n"
-      + "select NonEmptyCrossjoin([PurchaseDate].[1997].[Q1], Gender.Gender.members) on 0 \n"
+      + "with member Measures.q1Sales as '([PurchaseDate].[PurchaseDate].[1997].[Q1], Measures.[Unit Sales])'\n"
+      + "select NonEmptyCrossjoin([PurchaseDate].[PurchaseDate].[1997].[Q1], Gender.Gender.Gender.members) on 0 \n"
       + "from Sales where Measures.q1Sales";
     Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
 
@@ -2180,8 +2180,8 @@ protected void assertQuerySql(Connection connection,
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testDimensionUsageExecutedNatively(Context context) {
     String mdx = ""
-      + "with member Measures.q1Sales as '([Time].[1997].[Q1], Measures.[Unit Sales])'\n"
-      + "select NonEmptyCrossjoin( [Time].[1997].[Q1], Gender.Gender.members) on 0 \n"
+      + "with member Measures.q1Sales as '([Time].[Time].[1997].[Q1], Measures.[Unit Sales])'\n"
+      + "select NonEmptyCrossjoin( [Time].[Time].[1997].[Q1], Gender.Gender.Gender.members) on 0 \n"
       + "from Sales where Measures.q1Sales";
     Connection connection = context.getConnectionWithDefaultRole();
     Result result = executeQuery(mdx, connection);

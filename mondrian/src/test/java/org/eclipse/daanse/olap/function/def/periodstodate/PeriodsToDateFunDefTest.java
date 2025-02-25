@@ -31,17 +31,17 @@ class PeriodsToDateFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPeriodsToDate(Context context) {
-        assertSetExprDependsOn(context.getConnectionWithDefaultRole(), "PeriodsToDate()", "{[Time]}" );
+        assertSetExprDependsOn(context.getConnectionWithDefaultRole(), "PeriodsToDate()", "{[Time].[Time]}" );
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "PeriodsToDate([Time].[Year])",
-            "{[Time]}" );
+            "{[Time].[Time]}" );
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "PeriodsToDate([Time].[Year], [Time].[1997].[Q2].[5])", "{}" );
 
         // two args
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "PeriodsToDate([Time].[Quarter], [Time].[1997].[Q2].[5])",
-            "[Time].[1997].[Q2].[4]\n" + "[Time].[1997].[Q2].[5]" );
+            "[Time].[Time].[1997].[Q2].[4]\n" + "[Time].[Time].[1997].[Q2].[5]" );
 
         // equivalent to above
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -51,7 +51,7 @@ class PeriodsToDateFunDefTest {
                 + "      [Time].[1997].[Q2].[5], [Time].[Quarter]),"
                 + "    [Time].[1997].[Q2].[5].Level),"
                 + "  1).Item(0) : [Time].[1997].[Q2].[5]",
-            "[Time].[1997].[Q2].[4]\n" + "[Time].[1997].[Q2].[5]" );
+            "[Time].[Time].[1997].[Q2].[4]\n" + "[Time].[Time].[1997].[Q2].[5]" );
 
         // one arg
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -60,10 +60,10 @@ class PeriodsToDateFunDefTest {
                 + "from [Sales]\n"
                 + "where [Time].[1997].[Q2].[5]",
             "Axis #0:\n"
-                + "{[Time].[1997].[Q2].[5]}\n"
+                + "{[Time].[Time].[1997].[Q2].[5]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Foo]}\n"
-                + "Row #0: {[Time].[1997].[Q2].[4], [Time].[1997].[Q2].[5]}\n" );
+                + "Row #0: {[Time].[Time].[1997].[Q2].[4], [Time].[Time].[1997].[Q2].[5]}\n" );
 
         // zero args
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -72,10 +72,10 @@ class PeriodsToDateFunDefTest {
                 + "from [Sales]\n"
                 + "where [Time].[1997].[Q2].[5]",
             "Axis #0:\n"
-                + "{[Time].[1997].[Q2].[5]}\n"
+                + "{[Time].[Time].[1997].[Q2].[5]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Foo]}\n"
-                + "Row #0: {[Time].[1997].[Q2].[4], [Time].[1997].[Q2].[5]}\n" );
+                + "Row #0: {[Time].[Time].[1997].[Q2].[4], [Time].[Time].[1997].[Q2].[5]}\n" );
 
         // zero args, evaluated at a member which is at the top level.
         // The default level is the level above the current member -- so
@@ -87,7 +87,7 @@ class PeriodsToDateFunDefTest {
                 + "from [Sales]\n"
                 + "where [Time].[1997]",
             "Axis #0:\n"
-                + "{[Time].[1997]}\n"
+                + "{[Time].[Time].[1997]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Foo]}\n"
                 + "Row #0: {}\n" );
@@ -110,11 +110,11 @@ class PeriodsToDateFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Time].[1997]}\n"
-                + "{[Time].[1997].[Q1]}\n"
-                + "{[Time].[1997].[Q1].[1]}\n"
-                + "{[Time].[1997].[Q1].[2]}\n"
-                + "{[Time].[1997].[Q1].[3]}\n"
+                + "{[Time].[Time].[1997]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q1].[1]}\n"
+                + "{[Time].[Time].[1997].[Q1].[2]}\n"
+                + "{[Time].[Time].[1997].[Q1].[3]}\n"
                 + "Axis #2:\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "{[Measures].[Position]}\n"
@@ -142,8 +142,8 @@ class PeriodsToDateFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Food].[Baked Goods].[Bread].[Bagels]}\n"
-                + "{[Product].[Food].[Baked Goods].[Bread].[Muffins]}\n"
+                + "{[Product].[Product].[Food].[Baked Goods].[Bread].[Bagels]}\n"
+                + "{[Product].[Product].[Food].[Baked Goods].[Bread].[Muffins]}\n"
                 + "Row #0: 815\n"
                 + "Row #1: 3,497\n"
                 + "" );

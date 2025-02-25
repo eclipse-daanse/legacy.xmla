@@ -50,7 +50,7 @@ public class DimensionsFunctionsTest {
 		TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(-1).Name", "Index '-1' out of bounds");
 		TestUtil.assertExprThrows(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(100).Name", "Index '100' out of bounds");
 		// Since Dimensions returns a Hierarchy, can apply CurrentMember.
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(3).CurrentMember", "[Store Type].[All Store Types]");
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(3).CurrentMember", "[Store Type].[Store Type].[All Store Types]");
 	}
 
 	@ParameterizedTest
@@ -59,12 +59,12 @@ public class DimensionsFunctionsTest {
 		TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(\"foo\").UniqueName", "{}");
 		TestUtil.assertMemberExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(\"foo\").CurrentMember",
 				FunctionTest.allHiers());
-		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"Store\").UniqueName", "[Store]");
+		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"Store\").UniqueName", "[Store].[Store]");
 		// Since Dimensions returns a Hierarchy, can apply Children.
 		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Dimensions(\"Store\").Children", """
-				[Store].[Canada]
-				[Store].[Mexico]
-				[Store].[USA]""");
+				[Store].[Store].[Canada]
+				[Store].[Store].[Mexico]
+				[Store].[Store].[USA]""");
 	}
 
 	@ParameterizedTest
@@ -74,7 +74,7 @@ public class DimensionsFunctionsTest {
 				Crossjoin(
 				{Dimensions("Measures").CurrentMember.Hierarchy.CurrentMember},
 				{Dimensions("Product")})""";
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", expression, "{[Measures].[Unit Sales], [Product].[All Products]}");
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", expression, "{[Measures].[Unit Sales], [Product].[Product].[All Products]}");
 		TestUtil.assertSetExprDependsOn(context.getConnectionWithDefaultRole(), expression, FunctionTest.allHiers());
 	}
 

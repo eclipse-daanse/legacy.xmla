@@ -19,6 +19,7 @@ package org.eclipse.daanse.olap.impl;
 
 import java.util.AbstractList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.ParseRegion;
@@ -108,6 +109,14 @@ public class IdentifierNode
             new UnmodifiableArrayList<IdentifierSegment>(
                 segments.toArray(
                     new IdentifierSegment[segments.size()]));
+    }
+    
+    public String toString() {
+        if (segments != null) {
+            return "[" + segments.stream().map(is -> is.getName())
+                    .collect(Collectors.joining("].[")) + "]"; 
+        }
+        return "";
     }
     /**
      * Returns string quoted in [...].

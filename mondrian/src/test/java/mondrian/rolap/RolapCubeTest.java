@@ -55,12 +55,6 @@ import mondrian.olap.Util;
  */
 class RolapCubeTest {
 
-
-    @BeforeEach
-    public void beforeEach() {
-        SystemWideProperties.instance().SsasCompatibleNaming = false;
-    }
-
     @AfterEach
     public void afterEach() {
         SystemWideProperties.instance().populateInitial();
@@ -157,7 +151,7 @@ class RolapCubeTest {
             "[Measures].[Profit]",
             "[Measures].[Profit last Period]",
             "[Measures].[Profit Growth]",
-            "[Product].[~Missing]"
+            "[Product].[Product].[~Missing]"
         };
 
 
@@ -186,7 +180,7 @@ class RolapCubeTest {
     void testGetCalculatedMembersReturnsOnlyAccessibleMembersForHierarchy(Context context)
     {
         String[] expectedCalculatedMembersFromProduct = {
-            "[Product].[~Missing]"
+            "[Product].[Product].[~Missing]"
         };
         //TestContext testContext =
         //    createTestContextWithAdditionalMembersAndARole();
@@ -229,7 +223,7 @@ class RolapCubeTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGetCalculatedMembersReturnsOnlyAccessibleMembersForLevel(Context context) {
         String[] expectedCalculatedMembersFromProduct = new String[]{
-            "[Product].[~Missing]"
+            "[Product].[Product].[~Missing]"
         };
 
 

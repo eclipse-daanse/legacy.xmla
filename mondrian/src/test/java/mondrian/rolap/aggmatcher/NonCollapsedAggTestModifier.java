@@ -311,7 +311,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
                         ))
                         .withAggregationLevels(List.of(
                         		AggregationLevelMappingImpl.builder()
-                                .withName("[dimension.tenant].[tenant]")
+                                .withName("[dimension].[tenant].[tenant]")
                                 .withColumn(tenantIdAggTenant).withCollapsed(false)
                                 .build()
                         ))
@@ -328,7 +328,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
                         ))
                         .withAggregationLevels(List.of(
                             AggregationLevelMappingImpl.builder()
-                                .withName("[dimension.distributor].[line class]")
+                                .withName("[dimension].[distributor].[line class]")
                                 .withColumn(lineClassIdAggLineClass).withCollapsed(false)
                                 .build()
                         ))
@@ -345,7 +345,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
                         ))
                         .withAggregationLevels(List.of(
                             AggregationLevelMappingImpl.builder()
-                                .withName("[dimension.network].[line class]")
+                                .withName("[dimension].[network].[line class]")
                                 .withColumn(lineClassIdAggLineClass).withCollapsed(false)
                                 .build()
                         ))

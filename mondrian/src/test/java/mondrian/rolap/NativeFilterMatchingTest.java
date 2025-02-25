@@ -114,16 +114,16 @@ class NativeFilterMatchingTest extends BatchTestCase {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Customers].[USA].[WA].[Issaquah].[Jeanne Derry], [Measures].[*FORMATTED_MEASURE_0]}\n"
-            + "{[Customers].[USA].[CA].[Los Angeles].[Jeannette Eldridge], [Measures].[*FORMATTED_MEASURE_0]}\n"
-            + "{[Customers].[USA].[CA].[Burbank].[Jeanne Bohrnstedt], [Measures].[*FORMATTED_MEASURE_0]}\n"
-            + "{[Customers].[USA].[OR].[Portland].[Jeanne Zysko], [Measures].[*FORMATTED_MEASURE_0]}\n"
-            + "{[Customers].[USA].[WA].[Everett].[Jeanne McDill], [Measures].[*FORMATTED_MEASURE_0]}\n"
-            + "{[Customers].[USA].[CA].[West Covina].[Jeanne Whitaker], [Measures].[*FORMATTED_MEASURE_0]}\n"
-            + "{[Customers].[USA].[WA].[Everett].[Jeanne Turner], [Measures].[*FORMATTED_MEASURE_0]}\n"
-            + "{[Customers].[USA].[WA].[Puyallup].[Jeanne Wentz], [Measures].[*FORMATTED_MEASURE_0]}\n"
-            + "{[Customers].[USA].[OR].[Albany].[Jeannette Bura], [Measures].[*FORMATTED_MEASURE_0]}\n"
-            + "{[Customers].[USA].[WA].[Lynnwood].[Jeanne Ibarra], [Measures].[*FORMATTED_MEASURE_0]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Issaquah].[Jeanne Derry], [Measures].[*FORMATTED_MEASURE_0]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Los Angeles].[Jeannette Eldridge], [Measures].[*FORMATTED_MEASURE_0]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Burbank].[Jeanne Bohrnstedt], [Measures].[*FORMATTED_MEASURE_0]}\n"
+            + "{[Customers].[Customers].[USA].[OR].[Portland].[Jeanne Zysko], [Measures].[*FORMATTED_MEASURE_0]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Everett].[Jeanne McDill], [Measures].[*FORMATTED_MEASURE_0]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[West Covina].[Jeanne Whitaker], [Measures].[*FORMATTED_MEASURE_0]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Everett].[Jeanne Turner], [Measures].[*FORMATTED_MEASURE_0]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Puyallup].[Jeanne Wentz], [Measures].[*FORMATTED_MEASURE_0]}\n"
+            + "{[Customers].[Customers].[USA].[OR].[Albany].[Jeannette Bura], [Measures].[*FORMATTED_MEASURE_0]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Lynnwood].[Jeanne Ibarra], [Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Row #0: 50\n"
             + "Row #0: 21\n"
             + "Row #0: 31\n"
@@ -251,7 +251,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Product].[*TOTAL_MEMBER_SEL~SUM]}\n"
+            + "{[Product].[Product].[*TOTAL_MEMBER_SEL~SUM]}\n"
             + "Row #0: \n");
     }
 
@@ -448,8 +448,8 @@ class NativeFilterMatchingTest extends BatchTestCase {
     void testNativeFilterWithCompoundSlicer(Context context) {
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
         final String mdx =
-            "with member measures.avgQtrs as 'avg( filter( time.quarter.members, measures.[unit sales] > 80))' "
-            + "select measures.avgQtrs * gender.members on 0 from sales where head( product.[product name].members, 3)";
+            "with member measures.avgQtrs as 'avg( filter( time.time.quarter.members, measures.[unit sales] > 80))' "
+            + "select measures.avgQtrs * gender.gender.members on 0 from sales where head( product.product.[product name].members, 3)";
 
         if (context.getConfig().enableNativeFilter()
             && SystemWideProperties.instance().EnableNativeNonEmpty)
@@ -597,13 +597,13 @@ class NativeFilterMatchingTest extends BatchTestCase {
             context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Imported Beer]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Light Beer]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl].[Pearl Imported Beer]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Imported Beer]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Light Beer]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl].[Pearl Imported Beer]}\n"
             + "Axis #1:\n"
-            + "{[Measures].[avgQtrs], [Gender].[All Gender]}\n"
-            + "{[Measures].[avgQtrs], [Gender].[F]}\n"
-            + "{[Measures].[avgQtrs], [Gender].[M]}\n"
+            + "{[Measures].[avgQtrs], [Gender].[Gender].[All Gender]}\n"
+            + "{[Measures].[avgQtrs], [Gender].[Gender].[F]}\n"
+            + "{[Measures].[avgQtrs], [Gender].[Gender].[M]}\n"
             + "Row #0: 111\n"
             + "Row #0: \n"
             + "Row #0: \n");
@@ -749,8 +749,8 @@ class NativeFilterMatchingTest extends BatchTestCase {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]}\n"
-            + "{[Product].[Food].[Baked Goods].[Bread].[Muffins]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]}\n"
+            + "{[Product].[Product].[Food].[Baked Goods].[Bread].[Muffins]}\n"
             + "Axis #1:\n"
             + "{[Measures].[avgQtrs]}\n"
             + "Row #0: 1,281\n");
@@ -790,8 +790,8 @@ class NativeFilterMatchingTest extends BatchTestCase {
             "with member measures.avgQtrs as 'count(filter(Customers.[Name].members, [Unit Sales] > 0))' "
             + "select measures.avgQtrs on 0 from sales where ( {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Food].[Baked Goods].[Bread].[Muffins]} )",
             "Axis #0:\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]}\n"
-            + "{[Product].[Food].[Baked Goods].[Bread].[Muffins]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]}\n"
+            + "{[Product].[Product].[Food].[Baked Goods].[Bread].[Muffins]}\n"
             + "Axis #1:\n"
             + "{[Measures].[avgQtrs]}\n"
             + "Row #0: 1,281\n");

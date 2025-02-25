@@ -68,7 +68,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Axis #1:\n"
             + "{[Measures].[Total Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[x]}\n"
+            + "{[Product].[Product].[x]}\n"
             + "Row #0: 7,913,333.82\n");
     }
 
@@ -104,8 +104,8 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Axis #1:\n"
             + "{[Measures].[Total Sales]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[AggPreSP]}\n"
-            + "{[Warehouse].[AggSP1]}\n"
+            + "{[Warehouse].[Warehouse].[AggPreSP]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1]}\n"
             + "Row #0: 196,770.89\n"
             + "Row #1: 196,770.89\n");
         ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(false);
@@ -116,8 +116,8 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Axis #1:\n"
             + "{[Measures].[Total Sales]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[AggPreSP]}\n"
-            + "{[Warehouse].[AggSP1]}\n"
+            + "{[Warehouse].[Warehouse].[AggPreSP]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1]}\n"
             + "Row #0: 762,009.02\n"
             + "Row #1: 762,009.02\n");
     }
@@ -147,7 +147,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Axis #1:\n"
             + "{[Measures].[Total Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[AggSP1]}\n"
+            + "{[Product].[Product].[AggSP1]}\n"
             + "Row #0: 196,770.89\n");
     }
 
@@ -180,8 +180,8 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Axis #1:\n"
             + "{[Measures].[Total Sales]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[AggSP1_1]}\n"
-            + "{[Warehouse].[AggSP1_2]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1_1]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1_2]}\n"
             + "Row #0: 196,770.89\n"
             + "Row #1: 196,770.89\n");
     }
@@ -224,10 +224,10 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Axis #1:\n"
             + "{[Measures].[Total Sales]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[AggSP1_1]}\n"
-            + "{[Warehouse].[AggSP1_2]}\n"
-            + "{[Warehouse].[AggSP1_3]}\n"
-            + "{[Warehouse].[AggSP1_4]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1_1]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1_2]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1_3]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1_4]}\n"
             + "Row #0: 196,770.89\n"
             + "Row #1: 196,770.89\n"
             + "Row #2: 196,770.89\n"
@@ -281,12 +281,12 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Axis #1:\n"
             + "{[Measures].[Total Sales]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[AggSP1_1]}\n"
-            + "{[Warehouse].[AggSP1_2]}\n"
-            + "{[Warehouse].[AggSP1_3]}\n"
-            + "{[Warehouse].[AggSP1_4]}\n"
-            + "{[Warehouse].[AggSP1_5]}\n"
-            + "{[Warehouse].[AggSP1_6]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1_1]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1_2]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1_3]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1_4]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1_5]}\n"
+            + "{[Warehouse].[Warehouse].[AggSP1_6]}\n"
             + "Row #0: 196,770.89\n"
             + "Row #1: 196,770.89\n"
             + "Row #2: 196,770.89\n"
@@ -313,7 +313,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Axis #1:\n"
             + "{[Measures].[Total Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[x]}\n"
+            + "{[Product].[Product].[x]}\n"
             + "Row #0: 3,956,666.91\n");
     }
 
@@ -352,7 +352,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Axis #1:\n"
             + "{[Measures].[Warehouse Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[x]}\n"
+            + "{[Product].[Product].[x]}\n"
             + "Row #0: 1,377,396.213\n");
     }
 
@@ -393,7 +393,7 @@ class IgnoreMeasureForNonJoiningDimensionInAggregationTest
             + "Axis #1:\n"
             + "{[Measures].[My Profit]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[G]}\n"
+            + "{[Gender].[Gender].[G]}\n"
             + "Row #0: $14,652.70\n");
     }
 

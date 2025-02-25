@@ -12,7 +12,6 @@ package mondrian.test;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Statement;
@@ -24,10 +23,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.server.monitor.ConnectionInfo;
-import mondrian.server.monitor.ServerInfo;
-
 /**
  * Unit test for monitoring, including {@link EventBus}.
  *
@@ -52,11 +47,11 @@ class MonitorTest {
             "WITH MEMBER [Measures].[Foo] AS\n"
             + " [Measures].[Unit Sales]"
             + " + case when [Measures].[Unit Sales] > 0\n"
-            + "   then CInt( ([Measures].[Foo], [Time].PrevMember) )\n"
+            + "   then CInt( ([Measures].[Foo], [Time].[Time].PrevMember) )\n"
             + "   end\n"
             + "SELECT [Measures].[Foo] on 0\n"
             + "from [Sales]\n"
-            + "where [Time].[1997].[Q3].[9]";
+            + "where [Time].[Time].[1997].[Q3].[9]";
 
         final Statement statement =
             context.getConnectionWithDefaultRole().createStatement();

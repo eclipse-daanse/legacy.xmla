@@ -53,8 +53,6 @@ class NativizeSetFunDefTest extends BatchTestCase {
         // lot in this test. There is little to be gained by having this test
         // run for both values. When SSAS-compatible naming is the standard, we
         // should upgrade all the MDX.
-
-        SystemWideProperties.instance().SsasCompatibleNaming = false;
     }
 
     @AfterEach
@@ -109,10 +107,10 @@ class NativizeSetFunDefTest extends BatchTestCase {
         String mdx =
             "select NativizeSet("
             + "CrossJoin( "
-            + "gender.gender.members, "
+            + "gender.gender.gender.members, "
             + "CrossJoin("
             + "{ measures.[unit sales] }, "
-            + "[Time].[Month].members"
+            + "[Time].[Time].[Month].members"
             + "))) on 0"
             + " from sales";
         checkNotNative(context,mdx);
@@ -152,10 +150,10 @@ class NativizeSetFunDefTest extends BatchTestCase {
         checkNative(context,
             "select NativizeSet("
             + "CrossJoin( "
-            + "gender.gender.members, "
+            + "gender.gender.gender.members, "
             + "CrossJoin("
             + "{ measures.[unit sales] }, "
-            + "[marital status].[marital status].members"
+            + "[marital status].[marital status].[marital status].members"
             + "))) on 0 "
             + "from sales");
     }
@@ -167,11 +165,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
         // This query will return exactly 6 rows:
         // {Female,Male,Agg}x{Married,Single}
         String mdx =
-            "with  member [gender].[agg] as"
-            + "  'aggregate({[gender].[gender].members},[measures].[unit sales])'"
+            "with  member [gender].[gender].[agg] as"
+            + "  'aggregate({[gender].[gender].[gender].members},[measures].[unit sales])'"
             + "select NativizeSet(CrossJoin( "
-            + "{gender.gender.members, gender.agg}, "
-            + "{[marital status].[marital status].members}"
+            + "{gender.gender.gender.members, gender.agg}, "
+            + "{[marital status].[marital status].[marital status].members}"
             + ")) on 0 from sales";
 
         // Set limit to zero (effectively, no limit)
@@ -187,10 +185,10 @@ class NativizeSetFunDefTest extends BatchTestCase {
         // {Female,Male,Agg}x{Married,Single}
         String mdx =
             "with  member [gender].[agg] as"
-            + "  'aggregate({[gender].[gender].members},[measures].[unit sales])'"
+            + "  'aggregate({[gender].[gender].[gender].members},[measures].[unit sales])'"
             + "select NativizeSet(CrossJoin( "
-            + "{gender.gender.members, gender.agg}, "
-            + "{[marital status].[marital status].members}"
+            + "{gender.gender.gender.members, gender.agg}, "
+            + "{[marital status].[marital status].[marital status].members}"
             + ")) on 0 from sales";
 
         // Set limit to exact size of result
@@ -217,11 +215,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
         // This query will return exactly 6 rows:
         // {Female,Male,Agg}x{Married,Single}
         String mdx =
-            "with  member [gender].[agg] as"
-            + "  'aggregate({[gender].[gender].members},[measures].[unit sales])'"
+            "with  member [gender].[gender].[agg] as"
+            + "  'aggregate({[gender].[gender].[gender].members},[measures].[unit sales])'"
             + "select NativizeSet(CrossJoin( "
-            + "{gender.gender.members, gender.agg}, "
-            + "{[marital status].[marital status].members}"
+            + "{gender.gender.gender.members, gender.agg}, "
+            + "{[marital status].[marital status].[marital status].members}"
             + ")) on 0 from sales";
 
         // Set limit to exact size of result
@@ -317,13 +315,13 @@ class NativizeSetFunDefTest extends BatchTestCase {
             "select "
             + "NativizeSet("
             + "CrossJoin("
-            + "{ [gender].[gender].members }, "
-            + "{ [marital status].[marital status].members } "
+            + "{ [gender].[gender].[gender].members }, "
+            + "{ [marital status].[marital status].[marital status].members } "
             + ")) on 0,"
             + "NativizeSet("
             + "CrossJoin("
             + "{ [measures].[unit sales] }, "
-            + "{ [Education Level].[Education Level].members } "
+            + "{ [Education Level].[Education Level].[Education Level].members } "
             + ")) on 1"
             + " from [warehouse and sales]";
 
@@ -349,16 +347,16 @@ class NativizeSetFunDefTest extends BatchTestCase {
             // there is a special case in FunUtil.checkNativeCompatible
             // which allows currentmember
             ////////////////////////////////////////////////////////////
-            + "member [gender].[x] "
+            + "member [gender].[gender].[x] "
             + "   as 'iif (measures.currentmember is measures.[unit sales], "
-            + "       Aggregate(gender.gender.members), 101010)' "
+            + "       Aggregate(gender.gender.gender.members), 101010)' "
             + "select "
             + "NativizeSet("
             + "crossjoin("
-            + "{time.year.members}, "
+            + "{time.time.year.members}, "
             + "crossjoin("
-            + "{gender.x},"
-            + "[marital status].[marital status].members"
+            + "{gender.gender.x},"
+            + "[marital status].[marital status].[marital status].members"
             + "))) "
             + "on axis(0) "
             + "from [warehouse and sales]");
@@ -395,8 +393,8 @@ class NativizeSetFunDefTest extends BatchTestCase {
             + "member [measures].[cog_oqp_int_t2] as '2', solve_order = 65535 "
             + "select "
             + "   NativizeSet(CrossJoin("
-            + "      [marital status].[marital status].members, "
-            + "      [gender].[gender].members "
+            + "      [marital status].[marital status].[marital status].members, "
+            + "      [gender].[gender].[gender].members "
             + "    ))"
             + "on 1, "
             + "{ "
@@ -423,8 +421,8 @@ class NativizeSetFunDefTest extends BatchTestCase {
             + "member [measures].[cog_oqp_int_t2] as '2', solve_order = 65535 "
             + "select "
             + "   NativizeSet(CrossJoin("
-            + "      [marital status].[marital status].members, "
-            + "      [gender].[gender].members "
+            + "      [marital status].[marital status].[marital status].members, "
+            + "      [gender].[gender].[gender].members "
             + "    ))"
             + "on 1, "
             + "{ "
@@ -450,8 +448,8 @@ class NativizeSetFunDefTest extends BatchTestCase {
             + "   as 'iif( isEmpty( measures.[unit sales]), 1010,2020)', solve_order = 65535 "
             + "select "
             + "   NativizeSet(CrossJoin("
-            + "      [marital status].[marital status].members, "
-            + "      [gender].[gender].members "
+            + "      [marital status].[marital status].[marital status].members, "
+            + "      [gender].[gender].[gender].members "
             + "    ))"
             + "on 1, "
             + "{ "
@@ -553,8 +551,8 @@ class NativizeSetFunDefTest extends BatchTestCase {
             + "measures.[store sales])', solve_order = 65535 "
             + "select "
             + "   NativizeSet(CrossJoin("
-            + "      [marital status].[marital status].members, "
-            + "      [gender].[gender].members "
+            + "      [marital status].[marital status].[marital status].members, "
+            + "      [gender].[gender].[gender].members "
             + "   ))"
             + "on 1, "
             + "{ "
@@ -576,8 +574,8 @@ class NativizeSetFunDefTest extends BatchTestCase {
             + "member [measures].[cog_oqp_int_t2] as '2', solve_order = 65535 "
             + "set [cog_oqp_int_s1] as "
             + "   'CrossJoin("
-            + "      [marital status].[marital status].members, "
-            + "      [gender].[gender].members "
+            + "      [marital status].[marital status].[marital status].members, "
+            + "      [gender].[gender].[gender].members "
             + "    )'"
             + "select "
             + "   NativizeSet([cog_oqp_int_s1])"
@@ -618,8 +616,8 @@ class NativizeSetFunDefTest extends BatchTestCase {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
             "SELECT NativizeSet(CrossJoin( "
-            + "   { [Time].[Month].currentmember }, "
-            + "   Gender.Gender.members )) " + "on 0 from sales");
+            + "   { [Time].[Time].[Month].currentmember }, "
+            + "   Gender.Gender.Gender.members )) " + "on 0 from sales");
     }
 
     @ParameterizedTest
@@ -628,10 +626,10 @@ class NativizeSetFunDefTest extends BatchTestCase {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
             "WITH "
-            + "SET [Current Month] AS 'tail([Time].[month].members, 1)'"
+            + "SET [Current Month] AS 'tail([Time].[Time].[month].members, 1)'"
             + "SELECT NativizeSet(CrossJoin( "
             + "   { [Current Month] }, "
-            + "   Gender.Gender.members )) "
+            + "   Gender.Gender.Gender.members )) "
             + "on 0 from sales");
     }
 
@@ -667,8 +665,8 @@ class NativizeSetFunDefTest extends BatchTestCase {
     void testAcceptsCrossJoinAsInput(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
-            "SELECT NativizeSet( CrossJoin({ Gender.F, Gender.M }, "
-            + "{[Marital Status].[Marital Status].members})) on 0 from sales");
+            "SELECT NativizeSet( CrossJoin({ Gender.Gender.F, Gender.Gender.M }, "
+            + "{[Marital Status].[Marital Status].[Marital Status].members})) on 0 from sales");
     }
 
     @ParameterizedTest
@@ -702,12 +700,12 @@ class NativizeSetFunDefTest extends BatchTestCase {
             // level of parens aren't logically necessary, but
             // are included here because they require special handling.
             "SELECT NativizeSet( CrossJoin("
-            + "{  [Marital Status].[Marital Status].members },"
+            + "{  [Marital Status].[Marital Status].[Marital Status].members },"
             + "CrossJoin( "
-            + "{ { gender.F, gender.M , gender.M}, "
-            + "  { gender.M } "
+            + "{ { gender.gender.F, gender.gender.M , gender.gender.M}, "
+            + "  { gender.gender.M } "
             + "}, "
-            + "{ time.quarter.members } "
+            + "{ time.time.quarter.members } "
             + "))) on 0 from sales");
     }
 
@@ -722,11 +720,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
             // level of parens aren't logically necessary, but
             // are included here because they require special handling.
             "SELECT NativizeSet( CrossJoin("
-            + "{  [Marital Status].[Marital Status].members },"
+            + "{  [Marital Status].[Marital Status].[Marital Status].members },"
             + "CrossJoin( "
-            + "{ gender.gender.members }, "
-            + "{ { time.[1997].Q1, time.[1997].Q2 }, "
-            + "  { time.[1997].Q2 } "
+            + "{ gender.gender.gender.members }, "
+            + "{ { time.time.[1997].Q1, time.[1997].Q2 }, "
+            + "  { time.time.[1997].Q2 } "
             + "} "
             + "))) on 0 from sales");
     }
@@ -762,12 +760,12 @@ class NativizeSetFunDefTest extends BatchTestCase {
             // necessary, but are included here because they require
             // special handling.
             "SELECT NativizeSet( CrossJoin("
-            + "{  [Marital Status].[Marital Status].members },"
+            + "{  [Marital Status].[Marital Status].[Marital Status].members },"
             + "CrossJoin( "
-            + "{ gender.gender.members, "
-            + "  { gender.gender.members } "
+            + "{ gender.gender.gender.members, "
+            + "  { gender.gender.gender.members } "
             + "}, "
-            + "{ time.quarter.members } "
+            + "{ time.time.quarter.members } "
             + "))) on 0 from sales");
     }
 
@@ -782,11 +780,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
             // necessary, but are included here because they require
             // special handling.
             "SELECT NativizeSet( CrossJoin("
-            + "{  [Marital Status].[Marital Status].members },"
+            + "{  [Marital Status].[Marital Status].[Marital Status].members },"
             + "CrossJoin( "
-            + "{ gender.gender.members }, "
-            + "{ time.quarter.members, "
-            + "  { time.quarter.members } "
+            + "{ gender.gender.gender.members }, "
+            + "{ time.time.quarter.members, "
+            + "  { time.time.quarter.members } "
             + "} "
             + "))) on 0 from sales");
     }
@@ -798,12 +796,12 @@ class NativizeSetFunDefTest extends BatchTestCase {
         checkNative(context,
             "SELECT "
             + "NativizeSet(CrossJoin("
-            + "{ Gender.F, Gender.M }, "
+            + "{ Gender.Gender.F, Gender.Gender.M }, "
             + "CrossJoin("
-            + "{ [Marital Status].[Marital Status].members }, "
+            + "{ [Marital Status].[Marital Status].[Marital Status].members }, "
             + "CrossJoin("
-            + "{ [Store].[All Stores].[USA].[CA], [Store].[All Stores].[USA].[OR] }, "
-            + "{ [Education Level].[Education Level].members } "
+            + "{ [Store].[Store].[All Stores].[USA].[CA], [Store].[All Stores].[USA].[OR] }, "
+            + "{ [Education Level].[Education Level].[Education Level].members } "
             + ")))"
             + ") on 0 from sales");
     }
@@ -815,8 +813,8 @@ class NativizeSetFunDefTest extends BatchTestCase {
         checkNative(context,
             "select NativizeSet ("
             + "crossjoin( "
-            + "  { gender.gender.members, gender.[all gender] }, "
-            + "  [marital status].[marital status].members "
+            + "  { gender.gender.gender.members, gender.gender.[all gender] }, "
+            + "  [marital status].[marital status].[marital status].members "
             + ")) on 0 from sales");
     }
 
@@ -827,8 +825,8 @@ class NativizeSetFunDefTest extends BatchTestCase {
         checkNative(context,
             "select NativizeSet ("
             + "crossjoin( "
-            + "  { { gender.gender.members } }, "
-            + "  [marital status].[marital status].members "
+            + "  { { gender.gender.gender.members } }, "
+            + "  [marital status].[marital status].[marital status].members "
             + ")) on 0 from sales");
     }
 
@@ -839,8 +837,8 @@ class NativizeSetFunDefTest extends BatchTestCase {
         checkNative(context,
             "select NativizeSet ("
             + "crossjoin( "
-            + "  { gender.gender.members, gender.[all gender] }, "
-            + "  { [marital status].S, [marital status].M } "
+            + "  { gender.gender.gender.members, gender.gender.[all gender] }, "
+            + "  { [marital status].[marital status].S, [marital status].[marital status].M } "
             + ")) on 0 from sales");
     }
 
@@ -851,8 +849,8 @@ class NativizeSetFunDefTest extends BatchTestCase {
         checkNative(context,
             "select NativizeSet ("
             + "crossjoin( "
-            + "  { gender.F, gender.M, gender.[all gender] }, "
-            + "  [marital status].[marital status].members "
+            + "  { gender.gender.F, gender.gender.M, gender.gender.[all gender] }, "
+            + "  [marital status].[marital status].[marital status].members "
             + ")) on 0 from sales");
     }
 
@@ -862,18 +860,18 @@ class NativizeSetFunDefTest extends BatchTestCase {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
             "WITH"
-            + "  MEMBER [Gender].[umg1] AS "
-            + "  '([Gender].[gender agg], [Measures].[Unit Sales])', SOLVE_ORDER = 8 "
-            + "  MEMBER [Gender].[gender agg] AS"
-            + "  'AGGREGATE({[Gender].[Gender].MEMBERS},[Measures].[Unit Sales])', SOLVE_ORDER = 8 "
-            + " MEMBER [Marital Status].[umg2] AS "
-            + " '([Marital Status].[marital agg], [Measures].[Unit Sales])', SOLVE_ORDER = 4 "
-            + " MEMBER [Marital Status].[marital agg] AS "
-            + "  'AGGREGATE({[Marital Status].[Marital Status].MEMBERS},[Measures].[Unit Sales])', SOLVE_ORDER = 4 "
+            + "  MEMBER [Gender].[Gender].[umg1] AS "
+            + "  '([Gender].[Gender].[gender agg], [Measures].[Unit Sales])', SOLVE_ORDER = 8 "
+            + "  MEMBER [Gender].[Gender].[gender agg] AS"
+            + "  'AGGREGATE({[Gender].[Gender].[Gender].MEMBERS},[Measures].[Unit Sales])', SOLVE_ORDER = 8 "
+            + " MEMBER [Marital Status].[Marital Status].[umg2] AS "
+            + " '([Marital Status].[Marital Status].[marital agg], [Measures].[Unit Sales])', SOLVE_ORDER = 4 "
+            + " MEMBER [Marital Status].[Marital Status].[marital agg] AS "
+            + "  'AGGREGATE({[Marital Status].[Marital Status].[Marital Status].MEMBERS},[Measures].[Unit Sales])', SOLVE_ORDER = 4 "
             + " SET [s2] AS "
-            + "  'CROSSJOIN({[Marital Status].[Marital Status].MEMBERS}, {{[Gender].[Gender].MEMBERS}, {[Gender].[umg1]}})' "
+            + "  'CROSSJOIN({[Marital Status].[Marital Status].MEMBERS}, {{[Gender].[Gender].[Gender].MEMBERS}, {[Gender].[Gender].[umg1]}})' "
             + " SET [s1] AS "
-            + "  'CROSSJOIN({[Marital Status].[umg2]}, {[Gender].DEFAULTMEMBER})' "
+            + "  'CROSSJOIN({[Marital Status].[Marital Status].[umg2]}, {[Gender].[Gender].DEFAULTMEMBER})' "
             + " SELECT "
             + "  NativizeSet({[Measures].[Unit Sales]}) DIMENSION PROPERTIES PARENT_LEVEL, CHILDREN_CARDINALITY, PARENT_UNIQUE_NAME ON AXIS(0), "
             + "  NativizeSet({[s2],[s1]}) "
@@ -889,27 +887,27 @@ class NativizeSetFunDefTest extends BatchTestCase {
             "WITH\n"
             + "MEMBER [Gender].[COG_OQP_INT_umg2] AS 'IIF([Measures].CURRENTMEMBER IS [Measures].[Unit Sales], "
             + "([Gender].[COG_OQP_INT_m5], [Measures].[Unit Sales]), "
-            + "AGGREGATE({[Gender].[Gender].MEMBERS}))', SOLVE_ORDER = 8\n"
+            + "AGGREGATE({[Gender].[Gender].[Gender].MEMBERS}))', SOLVE_ORDER = 8\n"
             + "MEMBER [Gender].[COG_OQP_INT_m5] AS "
-            + "'AGGREGATE({[Gender].[Gender].MEMBERS}, [Measures].[Unit Sales])', SOLVE_ORDER = 8\n"
-            + "MEMBER [Store Type].[COG_OQP_INT_umg1] AS "
+            + "'AGGREGATE({[Gender].[Gender].[Gender].MEMBERS}, [Measures].[Unit Sales])', SOLVE_ORDER = 8\n"
+            + "MEMBER [Store Type].[Store Type].[COG_OQP_INT_umg1] AS "
             + "'IIF([Measures].CURRENTMEMBER IS [Measures].[Unit Sales], "
-            + "([Store Type].[COG_OQP_INT_m4], [Measures].[Unit Sales]), "
-            + "AGGREGATE({[Store Type].[Store Type].MEMBERS}))', SOLVE_ORDER = 12\n"
-            + "MEMBER [Store Type].[COG_OQP_INT_m4] AS "
-            + "'AGGREGATE({[Store Type].[Store Type].MEMBERS}, [Measures].[Unit Sales])', SOLVE_ORDER = 12\n"
-            + "MEMBER [Marital Status].[COG_OQP_INT_umg3] AS "
+            + "([Store Type].[Store Type].[COG_OQP_INT_m4], [Measures].[Unit Sales]), "
+            + "AGGREGATE({[Store Type].[Store Type].[Store Type].MEMBERS}))', SOLVE_ORDER = 12\n"
+            + "MEMBER [Store Type].[Store Type].[COG_OQP_INT_m4] AS "
+            + "'AGGREGATE({[Store Type].[Store Type].[Store Type].MEMBERS}, [Measures].[Unit Sales])', SOLVE_ORDER = 12\n"
+            + "MEMBER [Marital Status].[Marital Status].[COG_OQP_INT_umg3] AS "
             + "'IIF([Measures].CURRENTMEMBER IS [Measures].[Unit Sales], "
-            + "([Marital Status].[COG_OQP_INT_m6], [Measures].[Unit Sales]), "
-            + "AGGREGATE({[Marital Status].[Marital Status].MEMBERS}))', SOLVE_ORDER = 4\n"
-            + "MEMBER [Marital Status].[COG_OQP_INT_m6] AS "
-            + "'AGGREGATE({[Marital Status].[Marital Status].MEMBERS}, [Measures].[Unit Sales])', SOLVE_ORDER = 4\n"
-            + "SET [COG_OQP_INT_s5] AS 'CROSSJOIN({[Marital Status].[Marital Status].MEMBERS}, {[COG_OQP_INT_s4], [COG_OQP_INT_s3]})'\n"
-            + "SET [COG_OQP_INT_s4] AS 'CROSSJOIN({[Gender].[Gender].MEMBERS}, {{[Store Type].[Store Type].MEMBERS}, "
-            + "{[Store Type].[COG_OQP_INT_umg1]}})'\n"
-            + "SET [COG_OQP_INT_s3] AS 'CROSSJOIN({[Gender].[COG_OQP_INT_umg2]}, {[Store Type].DEFAULTMEMBER})'\n"
-            + "SET [COG_OQP_INT_s2] AS 'CROSSJOIN({[Marital Status].[COG_OQP_INT_umg3]}, [COG_OQP_INT_s1])'\n"
-            + "SET [COG_OQP_INT_s1] AS 'CROSSJOIN({[Gender].DEFAULTMEMBER}, {[Store Type].DEFAULTMEMBER})' \n"
+            + "([Marital Status].[Marital Status].[COG_OQP_INT_m6], [Measures].[Unit Sales]), "
+            + "AGGREGATE({[Marital Status].[Marital Status].[Marital Status].MEMBERS}))', SOLVE_ORDER = 4\n"
+            + "MEMBER [Marital Status].[Marital Status].[COG_OQP_INT_m6] AS "
+            + "'AGGREGATE({[Marital Status].[Marital Status].[Marital Status].MEMBERS}, [Measures].[Unit Sales])', SOLVE_ORDER = 4\n"
+            + "SET [COG_OQP_INT_s5] AS 'CROSSJOIN({[Marital Status].[Marital Status].[Marital Status].MEMBERS}, {[COG_OQP_INT_s4], [COG_OQP_INT_s3]})'\n"
+            + "SET [COG_OQP_INT_s4] AS 'CROSSJOIN({[Gender].[Gender].[Gender].MEMBERS}, {{[Store Type].[Store Type].[Store Type].MEMBERS}, "
+            + "{[Store Type].[Store Type].[COG_OQP_INT_umg1]}})'\n"
+            + "SET [COG_OQP_INT_s3] AS 'CROSSJOIN({[Gender].[Gender].[COG_OQP_INT_umg2]}, {[Store Type].DEFAULTMEMBER})'\n"
+            + "SET [COG_OQP_INT_s2] AS 'CROSSJOIN({[Marital Status].[Marital Status].[COG_OQP_INT_umg3]}, [COG_OQP_INT_s1])'\n"
+            + "SET [COG_OQP_INT_s1] AS 'CROSSJOIN({[Gender].[Gender].DEFAULTMEMBER}, {[Store Type].[Store Type].DEFAULTMEMBER})' \n"
             + "SELECT {[Measures].[Unit Sales]} "
             + "DIMENSION PROPERTIES PARENT_LEVEL, CHILDREN_CARDINALITY, PARENT_UNIQUE_NAME ON AXIS(0), \n"
             + "NativizeSet({[COG_OQP_INT_s5], [COG_OQP_INT_s2]}) "
@@ -923,19 +921,19 @@ class NativizeSetFunDefTest extends BatchTestCase {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
             "WITH"
-            + "  MEMBER [Gender].[umg1] AS "
-            + "  '([Gender].[gender agg], [Measures].[Unit Sales])', SOLVE_ORDER = 8 "
-            + "  MEMBER [Gender].[gender agg] AS"
-            + "  'AGGREGATE({[Gender].[Gender].MEMBERS},[Measures].[Unit Sales])', SOLVE_ORDER = 8 "
-            + " MEMBER [Marital Status].[umg2] AS "
-            + " '([Marital Status].[marital agg], [Measures].[Unit Sales])', SOLVE_ORDER = 4 "
-            + " MEMBER [Marital Status].[marital agg] AS "
-            + "  'AGGREGATE({[Marital Status].[Marital Status].MEMBERS},[Measures].[Unit Sales])', SOLVE_ORDER = 4 "
+            + "  MEMBER [Gender].[Gender].[umg1] AS "
+            + "  '([Gender].[Gender].[gender agg], [Measures].[Unit Sales])', SOLVE_ORDER = 8 "
+            + "  MEMBER [Gender].[Gender].[gender agg] AS"
+            + "  'AGGREGATE({[Gender].[Gender].[Gender].MEMBERS},[Measures].[Unit Sales])', SOLVE_ORDER = 8 "
+            + " MEMBER [Marital Status].[Marital Status].[umg2] AS "
+            + " '([Marital Status].[Marital Status].[marital agg], [Measures].[Unit Sales])', SOLVE_ORDER = 4 "
+            + " MEMBER [Marital Status].[Marital Status].[marital agg] AS "
+            + "  'AGGREGATE({[Marital Status].[Marital Status].[Marital Status].MEMBERS},[Measures].[Unit Sales])', SOLVE_ORDER = 4 "
             + " SET [s2] AS "
-            + "  'CROSSJOIN({{[Marital Status].[Marital Status].MEMBERS},{[Marital Status].[umg2]}}, "
-            + "{{[Gender].[Gender].MEMBERS}, {[Gender].[umg1]}})' "
+            + "  'CROSSJOIN({{[Marital Status].[Marital Status].[Marital Status].MEMBERS},{[Marital Status].[Marital Status].[umg2]}}, "
+            + "{{[Gender].[Gender].[Gender].MEMBERS}, {[Gender].[Gender].[umg1]}})' "
             + " SET [s1] AS "
-            + "  'CROSSJOIN({[Marital Status].[umg2]}, {[Gender].DEFAULTMEMBER})' "
+            + "  'CROSSJOIN({[Marital Status].[Marital Status].[umg2]}, {[Gender].[Gender].DEFAULTMEMBER})' "
             + " SELECT "
             + "  NativizeSet({[Measures].[Unit Sales]}) "
             + "DIMENSION PROPERTIES PARENT_LEVEL, CHILDREN_CARDINALITY, PARENT_UNIQUE_NAME ON AXIS(0), "
@@ -949,11 +947,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     void testGenderMembersAndAggByMaritalStatus(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
-            "with member gender.agg as 'Aggregate( gender.gender.members )' "
+            "with member gender.gender.agg as 'Aggregate( gender.gender.gender.members )' "
             + "select NativizeSet("
             + "crossjoin( "
-            + "  { gender.gender.members, gender.[agg] }, "
-            + "  [marital status].[marital status].members "
+            + "  { gender.gender.gender.members, gender.gender.[agg] }, "
+            + "  [marital status].[marital status].[marital status].members "
             + ")) on 0 from sales");
     }
 
@@ -962,11 +960,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     void testGenderAggAndMembersByMaritalStatus(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
-            "with member gender.agg as 'Aggregate( gender.gender.members )' "
+            "with member gender.gender.agg as 'Aggregate( gender.gender.gender.members )' "
             + "select NativizeSet("
             + "crossjoin( "
-            + "  { gender.[agg], gender.gender.members }, "
-            + "  [marital status].[marital status].members "
+            + "  { gender.gender.[agg], gender.gender.gender.members }, "
+            + "  [marital status].[marital status].[marital status].members "
             + ")) on 0 from sales");
     }
 
@@ -975,11 +973,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     void testGenderAggAndMembersAndAllByMaritalStatus(Context context) {
     	((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
-            "with member gender.agg as 'Aggregate( gender.gender.members )' "
+            "with member gender.gender.agg as 'Aggregate( gender.gender.gender.members )' "
             + "select NativizeSet("
             + "crossjoin( "
-            + "  { gender.[agg], gender.gender.members, gender.[all gender] }, "
-            + "  [marital status].[marital status].members "
+            + "  { gender.gender.[agg], gender.gender.gender.members, gender.gender.[all gender] }, "
+            + "  [marital status].[marital status].[marital status].members "
             + ")) on 0 from sales");
     }
 
@@ -988,11 +986,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     void testMaritalStatusByGenderMembersAndAgg(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
-            "with member gender.agg as 'Aggregate( gender.gender.members )' "
+            "with member gender.gender.agg as 'Aggregate( gender.gender.gender.members )' "
             + "select NativizeSet("
             + "crossjoin( "
-            + "  [marital status].[marital status].members, "
-            + "  { gender.gender.members, gender.[agg] } "
+            + "  [marital status].[marital status].[marital status].members, "
+            + "  { gender.gender.gender.members, gender.gender.[agg] } "
             + ")) on 0 from sales");
     }
 
@@ -1001,11 +999,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     void testMaritalStatusByGenderAggAndMembers(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
-            "with member gender.agg as 'Aggregate( gender.gender.members )' "
+            "with member gender.gender.agg as 'Aggregate( gender.gender.gender.members )' "
             + "select NativizeSet("
             + "crossjoin( "
-            + "  [marital status].[marital status].members, "
-            + "  { gender.[agg], gender.gender.members } "
+            + "  [marital status].[marital status].[marital status].members, "
+            + "  { gender.gender.[agg], gender.gender.gender.members } "
             + ")) on 0 from sales");
     }
 
@@ -1014,10 +1012,10 @@ class NativizeSetFunDefTest extends BatchTestCase {
     void testAggWithEnumMembers(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
-            "with member gender.agg as 'Aggregate( gender.gender.members )' "
+            "with member gender.gender.agg as 'Aggregate( gender.gender.gender.members )' "
             + "select NativizeSet("
             + "crossjoin( "
-            + "  { gender.gender.members, gender.[agg] }, "
+            + "  { gender.gender.gender.members, gender.gender.[agg] }, "
             + "  { [marital status].[marital status].[M], [marital status].[marital status].[S] } "
             + ")) on 0 from sales");
     }
@@ -1030,13 +1028,13 @@ class NativizeSetFunDefTest extends BatchTestCase {
             // Test for correct handling of a crossjoin arg that contains
             // a combination of element types: a members function, an
             // explicit enumerated value, an aggregate, and the all level.
-            "with member [gender].agg as 'Aggregate( gender.gender.members )' "
+            "with member [gender].[gender].agg as 'Aggregate( gender.gender.gender.members )' "
             + "select NativizeSet("
             + "crossjoin( "
-            + "{ time.quarter.members }, "
+            + "{ time.time.quarter.members }, "
             + "CrossJoin( "
-            + "{ gender.gender.members, gender.F, gender.[agg], gender.[all gender] }, "
-            + "{ [marital status].[marital status].members }"
+            + "{ gender.gender.gender.members, gender.gender.F, gender.gender.[agg], gender.gender.[all gender] }, "
+            + "{ [marital status].[marital status].[marital status].members }"
             + "))) on 0 from sales");
     }
 
@@ -1058,14 +1056,14 @@ class NativizeSetFunDefTest extends BatchTestCase {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
             "with "
-            + "member gender.agg as 'Aggregate( gender.gender.members )' "
-            + "member [marital status].agg as 'Aggregate( [marital status].[marital status].members )' "
+            + "member gender.gender.agg as 'Aggregate( gender.gender.gender.members )' "
+            + "member [marital status].agg as 'Aggregate( [marital status].[marital status].[marital status].members )' "
             + "select NativizeSet("
             + "crossjoin( "
-            + "  { gender.[all gender], gender.gender.members, gender.[agg] }, "
+            + "  { gender.gender.[all gender], gender.gender.gender.members, gender.gender.[agg] }, "
             + "  crossjoin("
-            + "  { [marital status].[marital status].members, [marital status].[agg] },"
-            + "  [Education Level].[Education Level].members "
+            + "  { [marital status].[marital status].[marital status].members, [marital status].[marital status].[agg] },"
+            + "  [Education Level].[Education Level].[Education Level].members "
             + "))) on 0 from sales");
     }
 
@@ -1075,14 +1073,14 @@ class NativizeSetFunDefTest extends BatchTestCase {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
             "with "
-            + "member gender.agg as 'Aggregate( gender.gender.members )' "
-            + "member [marital status].agg as 'Aggregate( [marital status].[marital status].members )' "
+            + "member gender.gender.agg as 'Aggregate( gender.gender.gender.members )' "
+            + "member [marital status].[marital status].agg as 'Aggregate( [marital status].[marital status].[marital status].members )' "
             + "select NativizeSet("
             + "crossjoin( "
-            + "  { gender.[all gender], gender.[agg] }, "
+            + "  { gender.gender.[all gender], gender.gender.[agg] }, "
             + "  crossjoin("
-            + "  { [marital status].[marital status].members, [marital status].[agg] },"
-            + "  [Education Level].[Education Level].members "
+            + "  { [marital status].[marital status].[marital status].members, [marital status].[marital status].[agg] },"
+            + "  [Education Level].[Education Level].[Education Level].members "
             + "))) on 0 from sales");
     }
 
@@ -1092,14 +1090,14 @@ class NativizeSetFunDefTest extends BatchTestCase {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
             "with "
-            + "member gender.agg as 'Aggregate( gender.gender.members )' "
-            + "member [marital status].agg as 'Aggregate( [marital status].[marital status].members )' "
+            + "member gender.gender.agg as 'Aggregate( gender.gender.gender.members )' "
+            + "member [marital status].[marital status].agg as 'Aggregate( [marital status].[marital status].[marital status].members )' "
             + "select NativizeSet("
             + "crossjoin( "
-            + "  { [marital status].[marital status].members, [marital status].[agg] },"
+            + "  { [marital status].[marital status].[marital status].members, [marital status].[marital status].[agg] },"
             + "  crossjoin("
-            + "  { gender.[all gender], gender.[agg] }, "
-            + "  [Education Level].[Education Level].members "
+            + "  { gender.gender.[all gender], gender.gender.[agg] }, "
+            + "  [Education Level].[Education Level].[Education Level].members "
             + "))) on 0 from sales");
     }
 
@@ -1109,14 +1107,14 @@ class NativizeSetFunDefTest extends BatchTestCase {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
             "with "
-            + "member gender.agg as 'Aggregate( gender.gender.members )' "
-            + "member [marital status].agg as 'Aggregate( [marital status].[marital status].members )' "
+            + "member gender.gender.agg as 'Aggregate( gender.gender.gender.members )' "
+            + "member [marital status].[marital status].agg as 'Aggregate( [marital status].[marital status].[marital status].members )' "
             + "select NativizeSet("
             + "crossjoin( "
-            + "  { [marital status].[marital status].members, [marital status].[agg] },"
+            + "  { [marital status].[marital status].[marital status].members, [marital status].[marital status].[agg] },"
             + "  crossjoin("
-            + "  [Education Level].[Education Level].members, "
-            + "  { gender.[all gender], gender.[agg] } "
+            + "  [Education Level].[Education Level].[Education Level].members, "
+            + "  { gender.gender.[all gender], gender.gender.[agg] } "
             + "))) on 0 from sales");
     }
 
@@ -1254,9 +1252,9 @@ class NativizeSetFunDefTest extends BatchTestCase {
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
-            "SELECT NativizeSet({Gender.M,Gender.F}) on 0 from sales",
+            "SELECT NativizeSet({Gender.Gender.M,Gender.Gender.F}) on 0 from sales",
             "select "
-            + "NativizeSet({[Gender].[M], [Gender].[F]}) "
+            + "NativizeSet({[Gender].[Gender].[M], [Gender].[Gender].[F]}) "
             + "ON COLUMNS\n"
             + "from [sales]\n");
     }
@@ -1284,15 +1282,15 @@ class NativizeSetFunDefTest extends BatchTestCase {
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
-            "select NativizeSet(CrossJoin({Gender.M,Gender.F},{[Marital Status].[Marital Status].members})) "
+            "select NativizeSet(CrossJoin({Gender.Gender.M,Gender.Gender.F},{[Marital Status].[Marital Status].[Marital Status].members})) "
             + "on 0 from sales",
-            "with member [Marital Status].[_Nativized_Member_Marital Status_Marital Status_] as '[Marital Status].DefaultMember'\n"
-            + "  set [_Nativized_Set_Marital Status_Marital Status_] as "
-            + "'{[Marital Status].[_Nativized_Member_Marital Status_Marital Status_]}'\n"
-            + "  member [Gender].[_Nativized_Sentinel_Gender_(All)_] as '101010'\n"
-            + "  member [Marital Status].[_Nativized_Sentinel_Marital Status_(All)_] as '101010'\n"
-            + "select NativizeSet(Crossjoin({[Gender].[M], [Gender].[F]}, "
-            + "{[_Nativized_Set_Marital Status_Marital Status_]})) ON COLUMNS\n"
+            "with member [Marital Status].[Marital Status].[_Nativized_Member_Marital Status_Marital Status_Marital Status_] as '[Marital Status].[Marital Status].DefaultMember'\n"
+            + "  set [_Nativized_Set_Marital Status_Marital Status_Marital Status_] as "
+            + "'{[Marital Status].[Marital Status].[_Nativized_Member_Marital Status_Marital Status_Marital Status_]}'\n"
+            + "  member [Gender].[Gender].[_Nativized_Sentinel_Gender_Gender_(All)_] as '101010'\n"
+            + "  member [Marital Status].[Marital Status].[_Nativized_Sentinel_Marital Status_Marital Status_(All)_] as '101010'\n"
+            + "select NativizeSet(Crossjoin({[Gender].[Gender].[M], [Gender].[Gender].[F]}, "
+            + "{[_Nativized_Set_Marital Status_Marital Status_Marital Status_]})) ON COLUMNS\n"
             + "from [sales]\n");
     }
 
@@ -1304,27 +1302,27 @@ class NativizeSetFunDefTest extends BatchTestCase {
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
-            "WITH SET [COG_OQP_INT_s4] AS 'CROSSJOIN({[Education Level].[Graduate Degree]},"
+            "WITH SET [COG_OQP_INT_s4] AS 'CROSSJOIN({[Education Level].[Education Level].[Graduate Degree]},"
             + " [COG_OQP_INT_s3])'"
-            + " SET [COG_OQP_INT_s3] AS 'CROSSJOIN({[Marital Status].[S]}, [COG_OQP_INT_s2])'"
-            + " SET [COG_OQP_INT_s2] AS 'CROSSJOIN({[Gender].[F]}, [COG_OQP_INT_s1])'"
-            + " SET [COG_OQP_INT_s1] AS 'CROSSJOIN({[Product].[Product Name].MEMBERS}, {[Customers].[Name].MEMBERS})' "
+            + " SET [COG_OQP_INT_s3] AS 'CROSSJOIN({[Marital Status].[Marital Status].[S]}, [COG_OQP_INT_s2])'"
+            + " SET [COG_OQP_INT_s2] AS 'CROSSJOIN({[Gender].[Gender].[F]}, [COG_OQP_INT_s1])'"
+            + " SET [COG_OQP_INT_s1] AS 'CROSSJOIN({[Product].[Product].[Product Name].MEMBERS}, {[Customers].[Customers].[Name].MEMBERS})' "
             + "SELECT {[Measures].[Unit Sales]} DIMENSION PROPERTIES PARENT_LEVEL, CHILDREN_CARDINALITY, PARENT_UNIQUE_NAME ON AXIS(0),"
             + " NativizeSet([COG_OQP_INT_s4]) DIMENSION PROPERTIES PARENT_LEVEL, CHILDREN_CARDINALITY, PARENT_UNIQUE_NAME ON AXIS(1) "
             + "FROM [Sales] CELL PROPERTIES VALUE, FORMAT_STRING",
-            "with set [COG_OQP_INT_s4] as 'Crossjoin({[Education Level].[Graduate Degree]}, [COG_OQP_INT_s3])'\n"
-            + "  set [COG_OQP_INT_s3] as 'Crossjoin({[Marital Status].[S]}, [COG_OQP_INT_s2])'\n"
-            + "  set [COG_OQP_INT_s2] as 'Crossjoin({[Gender].[F]}, [COG_OQP_INT_s1])'\n"
-            + "  set [COG_OQP_INT_s1] as 'Crossjoin({[_Nativized_Set_Product_Product Name_]}, {[_Nativized_Set_Customers_Name_]})'\n"
-            + "  member [Product].[_Nativized_Member_Product_Product Name_] as '[Product].DefaultMember'\n"
-            + "  set [_Nativized_Set_Product_Product Name_] as '{[Product].[_Nativized_Member_Product_Product Name_]}'\n"
-            + "  member [Customers].[_Nativized_Member_Customers_Name_] as '[Customers].DefaultMember'\n"
-            + "  set [_Nativized_Set_Customers_Name_] as '{[Customers].[_Nativized_Member_Customers_Name_]}'\n"
-            + "  member [Education Level].[_Nativized_Sentinel_Education Level_(All)_] as '101010'\n"
-            + "  member [Marital Status].[_Nativized_Sentinel_Marital Status_(All)_] as '101010'\n"
-            + "  member [Gender].[_Nativized_Sentinel_Gender_(All)_] as '101010'\n"
-            + "  member [Product].[_Nativized_Sentinel_Product_(All)_] as '101010'\n"
-            + "  member [Customers].[_Nativized_Sentinel_Customers_(All)_] as '101010'\n"
+            "with set [COG_OQP_INT_s4] as 'Crossjoin({[Education Level].[Education Level].[Graduate Degree]}, [COG_OQP_INT_s3])'\n"
+            + "  set [COG_OQP_INT_s3] as 'Crossjoin({[Marital Status].[Marital Status].[S]}, [COG_OQP_INT_s2])'\n"
+            + "  set [COG_OQP_INT_s2] as 'Crossjoin({[Gender].[Gender].[F]}, [COG_OQP_INT_s1])'\n"
+            + "  set [COG_OQP_INT_s1] as 'Crossjoin({[_Nativized_Set_Product_Product_Product Name_]}, {[_Nativized_Set_Customers_Customers_Name_]})'\n"
+            + "  member [Product].[Product].[_Nativized_Member_Product_Product_Product Name_] as '[Product].[Product].DefaultMember'\n"
+            + "  set [_Nativized_Set_Product_Product_Product Name_] as '{[Product].[Product].[_Nativized_Member_Product_Product_Product Name_]}'\n"
+            + "  member [Customers].[Customers].[_Nativized_Member_Customers_Customers_Name_] as '[Customers].[Customers].DefaultMember'\n"
+            + "  set [_Nativized_Set_Customers_Customers_Name_] as '{[Customers].[Customers].[_Nativized_Member_Customers_Customers_Name_]}'\n"
+            + "  member [Education Level].[Education Level].[_Nativized_Sentinel_Education Level_Education Level_(All)_] as '101010'\n"
+            + "  member [Marital Status].[Marital Status].[_Nativized_Sentinel_Marital Status_Marital Status_(All)_] as '101010'\n"
+            + "  member [Gender].[Gender].[_Nativized_Sentinel_Gender_Gender_(All)_] as '101010'\n"
+            + "  member [Product].[Product].[_Nativized_Sentinel_Product_Product_(All)_] as '101010'\n"
+            + "  member [Customers].[Customers].[_Nativized_Sentinel_Customers_Customers_(All)_] as '101010'\n"
             + "select {[Measures].[Unit Sales]} DIMENSION PROPERTIES PARENT_LEVEL, CHILDREN_CARDINALITY, PARENT_UNIQUE_NAME ON COLUMNS,\n"
             + "  NativizeSet([COG_OQP_INT_s4]) DIMENSION PROPERTIES PARENT_LEVEL, CHILDREN_CARDINALITY, PARENT_UNIQUE_NAME ON ROWS\n"
             + "from [Sales]\n");
@@ -1338,38 +1336,38 @@ class NativizeSetFunDefTest extends BatchTestCase {
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
-            "WITH MEMBER [Product].[COG_OQP_INT_umg1] AS "
-            + "'IIF([Measures].CURRENTMEMBER IS [Measures].[Unit Sales], ([Product].[COG_OQP_INT_m2], [Measures].[Unit Sales]),"
-            + " AGGREGATE({[Product].[Product Name].MEMBERS}))', SOLVE_ORDER = 4 "
-            + "MEMBER [Product].[COG_OQP_INT_m2] AS 'AGGREGATE({[Product].[Product Name].MEMBERS},"
+            "WITH MEMBER [Product].[Product].[COG_OQP_INT_umg1] AS "
+            + "'IIF([Measures].CURRENTMEMBER IS [Measures].[Unit Sales], ([Product].[Product].[COG_OQP_INT_m2], [Measures].[Unit Sales]),"
+            + " AGGREGATE({[Product].[Product].[Product Name].MEMBERS}))', SOLVE_ORDER = 4 "
+            + "MEMBER [Product].[Product].[COG_OQP_INT_m2] AS 'AGGREGATE({[Product].[Product].[Product Name].MEMBERS},"
             + " [Measures].[Unit Sales])', SOLVE_ORDER = 4 "
-            + "SET [COG_OQP_INT_s5] AS 'CROSSJOIN({[Marital Status].[S]}, [COG_OQP_INT_s4])'"
-            + " SET [COG_OQP_INT_s4] AS 'CROSSJOIN({[Gender].[F]}, [COG_OQP_INT_s2])'"
-            + " SET [COG_OQP_INT_s3] AS 'CROSSJOIN({[Gender].[F]}, {[COG_OQP_INT_s2], [COG_OQP_INT_s1]})' "
-            + "SET [COG_OQP_INT_s2] AS 'CROSSJOIN({[Product].[Product Name].MEMBERS}, {[Customers].[Name].MEMBERS})' "
-            + "SET [COG_OQP_INT_s1] AS 'CROSSJOIN({[Product].[COG_OQP_INT_umg1]}, {[Customers].DEFAULTMEMBER})' "
+            + "SET [COG_OQP_INT_s5] AS 'CROSSJOIN({[Marital Status].[Marital Status].[S]}, [COG_OQP_INT_s4])'"
+            + " SET [COG_OQP_INT_s4] AS 'CROSSJOIN({[Gender].[Gender].[F]}, [COG_OQP_INT_s2])'"
+            + " SET [COG_OQP_INT_s3] AS 'CROSSJOIN({[Gender].[Gender].[F]}, {[COG_OQP_INT_s2], [COG_OQP_INT_s1]})' "
+            + "SET [COG_OQP_INT_s2] AS 'CROSSJOIN({[Product].[Product].[Product Name].MEMBERS}, {[Customers].[Customers].[Name].MEMBERS})' "
+            + "SET [COG_OQP_INT_s1] AS 'CROSSJOIN({[Product].[Product].[COG_OQP_INT_umg1]}, {[Customers].[Customers].DEFAULTMEMBER})' "
             + "SELECT {[Measures].[Unit Sales]} DIMENSION PROPERTIES PARENT_LEVEL, CHILDREN_CARDINALITY, PARENT_UNIQUE_NAME ON AXIS(0),"
-            + " NativizeSet(GENERATE({[Education Level].[Graduate Degree]}, \n"
-            + "CROSSJOIN(HEAD({([Education Level].CURRENTMEMBER)}, IIF(COUNT([COG_OQP_INT_s5], INCLUDEEMPTY) > 0, 1, 0)), "
-            + "GENERATE({[Marital Status].[S]}, CROSSJOIN(HEAD({([Marital Status].CURRENTMEMBER)}, "
+            + " NativizeSet(GENERATE({[Education Level].[Education Level].[Graduate Degree]}, \n"
+            + "CROSSJOIN(HEAD({([Education Level].[Education Level].CURRENTMEMBER)}, IIF(COUNT([COG_OQP_INT_s5], INCLUDEEMPTY) > 0, 1, 0)), "
+            + "GENERATE({[Marital Status].[Marital Status].[S]}, CROSSJOIN(HEAD({([Marital Status].[Marital Status].CURRENTMEMBER)}, "
             + "IIF(COUNT([COG_OQP_INT_s4], INCLUDEEMPTY) > 0, 1, 0)), [COG_OQP_INT_s3]), ALL)), ALL))"
             + " DIMENSION PROPERTIES PARENT_LEVEL, CHILDREN_CARDINALITY, PARENT_UNIQUE_NAME ON AXIS(1)"
             + " FROM [Sales]  CELL PROPERTIES VALUE, FORMAT_STRING",
-            "with member [Product].[COG_OQP_INT_umg1] as "
-            + "'IIf(([Measures].CurrentMember IS [Measures].[Unit Sales]), ([Product].[COG_OQP_INT_m2], [Measures].[Unit Sales]), "
-            + "Aggregate({[Product].[Product Name].Members}))', SOLVE_ORDER = 4\n"
-            + "  member [Product].[COG_OQP_INT_m2] as "
-            + "'Aggregate({[Product].[Product Name].Members}, [Measures].[Unit Sales])', SOLVE_ORDER = 4\n"
-            + "  set [COG_OQP_INT_s5] as 'Crossjoin({[Marital Status].[S]}, [COG_OQP_INT_s4])'\n"
-            + "  set [COG_OQP_INT_s4] as 'Crossjoin({[Gender].[F]}, [COG_OQP_INT_s2])'\n"
-            + "  set [COG_OQP_INT_s3] as 'Crossjoin({[Gender].[F]}, {[COG_OQP_INT_s2], [COG_OQP_INT_s1]})'\n"
-            + "  set [COG_OQP_INT_s2] as 'Crossjoin({[Product].[Product Name].Members}, {[Customers].[Name].Members})'\n"
-            + "  set [COG_OQP_INT_s1] as 'Crossjoin({[Product].[COG_OQP_INT_umg1]}, {[Customers].DefaultMember})'\n"
+            "with member [Product].[Product].[COG_OQP_INT_umg1] as "
+            + "'IIf(([Measures].CurrentMember IS [Measures].[Unit Sales]), ([Product].[Product].[COG_OQP_INT_m2], [Measures].[Unit Sales]), "
+            + "Aggregate({[Product].[Product].[Product Name].Members}))', SOLVE_ORDER = 4\n"
+            + "  member [Product].[Product].[COG_OQP_INT_m2] as "
+            + "'Aggregate({[Product].[Product].[Product Name].Members}, [Measures].[Unit Sales])', SOLVE_ORDER = 4\n"
+            + "  set [COG_OQP_INT_s5] as 'Crossjoin({[Marital Status].[Marital Status].[S]}, [COG_OQP_INT_s4])'\n"
+            + "  set [COG_OQP_INT_s4] as 'Crossjoin({[Gender].[Gender].[F]}, [COG_OQP_INT_s2])'\n"
+            + "  set [COG_OQP_INT_s3] as 'Crossjoin({[Gender].[Gender].[F]}, {[COG_OQP_INT_s2], [COG_OQP_INT_s1]})'\n"
+            + "  set [COG_OQP_INT_s2] as 'Crossjoin({[Product].[Product].[Product Name].Members}, {[Customers].[Customers].[Name].Members})'\n"
+            + "  set [COG_OQP_INT_s1] as 'Crossjoin({[Product].[Product].[COG_OQP_INT_umg1]}, {[Customers].[Customers].DefaultMember})'\n"
             + "select {[Measures].[Unit Sales]} DIMENSION PROPERTIES PARENT_LEVEL, CHILDREN_CARDINALITY, PARENT_UNIQUE_NAME ON COLUMNS,\n"
-            + "  NativizeSet(Generate({[Education Level].[Graduate Degree]}, "
-            + "Crossjoin(Head({([Education Level].CurrentMember)}, IIf((Count([COG_OQP_INT_s5], INCLUDEEMPTY) > 0), 1, 0)), "
-            + "Generate({[Marital Status].[S]}, "
-            + "Crossjoin(Head({([Marital Status].CurrentMember)}, "
+            + "  NativizeSet(Generate({[Education Level].[Education Level].[Graduate Degree]}, "
+            + "Crossjoin(Head({([Education Level].[Education Level].CurrentMember)}, IIf((Count([COG_OQP_INT_s5], INCLUDEEMPTY) > 0), 1, 0)), "
+            + "Generate({[Marital Status].[Marital Status].[S]}, "
+            + "Crossjoin(Head({([Marital Status].[Marital Status].CurrentMember)}, "
             + "IIf((Count([COG_OQP_INT_s4], INCLUDEEMPTY) > 0), 1, 0)), [COG_OQP_INT_s3]), ALL)), ALL)) "
             + "DIMENSION PROPERTIES PARENT_LEVEL, CHILDREN_CARDINALITY, PARENT_UNIQUE_NAME ON ROWS\n"
             + "from [Sales]\n");
@@ -1393,8 +1391,6 @@ class NativizeSetFunDefTest extends BatchTestCase {
     void testMultipleHierarchySsasTrue(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
 
-        SystemWideProperties.instance().SsasCompatibleNaming = true;
-
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
         // Ssas compatible: time.[weekly].[week]
@@ -1405,13 +1401,13 @@ class NativizeSetFunDefTest extends BatchTestCase {
         try {
             assertQueryIsReWritten(
                 connection,
-                "select nativizeSet(crossjoin(time.[week].members, { gender.m })) on 0 "
+                "select nativizeSet(crossjoin(time.[week].members, { gender.gender.m })) on 0 "
                 + "from sales",
-                "with member [Time.Weekly].[_Nativized_Member_Time_Weekly_Week_] as '[Time.Weekly].DefaultMember'\n"
-                + "  set [_Nativized_Set_Time_Weekly_Week_] as '{[Time.Weekly].[_Nativized_Member_Time_Weekly_Week_]}'\n"
-                + "  member [Time].[_Nativized_Sentinel_Time_Year_] as '101010'\n"
-                + "  member [Gender].[_Nativized_Sentinel_Gender_(All)_] as '101010'\n"
-                + "select NativizeSet(Crossjoin([_Nativized_Set_Time_Weekly_Week_], {[Gender].[M]})) ON COLUMNS\n"
+                "with member [Time].[Weekly].[_Nativized_Member_Time_Weekly_Week_] as '[Time].[Weekly].DefaultMember'\n"
+                + "  set [_Nativized_Set_Time_Weekly_Week_] as '{[Time].[Weekly].[_Nativized_Member_Time_Weekly_Week_]}'\n"
+                + "  member [Time].[Time].[_Nativized_Sentinel_Time_Time_Year_] as '101010'\n"
+                + "  member [Gender].[Gender].[_Nativized_Sentinel_Gender_Gender_(All)_] as '101010'\n"
+                + "select NativizeSet(Crossjoin([_Nativized_Set_Time_Weekly_Week_], {[Gender].[Gender].[M]})) ON COLUMNS\n"
                 + "from [sales]\n");
         } finally {
             connection.close();
@@ -1423,19 +1419,17 @@ class NativizeSetFunDefTest extends BatchTestCase {
     void testMultipleHierarchySsasFalse(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
 
-        SystemWideProperties.instance().SsasCompatibleNaming = false;
-
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
         // Ssas compatible: [time.weekly].week
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
-            "select nativizeSet(crossjoin( [time.weekly].week.members, { gender.m })) on 0 "
+            "select nativizeSet(crossjoin( [time].[weekly].week.members, { gender.gender.m })) on 0 "
             + "from sales",
-            "with member [Time].[_Nativized_Member_Time_Weekly_Week_] as '[Time].DefaultMember'\n"
-            + "  set [_Nativized_Set_Time_Weekly_Week_] as '{[Time].[_Nativized_Member_Time_Weekly_Week_]}'\n"
-            + "  member [Time].[_Nativized_Sentinel_Time_Year_] as '101010'\n"
-            + "  member [Gender].[_Nativized_Sentinel_Gender_(All)_] as '101010'\n"
-            + "select NativizeSet(Crossjoin([_Nativized_Set_Time_Weekly_Week_], {[Gender].[M]})) ON COLUMNS\n"
+            "with member [Time].[Weekly].[_Nativized_Member_Time_Weekly_Week_] as '[Time].[Weekly].DefaultMember'\n"
+            + "  set [_Nativized_Set_Time_Weekly_Week_] as '{[Time].[Weekly].[_Nativized_Member_Time_Weekly_Week_]}'\n"
+            + "  member [Time].[Time].[_Nativized_Sentinel_Time_Time_Year_] as '101010'\n"
+            + "  member [Gender].[Gender].[_Nativized_Sentinel_Gender_Gender_(All)_] as '101010'\n"
+            + "select NativizeSet(Crossjoin([_Nativized_Set_Time_Weekly_Week_], {[Gender].[Gender].[M]})) ON COLUMNS\n"
             + "from [sales]\n");
     }
 
@@ -1446,44 +1440,44 @@ class NativizeSetFunDefTest extends BatchTestCase {
         checkNative(context,
             "WITH\n"
             + "\tMEMBER [Time].[Time].[COG_OQP_USR_Aggregate(Time Values)] AS "
-            + "'IIF([Measures].CURRENTMEMBER IS [Measures].[Unit Sales], ([Time].[1997], [Measures].[Unit Sales]), ([Time].[1997]))',\n"
-            + "\tSOLVE_ORDER = 4 MEMBER [Store Type].[COG_OQP_INT_umg1] AS "
-            + "'IIF([Measures].CURRENTMEMBER IS [Measures].[Unit Sales], ([Store Type].[COG_OQP_INT_m2], [Measures].[Unit Sales]), "
-            + "AGGREGATE({[Store Type].[Store Type].MEMBERS}))',\n"
-            + "\tSOLVE_ORDER = 8 MEMBER [Store Type].[COG_OQP_INT_m2] AS "
-            + "'AGGREGATE({[Store Type].[Store Type].MEMBERS}, [Measures].[Unit Sales])',\n"
+            + "'IIF([Measures].CURRENTMEMBER IS [Measures].[Unit Sales], ([Time].[Time].[1997], [Measures].[Unit Sales]), ([Time].[Time].[1997]))',\n"
+            + "\tSOLVE_ORDER = 4 MEMBER [Store Type].[Store Type].[COG_OQP_INT_umg1] AS "
+            + "'IIF([Measures].CURRENTMEMBER IS [Measures].[Unit Sales], ([Store Type].[Store Type].[COG_OQP_INT_m2], [Measures].[Unit Sales]), "
+            + "AGGREGATE({[Store Type].[Store Type].[Store Type].MEMBERS}))',\n"
+            + "\tSOLVE_ORDER = 8 MEMBER [Store Type].[Store Type].[COG_OQP_INT_m2] AS "
+            + "'AGGREGATE({[Store Type].[Store Type].[Store Type].MEMBERS}, [Measures].[Unit Sales])',\n"
             + "\tSOLVE_ORDER = 8 \n"
             + "SET\n"
-            + "\t[COG_OQP_INT_s9] AS 'CROSSJOIN({[Marital Status].[Marital Status].MEMBERS}, {[COG_OQP_INT_s8], [COG_OQP_INT_s6]})' \n"
+            + "\t[COG_OQP_INT_s9] AS 'CROSSJOIN({[Marital Status].[Marital Status].[Marital Status].MEMBERS}, {[COG_OQP_INT_s8], [COG_OQP_INT_s6]})' \n"
             + "SET\n"
-            + "\t[COG_OQP_INT_s8] AS 'CROSSJOIN({[Store Type].[Store Type].MEMBERS}, [COG_OQP_INT_s7])' \n"
+            + "\t[COG_OQP_INT_s8] AS 'CROSSJOIN({[Store Type].[Store Type].[Store Type].MEMBERS}, [COG_OQP_INT_s7])' \n"
             + "SET\n"
             + "\t[COG_OQP_INT_s7] AS 'CROSSJOIN({[Promotions].[Promotions].MEMBERS}, "
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl].[Pearl Imported Beer]})' \n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl].[Pearl Imported Beer]})' \n"
             + "SET\n"
-            + "\t[COG_OQP_INT_s6] AS 'CROSSJOIN({[Store Type].[COG_OQP_INT_umg1]}, [COG_OQP_INT_s1])' \n"
+            + "\t[COG_OQP_INT_s6] AS 'CROSSJOIN({[Store Type].[Store Type].[COG_OQP_INT_umg1]}, [COG_OQP_INT_s1])' \n"
             + "SET\n"
-            + "\t[COG_OQP_INT_s5] AS 'CROSSJOIN({[Time].[COG_OQP_USR_Aggregate(Time Values)]}, [COG_OQP_INT_s4])' \n"
+            + "\t[COG_OQP_INT_s5] AS 'CROSSJOIN({[Time].[Time].[COG_OQP_USR_Aggregate(Time Values)]}, [COG_OQP_INT_s4])' \n"
             + "SET\n"
-            + "\t[COG_OQP_INT_s4] AS 'CROSSJOIN({[Gender].DEFAULTMEMBER}, [COG_OQP_INT_s3])' \n"
+            + "\t[COG_OQP_INT_s4] AS 'CROSSJOIN({[Gender].[Gender].DEFAULTMEMBER}, [COG_OQP_INT_s3])' \n"
             + "SET\n"
-            + "\t[COG_OQP_INT_s3] AS 'CROSSJOIN({[Marital Status].DEFAULTMEMBER}, [COG_OQP_INT_s2])' \n"
+            + "\t[COG_OQP_INT_s3] AS 'CROSSJOIN({[Marital Status].[Marital Status].DEFAULTMEMBER}, [COG_OQP_INT_s2])' \n"
             + "SET\n"
-            + "\t[COG_OQP_INT_s2] AS 'CROSSJOIN({[Store Type].DEFAULTMEMBER}, [COG_OQP_INT_s1])' \n"
+            + "\t[COG_OQP_INT_s2] AS 'CROSSJOIN({[Store Type].[Store Type].DEFAULTMEMBER}, [COG_OQP_INT_s1])' \n"
             + "SET\n"
-            + "\t[COG_OQP_INT_s11] AS 'CROSSJOIN({[Gender].[Gender].MEMBERS}, [COG_OQP_INT_s10])' \n"
+            + "\t[COG_OQP_INT_s11] AS 'CROSSJOIN({[Gender].[Gender].[Gender].MEMBERS}, [COG_OQP_INT_s10])' \n"
             + "SET\n"
-            + "\t[COG_OQP_INT_s10] AS 'CROSSJOIN({[Marital Status].[Marital Status].MEMBERS}, [COG_OQP_INT_s8])' \n"
+            + "\t[COG_OQP_INT_s10] AS 'CROSSJOIN({[Marital Status].[Marital Status].[Marital Status].MEMBERS}, [COG_OQP_INT_s8])' \n"
             + "SET\n"
             + "\t[COG_OQP_INT_s1] AS 'CROSSJOIN({[Promotion Name].DEFAULTMEMBER}, "
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl].[Pearl Imported Beer]})' \n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl].[Pearl Imported Beer]})' \n"
             + "SELECT\n"
             + "\t{[Measures].[Unit Sales]} DIMENSION PROPERTIES PARENT_LEVEL,\n"
             + "\tCHILDREN_CARDINALITY,\n"
             + "\tPARENT_UNIQUE_NAME ON AXIS(0),\n"
             + "NativizeSet(\n"
             + "\t{\n"
-            + "CROSSJOIN({[Time].[1997]}, CROSSJOIN({[Gender].[Gender].MEMBERS}, [COG_OQP_INT_s9])),\n"
+            + "CROSSJOIN({[Time].[Time].[1997]}, CROSSJOIN({[Gender].[Gender].[Gender].MEMBERS}, [COG_OQP_INT_s9])),\n"
             + "\t[COG_OQP_INT_s5]}\n"
             + ")\n"
             + "ON AXIS(1) \n"
@@ -1497,15 +1491,15 @@ class NativizeSetFunDefTest extends BatchTestCase {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
             "select "
-            + "   NativizeSet(Crossjoin([Gender].[Gender].members,"
-            + "TopCount({[Marital Status].[Marital Status].members},1,[Measures].[Unit Sales]))"
+            + "   NativizeSet(Crossjoin([Gender].[Gender].[Gender].members,"
+            + "TopCount({[Marital Status].[Marital Status].[Marital Status].members},1,[Measures].[Unit Sales]))"
             + " ) on 0,"
             + "{[Measures].[Unit Sales]} on 1 FROM [Sales]",
-            "with member [Gender].[_Nativized_Member_Gender_Gender_] as '[Gender].DefaultMember'\n"
-            + "  set [_Nativized_Set_Gender_Gender_] as '{[Gender].[_Nativized_Member_Gender_Gender_]}'\n"
-            + "  member [Gender].[_Nativized_Sentinel_Gender_(All)_] as '101010'\n"
-            + "select NON EMPTY NativizeSet(Crossjoin([_Nativized_Set_Gender_Gender_], "
-            + "TopCount({[Marital Status].[Marital Status].Members}, 1, [Measures].[Unit Sales]))) ON COLUMNS,\n"
+            "with member [Gender].[Gender].[_Nativized_Member_Gender_Gender_Gender_] as '[Gender].[Gender].DefaultMember'\n"
+            + "  set [_Nativized_Set_Gender_Gender_Gender_] as '{[Gender].[Gender].[_Nativized_Member_Gender_Gender_Gender_]}'\n"
+            + "  member [Gender].[Gender].[_Nativized_Sentinel_Gender_Gender_(All)_] as '101010'\n"
+            + "select NON EMPTY NativizeSet(Crossjoin([_Nativized_Set_Gender_Gender_Gender_], "
+            + "TopCount({[Marital Status].[Marital Status].[Marital Status].Members}, 1, [Measures].[Unit Sales]))) ON COLUMNS,\n"
             + "  NON EMPTY {[Measures].[Unit Sales]} ON ROWS\n"
             + "from [Sales]\n");
     }
@@ -1517,15 +1511,15 @@ class NativizeSetFunDefTest extends BatchTestCase {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
             + "NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS,   \n"
-            + "NON EMPTY NativizeSet(Crossjoin({[Time].[1997]}, "
-            + "Filter({[Gender].[Gender].Members}, ([Measures].[Unit Sales] < 131559)))) ON ROWS \n"
+            + "NON EMPTY NativizeSet(Crossjoin({[Time].[Time].[1997]}, "
+            + "Filter({[Gender].[Gender].[Gender].Members}, ([Measures].[Unit Sales] < 131559)))) ON ROWS \n"
             + "from [Sales]",
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997], [Gender].[F]}\n"
+            + "{[Time].[Time].[1997], [Gender].[Gender].[F]}\n"
             + "Row #0: 131,558\n");
     }
 
@@ -1665,19 +1659,19 @@ class NativizeSetFunDefTest extends BatchTestCase {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
             "with"
-            + " member [gender].[agg] as"
-            + "  'aggregate({[gender].[gender].members},[measures].[unit sales])'"
-            + " member [Marital Status].[agg] as"
-            + "  'aggregate({[Marital Status].[Marital Status].members},[measures].[unit sales])'"
+            + " member [gender].[gender].[agg] as"
+            + "  'aggregate({[gender].[gender].[gender].members},[measures].[unit sales])'"
+            + " member [Marital Status].[Marital Status].[agg] as"
+            + "  'aggregate({[Marital Status].[Marital Status].[Marital Status].members},[measures].[unit sales])'"
             + "select"
             + " non empty "
             + " NativizeSet("
             + "Crossjoin("
-            + "{[Marital Status].[Marital Status].members,[Marital Status].[agg]},"
-            + "{[Gender].[Gender].members,[gender].[agg]}"
+            + "{[Marital Status].[Marital Status].[Marital Status].members,[Marital Status].[Marital Status].[agg]},"
+            + "{[Gender].[Gender].[Gender].members,[gender].[gender].[agg]}"
             + ")) on 0 "
             + " from sales "
-            + " where [Store].[Canada].[BC].[Vancouver].[Store 19]");
+            + " where [Store].[Store].[Canada].[BC].[Vancouver].[Store 19]");
     }
 
     @ParameterizedTest

@@ -35,7 +35,7 @@ class LevelsStringFunDefTest {
     void testLevelsString(Context context) {
       TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
         "Levels(\"[Time].[Year]\").UniqueName",
-        "[Time].[Year]" );
+        "[Time].[Time].[Year]" );
     }
 
 }

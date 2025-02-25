@@ -364,8 +364,7 @@ public final class IdBatchResolver {
                 || segListMatchInUniqueNames(
                     id.getSegments(), hierarchyUniqueNames);
         }
-        if (SystemWideProperties.instance().SsasCompatibleNaming
-            && size == 2)
+        if (size == 2)
         {
             return segListMatchInUniqueNames(
                 id.getSegments(), hierarchyUniqueNames);

@@ -30,22 +30,22 @@ class AggregateFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAggregateDepends(Context context) {
         // Depends on everything except Measures, Gender
-        String s12 = allHiersExcept("[Measures]", "[Gender]" );
+        String s12 = allHiersExcept("[Measures]", "[Gender].[Gender]" );
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "([Measures].[Unit Sales], [Gender].[F])", s12 );
         // Depends on everything except Customers, Measures, Gender
-        String s13 = allHiersExcept( "[Customers]", "[Gender]" );
+        String s13 = allHiersExcept( "[Customers].[Customers]", "[Gender].[Gender]" );
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "Aggregate([Customers].Members, ([Measures].[Unit Sales], [Gender].[F]))",
             s13 );
         // Depends on everything except Customers
-        String s11 = allHiersExcept( "[Customers]" );
+        String s11 = allHiersExcept( "[Customers].[Customers]" );
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "Aggregate([Customers].Members)",
             s11 );
         // Depends on the current member of the Product dimension, even though
         // [Product].[All Products] is referenced from the expression.
-        String s1 = allHiersExcept( "[Customers]" );
+        String s1 = allHiersExcept( "[Customers].[Customers]" );
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "Aggregate(Filter([Customers].[City].Members, (([Measures].[Unit Sales] / ([Measures].[Unit Sales], [Product]"
                 + ".[All Products])) > 0.1)))",
@@ -62,14 +62,14 @@ class AggregateFunDefTest {
                 + "FROM Sales\n"
                 + "WHERE ([1997].[Q1])",
             "Axis #0:\n"
-                + "{[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Store].[USA].[CA]}\n"
-                + "{[Store].[USA].[OR]}\n"
-                + "{[Store].[CA plus OR]}\n"
+                + "{[Store].[Store].[USA].[CA]}\n"
+                + "{[Store].[Store].[USA].[OR]}\n"
+                + "{[Store].[Store].[CA plus OR]}\n"
                 + "Row #0: 16,890\n"
                 + "Row #0: 36,175.20\n"
                 + "Row #1: 19,287\n"
@@ -94,20 +94,20 @@ class AggregateFunDefTest {
             "Axis #0:\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #1:\n"
-                + "{[Store].[Canada].[BC]}\n"
-                + "{[Store].[Mexico].[DF]}\n"
-                + "{[Store].[Mexico].[Guerrero]}\n"
-                + "{[Store].[Mexico].[Jalisco]}\n"
-                + "{[Store].[Mexico].[Veracruz]}\n"
-                + "{[Store].[Mexico].[Yucatan]}\n"
-                + "{[Store].[Mexico].[Zacatecas]}\n"
-                + "{[Store].[USA].[CA]}\n"
-                + "{[Store].[USA].[OR]}\n"
-                + "{[Store].[USA].[WA]}\n"
+                + "{[Store].[Store].[Canada].[BC]}\n"
+                + "{[Store].[Store].[Mexico].[DF]}\n"
+                + "{[Store].[Store].[Mexico].[Guerrero]}\n"
+                + "{[Store].[Store].[Mexico].[Jalisco]}\n"
+                + "{[Store].[Store].[Mexico].[Veracruz]}\n"
+                + "{[Store].[Store].[Mexico].[Yucatan]}\n"
+                + "{[Store].[Store].[Mexico].[Zacatecas]}\n"
+                + "{[Store].[Store].[USA].[CA]}\n"
+                + "{[Store].[Store].[USA].[OR]}\n"
+                + "{[Store].[Store].[USA].[WA]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1st Half Sales]}\n"
-                + "{[Time].[2nd Half Sales]}\n"
-                + "{[Time].[Difference]}\n"
+                + "{[Time].[Time].[1st Half Sales]}\n"
+                + "{[Time].[Time].[2nd Half Sales]}\n"
+                + "{[Time].[Time].[Difference]}\n"
                 + "Row #0: \n"
                 + "Row #0: \n"
                 + "Row #0: \n"
@@ -151,7 +151,7 @@ class AggregateFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[foo]}\n"
+                + "{[Store].[Store].[foo]}\n"
                 + "Row #0: 67,659\n" );
     }
 
@@ -172,20 +172,20 @@ class AggregateFunDefTest {
             "Axis #0:\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #1:\n"
-                + "{[Store].[Canada].[BC]}\n"
-                + "{[Store].[Mexico].[DF]}\n"
-                + "{[Store].[Mexico].[Guerrero]}\n"
-                + "{[Store].[Mexico].[Jalisco]}\n"
-                + "{[Store].[Mexico].[Veracruz]}\n"
-                + "{[Store].[Mexico].[Yucatan]}\n"
-                + "{[Store].[Mexico].[Zacatecas]}\n"
-                + "{[Store].[USA].[CA]}\n"
-                + "{[Store].[USA].[OR]}\n"
-                + "{[Store].[USA].[WA]}\n"
+                + "{[Store].[Store].[Canada].[BC]}\n"
+                + "{[Store].[Store].[Mexico].[DF]}\n"
+                + "{[Store].[Store].[Mexico].[Guerrero]}\n"
+                + "{[Store].[Store].[Mexico].[Jalisco]}\n"
+                + "{[Store].[Store].[Mexico].[Veracruz]}\n"
+                + "{[Store].[Store].[Mexico].[Yucatan]}\n"
+                + "{[Store].[Store].[Mexico].[Zacatecas]}\n"
+                + "{[Store].[Store].[USA].[CA]}\n"
+                + "{[Store].[Store].[USA].[OR]}\n"
+                + "{[Store].[Store].[USA].[WA]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1st Half Sales]}\n"
-                + "{[Time].[2nd Half Sales]}\n"
-                + "{[Time].[Difference]}\n"
+                + "{[Time].[Time].[1st Half Sales]}\n"
+                + "{[Time].[Time].[2nd Half Sales]}\n"
+                + "{[Time].[Time].[Difference]}\n"
                 + "Row #0: \n"
                 + "Row #0: \n"
                 + "Row #0: \n"
@@ -231,14 +231,14 @@ class AggregateFunDefTest {
                 + "FROM [Sales]\n"
                 + "WHERE ([Time].[1997 H1], [Education Level].[College or higher], [Gender].[F])",
             "Axis #0:\n"
-                + "{[Time].[1997 H1], [Education Level].[College or higher], [Gender].[F]}\n"
+                + "{[Time].[Time].[1997 H1], [Education Level].[Education Level].[College or higher], [Gender].[Gender].[F]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Food]}\n"
-                + "{[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Food]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
                 + "Row #0: 1,797\n"
                 + "Row #0: 3,620.49\n"
                 + "Row #1: 15,002\n"

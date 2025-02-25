@@ -806,7 +806,7 @@ class SqlQueryTest  extends BatchTestCase {
         };
 
         assertNoQuerySql(connection,
-            "select {[Time.Weekly].[All Time.Weeklys]} ON COLUMNS from [Sales]",
+            "select {[Time].[Weekly].[All Weeklys]} ON COLUMNS from [Sales]",
             patterns);
     }
 
@@ -1040,8 +1040,8 @@ class SqlQueryTest  extends BatchTestCase {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx,
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1]}\n"
-            + "{[Time].[1997].[Q2].[4]}\n"
+            + "{[Time].[Time].[1997].[Q1]}\n"
+            + "{[Time].[Time].[1997].[Q2].[4]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Avg Sales]}\n"
             + "Row #0: 3.069\n");

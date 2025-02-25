@@ -156,7 +156,7 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
             .withAggregationLevels(List.of(
             	AggregationLevelMappingImpl.builder()
                     .withColumn(dimCodeMondrian2225Agg)
-                    .withName("[Product Code].[Code]")
+                    .withName("[Product Code].[Product Code].[Code]")
                     .withCollapsed(true)
                     .build()
             ))
@@ -261,7 +261,7 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
                                     .withAccess(AccessHierarchy.CUSTOM)
                                     .withMemberGrants(List.of(
                                     	AccessMemberGrantMappingImpl.builder()
-                                            .withMember("[Customer.Customer].[NonExistingName]")
+                                            .withMember("[Customer].[Customer].[NonExistingName]")
                                             .withAccess(AccessMember.ALL)
                                             .build()
                                     ))

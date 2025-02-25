@@ -1083,9 +1083,9 @@ class TestAggregationManager extends BatchTestCase {
             "Axis #0:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #1:\n"
-            + "{[Time].[1997]}\n"
+            + "{[Time].[Time].[1997]}\n"
             + "Axis #2:\n"
-            + "{[Store].[All Stores], [Product].[All Products]}\n"
+            + "{[Store].[Store].[All Stores], [Product].[Product].[All Products]}\n"
             + "Row #0: 266,773\n");
     }
 
@@ -1121,7 +1121,7 @@ class TestAggregationManager extends BatchTestCase {
             + "from [Sales] "
             + "where [Store Type].[Store Type].[Small Grocery]",
             "Axis #0:\n"
-            + "{[Store Type].[Small Grocery]}\n"
+            + "{[Store Type].[Store Type].[Small Grocery]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n");
@@ -2084,57 +2084,57 @@ class TestAggregationManager extends BatchTestCase {
             "Axis #0:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #1:\n"
-            + "{[Store].[All Stores]}\n"
+            + "{[Store].[Store].[All Stores]}\n"
             + "Axis #2:\n"
-            + "{[Promotions].[Bag Stuffers]}\n"
-            + "{[Promotions].[Best Savings]}\n"
-            + "{[Promotions].[Big Promo]}\n"
-            + "{[Promotions].[Big Time Discounts]}\n"
-            + "{[Promotions].[Big Time Savings]}\n"
-            + "{[Promotions].[Bye Bye Baby]}\n"
-            + "{[Promotions].[Cash Register Lottery]}\n"
-            + "{[Promotions].[Dimes Off]}\n"
-            + "{[Promotions].[Dollar Cutters]}\n"
-            + "{[Promotions].[Dollar Days]}\n"
-            + "{[Promotions].[Double Down Sale]}\n"
-            + "{[Promotions].[Double Your Savings]}\n"
-            + "{[Promotions].[Free For All]}\n"
-            + "{[Promotions].[Go For It]}\n"
-            + "{[Promotions].[Green Light Days]}\n"
-            + "{[Promotions].[Green Light Special]}\n"
-            + "{[Promotions].[High Roller Savings]}\n"
-            + "{[Promotions].[I Cant Believe It Sale]}\n"
-            + "{[Promotions].[Money Savers]}\n"
-            + "{[Promotions].[Mystery Sale]}\n"
-            + "{[Promotions].[No Promotion]}\n"
-            + "{[Promotions].[One Day Sale]}\n"
-            + "{[Promotions].[Pick Your Savings]}\n"
-            + "{[Promotions].[Price Cutters]}\n"
-            + "{[Promotions].[Price Destroyers]}\n"
-            + "{[Promotions].[Price Savers]}\n"
-            + "{[Promotions].[Price Slashers]}\n"
-            + "{[Promotions].[Price Smashers]}\n"
-            + "{[Promotions].[Price Winners]}\n"
-            + (p ? "" : "{[Promotions].[Sale Winners]}\n")
-            + "{[Promotions].[Sales Days]}\n"
-            + "{[Promotions].[Sales Galore]}\n"
-            + (!p ? "" : "{[Promotions].[Sale Winners]}\n")
-            + "{[Promotions].[Save-It Sale]}\n"
-            + "{[Promotions].[Saving Days]}\n"
-            + "{[Promotions].[Savings Galore]}\n"
-            + "{[Promotions].[Shelf Clearing Days]}\n"
-            + "{[Promotions].[Shelf Emptiers]}\n"
-            + "{[Promotions].[Super Duper Savers]}\n"
-            + "{[Promotions].[Super Savers]}\n"
-            + "{[Promotions].[Super Wallet Savers]}\n"
-            + "{[Promotions].[Three for One]}\n"
-            + "{[Promotions].[Tip Top Savings]}\n"
-            + "{[Promotions].[Two Day Sale]}\n"
-            + "{[Promotions].[Two for One]}\n"
-            + "{[Promotions].[Unbeatable Price Savers]}\n"
-            + "{[Promotions].[Wallet Savers]}\n"
-            + "{[Promotions].[Weekend Markdown]}\n"
-            + "{[Promotions].[You Save Days]}\n"
+            + "{[Promotions].[Promotions].[Bag Stuffers]}\n"
+            + "{[Promotions].[Promotions].[Best Savings]}\n"
+            + "{[Promotions].[Promotions].[Big Promo]}\n"
+            + "{[Promotions].[Promotions].[Big Time Discounts]}\n"
+            + "{[Promotions].[Promotions].[Big Time Savings]}\n"
+            + "{[Promotions].[Promotions].[Bye Bye Baby]}\n"
+            + "{[Promotions].[Promotions].[Cash Register Lottery]}\n"
+            + "{[Promotions].[Promotions].[Dimes Off]}\n"
+            + "{[Promotions].[Promotions].[Dollar Cutters]}\n"
+            + "{[Promotions].[Promotions].[Dollar Days]}\n"
+            + "{[Promotions].[Promotions].[Double Down Sale]}\n"
+            + "{[Promotions].[Promotions].[Double Your Savings]}\n"
+            + "{[Promotions].[Promotions].[Free For All]}\n"
+            + "{[Promotions].[Promotions].[Go For It]}\n"
+            + "{[Promotions].[Promotions].[Green Light Days]}\n"
+            + "{[Promotions].[Promotions].[Green Light Special]}\n"
+            + "{[Promotions].[Promotions].[High Roller Savings]}\n"
+            + "{[Promotions].[Promotions].[I Cant Believe It Sale]}\n"
+            + "{[Promotions].[Promotions].[Money Savers]}\n"
+            + "{[Promotions].[Promotions].[Mystery Sale]}\n"
+            + "{[Promotions].[Promotions].[No Promotion]}\n"
+            + "{[Promotions].[Promotions].[One Day Sale]}\n"
+            + "{[Promotions].[Promotions].[Pick Your Savings]}\n"
+            + "{[Promotions].[Promotions].[Price Cutters]}\n"
+            + "{[Promotions].[Promotions].[Price Destroyers]}\n"
+            + "{[Promotions].[Promotions].[Price Savers]}\n"
+            + "{[Promotions].[Promotions].[Price Slashers]}\n"
+            + "{[Promotions].[Promotions].[Price Smashers]}\n"
+            + "{[Promotions].[Promotions].[Price Winners]}\n"
+            + (p ? "" : "{[Promotions].[Promotions].[Sale Winners]}\n")
+            + "{[Promotions].[Promotions].[Sales Days]}\n"
+            + "{[Promotions].[Promotions].[Sales Galore]}\n"
+            + (!p ? "" : "{[Promotions].[Promotions].[Sale Winners]}\n")
+            + "{[Promotions].[Promotions].[Save-It Sale]}\n"
+            + "{[Promotions].[Promotions].[Saving Days]}\n"
+            + "{[Promotions].[Promotions].[Savings Galore]}\n"
+            + "{[Promotions].[Promotions].[Shelf Clearing Days]}\n"
+            + "{[Promotions].[Promotions].[Shelf Emptiers]}\n"
+            + "{[Promotions].[Promotions].[Super Duper Savers]}\n"
+            + "{[Promotions].[Promotions].[Super Savers]}\n"
+            + "{[Promotions].[Promotions].[Super Wallet Savers]}\n"
+            + "{[Promotions].[Promotions].[Three for One]}\n"
+            + "{[Promotions].[Promotions].[Tip Top Savings]}\n"
+            + "{[Promotions].[Promotions].[Two Day Sale]}\n"
+            + "{[Promotions].[Promotions].[Two for One]}\n"
+            + "{[Promotions].[Promotions].[Unbeatable Price Savers]}\n"
+            + "{[Promotions].[Promotions].[Wallet Savers]}\n"
+            + "{[Promotions].[Promotions].[Weekend Markdown]}\n"
+            + "{[Promotions].[Promotions].[You Save Days]}\n"
             + "Row #0: 901\n"
             + "Row #1: 2,081\n"
             + "Row #2: 1,789\n"
@@ -2354,7 +2354,7 @@ class TestAggregationManager extends BatchTestCase {
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier5::new);
         final String mdxQuery =
             "select {[Measures].[Unit Sales]} on columns, "
-            + "non empty CrossJoin({[Time.Weekly].[1997].[1].[15]},CrossJoin({[Customers].[USA].[CA].[Lincoln Acres].[William Smith]}, {[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Washington].[Washington Diet Cola]})) on rows "
+            + "non empty CrossJoin({[Time].[Weekly].[1997].[1].[15]},CrossJoin({[Customers].[USA].[CA].[Lincoln Acres].[William Smith]}, {[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Washington].[Washington Diet Cola]})) on rows "
             + "from [Sales_Foo] ";
         final String sqlOracle =
             "select count(*) as \"c0\" from \"agg_pl_01_sales_fact_1997\" \"agg_pl_01_sales_fact_1997\"";
@@ -2497,7 +2497,7 @@ class TestAggregationManager extends BatchTestCase {
                                     ))
                                     .withAggregationLevels(List.of(
                                     	AggregationLevelMappingImpl.builder()
-                                            .withName("[Product].[Product Id]")
+                                            .withName("[Product].[Product].[Product Id]")
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                             .withCollapsed(false)
                                             .build()
@@ -2596,7 +2596,7 @@ class TestAggregationManager extends BatchTestCase {
          */
         withSchema(context, TestNonCollapsedAggregateModifier::new);
         final String mdx =
-            "select {[Product].[Product Family].Members} on rows, {[Measures].[Unit Sales]} on columns from [Foo]";
+            "select {[Product].[Product].[Product Family].Members} on rows, {[Measures].[Unit Sales]} on columns from [Foo]";
         final String sqlOracle =
             "select \"product_class\".\"product_family\" as \"c0\", sum(\"agg_l_05_sales_fact_1997\".\"unit_sales\") as \"m0\" from \"product_class\" \"product_class\", \"product\" \"product\", \"agg_l_05_sales_fact_1997\" \"agg_l_05_sales_fact_1997\" where \"agg_l_05_sales_fact_1997\".\"product_id\" = \"product\".\"product_id\" and \"product\".\"product_class_id\" = \"product_class\".\"product_class_id\" group by \"product_class\".\"product_family\"";
         final String sqlMysql =
@@ -2686,9 +2686,9 @@ class TestAggregationManager extends BatchTestCase {
             +    "Axis #1:\n"
             +    "{[Measures].[Unit Sales]}\n"
             +    "Axis #2:\n"
-            +    "{[Product].[Drink]}\n"
-            +    "{[Product].[Food]}\n"
-            +    "{[Product].[Non-Consumable]}\n"
+            +    "{[Product].[Product].[Drink]}\n"
+            +    "{[Product].[Product].[Food]}\n"
+            +    "{[Product].[Product].[Non-Consumable]}\n"
             +    "Row #0: 24,597\n"
             +    "Row #1: 191,940\n"
             +    "Row #2: 50,236\n");
@@ -2769,20 +2769,20 @@ class TestAggregationManager extends BatchTestCase {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Promotions].[Bulk Mail]}\n"
-            + "{[Promotions].[Cash Register Handout]}\n"
-            + "{[Promotions].[Daily Paper]}\n"
-            + "{[Promotions].[Daily Paper, Radio]}\n"
-            + "{[Promotions].[Daily Paper, Radio, TV]}\n"
-            + "{[Promotions].[In-Store Coupon]}\n"
-            + "{[Promotions].[No Media]}\n"
-            + "{[Promotions].[Product Attachment]}\n"
-            + "{[Promotions].[Radio]}\n"
-            + "{[Promotions].[Street Handout]}\n"
-            + "{[Promotions].[Sunday Paper]}\n"
-            + "{[Promotions].[Sunday Paper, Radio]}\n"
-            + "{[Promotions].[Sunday Paper, Radio, TV]}\n"
-            + "{[Promotions].[TV]}\n"
+            + "{[Promotions].[Promotions].[Bulk Mail]}\n"
+            + "{[Promotions].[Promotions].[Cash Register Handout]}\n"
+            + "{[Promotions].[Promotions].[Daily Paper]}\n"
+            + "{[Promotions].[Promotions].[Daily Paper, Radio]}\n"
+            + "{[Promotions].[Promotions].[Daily Paper, Radio, TV]}\n"
+            + "{[Promotions].[Promotions].[In-Store Coupon]}\n"
+            + "{[Promotions].[Promotions].[No Media]}\n"
+            + "{[Promotions].[Promotions].[Product Attachment]}\n"
+            + "{[Promotions].[Promotions].[Radio]}\n"
+            + "{[Promotions].[Promotions].[Street Handout]}\n"
+            + "{[Promotions].[Promotions].[Sunday Paper]}\n"
+            + "{[Promotions].[Promotions].[Sunday Paper, Radio]}\n"
+            + "{[Promotions].[Promotions].[Sunday Paper, Radio, TV]}\n"
+            + "{[Promotions].[Promotions].[TV]}\n"
             + "Row #0: 4,320\n"
             + "Row #1: 6,697\n"
             + "Row #2: 7,738\n"
@@ -2942,12 +2942,12 @@ class TestAggregationManager extends BatchTestCase {
                             ))
                             .withAggregationLevels(List.of(
                             	AggregationLevelMappingImpl.builder()
-                                    .withName("[Product].[Product Id]")
+                                    .withName("[Product].[Product].[Product Id]")
                                     .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                     .withCollapsed(false)
                                     .build(),
                                 AggregationLevelMappingImpl.builder()
-                                    .withName("[Store].[Store Id]")
+                                    .withName("[Store].[Store].[Store Id]")
                                     .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_AGG_L_05_SALES_FACT_1997)
                                     .withCollapsed(false)
                                     .build()
@@ -3092,7 +3092,7 @@ class TestAggregationManager extends BatchTestCase {
         withSchema(context, TestTwoNonCollapsedAggregateModifier::new);
 
         final String mdx =
-            "select {Crossjoin([Product].[Product Family].Members, [Store].[Store Id].Members)} on rows, {[Measures].[Unit Sales]} on columns from [Foo]";
+            "select {Crossjoin([Product].[Product].[Product Family].Members, [Store].[Store].[Store Id].Members)} on rows, {[Measures].[Unit Sales]} on columns from [Foo]";
         final String sqlOracle =
             "select\n"
             + "    \"product_class\".\"product_family\" as \"c0\",\n"
@@ -3305,18 +3305,18 @@ class TestAggregationManager extends BatchTestCase {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997].[Q1].[1], [Store].[USA]}\n"
-            + "{[Time].[1997].[Q1].[2], [Store].[USA]}\n"
-            + "{[Time].[1997].[Q1].[3], [Store].[USA]}\n"
-            + "{[Time].[1997].[Q2].[4], [Store].[USA]}\n"
-            + "{[Time].[1997].[Q2].[5], [Store].[USA]}\n"
-            + "{[Time].[1997].[Q2].[6], [Store].[USA]}\n"
-            + "{[Time].[1997].[Q3].[7], [Store].[USA]}\n"
-            + "{[Time].[1997].[Q3].[8], [Store].[USA]}\n"
-            + "{[Time].[1997].[Q3].[9], [Store].[USA]}\n"
-            + "{[Time].[1997].[Q4].[10], [Store].[USA]}\n"
-            + "{[Time].[1997].[Q4].[11], [Store].[USA]}\n"
-            + "{[Time].[1997].[Q4].[12], [Store].[USA]}\n"
+            + "{[Time].[Time].[1997].[Q1].[1], [Store].[Store].[USA]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2], [Store].[Store].[USA]}\n"
+            + "{[Time].[Time].[1997].[Q1].[3], [Store].[Store].[USA]}\n"
+            + "{[Time].[Time].[1997].[Q2].[4], [Store].[Store].[USA]}\n"
+            + "{[Time].[Time].[1997].[Q2].[5], [Store].[Store].[USA]}\n"
+            + "{[Time].[Time].[1997].[Q2].[6], [Store].[Store].[USA]}\n"
+            + "{[Time].[Time].[1997].[Q3].[7], [Store].[Store].[USA]}\n"
+            + "{[Time].[Time].[1997].[Q3].[8], [Store].[Store].[USA]}\n"
+            + "{[Time].[Time].[1997].[Q3].[9], [Store].[Store].[USA]}\n"
+            + "{[Time].[Time].[1997].[Q4].[10], [Store].[Store].[USA]}\n"
+            + "{[Time].[Time].[1997].[Q4].[11], [Store].[Store].[USA]}\n"
+            + "{[Time].[Time].[1997].[Q4].[12], [Store].[Store].[USA]}\n"
             + "Row #0: 21,628\n"
             + "Row #1: 20,957\n"
             + "Row #2: 23,706\n"
@@ -3414,11 +3414,11 @@ class TestAggregationManager extends BatchTestCase {
          */
 
         final String mdx =
-            "select {NonEmptyCrossJoin([Time].[Year].Members, [Store].[Store Country].Members)} on rows,"
+            "select {NonEmptyCrossJoin([Time].[Time].[Year].Members, [Store].[Store].[Store Country].Members)} on rows,"
             + "{[Measures].[Unit Sales]} on columns "
             + "from [Sales1]";
         final String mdxTooLowForAgg =
-            "select {NonEmptyCrossJoin([Time].[Day].Members, [Store].[Store Country].Members)} on rows,"
+            "select {NonEmptyCrossJoin([Time].[Time].[Day].Members, [Store].[Store].[Store Country].Members)} on rows,"
             + "{[Measures].[Unit Sales]} on columns "
             + "from [Sales1]";
 
@@ -3551,8 +3551,8 @@ class TestAggregationManager extends BatchTestCase {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997], [Store].[USA]}\n"
-            + "{[Time].[1998], [Store].[USA]}\n"
+            + "{[Time].[Time].[1997], [Store].[Store].[USA]}\n"
+            + "{[Time].[Time].[1998], [Store].[Store].[USA]}\n"
             + "Row #0: 8,119,905\n"
             + "Row #1: 8,119,905\n");
 
@@ -3668,7 +3668,7 @@ class TestAggregationManager extends BatchTestCase {
             + "    \"agg_c_10_sales_fact_1997\".\"the_year\"";
         assertQuerySqlOrNot(
             context.getConnectionWithDefaultRole(),
-            "select Time.[1997] on 0 from sales",
+            "select Time.Time.[1997] on 0 from sales",
             new SqlPattern[]{
                 new SqlPattern(
                     DatabaseProduct.MYSQL,

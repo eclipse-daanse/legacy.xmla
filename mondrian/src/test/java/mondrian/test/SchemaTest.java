@@ -109,14 +109,12 @@ import org.eclipse.daanse.rolap.mapping.pojo.RowValueMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TimeDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.VirtualCubeMappingImpl;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -129,15 +127,10 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mysql.cj.xdevapi.RowImpl;
-
-import mondrian.olap.StandardProperty;
 import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapConnection;
-import mondrian.rolap.RolapCube;
 import mondrian.rolap.aggmatcher.AggTableManager;
 import mondrian.spi.PropertyFormatter;
 import mondrian.util.Bug;
@@ -152,11 +145,6 @@ import mondrian.util.Bug;
  * @since August 7, 2006
  */
 class SchemaTest {
-
-    @BeforeEach
-    public void beforeEach() {
-        SystemWideProperties.instance().SsasCompatibleNaming = false;
-    }
 
     @AfterEach
     public void afterEach() {
@@ -280,7 +268,7 @@ class SchemaTest {
             + "Axis #1:\n"
             + "{[Measures].[QuantumProfit]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[foo]}\n"
+            + "{[Gender].[Gender].[foo]}\n"
             + "Row #0: $7.52\n");
     }
 
@@ -343,7 +331,7 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender with default].[M]}\n"
+            + "{[Gender with default].[Gender with default].[M]}\n"
             + "Row #0: 135,215\n");
     }
 
@@ -440,7 +428,7 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Product with no all].[Nuts]}\n"
+            + "{[Product with no all].[Product with no all].[Nuts]}\n"
             + "Row #0: 4,400\n");
     }
 
@@ -505,7 +493,7 @@ class SchemaTest {
             + "Axis #1:\n"
             // Note that the 'all' member is named according to the rule
             // '[<hierarchy>].[All <hierarchy>s]'.
-            + "{[Gender with default].[F]}\n"
+            + "{[Gender with default].[Gender with default].[F]}\n"
             + "Row #0: 131,558\n");
     }
 
@@ -554,7 +542,7 @@ class SchemaTest {
         withSchema(context, TestHierarchyNoLevelsFailsModifier::new);
         assertQueryThrows(context,
             "select {[Gender no levels]} on columns from [Sales]",
-            "Hierarchy '[Gender no levels]' must have at least one level.");
+            "Hierarchy '[Gender no levels].[Gender no levels]' must have at least one level.");
     }
 
     @ParameterizedTest
@@ -618,7 +606,7 @@ class SchemaTest {
         withSchema(context, TestHierarchyNonUniqueLevelsFailsModifier::new);
         assertQueryThrows(context,
             "select {[Gender dup levels]} on columns from [Sales]",
-            "Level names within hierarchy '[Gender dup levels]' are not unique; there is more than one level with name 'Gender'.");
+            "Level names within hierarchy '[Gender dup levels].[Gender dup levels]' are not unique; there is more than one level with name 'Gender'.");
     }
 
     /**
@@ -666,9 +654,9 @@ class SchemaTest {
             + "{[Measures].[Fact Count]}\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[All Gender]}\n"
-            + "{[Gender].[F]}\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[All Gender]}\n"
+            + "{[Gender].[Gender].[F]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Row #0: 86,837\n"
             + "Row #0: 266,773\n"
             + "Row #1: 42,831\n"
@@ -991,7 +979,7 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Yearly Income2].[All Yearly Income2s]}\n"
+            + "{[Yearly Income2].[Yearly Income2].[All Yearly Income2s]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 266,773\n");
@@ -1132,9 +1120,9 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Yearly Income].[$10K - $30K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$10K - $30K]}\n"
             + "Axis #2:\n"
-            + "{[Yearly Income2].[$150K +]}\n"
+            + "{[Yearly Income2].[Yearly Income2].[$150K +]}\n"
             + "Row #0: 918\n");
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1147,70 +1135,70 @@ class SchemaTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Yearly Income].[$10K - $30K], [Yearly Income2].[$10K - $30K]}\n"
-            + "{[Yearly Income].[$10K - $30K], [Yearly Income2].[$110K - $130K]}\n"
-            + "{[Yearly Income].[$10K - $30K], [Yearly Income2].[$130K - $150K]}\n"
-            + "{[Yearly Income].[$10K - $30K], [Yearly Income2].[$150K +]}\n"
-            + "{[Yearly Income].[$10K - $30K], [Yearly Income2].[$30K - $50K]}\n"
-            + "{[Yearly Income].[$10K - $30K], [Yearly Income2].[$50K - $70K]}\n"
-            + "{[Yearly Income].[$10K - $30K], [Yearly Income2].[$70K - $90K]}\n"
-            + "{[Yearly Income].[$10K - $30K], [Yearly Income2].[$90K - $110K]}\n"
-            + "{[Yearly Income].[$110K - $130K], [Yearly Income2].[$10K - $30K]}\n"
-            + "{[Yearly Income].[$110K - $130K], [Yearly Income2].[$110K - $130K]}\n"
-            + "{[Yearly Income].[$110K - $130K], [Yearly Income2].[$130K - $150K]}\n"
-            + "{[Yearly Income].[$110K - $130K], [Yearly Income2].[$150K +]}\n"
-            + "{[Yearly Income].[$110K - $130K], [Yearly Income2].[$30K - $50K]}\n"
-            + "{[Yearly Income].[$110K - $130K], [Yearly Income2].[$50K - $70K]}\n"
-            + "{[Yearly Income].[$110K - $130K], [Yearly Income2].[$70K - $90K]}\n"
-            + "{[Yearly Income].[$110K - $130K], [Yearly Income2].[$90K - $110K]}\n"
-            + "{[Yearly Income].[$130K - $150K], [Yearly Income2].[$10K - $30K]}\n"
-            + "{[Yearly Income].[$130K - $150K], [Yearly Income2].[$110K - $130K]}\n"
-            + "{[Yearly Income].[$130K - $150K], [Yearly Income2].[$130K - $150K]}\n"
-            + "{[Yearly Income].[$130K - $150K], [Yearly Income2].[$150K +]}\n"
-            + "{[Yearly Income].[$130K - $150K], [Yearly Income2].[$30K - $50K]}\n"
-            + "{[Yearly Income].[$130K - $150K], [Yearly Income2].[$50K - $70K]}\n"
-            + "{[Yearly Income].[$130K - $150K], [Yearly Income2].[$70K - $90K]}\n"
-            + "{[Yearly Income].[$130K - $150K], [Yearly Income2].[$90K - $110K]}\n"
-            + "{[Yearly Income].[$150K +], [Yearly Income2].[$10K - $30K]}\n"
-            + "{[Yearly Income].[$150K +], [Yearly Income2].[$110K - $130K]}\n"
-            + "{[Yearly Income].[$150K +], [Yearly Income2].[$130K - $150K]}\n"
-            + "{[Yearly Income].[$150K +], [Yearly Income2].[$150K +]}\n"
-            + "{[Yearly Income].[$150K +], [Yearly Income2].[$30K - $50K]}\n"
-            + "{[Yearly Income].[$150K +], [Yearly Income2].[$50K - $70K]}\n"
-            + "{[Yearly Income].[$150K +], [Yearly Income2].[$70K - $90K]}\n"
-            + "{[Yearly Income].[$150K +], [Yearly Income2].[$90K - $110K]}\n"
-            + "{[Yearly Income].[$30K - $50K], [Yearly Income2].[$10K - $30K]}\n"
-            + "{[Yearly Income].[$30K - $50K], [Yearly Income2].[$110K - $130K]}\n"
-            + "{[Yearly Income].[$30K - $50K], [Yearly Income2].[$130K - $150K]}\n"
-            + "{[Yearly Income].[$30K - $50K], [Yearly Income2].[$150K +]}\n"
-            + "{[Yearly Income].[$30K - $50K], [Yearly Income2].[$30K - $50K]}\n"
-            + "{[Yearly Income].[$30K - $50K], [Yearly Income2].[$50K - $70K]}\n"
-            + "{[Yearly Income].[$30K - $50K], [Yearly Income2].[$70K - $90K]}\n"
-            + "{[Yearly Income].[$30K - $50K], [Yearly Income2].[$90K - $110K]}\n"
-            + "{[Yearly Income].[$50K - $70K], [Yearly Income2].[$10K - $30K]}\n"
-            + "{[Yearly Income].[$50K - $70K], [Yearly Income2].[$110K - $130K]}\n"
-            + "{[Yearly Income].[$50K - $70K], [Yearly Income2].[$130K - $150K]}\n"
-            + "{[Yearly Income].[$50K - $70K], [Yearly Income2].[$150K +]}\n"
-            + "{[Yearly Income].[$50K - $70K], [Yearly Income2].[$30K - $50K]}\n"
-            + "{[Yearly Income].[$50K - $70K], [Yearly Income2].[$50K - $70K]}\n"
-            + "{[Yearly Income].[$50K - $70K], [Yearly Income2].[$70K - $90K]}\n"
-            + "{[Yearly Income].[$50K - $70K], [Yearly Income2].[$90K - $110K]}\n"
-            + "{[Yearly Income].[$70K - $90K], [Yearly Income2].[$10K - $30K]}\n"
-            + "{[Yearly Income].[$70K - $90K], [Yearly Income2].[$110K - $130K]}\n"
-            + "{[Yearly Income].[$70K - $90K], [Yearly Income2].[$130K - $150K]}\n"
-            + "{[Yearly Income].[$70K - $90K], [Yearly Income2].[$150K +]}\n"
-            + "{[Yearly Income].[$70K - $90K], [Yearly Income2].[$30K - $50K]}\n"
-            + "{[Yearly Income].[$70K - $90K], [Yearly Income2].[$50K - $70K]}\n"
-            + "{[Yearly Income].[$70K - $90K], [Yearly Income2].[$70K - $90K]}\n"
-            + "{[Yearly Income].[$70K - $90K], [Yearly Income2].[$90K - $110K]}\n"
-            + "{[Yearly Income].[$90K - $110K], [Yearly Income2].[$10K - $30K]}\n"
-            + "{[Yearly Income].[$90K - $110K], [Yearly Income2].[$110K - $130K]}\n"
-            + "{[Yearly Income].[$90K - $110K], [Yearly Income2].[$130K - $150K]}\n"
-            + "{[Yearly Income].[$90K - $110K], [Yearly Income2].[$150K +]}\n"
-            + "{[Yearly Income].[$90K - $110K], [Yearly Income2].[$30K - $50K]}\n"
-            + "{[Yearly Income].[$90K - $110K], [Yearly Income2].[$50K - $70K]}\n"
-            + "{[Yearly Income].[$90K - $110K], [Yearly Income2].[$70K - $90K]}\n"
-            + "{[Yearly Income].[$90K - $110K], [Yearly Income2].[$90K - $110K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$10K - $30K], [Yearly Income2].[Yearly Income2].[$10K - $30K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$10K - $30K], [Yearly Income2].[Yearly Income2].[$110K - $130K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$10K - $30K], [Yearly Income2].[Yearly Income2].[$130K - $150K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$10K - $30K], [Yearly Income2].[Yearly Income2].[$150K +]}\n"
+            + "{[Yearly Income].[Yearly Income].[$10K - $30K], [Yearly Income2].[Yearly Income2].[$30K - $50K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$10K - $30K], [Yearly Income2].[Yearly Income2].[$50K - $70K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$10K - $30K], [Yearly Income2].[Yearly Income2].[$70K - $90K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$10K - $30K], [Yearly Income2].[Yearly Income2].[$90K - $110K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$110K - $130K], [Yearly Income2].[Yearly Income2].[$10K - $30K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$110K - $130K], [Yearly Income2].[Yearly Income2].[$110K - $130K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$110K - $130K], [Yearly Income2].[Yearly Income2].[$130K - $150K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$110K - $130K], [Yearly Income2].[Yearly Income2].[$150K +]}\n"
+            + "{[Yearly Income].[Yearly Income].[$110K - $130K], [Yearly Income2].[Yearly Income2].[$30K - $50K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$110K - $130K], [Yearly Income2].[Yearly Income2].[$50K - $70K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$110K - $130K], [Yearly Income2].[Yearly Income2].[$70K - $90K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$110K - $130K], [Yearly Income2].[Yearly Income2].[$90K - $110K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$130K - $150K], [Yearly Income2].[Yearly Income2].[$10K - $30K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$130K - $150K], [Yearly Income2].[Yearly Income2].[$110K - $130K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$130K - $150K], [Yearly Income2].[Yearly Income2].[$130K - $150K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$130K - $150K], [Yearly Income2].[Yearly Income2].[$150K +]}\n"
+            + "{[Yearly Income].[Yearly Income].[$130K - $150K], [Yearly Income2].[Yearly Income2].[$30K - $50K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$130K - $150K], [Yearly Income2].[Yearly Income2].[$50K - $70K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$130K - $150K], [Yearly Income2].[Yearly Income2].[$70K - $90K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$130K - $150K], [Yearly Income2].[Yearly Income2].[$90K - $110K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$150K +], [Yearly Income2].[Yearly Income2].[$10K - $30K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$150K +], [Yearly Income2].[Yearly Income2].[$110K - $130K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$150K +], [Yearly Income2].[Yearly Income2].[$130K - $150K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$150K +], [Yearly Income2].[Yearly Income2].[$150K +]}\n"
+            + "{[Yearly Income].[Yearly Income].[$150K +], [Yearly Income2].[Yearly Income2].[$30K - $50K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$150K +], [Yearly Income2].[Yearly Income2].[$50K - $70K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$150K +], [Yearly Income2].[Yearly Income2].[$70K - $90K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$150K +], [Yearly Income2].[Yearly Income2].[$90K - $110K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$30K - $50K], [Yearly Income2].[Yearly Income2].[$10K - $30K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$30K - $50K], [Yearly Income2].[Yearly Income2].[$110K - $130K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$30K - $50K], [Yearly Income2].[Yearly Income2].[$130K - $150K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$30K - $50K], [Yearly Income2].[Yearly Income2].[$150K +]}\n"
+            + "{[Yearly Income].[Yearly Income].[$30K - $50K], [Yearly Income2].[Yearly Income2].[$30K - $50K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$30K - $50K], [Yearly Income2].[Yearly Income2].[$50K - $70K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$30K - $50K], [Yearly Income2].[Yearly Income2].[$70K - $90K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$30K - $50K], [Yearly Income2].[Yearly Income2].[$90K - $110K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$50K - $70K], [Yearly Income2].[Yearly Income2].[$10K - $30K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$50K - $70K], [Yearly Income2].[Yearly Income2].[$110K - $130K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$50K - $70K], [Yearly Income2].[Yearly Income2].[$130K - $150K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$50K - $70K], [Yearly Income2].[Yearly Income2].[$150K +]}\n"
+            + "{[Yearly Income].[Yearly Income].[$50K - $70K], [Yearly Income2].[Yearly Income2].[$30K - $50K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$50K - $70K], [Yearly Income2].[Yearly Income2].[$50K - $70K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$50K - $70K], [Yearly Income2].[Yearly Income2].[$70K - $90K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$50K - $70K], [Yearly Income2].[Yearly Income2].[$90K - $110K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$70K - $90K], [Yearly Income2].[Yearly Income2].[$10K - $30K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$70K - $90K], [Yearly Income2].[Yearly Income2].[$110K - $130K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$70K - $90K], [Yearly Income2].[Yearly Income2].[$130K - $150K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$70K - $90K], [Yearly Income2].[Yearly Income2].[$150K +]}\n"
+            + "{[Yearly Income].[Yearly Income].[$70K - $90K], [Yearly Income2].[Yearly Income2].[$30K - $50K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$70K - $90K], [Yearly Income2].[Yearly Income2].[$50K - $70K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$70K - $90K], [Yearly Income2].[Yearly Income2].[$70K - $90K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$70K - $90K], [Yearly Income2].[Yearly Income2].[$90K - $110K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$90K - $110K], [Yearly Income2].[Yearly Income2].[$10K - $30K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$90K - $110K], [Yearly Income2].[Yearly Income2].[$110K - $130K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$90K - $110K], [Yearly Income2].[Yearly Income2].[$130K - $150K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$90K - $110K], [Yearly Income2].[Yearly Income2].[$150K +]}\n"
+            + "{[Yearly Income].[Yearly Income].[$90K - $110K], [Yearly Income2].[Yearly Income2].[$30K - $50K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$90K - $110K], [Yearly Income2].[Yearly Income2].[$50K - $70K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$90K - $110K], [Yearly Income2].[Yearly Income2].[$70K - $90K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$90K - $110K], [Yearly Income2].[Yearly Income2].[$90K - $110K]}\n"
             + "Row #0: 12,824\n"
             + "Row #1: 2,822\n"
             + "Row #2: 2,933\n"
@@ -1341,7 +1329,7 @@ class SchemaTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Yearly Income2].[All Yearly Income2s], [Customers].[All Customers]}\n"
+            + "{[Yearly Income2].[Yearly Income2].[All Yearly Income2s], [Customers].[Customers].[All Customers]}\n"
             + "Row #0: 266,773\n");
     }
 
@@ -1406,9 +1394,9 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Yearly Income].[$10K - $30K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$10K - $30K]}\n"
             + "Axis #2:\n"
-            + "{[Yearly Income2].[$150K +]}\n"
+            + "{[Yearly Income2].[Yearly Income2].[$150K +]}\n"
             + "Row #0: \n");
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1421,14 +1409,14 @@ class SchemaTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Yearly Income].[$10K - $30K], [Yearly Income2].[$10K - $30K]}\n"
-            + "{[Yearly Income].[$110K - $130K], [Yearly Income2].[$110K - $130K]}\n"
-            + "{[Yearly Income].[$130K - $150K], [Yearly Income2].[$130K - $150K]}\n"
-            + "{[Yearly Income].[$150K +], [Yearly Income2].[$150K +]}\n"
-            + "{[Yearly Income].[$30K - $50K], [Yearly Income2].[$30K - $50K]}\n"
-            + "{[Yearly Income].[$50K - $70K], [Yearly Income2].[$50K - $70K]}\n"
-            + "{[Yearly Income].[$70K - $90K], [Yearly Income2].[$70K - $90K]}\n"
-            + "{[Yearly Income].[$90K - $110K], [Yearly Income2].[$90K - $110K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$10K - $30K], [Yearly Income2].[Yearly Income2].[$10K - $30K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$110K - $130K], [Yearly Income2].[Yearly Income2].[$110K - $130K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$130K - $150K], [Yearly Income2].[Yearly Income2].[$130K - $150K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$150K +], [Yearly Income2].[Yearly Income2].[$150K +]}\n"
+            + "{[Yearly Income].[Yearly Income].[$30K - $50K], [Yearly Income2].[Yearly Income2].[$30K - $50K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$50K - $70K], [Yearly Income2].[Yearly Income2].[$50K - $70K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$70K - $90K], [Yearly Income2].[Yearly Income2].[$70K - $90K]}\n"
+            + "{[Yearly Income].[Yearly Income].[$90K - $110K], [Yearly Income2].[Yearly Income2].[$90K - $110K]}\n"
             + "Row #0: 57,950\n"
             + "Row #1: 11,561\n"
             + "Row #2: 14,392\n"
@@ -1705,16 +1693,16 @@ class SchemaTest {
          */
         withSchema(context, TestSnowflakeHierarchyValidationNotNeededModifier::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select  {[Store.MyHierarchy].[Mexico]} on rows,"
-            + "{[Customers].[USA].[South West]} on columns"
+            "select  {[Store].[MyHierarchy].[Mexico]} on rows,"
+            + "{[Customers].[Customers].[USA].[South West]} on columns"
             + " from "
             + "AliasedDimensionsTesting",
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Customers].[USA].[South West]}\n"
+            + "{[Customers].[Customers].[USA].[South West]}\n"
             + "Axis #2:\n"
-            + "{[Store.MyHierarchy].[Mexico]}\n"
+            + "{[Store].[MyHierarchy].[Mexico]}\n"
             + "Row #0: 51,298\n");
     }
 
@@ -1998,16 +1986,16 @@ class SchemaTest {
          */
         withSchema(context, TestSnowflakeHierarchyValidationNotNeeded2Modifier::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select  {[Store.MyHierarchy].[USA].[South West]} on rows,"
-            + "{[Customers].[USA].[South West]} on columns"
+            "select  {[Store].[MyHierarchy].[USA].[South West]} on rows,"
+            + "{[Customers].[Customers].[USA].[South West]} on columns"
             + " from "
             + "AliasedDimensionsTesting",
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Customers].[USA].[South West]}\n"
+            + "{[Customers].[Customers].[USA].[South West]}\n"
             + "Axis #2:\n"
-            + "{[Store.MyHierarchy].[USA].[South West]}\n"
+            + "{[Store].[MyHierarchy].[USA].[South West]}\n"
             + "Row #0: 72,631\n");
     }
 
@@ -2222,9 +2210,9 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Customers].[USA].[South West]}\n"
+            + "{[Customers].[Customers].[USA].[South West]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[South West]}\n"
+            + "{[Store].[Store].[USA].[South West]}\n"
             + "Row #0: 72,631\n");
     }
 
@@ -2834,9 +2822,9 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[StoreB].[USA]}\n"
+            + "{[StoreB].[StoreB].[USA]}\n"
             + "Axis #2:\n"
-            + "{[StoreA].[USA]}\n"
+            + "{[StoreA].[StoreA].[USA]}\n"
             + "Row #0: 10,425\n");
     }
 
@@ -2995,9 +2983,9 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[StoreB].[USA]}\n"
+            + "{[StoreB].[StoreB].[USA]}\n"
             + "Axis #2:\n"
-            + "{[StoreA].[USA]}\n"
+            + "{[StoreA].[StoreA].[USA]}\n"
             + "Row #0: 10,425\n");
     }
 
@@ -3098,11 +3086,9 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + (SystemWideProperties.instance().SsasCompatibleNaming
-                ? "{[Time2].[Time].[1997]}\n"
-                : "{[Time2].[1997]}\n")
+            + "{[Time2].[Time].[1997]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997].[Q3]}\n"
+            + "{[Time].[Time].[1997].[Q3]}\n"
             + "Row #0: 16,266\n");
     }
 
@@ -3289,7 +3275,7 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[USA]}\n"
+            + "{[Store].[Store].[USA]}\n"
             + "Row #0: 266,773\n");
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -3300,9 +3286,9 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[USA]}\n"
+            + "{[Store].[Store].[USA]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997].[Q1]}\n"
+            + "{[Time].[Time].[1997].[Q1]}\n"
             + "Row #0: 66,291\n");
     }
 
@@ -3378,16 +3364,16 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[Canada].[BC]}\n"
-            + "{[Store].[Mexico].[DF]}\n"
-            + "{[Store].[Mexico].[Guerrero]}\n"
-            + "{[Store].[Mexico].[Jalisco]}\n"
-            + "{[Store].[Mexico].[Veracruz]}\n"
-            + "{[Store].[Mexico].[Yucatan]}\n"
-            + "{[Store].[Mexico].[Zacatecas]}\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[OR]}\n"
-            + "{[Store].[USA].[WA]}\n"
+            + "{[Store].[Store].[Canada].[BC]}\n"
+            + "{[Store].[Store].[Mexico].[DF]}\n"
+            + "{[Store].[Store].[Mexico].[Guerrero]}\n"
+            + "{[Store].[Store].[Mexico].[Jalisco]}\n"
+            + "{[Store].[Store].[Mexico].[Veracruz]}\n"
+            + "{[Store].[Store].[Mexico].[Yucatan]}\n"
+            + "{[Store].[Store].[Mexico].[Zacatecas]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[USA].[WA]}\n"
             + "Row #0: 7,700\n"
             + "Row #0: 1,492\n"
             + "Row #0: 228\n"
@@ -3490,7 +3476,6 @@ class SchemaTest {
         }
 
 
-        SystemWideProperties.instance().SsasCompatibleNaming = true;
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -3518,10 +3503,7 @@ class SchemaTest {
         // or [Store2].[All Stores] for short.
         //
         // Under the old behavior, the member is called [Store2].[All Store2s].
-        final String store2AllMember =
-            SystemWideProperties.instance().SsasCompatibleNaming
-                ? "[Store2].[All Stores]"
-                : "[Store2].[All Store2s]";
+        final String store2AllMember = "[Store2].[All Stores]";
         withSchema(context, TestAllMemberMultipleDimensionUsagesModifier::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select\n"
@@ -3624,15 +3606,8 @@ class SchemaTest {
          */
         withSchema(context, TestNonAliasedDimensionUsageModifier::new);
         final String query = "select\n"
-                             + " {[Time].[1997]} on columns \n"
+                             + " {[Time2].[Time].[1997]} on columns \n"
                              + "From [Sales Two Dimensions]";
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            assertQueryThrows(context,
-                query,
-                "In cube \"Sales Two Dimensions\" use of unaliased Dimension name \"[Time]\" rather than the alias name \"Time2\"");
-        } else {
-            // In new behavior, resolves to the hierarchy name [Time] even if
-            // not qualified by dimension name [Time2].
             assertQueryReturns(context.getConnectionWithDefaultRole(),
                 query,
                 "Axis #0:\n"
@@ -3640,7 +3615,6 @@ class SchemaTest {
                 + "Axis #1:\n"
                 + "{[Time2].[Time].[1997]}\n"
                 + "Row #0: 266,773\n");
-        }
     }
 
     /**
@@ -3823,11 +3797,11 @@ class SchemaTest {
             + "From [Warehouse (based on view)]\n"
             + "where [Warehouse].[2]",
             "Axis #0:\n"
-            + "{[Warehouse].[2]}\n"
+            + "{[Warehouse].[Warehouse].[2]}\n"
             + "Axis #1:\n"
-            + "{[Time].[1997]}\n"
+            + "{[Time].[Time].[1997]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[WA]}\n"
+            + "{[Store].[Store].[USA].[WA]}\n"
             + "Row #0: 917.554\n");
     }
 
@@ -3996,14 +3970,14 @@ class SchemaTest {
             + "From [Warehouse (based on view)]\n"
             + "where [Warehouse].[USA]",
             "Axis #0:\n"
-            + "{[Warehouse].[USA]}\n"
+            + "{[Warehouse].[Warehouse].[USA]}\n"
             + "Axis #1:\n"
-            + "{[Time].[1997]}\n"
-            + "{[Time].[1997].[Q3]}\n"
+            + "{[Time].[Time].[1997]}\n"
+            + "{[Time].[Time].[1997].[Q3]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[OR]}\n"
-            + "{[Store].[USA].[WA]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[USA].[WA]}\n"
             + "Row #0: 25,789.087\n"
             + "Row #0: 8,624.791\n"
             + "Row #1: 17,606.904\n"
@@ -4136,12 +4110,12 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store Type].[Deluxe Supermarket]}\n"
-            + "{[Store Type].[Gourmet Supermarket]}\n"
-            + "{[Store Type].[HeadQuarters]}\n"
-            + "{[Store Type].[Mid-Size Grocery]}\n"
-            + "{[Store Type].[Small Grocery]}\n"
-            + "{[Store Type].[Supermarket]}\n"
+            + "{[Store Type].[Store Type].[Deluxe Supermarket]}\n"
+            + "{[Store Type].[Store Type].[Gourmet Supermarket]}\n"
+            + "{[Store Type].[Store Type].[HeadQuarters]}\n"
+            + "{[Store Type].[Store Type].[Mid-Size Grocery]}\n"
+            + "{[Store Type].[Store Type].[Small Grocery]}\n"
+            + "{[Store Type].[Store Type].[Supermarket]}\n"
             + "Row #0: 146,045\n"
             + "Row #0: 47,447\n"
             + "Row #0: \n"
@@ -4209,16 +4183,16 @@ class SchemaTest {
             + "FROM [Sales]\n"
             + "WHERE ([Gender].[M])",
             "Axis #0:\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "{[Measures].[Customer Count]}\n"
             + "{[Measures].[Customer Count2]}\n"
             + "{[Measures].[Half Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[OR]}\n"
-            + "{[Store].[USA].[WA]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[USA].[WA]}\n"
             + "Row #0: 37,989\n"
             + "Row #0: 1,389\n"
             + "Row #0: 1,389\n"
@@ -5030,19 +5004,19 @@ class SchemaTest {
             + "{[Measures].[Store Sales]}\n"
             + "{[Measures].[StoreType]}\n"
             + "Axis #2:\n"
-            + "{[Store2].[2], [Product].[All Products]}\n"
-            + "{[Store2].[3], [Product].[All Products]}\n"
-            + "{[Store2].[6], [Product].[All Products]}\n"
-            + "{[Store2].[7], [Product].[All Products]}\n"
-            + "{[Store2].[11], [Product].[All Products]}\n"
-            + "{[Store2].[13], [Product].[All Products]}\n"
-            + "{[Store2].[14], [Product].[All Products]}\n"
-            + "{[Store2].[15], [Product].[All Products]}\n"
-            + "{[Store2].[16], [Product].[All Products]}\n"
-            + "{[Store2].[17], [Product].[All Products]}\n"
-            + "{[Store2].[22], [Product].[All Products]}\n"
-            + "{[Store2].[23], [Product].[All Products]}\n"
-            + "{[Store2].[24], [Product].[All Products]}\n"
+            + "{[Store2].[Store2].[2], [Product].[Product].[All Products]}\n"
+            + "{[Store2].[Store2].[3], [Product].[Product].[All Products]}\n"
+            + "{[Store2].[Store2].[6], [Product].[Product].[All Products]}\n"
+            + "{[Store2].[Store2].[7], [Product].[Product].[All Products]}\n"
+            + "{[Store2].[Store2].[11], [Product].[Product].[All Products]}\n"
+            + "{[Store2].[Store2].[13], [Product].[Product].[All Products]}\n"
+            + "{[Store2].[Store2].[14], [Product].[Product].[All Products]}\n"
+            + "{[Store2].[Store2].[15], [Product].[Product].[All Products]}\n"
+            + "{[Store2].[Store2].[16], [Product].[Product].[All Products]}\n"
+            + "{[Store2].[Store2].[17], [Product].[Product].[All Products]}\n"
+            + "{[Store2].[Store2].[22], [Product].[Product].[All Products]}\n"
+            + "{[Store2].[Store2].[23], [Product].[Product].[All Products]}\n"
+            + "{[Store2].[Store2].[24], [Product].[Product].[All Products]}\n"
             + "Row #0: 4,739.23\n"
             + "Row #0: Small Grocery\n"
             + "Row #1: 52,896.30\n"
@@ -5157,7 +5131,7 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Promotion Media].[All Media]}\n"
+            + "{[Promotion Media].[Promotion Media].[All Media]}\n"
             + "Row #0: 266,773\n");
     }
 
@@ -5224,9 +5198,9 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Product].[Drink]}\n"
-            + "{[Product].[Food]}\n"
-            + "{[Product].[Non-Consumable]}\n"
+            + "{[Product].[Product].[Drink]}\n"
+            + "{[Product].[Product].[Food]}\n"
+            + "{[Product].[Product].[Non-Consumable]}\n"
             + "Row #0: 24,597\n"
             + "Row #0: 191,940\n"
             + "Row #0: 50,236\n");
@@ -5543,7 +5517,7 @@ class SchemaTest {
             "select {[Measures]} on columns from [OneCalcMeasure]\n"
             + "where [Promotion Media].[TV]",
             "Axis #0:\n"
-            + "{[Promotion Media].[TV]}\n"
+            + "{[Promotion Media].[Promotion Media].[TV]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Fact Count]}\n"
             + "Row #0: 1,171\n");
@@ -5572,8 +5546,8 @@ class SchemaTest {
                         .builder()
                         .withName("SF and LA")
                         .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.storeHierarchy))
-                        .withParent("[Store].[USA].[CA]")
-                        .withFormula("[Store].[USA].[CA].[San Francisco] + [Store].[USA].[CA].[Los Angeles]")
+                        .withParent("[Store].[Store].[USA].[CA]")
+                        .withFormula("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]")
                         .build();
                     result.add(calculatedMember);
                 }
@@ -5601,24 +5575,23 @@ class SchemaTest {
         // the implicit stored measure, [Fact Count]. Stored measures, even
         // non-visible ones, come before calculated measures.
         assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select {[Store].[USA].[CA].[SF and LA]} on columns from [Sales]",
+            "select {[Store].[Store].[USA].[CA].[SF and LA]} on columns from [Sales]",
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[USA].[CA].[SF and LA]}\n"
+            + "{[Store].[Store].[USA].[CA].[SF and LA]}\n"
             + "Row #0: 27,780\n");
 
         // Now access the same member using a path that is not its unique name.
         // Only works with new name resolver (if ssas = true).
-        if (SystemWideProperties.instance().SsasCompatibleNaming) {
+
             assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
+                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA].[CA].[SF and LA]}\n"
+                + "{[Store].[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
-        }
 
         // Test where hierarchy & dimension both specified. should fail
         try {
@@ -5637,8 +5610,8 @@ class SchemaTest {
                             .withName("SF and LA")
                             .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.storeHierarchy))
                             //.dimension("[Store]")
-                            .withParent("[Store].[USA].[CA]")
-                            .withFormula("[Store].[USA].[CA].[San Francisco] + [Store].[USA].[CA].[Los Angeles]")
+                            .withParent("[Store].[Store].[USA].[CA]")
+                            .withFormula("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]")
                             .build();
                         result.add(calculatedMember);
                     }
@@ -5665,11 +5638,11 @@ class SchemaTest {
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestCalcMemberInCubeModifier2::new);
             assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
+                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA].[CA].[SF and LA]}\n"
+                + "{[Store].[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
             //fail();
         } catch (OlapRuntimeException e) {
@@ -5695,9 +5668,9 @@ class SchemaTest {
                     	CalculatedMemberMappingImpl calculatedMember = CalculatedMemberMappingImpl
                             .builder()
                             .withName("SF and LA")
-                            //.withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.Bacon))
-                            .withParent("[Store].[USA].[CA]")
-                            .withFormula("[Store].[USA].[CA].[San Francisco] + [Store].[USA].[CA].[Los Angeles]")
+                            .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.HIERARCHY_STORE_TYPE))
+                            .withParent("[Store].[Store].[USA].[CA]")
+                            .withFormula("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]")
                             .build();
                         result.add(calculatedMember);
                     }
@@ -5723,17 +5696,17 @@ class SchemaTest {
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestCalcMemberInCubeModifier3::new);
             assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
+                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA].[CA].[SF and LA]}\n"
+                + "{[Store].[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
             fail();
         } catch (OlapRuntimeException e) {
             assertTrue(
-                e.getCause().getMessage().contains(
-                    "'[Store].[All Stores].[USA].[CA].[SF and LA]' not found in cube 'Sales'"));
+                e.getMessage().contains(
+                    "The calculated member 'SF and LA' in cube 'Sales' is defined for hierarchy '[Store Type].[Store Type]' but its parent member is not part of that hierarchy"));
         }
 
         // test where formula is invalid. should fail
@@ -5752,7 +5725,7 @@ class SchemaTest {
                             .builder()
                             .withName("SF and LA")
                             .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.storeHierarchy))
-                            .withParent("[Store].[USA].[CA]")
+                            .withParent("[Store].[Store].[USA].[CA]")
                             .withFormula("Baconating!")
                             .build();
                         result.add(calculatedMember);
@@ -5778,11 +5751,11 @@ class SchemaTest {
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestCalcMemberInCubeModifier4::new);
             assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
+                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA].[CA].[SF and LA]}\n"
+                + "{[Store].[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
             fail();
         } catch (OlapRuntimeException e) {
@@ -5838,7 +5811,7 @@ class SchemaTest {
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA].[CA].[SF and LA]}\n"
+                + "{[Store].[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
             fail();
         } catch (OlapRuntimeException e) {
@@ -5865,8 +5838,8 @@ class SchemaTest {
                             .builder()
                             .withName("SF and LA")
                             .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.HIERARCHY_STORE_TYPE))
-                            .withParent("[Store].[USA].[CA]")
-                            .withFormula("[Store].[USA].[CA].[San Francisco] + [Store].[USA].[CA].[Los Angeles]")
+                            .withParent("[Store].[Store].[USA].[CA]")
+                            .withFormula("[Store].[Store].[USA].[CA].[San Francisco] + [Store].[Store].[USA].[CA].[Los Angeles]")
                             .build();
                         result.add(calculatedMember);
                     }
@@ -5893,18 +5866,18 @@ class SchemaTest {
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestCalcMemberInCubeModifier6::new);
             assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
+                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA].[CA].[SF and LA]}\n"
+                + "{[Store].[Store].[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
             fail();
         } catch (OlapRuntimeException e) {
             assertTrue(
                 e.getMessage().contains(
                     "The calculated member 'SF and LA' in cube 'Sales'"
-                    + " is defined for hierarchy '[Store Type]' but its"
+                    + " is defined for hierarchy '[Store Type].[Store Type]' but its"
                     + " parent member is not part of that hierarchy"));
         }
 
@@ -5925,7 +5898,7 @@ class SchemaTest {
                             .builder()
                             .withName("SF and LA")
                             .withHierarchy((HierarchyMappingImpl) look(FoodmartMappingSupplier.storeHierarchy))
-                            .withParent("[Store].[USA].[CA]")
+                            .withParent("[Store].[Store].[USA].[CA]")
                             .withFormula("")
                             .build();
                         result.add(calculatedMember);
@@ -5951,11 +5924,11 @@ class SchemaTest {
             ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
             withSchema(context, TestCalcMemberInCubeModifier7::new);
             assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
+                "select {[Store].[Store].[All Stores].[USA].[CA].[SF and LA]} on columns from [Sales]",
                 "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA].[CA].[SF and LA]}\n"
+                + "{[Store].[Store].[USA].[CA].[SF and LA]}\n"
                 + "Row #0: 27,780\n");
             fail();
         } catch (OlapRuntimeException e) {
@@ -6211,9 +6184,9 @@ class SchemaTest {
             "select {[Gender2].members} on columns from [GenderCube]");
 
         assertEqualsVerbose(
-            "[Gender2].[All Gender]\n"
-            + "[Gender2].[F]\n"
-            + "[Gender2].[M]",
+            "[Gender2].[Gender2].[All Gender]\n"
+            + "[Gender2].[Gender2].[F]\n"
+            + "[Gender2].[Gender2].[M]",
             TestUtil.toString(
                 result.getAxes()[0].getPositions()));
     }
@@ -6320,12 +6293,12 @@ class SchemaTest {
 
         withSchema(context, TestAllMemberNoStringReplaceModifier::new);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "select [TIME.CALENDAR].[All TIME(CALENDAR)] on columns\n"
+            "select [TIME].[CALENDAR].[All TIME(CALENDAR)] on columns\n"
             + "from [Sales Special Time]",
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[TIME.CALENDAR].[All TIME(CALENDAR)]}\n"
+            + "{[TIME].[CALENDAR].[All TIME(CALENDAR)]}\n"
             + "Row #0: 266,773\n");
     }
 
@@ -6534,8 +6507,8 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[USA]}\n"
-            + "{[Store].[Total Non CA State]}\n"
+            + "{[Store].[Store].[USA]}\n"
+            + "{[Store].[Store].[Total Non CA State]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 266,773\n"
@@ -6550,8 +6523,8 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[USA]}\n"
-            + "{[Store].[Total Non CA State]}\n"
+            + "{[Store].[Store].[USA]}\n"
+            + "{[Store].[Store].[Total Non CA State]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 266,773\n"
@@ -6828,11 +6801,11 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Binary].[Ben]}\n"
-            + "{[Binary].[Ben].[2]}\n"
-            + "{[Binary].[Bill]}\n"
-            + "{[Binary].[Bill].[3]}\n"
-            + "{[Binary].[Bill].[4]}\n"
+            + "{[Binary].[Binary].[Ben]}\n"
+            + "{[Binary].[Binary].[Ben].[2]}\n"
+            + "{[Binary].[Binary].[Bill]}\n"
+            + "{[Binary].[Binary].[Bill].[3]}\n"
+            + "{[Binary].[Binary].[Bill].[4]}\n"
             + "Row #0: \n"
             + "Row #0: \n"
             + "Row #0: \n"
@@ -6843,11 +6816,11 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Binary].[Ben]}\n"
-            + "{[Binary].[Ben].[2]}\n"
-            + "{[Binary].[Bill]}\n"
-            + "{[Binary].[Bill].[3]}\n"
-            + "{[Binary].[Bill].[4]}\n"
+            + "{[Binary].[Binary].[Ben]}\n"
+            + "{[Binary].[Binary].[Ben].[2]}\n"
+            + "{[Binary].[Binary].[Bill]}\n"
+            + "{[Binary].[Binary].[Bill].[3]}\n"
+            + "{[Binary].[Binary].[Bill].[4]}\n"
             + "Row #0: \n"
             + "Row #0: \n"
             + "Row #0: \n"
@@ -6963,10 +6936,10 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Big numbers].[1234]}\n"
-            + "{[Big numbers].[1234].[0]}\n"
-            + "{[Big numbers].[1.234567890123E12]}\n"
-            + "{[Big numbers].[1.234567890123E12].[519]}\n"
+            + "{[Big numbers].[Big numbers].[1234]}\n"
+            + "{[Big numbers].[Big numbers].[1234].[0]}\n"
+            + "{[Big numbers].[Big numbers].[1.234567890123E12]}\n"
+            + "{[Big numbers].[Big numbers].[1.234567890123E12].[519]}\n"
             + "Row #0: 195,448\n"
             + "Row #0: 195,448\n"
             + "Row #0: 739\n"
@@ -7181,9 +7154,9 @@ class SchemaTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product truncated].[All Product truncateds]}\n"
-            + "{[Product truncated].[Fresh Vegetables]}\n"
-            + "{[Product truncated].[Fresh Fruit]}\n"
+            + "{[Product truncated].[Product truncated].[All Product truncateds]}\n"
+            + "{[Product truncated].[Product truncated].[Fresh Vegetables]}\n"
+            + "{[Product truncated].[Product truncated].[Fresh Fruit]}\n"
             + "Row #0: 266,773\n"
             + "Row #1: 20,739\n"
             + "Row #2: 11,767\n");
@@ -7307,6 +7280,7 @@ class SchemaTest {
                 TableQueryMappingImpl table = TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
                 	.withSqlWhereExpression(SqlStatementMappingImpl.builder()
                 			.withSql("`sales_fact_1997`.`store_id` in (select distinct `store_id` from `store` where `store`.`store_state` = \"CA\")")
+                			.withDialects(List.of("generic"))
                 			.build()).build();
                 DimensionConnectorMappingImpl d1 = DimensionConnectorMappingImpl.builder()
                     .withOverrideDimensionName("Store")
@@ -7391,14 +7365,14 @@ class SchemaTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[All Products], [Store].[USA].[CA]}\n"
+            + "{[Product].[Product].[All Products], [Store].[Store].[USA].[CA]}\n"
             + "Row #0: 74,748\n");
 
         // Now query the children of CA using the descendants function
         // This is where the ClassCastException occurs
         String query2 =
             "WITH SET [#DataSet#] as "
-            + "'{Descendants([Store].[All Stores], 3)}' "
+            + "'{Descendants([Store].[Store].[All Stores], 3)}' "
             + "SELECT {[Measures].[Unit Sales]} on columns, "
             + "NON EMPTY Hierarchize({[#DataSet#]}) on rows FROM [Sales2]";
 
@@ -7409,10 +7383,10 @@ class SchemaTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA].[Beverly Hills]}\n"
-            + "{[Store].[USA].[CA].[Los Angeles]}\n"
-            + "{[Store].[USA].[CA].[San Diego]}\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[CA].[Beverly Hills]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Diego]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
             + "Row #0: 21,333\n"
             + "Row #1: 25,663\n"
             + "Row #2: 25,635\n"
@@ -7546,9 +7520,9 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time2].[1997].[Q1].[1].[367]}\n"
-            + "{[Time2].[1997].[Q1].[1].[368]}\n"
-            + "{[Time2].[1997].[Q1].[1].[369]}\n"
+            + "{[Time2].[Time2].[1997].[Q1].[1].[367]}\n"
+            + "{[Time2].[Time2].[1997].[Q1].[1].[368]}\n"
+            + "{[Time2].[Time2].[1997].[Q1].[1].[369]}\n"
             + "Row #0: 348\n"
             + "Row #0: 635\n"
             + "Row #0: 589\n");
@@ -7557,12 +7531,12 @@ class SchemaTest {
         Connection connection = context.getConnectionWithDefaultRole();
         assertAxisReturns(connection, "Sales",
             "PeriodsToDate([Time2].[Quarter hours], [Time2].[1997].[Q1].[1].[368])",
-            "[Time2].[1997].[Q1].[1].[368]");
+            "[Time2].[Time2].[1997].[Q1].[1].[368]");
 
         assertAxisReturns(connection, "Sales",
             "PeriodsToDate([Time2].[Half year], [Time2].[1997].[Q1].[1].[368])",
-            "[Time2].[1997].[Q1].[1].[367]\n"
-            + "[Time2].[1997].[Q1].[1].[368]");
+            "[Time2].[Time2].[1997].[Q1].[1].[367]\n"
+            + "[Time2].[Time2].[1997].[Q1].[1].[368]");
         // Check that get an error if give invalid level type
         try {
             /*
@@ -8110,14 +8084,10 @@ class SchemaTest {
         final Hierarchy timeHierarchy = timeDimension.getHierarchies()[0];
         // The hierarchy in the shared dimension does not have a name, so the
         // hierarchy usage inherits the name of the dimension usage, Time1.
-        final boolean ssasCompatibleNaming =
-            SystemWideProperties.instance().SsasCompatibleNaming;
-        if (ssasCompatibleNaming) {
-            assertEquals("Time", timeHierarchy.getName());
-            assertEquals("Time1", timeHierarchy.getDimension().getName());
-        } else {
-            assertEquals("Time1", timeHierarchy.getName());
-        }
+        //final boolean ssasCompatibleNaming =
+        //    SystemWideProperties.instance().SsasCompatibleNaming;
+        assertEquals("Time1", timeHierarchy.getName());
+        assertEquals("Time1", timeHierarchy.getDimension().getName());
         // The description is prefixed by the dimension usage name.
         assertEquals(
             "Time shared hierarchy description",
@@ -8141,12 +8111,9 @@ class SchemaTest {
         final Hierarchy time2Hierarchy = time2Dimension.getHierarchies()[0];
         // The hierarchy in the shared dimension does not have a name, so the
         // hierarchy usage inherits the name of the dimension usage, Time2.
-        if (ssasCompatibleNaming) {
-            assertEquals("Time", time2Hierarchy.getName());
-            assertEquals("Time2", time2Hierarchy.getDimension().getName());
-        } else {
-            assertEquals("Time2", time2Hierarchy.getName());
-        }
+
+        assertEquals("Time2", time2Hierarchy.getName());
+        assertEquals("Time2", time2Hierarchy.getDimension().getName());
         // The description is prefixed by the dimension usage name (because
         // dimension usage has no caption).
         assertEquals(
@@ -9105,16 +9072,16 @@ class SchemaTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product3].[All Product3s]}\n"
-            + "{[Product3].[Drink]}\n"
-            + "{[Product3].[Drink].[Baking Goods]}\n"
-            + "{[Product3].[Drink].[Baking Goods].[Dry Goods]}\n"
-            + "{[Product3].[Drink].[Baking Goods].[Dry Goods].[Coffee]}\n"
-            + "{[Product3].[Drink].[Baking Goods].[Dry Goods].[Coffee].[24]}\n"
-            + "{[Product3].[Drink].[Baking Goods].[Dry Goods].[Coffee].[24].[Amigo]}\n"
-            + "{[Product3].[Drink].[Baking Goods].[Dry Goods].[Coffee].[24].[Amigo].[Amigo Lox]}\n"
-            + "{[Product3].[Drink].[Baking Goods].[Dry Goods].[Coffee].[24].[Curlew]}\n"
-            + "{[Product3].[Drink].[Baking Goods].[Dry Goods].[Coffee].[24].[Curlew].[Curlew Lox]}\n"
+            + "{[Product3].[Product3].[All Product3s]}\n"
+            + "{[Product3].[Product3].[Drink]}\n"
+            + "{[Product3].[Product3].[Drink].[Baking Goods]}\n"
+            + "{[Product3].[Product3].[Drink].[Baking Goods].[Dry Goods]}\n"
+            + "{[Product3].[Product3].[Drink].[Baking Goods].[Dry Goods].[Coffee]}\n"
+            + "{[Product3].[Product3].[Drink].[Baking Goods].[Dry Goods].[Coffee].[24]}\n"
+            + "{[Product3].[Product3].[Drink].[Baking Goods].[Dry Goods].[Coffee].[24].[Amigo]}\n"
+            + "{[Product3].[Product3].[Drink].[Baking Goods].[Dry Goods].[Coffee].[24].[Amigo].[Amigo Lox]}\n"
+            + "{[Product3].[Product3].[Drink].[Baking Goods].[Dry Goods].[Coffee].[24].[Curlew]}\n"
+            + "{[Product3].[Product3].[Drink].[Baking Goods].[Dry Goods].[Coffee].[24].[Curlew].[Curlew Lox]}\n"
             + "Row #0: 266,773\n"
             + "Row #1: 2,647\n"
             + "Row #2: 835\n"
@@ -9912,10 +9879,7 @@ class SchemaTest {
             assertNotNull(dim);
             final Hierarchy hier = dim.getHierarchy();
             assertNotNull(hier);
-            assertEquals(
-                SystemWideProperties.instance().SsasCompatibleNaming
-                    ? "Bacon"
-                    : "Bar.Bacon",
+            assertEquals("Bacon",
                 hier.getName());
             assertTrue(testValue.equals(hier.isVisible()));
         }
@@ -10004,10 +9968,7 @@ class SchemaTest {
             assertNotNull(dim);
             final Hierarchy hier = dim.getHierarchy();
             assertNotNull(hier);
-            assertEquals(
-                SystemWideProperties.instance().SsasCompatibleNaming
-                    ? "Bacon"
-                    : "Bar.Bacon",
+            assertEquals("Bacon",
                 hier.getName());
             final Level level = hier.getLevels()[0];
             assertEquals("Samosa", level.getName());
@@ -11297,27 +11258,27 @@ class SchemaTest {
                 DataType.LEVEL),
             true);
         assertEquals(
-            "[[Store Size in SQFT].[#null], "
-            + "[Store Size in SQFT].[20319], "
-            + "[Store Size in SQFT].[21215], "
-            + "[Store Size in SQFT].[22478], "
-            + "[Store Size in SQFT].[23112], "
-            + "[Store Size in SQFT].[23593], "
-            + "[Store Size in SQFT].[23598], "
-            + "[Store Size in SQFT].[23688], "
-            + "[Store Size in SQFT].[23759], "
-            + "[Store Size in SQFT].[24597], "
-            + "[Store Size in SQFT].[27694], "
-            + "[Store Size in SQFT].[28206], "
-            + "[Store Size in SQFT].[30268], "
-            + "[Store Size in SQFT].[30584], "
-            + "[Store Size in SQFT].[30797], "
-            + "[Store Size in SQFT].[33858], "
-            + "[Store Size in SQFT].[34452], "
-            + "[Store Size in SQFT].[34791], "
-            + "[Store Size in SQFT].[36509], "
-            + "[Store Size in SQFT].[38382], "
-            + "[Store Size in SQFT].[39696]]",
+            "[[Store Size in SQFT].[Store Size in SQFT].[#null], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[20319], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[21215], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[22478], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[23112], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[23593], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[23598], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[23688], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[23759], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[24597], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[27694], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[28206], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[30268], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[30584], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[30797], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[33858], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[34452], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[34791], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[36509], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[38382], "
+            + "[Store Size in SQFT].[Store Size in SQFT].[39696]]",
             members.toString());
     }
 
@@ -11714,9 +11675,9 @@ class SchemaTest {
             + "Axis #1:\n"
             + "{[Measures].[Org Salary]}\n"
             + "Axis #2:\n"
-            + "{[Store].[Canada]}\n"
-            + "{[Store].[Mexico]}\n"
-            + "{[Store].[USA]}\n"
+            + "{[Store].[Store].[Canada]}\n"
+            + "{[Store].[Store].[Mexico]}\n"
+            + "{[Store].[Store].[USA]}\n"
             + "Row #0: $7,473.54\n"
             + "Row #1: $180,599.76\n"
             + "Row #2: $83,479.14\n");
@@ -11882,9 +11843,9 @@ class SchemaTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender.地域].[All Gender]}\n"
-            + "{[Gender.地域].[F]}\n"
-            + "{[Gender.地域].[M]}\n"
+            + "{[Gender].[地域].[All Gender]}\n"
+            + "{[Gender].[地域].[F]}\n"
+            + "{[Gender].[地域].[M]}\n"
             + "Row #0: 266,773\n"
             + "Row #0: 131,558\n"
             + "Row #0: 135,215\n");
@@ -11996,12 +11957,12 @@ class SchemaTest {
           + "FROM [Sales]\n"
           + "WHERE FILTER([Store Type].children, [Store Type].CURRENTMEMBER NOT IN {[Store Type].[Deluxe Supermarket], [Store Type].[Gourmet Supermarket]})\n",
           "Axis #0:\n"
-          + "{[Store Type].[HeadQuarters]}\n"
-          + "{[Store Type].[Mid-Size Grocery]}\n"
-          + "{[Store Type].[Small Grocery]}\n"
-          + "{[Store Type].[Supermarket]}\n"
+          + "{[Store Type].[Store Type].[HeadQuarters]}\n"
+          + "{[Store Type].[Store Type].[Mid-Size Grocery]}\n"
+          + "{[Store Type].[Store Type].[Small Grocery]}\n"
+          + "{[Store Type].[Store Type].[Supermarket]}\n"
           + "Axis #1:\n"
-          + "{[Product].[All Products]}\n"
+          + "{[Product].[Product].[All Products]}\n"
           + "Axis #2:\n"
           + "{[Measures].[Store Sales]}\n"
           + "Row #0: 357,425.65\n"

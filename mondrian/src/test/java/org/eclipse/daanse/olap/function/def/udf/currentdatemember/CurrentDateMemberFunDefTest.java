@@ -70,10 +70,10 @@ class CurrentDateMemberFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testGetReturnType(Context context) {
         Connection connection=context.getConnectionWithDefaultRole();
-        String query = "WITH MEMBER [Time].[YTD] AS SUM( YTD(CurrentDateMember"
-             + "([Time], '[\"Time\"]\\.[yyyy]\\.[Qq].[m]', EXACT)), Measures.[Unit Sales]) SELECT Time.YTD on 0 FROM sales";
+        String query = "WITH MEMBER [Time].[Time].[YTD] AS SUM( YTD(CurrentDateMember"
+             + "([Time].[Time], '[\"Time\"]\\.[\"Time\"]\\.[yyyy]\\.[Qq].[m]', EXACT)), Measures.[Unit Sales]) SELECT Time.Time.YTD on 0 FROM sales";
         String expected = "Axis #0:\n" + "{}\n" + "Axis #1:\n"
-             + "{[Time].[YTD]}\n" + "Row #0: \n";
+             + "{[Time].[Time].[YTD]}\n" + "Row #0: \n";
         TestUtil.assertQueryReturns(connection,query, expected);
     }
 

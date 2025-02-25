@@ -11,14 +11,14 @@ query all product family and all quarters
 With
   Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Product],[*BASE_MEMBERS_Time])'
   Set [*BASE_MEMBERS_Measures] as '{[Measures].[*FORMATTED_MEASURE_0]}'
-  Set [*BASE_MEMBERS_Product] as '[Product].[Product Family].Members'
-  Set [*NATIVE_MEMBERS_Product] as 'Generate([*NATIVE_CJ_SET], {[Product].CurrentMember})'
-  Set [*BASE_MEMBERS_Time] as '[Time].[Quarter].Members'
-  Set [*NATIVE_MEMBERS_Time] as 'Generate([*NATIVE_CJ_SET], {[Time].CurrentMember})'
-  Member [Measures].[*FORMATTED_MEASURE_0] as '[Measures].[Unit Sales]', FORMAT_STRING = '#,##0', SOLVE_ORDER=300 
+  Set [*BASE_MEMBERS_Product] as '[Product].[Product].[Product Family].Members'
+  Set [*NATIVE_MEMBERS_Product] as 'Generate([*NATIVE_CJ_SET], {[Product].[Product].CurrentMember})'
+  Set [*BASE_MEMBERS_Time] as '[Time].[Time].[Quarter].Members'
+  Set [*NATIVE_MEMBERS_Time] as 'Generate([*NATIVE_CJ_SET], {[Time].[Time].CurrentMember})'
+  Member [Measures].[*FORMATTED_MEASURE_0] as '[Measures].[Unit Sales]', FORMAT_STRING = '#,##0', SOLVE_ORDER=300
 Select
   [*BASE_MEMBERS_Measures] on columns,
-  Non Empty Generate([*NATIVE_CJ_SET], {([Product].CurrentMember,[Time].CurrentMember)}) on rows 
+  Non Empty Generate([*NATIVE_CJ_SET], {([Product].[Product].CurrentMember,[Time].[Time].CurrentMember)}) on rows
 From [Warehouse and Sales]
 ]]>
         </Resource>
@@ -29,18 +29,18 @@ Axis #0:
 Axis #1:
 {[Measures].[*FORMATTED_MEASURE_0]}
 Axis #2:
-{[Product].[Drink], [Time].[1997].[Q1]}
-{[Product].[Drink], [Time].[1997].[Q2]}
-{[Product].[Drink], [Time].[1997].[Q3]}
-{[Product].[Drink], [Time].[1997].[Q4]}
-{[Product].[Food], [Time].[1997].[Q1]}
-{[Product].[Food], [Time].[1997].[Q2]}
-{[Product].[Food], [Time].[1997].[Q3]}
-{[Product].[Food], [Time].[1997].[Q4]}
-{[Product].[Non-Consumable], [Time].[1997].[Q1]}
-{[Product].[Non-Consumable], [Time].[1997].[Q2]}
-{[Product].[Non-Consumable], [Time].[1997].[Q3]}
-{[Product].[Non-Consumable], [Time].[1997].[Q4]}
+{[Product].[Product].[Drink], [Time].[Time].[1997].[Q1]}
+{[Product].[Product].[Drink], [Time].[Time].[1997].[Q2]}
+{[Product].[Product].[Drink], [Time].[Time].[1997].[Q3]}
+{[Product].[Product].[Drink], [Time].[Time].[1997].[Q4]}
+{[Product].[Product].[Food], [Time].[Time].[1997].[Q1]}
+{[Product].[Product].[Food], [Time].[Time].[1997].[Q2]}
+{[Product].[Product].[Food], [Time].[Time].[1997].[Q3]}
+{[Product].[Product].[Food], [Time].[Time].[1997].[Q4]}
+{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q1]}
+{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q2]}
+{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q3]}
+{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q4]}
 Row #0: 5,976
 Row #1: 5,895
 Row #2: 6,065
@@ -67,14 +67,14 @@ query all product family and some quarters
 With
   Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Product],[*BASE_MEMBERS_Time])'
   Set [*BASE_MEMBERS_Measures] as '{[Measures].[*FORMATTED_MEASURE_0]}'
-  Set [*BASE_MEMBERS_Product] as '[Product].[Product Family].Members'
-  Set [*NATIVE_MEMBERS_Product] as 'Generate([*NATIVE_CJ_SET], {[Product].CurrentMember})'
-  Set [*BASE_MEMBERS_Time] as '{[Time].[1997].[Q1],[Time].[1997].[Q3]}'
-  Set [*NATIVE_MEMBERS_Time] as 'Generate([*NATIVE_CJ_SET], {[Time].CurrentMember})'
-  Member [Measures].[*FORMATTED_MEASURE_0] as '[Measures].[Unit Sales]', FORMAT_STRING = '#,##0', SOLVE_ORDER=300 
+  Set [*BASE_MEMBERS_Product] as '[Product].[Product].[Product Family].Members'
+  Set [*NATIVE_MEMBERS_Product] as 'Generate([*NATIVE_CJ_SET], {[Product].[Product].CurrentMember})'
+  Set [*BASE_MEMBERS_Time] as '{[Time].[Time].[1997].[Q1],[Time].[Time].[1997].[Q3]}'
+  Set [*NATIVE_MEMBERS_Time] as 'Generate([*NATIVE_CJ_SET], {[Time].[Time].CurrentMember})'
+  Member [Measures].[*FORMATTED_MEASURE_0] as '[Measures].[Unit Sales]', FORMAT_STRING = '#,##0', SOLVE_ORDER=300
 Select
   [*BASE_MEMBERS_Measures] on columns,
-  Non Empty Generate([*NATIVE_CJ_SET], {([Product].CurrentMember,[Time].CurrentMember)}) on rows 
+  Non Empty Generate([*NATIVE_CJ_SET], {([Product].[Product].CurrentMember,[Time].[Time].CurrentMember)}) on rows
 From [Warehouse and Sales]
 ]]>
         </Resource>
@@ -85,12 +85,12 @@ Axis #0:
 Axis #1:
 {[Measures].[*FORMATTED_MEASURE_0]}
 Axis #2:
-{[Product].[Drink], [Time].[1997].[Q1]}
-{[Product].[Drink], [Time].[1997].[Q3]}
-{[Product].[Food], [Time].[1997].[Q1]}
-{[Product].[Food], [Time].[1997].[Q3]}
-{[Product].[Non-Consumable], [Time].[1997].[Q1]}
-{[Product].[Non-Consumable], [Time].[1997].[Q3]}
+{[Product].[Product].[Drink], [Time].[Time].[1997].[Q1]}
+{[Product].[Product].[Drink], [Time].[Time].[1997].[Q3]}
+{[Product].[Product].[Food], [Time].[Time].[1997].[Q1]}
+{[Product].[Product].[Food], [Time].[Time].[1997].[Q3]}
+{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q1]}
+{[Product].[Product].[Non-Consumable], [Time].[Time].[1997].[Q3]}
 Row #0: 5,976
 Row #1: 6,065
 Row #2: 47,809
@@ -111,14 +111,14 @@ query all Drink product family and all quarters
 With
   Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Product],[*BASE_MEMBERS_Time])'
   Set [*BASE_MEMBERS_Measures] as '{[Measures].[*FORMATTED_MEASURE_0]}'
-  Set [*BASE_MEMBERS_Product] as '{[Product].[Drink]}'
-  Set [*NATIVE_MEMBERS_Product] as 'Generate([*NATIVE_CJ_SET], {[Product].CurrentMember})'
-  Set [*BASE_MEMBERS_Time] as '[Time].[Quarter].Members'
-  Set [*NATIVE_MEMBERS_Time] as 'Generate([*NATIVE_CJ_SET], {[Time].CurrentMember})'
-  Member [Measures].[*FORMATTED_MEASURE_0] as '[Measures].[Unit Sales]', FORMAT_STRING = '#,##0', SOLVE_ORDER=300 
+  Set [*BASE_MEMBERS_Product] as '{[Product].[Product].[Drink]}'
+  Set [*NATIVE_MEMBERS_Product] as 'Generate([*NATIVE_CJ_SET], {[Product].[Product].CurrentMember})'
+  Set [*BASE_MEMBERS_Time] as '[Time].[Time].[Quarter].Members'
+  Set [*NATIVE_MEMBERS_Time] as 'Generate([*NATIVE_CJ_SET], {[Time].[Time].CurrentMember})'
+  Member [Measures].[*FORMATTED_MEASURE_0] as '[Measures].[Unit Sales]', FORMAT_STRING = '#,##0', SOLVE_ORDER=300
 Select
   [*BASE_MEMBERS_Measures] on columns,
-  Non Empty Generate([*NATIVE_CJ_SET], {([Product].CurrentMember,[Time].CurrentMember)}) on rows 
+  Non Empty Generate([*NATIVE_CJ_SET], {([Product].[Product].CurrentMember,[Time].[Time].CurrentMember)}) on rows
 From [Warehouse and Sales]
 ]]>
         </Resource>
@@ -129,10 +129,10 @@ Axis #0:
 Axis #1:
 {[Measures].[*FORMATTED_MEASURE_0]}
 Axis #2:
-{[Product].[Drink], [Time].[1997].[Q1]}
-{[Product].[Drink], [Time].[1997].[Q2]}
-{[Product].[Drink], [Time].[1997].[Q3]}
-{[Product].[Drink], [Time].[1997].[Q4]}
+{[Product].[Product].[Drink], [Time].[Time].[1997].[Q1]}
+{[Product].[Product].[Drink], [Time].[Time].[1997].[Q2]}
+{[Product].[Product].[Drink], [Time].[Time].[1997].[Q3]}
+{[Product].[Product].[Drink], [Time].[Time].[1997].[Q4]}
 Row #0: 5,976
 Row #1: 5,895
 Row #2: 6,065
@@ -151,14 +151,14 @@ query only drink and some quarters
 With
   Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Product],[*BASE_MEMBERS_Time])'
   Set [*BASE_MEMBERS_Measures] as '{[Measures].[*FORMATTED_MEASURE_0]}'
-  Set [*BASE_MEMBERS_Product] as '{[Product].[Drink]}'
-  Set [*NATIVE_MEMBERS_Product] as 'Generate([*NATIVE_CJ_SET], {[Product].CurrentMember})'
-  Set [*BASE_MEMBERS_Time] as '{[Time].[1997].[Q1],[Time].[1997].[Q3]}'
-  Set [*NATIVE_MEMBERS_Time] as 'Generate([*NATIVE_CJ_SET], {[Time].CurrentMember})'
-  Member [Measures].[*FORMATTED_MEASURE_0] as '[Measures].[Unit Sales]', FORMAT_STRING = '#,##0', SOLVE_ORDER=300 
+  Set [*BASE_MEMBERS_Product] as '{[Product].[Product].[Drink]}'
+  Set [*NATIVE_MEMBERS_Product] as 'Generate([*NATIVE_CJ_SET], {[Product].[Product].CurrentMember})'
+  Set [*BASE_MEMBERS_Time] as '{[Time].[Time].[1997].[Q1],[Time].[Time].[1997].[Q3]}'
+  Set [*NATIVE_MEMBERS_Time] as 'Generate([*NATIVE_CJ_SET], {[Time].[Time].CurrentMember})'
+  Member [Measures].[*FORMATTED_MEASURE_0] as '[Measures].[Unit Sales]', FORMAT_STRING = '#,##0', SOLVE_ORDER=300
 Select
   [*BASE_MEMBERS_Measures] on columns,
-  Non Empty Generate([*NATIVE_CJ_SET], {([Product].CurrentMember,[Time].CurrentMember)}) on rows 
+  Non Empty Generate([*NATIVE_CJ_SET], {([Product].[Product].CurrentMember,[Time].[Time].CurrentMember)}) on rows
 From [Warehouse and Sales]
 ]]>
         </Resource>
@@ -169,8 +169,8 @@ Axis #0:
 Axis #1:
 {[Measures].[*FORMATTED_MEASURE_0]}
 Axis #2:
-{[Product].[Drink], [Time].[1997].[Q1]}
-{[Product].[Drink], [Time].[1997].[Q3]}
+{[Product].[Product].[Drink], [Time].[Time].[1997].[Q1]}
+{[Product].[Product].[Drink], [Time].[Time].[1997].[Q3]}
 Row #0: 5,976
 Row #1: 6,065
 ]]>
@@ -187,30 +187,30 @@ use slicers
 With
   Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Time],[*BASE_MEMBERS_Product])'
   Set [*BASE_MEMBERS_Measures] as '{[Measures].[*FORMATTED_MEASURE_0]}'
-  Set [*BASE_MEMBERS_Time] as '[Time].[Quarter].Members'
-  Set [*NATIVE_MEMBERS_Time] as 'Generate([*NATIVE_CJ_SET], {[Time].CurrentMember})'
-  Set [*BASE_MEMBERS_Product] as '{[Product].[Drink]}'
-  Set [*NATIVE_MEMBERS_Product] as 'Generate([*NATIVE_CJ_SET], {[Product].CurrentMember})'
+  Set [*BASE_MEMBERS_Time] as '[Time].[Time].[Quarter].Members'
+  Set [*NATIVE_MEMBERS_Time] as 'Generate([*NATIVE_CJ_SET], {[Time].[Time].CurrentMember})'
+  Set [*BASE_MEMBERS_Product] as '{[Product].[Product].[Drink]}'
+  Set [*NATIVE_MEMBERS_Product] as 'Generate([*NATIVE_CJ_SET], {[Product].[Product].CurrentMember})'
   Member [Measures].[*FORMATTED_MEASURE_0] as '[Measures].[Unit Sales]', FORMAT_STRING = '#,##0', SOLVE_ORDER=300
-  Member [Product].[*FILTER_MEMBER] as 'Aggregate ([*NATIVE_MEMBERS_Product])', SOLVE_ORDER=-200 
+  Member [Product].[Product].[*FILTER_MEMBER] as 'Aggregate ([*NATIVE_MEMBERS_Product])', SOLVE_ORDER=-200
 Select
   [*BASE_MEMBERS_Measures] on columns,
-  Non Empty Generate([*NATIVE_CJ_SET], {([Time].CurrentMember)}) on rows 
-From [Warehouse and Sales] 
-Where ([Product].[*FILTER_MEMBER])
+  Non Empty Generate([*NATIVE_CJ_SET], {([Time].[Time].CurrentMember)}) on rows
+From [Warehouse and Sales]
+Where ([Product].[Product].[*FILTER_MEMBER])
 ]]>
         </Resource>
         <Resource name="result">
             <![CDATA[
 Axis #0:
-{[Product].[*FILTER_MEMBER]}
+{[Product].[Product].[*FILTER_MEMBER]}
 Axis #1:
 {[Measures].[*FORMATTED_MEASURE_0]}
 Axis #2:
-{[Time].[1997].[Q1]}
-{[Time].[1997].[Q2]}
-{[Time].[1997].[Q3]}
-{[Time].[1997].[Q4]}
+{[Time].[Time].[1997].[Q1]}
+{[Time].[Time].[1997].[Q2]}
+{[Time].[Time].[1997].[Q3]}
+{[Time].[Time].[1997].[Q4]}
 Row #0: 5,976
 Row #1: 5,895
 Row #2: 6,065

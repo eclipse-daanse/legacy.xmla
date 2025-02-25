@@ -61,7 +61,7 @@ class IifNumericFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA]}\n"
+                + "{[Store].[Store].[USA]}\n"
                 + "Row #0: 266,773\n" );
     }
 
@@ -75,7 +75,7 @@ class IifNumericFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA].[CA].[Beverly Hills].[Store 6]}\n"
+                + "{[Store].[Store].[USA].[CA].[Beverly Hills].[Store 6]}\n"
                 + "Row #0: 21,333\n" );
     }
 

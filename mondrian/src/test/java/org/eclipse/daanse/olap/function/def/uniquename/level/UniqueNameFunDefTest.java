@@ -29,7 +29,7 @@ class UniqueNameFunDefTest {
     void testLevelUniqueName(Context context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Gender].DefaultMember.Level.UniqueName",
-            "[Gender].[(All)]" );
+            "[Gender].[Gender].[(All)]" );
     }
 
 }

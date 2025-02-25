@@ -175,7 +175,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 5,581\n");
@@ -192,7 +192,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 5,581\n");
@@ -213,7 +213,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 2,716\n";
@@ -265,7 +265,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 2,716\n";
@@ -325,7 +325,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 1,389\n");
@@ -341,7 +341,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 5,581\n");
@@ -357,9 +357,9 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
             + "Axis #2:\n"
-            + "{[Measures].[Customer Count], [Gender].[M]}\n"
+            + "{[Measures].[Customer Count], [Gender].[Gender].[M]}\n"
             + "Row #0: 1,389\n");
     }
 
@@ -378,7 +378,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Store].[X]}\n"
+            + "{[Store].[Store].[X]}\n"
             + "Row #0: 4,544\n");
     }
 
@@ -399,7 +399,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: \n";
       assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, expectedResult);
       ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
@@ -418,7 +418,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 5,581\n");
@@ -440,7 +440,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: \n");
     }
 
@@ -458,7 +458,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: 5,581\n");
     }
 
@@ -477,7 +477,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: 5,581\n");
 
       assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -491,7 +491,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: 5,581\n");
     }
 
@@ -510,7 +510,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: \n");
 
       assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -524,7 +524,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: 5,581\n");
     }
 
@@ -555,7 +555,7 @@ class AggregationOnDistinctCountMeasuresTest {
               + "Axis #1:\n"
               + "{[Measures].[Customer Count]}\n"
               + "Axis #2:\n"
-              + "{[Product].[X]}\n"
+              + "{[Product].[Product].[X]}\n"
               + "Row #0: #ERR: mondrian.olap.fun.MondrianEvaluationException: "
               + "Aggregation is not supported over a list with more than 7 predicates (see property MaxConstraints)\n");
 
@@ -567,7 +567,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Store Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[X]}\n"
+            + "{[Product].[Product].[X]}\n"
             + "Row #0: 11,257.28\n");
 
         // aggregation over a non-distinct-count measure in slicer should be
@@ -586,14 +586,14 @@ class AggregationOnDistinctCountMeasuresTest {
             + "[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Top Measure],\n"
             + "[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Walrus]}",
             "Axis #0:\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Pearl]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Portsmouth]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Top Measure]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Walrus]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Pearl]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Portsmouth]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Top Measure]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Walrus]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Store Sales]}\n"
             + "Row #0: 11,257.28\n");
@@ -626,9 +626,9 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAggregateMaxConstraints(Context context) {
       prepareContext(context);
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
 
         SystemWideProperties.instance().MaxConstraints = 5;
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -653,9 +653,9 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink]}\n"
-            + "{[Product].[Food]}\n"
-            + "{[Product].[Non-Consumable]}\n"
+            + "{[Product].[Product].[Drink]}\n"
+            + "{[Product].[Product].[Food]}\n"
+            + "{[Product].[Product].[Non-Consumable]}\n"
             + "Row #0: 458\n"
             + "Row #1: 3,746\n"
             + "Row #2: 937\n");
@@ -929,7 +929,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Cost Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse2].[TwoMembers]}\n"
+            + "{[Warehouse2].[Warehouse2].[TwoMembers]}\n"
             + "Row #0: 220\n";
 
         assertQueryReturns(context.getConnectionWithDefaultRole(), query, result);
@@ -1054,7 +1054,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Cost Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse2].[TwoMembers]}\n"
+            + "{[Warehouse2].[Warehouse2].[TwoMembers]}\n"
             + "Row #0: 220\n";
       withSchema(context, TestMultiLevelsMixedNullNonNullChildModifier::new);
       assertQueryReturns(context.getConnectionWithDefaultRole(), query, result);
@@ -1131,9 +1131,9 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[OR]}\n"
-            + "{[Store].[COG_OQP_USR_Aggregate(Store)]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[COG_OQP_USR_Aggregate(Store)]}\n"
             + "Row #0: 2,716\n"
             + "Row #1: 1,037\n"
             + "Row #2: 5,581\n";
@@ -1212,9 +1212,9 @@ class AggregationOnDistinctCountMeasuresTest {
             + "{[Measures].[Customer Count]}\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[OR]}\n"
-            + "{[Store].[COG_OQP_USR_Aggregate(Store)]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[COG_OQP_USR_Aggregate(Store)]}\n"
             + "Row #0: 2,716\n"
             + "Row #0: 74,748\n"
             + "Row #1: 1,037\n"
@@ -1299,10 +1299,10 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[All Gender]}\n"
-            + "{[Gender].[F]}\n"
-            + "{[Gender].[M]}\n"
-            + "{[Gender].[COG_OQP_USR_Aggregate(Gender)]}\n"
+            + "{[Gender].[Gender].[All Gender]}\n"
+            + "{[Gender].[Gender].[F]}\n"
+            + "{[Gender].[Gender].[M]}\n"
+            + "{[Gender].[Gender].[COG_OQP_USR_Aggregate(Gender)]}\n"
             + "Row #0: 5,581\n"
             + "Row #1: 2,755\n"
             + "Row #2: 2,826\n"
@@ -1345,7 +1345,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[x]}\n"
+            + "{[Gender].[Gender].[x]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 5,581\n";
@@ -1394,25 +1394,25 @@ class AggregationOnDistinctCountMeasuresTest {
       prepareContext(context);
         String query =
             "WITH\n"
-            + "MEMBER Product.Agg AS \n"
-            + "'Aggregate({[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pot Scrubbers].[Cormorant],\n"
-            + "[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pot Scrubbers].[Denny],\n"
-            + "[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pot Scrubbers].[High Quality],\n"
-            + "[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pot Scrubbers].[Red Wing],\n"
-            + "[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pots and Pans].[Cormorant],\n"
-            + "[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pots and Pans].[Denny],\n"
-            + "[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pots and Pans].[High Quality],\n"
-            + "[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pots and Pans].[Red Wing],\n"
-            + "[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pots and Pans].[Sunset]} *\n"
-            + "{[Gender].[Gender].Members})'\n"
+            + "MEMBER Product.Product.Agg AS \n"
+            + "'Aggregate({[Product].[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pot Scrubbers].[Cormorant],\n"
+            + "[Product].[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pot Scrubbers].[Denny],\n"
+            + "[Product].[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pot Scrubbers].[High Quality],\n"
+            + "[Product].[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pot Scrubbers].[Red Wing],\n"
+            + "[Product].[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pots and Pans].[Cormorant],\n"
+            + "[Product].[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pots and Pans].[Denny],\n"
+            + "[Product].[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pots and Pans].[High Quality],\n"
+            + "[Product].[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pots and Pans].[Red Wing],\n"
+            + "[Product].[Product].[All Products].[Non-Consumable].[Household].[Kitchen Products].[Pots and Pans].[Sunset]} *\n"
+            + "{[Gender].[Gender].[Gender].Members})'\n"
             + "SELECT {Product.Agg} on 0, {[Measures].[Customer Count]} on 1\n"
             + "from Sales\n"
-            + "where [Time.Weekly].[1997]";
+            + "where [Time].[Weekly].[1997]";
         String expected =
             "Axis #0:\n"
-            + "{[Time.Weekly].[1997]}\n"
+            + "{[Time].[Weekly].[1997]}\n"
             + "Axis #1:\n"
-            + "{[Product].[Agg]}\n"
+            + "{[Product].[Product].[Agg]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 421\n";
@@ -1510,7 +1510,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Product].[Agg]}\n"
+            + "{[Product].[Product].[Agg]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 189\n";
@@ -1747,8 +1747,8 @@ class AggregationOnDistinctCountMeasuresTest {
             + "{[Measures].[Customer Count]}\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[AGG]}\n"
-            + "{[Gender].[AGG2]}\n"
+            + "{[Gender].[Gender].[AGG]}\n"
+            + "{[Gender].[Gender].[AGG2]}\n"
             + "Row #0: 2,755\n"
             + "Row #0: 131,558\n"
             + "Row #1: 2,826\n"
@@ -1772,7 +1772,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[AGG]}\n"
+            + "{[Gender].[Gender].[AGG]}\n"
             + "Row #0: 5,581\n");
     }
 
@@ -1935,9 +1935,9 @@ class AggregationOnDistinctCountMeasuresTest {
                     "Axis #0:\n"
                     + "{}\n"
                     + "Axis #1:\n"
-                    + "{[Customers].[USA]}\n"
-                    + "{[Customers].[USA].[OR]}\n"
-                    + "{[Customers].[USA].[WA]}\n"
+                    + "{[Customers].[Customers].[USA]}\n"
+                    + "{[Customers].[Customers].[USA].[OR]}\n"
+                    + "{[Customers].[Customers].[USA].[WA]}\n"
                     + "Axis #2:\n"
                     + "{[Measures].[Customer Count]}\n"
                     + "Row #0: 2,865\n"
@@ -1996,7 +1996,7 @@ class AggregationOnDistinctCountMeasuresTest {
         TupleList optimized =
             optimizeChildren(tl);
         assertEquals(
-            "[[[Store].[USA], [Gender].[All Gender]], [[Store].[USA], [Gender].[F]]]", optimized.toString());
+            "[[[Store].[Store].[USA], [Gender].[Gender].[All Gender]], [[Store].[Store].[USA], [Gender].[Gender].[F]]]", optimized.toString());
     }
 
     private boolean tuppleListContains(
@@ -2102,12 +2102,12 @@ class AggregationOnDistinctCountMeasuresTest {
         final String query =
             "select "
             + "  NON EMPTY {[Measures].[Customer Count]} ON COLUMNS, "
-            + "  NON EMPTY {[Time].[Year].Members} ON ROWS "
+            + "  NON EMPTY {[Time].[Time].[Year].Members} ON ROWS "
             + "from [Sales]";
         final String monthsQuery =
             "select "
             + "  NON EMPTY {[Measures].[Customer Count]} ON COLUMNS, "
-            + "  NON EMPTY {[Time].[1997].[Q1].Children} ON ROWS "
+            + "  NON EMPTY {[Time].[Time].[1997].[Q1].Children} ON ROWS "
             + "from [Sales]";
         //String simpleSchema = "<Schema name=\"FoodMart\">" + dimension + cube
         //    + "</Schema>";
@@ -2208,15 +2208,15 @@ class AggregationOnDistinctCountMeasuresTest {
                                       ))
                                       .withAggregationLevels(List.of(
                                           AggregationLevelMappingImpl.builder()
-                                              .withName("[Time].[Year]")
+                                              .withName("[Time].[Time].[Year]")
                                               .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                               .build(),
                                           AggregationLevelMappingImpl.builder()
-                                              .withName("[Time].[Quarter]")
+                                              .withName("[Time].[Time].[Quarter]")
                                               .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                               .build(),
                                           AggregationLevelMappingImpl.builder()
-                                              .withName("[Time].[Month]")
+                                              .withName("[Time].[Time].[Month]")
                                               .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                               .build()
                                       ))
@@ -2272,7 +2272,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997]}\n"
+            + "{[Time].[Time].[1997]}\n"
             + "Row #0: 5,581\n");
         // aggregate table has count for months, make sure it is used
         ((TestConfig)context.getConfig()).setUseAggregates(true);
@@ -2319,24 +2319,24 @@ class AggregationOnDistinctCountMeasuresTest {
     Result result =
         executeQuery(context.getConnectionWithDefaultRole(), " WITH\r\n"
             + " SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Gender_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Store Type_],[*BASE_MEMBERS__Product_]))'\r\n"
-            + " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Gender].CURRENTMEMBER,[Store Type].CURRENTMEMBER)})'\r\n"
-            + " SET [*BASE_MEMBERS__Store Type_] AS '{[Store Type].[All Store Types].[Gourmet Supermarket],[Store Type].[All Store Types].[Supermarket]}'\r\n"
-            + " SET [*BASE_MEMBERS__Gender_] AS '[Gender].[Gender].MEMBERS'\r\n"
-            + " SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Product].CURRENTMEMBER)})'\r\n"
-            + " SET [*BASE_MEMBERS__Product_] AS '{[Product].[All Products].[Food],[Product].[All Products].[Drink]}'\r\n"
-            + " SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Gender].CURRENTMEMBER,[Store Type].CURRENTMEMBER)})'\r\n"
-            + " MEMBER [Store Type].[*TOTAL_MEMBER_SEL~AGG] AS '([Education Level].[*TOTAL_MEMBER_SEL~AGG], [Time].[*TOTAL_MEMBER_SEL~AGG])'\r\n"
-            + " MEMBER [Education Level].[*TOTAL_MEMBER_SEL~AGG] AS 'CACHE(AGGREGATE([*CJ_SLICER_AXIS]))', SOLVE_ORDER=10\r\n"
-            + " MEMBER [Time].[*TOTAL_MEMBER_SEL~AGG] AS 'AGGREGATE(EXISTS([*CJ_ROW_AXIS],([Gender].CURRENTMEMBER)))', SOLVE_ORDER=20\r\n"
+            + " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Gender].[Gender].CURRENTMEMBER,[Store Type].[Store Type].CURRENTMEMBER)})'\r\n"
+            + " SET [*BASE_MEMBERS__Store Type_] AS '{[Store Type].[Store Type].[All Store Types].[Gourmet Supermarket],[Store Type].[Store Type].[All Store Types].[Supermarket]}'\r\n"
+            + " SET [*BASE_MEMBERS__Gender_] AS '[Gender].[Gender].[Gender].MEMBERS'\r\n"
+            + " SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Product].[Product].CURRENTMEMBER)})'\r\n"
+            + " SET [*BASE_MEMBERS__Product_] AS '{[Product].[Product].[All Products].[Food],[Product].[Product].[All Products].[Drink]}'\r\n"
+            + " SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Gender].[Gender].CURRENTMEMBER,[Store Type].[Store Type].CURRENTMEMBER)})'\r\n"
+            + " MEMBER [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG] AS '([Education Level].[Education Level].[*TOTAL_MEMBER_SEL~AGG], [Time].[Time].[*TOTAL_MEMBER_SEL~AGG])'\r\n"
+            + " MEMBER [Education Level].[Education Level].[*TOTAL_MEMBER_SEL~AGG] AS 'CACHE(AGGREGATE([*CJ_SLICER_AXIS]))', SOLVE_ORDER=10\r\n"
+            + " MEMBER [Time].[Time].[*TOTAL_MEMBER_SEL~AGG] AS 'AGGREGATE(EXISTS([*CJ_ROW_AXIS],([Gender].CURRENTMEMBER)))', SOLVE_ORDER=20\r\n"
             + " SELECT\r\n" + " {[Measures].[Customer Count]} ON COLUMNS\r\n" + " , NON EMPTY\r\n"
-            + " UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Gender].CURRENTMEMBER)}),{[Store Type].[*TOTAL_MEMBER_SEL~AGG]}),[*CJ_ROW_AXIS]) ON ROWS\r\n"
+            + " UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Gender].[Gender].CURRENTMEMBER)}),{[Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}),[*CJ_ROW_AXIS]) ON ROWS\r\n"
             + " FROM [Sales]\r\n" );
     String resultString = TestUtil.toString( result );
     assertEqualsVerbose( "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Customer Count]}\n"
-        + "Axis #2:\n" + "{[Gender].[F], [Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
-        + "{[Gender].[M], [Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
-        + "{[Gender].[F], [Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[F], [Store Type].[Supermarket]}\n"
-        + "{[Gender].[M], [Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[M], [Store Type].[Supermarket]}\n"
+        + "Axis #2:\n" + "{[Gender].[Gender].[F], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
+        + "{[Gender].[Gender].[M], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
+        + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Supermarket]}\n"
+        + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Supermarket]}\n"
         + "Row #0: 2,044\n" + "Row #1: 2,084\n" + "Row #2: 519\n" + "Row #3: 1,896\n" + "Row #4: 540\n"
         + "Row #5: 1,945\n", upgradeActual( resultString ) );
     Execution e = ( (ResultBase) result ).getExecution();
@@ -2354,26 +2354,26 @@ class AggregationOnDistinctCountMeasuresTest {
     Result result =
         executeQuery(context.getConnectionWithDefaultRole(), " WITH\r\n"
             + " SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Gender_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Store Type_],[*BASE_MEMBERS__Product_]))'\r\n"
-            + " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Gender].CURRENTMEMBER,[Store Type].CURRENTMEMBER)})'\r\n"
-            + " SET [*BASE_MEMBERS__Store Type_] AS '{[Store Type].[All Store Types].[Gourmet Supermarket],[Store Type].[All Store Types].[Supermarket]}'\r\n"
-            + " SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Gender].CURRENTMEMBER.ORDERKEY,BASC,[Store Type].CURRENTMEMBER.ORDERKEY,BASC)'\r\n"
+            + " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Gender].[Gender].CURRENTMEMBER,[Store Type].[Store Type].CURRENTMEMBER)})'\r\n"
+            + " SET [*BASE_MEMBERS__Store Type_] AS '{[Store Type].[Store Type].[All Store Types].[Gourmet Supermarket],[Store Type].[Store Type].[All Store Types].[Supermarket]}'\r\n"
+            + " SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Gender].CURRENTMEMBER.ORDERKEY,BASC,[Store Type].[Store Type].CURRENTMEMBER.ORDERKEY,BASC)'\r\n"
             + " SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[*FORMATTED_MEASURE_0]}'\r\n"
-            + " SET [*BASE_MEMBERS__Gender_] AS '[Gender].[Gender].MEMBERS'\r\n"
-            + " SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Product].CURRENTMEMBER)})'\r\n"
-            + " SET [*BASE_MEMBERS__Product_] AS '{[Product].[All Products].[Food],[Product].[All Products].[Drink]}'\r\n"
-            + " SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Gender].CURRENTMEMBER,[Store Type].CURRENTMEMBER)})'\r\n"
+            + " SET [*BASE_MEMBERS__Gender_] AS '[Gender].[Gender].[Gender].MEMBERS'\r\n"
+            + " SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Product].[Product].CURRENTMEMBER)})'\r\n"
+            + " SET [*BASE_MEMBERS__Product_] AS '{[Product].[Product].[All Products].[Food],[Product].[Product].[All Products].[Drink]}'\r\n"
+            + " SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Gender].[Gender].CURRENTMEMBER,[Store Type].[Store Type].CURRENTMEMBER)})'\r\n"
             + " MEMBER [Measures].[*FORMATTED_MEASURE_0] AS '[Measures].[Customer Count]', FORMAT_STRING = '#,###', SOLVE_ORDER=500\r\n"
-            + " MEMBER [Store Type].[*TOTAL_MEMBER_SEL~AGG] AS 'AGGREGATE(CACHEDEXISTS([*CJ_ROW_AXIS],([Gender].CURRENTMEMBER),\"[*CJ_ROW_AXIS]\"))', SOLVE_ORDER=-101\r\n"
+            + " MEMBER [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG] AS 'AGGREGATE(CACHEDEXISTS([*CJ_ROW_AXIS],([Gender].CURRENTMEMBER),\"[*CJ_ROW_AXIS]\"))', SOLVE_ORDER=-101\r\n"
             + " SELECT\r\n" + " [*BASE_MEMBERS__Measures_] ON COLUMNS\r\n" + " , NON EMPTY\r\n"
-            + " UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Gender].CURRENTMEMBER)}),{[Store Type].[*TOTAL_MEMBER_SEL~AGG]}),[*SORTED_ROW_AXIS]) ON ROWS\r\n"
+            + " UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Gender].[Gender].CURRENTMEMBER)}),{[Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}),[*SORTED_ROW_AXIS]) ON ROWS\r\n"
             + " FROM [Sales]\r\n" + " WHERE ([*CJ_SLICER_AXIS])\r\n" );
     String resultString = TestUtil.toString( result );
-    assertEqualsVerbose( "Axis #0:\n" + "{[Product].[Drink]}\n" + "{[Product].[Food]}\n" + "Axis #1:\n"
+    assertEqualsVerbose( "Axis #0:\n" + "{[Product].[Product].[Drink]}\n" + "{[Product].[Product].[Food]}\n" + "Axis #1:\n"
         + "{[Measures].[*FORMATTED_MEASURE_0]}\n" + "Axis #2:\n"
-        + "{[Gender].[F], [Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
-        + "{[Gender].[M], [Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
-        + "{[Gender].[F], [Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[F], [Store Type].[Supermarket]}\n"
-        + "{[Gender].[M], [Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[M], [Store Type].[Supermarket]}\n"
+        + "{[Gender].[Gender].[F], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
+        + "{[Gender].[Gender].[M], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
+        + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Supermarket]}\n"
+        + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Supermarket]}\n"
         + "Row #0: 2,044\n" + "Row #1: 2,084\n" + "Row #2: 512\n" // Less than 519 above because slicer was applied
         + "Row #3: 1,884\n" + "Row #4: 531\n" + "Row #5: 1,929\n", upgradeActual( resultString ) );
     Execution e = ( (ResultBase) result ).getExecution();
@@ -2392,28 +2392,28 @@ class AggregationOnDistinctCountMeasuresTest {
     Result result =
         executeQuery(context.getConnectionWithDefaultRole(), "WITH\r\n"
             + " SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Gender_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Store Type_],[*BASE_MEMBERS__Product_]))'\r\n"
-            + " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Gender].CURRENTMEMBER,[Store Type].CURRENTMEMBER)})'\r\n"
-            + " SET [*METRIC_CJ_SET] AS 'FILTER([*NATIVE_CJ_SET],[Gender].CURRENTMEMBER IN [*METRIC_CACHE_SET])'\r\n"
-            + " SET [*BASE_MEMBERS__Store Type_] AS '{[Store Type].[All Store Types].[Gourmet Supermarket],[Store Type].[All Store Types].[Supermarket]}'\r\n"
-            + " SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Gender].CURRENTMEMBER.ORDERKEY,BASC,[Store Type].CURRENTMEMBER.ORDERKEY,BASC)'\r\n"
+            + " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Gender].[Gender].CURRENTMEMBER,[Store Type].CURRENTMEMBER)})'\r\n"
+            + " SET [*METRIC_CJ_SET] AS 'FILTER([*NATIVE_CJ_SET],[Gender].[Gender].CURRENTMEMBER IN [*METRIC_CACHE_SET])'\r\n"
+            + " SET [*BASE_MEMBERS__Store Type_] AS '{[Store Type].[Store Type].[All Store Types].[Gourmet Supermarket],[Store Type].[Store Type].[All Store Types].[Supermarket]}'\r\n"
+            + " SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Gender].[Gender].CURRENTMEMBER.ORDERKEY,BASC,[Store Type].[Store Type].CURRENTMEMBER.ORDERKEY,BASC)'\r\n"
             + " SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[Customer Count]}'\r\n"
-            + " SET [*BASE_MEMBERS__Gender_] AS '[Gender].[Gender].MEMBERS'\r\n"
-            + " SET [*METRIC_CACHE_SET] AS 'FILTER(GENERATE([*NATIVE_CJ_SET],{([Gender].CURRENTMEMBER)}),2044 <= [Measures].[*Customer Count_SEL~AGG] and [Measures].[*Customer Count_SEL~AGG] <= 2084)'\r\n"
-            + " SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Product].CURRENTMEMBER)})'\r\n"
-            + " SET [*BASE_MEMBERS__Product_] AS '{[Product].[All Products].[Drink],[Product].[All Products].[Food]}'\r\n"
-            + " SET [*CJ_ROW_AXIS] AS 'GENERATE([*METRIC_CJ_SET], {([Gender].CURRENTMEMBER,[Store Type].CURRENTMEMBER)})'\r\n"
-            + " MEMBER [Education Level].[*METRIC_CTX_SET_AGG] AS 'CACHE(AGGREGATE(CACHEDEXISTS([*NATIVE_CJ_SET],([Gender].CURRENTMEMBER),\"[*NATIVE_CJ_SET]\")))', SOLVE_ORDER=-100\r\n"
-            + " MEMBER [Measures].[*Customer Count_SEL~AGG] AS '([Measures].[Customer Count], [Education Level].[*METRIC_CTX_SET_AGG])', SOLVE_ORDER=400\r\n"
-            + " MEMBER [Store Type].[*TOTAL_MEMBER_SEL~AGG] AS 'AGGREGATE(CACHEDEXISTS([*CJ_ROW_AXIS],([Gender].CURRENTMEMBER),\"[*CJ_ROW_AXIS]\"))', SOLVE_ORDER=-101\r\n"
+            + " SET [*BASE_MEMBERS__Gender_] AS '[Gender].[Gender].[Gender].MEMBERS'\r\n"
+            + " SET [*METRIC_CACHE_SET] AS 'FILTER(GENERATE([*NATIVE_CJ_SET],{([Gender].[Gender].CURRENTMEMBER)}),2044 <= [Measures].[*Customer Count_SEL~AGG] and [Measures].[*Customer Count_SEL~AGG] <= 2084)'\r\n"
+            + " SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Product].[Product].CURRENTMEMBER)})'\r\n"
+            + " SET [*BASE_MEMBERS__Product_] AS '{[Product].[Product].[All Products].[Drink],[Product].[Product].[All Products].[Food]}'\r\n"
+            + " SET [*CJ_ROW_AXIS] AS 'GENERATE([*METRIC_CJ_SET], {([Gender].[Gender].CURRENTMEMBER,[Store Type].[Store Type].CURRENTMEMBER)})'\r\n"
+            + " MEMBER [Education Level].[Education Level].[*METRIC_CTX_SET_AGG] AS 'CACHE(AGGREGATE(CACHEDEXISTS([*NATIVE_CJ_SET],([Gender].[Gender].CURRENTMEMBER),\"[*NATIVE_CJ_SET]\")))', SOLVE_ORDER=-100\r\n"
+            + " MEMBER [Measures].[*Customer Count_SEL~AGG] AS '([Measures].[Customer Count], [Education Level].[Education Level].[*METRIC_CTX_SET_AGG])', SOLVE_ORDER=400\r\n"
+            + " MEMBER [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG] AS 'AGGREGATE(CACHEDEXISTS([*CJ_ROW_AXIS],([Gender].CURRENTMEMBER),\"[*CJ_ROW_AXIS]\"))', SOLVE_ORDER=-101\r\n"
             + " SELECT\r\n" + " [*BASE_MEMBERS__Measures_] ON COLUMNS\r\n" + " , NON EMPTY\r\n"
-            + " UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Gender].CURRENTMEMBER)}),{[Store Type].[*TOTAL_MEMBER_SEL~AGG]}),[*SORTED_ROW_AXIS]) ON ROWS\r\n"
+            + " UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Gender].CURRENTMEMBER)}),{[Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}),[*SORTED_ROW_AXIS]) ON ROWS\r\n"
             + " FROM [Sales]\r\n" + " WHERE ([*CJ_SLICER_AXIS])" );
     String resultString = TestUtil.toString( result );
-    assertEqualsVerbose( "Axis #0:\n" + "{[Product].[Drink]}\n" + "{[Product].[Food]}\n" + "Axis #1:\n"
-        + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Gender].[F], [Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
-        + "{[Gender].[M], [Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
-        + "{[Gender].[F], [Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[F], [Store Type].[Supermarket]}\n"
-        + "{[Gender].[M], [Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[M], [Store Type].[Supermarket]}\n"
+    assertEqualsVerbose( "Axis #0:\n" + "{[Product].[Product].[Drink]}\n" + "{[Product].[Product].[Food]}\n" + "Axis #1:\n"
+        + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Gender].[Gender].[F], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
+        + "{[Gender].[Gender].[M], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
+        + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Supermarket]}\n"
+        + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Supermarket]}\n"
         + "Row #0: 2,044\n" + "Row #1: 2,084\n" + "Row #2: 512\n" + "Row #3: 1,884\n" + "Row #4: 531\n"
         + "Row #5: 1,929\n", upgradeActual( resultString ) );
     Execution e = ( (ResultBase) result ).getExecution();
@@ -2428,41 +2428,41 @@ class AggregationOnDistinctCountMeasuresTest {
     Result result =
         executeQuery(context.getConnectionWithDefaultRole(), "WITH\r\n" +
             " SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Customers_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Product_],[*BASE_MEMBERS__Promotion Media_]))))'\r\n" +
-            " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Customers].CURRENTMEMBER,[Education Level].CURRENTMEMBER,[Time].CURRENTMEMBER)})'\r\n" +
-            " SET [*METRIC_CJ_SET] AS 'FILTER([*NATIVE_CJ_SET],[Customers].CURRENTMEMBER IN [*METRIC_CACHE_SET])'\r\n" +
-            " SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Customers].CURRENTMEMBER.ORDERKEY,BASC,ANCESTOR([Customers].CURRENTMEMBER,[Customers].[City]).ORDERKEY,BASC,[Measures].[*SORTED_MEASURE],BASC)'\r\n" +
-            " SET [*BASE_MEMBERS__Education Level_] AS '{[Education Level].[All Education Levels].[Graduate Degree],[Education Level].[All Education Levels].[High School Degree],[Education Level].[All Education Levels].[Partial College],[Education Level].[All Education Levels].[Partial High School]}'\r\n" +
-            " SET [*BASE_MEMBERS__Customers_] AS '[Customers].[Name].MEMBERS'\r\n" +
-            " SET [*METRIC_CACHE_SET] AS 'FILTER(GENERATE([*NATIVE_CJ_SET],{([Customers].CURRENTMEMBER)}),[Measures].[**CALCULATED_MEASURE_3_SEL~SUM] > 0)'\r\n" +
-            " SET [*METRIC_MEMBERS__Time_] AS 'GENERATE([*METRIC_CJ_SET], {[Time].CURRENTMEMBER})'\r\n" +
-            " SET [*SORTED_COL_AXIS] AS 'ORDER([*CJ_COL_AXIS],[Time].CURRENTMEMBER.ORDERKEY,BASC,ANCESTOR([Time].CURRENTMEMBER,[Time].[Quarter]).ORDERKEY,BASC,[Measures].CURRENTMEMBER.ORDERKEY,BASC)'\r\n" +
+            " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Customers].[Customers].CURRENTMEMBER,[Education Level].[Education Level].CURRENTMEMBER,[Time].[Time].CURRENTMEMBER)})'\r\n" +
+            " SET [*METRIC_CJ_SET] AS 'FILTER([*NATIVE_CJ_SET],[Customers].[Customers].CURRENTMEMBER IN [*METRIC_CACHE_SET])'\r\n" +
+            " SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Customers].[Customers].CURRENTMEMBER.ORDERKEY,BASC,ANCESTOR([Customers].[Customers].CURRENTMEMBER,[Customers].[Customers].[City]).ORDERKEY,BASC,[Measures].[*SORTED_MEASURE],BASC)'\r\n" +
+            " SET [*BASE_MEMBERS__Education Level_] AS '{[Education Level].[Education Level].[All Education Levels].[Graduate Degree],[Education Level].[Education Level].[All Education Levels].[High School Degree],[Education Level].[Education Level].[All Education Levels].[Partial College],[Education Level].[Education Level].[All Education Levels].[Partial High School]}'\r\n" +
+            " SET [*BASE_MEMBERS__Customers_] AS '[Customers].[Customers].[Name].MEMBERS'\r\n" +
+            " SET [*METRIC_CACHE_SET] AS 'FILTER(GENERATE([*NATIVE_CJ_SET],{([Customers].[Customers].CURRENTMEMBER)}),[Measures].[**CALCULATED_MEASURE_3_SEL~SUM] > 0)'\r\n" +
+            " SET [*METRIC_MEMBERS__Time_] AS 'GENERATE([*METRIC_CJ_SET], {[Time].[Time].CURRENTMEMBER})'\r\n" +
+            " SET [*SORTED_COL_AXIS] AS 'ORDER([*CJ_COL_AXIS],[Time].[Time].CURRENTMEMBER.ORDERKEY,BASC,ANCESTOR([Time].[Time].CURRENTMEMBER,[Time].[Time].[Quarter]).ORDERKEY,BASC,[Measures].CURRENTMEMBER.ORDERKEY,BASC)'\r\n" +
             " SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[*FORMATTED_MEASURE_0],[Measures].[*CALCULATED_MEASURE_2],[Measures].[*CALCULATED_MEASURE_1],[Measures].[*CALCULATED_MEASURE_4],[Measures].[*CALCULATED_MEASURE_3]}'\r\n" +
-            " SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Product].CURRENTMEMBER,[Promotion Media].CURRENTMEMBER)})'\r\n" +
-            " SET [*CJ_COL_AXIS] AS 'GENERATE([*METRIC_CJ_SET], {([Time].CURRENTMEMBER)})'\r\n" +
-            " SET [*BASE_MEMBERS__Product_] AS '{[Product].[All Products].[Drink]}'\r\n" +
-            " SET [*CJ_ROW_AXIS] AS 'GENERATE([*METRIC_CJ_SET], {([Customers].CURRENTMEMBER,[Education Level].CURRENTMEMBER)})'\r\n" +
-            " SET [*BASE_MEMBERS__Time_] AS '{[Time].[1997].[Q4].[12]}'\r\n" +
-            " SET [*BASE_MEMBERS__Promotion Media_] AS '{[Promotion Media].[All Media].[Bulk Mail],[Promotion Media].[All Media].[Cash Register Handout]}'\r\n" +
-            " MEMBER [Store].[*METRIC_CTX_SET_SUM] AS 'CACHE(SUM(CACHEDEXISTS([*NATIVE_CJ_SET],([Customers].CURRENTMEMBER),\"[*NATIVE_CJ_SET]\")))', SOLVE_ORDER=100\r\n" +
-            " MEMBER [Measures].[**CALCULATED_MEASURE_3_SEL~SUM] AS '([Measures].[*CALCULATED_MEASURE_3], [Store].[*METRIC_CTX_SET_SUM])', SOLVE_ORDER=400\r\n" +
+            " SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Product].[Product].CURRENTMEMBER,[Promotion Media].[Promotion Media].CURRENTMEMBER)})'\r\n" +
+            " SET [*CJ_COL_AXIS] AS 'GENERATE([*METRIC_CJ_SET], {([Time].[Time].CURRENTMEMBER)})'\r\n" +
+            " SET [*BASE_MEMBERS__Product_] AS '{[Product].[Product].[All Products].[Drink]}'\r\n" +
+            " SET [*CJ_ROW_AXIS] AS 'GENERATE([*METRIC_CJ_SET], {([Customers].[Customers].CURRENTMEMBER,[Education Level].[Education Level].CURRENTMEMBER)})'\r\n" +
+            " SET [*BASE_MEMBERS__Time_] AS '{[Time].[Time].[1997].[Q4].[12]}'\r\n" +
+            " SET [*BASE_MEMBERS__Promotion Media_] AS '{[Promotion Media].[Promotion Media].[All Media].[Bulk Mail],[Promotion Media].[Promotion Media].[All Media].[Cash Register Handout]}'\r\n" +
+            " MEMBER [Store].[Store].[*METRIC_CTX_SET_SUM] AS 'CACHE(SUM(CACHEDEXISTS([*NATIVE_CJ_SET],([Customers].[Customers].CURRENTMEMBER),\"[*NATIVE_CJ_SET]\")))', SOLVE_ORDER=100\r\n" +
+            " MEMBER [Measures].[**CALCULATED_MEASURE_3_SEL~SUM] AS '([Measures].[*CALCULATED_MEASURE_3], [Store].[Store].[*METRIC_CTX_SET_SUM])', SOLVE_ORDER=400\r\n" +
             " MEMBER [Measures].[*CALCULATED_MEASURE_1] AS 'CACHE(SUM(\r\n" +
             "\r\n" +
-            "PERIODSTODATE([Time].[Year], \r\n" +
+            "PERIODSTODATE([Time].[Time].[Year], \r\n" +
             "\r\n" +
             "ParallelPeriod(\r\n" +
-            "[Time].[Quarter], 1,\r\n" +
-            "[Time].CurrentMember)\r\n" +
+            "[Time].[Time].[Quarter], 1,\r\n" +
+            "[Time].[Time].CurrentMember)\r\n" +
             "\r\n" +
             ")\r\n" +
             ", [Measures].[Unit Sales]))', SOLVE_ORDER=200\r\n" +
             " MEMBER [Measures].[*CALCULATED_MEASURE_2] AS 'CACHE(SUM(\r\n" +
             "\r\n" +
-            "PERIODSTODATE([Time].[Year], [Time].CurrentMember), [Measures].[Unit Sales]))', SOLVE_ORDER=0\r\n" +
+            "PERIODSTODATE([Time].[Time].[Year], [Time].[Time].CurrentMember), [Measures].[Unit Sales]))', SOLVE_ORDER=0\r\n" +
             " MEMBER [Measures].[*CALCULATED_MEASURE_3] AS '([Measures].[*CALCULATED_MEASURE_2]-[Measures].[*CALCULATED_MEASURE_1])/[Measures].[*CALCULATED_MEASURE_1]', FORMAT_STRING = '###0.00%', SOLVE_ORDER=0\r\n" +
             " MEMBER [Measures].[*CALCULATED_MEASURE_4] AS '[Measures].[*CALCULATED_MEASURE_2]-[Measures].[*CALCULATED_MEASURE_1]', SOLVE_ORDER=0\r\n" +
             " MEMBER [Measures].[*FORMATTED_MEASURE_0] AS '[Measures].[Unit Sales]', FORMAT_STRING = 'Standard', SOLVE_ORDER=500\r\n" +
-            " MEMBER [Measures].[*SORTED_MEASURE] AS '([Measures].[*CALCULATED_MEASURE_3],[Time].[*CTX_MEMBER_SEL~SUM])', SOLVE_ORDER=400\r\n" +
-            " MEMBER [Time].[*CTX_MEMBER_SEL~SUM] AS 'SUM([*METRIC_MEMBERS__Time_])', SOLVE_ORDER=98\r\n" +
+            " MEMBER [Measures].[*SORTED_MEASURE] AS '([Measures].[*CALCULATED_MEASURE_3],[Time].[Time].[*CTX_MEMBER_SEL~SUM])', SOLVE_ORDER=400\r\n" +
+            " MEMBER [Time].[Time].[*CTX_MEMBER_SEL~SUM] AS 'SUM([*METRIC_MEMBERS__Time_])', SOLVE_ORDER=98\r\n" +
             " SELECT\r\n" +
             " CROSSJOIN([*SORTED_COL_AXIS],[*BASE_MEMBERS__Measures_]) ON COLUMNS\r\n" +
             " , NON EMPTY\r\n" +

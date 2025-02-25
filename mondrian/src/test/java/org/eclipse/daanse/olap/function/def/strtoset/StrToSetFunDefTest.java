@@ -23,9 +23,6 @@ import org.opencube.junit5.context.TestConfig;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.RolapCatalogCache;
-
-
 class StrToSetFunDefTest {
 
 
@@ -42,8 +39,8 @@ class StrToSetFunDefTest {
             "StrToSet("
                 + " \"{[Gender].[F], [Gender].[M]}\","
                 + " [Gender])",
-            "[Gender].[F]\n"
-                + "[Gender].[M]" );
+            "[Gender].[Gender].[F]\n"
+                + "[Gender].[Gender].[M]" );
 
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "StrToSet("
@@ -56,8 +53,8 @@ class StrToSetFunDefTest {
             "StrToSet("
                 + " \"  {   [Gender] .  [F]  ,[Gender].[M] }  \","
                 + " [Gender])",
-            "[Gender].[F]\n"
-                + "[Gender].[M]" );
+            "[Gender].[Gender].[F]\n"
+                + "[Gender].[Gender].[M]" );
 
         // tuples
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -70,8 +67,8 @@ class StrToSetFunDefTest {
                 + "\","
                 + " [Gender],"
                 + " [Time])",
-            "{[Gender].[F], [Time].[1997].[Q2]}\n"
-                + "{[Gender].[M], [Time].[1997]}" );
+            "{[Gender].[Gender].[F], [Time].[Time].[1997].[Q2]}\n"
+                + "{[Gender].[Gender].[M], [Time].[Time].[1997]}" );
 
         // matches unique name
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -84,9 +81,9 @@ class StrToSetFunDefTest {
                 + "}"
                 + "\","
                 + " [Store])",
-            "[Store].[USA].[CA]\n"
-                + "[Store].[USA].[OR]\n"
-                + "[Store].[USA].[WA]" );
+            "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA].[OR]\n"
+                + "[Store].[Store].[USA].[WA]" );
     }
 
     @ParameterizedTest
@@ -103,7 +100,7 @@ class StrToSetFunDefTest {
                 + " [Gender],"
                 + " [Time],"
                 + " [Gender])",
-            "Tuple contains more than one member of hierarchy '[Gender]'.", "Sales" );
+            "Tuple contains more than one member of hierarchy '[Gender].[Gender]'.", "Sales" );
     }
 
     @ParameterizedTest
@@ -122,8 +119,8 @@ class StrToSetFunDefTest {
                 + "}"
                 + "\","
                 + " [Product])",
-            "[Product].[Food]\n"
-                + "[Product].[Drink].[Dairy]" );
+            "[Product].[Product].[Food]\n"
+                + "[Product].[Product].[Drink].[Dairy]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
@@ -136,8 +133,8 @@ class StrToSetFunDefTest {
                 + "}"
                 + "\","
                 + " [Gender], [Product])",
-            "{[Gender].[M], [Product].[Food]}\n"
-                + "{[Gender].[F], [Product].[Drink].[Dairy]}" );
+            "{[Gender].[Gender].[M], [Product].[Product].[Food]}\n"
+                + "{[Gender].[Gender].[F], [Product].[Product].[Drink].[Dairy]}" );
     }
 
 

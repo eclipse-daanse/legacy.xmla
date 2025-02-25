@@ -39,9 +39,9 @@ class ExistingFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[ExistingCount]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Food]}\n"
-                + "{[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Food]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
                 + "Row #0: 8\n"
                 + "Row #1: 62\n"
                 + "Row #2: 32\n" );
@@ -63,9 +63,9 @@ class ExistingFunDefTest {
                 + "{[Measures].[WithExisting]}\n"
                 + "{[Measures].[WithExists]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Food]}\n"
-                + "{[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Food]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
                 + "Row #0: 102\n"
                 + "Row #0: 8\n"
                 + "Row #0: 8\n"
@@ -83,16 +83,16 @@ class ExistingFunDefTest {
         // sorry about the mess, this came from Analyzer
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH \n"
-                + "SET [*NATIVE_CJ_SET] AS 'FILTER({[Time.Weekly].[All Time.Weeklys].[1997].[2],[Time.Weekly].[All Time"
-                + ".Weeklys].[1997].[24]}, NOT ISEMPTY ([Measures].[Store Sales]) OR NOT ISEMPTY ([Measures]"
+                + "SET [*NATIVE_CJ_SET] AS 'FILTER({[Time].[Weekly].[All Weeklys].[1997].[2],[Time].[Weekly].[All "
+                + "Weeklys].[1997].[24]}, NOT ISEMPTY ([Measures].[Store Sales]) OR NOT ISEMPTY ([Measures]"
                 + ".[CALCULATED_MEASURE_1]))' \n"
-                + "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time.Weekly].CURRENTMEMBER.ORDERKEY,BASC,ANCESTOR([Time"
-                + ".Weekly].CURRENTMEMBER,[Time.Weekly].[Year]).ORDERKEY,BASC)'\n"
+                + "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time].[Weekly].CURRENTMEMBER.ORDERKEY,BASC,ANCESTOR([Time]"
+                + ".[Weekly].CURRENTMEMBER,[Time].[Weekly].[Year]).ORDERKEY,BASC)'\n"
                 + "SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[*FORMATTED_MEASURE_0],[Measures].[CALCULATED_MEASURE_1]}'\n"
-                + "SET [*BASE_MEMBERS__Time.Weekly_] AS '{[Time.Weekly].[All Time.Weeklys].[1997].[2],[Time.Weekly].[All Time"
-                + ".Weeklys].[1997].[24]}'\n"
-                + "SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Time.Weekly].CURRENTMEMBER)})'\n"
-                + "MEMBER [Measures].[CALCULATED_MEASURE_1] AS 'SetToStr( EXISTING [Time.Weekly].[Week].Members )'\n"
+                + "SET [*BASE_MEMBERS__Time.Weekly_] AS '{[Time].[Weekly].[All Weeklys].[1997].[2],[Time].[Weekly].[All "
+                + "Weeklys].[1997].[24]}'\n"
+                + "SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Time].[Weekly].CURRENTMEMBER)})'\n"
+                + "MEMBER [Measures].[CALCULATED_MEASURE_1] AS 'SetToStr( EXISTING [Time].[Weekly].[Week].Members )'\n"
                 + "MEMBER [Measures].[*FORMATTED_MEASURE_0] AS '[Measures].[Store Sales]', FORMAT_STRING = '#,###.00', "
                 + "SOLVE_ORDER=500\n"
                 + "SELECT\n"
@@ -106,12 +106,12 @@ class ExistingFunDefTest {
                 + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
                 + "{[Measures].[CALCULATED_MEASURE_1]}\n"
                 + "Axis #2:\n"
-                + "{[Time.Weekly].[1997].[2]}\n"
-                + "{[Time.Weekly].[1997].[24]}\n"
+                + "{[Time].[Weekly].[1997].[2]}\n"
+                + "{[Time].[Weekly].[1997].[24]}\n"
                 + "Row #0: 19,756.43\n"
-                + "Row #0: {[Time.Weekly].[1997].[2]}\n"
+                + "Row #0: {[Time].[Weekly].[1997].[2]}\n"
                 + "Row #1: 11,371.84\n"
-                + "Row #1: {[Time.Weekly].[1997].[24]}\n" );
+                + "Row #1: {[Time].[Weekly].[1997].[24]}\n" );
     }
 
     @ParameterizedTest
@@ -125,10 +125,10 @@ class ExistingFunDefTest {
                 + "  from [Sales]\n"
                 + "  where {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]} ",
             "Axis #0:\n"
-                + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]}\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[subcategorystring]}\n"
-                + "Row #0: {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Drink].[Alcoholic "
+                + "Row #0: {[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Product].[Drink].[Alcoholic "
                 + "Beverages].[Beer and Wine].[Wine]}\n" );
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -138,12 +138,12 @@ class ExistingFunDefTest {
                 + " WHERE {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Drink].[Alcoholic "
                 + "Beverages].[Beer and Wine].[Wine], [Product].[Food].[Eggs].[Eggs] } ",
             "Axis #0:\n"
-                + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]}\n"
-                + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine]}\n"
-                + "{[Product].[Food].[Eggs].[Eggs]}\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]}\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine]}\n"
+                + "{[Product].[Product].[Food].[Eggs].[Eggs]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[*CALCULATED_MEASURE_1]}\n"
-                + "Row #0: {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Product].[Food].[Eggs].[Eggs]}\n" );
+                + "Row #0: {[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Product].[Product].[Food].[Eggs].[Eggs]}\n" );
     }
 
     @ParameterizedTest
@@ -162,10 +162,10 @@ class ExistingFunDefTest {
                 + "{[Measures].[Unit Sales]}\n"
                 + "{[Measures].[Edible Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Food]}\n"
-                + "{[Product].[Non-Consumable]}\n"
-                + "{[Product].[All Products]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Food]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[All Products]}\n"
                 + "Row #0: 24,597\n"
                 + "Row #0: 24,597\n"
                 + "Row #1: 191,940\n"
@@ -197,9 +197,9 @@ class ExistingFunDefTest {
                 + "{[Measures].[Top 10 Brand Sales]}\n"
                 + "{[Measures].[Rest Brand Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Food]}\n"
-                + "{[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Food]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
                 + "Row #0: 24,597\n"
                 + "Row #0: 9,448\n"
                 + "Row #0: 15,149\n"
@@ -227,9 +227,9 @@ class ExistingFunDefTest {
                 + "{[Measures].[StaticSumNC]}\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Food]}\n"
-                + "{[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Food]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
                 + "Row #0: 50,236\n"
                 + "Row #0: 24,597\n"
                 + "Row #1: 50,236\n"
@@ -249,7 +249,7 @@ class ExistingFunDefTest {
                 + "{[Measures].[StaticSumNC]}\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #0: 50,236\n" );
     }
@@ -260,16 +260,16 @@ class ExistingFunDefTest {
         // this should ideally return 14 for both,
         // but being coherent with exists is good enough
         assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "WITH MEMBER [Measures].[Count Exists] AS Count(exists( [Time.Weekly].[Week].Members, [Time.Weekly]"
+            "WITH MEMBER [Measures].[Count Exists] AS Count(exists( [Time].[Weekly].[Week].Members, [Time].[Weekly]"
                 + ".CurrentMember ) )\n"
-                + " MEMBER [Measures].[Count Existing] AS Count(existing [Time.Weekly].[Week].Members)\n"
+                + " MEMBER [Measures].[Count Existing] AS Count(existing [Time].[Weekly].[Week].Members)\n"
                 + "SELECT\n"
                 + "{[Measures].[Count Exists], [Measures].[Count Existing]}\n"
                 + "ON 0\n"
                 + "FROM [Warehouse and Sales]\n"
-                + "WHERE [Time].[1997].[Q2]",
+                + "WHERE [Time].[Time].[1997].[Q2]",
             "Axis #0:\n"
-                + "{[Time].[1997].[Q2]}\n"
+                + "{[Time].[Time].[1997].[Q2]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Count Exists]}\n"
                 + "{[Measures].[Count Existing]}\n"

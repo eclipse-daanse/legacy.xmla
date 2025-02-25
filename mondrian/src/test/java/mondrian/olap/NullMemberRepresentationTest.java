@@ -46,12 +46,12 @@ class NullMemberRepresentationTest {
             + "Axis #1:\n"
             + "{[Measures].[Foo]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997]}\n"
-            + "{[Time].[1997].[Q2]}\n"
-            + "{[Time].[1997].[Q2].[4]}\n"
-            + "Row #0: [Time].[1997].[Q4]\n"
-            + "Row #1: [Time].[1997].[Q2].[6]\n"
-            + "Row #2: [Time].["
+            + "{[Time].[Time].[1997]}\n"
+            + "{[Time].[Time].[1997].[Q2]}\n"
+            + "{[Time].[Time].[1997].[Q2].[4]}\n"
+            + "Row #0: [Time].[Time].[1997].[Q4]\n"
+            + "Row #1: [Time].[Time].[1997].[Q2].[6]\n"
+            + "Row #2: [Time].[Time].["
             + getNullMemberRepresentation()
             + "]\n"
             + "");
@@ -65,10 +65,10 @@ class NullMemberRepresentationTest {
         Connection connection = context.getConnectionWithDefaultRole();
         assertExprReturns(connection, "Sales",
             "[Time].[1997].Children.Item(6).UniqueName",
-            "[Time].[" + getNullMemberRepresentation() + "]");
+            "[Time].[Time].[" + getNullMemberRepresentation() + "]");
         assertExprReturns(connection, "Sales",
             "[Time].[1997].Children.Item(-1).UniqueName",
-            "[Time].[" + getNullMemberRepresentation() + "]");
+            "[Time].[Time].[" + getNullMemberRepresentation() + "]");
     }
 
     void testNullMemberWithCustomRepresentation(Context context) throws IOException {

@@ -21,7 +21,7 @@ Axis #0:
 Axis #1:
 {[Measures].[Unit Sales]}
 Axis #2:
-{[Customers].[USA].[CA]}
+{[Customers].[Customers].[USA].[CA]}
 Row #0: 74,748
 ]]>
         </Resource>
@@ -67,7 +67,7 @@ Axis #0:
 Axis #1:
 {[Measures].[Unit Sales]}
 Axis #2:
-{[Customers].[USA].[OR]}
+{[Customers].[Customers].[USA].[OR]}
 Row #0: 67,659
 ]]>
         </Resource>
@@ -114,8 +114,8 @@ Axis #0:
 Axis #1:
 {[Measures].[Unit Sales]}
 Axis #2:
-{[Customers].[USA].[CA]}
-{[Customers].[USA].[WA]}
+{[Customers].[Customers].[USA].[CA]}
+{[Customers].[Customers].[USA].[WA]}
 Row #0: 74,748
 Row #1: 124,366
 ]]>

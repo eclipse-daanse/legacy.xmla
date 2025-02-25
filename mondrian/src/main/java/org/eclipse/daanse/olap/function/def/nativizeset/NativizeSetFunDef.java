@@ -197,9 +197,7 @@ public class NativizeSetFunDef extends AbstractFunctionDefinition {
 
     static IdImpl hierarchyId(Level level) {
         IdImpl id = new IdImpl(NativizeSetFunDef.q(level.getDimension().getName()));
-        if (SystemWideProperties.instance().SsasCompatibleNaming) {
-            id = id.append(NativizeSetFunDef.q(level.getHierarchy().getName()));
-        }
+        id = id.append(NativizeSetFunDef.q(level.getHierarchy().getName()));
         return id;
     }
 

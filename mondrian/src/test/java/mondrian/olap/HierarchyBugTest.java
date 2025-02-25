@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
@@ -43,10 +42,8 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TimeDimensionMappingImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -133,7 +130,6 @@ class HierarchyBugTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
 	void testNamesIdentitySsasCompatibleTimeHierarchy(Context foodMartContext) {
 
-        SystemWideProperties.instance().SsasCompatibleNaming = true;
         String mdxTime = "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
             + "   [Time].[Time].[Year].Members ON ROWS\n"
@@ -152,7 +148,6 @@ TestUtil.flushSchemaCache(conn);
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testNamesIdentitySsasCompatibleWeeklyHierarchy(Context foodMartContext) {
-        SystemWideProperties.instance().SsasCompatibleNaming = true;
         String mdxWeekly = "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
             + "   [Time].[Weekly].[Year].Members ON ROWS\n"
@@ -187,7 +182,7 @@ TestUtil.flushSchemaCache(conn);
         verifyMemberLevelNamesIdentityMeasureAxis(
             resultTime.getAxes()[0], "[Measures]");
         verifyMemberLevelNamesIdentityDimAxis(
-            resultTime.getAxes()[1], "[Time]");
+            resultTime.getAxes()[1], "[Time].[Time]");
         TestUtil.flushSchemaCache(conn);
     }
 	@ParameterizedTest
@@ -195,7 +190,7 @@ TestUtil.flushSchemaCache(conn);
     void testNamesIdentitySsasInCompatibleWeeklyHierarchy(Context foodMartContext) {
         String mdxWeekly = "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
-            + "   [Time.Weekly].[Year].Members ON ROWS\n"
+            + "   [Time].[Weekly].[Year].Members ON ROWS\n"
             + "FROM [Sales]";
 
         Connection conn=foodMartContext.getConnectionWithDefaultRole();
@@ -204,7 +199,7 @@ TestUtil.flushSchemaCache(conn);
         verifyMemberLevelNamesIdentityMeasureAxis(
             resultWeekly.getAxes()[0], "[Measures]");
         verifyMemberLevelNamesIdentityDimAxis(
-            resultWeekly.getAxes()[1], "[Time.Weekly]");
+            resultWeekly.getAxes()[1], "[Time].[Weekly]");
         TestUtil.flushSchemaCache(conn);
     }
 
@@ -232,14 +227,7 @@ TestUtil.flushSchemaCache(conn);
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testNamesIdentitySsasCompatibleOlap4j(Context foodMartContext) throws SQLException {
-        SystemWideProperties.instance().SsasCompatibleNaming = true;
         verifyLevelMemberNamesIdentityOlap4jTimeHierarchy(foodMartContext, "[Time].[Time]");
-    }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNamesIdentitySsasInCompatibleOlap4j(Context foodMartContext) throws SQLException {
-        // SsasCompatibleNaming defaults to false
-        verifyLevelMemberNamesIdentityOlap4jTimeHierarchy(foodMartContext, "[Time]");
     }
 
     private void verifyLevelMemberNamesIdentityOlap4jTimeHierarchy(Context foodMartContext, String expected)
@@ -258,7 +246,6 @@ TestUtil.flushSchemaCache(conn);
     void testNamesIdentitySsasCompatibleOlap4jWeekly(Context foodMartContext)
         throws SQLException
     {
-        SystemWideProperties.instance().SsasCompatibleNaming = true;
         String mdx = "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
             + "   [Time].[Weekly].[Year].Members ON ROWS\n"
@@ -274,27 +261,17 @@ TestUtil.flushSchemaCache(conn);
         // SsasCompatibleNaming defaults to false
         String mdx = "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
-            + "   [Time.Weekly].[Year].Members ON ROWS\n"
+            + "   [Time].[Weekly].[Year].Members ON ROWS\n"
             + "FROM [Sales]";
         verifyLevelMemberNamesIdentityOlap4j(
-            mdx, foodMartContext, "[Time.Weekly]");
+            mdx, foodMartContext, "[Time].[Weekly]");
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testNamesIdentitySsasCompatibleOlap4jDateDim(Context foodMartContext)
         throws SQLException
     {
-
-        SystemWideProperties.instance().SsasCompatibleNaming = true;
         verifyMemberLevelNamesIdentityOlap4jDateDim(foodMartContext, "[Date].[Date]");
-    }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNamesSsasInCompatibleOlap4jDateDim(Context foodMartContext)
-        throws SQLException
-    {
-        // SsasCompatibleNaming defaults to false
-        verifyMemberLevelNamesIdentityOlap4jDateDim(foodMartContext, "[Date]");
     }
 
     private void verifyMemberLevelNamesIdentityOlap4jDateDim(Context context, String expected)
@@ -378,8 +355,6 @@ TestUtil.flushSchemaCache(conn);
     void testNamesIdentitySsasCompatibleOlap4jDateWeekly(Context context)
         throws SQLException
     {
-
-        SystemWideProperties.instance().SsasCompatibleNaming = true;
         String mdx = "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
             + "   [Date].[Weekly].[Year].Members ON ROWS\n"
@@ -394,9 +369,9 @@ TestUtil.flushSchemaCache(conn);
         // SsasCompatibleNaming defaults to false
         String mdx = "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
-            + "   [Date.Weekly].[Year].Members ON ROWS\n"
+            + "   [Date].[Weekly].[Year].Members ON ROWS\n"
             + "FROM [Sales]";
-        verifyMemberLevelNamesIdentityOlap4jWeekly(context,mdx, "[Date.Weekly]");
+        verifyMemberLevelNamesIdentityOlap4jWeekly(context,mdx, "[Date].[Weekly]");
     }
 
     private void verifyMemberLevelNamesIdentityOlap4jWeekly(Context context,

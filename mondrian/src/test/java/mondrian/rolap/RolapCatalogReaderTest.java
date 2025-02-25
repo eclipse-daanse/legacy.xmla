@@ -263,9 +263,8 @@ class RolapCatalogReaderTest {
             assertFalse(dimensions.containsKey("Bad dimension")); // not exist
 
             assertFalse(hierarchies.containsKey("[Foo]"));
-            assertTrue(hierarchies.containsKey("[Product]"));
+            assertTrue(hierarchies.containsKey("[Product].[Product]"));
             assertTrue(hierarchies.containsKey(timeWeekly));
-            assertFalse(hierarchies.containsKey("[Time]"));
             assertFalse(hierarchies.containsKey("[Time].[Time]"));
         } finally {
             connection.close();

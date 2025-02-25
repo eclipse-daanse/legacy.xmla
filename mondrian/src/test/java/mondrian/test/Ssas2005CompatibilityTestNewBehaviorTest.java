@@ -15,7 +15,6 @@ public class Ssas2005CompatibilityTestNewBehaviorTest  extends Ssas2005Compatibi
     public void beforeEach() {
         SystemWideProperties.instance().populateInitial();
 //        RolapCatalogCache.instance().clear();
-        SystemWideProperties.instance().SsasCompatibleNaming = true;
     }
 
     @Override

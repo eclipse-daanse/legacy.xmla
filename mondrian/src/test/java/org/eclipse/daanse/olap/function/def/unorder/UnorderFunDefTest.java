@@ -31,27 +31,27 @@ class UnorderFunDefTest {
     void testUnorder(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Unorder([Gender].members)",
-            "[Gender].[All Gender]\n"
-                + "[Gender].[F]\n"
-                + "[Gender].[M]" );
+            "[Gender].[Gender].[All Gender]\n"
+                + "[Gender].[Gender].[F]\n"
+                + "[Gender].[Gender].[M]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Unorder(Order([Gender].members, -[Measures].[Unit Sales]))",
-            "[Gender].[All Gender]\n"
-                + "[Gender].[M]\n"
-                + "[Gender].[F]" );
+            "[Gender].[Gender].[All Gender]\n"
+                + "[Gender].[Gender].[M]\n"
+                + "[Gender].[Gender].[F]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Unorder(Crossjoin([Gender].members, [Marital Status].Children))",
-            "{[Gender].[All Gender], [Marital Status].[M]}\n"
-                + "{[Gender].[All Gender], [Marital Status].[S]}\n"
-                + "{[Gender].[F], [Marital Status].[M]}\n"
-                + "{[Gender].[F], [Marital Status].[S]}\n"
-                + "{[Gender].[M], [Marital Status].[M]}\n"
-                + "{[Gender].[M], [Marital Status].[S]}" );
+            "Unorder(Crossjoin([Gender].members, [Marital Status].[Marital Status].Children))",
+            "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[M]}\n"
+                + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[S]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}" );
 
         // implicitly convert member to set
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Unorder([Gender].[M])",
-            "[Gender].[M]" );
+            "[Gender].[Gender].[M]" );
 
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Unorder(1 + 3)",
@@ -69,9 +69,9 @@ class UnorderFunDefTest {
                 + "{[Measures].[Store Sales]}\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Gender].[All Gender]}\n"
-                + "{[Gender].[F]}\n"
-                + "{[Gender].[M]}\n"
+                + "{[Gender].[Gender].[All Gender]}\n"
+                + "{[Gender].[Gender].[F]}\n"
+                + "{[Gender].[Gender].[M]}\n"
                 + "Row #0: 565,238.13\n"
                 + "Row #0: 266,773\n"
                 + "Row #1: 280,226.21\n"

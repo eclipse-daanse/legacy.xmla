@@ -54,7 +54,7 @@ import mondrian.test.loader.CsvDBTestCase;
 class AggMeasureFactCountTest extends CsvDBTestCase {
 
     private final String QUERY = ""
-            + "select [Time].[Quarter].Members on columns, \n"
+            + "select [Time].[Time].[Quarter].Members on columns, \n"
             + "{[Measures].[Store Sales], [Measures].[Store Cost], [Measures].[Unit Sales]} on rows "
             + "from [Sales]";
 
@@ -145,11 +145,11 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 ))
                 .withAggregationLevels(List.of(
                 	AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016).build(),
+                        .withName("[Time].[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016).build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016).build(),
+                        .withName("[Time].[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016).build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016).build()
+                        .withName("[Time].[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016).build()
                 ))
                 .build()
         );
@@ -303,11 +303,11 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 ))
                 .withAggregationLevels(List.of(
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016).build(),
+                        .withName("[Time].[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016).build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016).build(),
+                        .withName("[Time].[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016).build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016).build()
+                        .withName("[Time].[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016).build()
                 ))
                 .build()
         );
@@ -391,11 +391,11 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 ))
                 .withAggregationLevels(List.of(
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016).build(),
+                        .withName("[Time].[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016).build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016).build(),
+                        .withName("[Time].[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016).build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016).build()
+                        .withName("[Time].[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016).build()
                 ))
                 .build()
         );
@@ -461,11 +461,11 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 ))
                 .withAggregationLevels(List.of(
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016).build(),
+                        .withName("[Time].[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016).build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016).build(),
+                        .withName("[Time].[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016).build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016).build()
+                        .withName("[Time].[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016).build()
                 ))
                 .build()
         );
@@ -625,11 +625,11 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 ))
                 .withAggregationLevels(List.of(
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggCsvDifferentColumnNames).build(),
+                        .withName("[Time].[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggCsvDifferentColumnNames).build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggCsvDifferentColumnNames).build(),
+                        .withName("[Time].[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggCsvDifferentColumnNames).build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggCsvDifferentColumnNames).build()
+                        .withName("[Time].[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggCsvDifferentColumnNames).build()
                 ))
                 .build()
         );
@@ -714,11 +714,11 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 ))
                 .withAggregationLevels(List.of(
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggCsvDivideByZero).build(),
+                        .withName("[Time].[Time].[Year]").withColumn(AggMeasureFactCountTestModifier.theYearAggCsvDivideByZero).build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggCsvDivideByZero).build(),
+                        .withName("[Time].[Time].[Quarter]").withColumn(AggMeasureFactCountTestModifier.quarterAggCsvDivideByZero).build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggCsvDivideByZero).build()
+                        .withName("[Time].[Time].[Month]").withColumn(AggMeasureFactCountTestModifier.monthOfYearAggCsvDivideByZero).build()
                     ))
                 .build()
         );
@@ -726,10 +726,10 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
                 + "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Time].[1997].[Q1]}\n"
-                + "{[Time].[1997].[Q2]}\n"
-                + "{[Time].[1997].[Q3]}\n"
-                + "{[Time].[1997].[Q4]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q2]}\n"
+                + "{[Time].[Time].[1997].[Q3]}\n"
+                + "{[Time].[Time].[1997].[Q4]}\n"
                 + "Axis #2:\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "{[Measures].[Store Cost]}\n"
@@ -794,15 +794,15 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
             ))
             .withAggregationLevels(List.of(
                 AggregationLevelMappingImpl.builder()
-                    .withName("[Time].[Year]")
+                    .withName("[Time].[Time].[Year]")
                     .withColumn(AggMeasureFactCountTestModifier.theYearAggC6FactCsv2016)
                     .build(),
                 AggregationLevelMappingImpl.builder()
-                    .withName("[Time].[Quarter]")
+                    .withName("[Time].[Time].[Quarter]")
                     .withColumn(AggMeasureFactCountTestModifier.quarterAggC6FactCsv2016)
                     .build(),
                 AggregationLevelMappingImpl.builder()
-                    .withName("[Time].[Month]")
+                    .withName("[Time].[Time].[Month]")
                     .withColumn(AggMeasureFactCountTestModifier.monthOfYearAggC6FactCsv2016)
                     .build()
             ))

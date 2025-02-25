@@ -50,10 +50,10 @@ class ParallelPeriodFunDefTest {
             + "Axis #1:\n"
             + "{[Measures].[foo]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997].[Q1]}\n"
-            + "{[Time].[1997].[Q2]}\n"
-            + "{[Time].[1997].[Q3]}\n"
-            + "{[Time].[1997].[Q4]}\n"
+            + "{[Time].[Time].[1997].[Q1]}\n"
+            + "{[Time].[Time].[1997].[Q2]}\n"
+            + "{[Time].[Time].[1997].[Q3]}\n"
+            + "{[Time].[Time].[1997].[Q4]}\n"
             + "Row #0: \n"
             + "Row #1: \n"
             + "Row #2: \n"
@@ -87,12 +87,12 @@ class ParallelPeriodFunDefTest {
           + "From [Sales] "
           + "Where ([Product].[*FILTER_MEMBER])",
         "Axis #0:\n"
-          + "{[Product].[*FILTER_MEMBER]}\n"
+          + "{[Product].[Product].[*FILTER_MEMBER]}\n"
           + "Axis #1:\n"
           + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
           + "{[Measures].[*FORMATTED_MEASURE_1]}\n"
           + "Axis #2:\n"
-          + "{[Time].[1997].[Q2].[6]}\n"
+          + "{[Time].[Time].[1997].[Q2].[6]}\n"
           + "Row #0: 1,314\n"
           + "Row #0: 1,447\n" );
     }
@@ -107,14 +107,14 @@ class ParallelPeriodFunDefTest {
           + "from [Sales]\n"
           + "where [Time].[1997].[Q2].[5]",
         "Axis #0:\n"
-          + "{[Time].[1997].[Q2].[5]}\n"
+          + "{[Time].[Time].[1997].[Q2].[5]}\n"
           + "Axis #1:\n"
           + "{[Measures].[Unit Sales]}\n"
           + "{[Measures].[Prev Unit Sales]}\n"
           + "Axis #2:\n"
-          + "{[Gender].[All Gender]}\n"
-          + "{[Gender].[F]}\n"
-          + "{[Gender].[M]}\n"
+          + "{[Gender].[Gender].[All Gender]}\n"
+          + "{[Gender].[Gender].[F]}\n"
+          + "{[Gender].[Gender].[M]}\n"
           + "Row #0: 21,081\n"
           + "Row #0: 20,179\n"
           + "Row #1: 10,536\n"
@@ -133,14 +133,14 @@ class ParallelPeriodFunDefTest {
           + "from [Sales]\n"
           + "where [Time].[1997].[Q2].[5]",
         "Axis #0:\n"
-          + "{[Time].[1997].[Q2].[5]}\n"
+          + "{[Time].[Time].[1997].[Q2].[5]}\n"
           + "Axis #1:\n"
           + "{[Measures].[Unit Sales]}\n"
           + "{[Measures].[Prev Unit Sales]}\n"
           + "Axis #2:\n"
-          + "{[Gender].[All Gender]}\n"
-          + "{[Gender].[F]}\n"
-          + "{[Gender].[M]}\n"
+          + "{[Gender].[Gender].[All Gender]}\n"
+          + "{[Gender].[Gender].[F]}\n"
+          + "{[Gender].[Gender].[M]}\n"
           + "Row #0: 21,081\n"
           + "Row #0: 20,957\n"
           + "Row #1: 10,536\n"
@@ -163,19 +163,19 @@ class ParallelPeriodFunDefTest {
     void testParallelPeriod(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "parallelperiod([Time].[Quarter], 1, [Time].[1998].[Q1])",
-            "[Time].[1997].[Q4]" );
+            "[Time].[Time].[1997].[Q4]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "parallelperiod([Time].[Quarter], -1, [Time].[1997].[Q1])",
-            "[Time].[1997].[Q2]" );
+            "[Time].[Time].[1997].[Q2]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "parallelperiod([Time].[Year], 1, [Time].[1998].[Q1])",
-            "[Time].[1997].[Q1]" );
+            "[Time].[Time].[1997].[Q1]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "parallelperiod([Time].[Year], 1, [Time].[1998].[Q1].[1])",
-            "[Time].[1997].[Q1].[1]" );
+            "[Time].[Time].[1997].[Q1].[1]" );
 
         // No args, therefore finds parallel period to [Time].[1997], which
         // would be [Time].[1996], except that that doesn't exist, so null.
@@ -195,10 +195,10 @@ class ParallelPeriodFunDefTest {
                     + "FROM [Sales]\n"
                     + "WHERE [Time].[1997].[Q3].[8]",
                 "Axis #0:\n"
-                    + "{[Time].[1997].[Q3].[8]}\n"
+                    + "{[Time].[Time].[1997].[Q3].[8]}\n"
                     + "Axis #1:\n"
                     + "{[Measures].[Foo]}\n"
-                    + "Row #0: [Time].[#null]\n" );
+                    + "Row #0: [Time].[Time].[#null]\n" );
         }
 
         // one parameter, level 1 above member
@@ -209,10 +209,10 @@ class ParallelPeriodFunDefTest {
                 + "FROM [Sales]\n"
                 + "WHERE [Time].[1997].[Q3].[8]",
             "Axis #0:\n"
-                + "{[Time].[1997].[Q3].[8]}\n"
+                + "{[Time].[Time].[1997].[Q3].[8]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Foo]}\n"
-                + "Row #0: [Time].[1997].[Q2].[5]\n" );
+                + "Row #0: [Time].[Time].[1997].[Q2].[5]\n" );
 
         // one parameter, level same as member
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -222,10 +222,10 @@ class ParallelPeriodFunDefTest {
                 + "FROM [Sales]\n"
                 + "WHERE [Time].[1997].[Q3].[8]",
             "Axis #0:\n"
-                + "{[Time].[1997].[Q3].[8]}\n"
+                + "{[Time].[Time].[1997].[Q3].[8]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Foo]}\n"
-                + "Row #0: [Time].[1997].[Q3].[7]\n" );
+                + "Row #0: [Time].[Time].[1997].[Q3].[7]\n" );
 
         //  one parameter, level below member
         if ( isDefaultNullMemberRepresentation() ) {
@@ -236,10 +236,10 @@ class ParallelPeriodFunDefTest {
                     + "FROM [Sales]\n"
                     + "WHERE [Time].[1997].[Q3]",
                 "Axis #0:\n"
-                    + "{[Time].[1997].[Q3]}\n"
+                    + "{[Time].[Time].[1997].[Q3]}\n"
                     + "Axis #1:\n"
                     + "{[Measures].[Foo]}\n"
-                    + "Row #0: [Time].[#null]\n" );
+                    + "Row #0: [Time].[Time].[#null]\n" );
         }
     }
 
@@ -249,35 +249,35 @@ class ParallelPeriodFunDefTest {
         assertQueryThrows(context,
             "select {parallelperiod([Time].[Year], 1)} on columns "
                 + "from [Sales] where ([Time].[1998].[Q1].[2])",
-            "Hierarchy '[Time]' appears in more than one independent axis" );
+            "Hierarchy '[Time].[Time]' appears in more than one independent axis" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testParallelPeriodDepends(Context context) {
         assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-            "ParallelPeriod([Time].[Quarter], 2.0)", "{[Time]}" );
+            "ParallelPeriod([Time].[Quarter], 2.0)", "{[Time].[Time]}" );
         assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-            "ParallelPeriod([Time].[Quarter], 2.0, [Time].[1997].[Q3])", "{}" );
+            "ParallelPeriod([Time].[Quarter], 2.0, [Time].[Time].[1997].[Q3])", "{}" );
         assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
             "ParallelPeriod()",
-            "{[Time]}" );
+            "{[Time].[Time]}" );
         assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-            "ParallelPeriod([Product].[Food])", "{[Product]}" );
+            "ParallelPeriod([Product].[Food])", "{[Product].[Product]}" );
         // [Gender].[M] is used here as a numeric expression!
         // The numeric expression DOES depend upon [Product].
         // The expression as a whole depends upon everything except [Gender].
-        String s1 = allHiersExcept( "[Gender]" );
+        String s1 = allHiersExcept( "[Gender].[Gender]" );
         assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
             "ParallelPeriod([Product].[Product Family], [Gender].[M], [Product].[Food])",
             s1 );
         // As above
-        String s11 = allHiersExcept( "[Gender]" );
+        String s11 = allHiersExcept( "[Gender].[Gender]" );
         assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
             "ParallelPeriod([Product].[Product Family], [Gender].[M])", s11 );
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "parallelperiod([Time].[Time].CurrentMember)",
-            "{[Time]}" );
+            "{[Time].[Time]}" );
     }
 
     @ParameterizedTest
@@ -295,12 +295,12 @@ class ParallelPeriodFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Measures].[Unit Sales], [Marital Status].[M]}\n"
-                + "{[Measures].[Unit Sales], [Marital Status].[S]}\n"
-                + "{[Measures].[Prev Unit Sales], [Marital Status].[M]}\n"
-                + "{[Measures].[Prev Unit Sales], [Marital Status].[S]}\n"
+                + "{[Measures].[Unit Sales], [Marital Status].[Marital Status].[M]}\n"
+                + "{[Measures].[Unit Sales], [Marital Status].[Marital Status].[S]}\n"
+                + "{[Measures].[Prev Unit Sales], [Marital Status].[Marital Status].[M]}\n"
+                + "{[Measures].[Prev Unit Sales], [Marital Status].[Marital Status].[S]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1997].[Q3]}\n"
+                + "{[Time].[Time].[1997].[Q3]}\n"
                 + "Row #0: 32,815\n"
                 + "Row #0: 33,033\n"
                 + "Row #0: 33,101\n"
@@ -323,10 +323,10 @@ class ParallelPeriodFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Measures].[Unit Sales], [Marital Status].[M]}\n"
-                + "{[Measures].[Prev Unit Sales], [Marital Status].[M]}\n"
+                + "{[Measures].[Unit Sales], [Marital Status].[Marital Status].[M]}\n"
+                + "{[Measures].[Prev Unit Sales], [Marital Status].[Marital Status].[M]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1997].[Q3].[8]}\n"
+                + "{[Time].[Time].[1997].[Q3].[8]}\n"
                 + "Row #0: 10,957\n"
                 + "Row #0: 10,280\n" );
     }

@@ -363,8 +363,8 @@ class AccessControlTest {
         TestUtil.assertQueryThrows(
         	context,
             props,
-            "select {[Store].Children} on 0 from [Sales]",
-            "Member '[Store].[USA].[Non Existent]' not found");
+            "select {[Store].[Store].Children} on 0 from [Sales]",
+            "Member '[Store].[Store].[USA].[Non Existent]' not found");
     }
 
     @ParameterizedTest
@@ -476,8 +476,8 @@ class AccessControlTest {
         Connection connection = getRestrictedConnection(foodMartContext);
         TestUtil.assertAxisReturns(
     		connection, "Sales",
-            "[Store].level.members",
-            "[Store].[Mexico]\n" + "[Store].[USA]");
+            "[Store].[Store].level.members",
+            "[Store].[Store].[Mexico]\n" + "[Store].[Store].[USA]");
     }
 
     @ParameterizedTest
@@ -491,7 +491,7 @@ class AccessControlTest {
         TestUtil.assertAxisReturns(
     		connection, "Sales",
             "[Store].level.allmembers",
-            "[Store].[Mexico]\n" + "[Store].[USA]");
+            "[Store].[Store].[Mexico]\n" + "[Store].[Store].[USA]");
     }
 
     @ParameterizedTest
@@ -503,7 +503,7 @@ class AccessControlTest {
         TestUtil.assertAxisReturns(
     		connection, "Sales",
             "[Store].defaultMember",
-            "[Store].[Mexico]");
+            "[Store].[Store].[Mexico]");
     }
 
     @ParameterizedTest
@@ -514,7 +514,7 @@ class AccessControlTest {
         TestUtil.assertAxisReturns(
     		connection, "Sales",
             "[Customers].defaultMember",
-            "[Customers].[Canada].[BC]");
+            "[Customers].[Customers].[Canada].[BC]");
     }
 
     @ParameterizedTest
@@ -525,16 +525,16 @@ class AccessControlTest {
         TestUtil.assertAxisReturns(
     		connection, "Sales",
             "[Store].[USA].children",
-            "[Store].[USA].[CA]");
+            "[Store].[Store].[USA].[CA]");
         TestUtil.assertAxisReturns(
     		connection, "Sales",
             "[Store].[USA].children",
-            "[Store].[USA].[CA]");
+            "[Store].[Store].[USA].[CA]");
         TestUtil.assertAxisReturns(
     		connection, "Sales",
             "[Store].[USA].[CA].children",
-            "[Store].[USA].[CA].[Los Angeles]\n"
-            + "[Store].[USA].[CA].[San Francisco]");
+            "[Store].[Store].[USA].[CA].[Los Angeles]\n"
+            + "[Store].[Store].[USA].[CA].[San Francisco]");
     }
 
     @ParameterizedTest
@@ -573,31 +573,31 @@ class AccessControlTest {
                 // no: [OR], [WA]
                 // yes: [San Francisco] -- explicitly allowed
                 // no: [San Diego]
-            "[Store].[Mexico]\n"
-            + "[Store].[Mexico].[Guerrero]\n"
-            + "[Store].[Mexico].[Guerrero].[Acapulco]\n"
-            + "[Store].[Mexico].[Guerrero].[Acapulco].[Store 1]\n"
-            + "[Store].[Mexico].[Jalisco]\n"
-            + "[Store].[Mexico].[Jalisco].[Guadalajara]\n"
-            + "[Store].[Mexico].[Jalisco].[Guadalajara].[Store 5]\n"
-            + "[Store].[Mexico].[Veracruz]\n"
-            + "[Store].[Mexico].[Veracruz].[Orizaba]\n"
-            + "[Store].[Mexico].[Veracruz].[Orizaba].[Store 10]\n"
-            + "[Store].[Mexico].[Yucatan]\n"
-            + "[Store].[Mexico].[Yucatan].[Merida]\n"
-            + "[Store].[Mexico].[Yucatan].[Merida].[Store 8]\n"
-            + "[Store].[Mexico].[Zacatecas]\n"
-            + "[Store].[Mexico].[Zacatecas].[Camacho]\n"
-            + "[Store].[Mexico].[Zacatecas].[Camacho].[Store 4]\n"
-            + "[Store].[Mexico].[Zacatecas].[Hidalgo]\n"
-            + "[Store].[Mexico].[Zacatecas].[Hidalgo].[Store 12]\n"
-            + "[Store].[Mexico].[Zacatecas].[Hidalgo].[Store 18]\n"
-            + "[Store].[USA]\n"
-            + "[Store].[USA].[CA]\n"
-            + "[Store].[USA].[CA].[Los Angeles]\n"
-            + "[Store].[USA].[CA].[Los Angeles].[Store 7]\n"
-            + "[Store].[USA].[CA].[San Francisco]\n"
-            + "[Store].[USA].[CA].[San Francisco].[Store 14]");
+            "[Store].[Store].[Mexico]\n"
+            + "[Store].[Store].[Mexico].[Guerrero]\n"
+            + "[Store].[Store].[Mexico].[Guerrero].[Acapulco]\n"
+            + "[Store].[Store].[Mexico].[Guerrero].[Acapulco].[Store 1]\n"
+            + "[Store].[Store].[Mexico].[Jalisco]\n"
+            + "[Store].[Store].[Mexico].[Jalisco].[Guadalajara]\n"
+            + "[Store].[Store].[Mexico].[Jalisco].[Guadalajara].[Store 5]\n"
+            + "[Store].[Store].[Mexico].[Veracruz]\n"
+            + "[Store].[Store].[Mexico].[Veracruz].[Orizaba]\n"
+            + "[Store].[Store].[Mexico].[Veracruz].[Orizaba].[Store 10]\n"
+            + "[Store].[Store].[Mexico].[Yucatan]\n"
+            + "[Store].[Store].[Mexico].[Yucatan].[Merida]\n"
+            + "[Store].[Store].[Mexico].[Yucatan].[Merida].[Store 8]\n"
+            + "[Store].[Store].[Mexico].[Zacatecas]\n"
+            + "[Store].[Store].[Mexico].[Zacatecas].[Camacho]\n"
+            + "[Store].[Store].[Mexico].[Zacatecas].[Camacho].[Store 4]\n"
+            + "[Store].[Store].[Mexico].[Zacatecas].[Hidalgo]\n"
+            + "[Store].[Store].[Mexico].[Zacatecas].[Hidalgo].[Store 12]\n"
+            + "[Store].[Store].[Mexico].[Zacatecas].[Hidalgo].[Store 18]\n"
+            + "[Store].[Store].[USA]\n"
+            + "[Store].[Store].[USA].[CA]\n"
+            + "[Store].[Store].[USA].[CA].[Los Angeles]\n"
+            + "[Store].[Store].[USA].[CA].[Los Angeles].[Store 7]\n"
+            + "[Store].[Store].[USA].[CA].[San Francisco]\n"
+            + "[Store].[Store].[USA].[CA].[San Francisco].[Store 14]");
     }
 
     @ParameterizedTest
@@ -680,12 +680,12 @@ class AccessControlTest {
             + "from [Sales] \n"
             + "where ([Time].[1997].[Q1].[2])",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1].[2]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA].[Los Angeles]}\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
             + "Row #0: 2,614\n"
             + "Row #1: 187\n");
 
@@ -698,12 +698,12 @@ class AccessControlTest {
             + "from [Sales] \n"
             + "where ([Time].[1997].[Q1].[2])",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1].[2]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA].[Los Angeles]}\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
             + "Row #0: 2,614\n"
             + "Row #1: 187\n");
 
@@ -717,12 +717,12 @@ class AccessControlTest {
             + "from [Sales] \n"
             + "where ([Time].[1997].[Q1].[2])",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1].[2]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[OR]}\n"
-            + "{[Store].[USA].[WA]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[USA].[WA]}\n"
             + "Row #0: 4,617\n"
             + "Row #1: 10,319\n");
 
@@ -740,13 +740,13 @@ class AccessControlTest {
             + "from [Sales] \n"
             + "where ([Time].[1997].[Q1].[2])",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1].[2]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[OR]}\n"
-            + "{[Store].[USA].[WA]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[USA].[WA]}\n"
             + "Row #0: 6,021\n"
             + "Row #1: 4,617\n"
             + "Row #2: 10,319\n");
@@ -767,11 +767,11 @@ class AccessControlTest {
         + "Axis #1:\n"
         + "{[Measures].[Unit Sales]}\n"
         + "Axis #2:\n"
-        + "{[Geography].[Canada]}\n"
-        + "{[Geography].[Israel]}\n"
-        + "{[Geography].[Mexico]}\n"
-        + "{[Geography].[USA]}\n"
-        + "{[Geography].[Vatican]}\n"
+        + "{[Geography].[Geography].[Canada]}\n"
+        + "{[Geography].[Geography].[Israel]}\n"
+        + "{[Geography].[Geography].[Mexico]}\n"
+        + "{[Geography].[Geography].[USA]}\n"
+        + "{[Geography].[Geography].[Vatican]}\n"
         + "Row #0: \n"
         + "Row #1: 13,694\n"
         + "Row #2: \n"
@@ -795,12 +795,12 @@ class AccessControlTest {
             + "from [Sales] \n"
             + "where ([Time].[1997].[Q1].[2])",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1].[2]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA].[Los Angeles]}\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
             + "Row #0: 2,614\n"
             + "Row #1: 187\n");
 
@@ -818,11 +818,11 @@ class AccessControlTest {
             + "from [Sales] \n"
             + "where ([Time].[1997].[Q1].[2])",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1].[2]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
             + "Row #0: 187\n");
     }
 
@@ -842,12 +842,12 @@ class AccessControlTest {
             + "from [Sales] \n"
             + "where ([Time].[1997].[Q1].[2])",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1].[2]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA].[Los Angeles]}\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
             + "Row #0: 2,614\n"
             + "Row #1: 187\n");
 
@@ -859,14 +859,14 @@ class AccessControlTest {
             + "from [Sales] \n"
             + "where ([Time].[1997].[Q1].[2])",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1].[2]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA].[Los Angeles]}\n"
-            + "{[Store].[USA].[CA].[San Diego]}\n"
-            + "{[Store].[USA].[CA].[Beverly Hills]}\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Diego]}\n"
+            + "{[Store].[Store].[USA].[CA].[Beverly Hills]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
             + "Row #0: 2,614\n"
             + "Row #1: 1,879\n"
             + "Row #2: 1,341\n"
@@ -886,13 +886,13 @@ class AccessControlTest {
             + "from [Sales] \n"
             + "where ([Time].[1997].[Q1].[2] : [Time].[1997].[Q1].[3])",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1].[2]}\n"
-            + "{[Time].[1997].[Q1].[3]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2]}\n"
+            + "{[Time].[Time].[1997].[Q1].[3]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA].[Los Angeles]}\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
             + "Row #0: 4,497\n"
             + "Row #1: 337\n");
 
@@ -904,15 +904,15 @@ class AccessControlTest {
             + "from [Sales] \n"
             + "where ([Time].[1997].[Q1].[2] : [Time].[1997].[Q1].[3])",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1].[2]}\n"
-            + "{[Time].[1997].[Q1].[3]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2]}\n"
+            + "{[Time].[Time].[1997].[Q1].[3]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA].[Los Angeles]}\n"
-            + "{[Store].[USA].[CA].[San Diego]}\n"
-            + "{[Store].[USA].[CA].[Beverly Hills]}\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Diego]}\n"
+            + "{[Store].[Store].[USA].[CA].[Beverly Hills]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
             + "Row #0: 4,497\n"
             + "Row #1: 4,094\n"
             + "Row #2: 2,585\n"
@@ -947,12 +947,12 @@ class AccessControlTest {
             + "from Sales\n"
             + "where ([Marital Status].[S])",
             "Axis #0:\n"
-            + "{[Marital Status].[S]}\n"
+            + "{[Marital Status].[Marital Status].[S]}\n"
             + "Axis #1:\n"
             + "{[Measures].[California Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[F]}\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[F]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Row #0: 6,636\n"
             + "Row #1: 7,329\n");
     }
@@ -972,8 +972,8 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA]}\n"
-            + "{[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
             + "Row #0: 266,773\n"
             + "Row #1: 74,748\n");
     }
@@ -1132,9 +1132,9 @@ class AccessControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[USA]}\n"
-            + "{[Store].[USA].[OR]}\n"
-            + "{[Store].[USA].[WA]}\n"
+            + "{[Store].[Store].[USA]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[USA].[WA]}\n"
             + "Row #0: 192,025\n"
             + "Row #0: 67,659\n"
             + "Row #0: 124,366\n");
@@ -1206,8 +1206,8 @@ class AccessControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[F]}\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[F]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Row #0: 131,558\n"
             + "Row #0: 135,215\n");
 
@@ -1220,8 +1220,8 @@ class AccessControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[F]}\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[F]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Row #0: 94,799\n"
             + "Row #0: 97,226\n");
     }
@@ -1754,7 +1754,7 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[All Gender], [Product].[Drink]}\n"
+            + "{[Gender].[Gender].[All Gender], [Product].[Product].[Drink]}\n"
             + "Row #0: 24,597\n";
 
         final String mdx =
@@ -1809,7 +1809,7 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[All Gender], [Product].[Drink]}\n"
+            + "{[Gender].[Gender].[All Gender], [Product].[Product].[Drink]}\n"
             + "Row #0: 24,597\n";
 
         final String mdx =
@@ -1856,19 +1856,19 @@ class AccessControlTest {
     		connection,
             query,
             "Axis #0:\n"
-            + "{[Time].[1997]}\n"
+            + "{[Time].[Time].[1997]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[All Stores]}\n"
-            + "{[Store].[USA]}\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[CA].[Alameda]}\n"
-            + "{[Store].[USA].[CA].[Beverly Hills]}\n"
-            + "{[Store].[USA].[CA].[Los Angeles]}\n"
-            + "{[Store].[USA].[CA].[San Diego]}\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
-            + "{[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[All Stores]}\n"
+            + "{[Store].[Store].[USA]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[CA].[Alameda]}\n"
+            + "{[Store].[Store].[USA].[CA].[Beverly Hills]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Diego]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
             + "Row #0: 100,827\n"
             + "Row #1: 100,827\n"
             + "Row #2: 74,748\n"
@@ -1887,19 +1887,19 @@ class AccessControlTest {
     		connection,
             query,
             "Axis #0:\n"
-            + "{[Time].[1997]}\n"
+            + "{[Time].[Time].[1997]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[All Stores]}\n"
-            + "{[Store].[USA]}\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[CA].[Alameda]}\n"
-            + "{[Store].[USA].[CA].[Beverly Hills]}\n"
-            + "{[Store].[USA].[CA].[Los Angeles]}\n"
-            + "{[Store].[USA].[CA].[San Diego]}\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
-            + "{[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[All Stores]}\n"
+            + "{[Store].[Store].[USA]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[CA].[Alameda]}\n"
+            + "{[Store].[Store].[USA].[CA].[Beverly Hills]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Diego]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
             + "Row #0: 266,773\n"
             + "Row #1: 266,773\n"
             + "Row #2: 74,748\n"
@@ -1918,19 +1918,19 @@ class AccessControlTest {
     		connection,
             query,
             "Axis #0:\n"
-            + "{[Time].[1997]}\n"
+            + "{[Time].[Time].[1997]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[All Stores]}\n"
-            + "{[Store].[USA]}\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[CA].[Alameda]}\n"
-            + "{[Store].[USA].[CA].[Beverly Hills]}\n"
-            + "{[Store].[USA].[CA].[Los Angeles]}\n"
-            + "{[Store].[USA].[CA].[San Diego]}\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
-            + "{[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[All Stores]}\n"
+            + "{[Store].[Store].[USA]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[CA].[Alameda]}\n"
+            + "{[Store].[Store].[USA].[CA].[Beverly Hills]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Diego]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
             + "Row #0: \n"
             + "Row #1: \n"
             + "Row #2: 74,748\n"
@@ -1989,7 +1989,7 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[Number of Employees]}\n"
             + "Axis #2:\n"
-            + "{[Store].[All Stores]}\n"
+            + "{[Store].[Store].[All Stores]}\n"
             + "Row #0: 1\n");
         checkQuery(connection, mdx);
 
@@ -2005,7 +2005,7 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[Number of Employees]}\n"
             + "Axis #2:\n"
-            + "{[Employees].[All Employees]}\n"
+            + "{[Employees].[Employees].[All Employees]}\n"
             + "Row #0: 1\n");
         checkQuery(connection, mdx2);
     }
@@ -2041,12 +2041,12 @@ class AccessControlTest {
         		"HR",
                 "Head([Employees].Members, 4),"
                 + "Tail([Employees].Members, 2)",
-                "[Employees].[All Employees]\n"
-                + "[Employees].[Sheri Nowmer]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Ed Young].[Gregory Whiting].[Merrill Steel]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Ed Young].[Gregory Whiting].[Melissa Marple]");
+                "[Employees].[Employees].[All Employees]\n"
+                + "[Employees].[Employees].[Sheri Nowmer]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Ed Young].[Gregory Whiting].[Merrill Steel]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Ed Young].[Gregory Whiting].[Melissa Marple]");
 
             // Leaf employee
             connection.setRole(
@@ -2055,19 +2055,19 @@ class AccessControlTest {
             TestUtil.assertExprReturns(
         		connection,
         		"HR",
-                "[Employees].Members.Count",
+                "[Employees].[Employees].Members.Count",
                 "7");
             TestUtil.assertAxisReturns(
         		connection,
         		"HR",
                 "[Employees].Members",
-                "[Employees].[All Employees]\n"
-                + "[Employees].[Sheri Nowmer]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman].[Ann Weyerhaeuser]");
+                "[Employees].[Employees].[All Employees]\n"
+                + "[Employees].[Employees].[Sheri Nowmer]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman].[Ann Weyerhaeuser]");
         } finally {
             connection.setRole(savedRole);
         }
@@ -2089,8 +2089,8 @@ class AccessControlTest {
         ConnectionProps props = new RolapConnectionPropsR(List.of("role1"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
     	Connection connection = foodMartContext.getConnection(props);
         final String mdx =
-            "select {([Measures].[Store Invoice], [Store Size in SQFT].[All Store Size in SQFTs])} ON COLUMNS,\n"
-            + "  {[Warehouse].[All Warehouses]} ON ROWS\n"
+            "select {([Measures].[Store Invoice], [Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs])} ON COLUMNS,\n"
+            + "  {[Warehouse].[Warehouse].[All Warehouses]} ON ROWS\n"
             + "from [Warehouse]";
         checkQuery(connection, mdx);
         TestUtil.assertQueryReturns(
@@ -2099,9 +2099,9 @@ class AccessControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Measures].[Store Invoice], [Store Size in SQFT].[All Store Size in SQFTs]}\n"
+            + "{[Measures].[Store Invoice], [Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[All Warehouses]}\n"
+            + "{[Warehouse].[Warehouse].[All Warehouses]}\n"
             + "Row #0: 4,042.96\n");
     }
 
@@ -2128,11 +2128,11 @@ class AccessControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store Size in SQFT].[All Store Size in SQFTs], [Product].[All Products]}\n"
-            + "{[Store Size in SQFT].[20319], [Product].[All Products]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs], [Product].[Product].[All Products]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[20319], [Product].[Product].[All Products]}\n"
             + "Axis #2:\n"
-            + "{[Store Type].[All Store Types]}\n"
-            + "{[Store Type].[Supermarket]}\n"
+            + "{[Store Type].[Store Type].[All Store Types]}\n"
+            + "{[Store Type].[Store Type].[Supermarket]}\n"
             + "Row #0: 4,042.96\n"
             + "Row #0: 4,042.96\n"
             + "Row #1: 4,042.96\n"
@@ -2151,13 +2151,13 @@ class AccessControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store Size in SQFT].[All Store Size in SQFTs], [Product].[All Products]}\n"
-            + "{[Store Size in SQFT].[All Store Size in SQFTs], [Product].[Drink].[Dairy]}\n"
-            + "{[Store Size in SQFT].[20319], [Product].[All Products]}\n"
-            + "{[Store Size in SQFT].[20319], [Product].[Food]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs], [Product].[Product].[All Products]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs], [Product].[Product].[Drink].[Dairy]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[20319], [Product].[Product].[All Products]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[20319], [Product].[Product].[Food]}\n"
             + "Axis #2:\n"
-            + "{[Store Type].[All Store Types]}\n"
-            + "{[Store Type].[Supermarket]}\n"
+            + "{[Store Type].[Store Type].[All Store Types]}\n"
+            + "{[Store Type].[Store Type].[Supermarket]}\n"
             + "Row #0: 4,042.96\n"
             + "Row #0: 82.454\n"
             + "Row #0: 4,042.96\n"
@@ -2186,13 +2186,13 @@ class AccessControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store Size in SQFT].[All Store Size in SQFTs], [Product].[All Products]}\n"
-            + "{[Store Size in SQFT].[All Store Size in SQFTs], [Product].[All Products]}\n"
-            + "{[Store Size in SQFT].[20319], [Product].[All Products]}\n"
-            + "{[Store Size in SQFT].[20319], [Product].[Food]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs], [Product].[Product].[All Products]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs], [Product].[Product].[All Products]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[20319], [Product].[Product].[All Products]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[20319], [Product].[Product].[Food]}\n"
             + "Axis #2:\n"
-            + "{[Store Type].[All Store Types]}\n"
-            + "{[Store Type].[Supermarket]}\n"
+            + "{[Store Type].[Store Type].[All Store Types]}\n"
+            + "{[Store Type].[Store Type].[Supermarket]}\n"
             + "Row #0: 4,042.96\n"
             + "Row #0: 4,042.96\n"
             + "Row #0: 4,042.96\n"
@@ -2218,22 +2218,22 @@ class AccessControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Product].[All Products], [Store Type].[All Store Types], [Store Size in SQFT].[All Store Size in SQFTs]}\n"
-            + "{[Product].[All Products], [Store Type].[All Store Types], [Store Size in SQFT].[20319]}\n"
-            + "{[Product].[All Products], [Store Type].[Supermarket], [Store Size in SQFT].[All Store Size in SQFTs]}\n"
-            + "{[Product].[All Products], [Store Type].[Supermarket], [Store Size in SQFT].[20319]}\n"
-            + "{[Product].[Drink].[Dairy], [Store Type].[All Store Types], [Store Size in SQFT].[All Store Size in SQFTs]}\n"
-            + "{[Product].[Drink].[Dairy], [Store Type].[All Store Types], [Store Size in SQFT].[20319]}\n"
-            + "{[Product].[Drink].[Dairy], [Store Type].[Supermarket], [Store Size in SQFT].[All Store Size in SQFTs]}\n"
-            + "{[Product].[Drink].[Dairy], [Store Type].[Supermarket], [Store Size in SQFT].[20319]}\n"
-            + "{[Product].[Food], [Store Type].[All Store Types], [Store Size in SQFT].[All Store Size in SQFTs]}\n"
-            + "{[Product].[Food], [Store Type].[All Store Types], [Store Size in SQFT].[20319]}\n"
-            + "{[Product].[Food], [Store Type].[Supermarket], [Store Size in SQFT].[All Store Size in SQFTs]}\n"
-            + "{[Product].[Food], [Store Type].[Supermarket], [Store Size in SQFT].[20319]}\n"
-            + "{[Product].[Food].[Eggs], [Store Type].[All Store Types], [Store Size in SQFT].[All Store Size in SQFTs]}\n"
-            + "{[Product].[Food].[Eggs], [Store Type].[All Store Types], [Store Size in SQFT].[20319]}\n"
-            + "{[Product].[Food].[Eggs], [Store Type].[Supermarket], [Store Size in SQFT].[All Store Size in SQFTs]}\n"
-            + "{[Product].[Food].[Eggs], [Store Type].[Supermarket], [Store Size in SQFT].[20319]}\n"
+            + "{[Product].[Product].[All Products], [Store Type].[Store Type].[All Store Types], [Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs]}\n"
+            + "{[Product].[Product].[All Products], [Store Type].[Store Type].[All Store Types], [Store Size in SQFT].[Store Size in SQFT].[20319]}\n"
+            + "{[Product].[Product].[All Products], [Store Type].[Store Type].[Supermarket], [Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs]}\n"
+            + "{[Product].[Product].[All Products], [Store Type].[Store Type].[Supermarket], [Store Size in SQFT].[Store Size in SQFT].[20319]}\n"
+            + "{[Product].[Product].[Drink].[Dairy], [Store Type].[Store Type].[All Store Types], [Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs]}\n"
+            + "{[Product].[Product].[Drink].[Dairy], [Store Type].[Store Type].[All Store Types], [Store Size in SQFT].[Store Size in SQFT].[20319]}\n"
+            + "{[Product].[Product].[Drink].[Dairy], [Store Type].[Store Type].[Supermarket], [Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs]}\n"
+            + "{[Product].[Product].[Drink].[Dairy], [Store Type].[Store Type].[Supermarket], [Store Size in SQFT].[Store Size in SQFT].[20319]}\n"
+            + "{[Product].[Product].[Food], [Store Type].[Store Type].[All Store Types], [Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs]}\n"
+            + "{[Product].[Product].[Food], [Store Type].[Store Type].[All Store Types], [Store Size in SQFT].[Store Size in SQFT].[20319]}\n"
+            + "{[Product].[Product].[Food], [Store Type].[Store Type].[Supermarket], [Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs]}\n"
+            + "{[Product].[Product].[Food], [Store Type].[Store Type].[Supermarket], [Store Size in SQFT].[Store Size in SQFT].[20319]}\n"
+            + "{[Product].[Product].[Food].[Eggs], [Store Type].[Store Type].[All Store Types], [Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs]}\n"
+            + "{[Product].[Product].[Food].[Eggs], [Store Type].[Store Type].[All Store Types], [Store Size in SQFT].[Store Size in SQFT].[20319]}\n"
+            + "{[Product].[Product].[Food].[Eggs], [Store Type].[Store Type].[Supermarket], [Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs]}\n"
+            + "{[Product].[Product].[Food].[Eggs], [Store Type].[Store Type].[Supermarket], [Store Size in SQFT].[Store Size in SQFT].[20319]}\n"
             + "Row #0: 4,042.96\n"
             + "Row #0: 4,042.96\n"
             + "Row #0: 4,042.96\n"
@@ -2300,12 +2300,12 @@ class AccessControlTest {
             + "{[Measures].[Units Ordered]}\n"
             + "{[Measures].[Units Shipped]}\n"
             + "Axis #2:\n"
-            + "{[Store Size in SQFT].[All Store Size in SQFTs], [Product].[Drink]}\n"
-            + "{[Store Size in SQFT].[All Store Size in SQFTs], [Product].[Drink].[Dairy]}\n"
-            + "{[Store Size in SQFT].[All Store Size in SQFTs], [Product].[Food]}\n"
-            + "{[Store Size in SQFT].[20319], [Product].[Drink]}\n"
-            + "{[Store Size in SQFT].[20319], [Product].[Food]}\n"
-            + "{[Store Size in SQFT].[20319], [Product].[Non-Consumable]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs], [Product].[Product].[Drink]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs], [Product].[Product].[Drink].[Dairy]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs], [Product].[Product].[Food]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[20319], [Product].[Product].[Drink]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[20319], [Product].[Product].[Food]}\n"
+            + "{[Store Size in SQFT].[Store Size in SQFT].[20319], [Product].[Product].[Non-Consumable]}\n"
             + "Row #0: 865.0\n"
             + "Row #0: 767.0\n"
             + "Row #1: 195.0\n"
@@ -2387,7 +2387,7 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA]}\n"
+            + "{[Store].[Store].[USA]}\n"
             + "Row #0: 49,085\n");
 
         final String secondBrokenMdx =
@@ -2402,10 +2402,10 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA].[Alameda].[HQ]}\n"
-            + "{[Store].[USA].[CA].[Beverly Hills].[Store 6]}\n"
-            + "{[Store].[USA].[CA].[San Diego].[Store 24]}\n"
-            + "{[Store].[USA].[CA].[San Francisco].[Store 14]}\n"
+            + "{[Store].[Store].[USA].[CA].[Alameda].[HQ]}\n"
+            + "{[Store].[Store].[USA].[CA].[Beverly Hills].[Store 6]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Diego].[Store 24]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco].[Store 14]}\n"
             + "Row #0: \n"
             + "Row #1: 21,333\n"
             + "Row #2: 25,635\n"
@@ -2473,7 +2473,7 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[Org Salary]}\n"
             + "Axis #2:\n"
-            + "{[Department].[14], [Employees].[All Employees]}\n"
+            + "{[Department].[Department].[14], [Employees].[Employees].[All Employees]}\n"
             + "Row #0: $97.20\n");
 
         // This query gave the right answer, even with MONDRIAN-694.
@@ -2487,8 +2487,8 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[Org Salary]}\n"
             + "Axis #2:\n"
-            + "{[Department].[14], [Employees].[All Employees]}\n"
-            + "{[Department].[14], [Employees].[Sheri Nowmer]}\n"
+            + "{[Department].[Department].[14], [Employees].[Employees].[All Employees]}\n"
+            + "{[Department].[Department].[14], [Employees].[Employees].[Sheri Nowmer]}\n"
             + "Row #0: $97.20\n"
             + "Row #1: $97.20\n");
 
@@ -2504,8 +2504,8 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[Org Salary]}\n"
             + "Axis #2:\n"
-            + "{[Department].[14], [Employees].[All Employees]}\n"
-            + "{[Department].[14], [Employees].[Sheri Nowmer]}\n"
+            + "{[Department].[Department].[14], [Employees].[Employees].[All Employees]}\n"
+            + "{[Department].[Department].[14], [Employees].[Employees].[Sheri Nowmer]}\n"
             + "Row #0: $97.20\n"
             + "Row #1: $97.20\n");
 
@@ -2519,8 +2519,8 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[Org Salary]}\n"
             + "Axis #2:\n"
-            + "{[Employees].[All Employees], [Department].[14]}\n"
-            + "{[Employees].[Sheri Nowmer], [Department].[14]}\n"
+            + "{[Employees].[Employees].[All Employees], [Department].[Department].[14]}\n"
+            + "{[Employees].[Employees].[Sheri Nowmer], [Department].[Department].[14]}\n"
             + "Row #0: $97.20\n"
             + "Row #1: $97.20\n");
     }
@@ -2550,9 +2550,9 @@ class AccessControlTest {
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Customers].[USA].[CA]}\n"
-                + "{[Customers].[USA].[CA].[Los Angeles]}\n"
-                + "{[Customers].[USA].[CA].[San Francisco]}\n"
+                + "{[Customers].[Customers].[USA].[CA]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Los Angeles]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[San Francisco]}\n"
                 + "Row #0: 74,748\n"
                 + "Row #1: 2,009\n"
                 + "Row #2: 88\n");
@@ -2642,8 +2642,8 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Customers].[USA].[CA], [Store Type].[Supermarket]}\n"
-            + "{[Customers].[USA].[WA], [Store Type].[Supermarket]}\n"
+            + "{[Customers].[Customers].[USA].[CA], [Store Type].[Store Type].[Supermarket]}\n"
+            + "{[Customers].[Customers].[USA].[WA], [Store Type].[Store Type].[Supermarket]}\n"
             + "Row #0: 1,118\n"
             + "Row #1: 73,178\n");
     }
@@ -2656,13 +2656,13 @@ class AccessControlTest {
     	Connection connection = foodMartContext.getConnection(props);
     	TestUtil.assertAxisReturns(
 			connection, "Sales",
-            "[Education Level].Members",
-            "[Education Level].[All Education Levels]\n"
-            + "[Education Level].[Bachelors Degree]\n"
-            + "[Education Level].[Graduate Degree]\n"
-            + "[Education Level].[High School Degree]\n"
-            + "[Education Level].[Partial College]\n"
-            + "[Education Level].[Partial High School]");
+            "[Education Level].[Education Level].Members",
+            "[Education Level].[Education Level].[All Education Levels]\n"
+            + "[Education Level].[Education Level].[Bachelors Degree]\n"
+            + "[Education Level].[Education Level].[Graduate Degree]\n"
+            + "[Education Level].[Education Level].[High School Degree]\n"
+            + "[Education Level].[Education Level].[Partial College]\n"
+            + "[Education Level].[Education Level].[Partial High School]");
     	TestUtil.assertAxisThrows(
 			connection,
             "[Customers].Members",
@@ -2673,12 +2673,12 @@ class AccessControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Education Level].[All Education Levels]}\n"
-            + "{[Education Level].[Bachelors Degree]}\n"
-            + "{[Education Level].[Graduate Degree]}\n"
-            + "{[Education Level].[High School Degree]}\n"
-            + "{[Education Level].[Partial College]}\n"
-            + "{[Education Level].[Partial High School]}\n"
+            + "{[Education Level].[Education Level].[All Education Levels]}\n"
+            + "{[Education Level].[Education Level].[Bachelors Degree]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree]}\n"
+            + "{[Education Level].[Education Level].[High School Degree]}\n"
+            + "{[Education Level].[Education Level].[Partial College]}\n"
+            + "{[Education Level].[Education Level].[Partial High School]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 266,773\n"
@@ -2803,12 +2803,12 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Customers].[USA].[CA].[Coronado], [Education Level].[All Education Levels]}\n"
-            + "{[Customers].[USA].[CA].[Coronado], [Education Level].[Bachelors Degree]}\n"
-            + "{[Customers].[USA].[CA].[Coronado], [Education Level].[Graduate Degree]}\n"
-            + "{[Customers].[USA].[CA].[Coronado], [Education Level].[High School Degree]}\n"
-            + "{[Customers].[USA].[CA].[Coronado], [Education Level].[Partial College]}\n"
-            + "{[Customers].[USA].[CA].[Coronado], [Education Level].[Partial High School]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Coronado], [Education Level].[Education Level].[All Education Levels]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Coronado], [Education Level].[Education Level].[Bachelors Degree]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Coronado], [Education Level].[Education Level].[Graduate Degree]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Coronado], [Education Level].[Education Level].[High School Degree]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Coronado], [Education Level].[Education Level].[Partial College]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Coronado], [Education Level].[Education Level].[Partial High School]}\n"
             + "Row #0: 2,391\n"
             + "Row #1: 559\n"
             + "Row #2: 205\n"
@@ -2825,12 +2825,12 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Customers].[USA].[CA].[Burbank], [Education Level].[All Education Levels]}\n"
-            + "{[Customers].[USA].[CA].[Burbank], [Education Level].[Bachelors Degree]}\n"
-            + "{[Customers].[USA].[CA].[Burbank], [Education Level].[Graduate Degree]}\n"
-            + "{[Customers].[USA].[CA].[Burbank], [Education Level].[High School Degree]}\n"
-            + "{[Customers].[USA].[CA].[Burbank], [Education Level].[Partial College]}\n"
-            + "{[Customers].[USA].[CA].[Burbank], [Education Level].[Partial High School]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Burbank], [Education Level].[Education Level].[All Education Levels]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Burbank], [Education Level].[Education Level].[Bachelors Degree]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Burbank], [Education Level].[Education Level].[Graduate Degree]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Burbank], [Education Level].[Education Level].[High School Degree]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Burbank], [Education Level].[Education Level].[Partial College]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Burbank], [Education Level].[Education Level].[Partial High School]}\n"
             + "Row #0: 3,086\n"
             + "Row #1: 914\n"
             + "Row #2: 126\n"
@@ -2847,18 +2847,18 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Customers].[USA].[CA].[Burbank], [Education Level].[All Education Levels]}\n"
-            + "{[Customers].[USA].[CA].[Burbank], [Education Level].[Bachelors Degree]}\n"
-            + "{[Customers].[USA].[CA].[Burbank], [Education Level].[Graduate Degree]}\n"
-            + "{[Customers].[USA].[CA].[Burbank], [Education Level].[High School Degree]}\n"
-            + "{[Customers].[USA].[CA].[Burbank], [Education Level].[Partial College]}\n"
-            + "{[Customers].[USA].[CA].[Burbank], [Education Level].[Partial High School]}\n"
-            + "{[Customers].[USA].[CA].[Coronado], [Education Level].[All Education Levels]}\n"
-            + "{[Customers].[USA].[CA].[Coronado], [Education Level].[Bachelors Degree]}\n"
-            + "{[Customers].[USA].[CA].[Coronado], [Education Level].[Graduate Degree]}\n"
-            + "{[Customers].[USA].[CA].[Coronado], [Education Level].[High School Degree]}\n"
-            + "{[Customers].[USA].[CA].[Coronado], [Education Level].[Partial College]}\n"
-            + "{[Customers].[USA].[CA].[Coronado], [Education Level].[Partial High School]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Burbank], [Education Level].[Education Level].[All Education Levels]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Burbank], [Education Level].[Education Level].[Bachelors Degree]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Burbank], [Education Level].[Education Level].[Graduate Degree]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Burbank], [Education Level].[Education Level].[High School Degree]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Burbank], [Education Level].[Education Level].[Partial College]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Burbank], [Education Level].[Education Level].[Partial High School]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Coronado], [Education Level].[Education Level].[All Education Levels]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Coronado], [Education Level].[Education Level].[Bachelors Degree]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Coronado], [Education Level].[Education Level].[Graduate Degree]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Coronado], [Education Level].[Education Level].[High School Degree]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Coronado], [Education Level].[Education Level].[Partial College]}\n"
+            + "{[Customers].[Customers].[USA].[CA].[Coronado], [Education Level].[Education Level].[Partial High School]}\n"
             + "Row #0: 3,086\n"
             + "Row #1: 914\n"
             + "Row #2: 126\n"
@@ -2882,12 +2882,12 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Education Level].[All Education Levels]}\n"
-            + "{[Education Level].[Bachelors Degree]}\n"
-            + "{[Education Level].[Graduate Degree]}\n"
-            + "{[Education Level].[High School Degree]}\n"
-            + "{[Education Level].[Partial College]}\n"
-            + "{[Education Level].[Partial High School]}\n"
+            + "{[Education Level].[Education Level].[All Education Levels]}\n"
+            + "{[Education Level].[Education Level].[Bachelors Degree]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree]}\n"
+            + "{[Education Level].[Education Level].[High School Degree]}\n"
+            + "{[Education Level].[Education Level].[Partial College]}\n"
+            + "{[Education Level].[Education Level].[Partial High School]}\n"
             + "Row #0: 2,391\n"
             + "Row #1: 559\n"
             + "Row #2: 205\n"
@@ -2905,12 +2905,12 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Education Level].[All Education Levels]}\n"
-            + "{[Education Level].[Bachelors Degree]}\n"
-            + "{[Education Level].[Graduate Degree]}\n"
-            + "{[Education Level].[High School Degree]}\n"
-            + "{[Education Level].[Partial College]}\n"
-            + "{[Education Level].[Partial High School]}\n"
+            + "{[Education Level].[Education Level].[All Education Levels]}\n"
+            + "{[Education Level].[Education Level].[Bachelors Degree]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree]}\n"
+            + "{[Education Level].[Education Level].[High School Degree]}\n"
+            + "{[Education Level].[Education Level].[Partial College]}\n"
+            + "{[Education Level].[Education Level].[Partial High School]}\n"
             + "Row #0: 3,086\n"
             + "Row #1: 914\n"
             + "Row #2: 126\n"
@@ -2927,12 +2927,12 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Education Level].[All Education Levels]}\n"
-            + "{[Education Level].[Bachelors Degree]}\n"
-            + "{[Education Level].[Graduate Degree]}\n"
-            + "{[Education Level].[High School Degree]}\n"
-            + "{[Education Level].[Partial College]}\n"
-            + "{[Education Level].[Partial High School]}\n"
+            + "{[Education Level].[Education Level].[All Education Levels]}\n"
+            + "{[Education Level].[Education Level].[Bachelors Degree]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree]}\n"
+            + "{[Education Level].[Education Level].[High School Degree]}\n"
+            + "{[Education Level].[Education Level].[Partial College]}\n"
+            + "{[Education Level].[Education Level].[Partial High School]}\n"
             + "Row #0: 5,477\n"
             + "Row #1: 1,473\n"
             + "Row #2: 331\n"
@@ -2967,7 +2967,7 @@ class AccessControlTest {
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Customers].[USA]}\n"
+                + "{[Customers].[Customers].[USA]}\n"
                 + "Row #0: 2,009\n");
     }
 
@@ -2990,19 +2990,19 @@ class AccessControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[All Stores]}\n"
-            + "{[Store].[USA]}\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[CA].[Alameda]}\n"
-            + "{[Store].[USA].[CA].[Alameda].[HQ]}\n"
-            + "{[Store].[USA].[CA].[Beverly Hills]}\n"
-            + "{[Store].[USA].[CA].[Beverly Hills].[Store 6]}\n"
-            + "{[Store].[USA].[CA].[Los Angeles]}\n"
-            + "{[Store].[USA].[CA].[Los Angeles].[Store 7]}\n"
-            + "{[Store].[USA].[CA].[San Diego]}\n"
-            + "{[Store].[USA].[CA].[San Diego].[Store 24]}\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
-            + "{[Store].[USA].[CA].[San Francisco].[Store 14]}\n"
+            + "{[Store].[Store].[All Stores]}\n"
+            + "{[Store].[Store].[USA]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[CA].[Alameda]}\n"
+            + "{[Store].[Store].[USA].[CA].[Alameda].[HQ]}\n"
+            + "{[Store].[Store].[USA].[CA].[Beverly Hills]}\n"
+            + "{[Store].[Store].[USA].[CA].[Beverly Hills].[Store 6]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles].[Store 7]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Diego]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Diego].[Store 24]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco].[Store 14]}\n"
             + "Row #0: 74,748\n"
             + "Row #0: 74,748\n"
             + "Row #0: 74,748\n"
@@ -3031,7 +3031,7 @@ class AccessControlTest {
         assertNotNull(allMember);
         assertNotNull(allMember.getHierarchy().getAllMember());
         assertEquals(
-            "[Store].[All Stores]",
+            "[Store].[Store].[All Stores]",
             allMember.getHierarchy().getAllMember().getUniqueName());
     }
 
@@ -3057,17 +3057,17 @@ class AccessControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[All Stores]}\n"
-            + "{[Store].[USA]}\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[CA].[Beverly Hills]}\n"
-            + "{[Store].[USA].[CA].[Beverly Hills].[Store 6]}\n"
-            + "{[Store].[USA].[CA].[Los Angeles]}\n"
-            + "{[Store].[USA].[CA].[Los Angeles].[Store 7]}\n"
-            + "{[Store].[USA].[CA].[San Diego]}\n"
-            + "{[Store].[USA].[CA].[San Diego].[Store 24]}\n"
-            + "{[Store].[USA].[CA].[San Francisco]}\n"
-            + "{[Store].[USA].[CA].[San Francisco].[Store 14]}\n"
+            + "{[Store].[Store].[All Stores]}\n"
+            + "{[Store].[Store].[USA]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[CA].[Beverly Hills]}\n"
+            + "{[Store].[Store].[USA].[CA].[Beverly Hills].[Store 6]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles].[Store 7]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Diego]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Diego].[Store 24]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco].[Store 14]}\n"
             + "Row #0: 74,748\n"
             + "Row #0: 74,748\n"
             + "Row #0: 74,748\n"
@@ -3087,13 +3087,13 @@ class AccessControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[All Stores]}\n"
-            + "{[Store].[USA]}\n"
-            + "{[Store].[USA].[OR]}\n"
-            + "{[Store].[USA].[OR].[Portland]}\n"
-            + "{[Store].[USA].[OR].[Portland].[Store 11]}\n"
-            + "{[Store].[USA].[OR].[Salem]}\n"
-            + "{[Store].[USA].[OR].[Salem].[Store 13]}\n"
+            + "{[Store].[Store].[All Stores]}\n"
+            + "{[Store].[Store].[USA]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[USA].[OR].[Portland]}\n"
+            + "{[Store].[Store].[USA].[OR].[Portland].[Store 11]}\n"
+            + "{[Store].[Store].[USA].[OR].[Salem]}\n"
+            + "{[Store].[Store].[USA].[OR].[Salem].[Store 13]}\n"
             + "Row #0: 67,659\n"
             + "Row #0: 67,659\n"
             + "Row #0: 67,659\n"
@@ -3109,11 +3109,11 @@ class AccessControlTest {
         final String mdx =
             "With\n"
             + "Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Time],[*BASE_MEMBERS_Product])'\n"
-            + "Set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS],Ancestor([Time].CurrentMember, [Time].[Year]).OrderKey,BASC,Ancestor([Time].CurrentMember, [Time].[Quarter]).OrderKey,BASC,[Time].CurrentMember.OrderKey,BASC,[Product].CurrentMember.OrderKey,BASC)'\n"
-            + "Set [*BASE_MEMBERS_Product] as '{[Product].[All Products]}'\n"
+            + "Set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS],Ancestor([Time].[Time].CurrentMember, [Time].[Time].[Year]).OrderKey,BASC,Ancestor([Time].[Time].CurrentMember, [Time].[Time].[Quarter]).OrderKey,BASC,[Time].[Time].CurrentMember.OrderKey,BASC,[Product].[Product].CurrentMember.OrderKey,BASC)'\n"
+            + "Set [*BASE_MEMBERS_Product] as '{[Product].[Product].[All Products]}'\n"
             + "Set [*BASE_MEMBERS_Measures] as '{[Measures].[*FORMATTED_MEASURE_0]}'\n"
-            + "Set [*CJ_ROW_AXIS] as 'Generate([*NATIVE_CJ_SET], {([Time].currentMember,[Product].currentMember)})'\n"
-            + "Set [*BASE_MEMBERS_Time] as '[Time].[Year].Members'\n"
+            + "Set [*CJ_ROW_AXIS] as 'Generate([*NATIVE_CJ_SET], {([Time].[Time].currentMember,[Product].[Product].currentMember)})'\n"
+            + "Set [*BASE_MEMBERS_Time] as '[Time].[Time].[Year].Members'\n"
             + "Set [*CJ_COL_AXIS] as '[*NATIVE_CJ_SET]'\n"
             + "Member [Measures].[*FORMATTED_MEASURE_0] as '[Measures].[Unit Sales]', FORMAT_STRING = 'Standard', SOLVE_ORDER=400\n"
             + "Select\n"
@@ -3156,7 +3156,7 @@ class AccessControlTest {
                 + "Axis #1:\n"
                 + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1997], [Product].[All Products]}\n"
+                + "{[Time].[Time].[1997], [Product].[Product].[All Products]}\n"
                 + "Row #0: 74,748\n");
     }
 
@@ -3172,12 +3172,12 @@ class AccessControlTest {
             + "                 {[Product].[Food].[Baked Goods].[Bread]} on rows "
             + "                 from [Sales] "
             + " where { [Store].[USA].[OR], [Store].[USA].[CA]} ", "Axis #0:\n"
-            + "{[Store].[USA].[OR]}\n"
-            + "{[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Food].[Baked Goods].[Bread]}\n"
+            + "{[Product].[Product].[Food].[Baked Goods].[Bread]}\n"
             + "Row #0: 4,163\n");
 
         // changing ordering of members in the slicer should not change
@@ -3188,12 +3188,12 @@ class AccessControlTest {
             + "                 {[Product].[Food].[Baked Goods].[Bread]} on rows "
             + "                 from [Sales] "
             + " where { [Store].[USA].[CA], [Store].[USA].[OR]} ", "Axis #0:\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Food].[Baked Goods].[Bread]}\n"
+            + "{[Product].[Product].[Food].[Baked Goods].[Bread]}\n"
             + "Row #0: 4,163\n");
 
 
@@ -3253,11 +3253,11 @@ class AccessControlTest {
         final String mdx =
             "With\n"
             + "Set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS_Gender],[*BASE_MEMBERS_Marital Status])'\n"
-            + "Set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS],[Gender].CurrentMember.OrderKey,BASC,[Marital Status].CurrentMember.OrderKey,BASC)'\n"
-            + "Set [*BASE_MEMBERS_Gender] as '[Gender].[Gender].Members'\n"
+            + "Set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS],[Gender].CurrentMember.OrderKey,BASC,[Marital Status].[Marital Status].CurrentMember.OrderKey,BASC)'\n"
+            + "Set [*BASE_MEMBERS_Gender] as '[Gender].[Gender].[Gender].Members'\n"
             + "Set [*BASE_MEMBERS_Measures] as '{[Measures].[*FORMATTED_MEASURE_0]}'\n"
-            + "Set [*CJ_ROW_AXIS] as 'Generate([*NATIVE_CJ_SET], {([Gender].currentMember,[Marital Status].currentMember)})'\n"
-            + "Set [*BASE_MEMBERS_Marital Status] as '[Marital Status].[Marital Status].Members'\n"
+            + "Set [*CJ_ROW_AXIS] as 'Generate([*NATIVE_CJ_SET], {([Gender].[Gender].currentMember,[Marital Status].[Marital Status].currentMember)})'\n"
+            + "Set [*BASE_MEMBERS_Marital Status] as '[Marital Status].[Marital Status].[Marital Status].Members'\n"
             + "Set [*CJ_COL_AXIS] as '[*NATIVE_CJ_SET]'\n"
             + "Member [Measures].[*FORMATTED_MEASURE_0] as '[Measures].[Unit Sales]', FORMAT_STRING = 'Standard', SOLVE_ORDER=400\n"
             + "Select\n"
@@ -3275,8 +3275,8 @@ class AccessControlTest {
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[F], [Marital Status].[M]}\n"
-            + "{[Gender].[F], [Marital Status].[S]}\n"
+            + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+            + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S]}\n"
             + "Row #0: 65,336\n"
             + "Row #1: 66,222\n");
     }
@@ -3358,12 +3358,12 @@ class AccessControlTest {
                         "Axis #0:\n"
                         + "{}\n"
                         + "Axis #1:\n"
-                        + "{[Store2].[USA].[CA], [Product].[Drink]}\n"
-                        + "{[Store2].[USA].[CA], [Product].[Food]}\n"
-                        + "{[Store2].[USA].[CA], [Product].[Non-Consumable]}\n"
-                        + "{[Store2].[USA].[OR], [Product].[Drink]}\n"
-                        + "{[Store2].[USA].[OR], [Product].[Food]}\n"
-                        + "{[Store2].[USA].[OR], [Product].[Non-Consumable]}\n"
+                        + "{[Store2].[Store2].[USA].[CA], [Product].[Product].[Drink]}\n"
+                        + "{[Store2].[Store2].[USA].[CA], [Product].[Product].[Food]}\n"
+                        + "{[Store2].[Store2].[USA].[CA], [Product].[Product].[Non-Consumable]}\n"
+                        + "{[Store2].[Store2].[USA].[OR], [Product].[Product].[Drink]}\n"
+                        + "{[Store2].[Store2].[USA].[OR], [Product].[Product].[Food]}\n"
+                        + "{[Store2].[Store2].[USA].[OR], [Product].[Product].[Non-Consumable]}\n"
                         + "Row #0: 7,102\n"
                         + "Row #0: 53,656\n"
                         + "Row #0: 13,990\n"
@@ -3387,8 +3387,8 @@ class AccessControlTest {
                         + "Axis #1:\n"
                         + "{[Measures].[Unit Sales]}\n"
                         + "Axis #2:\n"
-                        + "{[Store2].[USA].[CA]}\n"
-                        + "{[Store2].[USA].[OR]}\n"
+                        + "{[Store2].[Store2].[USA].[CA]}\n"
+                        + "{[Store2].[Store2].[USA].[OR]}\n"
                         + "Row #0: 74,748\n"
                         + "Row #1: 67,659\n");
                     // RolapNativeTopCount
@@ -3408,8 +3408,8 @@ class AccessControlTest {
                         + "Axis #1:\n"
                         + "{[Measures].[Unit Sales]}\n"
                         + "Axis #2:\n"
-                        + "{[Store2].[USA].[CA]}\n"
-                        + "{[Store2].[USA].[OR]}\n"
+                        + "{[Store2].[Store2].[USA].[CA]}\n"
+                        + "{[Store2].[Store2].[USA].[OR]}\n"
                         + "Row #0: 74,748\n"
                         + "Row #1: 67,659\n");
                 }
@@ -3445,7 +3445,7 @@ class AccessControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Measures].[vm], [Gender].[F]}\n"
+            + "{[Measures].[vm], [Gender].[Gender].[F]}\n"
             + "Row #0: 89,043.253\n");
     }
 

@@ -253,15 +253,15 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
     final String mdx =
         "WITH\r\n"
             + " SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER(NONEMPTYCROSSJOIN([*BASE_MEMBERS__Gender_],[*BASE_MEMBERS__Education Level_]), NOT ISEMPTY ([Measures].[Unit Sales]))'\r\n"
-            + " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Gender].CURRENTMEMBER)})'\r\n"
+            + " SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Gender].[Gender].CURRENTMEMBER)})'\r\n"
             + " SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Gender].CURRENTMEMBER.ORDERKEY,BASC)'\r\n"
-            + " SET [*BASE_MEMBERS__Education Level_] AS '{[Education Level].[All Education Levels].[Bachelors Degree],[Education Level].[All Education Levels].[Graduate Degree]}'\r\n"
+            + " SET [*BASE_MEMBERS__Education Level_] AS '{[Education Level].[Education Level].[All Education Levels].[Bachelors Degree],[Education Level].[Education Level].[All Education Levels].[Graduate Degree]}'\r\n"
             + " SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[*FORMATTED_MEASURE_0],[Measures].[*SUMMARY_MEASURE_1]}'\r\n"
-            + " SET [*BASE_MEMBERS__Gender_] AS '[Gender].[Gender].MEMBERS'\r\n"
-            + " SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Education Level].CURRENTMEMBER)})'\r\n"
-            + " SET [*NATIVE_MEMBERS__Gender_] AS 'GENERATE([*NATIVE_CJ_SET], {[Gender].CURRENTMEMBER})'\r\n"
-            + " SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Gender].CURRENTMEMBER)})'\r\n"
-            + " MEMBER [Gender].[*TOTAL_MEMBER_SEL~AGG] AS 'AGGREGATE({[Gender].[All Gender]})', SOLVE_ORDER=-100\r\n"
+            + " SET [*BASE_MEMBERS__Gender_] AS '[Gender].[Gender].[Gender].MEMBERS'\r\n"
+            + " SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Education Level].[Education Level].CURRENTMEMBER)})'\r\n"
+            + " SET [*NATIVE_MEMBERS__Gender_] AS 'GENERATE([*NATIVE_CJ_SET], {[Gender].[Gender].CURRENTMEMBER})'\r\n"
+            + " SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Gender].[Gender].CURRENTMEMBER)})'\r\n"
+            + " MEMBER [Gender].[*TOTAL_MEMBER_SEL~AGG] AS 'AGGREGATE({[Gender].[Gender].[All Gender]})', SOLVE_ORDER=-100\r\n"
             + " MEMBER [Gender].[*TOTAL_MEMBER_SEL~AVG] AS 'AVG([*CJ_ROW_AXIS])', SOLVE_ORDER=300\r\n"
             + " MEMBER [Gender].[*TOTAL_MEMBER_SEL~MAX] AS 'MAX([*CJ_ROW_AXIS])', SOLVE_ORDER=300\r\n"
             + " MEMBER [Gender].[*TOTAL_MEMBER_SEL~SUM] AS 'SUM([*CJ_ROW_AXIS])', SOLVE_ORDER=100\r\n"
@@ -284,7 +284,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
     assertTrue(strings.get( 19 ).contains( "MinMaxFunDef invoked 4 times" ),  strings.get( 19 ));
     assertTrue(strings.get( 19 ).contains( "OrderFunDef invoked 2 times" ),  strings.get( 19 ));
     assertTrue(strings.get( 19 ).contains(
-        "SqlStatement-SqlTupleReader.readTuples [[Gender].[Gender], [Education Level].[Education Level]] invoked 1 times" ) );
+        "SqlStatement-SqlTupleReader.readTuples [[Gender].[Gender].[Gender], [Education Level].[Education Level].[Education Level]] invoked 1 times" ) );
   }
 
   @ParameterizedTest
@@ -322,16 +322,16 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
   void testNestedSumFunDef(Context context) throws SQLException {
     final String mdx =
         "WITH\r\n"
-            + " SET [*NATIVE_CJ_SET] AS 'FILTER([Time].[Month].MEMBERS, NOT ISEMPTY ([Measures].[Unit Sales]))'\r\n"
-            + " SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time].CURRENTMEMBER.ORDERKEY,BASC,ANCESTOR([Time].CURRENTMEMBER,[Time].[Quarter]).ORDERKEY,BASC)'\r\n"
+            + " SET [*NATIVE_CJ_SET] AS 'FILTER([Time].[Time].[Month].MEMBERS, NOT ISEMPTY ([Measures].[Unit Sales]))'\r\n"
+            + " SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time].[Time].CURRENTMEMBER.ORDERKEY,BASC,ANCESTOR([Time].[Time].CURRENTMEMBER,[Time].[Time].[Quarter]).ORDERKEY,BASC)'\r\n"
             + " SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[*FORMATTED_MEASURE_0],[Measures].[*CALCULATED_MEASURE_1]}'\r\n"
-            + " SET [*BASE_MEMBERS__Time_] AS '[Time].[Month].MEMBERS'\r\n"
-            + " SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Time].CURRENTMEMBER)})'\r\n"
+            + " SET [*BASE_MEMBERS__Time_] AS '[Time].[Time].[Month].MEMBERS'\r\n"
+            + " SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Time].[Time].CURRENTMEMBER)})'\r\n"
             + " MEMBER [Measures].[*CALCULATED_MEASURE_1] AS 'SUM(YTD(), [Measures].[Unit Sales])', SOLVE_ORDER=0\r\n"
             + " MEMBER [Measures].[*FORMATTED_MEASURE_0] AS '[Measures].[Unit Sales]', FORMAT_STRING = 'Standard', SOLVE_ORDER=500\r\n"
-            + " MEMBER [Time].[*TOTAL_MEMBER_SEL~SUM] AS 'SUM([*CJ_ROW_AXIS])', SOLVE_ORDER=100\r\n" + " SELECT\r\n"
+            + " MEMBER [Time].[Time].[*TOTAL_MEMBER_SEL~SUM] AS 'SUM([*CJ_ROW_AXIS])', SOLVE_ORDER=100\r\n" + " SELECT\r\n"
             + " [*BASE_MEMBERS__Measures_] ON COLUMNS\r\n" + " , NON EMPTY\r\n"
-            + " UNION({[Time].[*TOTAL_MEMBER_SEL~SUM]},[*SORTED_ROW_AXIS]) ON ROWS\r\n" + " FROM [Sales]";
+            + " UNION({[Time].[Time].[*TOTAL_MEMBER_SEL~SUM]},[*SORTED_ROW_AXIS]) ON ROWS\r\n" + " FROM [Sales]";
 
     ArrayList<String> strings = executeQuery(context, mdx);
     assertEquals( 14, strings.size() );

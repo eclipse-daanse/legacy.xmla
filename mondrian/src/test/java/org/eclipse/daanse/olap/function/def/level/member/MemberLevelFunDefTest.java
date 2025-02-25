@@ -26,7 +26,7 @@ class MemberLevelFunDefTest {
     void testMemberLevel(Context context) {
         TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[1997].[Q1].[1].Level.UniqueName",
-            "[Time].[Month]" );
+            "[Time].[Time].[Month]" );
     }
 
 }

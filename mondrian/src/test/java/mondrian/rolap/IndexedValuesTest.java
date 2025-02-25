@@ -18,8 +18,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.olap.SystemWideProperties;
-
 /**
  * Test case for '&amp;[..]' capability in MDX identifiers.
  *
@@ -42,7 +40,7 @@ class IndexedValuesTest {
             + "{[Measures].[Org Salary]}\n"
             + "{[Measures].[Count]}\n"
             + "Axis #2:\n"
-            + "{[Employees].[Sheri Nowmer]}\n"
+            + "{[Employees].[Employees].[Sheri Nowmer]}\n"
             + "Row #0: $39,431.67\n"
             + "Row #0: 7,392\n";
         Connection connection = context.getConnectionWithDefaultRole();
@@ -50,20 +48,20 @@ class IndexedValuesTest {
         assertQueryReturns(connection,
             "SELECT {[Measures].[Org Salary], [Measures].[Count]} "
             + "ON COLUMNS, "
-            + "{[Employees].[Sheri Nowmer]} "
+            + "{[Employees].[Employees].[Sheri Nowmer]} "
             + "ON ROWS FROM [HR]",
             desiredResult);
 
         // Member keys only work with SsasCompatibleNaming=true
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
 
         // Query using key; expect same result.
         assertQueryReturns(connection,
             "SELECT {[Measures].[Org Salary], [Measures].[Count]} "
             + "ON COLUMNS, "
-            + "{[Employees].&[1]} "
+            + "{[Employees].[Employees].[Employees].&[1]} "
             + "ON ROWS FROM [HR]",
             desiredResult);
 
@@ -72,7 +70,7 @@ class IndexedValuesTest {
         assertQueryReturns(connection,
             "SELECT {[Measures].[Org Salary], [Measures].[Count]} "
             + "ON COLUMNS, "
-            + "{[Employees].&[4]} "
+            + "{[Employees].[Employees].&[4]} "
             + "ON ROWS FROM [HR]",
             "Axis #0:\n"
             + "{}\n"
@@ -80,21 +78,21 @@ class IndexedValuesTest {
             + "{[Measures].[Org Salary]}\n"
             + "{[Measures].[Count]}\n"
             + "Axis #2:\n"
-            + "{[Employees].[Sheri Nowmer].[Michael Spence]}\n"
+            + "{[Employees].[Employees].[Sheri Nowmer].[Michael Spence]}\n"
             + "Row #0: \n"
             + "Row #0: \n");
 
         // "level.&key" syntax
         assertQueryReturns(connection,
             "SELECT [Measures] ON COLUMNS, "
-            + "{[Product].[Product Name].&[9]} "
+            + "{[Product].[Product].[Product Name].&[9]} "
             + "ON ROWS FROM [Sales]",
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink].[Beverages].[Pure Juice Beverages].[Juice].[Washington].[Washington Cranberry Juice]}\n"
+            + "{[Product].[Product].[Drink].[Beverages].[Pure Juice Beverages].[Juice].[Washington].[Washington Cranberry Juice]}\n"
             + "Row #0: 130\n");
     }
 }

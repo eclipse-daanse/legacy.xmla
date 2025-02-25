@@ -35,16 +35,8 @@ public class DimensionUtil {
 		if (hierarchies.length == 1) {
 			return Optional.of(hierarchies[0]);
 		}
-		if (SystemWideProperties.instance().SsasCompatibleNaming) {
-			// In SSAS 2005, dimensions with more than one hierarchy do not have
-			// a default hierarchy.
-			return Optional.empty();
-		}
-		for (Hierarchy hierarchy : hierarchies) {
-			if (hierarchy.getName() == null || hierarchy.getUniqueName().equals(dimension.getUniqueName())) {
-				return Optional.of(hierarchy);
-			}
-		}
+		// In SSAS 2005, dimensions with more than one hierarchy do not have
+		// a default hierarchy.
 		return Optional.empty();
 	}
 
@@ -57,7 +49,7 @@ public class DimensionUtil {
 	 */
 	public static Hierarchy getDimensionDefaultHierarchyOrThrow(Dimension dimension) throws RuntimeException {
 		return getDimensionDefaultHierarchy(dimension).orElseThrow(() -> {
-			String s = "Could not Calculate the default hierarchy of the given dimension ''{0}''. It may contains more than one hierarchy. Specify the hierarchy explicitly.";
+			String s = "Could not Calculate the default hierarchy of the given dimension '%s'. It may contains more than one hierarchy. Specify the hierarchy explicitly.";
 			s = s.formatted(dimension.getName());
 			return new RuntimeException(s);
 

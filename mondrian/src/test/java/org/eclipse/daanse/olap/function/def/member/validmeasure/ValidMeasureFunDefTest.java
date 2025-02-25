@@ -42,9 +42,9 @@ class ValidMeasureFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[with VM]}\n"
                 + "Axis #2:\n"
-                + "{[Warehouse].[Canada]}\n"
-                + "{[Warehouse].[Mexico]}\n"
-                + "{[Warehouse].[USA]}\n"
+                + "{[Warehouse].[Warehouse].[Canada]}\n"
+                + "{[Warehouse].[Warehouse].[Mexico]}\n"
+                + "{[Warehouse].[Warehouse].[USA]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #1: 266,773\n"
                 + "Row #2: 266,773\n" );
@@ -56,29 +56,29 @@ class ValidMeasureFunDefTest {
         // Note that [with VM2] is NULL where it needs to be - and therefore
         // does not prevent NON EMPTY from eliminating empty rows.
         TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "with set [Foo] as ' Crossjoin({[Time].Children}, {[Measures].[Warehouse Sales]}) '\n"
+            "with set [Foo] as ' Crossjoin({[Time].[Time].Children}, {[Measures].[Warehouse Sales]}) '\n"
                 + " member [Measures].[with VM] as 'ValidMeasure([Measures].[Unit Sales])'\n"
                 + " member [Measures].[with VM2] as 'Iif(Count(Filter([Foo], not isempty([Measures].CurrentMember))) > 0, "
                 + "ValidMeasure([Measures].[Unit Sales]), NULL)'\n"
-                + "select NON EMPTY Crossjoin({[Time].Children}, {[Measures].[with VM2], [Measures].[Warehouse Sales]}) ON "
+                + "select NON EMPTY Crossjoin({[Time].[Time].Children}, {[Measures].[with VM2], [Measures].[Warehouse Sales]}) ON "
                 + "COLUMNS,\n"
-                + "  NON EMPTY {[Warehouse].[All Warehouses].[USA].[WA].Children} ON ROWS\n"
+                + "  NON EMPTY {[Warehouse].[Warehouse].[All Warehouses].[USA].[WA].Children} ON ROWS\n"
                 + "from [Warehouse and Sales]\n"
-                + "where [Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Light "
+                + "where [Product].[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Light "
                 + "Beer]",
             "Axis #0:\n"
-                + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Light Beer]}\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Light Beer]}\n"
                 + "Axis #1:\n"
-                + "{[Time].[1997].[Q1], [Measures].[with VM2]}\n"
-                + "{[Time].[1997].[Q1], [Measures].[Warehouse Sales]}\n"
-                + "{[Time].[1997].[Q2], [Measures].[with VM2]}\n"
-                + "{[Time].[1997].[Q2], [Measures].[Warehouse Sales]}\n"
-                + "{[Time].[1997].[Q3], [Measures].[with VM2]}\n"
-                + "{[Time].[1997].[Q4], [Measures].[with VM2]}\n"
+                + "{[Time].[Time].[1997].[Q1], [Measures].[with VM2]}\n"
+                + "{[Time].[Time].[1997].[Q1], [Measures].[Warehouse Sales]}\n"
+                + "{[Time].[Time].[1997].[Q2], [Measures].[with VM2]}\n"
+                + "{[Time].[Time].[1997].[Q2], [Measures].[Warehouse Sales]}\n"
+                + "{[Time].[Time].[1997].[Q3], [Measures].[with VM2]}\n"
+                + "{[Time].[Time].[1997].[Q4], [Measures].[with VM2]}\n"
                 + "Axis #2:\n"
-                + "{[Warehouse].[USA].[WA].[Seattle]}\n"
-                + "{[Warehouse].[USA].[WA].[Tacoma]}\n"
-                + "{[Warehouse].[USA].[WA].[Yakima]}\n"
+                + "{[Warehouse].[Warehouse].[USA].[WA].[Seattle]}\n"
+                + "{[Warehouse].[Warehouse].[USA].[WA].[Tacoma]}\n"
+                + "{[Warehouse].[Warehouse].[USA].[WA].[Yakima]}\n"
                 + "Row #0: 26\n"
                 + "Row #0: 34.793\n"
                 + "Row #0: 25\n"
@@ -112,9 +112,9 @@ class ValidMeasureFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[with VM]}\n"
                 + "Axis #2:\n"
-                + "{[Warehouse].[Canada]}\n"
-                + "{[Warehouse].[Mexico]}\n"
-                + "{[Warehouse].[USA]}\n"
+                + "{[Warehouse].[Warehouse].[Canada]}\n"
+                + "{[Warehouse].[Warehouse].[Mexico]}\n"
+                + "{[Warehouse].[Warehouse].[USA]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #1: 266,773\n"
                 + "Row #2: 266,773\n" );
@@ -128,7 +128,7 @@ class ValidMeasureFunDefTest {
         TestUtil.assertExprDependsOn(connection,
             "ValidMeasure([Measures].[Unit Sales])", s12 );
 
-        String s11 = FunctionTest.allHiersExcept( "[Measures]", "[Time]" );
+        String s11 = FunctionTest.allHiersExcept( "[Measures]", "[Time].[Time]" );
         TestUtil.assertExprDependsOn(connection,
             "ValidMeasure(([Measures].[Unit Sales], [Time].[1997].[Q1]))", s11 );
 
@@ -187,7 +187,7 @@ class ValidMeasureFunDefTest {
                 + "member measures.vm as 'ValidMeasure(measures.[warehouse sales])' \n"
                 + "select from [warehouse and sales] where (measures.vm, gender.f) \n",
             "Axis #0:\n"
-                + "{[Measures].[vm], [Gender].[F]}\n"
+                + "{[Measures].[vm], [Gender].[Gender].[F]}\n"
                 + "196,770.888" );
     }
 

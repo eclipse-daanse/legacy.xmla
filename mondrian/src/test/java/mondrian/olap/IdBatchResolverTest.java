@@ -94,18 +94,18 @@ class IdBatchResolverTest  {
             "Resolved map omitted one or more members",
             batchResolve(context,
                 "SELECT "
-                + "{[Product].[Food].[Dairy],"
-                + "[Product].[Food].[Deli],"
-                + "[Product].[Food].[Eggs],"
-                + "[Product].[Food].[Produce],"
-                + "[Product].[Food].[Starchy Foods]}"
+                + "{[Product].[Product].[Food].[Dairy],"
+                + "[Product].[Product].[Food].[Deli],"
+                + "[Product].[Product].[Food].[Eggs],"
+                + "[Product].[Product].[Food].[Produce],"
+                + "[Product].[Product].[Food].[Starchy Foods]}"
                 + "on 0 FROM SALES"),
             list(
-                "[Product].[Food].[Dairy]",
-                "[Product].[Food].[Deli]",
-                "[Product].[Food].[Eggs]",
-                "[Product].[Food].[Produce]",
-                "[Product].[Food].[Starchy Foods]"));
+                "[Product].[Product].[Food].[Dairy]",
+                "[Product].[Product].[Food].[Deli]",
+                "[Product].[Product].[Food].[Eggs]",
+                "[Product].[Product].[Food].[Produce]",
+                "[Product].[Product].[Food].[Starchy Foods]"));
 
         // verify lookupMemberChildrenByNames is called as expected with
         // batched children's names.
@@ -117,7 +117,7 @@ class IdBatchResolverTest  {
                 matchType.capture());
 
         assertEquals(
-            "[Product].[All Products]",
+            "[Product].[Product].[All Products]",
             parentMember.getAllValues().get(0).getUniqueName());
         assertTrue(childNames.getAllValues().get(0).size() == 1);
         assertEquals(
@@ -125,7 +125,7 @@ class IdBatchResolverTest  {
             childNames.getAllValues().get(0).get(0).getName());
 
         assertEquals(
-            "[Product].[Food]",
+            "[Product].[Product].[Food]",
             parentMember.getAllValues().get(1).getUniqueName());
         assertTrue(childNames.getAllValues().get(1).size() == 5);
 
@@ -138,13 +138,13 @@ class IdBatchResolverTest  {
     void testCalcMemsNotResolved(Context context) {
         assertFalse(
             batchResolve(context,
-                "with member time.foo as '1' member time.bar as '2' "
+                "with member time.time.foo as '1' member time.time.bar as '2' "
                 + " select "
-                + " {[Time].[foo], [Time].[bar], "
-                + "  [Time].[1997],"
-                + "  [Time].[1997].[Q1], [Time].[1997].[Q2]} "
+                + " {[Time].[Time].[foo], [Time].[Time].[bar], "
+                + "  [Time].[Time].[1997],"
+                + "  [Time].[Time].[1997].[Q1], [Time].[Time].[1997].[Q2]} "
                 + " on 0 from sales ")
-                .removeAll(list("[Time].[foo]", "[Time].[bar]")),
+                .removeAll(list("[Time].[Time].[foo]", "[Time].[Time].[bar]")),
                 "Resolved map should not contain calc members");
         // .removeAll will only return true if the set has changed, i.e. if
         // one ore more of the members were present.
@@ -156,8 +156,8 @@ class IdBatchResolverTest  {
         // [Time.Weekly].[All]
         batchResolve(context,
             "with member Gender.levelRef as "
-            + "'Sum(Descendants([Time.Weekly].CurrentMember, [Time.Weekly].Week))' "
-            + "select Gender.levelRef on 0 from sales where [Time.Weekly].[1997]");
+            + "'Sum(Descendants([Time].[Weekly].CurrentMember, [Time].[Weekly].Week))' "
+            + "select Gender.levelRef on 0 from sales where [Time].[Weekly].[1997]");
         verify(
             query.getCatalogReader(true), times(1))
             .lookupMemberChildrenByNames(
@@ -165,7 +165,7 @@ class IdBatchResolverTest  {
                 childNames.capture(),
                 matchType.capture());
         assertEquals(
-            "[Time.Weekly].[All Time.Weeklys]",
+            "[Time].[Weekly].[All Weeklys]",
             parentMember.getAllValues().get(0).getUniqueName());
         assertEquals(
             "[[1997]]",
@@ -178,16 +178,16 @@ class IdBatchResolverTest  {
         assertContains(
             "Resolved map omitted one or more members",
             batchResolve(context,
-                "with member time.foo as '1' member time.bar as '2' "
+                "with member time.time.foo as '1' member time.time.bar as '2' "
                 + " select "
-                + " {[Time].[foo], [Time].[bar], "
-                + "  [Time].[1997],"
-                + "  [Time].[1997].[Q1], [Time].[1997].[Q2]} "
+                + " {[Time].[Time].[foo], [Time].[Time].[bar], "
+                + "  [Time].[Time].[1997],"
+                + "  [Time].[Time].[1997].[Q1], [Time].[Time].[1997].[Q2]} "
                 + " on 0 from sales "),
             list(
-                "[Time].[1997]",
-                "[Time].[1997].[Q1]",
-                "[Time].[1997].[Q2]"));
+                "[Time].[Time].[1997]",
+                "[Time].[Time].[1997].[Q1]",
+                "[Time].[Time].[1997].[Q2]"));
         verify(
             query.getCatalogReader(true), times(1))
             .lookupMemberChildrenByNames(
@@ -195,7 +195,7 @@ class IdBatchResolverTest  {
                 childNames.capture(),
                 matchType.capture());
         assertEquals(
-            "[Time].[1997]",
+            "[Time].[Time].[1997]",
             parentMember.getAllValues().get(0).getUniqueName());
         assertTrue(childNames.getAllValues().get(0).size() == 2);
         assertEquals(
@@ -211,13 +211,13 @@ class IdBatchResolverTest  {
             batchResolve(context,
                 "WITH\n"
                 + "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Promotions_],[*BASE_MEMBERS__Store_])'\n"
-                + "SET [*BASE_MEMBERS__Store_] AS '{[Store].[USA].[WA].[Bellingham],[Store].[USA].[CA].[Beverly Hills],[Store].[USA].[WA].[Bremerton],[Store].[USA].[CA].[Los Angeles]}'\n"
-                + "SET [*SORTED_COL_AXIS] AS 'ORDER([*CJ_COL_AXIS],[Promotions].CURRENTMEMBER.ORDERKEY,BASC)'\n"
+                + "SET [*BASE_MEMBERS__Store_] AS '{[Store].[Store].[USA].[WA].[Bellingham],[Store].[Store].[USA].[CA].[Beverly Hills],[Store].[Store].[USA].[WA].[Bremerton],[Store].[Store].[USA].[CA].[Los Angeles]}'\n"
+                + "SET [*SORTED_COL_AXIS] AS 'ORDER([*CJ_COL_AXIS],[Promotions].[Promotions].CURRENTMEMBER.ORDERKEY,BASC)'\n"
                 + "SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[*FORMATTED_MEASURE_0]}'\n"
-                + "SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Store].CURRENTMEMBER)})'\n"
-                + "SET [*BASE_MEMBERS__Promotions_] AS '{[Promotions].[Bag Stuffers],[Promotions].[Best Savings],[Promotions].[Big Promo],[Promotions].[Big Time Discounts],[Promotions].[Big Time Savings],[Promotions].[Bye Bye Baby]}'\n"
-                + "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Store].CURRENTMEMBER.ORDERKEY,BASC,ANCESTOR([Store].CURRENTMEMBER,[Store].[Store State]).ORDERKEY,BASC)'\n"
-                + "SET [*CJ_COL_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Promotions].CURRENTMEMBER)})'\n"
+                + "SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Store].[Store].CURRENTMEMBER)})'\n"
+                + "SET [*BASE_MEMBERS__Promotions_] AS '{[Promotions].[Promotions].[Bag Stuffers],[Promotions].[Promotions].[Best Savings],[Promotions].[Promotions].[Big Promo],[Promotions].[Promotions].[Big Time Discounts],[Promotions].[Promotions].[Big Time Savings],[Promotions].[Promotions].[Bye Bye Baby]}'\n"
+                + "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Store].[Store].CURRENTMEMBER.ORDERKEY,BASC,ANCESTOR([Store].[Store].CURRENTMEMBER,[Store].[Store].[Store State]).ORDERKEY,BASC)'\n"
+                + "SET [*CJ_COL_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Promotions].[Promotions].CURRENTMEMBER)})'\n"
                 + "MEMBER [Measures].[*FORMATTED_MEASURE_0] AS '[Measures].[Unit Sales]', FORMAT_STRING = 'Standard', SOLVE_ORDER=500\n"
                 + "SELECT\n"
                 + "CROSSJOIN([*SORTED_COL_AXIS],[*BASE_MEMBERS__Measures_]) ON COLUMNS\n"
@@ -225,14 +225,14 @@ class IdBatchResolverTest  {
                 + "[*SORTED_ROW_AXIS] ON ROWS\n"
                 + "FROM [Sales]"),
             list(
-                "[Store].[USA].[WA].[Bellingham]",
-                "[Store].[USA].[CA].[Beverly Hills]",
-                "[Store].[USA].[WA].[Bremerton]",
-                "[Store].[USA].[CA].[Los Angeles]",
-                "[Promotions].[Bag Stuffers]", "[Promotions].[Best Savings]",
-                "[Promotions].[Big Promo]", "[Promotions].[Big Time Discounts]",
-                "[Promotions].[Big Time Savings]",
-                "[Promotions].[Bye Bye Baby]"));
+                "[Store].[Store].[USA].[WA].[Bellingham]",
+                "[Store].[Store].[USA].[CA].[Beverly Hills]",
+                "[Store].[Store].[USA].[WA].[Bremerton]",
+                "[Store].[Store].[USA].[CA].[Los Angeles]",
+                "[Promotions].[Promotions].[Bag Stuffers]", "[Promotions].[Promotions].[Best Savings]",
+                "[Promotions].[Promotions].[Big Promo]", "[Promotions].[Promotions].[Big Time Discounts]",
+                "[Promotions].[Promotions].[Big Time Savings]",
+                "[Promotions].[Promotions].[Bye Bye Baby]"));
 
         verify(
             query.getCatalogReader(true), times(5))
@@ -242,7 +242,7 @@ class IdBatchResolverTest  {
                 matchType.capture());
 
         assertEquals(
-            "[Promotions].[All Promotions]",
+            "[Promotions].[Promotions].[All Promotions]",
             parentMember.getAllValues().get(0).getUniqueName());
         assertTrue(childNames.getAllValues().get(0).size() == 6);
         assertEquals(
@@ -251,7 +251,7 @@ class IdBatchResolverTest  {
             sortedNames(childNames.getAllValues().get(0)));
 
         assertEquals(
-            "[Store].[USA].[CA]",
+            "[Store].[Store].[USA].[CA]",
             parentMember.getAllValues().get(3).getUniqueName());
         assertTrue(childNames.getAllValues().get(3).size() == 2);
         assertEquals(
@@ -266,7 +266,7 @@ class IdBatchResolverTest  {
             batchResolve(context,
                 "WITH\n"
                 + "SET [*NATIVE_CJ_SET] AS 'FILTER([*BASE_MEMBERS__Store Size in SQFT_], NOT ISEMPTY ([Measures].[Unit Sales]))'\n"
-                + "SET [*BASE_MEMBERS__Store Size in SQFT_] AS '{[Store Size in SQFT].[#null],[Store Size in SQFT].[20319],[Store Size in SQFT].[21215],[Store Size in SQFT].[22478],[Store Size in SQFT].[23598]}'\n"
+                + "SET [*BASE_MEMBERS__Store Size in SQFT_] AS '{[Store Size in SQFT].[Store Size in SQFT].[#null],[Store Size in SQFT].[Store Size in SQFT].[20319],[Store Size in SQFT].[Store Size in SQFT].[21215],[Store Size in SQFT].[Store Size in SQFT].[22478],[Store Size in SQFT].[Store Size in SQFT].[23598]}'\n"
                 + "SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[*FORMATTED_MEASURE_0]}'\n"
                 + "SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Store Size in SQFT].CURRENTMEMBER)})'\n"
                 + "MEMBER [Measures].[*FORMATTED_MEASURE_0] AS '[Measures].[Unit Sales]', FORMAT_STRING = 'Standard', SOLVE_ORDER=500\n"
@@ -275,11 +275,11 @@ class IdBatchResolverTest  {
                 + "FROM [Sales]\n"
                 + "WHERE ([*CJ_SLICER_AXIS])"),
             list(
-                "[Store Size in SQFT].[#null]",
-                "[Store Size in SQFT].[20319]",
-                "[Store Size in SQFT].[21215]",
-                "[Store Size in SQFT].[22478]",
-                "[Store Size in SQFT].[23598]"));
+                "[Store Size in SQFT].[Store Size in SQFT].[#null]",
+                "[Store Size in SQFT].[Store Size in SQFT].[20319]",
+                "[Store Size in SQFT].[Store Size in SQFT].[21215]",
+                "[Store Size in SQFT].[Store Size in SQFT].[22478]",
+                "[Store Size in SQFT].[Store Size in SQFT].[23598]"));
 
         verify(
             query.getCatalogReader(true), times(1))
@@ -289,7 +289,7 @@ class IdBatchResolverTest  {
                 matchType.capture());
 
         assertEquals(
-            "[Store Size in SQFT].[All Store Size in SQFTs]",
+            "[Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs]",
             parentMember.getAllValues().get(0).getUniqueName());
         assertTrue(childNames.getAllValues().get(0).size() == 5);
         assertEquals(
@@ -298,47 +298,7 @@ class IdBatchResolverTest  {
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testMultiHierarchyNonSSAS(Context context) {
-        SystemWideProperties.instance().SsasCompatibleNaming = false;
-        assertContains(
-            "Resolved map omitted one or more members",
-            batchResolve(context,
-                "WITH\n"
-                + "SET [*NATIVE_CJ_SET] AS 'FILTER([*BASE_MEMBERS__Time.Weekly_], NOT ISEMPTY ([Measures].[Unit Sales]))'\n"
-                + "SET [*BASE_MEMBERS__Time.Weekly_] AS '{[Time.Weekly].[1997].[4],[Time.Weekly].[1997].[5],[Time.Weekly].[1997].[6]}'\n"
-                + "SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[*FORMATTED_MEASURE_0]}'\n"
-                + "SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Time.Weekly].CURRENTMEMBER)})'\n"
-                + "MEMBER [Measures].[*FORMATTED_MEASURE_0] AS '[Measures].[Unit Sales]', FORMAT_STRING = 'Standard', SOLVE_ORDER=500\n"
-                + "SELECT\n"
-                + "[*BASE_MEMBERS__Measures_] ON COLUMNS\n"
-                + "FROM [Sales]\n"
-                + "WHERE ([*CJ_SLICER_AXIS])"),
-            list(
-                "[Time.Weekly].[1997].[4]",
-                "[Time.Weekly].[1997].[5]",
-                "[Time.Weekly].[1997].[6]"));
-
-        verify(
-            query.getCatalogReader(true), times(2))
-            .lookupMemberChildrenByNames(
-                parentMember.capture(),
-                childNames.capture(),
-                matchType.capture());
-        assertEquals(
-            "[Time.Weekly].[All Time.Weeklys]",
-            parentMember.getAllValues().get(0).getUniqueName());
-        assertTrue(childNames.getAllValues().get(0).size() == 1);
-        assertEquals(
-            "1997",
-            childNames.getAllValues().get(0).get(0).getName());
-        assertEquals(
-            "[[4], [5], [6]]",
-            sortedNames(childNames.getAllValues().get(1)));
-    }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testMultiHierarchySSAS(Context context) {
-        SystemWideProperties.instance().SsasCompatibleNaming = true;
         assertContains(
             "Resolved map omitted one or more members",
             batchResolve(context,
@@ -386,7 +346,7 @@ class IdBatchResolverTest  {
             batchResolve(context,
                 "WITH\n"
                 + "SET [*NATIVE_CJ_SET] AS 'FILTER([*BASE_MEMBERS__Employees_], NOT ISEMPTY ([Measures].[Number of Employees]))'\n"
-                + "SET [*BASE_MEMBERS__Employees_] AS '{[Employees].[Sheri Nowmer].[Derrick Whelply],[Employees].[Sheri Nowmer].[Michael Spence]}'\n"
+                + "SET [*BASE_MEMBERS__Employees_] AS '{[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply],[Employees].[Employees].[Sheri Nowmer].[Michael Spence]}'\n"
                 + "SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[*FORMATTED_MEASURE_0]}'\n"
                 + "SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Employees].CURRENTMEMBER)})'\n"
                 + "MEMBER [Measures].[*FORMATTED_MEASURE_0] AS '[Measures].[Number of Employees]', FORMAT_STRING = '#,#', SOLVE_ORDER=500\n"
@@ -395,8 +355,8 @@ class IdBatchResolverTest  {
                 + "FROM [HR]\n"
                 + "WHERE ([*CJ_SLICER_AXIS])"),
                 list(
-                    "[Employees].[Sheri Nowmer].[Derrick Whelply]",
-                    "[Employees].[Sheri Nowmer].[Michael Spence]"));
+                    "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]",
+                    "[Employees].[Employees].[Sheri Nowmer].[Michael Spence]"));
 
         verify(
             query.getCatalogReader(true), times(2))
@@ -405,7 +365,7 @@ class IdBatchResolverTest  {
                 childNames.capture(),
                 matchType.capture());
         assertEquals(
-            "[Employees].[Sheri Nowmer]",
+            "[Employees].[Employees].[Sheri Nowmer]",
             parentMember.getAllValues().get(1).getUniqueName());
         assertTrue(childNames.getAllValues().get(1).size() == 2);
     }

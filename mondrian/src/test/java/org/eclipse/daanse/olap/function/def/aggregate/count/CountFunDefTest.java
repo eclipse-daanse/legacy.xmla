@@ -33,9 +33,9 @@ class CountFunDefTest {
     void testCount(Context context) {
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "count(Crossjoin([Store].[All Stores].[USA].Children, {[Gender].children}), INCLUDEEMPTY)",
-            "{[Gender]}" );
+            "{[Gender].[Gender]}" );
 
-        String s1 = allHiersExcept( "[Store]" );
+        String s1 = allHiersExcept( "[Store].[Store]" );
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "count(Crossjoin([Store].[All Stores].[USA].Children, "
                 + "{[Gender].children}), EXCLUDEEMPTY)",
@@ -51,7 +51,7 @@ class CountFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCountExcludeEmpty(Context context) {
-        String s1 = allHiersExcept( "[Store]" );
+        String s1 = allHiersExcept( "[Store].[Store]" );
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "count(Crossjoin([Store].[USA].Children, {[Gender].children}), EXCLUDEEMPTY)",
             s1 );
@@ -69,11 +69,11 @@ class CountFunDefTest {
                 + "{[Measures].[Unit Sales]}\n"
                 + "{[Measures].[Promo Count]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Excellent]}\n"
-                + "{[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Fabulous]}\n"
-                + "{[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Skinner]}\n"
-                + "{[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Token]}\n"
-                + "{[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Washington]}\n"
+                + "{[Product].[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Excellent]}\n"
+                + "{[Product].[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Fabulous]}\n"
+                + "{[Product].[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Skinner]}\n"
+                + "{[Product].[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Token]}\n"
+                + "{[Product].[Product].[Drink].[Beverages].[Carbonated Beverages].[Soda].[Washington]}\n"
                 + "Row #0: 738\n"
                 + "Row #0: 14\n"
                 + "Row #1: 632\n"
@@ -128,12 +128,12 @@ class CountFunDefTest {
                 + "{[Measures].[Bar]}\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1997].[Q1]}\n"
-                + "{[Time].[1997].[Q2]}\n"
-                + "{[Time].[1997].[Q3]}\n"
-                + "{[Time].[1997].[Q4]}\n"
-                + "{[Time].[CountExc]}\n"
-                + "{[Time].[CountInc]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q2]}\n"
+                + "{[Time].[Time].[1997].[Q3]}\n"
+                + "{[Time].[Time].[1997].[Q4]}\n"
+                + "{[Time].[Time].[CountExc]}\n"
+                + "{[Time].[Time].[CountInc]}\n"
                 + "Row #0: \n"
                 + "Row #0: 0\n"
                 + "Row #0: 66,291\n"
@@ -166,7 +166,7 @@ class CountFunDefTest {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH "
                 + "  MEMBER [Measures].[count] AS '"
-                + "    COUNT([Store Type].[Store Type].MEMBERS, EXCLUDEEMPTY)'"
+                + "    COUNT([Store Type].[Store Type].[Store Type].MEMBERS, EXCLUDEEMPTY)'"
                 + " SELECT "
                 + "  {[Measures].[count]} ON AXIS(0)"
                 + " FROM [Warehouse]",

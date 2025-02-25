@@ -34,24 +34,24 @@ class TopBottomPercentSumFunDefTest {
             "BottomPercent(Filter({[Store].[All Stores].[USA].[CA].Children, [Store].[All Stores].[USA].[OR].Children, "
                 + "[Store].[All Stores].[USA].[WA].Children}, ([Measures].[Unit Sales] > 0.0)), 100.0, [Measures].[Store "
                 + "Sales])",
-            "[Store].[USA].[CA].[San Francisco]\n"
-                + "[Store].[USA].[WA].[Walla Walla]\n"
-                + "[Store].[USA].[WA].[Bellingham]\n"
-                + "[Store].[USA].[WA].[Yakima]\n"
-                + "[Store].[USA].[CA].[Beverly Hills]\n"
-                + "[Store].[USA].[WA].[Spokane]\n"
-                + "[Store].[USA].[WA].[Seattle]\n"
-                + "[Store].[USA].[WA].[Bremerton]\n"
-                + "[Store].[USA].[CA].[San Diego]\n"
-                + "[Store].[USA].[CA].[Los Angeles]\n"
-                + "[Store].[USA].[OR].[Portland]\n"
-                + "[Store].[USA].[WA].[Tacoma]\n"
-                + "[Store].[USA].[OR].[Salem]" );
+            "[Store].[Store].[USA].[CA].[San Francisco]\n"
+                + "[Store].[Store].[USA].[WA].[Walla Walla]\n"
+                + "[Store].[Store].[USA].[WA].[Bellingham]\n"
+                + "[Store].[Store].[USA].[WA].[Yakima]\n"
+                + "[Store].[Store].[USA].[CA].[Beverly Hills]\n"
+                + "[Store].[Store].[USA].[WA].[Spokane]\n"
+                + "[Store].[Store].[USA].[WA].[Seattle]\n"
+                + "[Store].[Store].[USA].[WA].[Bremerton]\n"
+                + "[Store].[Store].[USA].[CA].[San Diego]\n"
+                + "[Store].[Store].[USA].[CA].[Los Angeles]\n"
+                + "[Store].[Store].[USA].[OR].[Portland]\n"
+                + "[Store].[Store].[USA].[WA].[Tacoma]\n"
+                + "[Store].[Store].[USA].[OR].[Salem]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "BottomPercent({[Promotion Media].[Media Type].members}, 1, [Measures].[Unit Sales])",
-            "[Promotion Media].[Radio]\n"
-                + "[Promotion Media].[Sunday Paper, Radio, TV]" );
+            "[Promotion Media].[Promotion Media].[Radio]\n"
+                + "[Promotion Media].[Promotion Media].[Sunday Paper, Radio, TV]" );
     }
 
     // todo: test precision
@@ -61,8 +61,8 @@ class TopBottomPercentSumFunDefTest {
     void testBottomSum(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "BottomSum({[Promotion Media].[Media Type].members}, 5000, [Measures].[Unit Sales])",
-            "[Promotion Media].[Radio]\n"
-                + "[Promotion Media].[Sunday Paper, Radio, TV]" );
+            "[Promotion Media].[Promotion Media].[Radio]\n"
+                + "[Promotion Media].[Promotion Media].[Sunday Paper, Radio, TV]" );
     }
 
     /**
@@ -75,9 +75,9 @@ class TopBottomPercentSumFunDefTest {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{TopPercent(Crossjoin([Product].[Product Department].members,\n"
                 + "[Time].[1997].children),10,[Measures].[Store Sales])}",
-            "{[Product].[Food].[Produce], [Time].[1997].[Q4]}\n"
-                + "{[Product].[Food].[Produce], [Time].[1997].[Q1]}\n"
-                + "{[Product].[Food].[Produce], [Time].[1997].[Q3]}" );
+            "{[Product].[Product].[Food].[Produce], [Time].[Time].[1997].[Q4]}\n"
+                + "{[Product].[Product].[Food].[Produce], [Time].[Time].[1997].[Q1]}\n"
+                + "{[Product].[Product].[Food].[Produce], [Time].[Time].[1997].[Q3]}" );
     }
 
 
@@ -86,7 +86,7 @@ class TopBottomPercentSumFunDefTest {
     void testTopPercent(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopPercent({[Promotion Media].[Media Type].members}, 70, [Measures].[Unit Sales])",
-            "[Promotion Media].[No Media]" );
+            "[Promotion Media].[Promotion Media].[No Media]" );
     }
 
     // todo: test precision
@@ -96,8 +96,8 @@ class TopBottomPercentSumFunDefTest {
     void testTopSum(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopSum({[Promotion Media].[Media Type].members}, 200000, [Measures].[Unit Sales])",
-            "[Promotion Media].[No Media]\n"
-                + "[Promotion Media].[Daily Paper, Radio, TV]" );
+            "[Promotion Media].[Promotion Media].[No Media]\n"
+                + "[Promotion Media].[Promotion Media].[Daily Paper, Radio, TV]" );
     }
 
     @ParameterizedTest

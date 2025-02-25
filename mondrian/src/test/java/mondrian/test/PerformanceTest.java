@@ -607,7 +607,6 @@ public class PerformanceTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testBugMondrian1242(Context context) {
-    SystemWideProperties.instance().SsasCompatibleNaming = false;
     withSchema(context, SchemaModifiers.PerformanceTestModifier4::new);
     // original test case for MONDRIAN-1242; ensures correct result
     Connection connection = context.getConnectionWithDefaultRole();
@@ -615,19 +614,19 @@ public class PerformanceTest {
       "select {[Measures].[Unit Sales]} on COLUMNS,\n"
         + "[Store].[USA].[CA].Children on ROWS\n"
         + "from [Sales]\n"
-        + "where ([Time.Weekly].[All Time.Weeklys].[1997].[4].[16]\n"
-        + " : [Time.Weekly].[All Time.Weeklys].[1997].[5].[25])",
+        + "where ([Time].[Weekly].[All Time].[Weeklys].[1997].[4].[16]\n"
+        + " : [Time].[Weekly].[All Time].[Weeklys].[1997].[5].[25])",
       "Axis #0:\n"
-        + "{[Time.Weekly].[1997].[4].[16]}\n"
-        + "{[Time.Weekly].[1997].[4].[17]}\n"
-        + "{[Time.Weekly].[1997].[4].[18]}\n"
-        + "{[Time.Weekly].[1997].[5].[19]}\n"
-        + "{[Time.Weekly].[1997].[5].[20]}\n"
-        + "{[Time.Weekly].[1997].[5].[21]}\n"
-        + "{[Time.Weekly].[1997].[5].[22]}\n"
-        + "{[Time.Weekly].[1997].[5].[23]}\n"
-        + "{[Time.Weekly].[1997].[5].[24]}\n"
-        + "{[Time.Weekly].[1997].[5].[25]}\n"
+        + "{[Time].[Weekly].[1997].[4].[16]}\n"
+        + "{[Time].[Weekly].[1997].[4].[17]}\n"
+        + "{[Time].[Weekly].[1997].[4].[18]}\n"
+        + "{[Time].[Weekly].[1997].[5].[19]}\n"
+        + "{[Time].[Weekly].[1997].[5].[20]}\n"
+        + "{[Time].[Weekly].[1997].[5].[21]}\n"
+        + "{[Time].[Weekly].[1997].[5].[22]}\n"
+        + "{[Time].[Weekly].[1997].[5].[23]}\n"
+        + "{[Time].[Weekly].[1997].[5].[24]}\n"
+        + "{[Time].[Weekly].[1997].[5].[25]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Unit Sales]}\n"
         + "Axis #2:\n"

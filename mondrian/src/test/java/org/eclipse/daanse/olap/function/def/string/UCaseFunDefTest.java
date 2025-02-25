@@ -41,7 +41,7 @@ class UCaseFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA].[WA].[Bellingham]}\n"
+                + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
                 + "Row #0: 2,237\n" );
     }
 
@@ -56,7 +56,7 @@ class UCaseFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA].[WA].[Bellingham]}\n"
+                + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
                 + "Row #0: 2,237\n" );
     }
 

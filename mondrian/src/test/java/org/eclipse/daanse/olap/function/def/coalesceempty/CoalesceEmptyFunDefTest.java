@@ -35,7 +35,7 @@ class CoalesceEmptyFunDefTest {
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "coalesceempty([Time].[1997], [Gender].[M])",
             allHiers() );
-        String s1 = allHiersExcept( "[Measures]", "[Time]" );
+        String s1 = allHiersExcept( "[Measures]", "[Time].[Time]" );
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "coalesceempty(([Measures].[Unit Sales], [Time].[1997]),"
                 + " ([Measures].[Store Sales], [Time].[1997].[Q2]))",

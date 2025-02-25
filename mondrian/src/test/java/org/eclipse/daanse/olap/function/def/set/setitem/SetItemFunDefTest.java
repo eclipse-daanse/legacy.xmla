@@ -33,21 +33,21 @@ class SetItemFunDefTest {
     void testSetItemInt(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Customers].[All Customers].[USA].[OR].[Lebanon].[Mary Frances Christian]}.Item(0)",
-            "[Customers].[USA].[OR].[Lebanon].[Mary Frances Christian]" );
+            "[Customers].[Customers].[USA].[OR].[Lebanon].[Mary Frances Christian]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Customers].[All Customers].[USA],"
                 + "[Customers].[All Customers].[USA].[WA],"
                 + "[Customers].[All Customers].[USA].[CA],"
                 + "[Customers].[All Customers].[USA].[OR].[Lebanon].[Mary Frances Christian]}.Item(2)",
-            "[Customers].[USA].[CA]" );
+            "[Customers].[Customers].[USA].[CA]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Customers].[All Customers].[USA],"
                 + "[Customers].[All Customers].[USA].[WA],"
                 + "[Customers].[All Customers].[USA].[CA],"
                 + "[Customers].[All Customers].[USA].[OR].[Lebanon].[Mary Frances Christian]}.Item(100 / 50 - 1)",
-            "[Customers].[USA].[WA]" );
+            "[Customers].[Customers].[USA].[WA]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA]),"
@@ -55,7 +55,7 @@ class SetItemFunDefTest {
                 + "([Time].[1997].[Q1].[3], [Customers].[All Customers].[USA].[CA]),"
                 + "([Time].[1997].[Q2].[4], [Customers].[All Customers].[USA].[OR].[Lebanon].[Mary Frances Christian])}"
                 + ".Item(100 / 50 - 1)",
-            "{[Time].[1997].[Q1].[2], [Customers].[USA].[WA]}" );
+            "{[Time].[Time].[1997].[Q1].[2], [Customers].[Customers].[USA].[WA]}" );
 
         // given index out of bounds, item returns null
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -82,26 +82,26 @@ class SetItemFunDefTest {
     void testSetItemString(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Gender].[M], [Gender].[F]}.Item(\"M\")",
-            "[Gender].[M]" );
+            "[Gender].[Gender].[M]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{CrossJoin([Gender].Members, [Marital Status].Members)}.Item(\"M\", \"S\")",
-            "{[Gender].[M], [Marital Status].[S]}" );
+            "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}" );
 
         // MSAS fails with "duplicate dimensions across (independent) axes".
         // (That's a bug in MSAS.)
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{CrossJoin([Gender].Members, [Marital Status].Members)}.Item(\"M\", \"M\")",
-            "{[Gender].[M], [Marital Status].[M]}" );
+            "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M]}" );
 
         // None found.
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Gender].[M], [Gender].[F]}.Item(\"X\")", "" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "{CrossJoin([Gender].Members, [Marital Status].Members)}.Item(\"M\", \"F\")",
+            "{CrossJoin([Gender].[Gender].Members, [Marital Status].[Marital Status].Members)}.Item(\"M\", \"F\")",
             "" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "CrossJoin([Gender].Members, [Marital Status].Members).Item(\"S\", \"M\")",
+            "CrossJoin([Gender].[Gender].Members, [Marital Status].[Marital Status].Members).Item(\"S\", \"M\")",
             "" );
 
         assertAxisThrows(context.getConnectionWithDefaultRole(),

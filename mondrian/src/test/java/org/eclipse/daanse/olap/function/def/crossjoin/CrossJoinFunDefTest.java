@@ -38,42 +38,42 @@ class CrossJoinFunDefTest {
                 + "      [Marital Status].members),\n"
                 + "   {[Store], [Store].children})",
 
-            "{[Gender].[All Gender], [Marital Status].[All Marital Status], [Store].[All Stores]}\n"
-                + "{[Gender].[All Gender], [Marital Status].[All Marital Status], [Store].[Canada]}\n"
-                + "{[Gender].[All Gender], [Marital Status].[All Marital Status], [Store].[Mexico]}\n"
-                + "{[Gender].[All Gender], [Marital Status].[All Marital Status], [Store].[USA]}\n"
-                + "{[Gender].[All Gender], [Marital Status].[M], [Store].[All Stores]}\n"
-                + "{[Gender].[All Gender], [Marital Status].[M], [Store].[Canada]}\n"
-                + "{[Gender].[All Gender], [Marital Status].[M], [Store].[Mexico]}\n"
-                + "{[Gender].[All Gender], [Marital Status].[M], [Store].[USA]}\n"
-                + "{[Gender].[All Gender], [Marital Status].[S], [Store].[All Stores]}\n"
-                + "{[Gender].[All Gender], [Marital Status].[S], [Store].[Canada]}\n"
-                + "{[Gender].[All Gender], [Marital Status].[S], [Store].[Mexico]}\n"
-                + "{[Gender].[All Gender], [Marital Status].[S], [Store].[USA]}\n"
-                + "{[Gender].[F], [Marital Status].[All Marital Status], [Store].[All Stores]}\n"
-                + "{[Gender].[F], [Marital Status].[All Marital Status], [Store].[Canada]}\n"
-                + "{[Gender].[F], [Marital Status].[All Marital Status], [Store].[Mexico]}\n"
-                + "{[Gender].[F], [Marital Status].[All Marital Status], [Store].[USA]}\n"
-                + "{[Gender].[F], [Marital Status].[M], [Store].[All Stores]}\n"
-                + "{[Gender].[F], [Marital Status].[M], [Store].[Canada]}\n"
-                + "{[Gender].[F], [Marital Status].[M], [Store].[Mexico]}\n"
-                + "{[Gender].[F], [Marital Status].[M], [Store].[USA]}\n"
-                + "{[Gender].[F], [Marital Status].[S], [Store].[All Stores]}\n"
-                + "{[Gender].[F], [Marital Status].[S], [Store].[Canada]}\n"
-                + "{[Gender].[F], [Marital Status].[S], [Store].[Mexico]}\n"
-                + "{[Gender].[F], [Marital Status].[S], [Store].[USA]}\n"
-                + "{[Gender].[M], [Marital Status].[All Marital Status], [Store].[All Stores]}\n"
-                + "{[Gender].[M], [Marital Status].[All Marital Status], [Store].[Canada]}\n"
-                + "{[Gender].[M], [Marital Status].[All Marital Status], [Store].[Mexico]}\n"
-                + "{[Gender].[M], [Marital Status].[All Marital Status], [Store].[USA]}\n"
-                + "{[Gender].[M], [Marital Status].[M], [Store].[All Stores]}\n"
-                + "{[Gender].[M], [Marital Status].[M], [Store].[Canada]}\n"
-                + "{[Gender].[M], [Marital Status].[M], [Store].[Mexico]}\n"
-                + "{[Gender].[M], [Marital Status].[M], [Store].[USA]}\n"
-                + "{[Gender].[M], [Marital Status].[S], [Store].[All Stores]}\n"
-                + "{[Gender].[M], [Marital Status].[S], [Store].[Canada]}\n"
-                + "{[Gender].[M], [Marital Status].[S], [Store].[Mexico]}\n"
-                + "{[Gender].[M], [Marital Status].[S], [Store].[USA]}" );
+            "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[All Stores]}\n"
+                + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[Canada]}\n"
+                + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[Mexico]}\n"
+                + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[USA]}\n"
+                + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[M], [Store].[Store].[All Stores]}\n"
+                + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[M], [Store].[Store].[Canada]}\n"
+                + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[M], [Store].[Store].[Mexico]}\n"
+                + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[M], [Store].[Store].[USA]}\n"
+                + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[S], [Store].[Store].[All Stores]}\n"
+                + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[S], [Store].[Store].[Canada]}\n"
+                + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[S], [Store].[Store].[Mexico]}\n"
+                + "{[Gender].[Gender].[All Gender], [Marital Status].[Marital Status].[S], [Store].[Store].[USA]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[All Stores]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[Canada]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[Mexico]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[USA]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M], [Store].[Store].[All Stores]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M], [Store].[Store].[Canada]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M], [Store].[Store].[Mexico]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M], [Store].[Store].[USA]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S], [Store].[Store].[All Stores]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S], [Store].[Store].[Canada]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S], [Store].[Store].[Mexico]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S], [Store].[Store].[USA]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[All Stores]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[Canada]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[Mexico]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[All Marital Status], [Store].[Store].[USA]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M], [Store].[Store].[All Stores]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M], [Store].[Store].[Canada]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M], [Store].[Store].[Mexico]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M], [Store].[Store].[USA]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Store].[Store].[All Stores]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Store].[Store].[Canada]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Store].[Store].[Mexico]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Store].[Store].[USA]}" );
     }
 
     @ParameterizedTest
@@ -81,25 +81,25 @@ class CrossJoinFunDefTest {
     void testCrossjoinSingletonTuples(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "CrossJoin({([Gender].[M])}, {([Marital Status].[S])})",
-            "{[Gender].[M], [Marital Status].[S]}" );
+            "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCrossjoinSingletonTuplesNested(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "CrossJoin({([Gender].[M])}, CrossJoin({([Marital Status].[S])}, [Store].children))",
-            "{[Gender].[M], [Marital Status].[S], [Store].[Canada]}\n"
-                + "{[Gender].[M], [Marital Status].[S], [Store].[Mexico]}\n"
-                + "{[Gender].[M], [Marital Status].[S], [Store].[USA]}" );
+            "CrossJoin({([Gender].[M])}, CrossJoin({([Marital Status].[S])}, [Store].[Store].children))",
+            "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Store].[Store].[Canada]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Store].[Store].[Mexico]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Store].[Store].[USA]}" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCrossjoinAsterisk(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "{[Gender].[M]} * {[Marital Status].[S]}",
-            "{[Gender].[M], [Marital Status].[S]}" );
+            "{[Gender].[Gender].[M]} * {[Marital Status].[Marital Status].[S]}",
+            "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}" );
     }
 
     @ParameterizedTest
@@ -116,7 +116,7 @@ class CrossJoinFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Store].[All Stores], [Product].[All Products], [Gender].[All Gender], [Customers].[All Customers]}\n"
+                + "{[Store].[Store].[All Stores], [Product].[Product].[All Products], [Gender].[Gender].[All Gender], [Customers].[Customers].[All Customers]}\n"
                 + "Row #0: 266,773\n" );
     }
 
@@ -126,18 +126,18 @@ class CrossJoinFunDefTest {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Order({[Gender].Children} * {[Marital Status].Children} * {[Time].[1997].[Q2].Children},"
                 + "[Measures].[Unit Sales])",
-            "{[Gender].[F], [Marital Status].[M], [Time].[1997].[Q2].[4]}\n"
-                + "{[Gender].[F], [Marital Status].[M], [Time].[1997].[Q2].[6]}\n"
-                + "{[Gender].[F], [Marital Status].[M], [Time].[1997].[Q2].[5]}\n"
-                + "{[Gender].[F], [Marital Status].[S], [Time].[1997].[Q2].[4]}\n"
-                + "{[Gender].[F], [Marital Status].[S], [Time].[1997].[Q2].[5]}\n"
-                + "{[Gender].[F], [Marital Status].[S], [Time].[1997].[Q2].[6]}\n"
-                + "{[Gender].[M], [Marital Status].[M], [Time].[1997].[Q2].[4]}\n"
-                + "{[Gender].[M], [Marital Status].[M], [Time].[1997].[Q2].[5]}\n"
-                + "{[Gender].[M], [Marital Status].[M], [Time].[1997].[Q2].[6]}\n"
-                + "{[Gender].[M], [Marital Status].[S], [Time].[1997].[Q2].[6]}\n"
-                + "{[Gender].[M], [Marital Status].[S], [Time].[1997].[Q2].[4]}\n"
-                + "{[Gender].[M], [Marital Status].[S], [Time].[1997].[Q2].[5]}" );
+            "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M], [Time].[Time].[1997].[Q2].[4]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M], [Time].[Time].[1997].[Q2].[6]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M], [Time].[Time].[1997].[Q2].[5]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[4]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[5]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[6]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M], [Time].[Time].[1997].[Q2].[4]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M], [Time].[Time].[1997].[Q2].[5]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M], [Time].[Time].[1997].[Q2].[6]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[6]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[4]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[5]}" );
     }
 
     @ParameterizedTest
@@ -145,9 +145,9 @@ class CrossJoinFunDefTest {
     void testCrossjoinAsteriskInsideBraces(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Gender].[M] * [Marital Status].[S] * [Time].[1997].[Q2].Children}",
-            "{[Gender].[M], [Marital Status].[S], [Time].[1997].[Q2].[4]}\n"
-                + "{[Gender].[M], [Marital Status].[S], [Time].[1997].[Q2].[5]}\n"
-                + "{[Gender].[M], [Marital Status].[S], [Time].[1997].[Q2].[6]}" );
+            "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[4]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[5]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[6]}" );
     }
 
     @ParameterizedTest
@@ -161,34 +161,34 @@ class CrossJoinFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Measures].[Org Salary], [Time].[1997].[Q1]}\n"
-                + "{[Measures].[Org Salary], [Time].[1997].[Q2]}\n"
-                + "{[Measures].[Org Salary], [Time].[1997].[Q3]}\n"
-                + "{[Measures].[Org Salary], [Time].[1997].[Q4]}\n"
-                + "{[Measures].[Count], [Time].[1997].[Q1]}\n"
-                + "{[Measures].[Count], [Time].[1997].[Q2]}\n"
-                + "{[Measures].[Count], [Time].[1997].[Q3]}\n"
-                + "{[Measures].[Count], [Time].[1997].[Q4]}\n"
-                + "{[Measures].[Number of Employees], [Time].[1997].[Q1]}\n"
-                + "{[Measures].[Number of Employees], [Time].[1997].[Q2]}\n"
-                + "{[Measures].[Number of Employees], [Time].[1997].[Q3]}\n"
-                + "{[Measures].[Number of Employees], [Time].[1997].[Q4]}\n"
+                + "{[Measures].[Org Salary], [Time].[Time].[1997].[Q1]}\n"
+                + "{[Measures].[Org Salary], [Time].[Time].[1997].[Q2]}\n"
+                + "{[Measures].[Org Salary], [Time].[Time].[1997].[Q3]}\n"
+                + "{[Measures].[Org Salary], [Time].[Time].[1997].[Q4]}\n"
+                + "{[Measures].[Count], [Time].[Time].[1997].[Q1]}\n"
+                + "{[Measures].[Count], [Time].[Time].[1997].[Q2]}\n"
+                + "{[Measures].[Count], [Time].[Time].[1997].[Q3]}\n"
+                + "{[Measures].[Count], [Time].[Time].[1997].[Q4]}\n"
+                + "{[Measures].[Number of Employees], [Time].[Time].[1997].[Q1]}\n"
+                + "{[Measures].[Number of Employees], [Time].[Time].[1997].[Q2]}\n"
+                + "{[Measures].[Number of Employees], [Time].[Time].[1997].[Q3]}\n"
+                + "{[Measures].[Number of Employees], [Time].[Time].[1997].[Q4]}\n"
                 + "Axis #2:\n"
-                + "{[Store].[USA].[CA], [Position].[Middle Management]}\n"
-                + "{[Store].[USA].[CA], [Position].[Senior Management]}\n"
-                + "{[Store].[USA].[CA], [Position].[Store Full Time Staf]}\n"
-                + "{[Store].[USA].[CA], [Position].[Store Management]}\n"
-                + "{[Store].[USA].[CA], [Position].[Store Temp Staff]}\n"
-                + "{[Store].[USA].[OR], [Position].[Middle Management]}\n"
-                + "{[Store].[USA].[OR], [Position].[Senior Management]}\n"
-                + "{[Store].[USA].[OR], [Position].[Store Full Time Staf]}\n"
-                + "{[Store].[USA].[OR], [Position].[Store Management]}\n"
-                + "{[Store].[USA].[OR], [Position].[Store Temp Staff]}\n"
-                + "{[Store].[USA].[WA], [Position].[Middle Management]}\n"
-                + "{[Store].[USA].[WA], [Position].[Senior Management]}\n"
-                + "{[Store].[USA].[WA], [Position].[Store Full Time Staf]}\n"
-                + "{[Store].[USA].[WA], [Position].[Store Management]}\n"
-                + "{[Store].[USA].[WA], [Position].[Store Temp Staff]}\n"
+                + "{[Store].[Store].[USA].[CA], [Position].[Position].[Middle Management]}\n"
+                + "{[Store].[Store].[USA].[CA], [Position].[Position].[Senior Management]}\n"
+                + "{[Store].[Store].[USA].[CA], [Position].[Position].[Store Full Time Staf]}\n"
+                + "{[Store].[Store].[USA].[CA], [Position].[Position].[Store Management]}\n"
+                + "{[Store].[Store].[USA].[CA], [Position].[Position].[Store Temp Staff]}\n"
+                + "{[Store].[Store].[USA].[OR], [Position].[Position].[Middle Management]}\n"
+                + "{[Store].[Store].[USA].[OR], [Position].[Position].[Senior Management]}\n"
+                + "{[Store].[Store].[USA].[OR], [Position].[Position].[Store Full Time Staf]}\n"
+                + "{[Store].[Store].[USA].[OR], [Position].[Position].[Store Management]}\n"
+                + "{[Store].[Store].[USA].[OR], [Position].[Position].[Store Temp Staff]}\n"
+                + "{[Store].[Store].[USA].[WA], [Position].[Position].[Middle Management]}\n"
+                + "{[Store].[Store].[USA].[WA], [Position].[Position].[Senior Management]}\n"
+                + "{[Store].[Store].[USA].[WA], [Position].[Position].[Store Full Time Staf]}\n"
+                + "{[Store].[Store].[USA].[WA], [Position].[Position].[Store Management]}\n"
+                + "{[Store].[Store].[USA].[WA], [Position].[Position].[Store Temp Staff]}\n"
                 + "Row #0: $275.40\n"
                 + "Row #0: $275.40\n"
                 + "Row #0: $275.40\n"
@@ -382,25 +382,25 @@ class CrossJoinFunDefTest {
             "with\n"
                 + "member [Measures].[Filtered Unit Sales] as\n"
                 + " 'IIf((([Measures].[Unit Sales] > 50000.0)\n"
-                + "      OR ([Product].CurrentMember.Level.UniqueName <>\n"
-                + "          \"[Product].[Product Family]\")),\n"
-                + "      IIf(((Count([Product].CurrentMember.Children) = 0.0)),\n"
+                + "      OR ([Product].[Product].CurrentMember.Level.UniqueName <>\n"
+                + "          \"[Product].[Product].[Product Family]\")),\n"
+                + "      IIf(((Count([Product].[Product].CurrentMember.Children) = 0.0)),\n"
                 + "          [Measures].[Unit Sales],\n"
-                + "          Sum([Product].CurrentMember.Children,\n"
+                + "          Sum([Product].[Product].CurrentMember.Children,\n"
                 + "              [Measures].[Filtered Unit Sales])),\n"
                 + "      NULL)'\n"
                 + "select NON EMPTY {crossjoin({[Measures].[Filtered Unit Sales]},\n"
-                + "{[Gender].[M], [Gender].[F]})} ON COLUMNS,\n"
-                + "NON EMPTY {[Product].[All Products]} ON ROWS\n"
+                + "{[Gender].[Gender].[M], [Gender].[Gender].[F]})} ON COLUMNS,\n"
+                + "NON EMPTY {[Product].[Product].[All Products]} ON ROWS\n"
                 + "from [Sales]\n"
-                + "where [Time].[1997]",
+                + "where [Time].[Time].[1997]",
             "Axis #0:\n"
-                + "{[Time].[1997]}\n"
+                + "{[Time].[Time].[1997]}\n"
                 + "Axis #1:\n"
-                + "{[Measures].[Filtered Unit Sales], [Gender].[M]}\n"
-                + "{[Measures].[Filtered Unit Sales], [Gender].[F]}\n"
+                + "{[Measures].[Filtered Unit Sales], [Gender].[Gender].[M]}\n"
+                + "{[Measures].[Filtered Unit Sales], [Gender].[Gender].[F]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[All Products]}\n"
+                + "{[Product].[Product].[All Products]}\n"
                 + "Row #0: 97,126\n"
                 + "Row #0: 94,814\n" );
     }
@@ -414,7 +414,7 @@ class CrossJoinFunDefTest {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
                 + "\n"
-                + "SET [S1] AS 'CROSSJOIN({[Time].[1997]}, {[Gender].[Gender].MEMBERS})'\n"
+                + "SET [S1] AS 'CROSSJOIN({[Time].[Time].[1997]}, {[Gender].[Gender].[Gender].MEMBERS})'\n"
                 + "\n"
                 + "SELECT CROSSJOIN(ORDER([S1], [Measures].[Unit Sales], BDESC),\n"
                 + "{[Measures].[Unit Sales]}) ON AXIS(0)\n"
@@ -422,8 +422,8 @@ class CrossJoinFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Time].[1997], [Gender].[M], [Measures].[Unit Sales]}\n"
-                + "{[Time].[1997], [Gender].[F], [Measures].[Unit Sales]}\n"
+                + "{[Time].[Time].[1997], [Gender].[Gender].[M], [Measures].[Unit Sales]}\n"
+                + "{[Time].[Time].[1997], [Gender].[Gender].[F], [Measures].[Unit Sales]}\n"
                 + "Row #0: 135,215\n"
                 + "Row #0: 131,558\n" );
     }
@@ -435,21 +435,21 @@ class CrossJoinFunDefTest {
             "select [Measures].[Unit Sales] ON COLUMNS,\n"
                 + " CrossJoin({[Time].[Quarter].[Q1]}, {[Time].[Month].[5]}) ON ROWS\n"
                 + "from [Sales]",
-            "Tuple contains more than one member of hierarchy '[Time]'." );
+            "Tuple contains more than one member of hierarchy '[Time].[Time]'." );
 
         // now with Item, for kicks
         assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] ON COLUMNS,\n"
                 + " CrossJoin({[Time].[Quarter].[Q1]}, {[Time].[Month].[5]}).Item(0) ON ROWS\n"
                 + "from [Sales]",
-            "Tuple contains more than one member of hierarchy '[Time]'." );
+            "Tuple contains more than one member of hierarchy '[Time].[Time]'." );
 
         // same query using explicit tuple
         assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] ON COLUMNS,\n"
                 + " ([Time].[Quarter].[Q1], [Time].[Month].[5]) ON ROWS\n"
                 + "from [Sales]",
-            "Tuple contains more than one member of hierarchy '[Time]'." );
+            "Tuple contains more than one member of hierarchy '[Time].[Time]'." );
     }
 
     /**
@@ -466,7 +466,7 @@ class CrossJoinFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1997].[Q1], [Time.Weekly].[1997].[10]}\n"
+                + "{[Time].[Time].[1997].[Q1], [Time].[Weekly].[1997].[10]}\n"
                 + "Row #0: 4,395\n";
         final String timeWeekly = hierarchyName( "Time", "Weekly" );
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -500,6 +500,6 @@ class CrossJoinFunDefTest {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "CrossJoin([Gender].[All Gender].children, "
                 + "[Time].[1997].[Q2].children).Item(0).Item(1).UniqueName",
-            "[Time].[1997].[Q2].[4]" );
+            "[Time].[Time].[1997].[Q2].[4]" );
     }
 }

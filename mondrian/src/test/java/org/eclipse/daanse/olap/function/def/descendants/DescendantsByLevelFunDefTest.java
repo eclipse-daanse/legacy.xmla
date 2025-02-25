@@ -43,10 +43,10 @@ class DescendantsByLevelFunDefTest {
     void testDescendantsM(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Descendants([Time].[1997].[Q1])",
-            "[Time].[1997].[Q1]\n"
-                + "[Time].[1997].[Q1].[1]\n"
-                + "[Time].[1997].[Q1].[2]\n"
-                + "[Time].[1997].[Q1].[3]" );
+            "[Time].[Time].[1997].[Q1]\n"
+                + "[Time].[Time].[1997].[Q1].[1]\n"
+                + "[Time].[Time].[1997].[Q1].[2]\n"
+                + "[Time].[Time].[1997].[Q1].[3]" );
     }
 
     @ParameterizedTest
@@ -54,7 +54,7 @@ class DescendantsByLevelFunDefTest {
     void testDescendantsDepends(Context context) {
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[Time].CurrentMember)",
-            "{[Time]}" );
+            "{[Time].[Time]}" );
     }
 
     @ParameterizedTest
@@ -78,17 +78,17 @@ class DescendantsByLevelFunDefTest {
     void testDescendantsMLLeaves(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Descendants([Time].[1997], [Time].[Year], LEAVES)",
-            "[Time].[1997]" );
+            "[Time].[Time].[1997]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Descendants([Time].[1997], [Time].[Quarter], LEAVES)",
-            "[Time].[1997].[Q1]\n" + "[Time].[1997].[Q2]\n" + "[Time].[1997].[Q3]\n" + "[Time].[1997].[Q4]" );
+            "[Time].[Time].[1997].[Q1]\n" + "[Time].[Time].[1997].[Q2]\n" + "[Time].[Time].[1997].[Q3]\n" + "[Time].[Time].[1997].[Q4]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Descendants([Time].[1997], [Time].[Month], LEAVES)",
             months );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Descendants([Gender], [Gender].[Gender], leaves)",
-            "[Gender].[F]\n" + "[Gender].[M]" );
+            "Descendants([Gender].[Gender], [Gender].[Gender].[Gender], leaves)",
+            "[Gender].[Gender].[F]\n" + "[Gender].[Gender].[M]" );
     }
 
     @ParameterizedTest
@@ -99,29 +99,29 @@ class DescendantsByLevelFunDefTest {
         //  getTestContext().withCube( "[Sales Ragged]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "[Sales Ragged]",
             "Descendants([Store].[Israel], [Store].[Store City], leaves)",
-            "[Store].[Israel].[Israel].[Haifa]\n" + "[Store].[Israel].[Israel].[Tel Aviv]" );
+            "[Store].[Store].[Israel].[Israel].[Haifa]\n" + "[Store].[Store].[Israel].[Israel].[Tel Aviv]" );
 
         // all cities are leaves
         assertAxisReturns(context.getConnectionWithDefaultRole(), "[Sales Ragged]",
             "Descendants([Geography].[Israel], [Geography].[City], leaves)",
-            "[Geography].[Israel].[Israel].[Haifa]\n"
-                + "[Geography].[Israel].[Israel].[Tel Aviv]" );
+            "[Geography].[Geography].[Israel].[Israel].[Haifa]\n"
+                + "[Geography].[Geography].[Israel].[Israel].[Tel Aviv]" );
 
         // No state is a leaf (not even Israel, which is both a country and a
         // a state, or Vatican, with is a country/state/city)
         assertAxisReturns(context.getConnectionWithDefaultRole(), "[Sales Ragged]",
             "Descendants([Geography], [Geography].[State], leaves)",
-            "[Geography].[Canada].[BC]\n" +
-                "[Geography].[Mexico].[DF]\n" +
-                "[Geography].[Mexico].[Guerrero]\n" +
-                "[Geography].[Mexico].[Jalisco]\n" +
-                "[Geography].[Mexico].[Veracruz]\n" +
-                "[Geography].[Mexico].[Yucatan]\n" +
-                "[Geography].[Mexico].[Zacatecas]\n" +
-                "[Geography].[USA].[CA]\n" +
-                "[Geography].[USA].[OR]\n" +
-                "[Geography].[USA].[WA]\n" +
-                "[Geography].[Vatican]"
+            "[Geography].[Geography].[Canada].[BC]\n" +
+                "[Geography].[Geography].[Mexico].[DF]\n" +
+                "[Geography].[Geography].[Mexico].[Guerrero]\n" +
+                "[Geography].[Geography].[Mexico].[Jalisco]\n" +
+                "[Geography].[Geography].[Mexico].[Veracruz]\n" +
+                "[Geography].[Geography].[Mexico].[Yucatan]\n" +
+                "[Geography].[Geography].[Mexico].[Zacatecas]\n" +
+                "[Geography].[Geography].[USA].[CA]\n" +
+                "[Geography].[Geography].[USA].[OR]\n" +
+                "[Geography].[Geography].[USA].[WA]\n" +
+                "[Geography].[Geography].[Vatican]"
         );
 
     }
@@ -132,32 +132,32 @@ class DescendantsByLevelFunDefTest {
         // leaves at depth 0 returns the member itself
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Descendants([Time].[1997].[Q2].[4], 0, Leaves)",
-            "[Time].[1997].[Q2].[4]" );
+            "[Time].[Time].[1997].[Q2].[4]" );
 
         // leaves at depth > 0 returns the member itself
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Descendants([Time].[1997].[Q2].[4], 100, Leaves)",
-            "[Time].[1997].[Q2].[4]" );
+            "[Time].[Time].[1997].[Q2].[4]" );
 
         // leaves at depth < 0 returns all descendants
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Descendants([Time].[1997].[Q2], -1, Leaves)",
-            "[Time].[1997].[Q2].[4]\n"
-                + "[Time].[1997].[Q2].[5]\n"
-                + "[Time].[1997].[Q2].[6]" );
+            "[Time].[Time].[1997].[Q2].[4]\n"
+                + "[Time].[Time].[1997].[Q2].[5]\n"
+                + "[Time].[Time].[1997].[Q2].[6]" );
 
         // leaves at depth 0 returns the member itself
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Descendants([Time].[1997].[Q2], 0, Leaves)",
-            "[Time].[1997].[Q2].[4]\n"
-                + "[Time].[1997].[Q2].[5]\n"
-                + "[Time].[1997].[Q2].[6]" );
+            "[Time].[Time].[1997].[Q2].[4]\n"
+                + "[Time].[Time].[1997].[Q2].[5]\n"
+                + "[Time].[Time].[1997].[Q2].[6]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Descendants([Time].[1997].[Q2], 3, Leaves)",
-            "[Time].[1997].[Q2].[4]\n"
-                + "[Time].[1997].[Q2].[5]\n"
-                + "[Time].[1997].[Q2].[6]" );
+            "[Time].[Time].[1997].[Q2].[4]\n"
+                + "[Time].[Time].[1997].[Q2].[5]\n"
+                + "[Time].[Time].[1997].[Q2].[6]" );
     }
 
     @ParameterizedTest
@@ -284,7 +284,7 @@ class DescendantsByLevelFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDescendants2ndHier(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Descendants([Time.Weekly].[1997].[10], [Time.Weekly].[Day])",
+            "Descendants([Time].[Weekly].[1997].[10], [Time].[Weekly].[Day])",
             "[Time].[Weekly].[1997].[10].[1]\n"
                 + "[Time].[Weekly].[1997].[10].[23]\n"
                 + "[Time].[Weekly].[1997].[10].[24]\n"
@@ -300,13 +300,13 @@ class DescendantsByLevelFunDefTest {
         //getTestContext().withCube( "HR" ).
         assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Descendants([Employees], 2)",
-            "[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
-                + "[Employees].[Sheri Nowmer].[Michael Spence]\n"
-                + "[Employees].[Sheri Nowmer].[Maya Gutierrez]\n"
-                + "[Employees].[Sheri Nowmer].[Roberta Damstra]\n"
-                + "[Employees].[Sheri Nowmer].[Rebecca Kanagaki]\n"
-                + "[Employees].[Sheri Nowmer].[Darren Stanz]\n"
-                + "[Employees].[Sheri Nowmer].[Donna Arnold]" );
+            "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Michael Spence]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Maya Gutierrez]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Roberta Damstra]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Rebecca Kanagaki]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Darren Stanz]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Donna Arnold]" );
     }
 
     @ParameterizedTest
@@ -314,8 +314,8 @@ class DescendantsByLevelFunDefTest {
     void testDescendantsParentChildBefore(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Descendants([Employees], 2, BEFORE)",
-            "[Employees].[All Employees]\n"
-                + "[Employees].[Sheri Nowmer]" );
+            "[Employees].[Employees].[All Employees]\n"
+                + "[Employees].[Employees].[Sheri Nowmer]" );
     }
 
     @Disabled //disabled for CI build
@@ -578,12 +578,12 @@ class DescendantsByLevelFunDefTest {
     void testDescendantsSet(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Descendants({[Time].[1997].[Q4], [Time].[1997].[Q2]}, 1)",
-            "[Time].[1997].[Q4].[10]\n"
-                + "[Time].[1997].[Q4].[11]\n"
-                + "[Time].[1997].[Q4].[12]\n"
-                + "[Time].[1997].[Q2].[4]\n"
-                + "[Time].[1997].[Q2].[5]\n"
-                + "[Time].[1997].[Q2].[6]" );
+            "[Time].[Time].[1997].[Q4].[10]\n"
+                + "[Time].[Time].[1997].[Q4].[11]\n"
+                + "[Time].[Time].[1997].[Q4].[12]\n"
+                + "[Time].[Time].[1997].[Q2].[4]\n"
+                + "[Time].[Time].[1997].[Q2].[5]\n"
+                + "[Time].[Time].[1997].[Q2].[6]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Descendants({[Time].[1997]}, [Time].[Month], LEAVES)",
             months );
@@ -605,14 +605,14 @@ class DescendantsByLevelFunDefTest {
     void testItemMember(Context context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "Descendants([Time].[1997], [Time].[Month]).Item(1).Item(0).UniqueName",
-            "[Time].[1997].[Q1].[2]" );
+            "[Time].[Time].[1997].[Q1].[2]" );
 
         // Access beyond the list yields the Null member.
         if ( isDefaultNullMemberRepresentation() ) {
             assertExprReturns(context.getConnectionWithDefaultRole(),
-                "[Time].[1997].Children.Item(6).UniqueName", "[Time].[#null]" );
+                "[Time].[1997].Children.Item(6).UniqueName", "[Time].[Time].[#null]" );
             assertExprReturns(context.getConnectionWithDefaultRole(),
-                "[Time].[1997].Children.Item(-1).UniqueName", "[Time].[#null]" );
+                "[Time].[1997].Children.Item(-1).UniqueName", "[Time].[Time].[#null]" );
         }
     }
 }

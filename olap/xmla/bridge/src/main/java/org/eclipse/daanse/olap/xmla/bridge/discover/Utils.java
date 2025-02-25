@@ -638,8 +638,7 @@ public class Utils {
 
     private static String getHierarchyName(String hierarchyName, String dimensionName) {
         //TODO use Properties from context
-        if (SystemWideProperties.instance().SsasCompatibleNaming
-            && !hierarchyName.equals(dimensionName)) {
+        if (!hierarchyName.equals(dimensionName)) {
             hierarchyName =
                 dimensionName + "." + hierarchyName;
         }

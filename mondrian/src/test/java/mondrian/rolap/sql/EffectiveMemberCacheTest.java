@@ -26,7 +26,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapCatalogCache;
 import mondrian.test.SqlPattern;
 
 class EffectiveMemberCacheTest {
@@ -173,8 +172,8 @@ class EffectiveMemberCacheTest {
                 + "`store`.`store_type` ASC");
         assertQuerySql(
             connection,
-            "select {[Store Type].[Gourmet Supermarket], "
-            + "[Store Type].[HeadQuarters]} on 0 from sales",
+            "select {[Store Type].[Store Type].[Gourmet Supermarket], "
+            + "[Store Type].[Store Type].[HeadQuarters]} on 0 from sales",
             new SqlPattern[] {
                 new SqlPattern(
                     DatabaseProduct.MYSQL, sql, null)

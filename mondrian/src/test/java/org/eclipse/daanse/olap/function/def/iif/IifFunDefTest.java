@@ -30,7 +30,7 @@ class IifFunDefTest {
     void testIIfMember(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "IIf(1 > 2,[Store].[USA],[Store].[Canada].[BC])",
-            "[Store].[Canada].[BC]" );
+            "[Store].[Store].[Canada].[BC]" );
     }
 
     @ParameterizedTest
@@ -53,7 +53,7 @@ class IifFunDefTest {
         // hierarchy [Time.Weekly] is implicitly converted to
         // the dimension [Time] to match argument #2 which is a dimension.
         assertExprReturns(context.getConnectionWithDefaultRole(),
-            "IIf(1 > 2, [Time], [Time.Weekly]).Name",
+            "IIf(1 > 2, [Time], [Time].[Weekly]).Name",
             "Time" );
     }
 
@@ -72,8 +72,8 @@ class IifFunDefTest {
     void testIIfSet(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "IIf(1 > 2, {[Store].[USA], [Store].[USA].[CA]}, {[Store].[Mexico], [Store].[USA].[OR]})",
-            "[Store].[Mexico]\n"
-                + "[Store].[USA].[OR]" );
+            "[Store].[Store].[Mexico]\n"
+                + "[Store].[Store].[USA].[OR]" );
     }
 
     // MONDRIAN-2408 - Consumer wants ITERABLE or ANY in CrossJoinFunDef.compileCall(ResolvedFunCall, ExpCompiler)
@@ -83,7 +83,7 @@ class IifFunDefTest {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "CROSSJOIN([Store Type].[Deluxe Supermarket],IIf(1 = 1, {[Store].[USA], [Store].[USA].[CA]}, {[Store].[Mexico],"
                 + " [Store].[USA].[OR]}))",
-            "{[Store Type].[Deluxe Supermarket], [Store].[USA]}\n"
-                + "{[Store Type].[Deluxe Supermarket], [Store].[USA].[CA]}" );
+            "{[Store Type].[Store Type].[Deluxe Supermarket], [Store].[Store].[USA]}\n"
+                + "{[Store Type].[Store Type].[Deluxe Supermarket], [Store].[Store].[USA].[CA]}" );
     }
 }

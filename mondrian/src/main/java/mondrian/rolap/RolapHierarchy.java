@@ -191,8 +191,7 @@ public class RolapHierarchy extends HierarchyBase {
         this.allLevelName = "(All)";
         this.allMemberName =
             subName != null
-            && (SystemWideProperties.instance().SsasCompatibleNaming
-                || name.equals(new StringBuilder(subName).append(".").append(subName).toString()))
+            && (name.equals(new StringBuilder(subName).append(".").append(subName).toString()))
                 ? new StringBuilder("All ").append(subName).append("s").toString()
                 : new StringBuilder("All ").append(name).append("s").toString();
         this.closureFor = closureFor;
@@ -1647,13 +1646,6 @@ public class RolapHierarchy extends HierarchyBase {
                 return dimension;
             }
             // Archaic form <dimension>.<hierarchy>, e.g. [Time.Weekly].[1997]
-            if (!SystemWideProperties.instance().SsasCompatibleNaming
-                && Util.equalName(
-                    nameSegment.getName(),
-                new StringBuilder(dimension.getName()).append(".").append(subName).toString()))
-            {
-                return RolapHierarchy.this;
-            }
             return null;
         }
 

@@ -35,13 +35,13 @@ class AllMembersFunDefTest {
         // <Level>.allmembers
         assertAxisReturns(connection, "Sales",
             "{[Customers].[Country].allmembers}",
-            "[Customers].[Canada]\n"
-                + "[Customers].[Mexico]\n"
-                + "[Customers].[USA]" );
+            "[Customers].[Customers].[Canada]\n"
+                + "[Customers].[Customers].[Mexico]\n"
+                + "[Customers].[Customers].[USA]" );
 
         // <Level>.allmembers applied to 'all' level
         assertAxisReturns(connection, "Sales",
-            "{[Customers].[(All)].allmembers}", "[Customers].[All Customers]" );
+            "{[Customers].[(All)].allmembers}", "[Customers].[Customers].[All Customers]" );
 
         // <Level>.allmembers applied to measures dimension
         // Note -- cube-level calculated members ARE present
@@ -121,7 +121,7 @@ class AllMembersFunDefTest {
                         + "FROM Sales "
                         + "WHERE ([1997].[Q1])",
                     "Axis #0:\n"
-                        + "{[Time].[1997].[Q1]}\n"
+                        + "{[Time].[Time].[1997].[Q1]}\n"
                         + "Axis #1:\n"
                         + "{[Measures].[Unit Sales]}\n"
                         + "{[Measures].[Store Cost]}\n"
@@ -134,9 +134,9 @@ class AllMembersFunDefTest {
                         + "{[Measures].[Profit last Period]}\n"
                         + "{[Measures].[Unit to Sales ratio]}\n"
                         + "Axis #2:\n"
-                        + "{[Store].[USA].[CA]}\n"
-                        + "{[Store].[USA].[OR]}\n"
-                        + "{[Store].[USA].[WA]}\n"
+                        + "{[Store].[Store].[USA].[CA]}\n"
+                        + "{[Store].[Store].[USA].[OR]}\n"
+                        + "{[Store].[Store].[USA].[WA]}\n"
                         + "Row #0: 16,890\n"
                         + "Row #0: 14,431.09\n"
                         + "Row #0: 36,175.20\n"
@@ -184,7 +184,7 @@ class AllMembersFunDefTest {
                         + "FROM Sales "
                         + "WHERE ([1997].[Q1])",
                     "Axis #0:\n"
-                        + "{[Time].[1997].[Q1]}\n"
+                        + "{[Time].[Time].[1997].[Q1]}\n"
                         + "Axis #1:\n"
                         + "{[Measures].[Unit Sales]}\n"
                         + "{[Measures].[Store Cost]}\n"
@@ -197,9 +197,9 @@ class AllMembersFunDefTest {
                         + "{[Measures].[Profit last Period]}\n"
                         + "{[Measures].[Unit to Sales ratio]}\n"
                         + "Axis #2:\n"
-                        + "{[Store].[USA].[CA]}\n"
-                        + "{[Store].[USA].[OR]}\n"
-                        + "{[Store].[USA].[WA]}\n"
+                        + "{[Store].[Store].[USA].[CA]}\n"
+                        + "{[Store].[Store].[USA].[OR]}\n"
+                        + "{[Store].[Store].[USA].[WA]}\n"
                         + "Row #0: 16,890\n"
                         + "Row #0: 14,431.09\n"
                         + "Row #0: 36,175.20\n"
@@ -247,7 +247,7 @@ class AllMembersFunDefTest {
                         + "FROM Sales "
                         + "WHERE ([1997].[Q1])",
                     "Axis #0:\n"
-                        + "{[Time].[1997].[Q1]}\n"
+                        + "{[Time].[Time].[1997].[Q1]}\n"
                         + "Axis #1:\n"
                         + "{[Measures].[Unit Sales]}\n"
                         + "{[Measures].[Store Cost]}\n"
@@ -256,9 +256,9 @@ class AllMembersFunDefTest {
                         + "{[Measures].[Customer Count]}\n"
                         + "{[Measures].[Promotion Sales]}\n"
                         + "Axis #2:\n"
-                        + "{[Store].[USA].[CA]}\n"
-                        + "{[Store].[USA].[OR]}\n"
-                        + "{[Store].[USA].[WA]}\n"
+                        + "{[Store].[Store].[USA].[CA]}\n"
+                        + "{[Store].[Store].[USA].[OR]}\n"
+                        + "{[Store].[Store].[USA].[WA]}\n"
                         + "Row #0: 16,890\n"
                         + "Row #0: 14,431.09\n"
                         + "Row #0: 36,175.20\n"
@@ -287,15 +287,15 @@ class AllMembersFunDefTest {
                 + "FROM Sales "
                 + "WHERE ([1997].[Q1])",
             "Axis #0:\n"
-                + "{[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Store].[USA].[CA]}\n"
-                + "{[Store].[USA].[OR]}\n"
-                + "{[Store].[USA].[WA]}\n"
-                + "{[Store].[USA].[CA plus OR]}\n"
+                + "{[Store].[Store].[USA].[CA]}\n"
+                + "{[Store].[Store].[USA].[OR]}\n"
+                + "{[Store].[Store].[USA].[WA]}\n"
+                + "{[Store].[Store].[USA].[CA plus OR]}\n"
                 + "Row #0: 16,890\n"
                 + "Row #0: 36,175.20\n"
                 + "Row #1: 19,287\n"
@@ -313,12 +313,12 @@ class AllMembersFunDefTest {
                 + "FROM Sales "
                 + "WHERE ([1997].[Q1])",
             "Axis #0:\n"
-                + "{[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Store].[USA]}\n"
+                + "{[Store].[Store].[USA]}\n"
                 + "Row #0: 66,291\n"
                 + "Row #0: 139,628.35\n" );
     }

@@ -32,12 +32,12 @@ class ExceptFunDefTest {
     void testExceptEmpty(Context context) {
         // If left is empty, result is empty.
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Except(Filter([Gender].Members, 1=0), {[Gender].[M]})", "" );
+            "Except(Filter([Gender].Members, 1=0), {[Gender].[Gender].[M]})", "" );
 
         // If right is empty, result is left.
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Except({[Gender].[M]}, Filter([Gender].Members, 1=0))",
-            "[Gender].[M]" );
+            "[Gender].[Gender].[M]" );
     }
 
     /**
@@ -52,8 +52,8 @@ class ExceptFunDefTest {
                 + "                  [Product].[All Products].Children),\n"
                 + "       CROSSJOIN({[Promotion Media].[All Media]},\n"
                 + "                  {[Product].[All Products].[Drink]}))",
-            "{[Promotion Media].[All Media], [Product].[Food]}\n"
-                + "{[Promotion Media].[All Media], [Product].[Non-Consumable]}" );
+            "{[Promotion Media].[Promotion Media].[All Media], [Product].[Product].[Food]}\n"
+                + "{[Promotion Media].[Promotion Media].[All Media], [Product].[Product].[Non-Consumable]}" );
     }
 
     @ParameterizedTest
@@ -64,7 +64,7 @@ class ExceptFunDefTest {
                 + "Crossjoin({[Gender].[F], [Gender].[M]},\n"
                 + "          {[Marital Status].Members}),\n"
                 + "[Gender])",
-            "[Gender].[F]\n" + "[Gender].[M]" );
+            "[Gender].[Gender].[F]\n" + "[Gender].[Gender].[M]" );
 
         // Extract(<set>) with no dimensions is not valid
         assertAxisThrows(context.getConnectionWithDefaultRole(),
@@ -85,14 +85,14 @@ class ExceptFunDefTest {
         // removed, as always.
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Extract({[Gender].[M], [Gender].Members}, [Gender])",
-            "[Gender].[M]\n"
-                + "[Gender].[All Gender]\n"
-                + "[Gender].[F]" );
+            "[Gender].[Gender].[M]\n"
+                + "[Gender].[Gender].[All Gender]\n"
+                + "[Gender].[Gender].[F]" );
 
         // Extract of hierarchy not in set fails
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Extract(Crossjoin([Gender].Members, [Store].Children), [Marital Status])",
-            "hierarchy [Marital Status] is not a hierarchy of the expression Crossjoin([Gender].Members, [Store].Children)" , "Sales");
+            "hierarchy [Marital Status].[Marital Status] is not a hierarchy of the expression Crossjoin([Gender].Members, [Store].Children)" , "Sales");
 
         // Extract applied to empty set returns empty set
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -106,7 +106,7 @@ class ExceptFunDefTest {
                 + " ([Gender].[F], [Marital Status].[M]),\n"
                 + " ([Gender].[M], [Marital Status].[S])},\n"
                 + "[Gender])",
-            "[Gender].[M]\n" + "[Gender].[F]" );
+            "[Gender].[Gender].[M]\n" + "[Gender].[Gender].[F]" );
 
         // Extract applied to asymmetric set (other side)
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -115,22 +115,22 @@ class ExceptFunDefTest {
                 + " ([Gender].[F], [Marital Status].[M]),\n"
                 + " ([Gender].[M], [Marital Status].[S])},\n"
                 + "[Marital Status])",
-            "[Marital Status].[M]\n"
-                + "[Marital Status].[S]" );
+            "[Marital Status].[Marital Status].[M]\n"
+                + "[Marital Status].[Marital Status].[S]" );
 
         // Extract more than one hierarchy
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Extract(\n"
                 + "[Gender].Children * [Marital Status].Children * [Time].[1997].Children * [Store].[USA].Children,\n"
                 + "[Time], [Marital Status])",
-            "{[Time].[1997].[Q1], [Marital Status].[M]}\n"
-                + "{[Time].[1997].[Q2], [Marital Status].[M]}\n"
-                + "{[Time].[1997].[Q3], [Marital Status].[M]}\n"
-                + "{[Time].[1997].[Q4], [Marital Status].[M]}\n"
-                + "{[Time].[1997].[Q1], [Marital Status].[S]}\n"
-                + "{[Time].[1997].[Q2], [Marital Status].[S]}\n"
-                + "{[Time].[1997].[Q3], [Marital Status].[S]}\n"
-                + "{[Time].[1997].[Q4], [Marital Status].[S]}" );
+            "{[Time].[Time].[1997].[Q1], [Marital Status].[Marital Status].[M]}\n"
+                + "{[Time].[Time].[1997].[Q2], [Marital Status].[Marital Status].[M]}\n"
+                + "{[Time].[Time].[1997].[Q3], [Marital Status].[Marital Status].[M]}\n"
+                + "{[Time].[Time].[1997].[Q4], [Marital Status].[Marital Status].[M]}\n"
+                + "{[Time].[Time].[1997].[Q1], [Marital Status].[Marital Status].[S]}\n"
+                + "{[Time].[Time].[1997].[Q2], [Marital Status].[Marital Status].[S]}\n"
+                + "{[Time].[Time].[1997].[Q3], [Marital Status].[Marital Status].[S]}\n"
+                + "{[Time].[Time].[1997].[Q4], [Marital Status].[Marital Status].[S]}" );
 
         // Extract duplicate hierarchies fails
         assertAxisThrows(context.getConnectionWithDefaultRole(),
@@ -139,7 +139,7 @@ class ExceptFunDefTest {
                 + " ([Gender].[F], [Marital Status].[M]),\n"
                 + " ([Gender].[M], [Marital Status].[S])},\n"
                 + "[Gender], [Gender])",
-            "hierarchy [Gender] is extracted more than once", "Sales" );
+            "hierarchy [Gender].[Gender] is extracted more than once", "Sales" );
     }
 
     /**
@@ -168,53 +168,53 @@ class ExceptFunDefTest {
                     + "{[Measures].[Unit Sales]}\n"
                     + "{[Measures].[Store Sales]}\n"
                     + "Axis #2:\n"
-                    + "{[Customers].[USA].[CA].[Altadena]}\n"
-                    + "{[Customers].[USA].[CA].[Arcadia]}\n"
-                    + "{[Customers].[USA].[CA].[Bellflower]}\n"
-                    + "{[Customers].[USA].[CA].[Berkeley]}\n"
-                    + "{[Customers].[USA].[CA].[Beverly Hills]}\n"
-                    + "{[Customers].[USA].[CA].[Burbank]}\n"
-                    + "{[Customers].[USA].[CA].[Burlingame]}\n"
-                    + "{[Customers].[USA].[CA].[Chula Vista]}\n"
-                    + "{[Customers].[USA].[CA].[Colma]}\n"
-                    + "{[Customers].[USA].[CA].[Concord]}\n"
-                    + "{[Customers].[USA].[CA].[Coronado]}\n"
-                    + "{[Customers].[USA].[CA].[Daly City]}\n"
-                    + "{[Customers].[USA].[CA].[Downey]}\n"
-                    + "{[Customers].[USA].[CA].[El Cajon]}\n"
-                    + "{[Customers].[USA].[CA].[Fremont]}\n"
-                    + "{[Customers].[USA].[CA].[Glendale]}\n"
-                    + "{[Customers].[USA].[CA].[Grossmont]}\n"
-                    + "{[Customers].[USA].[CA].[Imperial Beach]}\n"
-                    + "{[Customers].[USA].[CA].[La Jolla]}\n"
-                    + "{[Customers].[USA].[CA].[La Mesa]}\n"
-                    + "{[Customers].[USA].[CA].[Lakewood]}\n"
-                    + "{[Customers].[USA].[CA].[Lemon Grove]}\n"
-                    + "{[Customers].[USA].[CA].[Lincoln Acres]}\n"
-                    + "{[Customers].[USA].[CA].[Long Beach]}\n"
-                    + "{[Customers].[USA].[CA].[Los Angeles]}\n"
-                    + "{[Customers].[USA].[CA].[Mill Valley]}\n"
-                    + "{[Customers].[USA].[CA].[National City]}\n"
-                    + "{[Customers].[USA].[CA].[Newport Beach]}\n"
-                    + "{[Customers].[USA].[CA].[Novato]}\n"
-                    + "{[Customers].[USA].[CA].[Oakland]}\n"
-                    + "{[Customers].[USA].[CA].[Palo Alto]}\n"
-                    + "{[Customers].[USA].[CA].[Pomona]}\n"
-                    + "{[Customers].[USA].[CA].[Redwood City]}\n"
-                    + "{[Customers].[USA].[CA].[Richmond]}\n"
-                    + "{[Customers].[USA].[CA].[San Carlos]}\n"
-                    + "{[Customers].[USA].[CA].[San Diego]}\n"
-                    + "{[Customers].[USA].[CA].[San Francisco]}\n"
-                    + "{[Customers].[USA].[CA].[San Gabriel]}\n"
-                    + "{[Customers].[USA].[CA].[San Jose]}\n"
-                    + "{[Customers].[USA].[CA].[Santa Cruz]}\n"
-                    + "{[Customers].[USA].[CA].[Santa Monica]}\n"
-                    + "{[Customers].[USA].[CA].[Spring Valley]}\n"
-                    + "{[Customers].[USA].[CA].[Torrance]}\n"
-                    + "{[Customers].[USA].[CA].[West Covina]}\n"
-                    + "{[Customers].[USA].[CA].[Woodland Hills]}\n"
-                    + "{[Customers].[USA].[OR]}\n"
-                    + "{[Customers].[USA].[WA]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Altadena]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Arcadia]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Bellflower]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Berkeley]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Beverly Hills]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Burbank]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Burlingame]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Chula Vista]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Colma]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Concord]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Coronado]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Daly City]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Downey]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[El Cajon]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Fremont]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Glendale]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Grossmont]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Imperial Beach]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[La Jolla]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[La Mesa]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Lakewood]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Lemon Grove]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Lincoln Acres]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Long Beach]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Los Angeles]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Mill Valley]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[National City]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Newport Beach]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Novato]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Oakland]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Palo Alto]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Pomona]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Redwood City]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Richmond]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[San Carlos]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[San Diego]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[San Francisco]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[San Gabriel]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[San Jose]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Santa Cruz]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Santa Monica]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Spring Valley]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Torrance]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[West Covina]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Woodland Hills]}\n"
+                    + "{[Customers].[Customers].[USA].[OR]}\n"
+                    + "{[Customers].[Customers].[USA].[WA]}\n"
                     + "Row #0: 2,574\n"
                     + "Row #0: 5,585.59\n"
                     + "Row #1: 2,440\n"

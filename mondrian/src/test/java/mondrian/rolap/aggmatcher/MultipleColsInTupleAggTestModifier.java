@@ -191,11 +191,11 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
                         .withAggregationLevels(List.of(
                             AggregationLevelMappingImpl.builder()
                                 .withColumn(categoryTestLpXxxFact)
-                                .withName("[Product].[Category]")
+                                .withName("[Product].[Product].[Category]")
                                 .build(),
                             AggregationLevelMappingImpl.builder()
                                 .withColumn(productCategoryTestLpXxxFact)
-                                .withName("[Product].[Product Category]")
+                                .withName("[Product].[Product].[Product Category]")
                                 .build()
                         ))
                         .build(),
@@ -213,7 +213,7 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
                         .withAggregationLevels(List.of(
                             AggregationLevelMappingImpl.builder()
                                 .withColumn(prodnameTestLpXx2Fact)
-                                .withName("[Product].[Product Name]")
+                                .withName("[Product].[Product].[Product Name]")
                                 .withCollapsed(false)
                                 .build()
                         ))

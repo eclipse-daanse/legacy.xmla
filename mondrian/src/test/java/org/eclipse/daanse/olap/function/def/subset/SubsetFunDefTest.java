@@ -30,8 +30,8 @@ class SubsetFunDefTest {
     void testSubset(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Subset([Promotion Media].Children, 7, 2)",
-            "[Promotion Media].[Product Attachment]\n"
-                + "[Promotion Media].[Radio]" );
+            "[Promotion Media].[Promotion Media].[Product Attachment]\n"
+                + "[Promotion Media].[Promotion Media].[Radio]" );
     }
 
     @ParameterizedTest
@@ -55,9 +55,9 @@ class SubsetFunDefTest {
     void testSubsetDefault(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Subset([Promotion Media].Children, 11)",
-            "[Promotion Media].[Sunday Paper, Radio]\n"
-                + "[Promotion Media].[Sunday Paper, Radio, TV]\n"
-                + "[Promotion Media].[TV]" );
+            "[Promotion Media].[Promotion Media].[Sunday Paper, Radio]\n"
+                + "[Promotion Media].[Promotion Media].[Sunday Paper, Radio, TV]\n"
+                + "[Promotion Media].[Promotion Media].[TV]" );
     }
 
     @ParameterizedTest

@@ -41,8 +41,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.olap.SystemWideProperties;
-
 class DefaultMemberFunDefTest {
 
     @ParameterizedTest
@@ -61,18 +59,12 @@ class DefaultMemberFunDefTest {
         // [Time].[Weekly] has an all member and no explicit default.
         result =
             executeQuery(context.getConnectionWithDefaultRole(),
-                "select {[Time.Weekly].DefaultMember} on columns\n"
+                "select {[Time].[Weekly].DefaultMember} on columns\n"
                     + "from Sales" );
-        assertEquals(
-            SystemWideProperties.instance().SsasCompatibleNaming
-                ? "All Weeklys"
-                : "All Time.Weeklys",
+        assertEquals("All Weeklys",
             result.getAxes()[ 0 ].getPositions().get( 0 ).get( 0 ).getName() );
 
-        final String memberUname =
-            SystemWideProperties.instance().SsasCompatibleNaming
-                ? "[Time2].[Weekly].[1997].[23]"
-                : "[Time2.Weekly].[1997].[23]";
+        final String memberUname ="[Time2].[Weekly].[1997].[23]";
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
       "Sales",
@@ -189,7 +181,7 @@ class DefaultMemberFunDefTest {
         // member.
         result =
             executeQuery(context.getConnectionWithDefaultRole(),
-                "select {[Time2.Weekly].DefaultMember} on columns\n"
+                "select {[Time2].[Weekly].DefaultMember} on columns\n"
                     + "from Sales" );
         assertEquals(
             "23",

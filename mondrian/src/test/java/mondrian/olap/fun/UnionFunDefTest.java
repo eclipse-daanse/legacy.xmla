@@ -136,18 +136,18 @@ class UnionFunDefTest {
         "CrossJoin( [Customers].[USA].Children,"
         + " CrossJoin( Time.[1997].children, { (Gender.F, [Marital Status].M ) }) ) ";
     String expected =
-        "{[Customers].[USA].[CA], [Time].[1997].[Q1], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[USA].[CA], [Time].[1997].[Q2], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[USA].[CA], [Time].[1997].[Q3], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[USA].[CA], [Time].[1997].[Q4], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[USA].[OR], [Time].[1997].[Q1], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[USA].[OR], [Time].[1997].[Q2], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[USA].[OR], [Time].[1997].[Q3], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[USA].[OR], [Time].[1997].[Q4], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[USA].[WA], [Time].[1997].[Q1], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[USA].[WA], [Time].[1997].[Q2], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[USA].[WA], [Time].[1997].[Q3], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[USA].[WA], [Time].[1997].[Q4], [Gender].[F], [Marital Status].[M]}";
+        "{[Customers].[Customers].[USA].[CA], [Time].[Time].[1997].[Q1], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[USA].[CA], [Time].[Time].[1997].[Q2], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[USA].[CA], [Time].[Time].[1997].[Q3], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[USA].[CA], [Time].[Time].[1997].[Q4], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[USA].[OR], [Time].[Time].[1997].[Q1], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[USA].[OR], [Time].[Time].[1997].[Q2], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[USA].[OR], [Time].[Time].[1997].[Q3], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[USA].[OR], [Time].[Time].[1997].[Q4], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[USA].[WA], [Time].[Time].[1997].[Q1], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[USA].[WA], [Time].[Time].[1997].[Q2], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[USA].[WA], [Time].[Time].[1997].[Q3], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[USA].[WA], [Time].[Time].[1997].[Q4], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}";
 
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Union( " + tupleSet + ", " + tupleSet + ")", expected);
   }
@@ -159,11 +159,11 @@ class UnionFunDefTest {
         + "CrossJoin( [Time].[1997].lastChild, "
         + "CrossJoin ([Education Level].children,{ (Gender.F, [Marital Status].M ) })) )";
     String expected =
-        "{[Customers].[Canada].[BC], [Time].[1997].[Q4], [Education Level].[Bachelors Degree], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q4], [Education Level].[Graduate Degree], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q4], [Education Level].[High School Degree], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q4], [Education Level].[Partial College], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q4], [Education Level].[Partial High School], [Gender].[F], [Marital Status].[M]}";
+        "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q4], [Education Level].[Education Level].[Bachelors Degree], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q4], [Education Level].[Education Level].[Graduate Degree], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q4], [Education Level].[Education Level].[High School Degree], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q4], [Education Level].[Education Level].[Partial College], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q4], [Education Level].[Education Level].[Partial High School], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}";
     Connection connection = context.getConnectionWithDefaultRole();
     assertAxisReturns(connection, "Sales", tupleSet, expected);
 
@@ -205,18 +205,18 @@ class UnionFunDefTest {
         + "{ (Gender.F, [Marital Status].M ) })) ) )";
 
     String tupleSet1Expected =
-        "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$90K - $110K], [Gender].[F], [Marital Status].[M]}";
+        "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$90K - $110K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}";
     Connection connection = context.getConnectionWithDefaultRole();
     assertAxisReturns(connection, "Sales", tupleSet1, tupleSet1Expected);
 
     String tupleSet2Expected =
-        "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$10K - $30K], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$110K - $130K], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$130K - $150K], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$150K +], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$30K - $50K], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$50K - $70K], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$70K - $90K], [Gender].[F], [Marital Status].[M]}\n"
+        "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$10K - $30K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$110K - $130K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$130K - $150K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$150K +], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$30K - $50K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$50K - $70K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$70K - $90K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
         + tupleSet1Expected;
 
     assertAxisReturns(connection, "Sales", tupleSet2, tupleSet2Expected);
@@ -241,18 +241,18 @@ class UnionFunDefTest {
         + "{ (Gender.F, [Marital Status].M ) })) ) )";
 
     String tupleSet1Expected =
-        "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$90K - $110K], [Gender].[F], [Marital Status].[M]}";
+        "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$90K - $110K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}";
     Connection connection = context.getConnectionWithDefaultRole();
     assertAxisReturns(connection, "Sales", tupleSet1, tupleSet1Expected);
 
     String tupleSet2Expected =
-        "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$10K - $30K], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$110K - $130K], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$130K - $150K], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$150K +], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$30K - $50K], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$50K - $70K], [Gender].[F], [Marital Status].[M]}\n"
-        + "{[Customers].[Canada].[BC], [Time].[1997].[Q1], [Education Level].[Partial High School], [Yearly Income].[$70K - $90K], [Gender].[F], [Marital Status].[M]}\n"
+        "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$10K - $30K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$110K - $130K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$130K - $150K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$150K +], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$30K - $50K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$50K - $70K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+        + "{[Customers].[Customers].[Canada].[BC], [Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School], [Yearly Income].[Yearly Income].[$70K - $90K], [Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
         + tupleSet1Expected;
     assertAxisReturns(connection, "Sales", tupleSet2, tupleSet2Expected);
 

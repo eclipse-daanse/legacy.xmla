@@ -40,15 +40,15 @@ class AddCalculatedMembersFunDefTest {
                 + "FROM Sales "
                 + "WHERE ([1997].[Q1])",
             "Axis #0:\n"
-                + "{[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Store].[USA].[CA]}\n"
-                + "{[Store].[USA].[OR]}\n"
-                + "{[Store].[USA].[WA]}\n"
-                + "{[Store].[USA].[CA plus OR]}\n"
+                + "{[Store].[Store].[USA].[CA]}\n"
+                + "{[Store].[Store].[USA].[OR]}\n"
+                + "{[Store].[Store].[USA].[WA]}\n"
+                + "{[Store].[Store].[USA].[CA plus OR]}\n"
                 + "Row #0: 16,890\n"
                 + "Row #0: 36,175.20\n"
                 + "Row #1: 19,287\n"
@@ -68,7 +68,7 @@ class AddCalculatedMembersFunDefTest {
                 + "FROM Sales "
                 + "WHERE ([1997].[Q1])",
             "Axis #0:\n"
-                + "{[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "{[Measures].[Store Sales]}\n"
@@ -76,10 +76,10 @@ class AddCalculatedMembersFunDefTest {
                 + "{[Measures].[Profit last Period]}\n"
                 + "{[Measures].[Profit Growth]}\n"
                 + "Axis #2:\n"
-                + "{[Store].[USA].[CA]}\n"
-                + "{[Store].[USA].[OR]}\n"
-                + "{[Store].[USA].[WA]}\n"
-                + "{[Store].[USA].[CA plus OR]}\n"
+                + "{[Store].[Store].[USA].[CA]}\n"
+                + "{[Store].[Store].[USA].[OR]}\n"
+                + "{[Store].[Store].[USA].[WA]}\n"
+                + "{[Store].[Store].[USA].[CA plus OR]}\n"
                 + "Row #0: 16,890\n"
                 + "Row #0: 36,175.20\n"
                 + "Row #0: $21,744.11\n"
@@ -109,7 +109,7 @@ class AddCalculatedMembersFunDefTest {
                 + "FROM Sales "
                 + "WHERE ([1997].[Q1])",
             "Axis #0:\n"
-                + "{[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "{[Measures].[Store Sales]}\n"
@@ -117,7 +117,7 @@ class AddCalculatedMembersFunDefTest {
                 + "{[Measures].[Profit last Period]}\n"
                 + "{[Measures].[Profit Growth]}\n"
                 + "Axis #2:\n"
-                + "{[Store].[USA].[CA], [Gender].[F]}\n"
+                + "{[Store].[Store].[USA].[CA], [Gender].[Gender].[F]}\n"
                 + "Row #0: 8,218\n"
                 + "Row #0: 17,928.37\n"
                 + "Row #0: $10,771.98\n"
@@ -128,7 +128,7 @@ class AddCalculatedMembersFunDefTest {
         //----------------------------------------------------
 
         assertAxisThrows(connection,
-            "AddCalculatedMembers({([Store].[USA].[CA], [Gender].[F])})",
+            "AddCalculatedMembers({([Store].[Store].[USA].[CA], [Gender].[Gender].[F])})",
             "Only single dimension members allowed in Set for AddCalculatedMembers", "Sales");
     }
 

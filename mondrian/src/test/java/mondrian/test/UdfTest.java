@@ -65,7 +65,6 @@ import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.spi.CellFormatter;
@@ -140,7 +139,7 @@ public class UdfTest {
             + "Axis #1:\n"
             + "{[Measures].[Store Sqft]}\n"
             + "Axis #2:\n"
-            + "{[Store Type].[All Store Types]}\n"
+            + "{[Store Type].[Store Type].[All Store Types]}\n"
             + "Row #0: 571,596\n");
     }
 
@@ -219,35 +218,35 @@ public class UdfTest {
             + "FROM [Sales]\n"
             + "WHERE ([Store].[All Stores].[USA].[OR].[Portland].[Store 11])",
             "Axis #0:\n"
-            + "{[Store].[USA].[OR].[Portland].[Store 11]}\n"
+            + "{[Store].[Store].[USA].[OR].[Portland].[Store 11]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Last Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
-            + "{[Time].[1997], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl]}\n"
-            + "{[Time].[1997], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
-            + "{[Time].[1997], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
-            + "{[Time].[1997], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
-            + "{[Time].[1997].[Q1], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
-            + "{[Time].[1997].[Q1], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl]}\n"
-            + "{[Time].[1997].[Q1], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
-            + "{[Time].[1997].[Q1], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
-            + "{[Time].[1997].[Q1], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
-            + "{[Time].[1997].[Q1].[1], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
-            + "{[Time].[1997].[Q1].[1], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl]}\n"
-            + "{[Time].[1997].[Q1].[1], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
-            + "{[Time].[1997].[Q1].[1], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
-            + "{[Time].[1997].[Q1].[1], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
-            + "{[Time].[1997].[Q1].[2], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
-            + "{[Time].[1997].[Q1].[2], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl]}\n"
-            + "{[Time].[1997].[Q1].[2], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
-            + "{[Time].[1997].[Q1].[2], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
-            + "{[Time].[1997].[Q1].[2], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
-            + "{[Time].[1997].[Q1].[3], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
-            + "{[Time].[1997].[Q1].[3], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl]}\n"
-            + "{[Time].[1997].[Q1].[3], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
-            + "{[Time].[1997].[Q1].[3], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
-            + "{[Time].[1997].[Q1].[3], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
+            + "{[Time].[Time].[1997], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
+            + "{[Time].[Time].[1997], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl]}\n"
+            + "{[Time].[Time].[1997], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
+            + "{[Time].[Time].[1997], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
+            + "{[Time].[Time].[1997], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
+            + "{[Time].[Time].[1997].[Q1], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
+            + "{[Time].[Time].[1997].[Q1], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl]}\n"
+            + "{[Time].[Time].[1997].[Q1], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
+            + "{[Time].[Time].[1997].[Q1], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
+            + "{[Time].[Time].[1997].[Q1], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
+            + "{[Time].[Time].[1997].[Q1].[1], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
+            + "{[Time].[Time].[1997].[Q1].[1], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl]}\n"
+            + "{[Time].[Time].[1997].[Q1].[1], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
+            + "{[Time].[Time].[1997].[Q1].[1], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
+            + "{[Time].[Time].[1997].[Q1].[1], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
+            + "{[Time].[Time].[1997].[Q1].[2], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
+            + "{[Time].[Time].[1997].[Q1].[3], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
+            + "{[Time].[Time].[1997].[Q1].[3], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Pearl]}\n"
+            + "{[Time].[Time].[1997].[Q1].[3], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
+            + "{[Time].[Time].[1997].[Q1].[3], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
+            + "{[Time].[Time].[1997].[Q1].[3], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
             + "Row #0: 2\n"
             + "Row #1: 7\n"
             + "Row #2: 6\n"
@@ -299,7 +298,7 @@ public class UdfTest {
             + "from [Sales]\n"
             + "where [Time].[Time].LastSibling",
             "Axis #0:\n"
-            + "{[Time].[1998]}\n"
+            + "{[Time].[Time].[1998]}\n"
             + "Axis #1:\n"
             + "Axis #2:\n");
     }
@@ -429,7 +428,7 @@ public class UdfTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time].[1998].[Q4].[12]}\n"
+            + "{[Time].[Time].[1998].[Q4].[12]}\n"
             + "Row #0: \n");
     }
 
@@ -439,12 +438,10 @@ public class UdfTest {
     {
         prepareContext(context);
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            SystemWideProperties.instance().SsasCompatibleNaming
-            ? "CurrentDateMember([Time].[Time], "
-            + "'\"[Time].[Time].[\"yyyy\"].[Q\"q\"].[\"m\"]\"', BEFORE)"
-            : "CurrentDateMember([Time], "
-            + "'\"[Time].[\"yyyy\"].[Q\"q\"].[\"m\"]\"', BEFORE)",
-            "[Time].[1998].[Q4].[12]");
+            
+            "CurrentDateMember([Time].[Time], "
+            + "'\"[Time].[Time].[\"yyyy\"].[Q\"q\"].[\"m\"]\"', BEFORE)",
+            "[Time].[Time].[1998].[Q4].[12]");
     }
 
     @ParameterizedTest
@@ -500,20 +497,15 @@ public class UdfTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCurrentDateMemberHierarchy(Context context) {
         prepareContext(context);
-        final String query =
-            SystemWideProperties.instance().SsasCompatibleNaming
-                ? "SELECT { CurrentDateMember([Time.Weekly], "
-                  + "\"[Ti\\me\\.Weekl\\y]\\.[All Weekl\\y\\s]\\.[yyyy]\\.[ww]\", BEFORE)} "
-                  + "ON COLUMNS FROM [Sales]"
-                : "SELECT { CurrentDateMember([Time.Weekly], "
-                  + "\"[Ti\\me\\.Weekl\\y]\\.[All Ti\\me\\.Weekl\\y\\s]\\.[yyyy]\\.[ww]\", BEFORE)} "
+        final String query = "SELECT { CurrentDateMember([Time].[Weekly], "
+                  + "\"[Ti\\me]\\.[Weekl\\y]\\.[All Weekl\\y\\s]\\.[yyyy]\\.[ww]\", BEFORE)} "
                   + "ON COLUMNS FROM [Sales]";
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             query,
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time.Weekly].[1998].[52]}\n"
+            + "{[Time].[Weekly].[1998].[52]}\n"
             + "Row #0: \n");
     }
 
@@ -525,7 +517,7 @@ public class UdfTest {
         // FoodMart is from '98; note that first arg is a hierarchy rather
         // than a dimension
         assertQueryReturns(context.getConnectionWithDefaultRole(),
-            "SELECT { CurrentDateMember([Time.Weekly], "
+            "SELECT { CurrentDateMember([Time].[Weekly], "
             + "\"[Ti\\me]\\.[yyyy]\\.[Qq]\\.[m]\", EXACT)} "
             + "ON COLUMNS FROM [Sales]",
             "Axis #0:\n"
@@ -547,7 +539,7 @@ public class UdfTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time].[1997].[Q1]}\n"
+            + "{[Time].[Time].[1997].[Q1]}\n"
             + "Row #0: 66,291\n");
     }
 
@@ -565,7 +557,7 @@ public class UdfTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time].[1997]}\n"
+            + "{[Time].[Time].[1997]}\n"
             + "Row #0: 266,773\n");
     }
 
@@ -583,7 +575,7 @@ public class UdfTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time].[1997].[Q2].[5]}\n"
+            + "{[Time].[Time].[1997].[Q2].[5]}\n"
             + "Row #0: 21,081\n");
     }
 
@@ -599,7 +591,7 @@ public class UdfTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time].[1998].[Q4].[11]}\n"
+            + "{[Time].[Time].[1998].[Q4].[11]}\n"
             + "Row #0: \n");
     }
 
@@ -620,10 +612,10 @@ public class UdfTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1998].[Q3].[9]}\n"
-            + "{[Time].[1998].[Q4].[10]}\n"
-            + "{[Time].[1998].[Q4].[11]}\n"
-            + "{[Time].[1998].[Q4].[12]}\n"
+            + "{[Time].[Time].[1998].[Q3].[9]}\n"
+            + "{[Time].[Time].[1998].[Q4].[10]}\n"
+            + "{[Time].[Time].[1998].[Q4].[11]}\n"
+            + "{[Time].[Time].[1998].[Q4].[12]}\n"
             + "Row #0: \n"
             + "Row #1: \n"
             + "Row #2: \n"
@@ -644,13 +636,13 @@ public class UdfTest {
             + "Axis #1:\n"
             + "{[Measures].[Org Salary]}\n"
             + "Axis #2:\n"
-            + "{[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Jacqueline Wyllie].[Ralph Mccoy].[Anne Tuck].[Samuel Johnson]}\n"
-            + "{[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Jose Bernard].[Mary Hunt].[Bonnie Bruno].[Sam Warren]}\n"
-            + "{[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Charles Macaluso].[Barbara Wallin].[Michael Suggs].[Sam Adair]}\n"
-            + "{[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lois Wood].[Dell Gras].[Kristine Aldred].[Sam Zeller]}\n"
-            + "{[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman].[Neal Hasty].[Sam Wheeler]}\n"
-            + "{[Employees].[Sheri Nowmer].[Maya Gutierrez].[Brenda Blumberg].[Wayne Banack].[Samuel Agcaoili]}\n"
-            + "{[Employees].[Sheri Nowmer].[Maya Gutierrez].[Jonathan Murraiin].[James Thompson].[Samantha Weller]}\n"
+            + "{[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Jacqueline Wyllie].[Ralph Mccoy].[Anne Tuck].[Samuel Johnson]}\n"
+            + "{[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Jose Bernard].[Mary Hunt].[Bonnie Bruno].[Sam Warren]}\n"
+            + "{[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Charles Macaluso].[Barbara Wallin].[Michael Suggs].[Sam Adair]}\n"
+            + "{[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lois Wood].[Dell Gras].[Kristine Aldred].[Sam Zeller]}\n"
+            + "{[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Laurie Borges].[Cody Goldey].[Shanay Steelman].[Neal Hasty].[Sam Wheeler]}\n"
+            + "{[Employees].[Employees].[Sheri Nowmer].[Maya Gutierrez].[Brenda Blumberg].[Wayne Banack].[Samuel Agcaoili]}\n"
+            + "{[Employees].[Employees].[Sheri Nowmer].[Maya Gutierrez].[Jonathan Murraiin].[James Thompson].[Samantha Weller]}\n"
             + "Row #0: $40.62\n"
             + "Row #1: $40.31\n"
             + "Row #2: $75.60\n"
@@ -675,11 +667,11 @@ public class UdfTest {
             + "Axis #1:\n"
             + "{[Measures].[Store Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store Type].[All Store Types]}\n"
-            + "{[Store Type].[Deluxe Supermarket]}\n"
-            + "{[Store Type].[Gourmet Supermarket]}\n"
-            + "{[Store Type].[HeadQuarters]}\n"
-            + "{[Store Type].[Supermarket]}\n"
+            + "{[Store Type].[Store Type].[All Store Types]}\n"
+            + "{[Store Type].[Store Type].[Deluxe Supermarket]}\n"
+            + "{[Store Type].[Store Type].[Gourmet Supermarket]}\n"
+            + "{[Store Type].[Store Type].[HeadQuarters]}\n"
+            + "{[Store Type].[Store Type].[Supermarket]}\n"
             + "Row #0: 565,238.13\n"
             + "Row #1: 162,062.24\n"
             + "Row #2: 45,750.24\n"
@@ -703,8 +695,8 @@ public class UdfTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink]}\n"
-            + "{[Product].[Non-Consumable]}\n"
+            + "{[Product].[Product].[Drink]}\n"
+            + "{[Product].[Product].[Non-Consumable]}\n"
             + "Row #0: 24,597\n"
             + "Row #1: 50,236\n");
     }
@@ -725,7 +717,7 @@ public class UdfTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Food]}\n"
+            + "{[Product].[Product].[Food]}\n"
             + "Row #0: 191,940\n");
     }
 
@@ -742,31 +734,31 @@ public class UdfTest {
             + "Axis #1:\n"
             + "{[Measures].[Store Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[Canada].[BC].[Vancouver].[Store 19]}\n"
-            + "{[Store].[Canada].[BC].[Victoria].[Store 20]}\n"
-            + "{[Store].[Mexico].[DF].[Mexico City].[Store 9]}\n"
-            + "{[Store].[Mexico].[DF].[San Andres].[Store 21]}\n"
-            + "{[Store].[Mexico].[Guerrero].[Acapulco].[Store 1]}\n"
-            + "{[Store].[Mexico].[Jalisco].[Guadalajara].[Store 5]}\n"
-            + "{[Store].[Mexico].[Veracruz].[Orizaba].[Store 10]}\n"
-            + "{[Store].[Mexico].[Yucatan].[Merida].[Store 8]}\n"
-            + "{[Store].[Mexico].[Zacatecas].[Camacho].[Store 4]}\n"
-            + "{[Store].[Mexico].[Zacatecas].[Hidalgo].[Store 12]}\n"
-            + "{[Store].[Mexico].[Zacatecas].[Hidalgo].[Store 18]}\n"
-            + "{[Store].[USA].[CA].[Alameda].[HQ]}\n"
-            + "{[Store].[USA].[CA].[Beverly Hills].[Store 6]}\n"
-            + "{[Store].[USA].[CA].[Los Angeles].[Store 7]}\n"
-            + "{[Store].[USA].[CA].[San Diego].[Store 24]}\n"
-            + "{[Store].[USA].[CA].[San Francisco].[Store 14]}\n"
-            + "{[Store].[USA].[OR].[Portland].[Store 11]}\n"
-            + "{[Store].[USA].[OR].[Salem].[Store 13]}\n"
-            + "{[Store].[USA].[WA].[Bellingham].[Store 2]}\n"
-            + "{[Store].[USA].[WA].[Bremerton].[Store 3]}\n"
-            + "{[Store].[USA].[WA].[Seattle].[Store 15]}\n"
-            + "{[Store].[USA].[WA].[Spokane].[Store 16]}\n"
-            + "{[Store].[USA].[WA].[Tacoma].[Store 17]}\n"
-            + "{[Store].[USA].[WA].[Walla Walla].[Store 22]}\n"
-            + "{[Store].[USA].[WA].[Yakima].[Store 23]}\n"
+            + "{[Store].[Store].[Canada].[BC].[Vancouver].[Store 19]}\n"
+            + "{[Store].[Store].[Canada].[BC].[Victoria].[Store 20]}\n"
+            + "{[Store].[Store].[Mexico].[DF].[Mexico City].[Store 9]}\n"
+            + "{[Store].[Store].[Mexico].[DF].[San Andres].[Store 21]}\n"
+            + "{[Store].[Store].[Mexico].[Guerrero].[Acapulco].[Store 1]}\n"
+            + "{[Store].[Store].[Mexico].[Jalisco].[Guadalajara].[Store 5]}\n"
+            + "{[Store].[Store].[Mexico].[Veracruz].[Orizaba].[Store 10]}\n"
+            + "{[Store].[Store].[Mexico].[Yucatan].[Merida].[Store 8]}\n"
+            + "{[Store].[Store].[Mexico].[Zacatecas].[Camacho].[Store 4]}\n"
+            + "{[Store].[Store].[Mexico].[Zacatecas].[Hidalgo].[Store 12]}\n"
+            + "{[Store].[Store].[Mexico].[Zacatecas].[Hidalgo].[Store 18]}\n"
+            + "{[Store].[Store].[USA].[CA].[Alameda].[HQ]}\n"
+            + "{[Store].[Store].[USA].[CA].[Beverly Hills].[Store 6]}\n"
+            + "{[Store].[Store].[USA].[CA].[Los Angeles].[Store 7]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Diego].[Store 24]}\n"
+            + "{[Store].[Store].[USA].[CA].[San Francisco].[Store 14]}\n"
+            + "{[Store].[Store].[USA].[OR].[Portland].[Store 11]}\n"
+            + "{[Store].[Store].[USA].[OR].[Salem].[Store 13]}\n"
+            + "{[Store].[Store].[USA].[WA].[Bellingham].[Store 2]}\n"
+            + "{[Store].[Store].[USA].[WA].[Bremerton].[Store 3]}\n"
+            + "{[Store].[Store].[USA].[WA].[Seattle].[Store 15]}\n"
+            + "{[Store].[Store].[USA].[WA].[Spokane].[Store 16]}\n"
+            + "{[Store].[Store].[USA].[WA].[Tacoma].[Store 17]}\n"
+            + "{[Store].[Store].[USA].[WA].[Walla Walla].[Store 22]}\n"
+            + "{[Store].[Store].[USA].[WA].[Yakima].[Store 23]}\n"
             + "Row #0: \n"
             + "Row #1: \n"
             + "Row #2: \n"
@@ -913,7 +905,7 @@ public class UdfTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time].[1998].[Q4].[12]}\n"
+            + "{[Time].[Time].[1998].[Q4].[12]}\n"
             + "Row #0: \n");
     }
 

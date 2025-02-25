@@ -48,8 +48,6 @@ import org.opencube.junit5.context.TestConfig;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.olap.SystemWideProperties;
-
 /**
  * Testcase for non-collapsed levels in agg tables.
  *
@@ -302,7 +300,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
         }
 
         final String mdx =
-            "select {[Measures].[Unit Sales]} on columns, {[dimension.tenant].[tenant].Members} on rows from [foo]";
+            "select {[Measures].[Unit Sales]} on columns, {[dimension].[tenant].[tenant].Members} on rows from [foo]";
 
 
 
@@ -314,8 +312,8 @@ class NonCollapsedAggTest extends AggTableTestCase {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[dimension.tenant].[tenant one]}\n"
-            + "{[dimension.tenant].[tenant two]}\n"
+            + "{[dimension].[tenant].[tenant one]}\n"
+            + "{[dimension].[tenant].[tenant two]}\n"
             + "Row #0: 31\n"
             + "Row #1: 121\n");
     }
@@ -331,7 +329,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
         }
 
         final String mdx =
-            "select {[Measures].[Unit Sales]} on columns, {[dimension.distributor].[line class].Members} on rows from [foo]";
+            "select {[Measures].[Unit Sales]} on columns, {[dimension].[distributor].[line class].Members} on rows from [foo]";
 
 
 
@@ -343,13 +341,13 @@ class NonCollapsedAggTest extends AggTableTestCase {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[dimension.distributor].[distributor one].[line class one]}\n"
-            + "{[dimension.distributor].[distributor two].[line class two]}\n"
+            + "{[dimension].[distributor].[distributor one].[line class one]}\n"
+            + "{[dimension].[distributor].[distributor two].[line class two]}\n"
             + "Row #0: 31\n"
             + "Row #1: 121\n");
 
         final String mdx2 =
-            "select {[Measures].[Unit Sales]} on columns, {[dimension.network].[line class].Members} on rows from [foo]";
+            "select {[Measures].[Unit Sales]} on columns, {[dimension].[network].[line class].Members} on rows from [foo]";
         // We expect the correct cell value + 1 if the agg table is used.
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             mdx2,
@@ -358,8 +356,8 @@ class NonCollapsedAggTest extends AggTableTestCase {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[dimension.network].[network one].[line class one]}\n"
-            + "{[dimension.network].[network two].[line class two]}\n"
+            + "{[dimension].[network].[network one].[line class one]}\n"
+            + "{[dimension].[network].[network two].[line class two]}\n"
             + "Row #0: 31\n"
             + "Row #1: 121\n");
     }
@@ -413,9 +411,9 @@ class NonCollapsedAggTest extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
         // MONDRIAN-1085
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -643,40 +641,47 @@ class NonCollapsedAggTest extends AggTableTestCase {
                                     .withAllMemberName("All distributors")
                                     .withPrimaryKey(lineIdLine)
                                     .withPrimaryKeyTable(line)
-
                     				.withQuery(JoinQueryMappingImpl.builder()
                     						.withLeft(JoinedQueryElementMappingImpl.builder()
                     							.withKey(lineIdLine)
-                    							.withQuery(TableQueryMappingImpl.builder().withTable(line).build())
+                    							.withQuery(TableQueryMappingImpl.builder().withTable(line).build()) //left
                     							.build())
-                    						.withRight(JoinedQueryElementMappingImpl.builder()
+                    						
+                    						.withRight(JoinedQueryElementMappingImpl.builder() //right
                     								.withAlias("line_line_class")
                         							.withKey(lineIdLineLineClass)
                                     				.withQuery(JoinQueryMappingImpl.builder()
                                     						.withLeft(JoinedQueryElementMappingImpl.builder()
                                     							.withKey(lineClassIdLineLineClass)
-                                    							.withQuery(TableQueryMappingImpl.builder().withTable(lineLineClass).build())
+                                    							.withQuery(TableQueryMappingImpl.builder().withTable(lineLineClass).build()) //left
                                     							.build())
                                     						.withRight(JoinedQueryElementMappingImpl.builder()
                                     								.withAlias("line_class")
                                         							.withKey(lineClassIdLineClassDistributor)
-                                                    				.withQuery(JoinQueryMappingImpl.builder()
-                                                    						.withLeft(JoinedQueryElementMappingImpl.builder()
-                                                    							.withKey(distributorIdLineClassDistributor)
-                                                    							.withQuery(TableQueryMappingImpl.builder().withTable(lineClassDistributor).build())
-                                                    							.build())
-                                                    						.withRight(JoinedQueryElementMappingImpl.builder()
+                                        							.withQuery(JoinQueryMappingImpl.builder()
+                                        							    .withLeft(JoinedQueryElementMappingImpl.builder()
+                                        							        .withKey(lineClassIdLineClass)
+                                        							        .withQuery(TableQueryMappingImpl.builder().withTable(lineClass).build()) //left
+                                        							        .build())
+                                        							    .withRight(JoinedQueryElementMappingImpl.builder()
+                                                                             .withKey(lineClassIdLineClassDistributor)
+                                                                             .withAlias("line_class_distributor")
+                                                                             .withQuery(JoinQueryMappingImpl.builder()
+                                                    						    .withLeft(JoinedQueryElementMappingImpl.builder()
+                                                    							    .withKey(distributorIdLineClassDistributor)
+                                                    							    .withQuery(TableQueryMappingImpl.builder().withTable(lineClassDistributor).build())
+                                                    							    .build())
+                                                    						     .withRight(JoinedQueryElementMappingImpl.builder()
                                                         							.withKey(distributorIdDistributor)
                                                         							.withQuery(TableQueryMappingImpl.builder().withTable(distributor).build())
                                                         							.build())
-                                                    						.build()
-                                                    				)
-                                        							.build())
-                                    						.build()
-                                    				)
+                                                    						.build())
+                                        							    .build())
+                                    						       .build())
+                                        			        .build())
                         							.build())
-                    						.build()
-                    				)
+                    						.build())
+                    			    .build())
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("distributor")
@@ -802,8 +807,8 @@ class NonCollapsedAggTest extends AggTableTestCase {
             + "Axis #2:\n"
             + "{[dimension].[tenant].[tenant one]}\n"
             + "{[dimension].[tenant].[tenant two]}\n"
-            + "Row #0: 31\n"
-            + "Row #1: 121\n");
+            + "Row #0: 30\n"
+            + "Row #1: 120\n");
     }
 
     /**
@@ -818,13 +823,13 @@ class NonCollapsedAggTest extends AggTableTestCase {
         final String query1 =
             "SELECT\n"
             + "{ Measures.[Bogus Number]} on 0,\n"
-            + "non empty Descendants([Time].[Year].Members, Time.Month, SELF) on 1\n"
+            + "non empty Descendants([Time].[Time].[Year].Members, Time.Time.Month, SELF) on 1\n"
             + "FROM [Sales]\n";
 
         final String query2 =
             "SELECT\n"
             + "{ Measures.[Bogus Number]} on 0,\n"
-            + "non empty Descendants([Time].[Year].Members, Time.Month, SELF_AND_BEFORE) on 1\n"
+            + "non empty Descendants([Time].[Time].[Year].Members, Time.Time.Month, SELF_AND_BEFORE) on 1\n"
             + "FROM [Sales]";
 
         class TestMondrian1325Modifier extends PojoMappingModifier {

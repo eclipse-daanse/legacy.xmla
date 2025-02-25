@@ -38,7 +38,6 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.olap.SystemWideProperties;
-import mondrian.rolap.RolapCatalogCache;
 
 
 class OrderFunDefTest {
@@ -49,11 +48,11 @@ class OrderFunDefTest {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Order(TopCount({[Store].[USA].[CA].children},"
                 + " [Measures].[Unit Sales], 2), [Measures].[Unit Sales])",
-            "[Store].[USA].[CA].[Alameda]\n"
-                + "[Store].[USA].[CA].[San Francisco]\n"
-                + "[Store].[USA].[CA].[Beverly Hills]\n"
-                + "[Store].[USA].[CA].[San Diego]\n"
-                + "[Store].[USA].[CA].[Los Angeles]" );
+            "[Store].[Store].[USA].[CA].[Alameda]\n"
+                + "[Store].[Store].[USA].[CA].[San Francisco]\n"
+                + "[Store].[Store].[USA].[CA].[Beverly Hills]\n"
+                + "[Store].[Store].[USA].[CA].[San Diego]\n"
+                + "[Store].[Store].[USA].[CA].[Los Angeles]" );
     }
 
 
@@ -67,10 +66,10 @@ class OrderFunDefTest {
         // Depends upon everything EXCEPT [Product], [Measures],
         // [Marital Status], [Gender].
         String s11 = allHiersExcept(
-            "[Product]", "[Measures]", "[Marital Status]", "[Gender]" );
+            "[Product].[Product]", "[Measures]", "[Marital Status].[Marital Status]", "[Gender].[Gender]" );
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "Order("
-                + " Crossjoin([Gender].MEMBERS, [Product].MEMBERS),"
+                + " Crossjoin([Gender].[Gender].MEMBERS, [Product].[Product].MEMBERS),"
                 + " ([Measures].[Unit Sales], [Marital Status].[S]),"
                 + " ASC)",
             s11 );
@@ -78,10 +77,10 @@ class OrderFunDefTest {
         // Depends upon everything EXCEPT [Product], [Measures],
         // [Marital Status]. Does depend upon [Gender].
         String s12 = allHiersExcept(
-            "[Product]", "[Measures]", "[Marital Status]" );
+            "[Product].[Product]", "[Measures]", "[Marital Status].[Marital Status]" );
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "Order("
-                + " Crossjoin({[Gender].CurrentMember}, [Product].MEMBERS),"
+                + " Crossjoin({[Gender].[Gender].CurrentMember}, [Product].[Product].MEMBERS),"
                 + " ([Measures].[Unit Sales], [Marital Status].[S]),"
                 + " ASC)",
             s12 );
@@ -91,24 +90,24 @@ class OrderFunDefTest {
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "Order("
                 + "  Crossjoin("
-                + "    [Gender].CurrentMember.Children, "
+                + "    [Gender].[Gender].CurrentMember.Children, "
                 + "    [Marital Status].CurrentMember.Children), "
                 + "  [Measures].[Unit Sales], "
                 + "  BDESC)",
             s13 );
 
         String s1 = allHiersExcept(
-            "[Measures]", "[Store]", "[Product]", "[Time]" );
+            "[Measures]", "[Store].[Store]", "[Product].[Product]", "[Time].[Time]" );
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "  Order(\n"
                 + "    CrossJoin(\n"
-                + "      {[Product].[All Products].[Food].[Eggs],\n"
-                + "       [Product].[All Products].[Food].[Seafood],\n"
-                + "       [Product].[All Products].[Drink].[Alcoholic Beverages]},\n"
-                + "      {[Store].[USA].[WA].[Seattle],\n"
-                + "       [Store].[USA].[CA],\n"
-                + "       [Store].[USA].[OR]}),\n"
-                + "    ([Time].[1997].[Q1], [Measures].[Unit Sales]),\n"
+                + "      {[Product].[Product].[All Products].[Food].[Eggs],\n"
+                + "       [Product].[Product].[All Products].[Food].[Seafood],\n"
+                + "       [Product].[Product].[All Products].[Drink].[Alcoholic Beverages]},\n"
+                + "      {[Store].[Store].[USA].[WA].[Seattle],\n"
+                + "       [Store].[Store].[USA].[CA],\n"
+                + "       [Store].[Store].[USA].[OR]}),\n"
+                + "    ([Time].[Time].[1997].[Q1], [Measures].[Unit Sales]),\n"
                 + "    ASC)",
             s1 );
     }
@@ -123,11 +122,11 @@ class OrderFunDefTest {
 
         String expr = "order([Product].children, [Measures].[Unit Sales])";
         String expected = """
-org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0)
+org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberType<hierarchy=[Product].[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0)
     org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Measures].[Unit Sales]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
-    org.eclipse.daanse.olap.function.def.order.OrderCurrentMemberCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0, direction=ASC)
-        org.eclipse.daanse.olap.function.def.set.children.ChildrenCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
-            org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
+    org.eclipse.daanse.olap.function.def.order.OrderCurrentMemberCalc(type=SetType<MemberType<hierarchy=[Product].[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0, direction=ASC)
+        org.eclipse.daanse.olap.function.def.set.children.ChildrenCalc(type=SetType<MemberType<hierarchy=[Product].[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
+            org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Product].[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
         org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
 					""";
         assertAxisCompilesTo(connection, expr, expected);
@@ -140,14 +139,14 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
         String expr = "order([Product].children, ([Time].[1997], [Product].CurrentMember.Parent))";
         String expected = """
-org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0)
-    org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Time].[1997]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
-    org.eclipse.daanse.olap.function.def.order.OrderCurrentMemberCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0, direction=ASC)
-        org.eclipse.daanse.olap.function.def.set.children.ChildrenCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
-            org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
+org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberType<hierarchy=[Product].[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0)
+    org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Time].[Time].[1997]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
+    org.eclipse.daanse.olap.function.def.order.OrderCurrentMemberCalc(type=SetType<MemberType<hierarchy=[Product].[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0, direction=ASC)
+        org.eclipse.daanse.olap.function.def.set.children.ChildrenCalc(type=SetType<MemberType<hierarchy=[Product].[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
+            org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Product].[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
         mondrian.calc.impl.MemberValueCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
-            org.eclipse.daanse.olap.function.def.member.parentcalc.ParentFunDef$1(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
-                org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
+            org.eclipse.daanse.olap.function.def.member.parentcalc.ParentFunDef$1(type=MemberType<hierarchy=[Product].[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
+                org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Product].[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
 				""";
         // [Time].[1997] is constant, and is evaluated in a ContextCalc.
         // [Product].Parent is variable, and is evaluated inside the loop.
@@ -161,12 +160,12 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
         // No ContextCalc this time. All members are non-variable.
         String expr = "order([Product].children, [Product].CurrentMember.Parent)";
         String expected = """
-org.eclipse.daanse.olap.function.def.order.OrderCurrentMemberCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0, direction=ASC)
-    org.eclipse.daanse.olap.function.def.set.children.ChildrenCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
-        org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
+org.eclipse.daanse.olap.function.def.order.OrderCurrentMemberCalc(type=SetType<MemberType<hierarchy=[Product].[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0, direction=ASC)
+    org.eclipse.daanse.olap.function.def.set.children.ChildrenCalc(type=SetType<MemberType<hierarchy=[Product].[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
+        org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Product].[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
     mondrian.calc.impl.MemberValueCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
-        org.eclipse.daanse.olap.function.def.member.parentcalc.ParentFunDef$1(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
-            org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
+        org.eclipse.daanse.olap.function.def.member.parentcalc.ParentFunDef$1(type=MemberType<hierarchy=[Product].[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
+            org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Product].[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
 						""";
         assertAxisCompilesTo(connection, expr, expected);
     }
@@ -177,19 +176,19 @@ org.eclipse.daanse.olap.function.def.order.OrderCurrentMemberCalc(type=SetType<M
         Connection connection = context.getConnectionWithDefaultRole();
 
         String expected = """
-org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0)
+org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberType<hierarchy=[Product].[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0)
     org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Measures].[Store Sales]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
-    org.eclipse.daanse.olap.function.def.order.OrderCurrentMemberCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0, direction=ASC)
-        org.eclipse.daanse.olap.function.def.set.filter.ImmutableIterFilterCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=ITERABLE, callCount=0, callMillis=0)
-            org.eclipse.daanse.olap.function.def.set.children.ChildrenCalc(type=SetType<MemberType<hierarchy=[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
-                org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
+    org.eclipse.daanse.olap.function.def.order.OrderCurrentMemberCalc(type=SetType<MemberType<hierarchy=[Product].[Product]>>, resultStyle=MUTABLE_LIST, callCount=0, callMillis=0, direction=ASC)
+        org.eclipse.daanse.olap.function.def.set.filter.ImmutableIterFilterCalc(type=SetType<MemberType<hierarchy=[Product].[Product]>>, resultStyle=ITERABLE, callCount=0, callMillis=0)
+            org.eclipse.daanse.olap.function.def.set.children.ChildrenCalc(type=SetType<MemberType<hierarchy=[Product].[Product]>>, resultStyle=LIST, callCount=0, callMillis=0)
+                org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Product].[Product]>, resultStyle=VALUE, callCount=0, callMillis=0)
             org.eclipse.daanse.olap.function.def.operators.greater.GreaterCalc(type=BOOLEAN, resultStyle=VALUE, callCount=0, callMillis=0)
                 mondrian.calc.impl.AbstractExpCompiler$UnknownToDoubleCalc(type=NUMERIC, resultStyle=VALUE, callCount=0, callMillis=0)
                     mondrian.calc.impl.MemberValueCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
                         org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Measures].[Unit Sales]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
                 org.eclipse.daanse.olap.calc.base.constant.ConstantDoubleCalc(type=NUMERIC, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
         mondrian.calc.impl.MemberValueCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
-            org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Gender].[M]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
+            org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Gender].[Gender].[M]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
 								""";
         String expr = "order(filter([Product].children, [Measures].[Unit Sales] > 1000), ([Gender].[M], [Measures].[Store Sales]))";
         assertAxisCompilesTo(connection, expr, expected);
@@ -214,9 +213,9 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 + "Axis #1:\n"
                 + "{[Measures].[Product Name Length]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Food]}\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[Food]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
                 + "Row #0: 4\n"
                 + "Row #1: 5\n"
                 + "Row #2: 14\n" );
@@ -237,14 +236,14 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 + " [Time].[1997])",
 
             "Axis #0:\n"
-                + "{[Customers].[USA].[CA].[San Francisco], [Time].[1997]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[San Francisco], [Time].[Time].[1997]}\n"
                 + "Axis #1:\n"
-                + "{[Gender].[All Gender]}\n"
-                + "{[Gender].[F]}\n"
-                + "{[Gender].[M]}\n"
+                + "{[Gender].[Gender].[All Gender]}\n"
+                + "{[Gender].[Gender].[F]}\n"
+                + "{[Gender].[Gender].[M]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink].[Beverages]}\n"
-                + "{[Product].[Drink].[Alcoholic Beverages]}\n"
+                + "{[Product].[Product].[Drink].[Beverages]}\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages]}\n"
                 + "Row #0: 2\n"
                 + "Row #0: \n"
                 + "Row #0: 2\n"
@@ -274,13 +273,13 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[All Products]}\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Drink].[Dairy]}\n"
-                + "{[Product].[Drink].[Beverages]}\n"
-                + "{[Product].[Food]}\n"
-                + "{[Product].[Food].[Eggs]}\n"
-                + "{[Product].[Food].[Baked Goods]}\n"
+                + "{[Product].[Product].[All Products]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Drink].[Dairy]}\n"
+                + "{[Product].[Product].[Drink].[Beverages]}\n"
+                + "{[Product].[Product].[Food]}\n"
+                + "{[Product].[Product].[Food].[Eggs]}\n"
+                + "{[Product].[Product].[Food].[Baked Goods]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #1: 24,597\n"
                 + "Row #2: 4,186\n"
@@ -309,8 +308,8 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink].[Alcoholic Beverages]}\n"
-                + "{[Product].[Food].[Eggs]}\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+                + "{[Product].[Product].[Food].[Eggs]}\n"
                 + "Row #0: 6,838\n"
                 + "Row #1: 4,132\n" );
     }
@@ -330,14 +329,14 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 + "where [Time].[1997].[Q1]",
 
             "Axis #0:\n"
-                + "{[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Gender].[M], [Marital Status].[S]}\n"
-                + "{[Gender].[F], [Marital Status].[M]}\n"
-                + "{[Gender].[M], [Marital Status].[M]}\n"
-                + "{[Gender].[F], [Marital Status].[S]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S]}\n"
                 + "Row #0: 17,070\n"
                 + "Row #1: 16,790\n"
                 + "Row #2: 16,311\n"
@@ -373,18 +372,18 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Time].[1997], [Measures].[Unit Sales]}\n"
-                + "{[Time].[1997].[Q1], [Measures].[Unit Sales]}\n"
+                + "{[Time].[Time].[1997], [Measures].[Unit Sales]}\n"
+                + "{[Time].[Time].[1997].[Q1], [Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink].[Alcoholic Beverages], [Store].[USA].[OR]}\n"
-                + "{[Product].[Drink].[Alcoholic Beverages], [Store].[USA].[CA]}\n"
-                + "{[Product].[Drink].[Alcoholic Beverages], [Store].[USA].[WA].[Seattle]}\n"
-                + "{[Product].[Food].[Seafood], [Store].[USA].[CA]}\n"
-                + "{[Product].[Food].[Seafood], [Store].[USA].[OR]}\n"
-                + "{[Product].[Food].[Seafood], [Store].[USA].[WA].[Seattle]}\n"
-                + "{[Product].[Food].[Eggs], [Store].[USA].[CA]}\n"
-                + "{[Product].[Food].[Eggs], [Store].[USA].[OR]}\n"
-                + "{[Product].[Food].[Eggs], [Store].[USA].[WA].[Seattle]}\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages], [Store].[Store].[USA].[OR]}\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages], [Store].[Store].[USA].[CA]}\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages], [Store].[Store].[USA].[WA].[Seattle]}\n"
+                + "{[Product].[Product].[Food].[Seafood], [Store].[Store].[USA].[CA]}\n"
+                + "{[Product].[Product].[Food].[Seafood], [Store].[Store].[USA].[OR]}\n"
+                + "{[Product].[Product].[Food].[Seafood], [Store].[Store].[USA].[WA].[Seattle]}\n"
+                + "{[Product].[Product].[Food].[Eggs], [Store].[Store].[USA].[CA]}\n"
+                + "{[Product].[Product].[Food].[Eggs], [Store].[Store].[USA].[OR]}\n"
+                + "{[Product].[Product].[Food].[Eggs], [Store].[Store].[USA].[WA].[Seattle]}\n"
                 + "Row #0: 1,680\n"
                 + "Row #0: 393\n"
                 + "Row #1: 1,936\n"
@@ -419,12 +418,12 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 + "  [Measures].[Unit Sales],\n"
                 + "  DESC)",
 
-            "[Product].[All Products]\n"
-                + "[Product].[Food]\n"
-                + "[Product].[Food].[Eggs]\n"
-                + "[Product].[Non-Consumable]\n"
-                + "[Product].[Drink]\n"
-                + "[Product].[Drink].[Dairy]" );
+            "[Product].[Product].[All Products]\n"
+                + "[Product].[Product].[Food]\n"
+                + "[Product].[Product].[Food].[Eggs]\n"
+                + "[Product].[Product].[Non-Consumable]\n"
+                + "[Product].[Product].[Drink]\n"
+                + "[Product].[Product].[Drink].[Dairy]" );
     }
 
     @ParameterizedTest
@@ -443,18 +442,18 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 + "  [Measures].[Unit Sales],\n"
                 + "  DESC)",
 
-            "{[Gender].[M], [Product].[All Products]}\n"
-                + "{[Gender].[M], [Product].[Food]}\n"
-                + "{[Gender].[M], [Product].[Food].[Eggs]}\n"
-                + "{[Gender].[M], [Product].[Non-Consumable]}\n"
-                + "{[Gender].[M], [Product].[Drink]}\n"
-                + "{[Gender].[M], [Product].[Drink].[Dairy]}\n"
-                + "{[Gender].[F], [Product].[All Products]}\n"
-                + "{[Gender].[F], [Product].[Food]}\n"
-                + "{[Gender].[F], [Product].[Food].[Eggs]}\n"
-                + "{[Gender].[F], [Product].[Non-Consumable]}\n"
-                + "{[Gender].[F], [Product].[Drink]}\n"
-                + "{[Gender].[F], [Product].[Drink].[Dairy]}" );
+            "{[Gender].[Gender].[M], [Product].[Product].[All Products]}\n"
+                + "{[Gender].[Gender].[M], [Product].[Product].[Food]}\n"
+                + "{[Gender].[Gender].[M], [Product].[Product].[Food].[Eggs]}\n"
+                + "{[Gender].[Gender].[M], [Product].[Product].[Non-Consumable]}\n"
+                + "{[Gender].[Gender].[M], [Product].[Product].[Drink]}\n"
+                + "{[Gender].[Gender].[M], [Product].[Product].[Drink].[Dairy]}\n"
+                + "{[Gender].[Gender].[F], [Product].[Product].[All Products]}\n"
+                + "{[Gender].[Gender].[F], [Product].[Product].[Food]}\n"
+                + "{[Gender].[Gender].[F], [Product].[Product].[Food].[Eggs]}\n"
+                + "{[Gender].[Gender].[F], [Product].[Product].[Non-Consumable]}\n"
+                + "{[Gender].[Gender].[F], [Product].[Product].[Drink]}\n"
+                + "{[Gender].[Gender].[F], [Product].[Product].[Drink].[Dairy]}" );
     }
 
     @ParameterizedTest
@@ -476,16 +475,16 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 + "from [Sales] where ([Time].[1997])",
 
             "Axis #0:\n"
-                + "{[Time].[1997]}\n"
+                + "{[Time].[Time].[1997]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "{[Measures].[Store Cost]}\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Promotion Media].[All Media], [Product].[All Products]}\n"
-                + "{[Promotion Media].[All Media], [Product].[Food]}\n"
-                + "{[Promotion Media].[All Media], [Product].[Non-Consumable]}\n"
-                + "{[Promotion Media].[All Media], [Product].[Drink]}\n"
+                + "{[Promotion Media].[Promotion Media].[All Media], [Product].[Product].[All Products]}\n"
+                + "{[Promotion Media].[Promotion Media].[All Media], [Product].[Product].[Food]}\n"
+                + "{[Promotion Media].[Promotion Media].[All Media], [Product].[Product].[Non-Consumable]}\n"
+                + "{[Promotion Media].[Promotion Media].[All Media], [Product].[Product].[Drink]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #0: 225,627.23\n"
                 + "Row #0: 565,238.13\n"
@@ -509,8 +508,8 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Time].[1998]}\n"
-                + "{[Time].[1997]}\n"
+                + "{[Time].[Time].[1998]}\n"
+                + "{[Time].[Time].[1997]}\n"
                 + "Row #0: \n"
                 + "Row #0: 266,773\n" );
     }
@@ -551,20 +550,20 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 + "{[Measures].[Max Unit Sales]}\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Store].[USA].[OR].[Portland], [Time].[1997]}\n"
-                + "{[Store].[USA].[OR].[Salem], [Time].[1997]}\n"
-                + "{[Store].[USA].[OR].[Salem].[Store 13], [Time].[1997]}\n"
-                + "{[Store].[USA].[CA].[San Francisco], [Time].[1997]}\n"
-                + "{[Store].[USA].[CA].[Beverly Hills], [Time].[1997]}\n"
-                + "{[Store].[USA].[CA].[San Diego], [Time].[1997]}\n"
-                + "{[Store].[USA].[CA].[Los Angeles], [Time].[1997]}\n"
-                + "{[Store].[USA].[WA].[Walla Walla], [Time].[1997]}\n"
-                + "{[Store].[USA].[WA].[Bellingham], [Time].[1997]}\n"
-                + "{[Store].[USA].[WA].[Yakima], [Time].[1997]}\n"
-                + "{[Store].[USA].[WA].[Spokane], [Time].[1997]}\n"
-                + "{[Store].[USA].[WA].[Bremerton], [Time].[1997]}\n"
-                + "{[Store].[USA].[WA].[Seattle], [Time].[1997]}\n"
-                + "{[Store].[USA].[WA].[Tacoma], [Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[OR].[Portland], [Time].[Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[OR].[Salem], [Time].[Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[OR].[Salem].[Store 13], [Time].[Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[CA].[San Francisco], [Time].[Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[CA].[Beverly Hills], [Time].[Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[CA].[San Diego], [Time].[Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[CA].[Los Angeles], [Time].[Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[WA].[Walla Walla], [Time].[Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[WA].[Bellingham], [Time].[Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[WA].[Yakima], [Time].[Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[WA].[Spokane], [Time].[Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[WA].[Bremerton], [Time].[Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[WA].[Seattle], [Time].[Time].[1997]}\n"
+                + "{[Store].[Store].[USA].[WA].[Tacoma], [Time].[Time].[1997]}\n"
                 + "Row #0: 2,173\n"
                 + "Row #0: 2,933\n"
                 + "Row #0: 26,079\n"
@@ -635,7 +634,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
                 + "Row #0: 75\n" );
     }
 
@@ -665,7 +664,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
                 + "Row #0: 75\n" );
     }
 
@@ -683,14 +682,14 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 + "FROM [Sales]\n"
                 + "WHERE {[Time].[1997].[Q3].[7]}",
             "Axis #0:\n"
-                + "{[Time].[1997].[Q3].[7]}\n"
+                + "{[Time].[Time].[1997].[Q3].[7]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Drink].[Dairy]}\n"
-                + "{[Product].[Drink].[Beverages]}\n"
-                + "{[Product].[Drink].[Alcoholic Beverages]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Drink].[Dairy]}\n"
+                + "{[Product].[Product].[Drink].[Beverages]}\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages]}\n"
                 + "Row #0: 4,409.58\n"
                 + "Row #1: 629.69\n"
                 + "Row #2: 2,477.02\n"
@@ -717,8 +716,8 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 "Axis #0:\n"
                     + "{}\n"
                     + "Axis #1:\n"
-                    + "{[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
-                    + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
                     + "Row #0: 33\n"
                     + "Row #0: 75\n");
         } finally {
@@ -748,8 +747,8 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 "Axis #0:\n"
                     + "{}\n"
                     + "Axis #1:\n"
-                    + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
-                    + "{[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
                     + "Row #0: 75\n"
                     + "Row #0: 33\n" );
         } finally {
@@ -773,8 +772,8 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
-                + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
                 + "Row #0: 33\n"
                 + "Row #0: 75\n" );
     }
@@ -795,8 +794,8 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
-                + "{[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
                 + "Row #0: 75\n"
                 + "Row #0: 33\n" );
     }
@@ -816,8 +815,8 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
-                + "{[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
                 + "Row #0: 75\n"
                 + "Row #0: 33\n" );
     }
@@ -837,9 +836,9 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
-                + "{[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
-                + "{[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                + "{[Customers].[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
                 + "Row #0: 75\n"
                 + "Row #0: 33\n"
                 + "Row #0: 33\n" );
@@ -865,9 +864,9 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 "Axis #0:\n"
                     + "{}\n"
                     + "Axis #1:\n"
-                    + "{[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
-                    + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
-                    + "{[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                    + "{[Customers].[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
                     + "Row #0: 33\n"
                     + "Row #0: 75\n"
                     + "Row #0: 33\n" );
@@ -891,9 +890,9 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
-                + "{[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
-                + "{[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                + "{[Customers].[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
                 + "Row #0: 75\n"
                 + "Row #0: 33\n"
                 + "Row #0: 33\n" );
@@ -924,9 +923,9 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 "Axis #0:\n"
                     + "{}\n"
                     + "Axis #1:\n"
-                    + "{[Customers].[USA].[CA].[Santa Monica].[Adeline Chun], [Store].[USA].[CA]}\n"
-                    + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young], [Store].[USA].[CA]}\n"
-                    + "{[Customers].[USA].[WA].[Issaquah].[Abe Tramel], [Store].[USA].[WA].[Seattle]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun], [Store].[Store].[USA].[CA]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young], [Store].[Store].[USA].[CA]}\n"
+                    + "{[Customers].[Customers].[USA].[WA].[Issaquah].[Abe Tramel], [Store].[Store].[USA].[WA].[Seattle]}\n"
                     + "Row #0: 33\n"
                     + "Row #0: 75\n"
                     + "Row #0: 33\n" );
@@ -960,9 +959,9 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 "Axis #0:\n"
                     + "{}\n"
                     + "Axis #1:\n"
-                    + "{[Customers].[USA].[WA].[Issaquah].[Abe Tramel], [Store].[USA].[WA].[Seattle]}\n"
-                    + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young], [Store].[USA].[CA]}\n"
-                    + "{[Customers].[USA].[CA].[Santa Monica].[Adeline Chun], [Store].[USA].[CA]}\n"
+                    + "{[Customers].[Customers].[USA].[WA].[Issaquah].[Abe Tramel], [Store].[Store].[USA].[WA].[Seattle]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young], [Store].[Store].[USA].[CA]}\n"
+                    + "{[Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun], [Store].[Store].[USA].[CA]}\n"
                     + "Row #0: 33\n"
                     + "Row #0: 75\n"
                     + "Row #0: 33\n" );
@@ -989,9 +988,9 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA].[WA], [Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
-                + "{[Store].[USA].[CA], [Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
-                + "{[Store].[USA].[CA], [Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                + "{[Store].[Store].[USA].[WA], [Customers].[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
+                + "{[Store].[Store].[USA].[CA], [Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                + "{[Store].[Store].[USA].[CA], [Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
                 + "Row #0: 33\n"
                 + "Row #0: 75\n"
                 + "Row #0: 33\n" );
@@ -1016,9 +1015,9 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA].[CA], [Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
-                + "{[Store].[USA].[CA], [Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
-                + "{[Store].[USA].[WA], [Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
+                + "{[Store].[Store].[USA].[CA], [Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                + "{[Store].[Store].[USA].[CA], [Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                + "{[Store].[Store].[USA].[WA], [Customers].[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
                 + "Row #0: 75\n"
                 + "Row #0: 33\n"
                 + "Row #0: 33\n" );
@@ -1045,9 +1044,9 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA].[WA], [Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
-                + "{[Store].[USA].[CA], [Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
-                + "{[Store].[USA].[CA], [Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                + "{[Store].[Store].[USA].[WA], [Customers].[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
+                + "{[Store].[Store].[USA].[CA], [Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                + "{[Store].[Store].[USA].[CA], [Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
                 + "Row #0: 33\n"
                 + "Row #0: 33\n"
                 + "Row #0: 75\n" );
@@ -1123,19 +1122,19 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
                 + "Axis #1:\n"
                 + "{[Measures].[Org Salary]}\n"
                 + "Axis #2:\n"
-                + "{[Position].[Store Management].[Store Manager], [Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
-                + "{[Position].[Store Management].[Store Manager], [Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
-                + "{[Position].[Store Management].[Store Manager], [Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
-                + "{[Position].[Store Management].[Store Assistant Manager], [Customers].[USA].[CA].[Santa Monica].[Adeline "
+                + "{[Position].[Position].[Store Management].[Store Manager], [Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                + "{[Position].[Position].[Store Management].[Store Manager], [Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                + "{[Position].[Position].[Store Management].[Store Manager], [Customers].[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
+                + "{[Position].[Position].[Store Management].[Store Assistant Manager], [Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline "
                 + "Chun]}\n"
-                + "{[Position].[Store Management].[Store Assistant Manager], [Customers].[USA].[CA].[Woodland Hills].[Abel "
+                + "{[Position].[Position].[Store Management].[Store Assistant Manager], [Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel "
                 + "Young]}\n"
-                + "{[Position].[Store Management].[Store Assistant Manager], [Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
-                + "{[Position].[Store Management].[Store Shift Supervisor], [Customers].[USA].[CA].[Santa Monica].[Adeline "
+                + "{[Position].[Position].[Store Management].[Store Assistant Manager], [Customers].[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
+                + "{[Position].[Position].[Store Management].[Store Shift Supervisor], [Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline "
                 + "Chun]}\n"
-                + "{[Position].[Store Management].[Store Shift Supervisor], [Customers].[USA].[CA].[Woodland Hills].[Abel "
+                + "{[Position].[Position].[Store Management].[Store Shift Supervisor], [Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel "
                 + "Young]}\n"
-                + "{[Position].[Store Management].[Store Shift Supervisor], [Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
+                + "{[Position].[Position].[Store Management].[Store Shift Supervisor], [Customers].[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
                 + "Row #0: \n"
                 + "Row #1: \n"
                 + "Row #2: \n"
@@ -1162,9 +1161,9 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
-                + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
-                + "{[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                + "{[Customers].[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
                 + "Row #0: 33\n"
                 + "Row #0: 75\n"
                 + "Row #0: 33\n");
@@ -1184,9 +1183,9 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
-                + "{[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
-                + "{[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
+                + "{[Customers].[Customers].[USA].[WA].[Issaquah].[Abe Tramel]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Woodland Hills].[Abel Young]}\n"
+                + "{[Customers].[Customers].[USA].[CA].[Santa Monica].[Adeline Chun]}\n"
                 + "Row #0: 33\n"
                 + "Row #0: 75\n"
                 + "Row #0: 33\n" );

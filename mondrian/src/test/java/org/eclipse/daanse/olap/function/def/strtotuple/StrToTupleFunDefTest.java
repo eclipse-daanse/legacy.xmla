@@ -27,9 +27,6 @@ import org.opencube.junit5.context.TestConfig;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.RolapCatalogCache;
-
-
 class StrToTupleFunDefTest {
 
 
@@ -39,12 +36,12 @@ class StrToTupleFunDefTest {
         // single dimension yields member
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{StrToTuple(\"[Time].[1997].[Q2]\", [Time])}",
-            "[Time].[1997].[Q2]" );
+            "[Time].[Time].[1997].[Q2]" );
 
         // multiple dimensions yield tuple
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{StrToTuple(\"([Gender].[F], [Time].[1997].[Q2])\", [Gender], [Time])}",
-            "{[Gender].[F], [Time].[1997].[Q2]}" );
+            "{[Gender].[Gender].[F], [Time].[Time].[1997].[Q2]}" );
 
         // todo: test for garbage at end of string
     }
@@ -66,7 +63,7 @@ class StrToTupleFunDefTest {
     void testStrToTupleDuHierarchiesFails(Context context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "{StrToTuple(\"([Gender].[F], [Time].[1997].[Q2], [Gender].[M])\", [Gender], [Time], [Gender])}",
-            "Tuple contains more than one member of hierarchy '[Gender]'.", "Sales" );
+            "Tuple contains more than one member of hierarchy '[Gender].[Gender]'.", "Sales" );
     }
 
     @ParameterizedTest
@@ -80,7 +77,7 @@ class StrToTupleFunDefTest {
                 + " [Gender], "
                 + hierarchyName( "Time", "Weekly" )
                 + ", [Gender])}",
-            "Tuple contains more than one member of hierarchy '[Gender]'.", "Sales" );
+            "Tuple contains more than one member of hierarchy '[Gender].[Gender]'.", "Sales" );
     }
 
     @ParameterizedTest
@@ -93,7 +90,7 @@ class StrToTupleFunDefTest {
         // converted to scalar, depends set is larger
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "StrToTuple(\"[Time].[1997].[Q2]\", [Time])",
-            allHiersExcept( "[Time]" ) );
+            allHiersExcept( "[Time].[Time]" ) );
 
         assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
             "StrToTuple(\"[Time].[1997].[Q2], [Gender].[F]\", [Time], [Gender])",
@@ -101,7 +98,7 @@ class StrToTupleFunDefTest {
 
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "StrToTuple(\"[Time].[1997].[Q2], [Gender].[F]\", [Time], [Gender])",
-            allHiersExcept( "[Time]", "[Gender]" ) );
+            allHiersExcept( "[Time].[Time]", "[Gender].[Gender]" ) );
     }
 
 }

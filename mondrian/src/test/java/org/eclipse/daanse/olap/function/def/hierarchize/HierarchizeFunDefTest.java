@@ -42,12 +42,12 @@ class HierarchizeFunDefTest {
                 + "     [Product].[Food].[Eggs],\n"
                 + "     [Product].[Drink].[Dairy]})",
 
-            "[Product].[All Products]\n"
-                + "[Product].[Drink]\n"
-                + "[Product].[Drink].[Dairy]\n"
-                + "[Product].[Food]\n"
-                + "[Product].[Food].[Eggs]\n"
-                + "[Product].[Non-Consumable]" );
+            "[Product].[Product].[All Products]\n"
+                + "[Product].[Product].[Drink]\n"
+                + "[Product].[Product].[Drink].[Dairy]\n"
+                + "[Product].[Product].[Food]\n"
+                + "[Product].[Product].[Food].[Eggs]\n"
+                + "[Product].[Product].[Non-Consumable]" );
     }
 
     @ParameterizedTest
@@ -61,10 +61,10 @@ class HierarchizeFunDefTest {
                 + "     [Product].[Drink].[Dairy]},\n"
                 + "  POST)",
 
-            "[Product].[Drink].[Dairy]\n"
-                + "[Product].[Food].[Eggs]\n"
-                + "[Product].[Food]\n"
-                + "[Product].[All Products]" );
+            "[Product].[Product].[Drink].[Dairy]\n"
+                + "[Product].[Product].[Food].[Eggs]\n"
+                + "[Product].[Product].[Food]\n"
+                + "[Product].[Product].[All Products]" );
     }
 
     @ParameterizedTest
@@ -75,30 +75,30 @@ class HierarchizeFunDefTest {
             "Hierarchize(\n"
                 + "   { Subset([Employees].Members, 90, 10),\n"
                 + "     Head([Employees].Members, 5) })",
-            "[Employees].[All Employees]\n"
-                + "[Employees].[Sheri Nowmer]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Shauna Wyro]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
+            "[Employees].[Employees].[All Employees]\n"
+                + "[Employees].[Employees].[Sheri Nowmer]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Beverly Baker].[Shauna Wyro]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
                 + ".[Leopoldo Renfro]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
                 + ".[Donna Brockett]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
                 + ".[Laurie Anderson]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
                 + ".[Louis Gomez]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
                 + ".[Melvin Glass]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
                 + ".[Kristin Cohen]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
                 + ".[Susan Kharman]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
                 + ".[Gordon Kirschner]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
                 + ".[Geneva Kouba]\n"
-                + "[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
+                + "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply].[Pedro Castillo].[Lin Conley].[Paul Tays].[Cheryl Thorton]"
                 + ".[Tricia Clark]" );
     }
 
@@ -115,18 +115,18 @@ class HierarchizeFunDefTest {
                 + "    [Gender].MEMBERS),\n"
                 + "  PRE)",
 
-            "{[Product].[All Products], [Gender].[All Gender]}\n"
-                + "{[Product].[All Products], [Gender].[F]}\n"
-                + "{[Product].[All Products], [Gender].[M]}\n"
-                + "{[Product].[Drink].[Dairy], [Gender].[All Gender]}\n"
-                + "{[Product].[Drink].[Dairy], [Gender].[F]}\n"
-                + "{[Product].[Drink].[Dairy], [Gender].[M]}\n"
-                + "{[Product].[Food], [Gender].[All Gender]}\n"
-                + "{[Product].[Food], [Gender].[F]}\n"
-                + "{[Product].[Food], [Gender].[M]}\n"
-                + "{[Product].[Food].[Eggs], [Gender].[All Gender]}\n"
-                + "{[Product].[Food].[Eggs], [Gender].[F]}\n"
-                + "{[Product].[Food].[Eggs], [Gender].[M]}" );
+            "{[Product].[Product].[All Products], [Gender].[Gender].[All Gender]}\n"
+                + "{[Product].[Product].[All Products], [Gender].[Gender].[F]}\n"
+                + "{[Product].[Product].[All Products], [Gender].[Gender].[M]}\n"
+                + "{[Product].[Product].[Drink].[Dairy], [Gender].[Gender].[All Gender]}\n"
+                + "{[Product].[Product].[Drink].[Dairy], [Gender].[Gender].[F]}\n"
+                + "{[Product].[Product].[Drink].[Dairy], [Gender].[Gender].[M]}\n"
+                + "{[Product].[Product].[Food], [Gender].[Gender].[All Gender]}\n"
+                + "{[Product].[Product].[Food], [Gender].[Gender].[F]}\n"
+                + "{[Product].[Product].[Food], [Gender].[Gender].[M]}\n"
+                + "{[Product].[Product].[Food].[Eggs], [Gender].[Gender].[All Gender]}\n"
+                + "{[Product].[Product].[Food].[Eggs], [Gender].[Gender].[F]}\n"
+                + "{[Product].[Product].[Food].[Eggs], [Gender].[Gender].[M]}" );
     }
 
     @ParameterizedTest
@@ -142,18 +142,18 @@ class HierarchizeFunDefTest {
                 + "    [Gender].MEMBERS),\n"
                 + "  POST)",
 
-            "{[Product].[Drink].[Dairy], [Gender].[F]}\n"
-                + "{[Product].[Drink].[Dairy], [Gender].[M]}\n"
-                + "{[Product].[Drink].[Dairy], [Gender].[All Gender]}\n"
-                + "{[Product].[Food].[Eggs], [Gender].[F]}\n"
-                + "{[Product].[Food].[Eggs], [Gender].[M]}\n"
-                + "{[Product].[Food].[Eggs], [Gender].[All Gender]}\n"
-                + "{[Product].[Food], [Gender].[F]}\n"
-                + "{[Product].[Food], [Gender].[M]}\n"
-                + "{[Product].[Food], [Gender].[All Gender]}\n"
-                + "{[Product].[All Products], [Gender].[F]}\n"
-                + "{[Product].[All Products], [Gender].[M]}\n"
-                + "{[Product].[All Products], [Gender].[All Gender]}" );
+            "{[Product].[Product].[Drink].[Dairy], [Gender].[Gender].[F]}\n"
+                + "{[Product].[Product].[Drink].[Dairy], [Gender].[Gender].[M]}\n"
+                + "{[Product].[Product].[Drink].[Dairy], [Gender].[Gender].[All Gender]}\n"
+                + "{[Product].[Product].[Food].[Eggs], [Gender].[Gender].[F]}\n"
+                + "{[Product].[Product].[Food].[Eggs], [Gender].[Gender].[M]}\n"
+                + "{[Product].[Product].[Food].[Eggs], [Gender].[Gender].[All Gender]}\n"
+                + "{[Product].[Product].[Food], [Gender].[Gender].[F]}\n"
+                + "{[Product].[Product].[Food], [Gender].[Gender].[M]}\n"
+                + "{[Product].[Product].[Food], [Gender].[Gender].[All Gender]}\n"
+                + "{[Product].[Product].[All Products], [Gender].[Gender].[F]}\n"
+                + "{[Product].[Product].[All Products], [Gender].[Gender].[M]}\n"
+                + "{[Product].[Product].[All Products], [Gender].[Gender].[All Gender]}" );
     }
 
     /**
@@ -204,57 +204,57 @@ class HierarchizeFunDefTest {
         // The [Time_Alphabetical] is ordered alphabetically by month
         assertAxisReturns(connection, "[Sales_Hierarchize]",
             "Hierarchize([Time_Alphabetical].members)",
-            "[Time_Alphabetical].[1997]\n"
-                + "[Time_Alphabetical].[1997].[Q1]\n"
-                + "[Time_Alphabetical].[1997].[Q1].[2]\n"
-                + "[Time_Alphabetical].[1997].[Q1].[1]\n"
-                + "[Time_Alphabetical].[1997].[Q1].[3]\n"
-                + "[Time_Alphabetical].[1997].[Q2]\n"
-                + "[Time_Alphabetical].[1997].[Q2].[4]\n"
-                + "[Time_Alphabetical].[1997].[Q2].[6]\n"
-                + "[Time_Alphabetical].[1997].[Q2].[5]\n"
-                + "[Time_Alphabetical].[1997].[Q3]\n"
-                + "[Time_Alphabetical].[1997].[Q3].[8]\n"
-                + "[Time_Alphabetical].[1997].[Q3].[7]\n"
-                + "[Time_Alphabetical].[1997].[Q3].[9]\n"
-                + "[Time_Alphabetical].[1997].[Q4]\n"
-                + "[Time_Alphabetical].[1997].[Q4].[12]\n"
-                + "[Time_Alphabetical].[1997].[Q4].[11]\n"
-                + "[Time_Alphabetical].[1997].[Q4].[10]\n"
-                + "[Time_Alphabetical].[1998]\n"
-                + "[Time_Alphabetical].[1998].[Q1]\n"
-                + "[Time_Alphabetical].[1998].[Q1].[2]\n"
-                + "[Time_Alphabetical].[1998].[Q1].[1]\n"
-                + "[Time_Alphabetical].[1998].[Q1].[3]\n"
-                + "[Time_Alphabetical].[1998].[Q2]\n"
-                + "[Time_Alphabetical].[1998].[Q2].[4]\n"
-                + "[Time_Alphabetical].[1998].[Q2].[6]\n"
-                + "[Time_Alphabetical].[1998].[Q2].[5]\n"
-                + "[Time_Alphabetical].[1998].[Q3]\n"
-                + "[Time_Alphabetical].[1998].[Q3].[8]\n"
-                + "[Time_Alphabetical].[1998].[Q3].[7]\n"
-                + "[Time_Alphabetical].[1998].[Q3].[9]\n"
-                + "[Time_Alphabetical].[1998].[Q4]\n"
-                + "[Time_Alphabetical].[1998].[Q4].[12]\n"
-                + "[Time_Alphabetical].[1998].[Q4].[11]\n"
-                + "[Time_Alphabetical].[1998].[Q4].[10]" );
+            "[Time_Alphabetical].[Time_Alphabetical].[1997]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q1]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q1].[2]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q1].[1]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q1].[3]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q2]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q2].[4]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q2].[6]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q2].[5]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q3]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q3].[8]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q3].[7]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q3].[9]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q4]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q4].[12]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q4].[11]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1997].[Q4].[10]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q1]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q1].[2]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q1].[1]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q1].[3]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q2]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q2].[4]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q2].[6]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q2].[5]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q3]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q3].[8]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q3].[7]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q3].[9]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q4]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q4].[12]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q4].[11]\n"
+                + "[Time_Alphabetical].[Time_Alphabetical].[1998].[Q4].[10]" );
 
         // The [Month_Alphabetical] is a single-level hierarchy ordered
         // alphabetically by month.
         assertAxisReturns(connection, "[Sales_Hierarchize]",
             "Hierarchize([Month_Alphabetical].members)",
-            "[Month_Alphabetical].[4]\n"
-                + "[Month_Alphabetical].[8]\n"
-                + "[Month_Alphabetical].[12]\n"
-                + "[Month_Alphabetical].[2]\n"
-                + "[Month_Alphabetical].[1]\n"
-                + "[Month_Alphabetical].[7]\n"
-                + "[Month_Alphabetical].[6]\n"
-                + "[Month_Alphabetical].[3]\n"
-                + "[Month_Alphabetical].[5]\n"
-                + "[Month_Alphabetical].[11]\n"
-                + "[Month_Alphabetical].[10]\n"
-                + "[Month_Alphabetical].[9]" );
+            "[Month_Alphabetical].[Month_Alphabetical].[4]\n"
+                + "[Month_Alphabetical].[Month_Alphabetical].[8]\n"
+                + "[Month_Alphabetical].[Month_Alphabetical].[12]\n"
+                + "[Month_Alphabetical].[Month_Alphabetical].[2]\n"
+                + "[Month_Alphabetical].[Month_Alphabetical].[1]\n"
+                + "[Month_Alphabetical].[Month_Alphabetical].[7]\n"
+                + "[Month_Alphabetical].[Month_Alphabetical].[6]\n"
+                + "[Month_Alphabetical].[Month_Alphabetical].[3]\n"
+                + "[Month_Alphabetical].[Month_Alphabetical].[5]\n"
+                + "[Month_Alphabetical].[Month_Alphabetical].[11]\n"
+                + "[Month_Alphabetical].[Month_Alphabetical].[10]\n"
+                + "[Month_Alphabetical].[Month_Alphabetical].[9]" );
 
         // clear the cache so that future tests don't fail that expect a
         // specific set of cubes

@@ -51,8 +51,8 @@ class CalculatedChildFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales CC]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
                 + "Row #0: 6,838\n" // Calculated child for [Drink]
                 + "Row #1: 841\n" ); // Calculated child for [Non-Consumable]
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),

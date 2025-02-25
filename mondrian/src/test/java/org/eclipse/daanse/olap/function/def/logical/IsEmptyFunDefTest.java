@@ -35,7 +35,7 @@ class IsEmptyFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Gender].[foo]}\n"
+                + "{[Gender].[Gender].[foo]}\n"
                 + "Row #0: false\n" );
     }
 

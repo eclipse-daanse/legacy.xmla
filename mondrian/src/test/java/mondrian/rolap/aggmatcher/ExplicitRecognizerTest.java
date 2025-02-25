@@ -151,19 +151,19 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                         ))
                         .withAggregationLevels(List.of(
                             AggregationLevelMappingImpl.builder()
-                                .withName("[Gender].[Gender]")
+                                .withName("[Gender].[Gender].[Gender]")
                                 .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_AGG_G_MS_PCAT_SALES_FACT_1997)
                                 .build(),
                             AggregationLevelMappingImpl.builder()
-                                .withName("[TimeExtra].[Year]")
+                                .withName("[TimeExtra].[TimeExtra].[Year]")
                                 .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_G_MS_PCAT_SALES_FACT_1997)
                                 .build(),
                             AggregationLevelMappingImpl.builder()
-                                .withName("[TimeExtra].[Quarter]")
+                                .withName("[TimeExtra].[TimeExtra].[Quarter]")
                                 .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_AGG_G_MS_PCAT_SALES_FACT_1997)
                                 .build(),
                             AggregationLevelMappingImpl.builder()
-                                .withName("[TimeExtra].[Month]")
+                                .withName("[TimeExtra].[TimeExtra].[Month]")
                                 .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_AGG_G_MS_PCAT_SALES_FACT_1997)
                                 .build()
                         ))
@@ -176,7 +176,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
-            + "non empty CrossJoin({[TimeExtra].[Month].members},{[Gender].[M]}) on rows "
+            + "non empty CrossJoin({[TimeExtra].[TimeExtra].[Month].members},{[Gender].[Gender].[M]}) on rows "
             + "from [ExtraCol] ";
         TestUtil.flushSchemaCache(context.getConnectionWithDefaultRole());
         assertQuerySql(
@@ -271,15 +271,15 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                     //    .withColumn("gender") //TODO gender is absent
                     //    .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[TimeExtra].[Year]")
+                        .withName("[TimeExtra].[TimeExtra].[Year]")
                         .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[TimeExtra].[Quarter]")
+                        .withName("[TimeExtra].[TimeExtra].[Quarter]")
                         .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[TimeExtra].[Month]")
+                        .withName("[TimeExtra].[TimeExtra].[Month]")
                         .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                         .build()
                 ))
@@ -293,7 +293,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
-            + "non empty CrossJoin({[TimeExtra].[Month].members},{[Store].[Store Name].members}) on rows "
+            + "non empty CrossJoin({[TimeExtra].[TimeExtra].[Month].members},{[Store].[Store].[Store Name].members}) on rows "
             + "from [ExtraCol] ";
         // Run the query twice, verifying both the SqlTupleReader and
         // Segment load queries.
@@ -392,19 +392,19 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 ))
                 .withAggregationLevels(List.of(
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Gender].[Gender]")
+                        .withName("[Gender].[Gender].[Gender]")
                         .withColumn(genderExpAggTest)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[TimeExtra].[Year]")
+                        .withName("[TimeExtra].[TimeExtra].[Year]")
                         .withColumn(testyearExpAggTest)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[TimeExtra].[Quarter]")
+                        .withName("[TimeExtra].[TimeExtra].[Quarter]")
                         .withColumn(testqtrExpAggTest)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[TimeExtra].[Month]")
+                        .withName("[TimeExtra].[TimeExtra].[Month]")
                         .withColumn(testmonthnameExpAggTest)
                         .withOrdinalColumn(testmonthordExpAggTest)
                         .build()
@@ -418,7 +418,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
-            + "non empty CrossJoin({[TimeExtra].[Month].members},{[Gender].[M]}) on rows "
+            + "non empty CrossJoin({[TimeExtra].[TimeExtra].[Month].members},{[Gender].[Gender].[M]}) on rows "
             + "from [ExtraCol] ";
 
         assertQuerySql(
@@ -475,19 +475,19 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 ))
                 .withAggregationLevels(List.of(
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Gender].[Gender]")
+                        .withName("[Gender].[Gender].[Gender]")
                         .withColumn(genderExpAggTest)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[TimeExtra].[Year]")
+                        .withName("[TimeExtra].[TimeExtra].[Year]")
                         .withColumn(testyearExpAggTest)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[TimeExtra].[Quarter]")
+                        .withName("[TimeExtra].[TimeExtra].[Quarter]")
                         .withColumn(testqtrExpAggTest)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[TimeExtra].[Month]")
+                        .withName("[TimeExtra].[TimeExtra].[Month]")
                         .withColumn(testmonthnameExpAggTest)
                         .withCaptionColumn(testmonthcapExpAggTest)
                         .build()
@@ -501,7 +501,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
         String query =
             "select {[Measures].[Unit Sales]} on columns, "
-            + "non empty CrossJoin({[TimeExtra].[Month].members},{[Gender].[M]}) on rows "
+            + "non empty CrossJoin({[TimeExtra].[TimeExtra].[Month].members},{[Gender].[Gender].[M]}) on rows "
             + "from [ExtraCol] ";
 
         assertQuerySql(
@@ -658,27 +658,27 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                     ))
                 .withAggregationLevels(List.of(
                     AggregationLevelMappingImpl.builder()
-                        .withName("[TimeExtra].[Year]")
+                        .withName("[TimeExtra].[TimeExtra].[Year]")
                         .withColumn(testyearExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Gender].[Gender]")
+                        .withName("[Gender].[Gender].[Gender]")
                         .withColumn(genderExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Store].[Store Country]")
+                        .withName("[Store].[Store].[Store Country]")
                         .withColumn(storeCountryExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Store].[Store State]")
+                        .withName("[Store].[Store].[Store State]")
                         .withColumn(storeStExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Store].[Store City]")
+                        .withName("[Store].[Store].[Store City]")
                         .withColumn(storeCtyExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Store].[Store Name]")
+                        .withName("[Store].[Store].[Store Name]")
                         .withColumn(storeNameExpAggTestDistinctCount)
                         .withAggregationLevelProperties(List.of(
                             AggregationLevelPropertyMappingImpl.builder()
@@ -698,9 +698,9 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             List.of(), List.of(expAggTest, expAggTestDistinctCount));
 
         String query =
-            "with member measures.propVal as 'Store.CurrentMember.Properties(\"Street Address\")'"
+            "with member measures.propVal as 'Store.Store.CurrentMember.Properties(\"Street Address\")'"
             + "select { measures.[propVal], measures.[Customer Count], [Measures].[Unit Sales]} on columns, "
-            + "non empty CrossJoin({[Gender].Gender.members},{[Store].[USA].[WA].[Spokane].[Store 16]}) on rows "
+            + "non empty CrossJoin({[Gender].[Gender].Gender.members},{[Store].[Store].[USA].[WA].[Spokane].[Store 16]}) on rows "
             + "from [ExtraCol]";
         assertQuerySql(
             context.getConnectionWithDefaultRole(),
@@ -747,8 +747,8 @@ class ExplicitRecognizerTest extends AggTableTestCase {
             + "{[Measures].[Customer Count]}\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[F], [Store].[USA].[WA].[Spokane].[Store 16]}\n"
-            + "{[Gender].[M], [Store].[USA].[WA].[Spokane].[Store 16]}\n"
+            + "{[Gender].[Gender].[F], [Store].[Store].[USA].[WA].[Spokane].[Store 16]}\n"
+            + "{[Gender].[Gender].[M], [Store].[Store].[USA].[WA].[Spokane].[Store 16]}\n"
             + "Row #0: 5922 La Salle Ct\n"
             + "Row #0: 45\n"
             + "Row #0: 12,068\n"
@@ -800,27 +800,27 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 ))
                 .withAggregationLevels(List.of(
                     AggregationLevelMappingImpl.builder()
-                        .withName("[TimeExtra].[Year]")
+                        .withName("[TimeExtra].[TimeExtra].[Year]")
                         .withColumn(testyearExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Gender].[Gender]")
+                        .withName("[Gender].[Gender].[Gender]")
                         .withColumn(genderExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Store].[Store Country]")
+                        .withName("[Store].[Store].[Store Country]")
                         .withColumn(storeCountryExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Store].[Store State]")
+                        .withName("[Store].[Store].[Store State]")
                         .withColumn(storeStExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Store].[Store City]")
+                        .withName("[Store].[Store].[Store City]")
                         .withColumn(storeCtyExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Store].[Store Name]")
+                        .withName("[Store].[Store].[Store Name]")
                         .withColumn(storeNameExpAggTestDistinctCount)
                         .withAggregationLevelProperties(List.of(
                             AggregationLevelPropertyMappingImpl.builder()
@@ -843,7 +843,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
         // since Customer Count is dependent on Gender.
         String query =
             "select { measures.[Customer Count], [Measures].[Unit Sales]} on columns, "
-            + "non empty CrossJoin({[TimeExtra].Year.members},{[Store].[USA].[WA].[Spokane].[Store 16]}) on rows "
+            + "non empty CrossJoin({[TimeExtra].[TimeExtra].Year.members},{[Store].[Store].[USA].[WA].[Spokane].[Store 16]}) on rows "
             + "from [ExtraCol]";
 
         assertQuerySql(
@@ -927,27 +927,27 @@ class ExplicitRecognizerTest extends AggTableTestCase {
                 ))
                 .withAggregationLevels(List.of(
                     AggregationLevelMappingImpl.builder()
-                        .withName("[TimeExtra].[Year]")
+                        .withName("[TimeExtra].[TimeExtra].[Year]")
                         .withColumn(testyearExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Gender].[Gender]")
+                        .withName("[Gender].[Gender].[Gender]")
                         .withColumn(genderExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Store].[Store Country]")
+                        .withName("[Store].[Store].[Store Country]")
                         .withColumn(storeCountryExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Store].[Store State]")
+                        .withName("[Store].[Store].[Store State]")
                         .withColumn(storeStExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Store].[Store City]")
+                        .withName("[Store].[Store].[Store City]")
                         .withColumn(storeCtyExpAggTestDistinctCount)
                         .build(),
                     AggregationLevelMappingImpl.builder()
-                        .withName("[Store].[Store Name]")
+                        .withName("[Store].[Store].[Store Name]")
                         .withColumn(storeNameExpAggTestDistinctCount)
                         .withAggregationLevelProperties(List.of(
                             AggregationLevelPropertyMappingImpl.builder()
@@ -969,7 +969,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
         String query =
             "select { measures.[Customer Count]} on columns, "
-            + "non empty CrossJoin({[TimeExtra].Year.members},{[Gender].[F]}) on rows "
+            + "non empty CrossJoin({[TimeExtra].[TimeExtra].Year.members},{[Gender].[Gender].[F]}) on rows "
             + "from [ExtraCol]";
 
 

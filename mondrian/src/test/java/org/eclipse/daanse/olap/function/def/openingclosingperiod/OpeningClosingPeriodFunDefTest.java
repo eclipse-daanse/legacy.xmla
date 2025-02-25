@@ -13,36 +13,23 @@
  */
 package org.eclipse.daanse.olap.function.def.openingclosingperiod;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.opencube.junit5.TestUtil.assertAxisReturns;
+import static org.opencube.junit5.TestUtil.assertAxisThrows;
+import static org.opencube.junit5.TestUtil.assertExprDependsOn;
+import static org.opencube.junit5.TestUtil.assertMemberExprDependsOn;
+import static org.opencube.junit5.TestUtil.assertQueryReturns;
+import static org.opencube.junit5.TestUtil.executeSingletonAxis;
+import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
+
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.opencube.junit5.TestUtil.assertAxisReturns;
-import static org.opencube.junit5.TestUtil.assertAxisThrows;
-import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;
-import static org.opencube.junit5.TestUtil.assertExprDependsOn;
-import static org.opencube.junit5.TestUtil.assertExprThrows;
-import static org.opencube.junit5.TestUtil.assertMemberExprDependsOn;
-import static org.opencube.junit5.TestUtil.assertQueryReturns;
-import static org.opencube.junit5.TestUtil.assertQueryThrows;
-import static org.opencube.junit5.TestUtil.assertSetExprDependsOn;
-import static org.opencube.junit5.TestUtil.assertStubbedEqualsVerbose;
-import static org.opencube.junit5.TestUtil.compileExpression;
-import static org.opencube.junit5.TestUtil.executeAxis;
-import static org.opencube.junit5.TestUtil.executeExpr;
-import static org.opencube.junit5.TestUtil.executeExprRaw;
-import static org.opencube.junit5.TestUtil.executeQuery;
-import static org.opencube.junit5.TestUtil.executeSingletonAxis;
-import static org.opencube.junit5.TestUtil.hierarchyName;
-import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
-import static org.opencube.junit5.TestUtil.withSchema;
 
 import mondrian.olap.fun.FunctionTest;
 
@@ -53,11 +40,11 @@ class OpeningClosingPeriodFunDefTest {
     void testClosingPeriodNoArgs(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
-            "ClosingPeriod()", "{[Time]}" );
+            "ClosingPeriod()", "{[Time].[Time]}" );
         // MSOLAP returns [1997].[Q4], because [Time].CurrentMember =
         // [1997].
         Member member = executeSingletonAxis(connection, "ClosingPeriod()", "Sales" );
-        assertEquals( "[Time].[1997].[Q4]", member.getUniqueName() );
+        assertEquals( "[Time].[Time].[1997].[Q4]", member.getUniqueName() );
     }
 
     @ParameterizedTest
@@ -65,21 +52,21 @@ class OpeningClosingPeriodFunDefTest {
     void testClosingPeriodLevel(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
-            "ClosingPeriod([Time].[Year])", "{[Time]}" );
+            "ClosingPeriod([Time].[Year])", "{[Time].[Time]}" );
         assertMemberExprDependsOn(connection,
             "([Measures].[Unit Sales], ClosingPeriod([Time].[Month]))",
-            "{[Time]}" );
+            "{[Time].[Time]}" );
 
         Member member;
 
         member = executeSingletonAxis(connection, "ClosingPeriod([Year])", "Sales" );
-        assertEquals( "[Time].[1997]", member.getUniqueName() );
+        assertEquals( "[Time].[Time].[1997]", member.getUniqueName() );
 
         member = executeSingletonAxis(connection, "ClosingPeriod([Quarter])", "Sales" );
-        assertEquals( "[Time].[1997].[Q4]", member.getUniqueName() );
+        assertEquals( "[Time].[Time].[1997].[Q4]", member.getUniqueName() );
 
         member = executeSingletonAxis(connection, "ClosingPeriod([Month])", "Sales" );
-        assertEquals( "[Time].[1997].[Q4].[12]", member.getUniqueName() );
+        assertEquals( "[Time].[Time].[1997].[Q4].[12]", member.getUniqueName() );
 
         assertQueryReturns(connection,
             "with member [Measures].[Closing Unit Sales] as "
@@ -93,23 +80,23 @@ class OpeningClosingPeriodFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[Closing Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1997]}\n"
-                + "{[Time].[1997].[Q1]}\n"
-                + "{[Time].[1997].[Q1].[1]}\n"
-                + "{[Time].[1997].[Q1].[2]}\n"
-                + "{[Time].[1997].[Q1].[3]}\n"
-                + "{[Time].[1997].[Q2]}\n"
-                + "{[Time].[1997].[Q2].[4]}\n"
-                + "{[Time].[1997].[Q2].[5]}\n"
-                + "{[Time].[1997].[Q2].[6]}\n"
-                + "{[Time].[1997].[Q3]}\n"
-                + "{[Time].[1997].[Q3].[7]}\n"
-                + "{[Time].[1997].[Q3].[8]}\n"
-                + "{[Time].[1997].[Q3].[9]}\n"
-                + "{[Time].[1997].[Q4]}\n"
-                + "{[Time].[1997].[Q4].[10]}\n"
-                + "{[Time].[1997].[Q4].[11]}\n"
-                + "{[Time].[1997].[Q4].[12]}\n"
+                + "{[Time].[Time].[1997]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q1].[1]}\n"
+                + "{[Time].[Time].[1997].[Q1].[2]}\n"
+                + "{[Time].[Time].[1997].[Q1].[3]}\n"
+                + "{[Time].[Time].[1997].[Q2]}\n"
+                + "{[Time].[Time].[1997].[Q2].[4]}\n"
+                + "{[Time].[Time].[1997].[Q2].[5]}\n"
+                + "{[Time].[Time].[1997].[Q2].[6]}\n"
+                + "{[Time].[Time].[1997].[Q3]}\n"
+                + "{[Time].[Time].[1997].[Q3].[7]}\n"
+                + "{[Time].[Time].[1997].[Q3].[8]}\n"
+                + "{[Time].[Time].[1997].[Q3].[9]}\n"
+                + "{[Time].[Time].[1997].[Q4]}\n"
+                + "{[Time].[Time].[1997].[Q4].[10]}\n"
+                + "{[Time].[Time].[1997].[Q4].[11]}\n"
+                + "{[Time].[Time].[1997].[Q4].[12]}\n"
                 + "Row #0: 26,796\n"
                 + "Row #1: 23,706\n"
                 + "Row #2: 21,628\n"
@@ -140,11 +127,11 @@ class OpeningClosingPeriodFunDefTest {
                 + "{[Measures].[Unit Sales]}\n"
                 + "{[Measures].[Closing Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1997]}\n"
-                + "{[Time].[1997].[Q1]}\n"
-                + "{[Time].[1997].[Q1].[1]}\n"
-                + "{[Time].[1997].[Q1].[3]}\n"
-                + "{[Time].[1997].[Q4].[12]}\n"
+                + "{[Time].[Time].[1997]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q1].[1]}\n"
+                + "{[Time].[Time].[1997].[Q1].[3]}\n"
+                + "{[Time].[Time].[1997].[Q4].[12]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #0: 26,796\n"
                 + "Row #1: 66,291\n"
@@ -203,12 +190,12 @@ class OpeningClosingPeriodFunDefTest {
                     + "Axis #1:\n"
                     + "{[Measures].[Foo]}\n"
                     + "Axis #2:\n"
-                    + "{[Time].[1997]}\n"
-                    + "{[Time].[1997].[Q2]}\n"
-                    + "{[Time].[1997].[Q2].[4]}\n"
-                    + "Row #0: [Time].[1997].[Q4]\n"
-                    + "Row #1: [Time].[1997].[Q2].[6]\n"
-                    + "Row #2: [Time].[#null]\n"
+                    + "{[Time].[Time].[1997]}\n"
+                    + "{[Time].[Time].[1997].[Q2]}\n"
+                    + "{[Time].[Time].[1997].[Q2].[4]}\n"
+                    + "Row #0: [Time].[Time].[1997].[Q4]\n"
+                    + "Row #1: [Time].[Time].[1997].[Q2].[6]\n"
+                    + "Row #2: [Time].[Time].[#null]\n"
                     // MSAS returns "" here.
                     + "" );
         }
@@ -220,14 +207,14 @@ class OpeningClosingPeriodFunDefTest {
         Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
             "ClosingPeriod([Time].[Month], [Time].[Time].CurrentMember)",
-            "{[Time]}" );
+            "{[Time].[Time]}" );
 
         String s1 = FunctionTest.allHiersExcept( "[Measures]" );
         assertExprDependsOn(connection,
             "(([Measures].[Store Sales],"
                 + " ClosingPeriod([Time].[Month], [Time].[Time].CurrentMember)) - "
                 + "([Measures].[Store Cost],"
-                + " ClosingPeriod([Time].[Month], [Time].[Time].CurrentMember)))",
+                + " ClosingPeriod([Time].[Time].[Month], [Time].[Time].CurrentMember)))",
             s1 );
 
         assertMemberExprDependsOn(connection,
@@ -238,22 +225,22 @@ class OpeningClosingPeriodFunDefTest {
 
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Quarter], [Time].[1997].[Q3])",
-            "[Time].[1997].[Q3]" );
+            "[Time].[Time].[1997].[Q3]" );
 
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Month], [Time].[1997].[Q3])",
-            "[Time].[1997].[Q3].[9]" );
+            "[Time].[Time].[1997].[Q3].[9]" );
 
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Quarter], [Time].[1997])",
-            "[Time].[1997].[Q4]" );
+            "[Time].[Time].[1997].[Q4]" );
 
         assertAxisReturns(connection, "Sales",
-            "ClosingPeriod([Time].[Year], [Time].[1997])", "[Time].[1997]" );
+            "ClosingPeriod([Time].[Year], [Time].[1997])", "[Time].[Time].[1997]" );
 
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Month], [Time].[1997])",
-            "[Time].[1997].[Q4].[12]" );
+            "[Time].[Time].[1997].[Q4].[12]" );
 
         // leaf member
 
@@ -265,17 +252,17 @@ class OpeningClosingPeriodFunDefTest {
 
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Month], [Time].[1997].[Q3].[8])",
-            "[Time].[1997].[Q3].[8]" );
+            "[Time].[Time].[1997].[Q3].[8]" );
 
         // non-Time dimension
 
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Product].[Product Name], [Product].[All Products].[Drink])",
-            "[Product].[Drink].[Dairy].[Dairy].[Milk].[Gorilla].[Gorilla Whole Milk]" );
+            "[Product].[Product].[Drink].[Dairy].[Dairy].[Milk].[Gorilla].[Gorilla Whole Milk]" );
 
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Product].[Product Family], [Product].[All Products].[Drink])",
-            "[Product].[Drink]" );
+            "[Product].[Product].[Drink]" );
 
         // 'all' level
 
@@ -287,13 +274,13 @@ class OpeningClosingPeriodFunDefTest {
         //getContext().withCube( "[Sales Ragged]" ).
         assertAxisReturns(connection, "[Sales Ragged]",
             "ClosingPeriod([Store].[Store City], [Store].[All Stores].[Israel])",
-            "[Store].[Israel].[Israel].[Tel Aviv]" );
+            "[Store].[Store].[Israel].[Israel].[Tel Aviv]" );
 
         // Default member is [Time].[1997].
         assertAxisReturns(connection, "Sales",
-            "ClosingPeriod([Time].[Month])", "[Time].[1997].[Q4].[12]" );
+            "ClosingPeriod([Time].[Month])", "[Time].[Time].[1997].[Q4].[12]" );
 
-        assertAxisReturns(connection, "Sales", "ClosingPeriod()", "[Time].[1997].[Q4]" );
+        assertAxisReturns(connection, "Sales", "ClosingPeriod()", "[Time].[Time].[1997].[Q4]" );
 
         //Context testContext = getContext().withCube( "[Sales Ragged]" );
         assertAxisReturns(connection, "[Sales Ragged]",
@@ -321,27 +308,27 @@ class OpeningClosingPeriodFunDefTest {
     void testOpeningPeriod(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "OpeningPeriod([Time].[Month], [Time].[1997].[Q3])",
-            "[Time].[1997].[Q3].[7]" );
+            "[Time].[Time].[1997].[Q3].[7]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "OpeningPeriod([Time].[Quarter], [Time].[1997])",
-            "[Time].[1997].[Q1]" );
+            "[Time].[Time].[1997].[Q1]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "OpeningPeriod([Time].[Year], [Time].[1997])", "[Time].[1997]" );
+            "OpeningPeriod([Time].[Year], [Time].[1997])", "[Time].[Time].[1997]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "OpeningPeriod([Time].[Month], [Time].[1997])",
-            "[Time].[1997].[Q1].[1]" );
+            "[Time].[Time].[1997].[Q1].[1]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "OpeningPeriod([Product].[Product Name], [Product].[All Products].[Drink])",
-            "[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Imported Beer]" );
+            "[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].[Good Imported Beer]" );
 
         //getTestContext().withCube( "[Sales Ragged]" ).
         assertAxisReturns(context.getConnectionWithDefaultRole(), "[Sales Ragged]",
             "OpeningPeriod([Store].[Store City], [Store].[All Stores].[Israel])",
-            "[Store].[Israel].[Israel].[Haifa]" );
+            "[Store].[Store].[Israel].[Israel].[Haifa]" );
 
         //getTestContext().withCube( "[Sales Ragged]" ).
         assertAxisReturns(context.getConnectionWithDefaultRole(), "[Sales Ragged]",
@@ -350,9 +337,9 @@ class OpeningClosingPeriodFunDefTest {
 
         // Default member is [Time].[1997].
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "OpeningPeriod([Time].[Month])", "[Time].[1997].[Q1].[1]" );
+            "OpeningPeriod([Time].[Month])", "[Time].[Time].[1997].[Q1].[1]" );
 
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "OpeningPeriod()", "[Time].[1997].[Q1]" );
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "OpeningPeriod()", "[Time].[Time].[1997].[Q1]" );
 
         //TestContext testContext = getTestContext().withCube( "[Sales Ragged]" );
         assertAxisThrows(context.getConnectionWithDefaultRole(),

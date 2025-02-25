@@ -93,7 +93,7 @@ class StrToMemberFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Product].[Food]}\n"
+                + "{[Product].[Product].[Food]}\n"
                 + "Axis #2:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Row #0: 191,940\n" );

@@ -46,7 +46,7 @@ public class AsAliasFunDefTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAs(Context context) {
 		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Filter([Customers].Children as t,\n" + "t.Current.Name = 'USA')",
-				"[Customers].[USA]");
+				"[Customers].[Customers].[USA]");
 	}
 
 	@ParameterizedTest
@@ -63,10 +63,10 @@ public class AsAliasFunDefTest {
 				Axis #0:
 				{}
 				Axis #1:
-				{[Time].[1997].[Q1].[2]}
-				{[Time].[1997].[Q2].[4]}
-				{[Time].[1997].[Q2].[6]}
-				{[Time].[1997].[Q3].[8]}
+				{[Time].[Time].[1997].[Q1].[2]}
+				{[Time].[Time].[1997].[Q2].[4]}
+				{[Time].[Time].[1997].[Q2].[6]}
+				{[Time].[Time].[1997].[Q3].[8]}
 				Row #0: 20,957
 				Row #0: 20,179
 				Row #0: 21,350
@@ -101,22 +101,22 @@ public class AsAliasFunDefTest {
 				Axis #1:
 				{[Measures].[Unit Sales]}
 				Axis #2:
-				{[Time].[1997].[Q1]}
-				{[Time].[1997].[Q2]}
-				{[Time].[1997].[Q3]}
-				{[Time].[1997].[Q4]}
-				{[Time].[1997].[Q1].[1]}
-				{[Time].[1997].[Q1].[2]}
-				{[Time].[1997].[Q1].[3]}
-				{[Time].[1997].[Q2].[4]}
-				{[Time].[1997].[Q2].[5]}
-				{[Time].[1997].[Q2].[6]}
-				{[Time].[1997].[Q3].[7]}
-				{[Time].[1997].[Q3].[8]}
-				{[Time].[1997].[Q3].[9]}
-				{[Time].[1997].[Q4].[10]}
-				{[Time].[1997].[Q4].[11]}
-				{[Time].[1997].[Q4].[12]}
+				{[Time].[Time].[1997].[Q1]}
+				{[Time].[Time].[1997].[Q2]}
+				{[Time].[Time].[1997].[Q3]}
+				{[Time].[Time].[1997].[Q4]}
+				{[Time].[Time].[1997].[Q1].[1]}
+				{[Time].[Time].[1997].[Q1].[2]}
+				{[Time].[Time].[1997].[Q1].[3]}
+				{[Time].[Time].[1997].[Q2].[4]}
+				{[Time].[Time].[1997].[Q2].[5]}
+				{[Time].[Time].[1997].[Q2].[6]}
+				{[Time].[Time].[1997].[Q3].[7]}
+				{[Time].[Time].[1997].[Q3].[8]}
+				{[Time].[Time].[1997].[Q3].[9]}
+				{[Time].[Time].[1997].[Q4].[10]}
+				{[Time].[Time].[1997].[Q4].[11]}
+				{[Time].[Time].[1997].[Q4].[12]}
 				Row #0: 66,291
 				Row #1: 62,610
 				Row #2: 65,848
@@ -151,19 +151,19 @@ public class AsAliasFunDefTest {
 				Axis #1:
 				{[Measures].[Unit Sales]}
 				Axis #2:
-				{[Time].[1997]}
-				{[Time].[1997].[Q1].[1]}
-				{[Time].[1997].[Q1].[2]}
-				{[Time].[1997].[Q1].[3]}
-				{[Time].[1997].[Q2].[4]}
-				{[Time].[1997].[Q2].[5]}
-				{[Time].[1997].[Q2].[6]}
-				{[Time].[1997].[Q3].[7]}
-				{[Time].[1997].[Q3].[8]}
-				{[Time].[1997].[Q3].[9]}
-				{[Time].[1997].[Q4].[10]}
-				{[Time].[1997].[Q4].[11]}
-				{[Time].[1997].[Q4].[12]}
+				{[Time].[Time].[1997]}
+				{[Time].[Time].[1997].[Q1].[1]}
+				{[Time].[Time].[1997].[Q1].[2]}
+				{[Time].[Time].[1997].[Q1].[3]}
+				{[Time].[Time].[1997].[Q2].[4]}
+				{[Time].[Time].[1997].[Q2].[5]}
+				{[Time].[Time].[1997].[Q2].[6]}
+				{[Time].[Time].[1997].[Q3].[7]}
+				{[Time].[Time].[1997].[Q3].[8]}
+				{[Time].[Time].[1997].[Q3].[9]}
+				{[Time].[Time].[1997].[Q4].[10]}
+				{[Time].[Time].[1997].[Q4].[11]}
+				{[Time].[Time].[1997].[Q4].[12]}
 				Row #0: 266,773
 				Row #1: 21,628
 				Row #2: 20,957
@@ -199,16 +199,16 @@ public class AsAliasFunDefTest {
 			Axis #0:
 			{}
 			Axis #1:
-			{[Measures].[Unit Sales], [Gender].[F]}
-			{[Measures].[Unit Sales], [Gender].[M]}
+			{[Measures].[Unit Sales], [Gender].[Gender].[F]}
+			{[Measures].[Unit Sales], [Gender].[Gender].[M]}
 			Axis #2:
-			{[Time].[1997].[Q1]}
-			{[Time].[1997].[Q2]}
-			{[Time].[1997].[Q3]}
-			{[Time].[1997].[Q4]}
-			{[Time].[1997].[Q1].[1]}
-			{[Time].[1997].[Q2].[6]}
-			{[Time].[1997].[Q4].[11]}
+			{[Time].[Time].[1997].[Q1]}
+			{[Time].[Time].[1997].[Q2]}
+			{[Time].[Time].[1997].[Q3]}
+			{[Time].[Time].[1997].[Q4]}
+			{[Time].[Time].[1997].[Q1].[1]}
+			{[Time].[Time].[1997].[Q2].[6]}
+			{[Time].[Time].[1997].[Q4].[11]}
 			Row #0: 32,910
 			Row #0: 33,381
 			Row #1: 30,992
@@ -315,15 +315,15 @@ public class AsAliasFunDefTest {
 				Axis #1:
 				{[Measures].[Unit Sales]}
 				Axis #2:
-				{[Time].[1997].[Q4].[10], [Gender].[All Gender]}
-				{[Time].[1997].[Q4].[10], [Gender].[F]}
-				{[Time].[1997].[Q4].[10], [Gender].[M]}
-				{[Time].[1997].[Q4].[11], [Gender].[All Gender]}
-				{[Time].[1997].[Q4].[11], [Gender].[F]}
-				{[Time].[1997].[Q4].[11], [Gender].[M]}
-				{[Time].[1997].[Q4].[12], [Gender].[All Gender]}
-				{[Time].[1997].[Q4].[12], [Gender].[F]}
-				{[Time].[1997].[Q4].[12], [Gender].[M]}
+				{[Time].[Time].[1997].[Q4].[10], [Gender].[Gender].[All Gender]}
+				{[Time].[Time].[1997].[Q4].[10], [Gender].[Gender].[F]}
+				{[Time].[Time].[1997].[Q4].[10], [Gender].[Gender].[M]}
+				{[Time].[Time].[1997].[Q4].[11], [Gender].[Gender].[All Gender]}
+				{[Time].[Time].[1997].[Q4].[11], [Gender].[Gender].[F]}
+				{[Time].[Time].[1997].[Q4].[11], [Gender].[Gender].[M]}
+				{[Time].[Time].[1997].[Q4].[12], [Gender].[Gender].[All Gender]}
+				{[Time].[Time].[1997].[Q4].[12], [Gender].[Gender].[F]}
+				{[Time].[Time].[1997].[Q4].[12], [Gender].[Gender].[M]}
 				Row #0: 19,958
 				Row #1: 9,506
 				Row #2: 10,452
@@ -349,9 +349,9 @@ public class AsAliasFunDefTest {
 				Axis #1:
 				{[Measures].[Unit Sales]}
 				Axis #2:
-				{[Time].[1997].[Q4].[10], [Gender].[All Gender]}
-				{[Time].[1997].[Q4].[11], [Gender].[All Gender]}
-				{[Time].[1997].[Q4].[12], [Gender].[All Gender]}
+				{[Time].[Time].[1997].[Q4].[10], [Gender].[Gender].[All Gender]}
+				{[Time].[Time].[1997].[Q4].[11], [Gender].[Gender].[All Gender]}
+				{[Time].[Time].[1997].[Q4].[12], [Gender].[Gender].[All Gender]}
 				Row #0: 19,958
 				Row #1: 25,270
 				Row #2: 26,796
@@ -377,24 +377,24 @@ public class AsAliasFunDefTest {
 				Axis #1:
 				{[Measures].[Unit Sales]}
 				Axis #2:
-				{[Time].[1997].[Q4].[10], [Gender].[All Gender]}
-				{[Time].[1997].[Q4].[10], [Gender].[F]}
-				{[Time].[1997].[Q4].[10], [Gender].[M]}
-				{[Time].[1997].[Q4].[11], [Gender].[All Gender]}
-				{[Time].[1997].[Q4].[11], [Gender].[F]}
-				{[Time].[1997].[Q4].[11], [Gender].[M]}
-				{[Time].[1997].[Q4].[12], [Gender].[All Gender]}
-				{[Time].[1997].[Q4].[12], [Gender].[F]}
-				{[Time].[1997].[Q4].[12], [Gender].[M]}
-				{[Time].[1997].[Q4].[10], [Gender].[All Gender]}
-				{[Time].[1997].[Q4].[10], [Gender].[F]}
-				{[Time].[1997].[Q4].[10], [Gender].[M]}
-				{[Time].[1997].[Q4].[11], [Gender].[All Gender]}
-				{[Time].[1997].[Q4].[11], [Gender].[F]}
-				{[Time].[1997].[Q4].[11], [Gender].[M]}
-				{[Time].[1997].[Q4].[12], [Gender].[All Gender]}
-				{[Time].[1997].[Q4].[12], [Gender].[F]}
-				{[Time].[1997].[Q4].[12], [Gender].[M]}
+				{[Time].[Time].[1997].[Q4].[10], [Gender].[Gender].[All Gender]}
+				{[Time].[Time].[1997].[Q4].[10], [Gender].[Gender].[F]}
+				{[Time].[Time].[1997].[Q4].[10], [Gender].[Gender].[M]}
+				{[Time].[Time].[1997].[Q4].[11], [Gender].[Gender].[All Gender]}
+				{[Time].[Time].[1997].[Q4].[11], [Gender].[Gender].[F]}
+				{[Time].[Time].[1997].[Q4].[11], [Gender].[Gender].[M]}
+				{[Time].[Time].[1997].[Q4].[12], [Gender].[Gender].[All Gender]}
+				{[Time].[Time].[1997].[Q4].[12], [Gender].[Gender].[F]}
+				{[Time].[Time].[1997].[Q4].[12], [Gender].[Gender].[M]}
+				{[Time].[Time].[1997].[Q4].[10], [Gender].[Gender].[All Gender]}
+				{[Time].[Time].[1997].[Q4].[10], [Gender].[Gender].[F]}
+				{[Time].[Time].[1997].[Q4].[10], [Gender].[Gender].[M]}
+				{[Time].[Time].[1997].[Q4].[11], [Gender].[Gender].[All Gender]}
+				{[Time].[Time].[1997].[Q4].[11], [Gender].[Gender].[F]}
+				{[Time].[Time].[1997].[Q4].[11], [Gender].[Gender].[M]}
+				{[Time].[Time].[1997].[Q4].[12], [Gender].[Gender].[All Gender]}
+				{[Time].[Time].[1997].[Q4].[12], [Gender].[Gender].[F]}
+				{[Time].[Time].[1997].[Q4].[12], [Gender].[Gender].[M]}
 				Row #0: 19,958
 				Row #1: 9,506
 				Row #2: 10,452

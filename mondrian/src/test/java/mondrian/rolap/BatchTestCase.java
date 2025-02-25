@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertEqualsVerbose;
 import static org.opencube.junit5.TestUtil.getDialect;
-import static org.opencube.junit5.TestUtil.upgradeQuery;
 import static org.opencube.junit5.TestUtil.withSchema;
 
 import java.io.PrintWriter;
@@ -471,8 +470,6 @@ public class BatchTestCase{
         boolean bypassSchemaCache,
         boolean clearCache)
     {
-
-        mdxQuery = upgradeQuery(mdxQuery);
 
         // Run the test once for each pattern in this dialect.
         // (We could optimize and run it once, collecting multiple queries, and

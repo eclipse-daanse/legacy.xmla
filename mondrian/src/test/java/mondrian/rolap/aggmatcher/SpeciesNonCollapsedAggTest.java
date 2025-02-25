@@ -117,16 +117,16 @@ class SpeciesNonCollapsedAggTest extends AggTableTestCase {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT \n"
             + " { [Measures].[Population] } ON COLUMNS,\n"
-            + " { [Animal.Animals].[Family].Members } ON ROWS\n"
+            + " { [Animal].[Animals].[Family].Members } ON ROWS\n"
             + "FROM [Test]\n",
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[Population]}\n"
             + "Axis #2:\n"
-            + "{[Animal.Animals].[Loricariidae]}\n"
-            + "{[Animal.Animals].[Cichlidae]}\n"
-            + "{[Animal.Animals].[Cyprinidae]}\n"
+            + "{[Animal].[Animals].[Loricariidae]}\n"
+            + "{[Animal].[Animals].[Cichlidae]}\n"
+            + "{[Animal].[Animals].[Cyprinidae]}\n"
             + "Row #0: 666\n"
             + "Row #1: 579\n"
             + "Row #2: 479\n");

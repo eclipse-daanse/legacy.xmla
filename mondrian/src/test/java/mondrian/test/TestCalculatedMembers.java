@@ -74,12 +74,12 @@ import mondrian.rolap.SchemaModifiers;
             + "from [HR]\n"
             + "where [Pay Type].[Hourly]",
             "Axis #0:\n"
-            + "{[Pay Type].[Hourly]}\n"
+            + "{[Pay Type].[Pay Type].[Hourly]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Avg Salary]}\n"
             + "{[Measures].[Org Salary]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997], [Store].[All Stores], [Employees].[All Employees]}\n"
+            + "{[Time].[Time].[1997], [Store].[Store].[All Stores], [Employees].[Employees].[All Employees]}\n"
             + "Row #0: $40.31\n"
             + "Row #0: $11,406.75\n");
     }
@@ -121,9 +121,9 @@ import mondrian.rolap.SchemaModifiers;
             + "{[Measures].[Profit]}\n"
             + "{[Measures].[Profit Change]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997].[Q2].[4]}\n"
-            + "{[Time].[1997].[Q2].[5]}\n"
-            + "{[Time].[1997].[Q2].[6]}\n"
+            + "{[Time].[Time].[1997].[Q2].[4]}\n"
+            + "{[Time].[Time].[1997].[Q2].[5]}\n"
+            + "{[Time].[Time].[1997].[Q2].[6]}\n"
             + "Row #0: $25,766.55\n"
             + "Row #0: -$4,289.24\n"
             + "Row #1: $26,673.73\n"
@@ -149,7 +149,7 @@ import mondrian.rolap.SchemaModifiers;
             + "Axis #1:\n"
             + "{[Measures].[Profit]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997].[Q2]}\n"
+            + "{[Time].[Time].[1997].[Q2]}\n"
             + "Row #0: 79,702\n");
 
         // Note that the Profit measure defined against the cube has
@@ -163,17 +163,17 @@ import mondrian.rolap.SchemaModifiers;
             + "Axis #1:\n"
             + "{[Measures].[Profit]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997].[Q2]}\n"
+            + "{[Time].[Time].[1997].[Q2]}\n"
             + "Row #0: $79,702.05\n");
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
      void testQueryCalcMemberOverridesShallowerStoredMember(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            // functionality requires new name resolver
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    // functionality requires new name resolver
+        //    return;
+        //}
         // Does "[Time].[Time2].[1998]" resolve to
         // the stored member "[Time].[Time2].[1998]"
         // or the calculated member "[Time].[Time2].[1997].[1998]"?
@@ -181,7 +181,7 @@ import mondrian.rolap.SchemaModifiers;
         // good a match.
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Time].[Weekly].[1998].[1997] as 4\n"
-            + " select [Time].[Weekly].[1997] on 0\n"
+            + " select [Time].[Weekly].[1998].[1997] on 0\n"
             + " from [Sales]",
             "Axis #0:\n"
             + "{}\n"
@@ -207,10 +207,10 @@ import mondrian.rolap.SchemaModifiers;
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
      void testEarlierCalcMember(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            // functionality requires new name resolver
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    // functionality requires new name resolver
+        //    return;
+        //}
         // SSAS returns 2
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with\n"
@@ -223,7 +223,7 @@ import mondrian.rolap.SchemaModifiers;
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time].[1997].[Q1].[1998]}\n"
+            + "{[Time].[Time].[1997].[Q1].[1998]}\n"
             + "Row #0: 2\n");
     }
 
@@ -235,16 +235,16 @@ import mondrian.rolap.SchemaModifiers;
         executeQuery(
             "with\n"
             + "member [Measures].[Total Store Sales by Product Name] as\n"
-            + "  'Sum([Product].[Product Name].members, [Measures].[Store Sales])'\n"
+            + "  'Sum([Product].[Product].[Product Name].members, [Measures].[Store Sales])'\n"
             + "\n"
             + "member [Measures].[Average Store Sales by Product Name] as\n"
-            + "  'Avg([Product].[Product Name].allmembers, [Measures].[Store Sales])'\n"
+            + "  'Avg([Product].[Product].[Product Name].allmembers, [Measures].[Store Sales])'\n"
             + "\n"
             + "member [Measures].[Number of Product Name members] as\n"
-            + "  'Count([Product].[Product Name].members)'\n"
+            + "  'Count([Product].[Product].[Product Name].members)'\n"
             + "\n"
             + "member [Measures].[Standard Deviation of Store Sales for Product Name] as\n"
-            + "  'Stddev([Product].[Product Name].members, [Measures].[Store Sales])'\n"
+            + "  'Stddev([Product].[Product].[Product Name].members, [Measures].[Store Sales])'\n"
             + "\n"
             + "member [Measures].[Variance between Store Sales and Store Cost] as\n"
             + "  '[Measures].[Store Sales] - [Measures].[Store Cost]'\n"
@@ -262,52 +262,52 @@ import mondrian.rolap.SchemaModifiers;
             + ", format_string='Percent'\n"
             + "\n"
             + "member [Measures].[Growth of Store Sales since previous period] as\n"
-            + "  '[Measures].[Store Sales] - ([Measures].[Store Sales], ParallelPeriod([Time].CurrentMember.level, 1))'\n"
+            + "  '[Measures].[Store Sales] - ([Measures].[Store Sales], ParallelPeriod([Time].[Time].CurrentMember.level, 1))'\n"
             + "\n"
             + "member [Measures].[% Growth of Store Sales since previous period] as\n"
-            + "  'iif(([Measures].[Store Sales], ParallelPeriod([Time].CurrentMember.level, 1)) = 0, 1, ([Measures].[Store Sales] - ([Measures].[Store Sales], ParallelPeriod([Time].CurrentMember.level, 1))) / ([Measures].[Store Sales], ParallelPeriod([Time].CurrentMember.level, 1)))'\n"
+            + "  'iif(([Measures].[Store Sales], ParallelPeriod([Time].[Time].CurrentMember.level, 1)) = 0, 1, ([Measures].[Store Sales] - ([Measures].[Store Sales], ParallelPeriod([Time].[Time].CurrentMember.level, 1))) / ([Measures].[Store Sales], ParallelPeriod([Time].[Time].CurrentMember.level, 1)))'\n"
             + ", format_string='Percent'\n"
             + "\n"
             + "member [Measures].[Growth of Store Sales since previous year] as\n"
-            + "  '[Measures].[Store Sales] - ([Measures].[Store Sales], ParallelPeriod([Time].[Year], 1))'\n"
+            + "  '[Measures].[Store Sales] - ([Measures].[Store Sales], ParallelPeriod([Time].[Time].[Year], 1))'\n"
             + "\n"
             + "member [Measures].[% Growth of Store Sales since previous year] as\n"
-            + "  'iif(([Measures].[Store Sales], ParallelPeriod([Time].[Year], 1)) = 0, 1, ([Measures].[Store Sales] - ([Measures].[Store Sales], ParallelPeriod([Time].[Year], 1))) / ([Measures].[Store Sales], ParallelPeriod([Time].[Year], 1)))'\n"
+            + "  'iif(([Measures].[Store Sales], ParallelPeriod([Time].[Time].[Year], 1)) = 0, 1, ([Measures].[Store Sales] - ([Measures].[Store Sales], ParallelPeriod([Time].[Time].[Year], 1))) / ([Measures].[Store Sales], ParallelPeriod([Time].[Time].[Year], 1)))'\n"
             + ", format_string='Percent'\n"
             + "\n"
             + "member [Measures].[Store Sales as % of parent Store] as\n"
-            + "  'iif(([Measures].[Store Sales], [Store].CurrentMember.Parent) = 0, 1, [Measures].[Store Sales] / ([Measures].[Store Sales], [Store].CurrentMember.Parent))'\n"
+            + "  'iif(([Measures].[Store Sales], [Store].[Store].CurrentMember.Parent) = 0, 1, [Measures].[Store Sales] / ([Measures].[Store Sales], [Store].CurrentMember.Parent))'\n"
             + ", format_string='Percent'\n"
             + "\n"
             + "member [Measures].[Store Sales as % of all Store] as\n"
-            + "  'iif(([Measures].[Store Sales], [Store].Members.Item(0)) = 0, 1, [Measures].[Store Sales] / ([Measures].[Store Sales], [Store].Members.Item(0)))'\n"
+            + "  'iif(([Measures].[Store Sales], [Store].[Store].Members.Item(0)) = 0, 1, [Measures].[Store Sales] / ([Measures].[Store Sales], [Store].[Store].Members.Item(0)))'\n"
             + ", format_string='Percent'\n"
             + "\n"
             + "member [Measures].[Total Store Sales, period to date] as\n"
-            + " 'sum(PeriodsToDate([Time].CurrentMember.Parent.Level), [Measures].[Store Sales])'\n"
+            + " 'sum(PeriodsToDate([Time].[Time].CurrentMember.Parent.Level), [Measures].[Store Sales])'\n"
             + "\n"
             + "member [Measures].[Total Store Sales, Quarter to date] as\n"
-            + " 'sum(PeriodsToDate([Time].[Quarter]), [Measures].[Store Sales])'\n"
+            + " 'sum(PeriodsToDate([Time].[Time].[Quarter]), [Measures].[Store Sales])'\n"
             + "\n"
             + "member [Measures].[Average Store Sales, period to date] as\n"
-            + " 'avg(PeriodsToDate([Time].CurrentMember.Parent.Level), [Measures].[Store Sales])'\n"
+            + " 'avg(PeriodsToDate([Time].[Time].CurrentMember.Parent.Level), [Measures].[Store Sales])'\n"
             + "\n"
             + "member [Measures].[Average Store Sales, Quarter to date] as\n"
-            + " 'avg(PeriodsToDate([Time].[Quarter]), [Measures].[Store Sales])'\n"
+            + " 'avg(PeriodsToDate([Time].[Time].[Quarter]), [Measures].[Store Sales])'\n"
             + "\n"
             + "member [Measures].[Rolling Total of Store Sales over previous 3 periods] as\n"
-            + " 'sum([Time].CurrentMember.Lag(2) : [Time].CurrentMember, [Measures].[Store Sales])'\n"
+            + " 'sum([Time].[Time].CurrentMember.Lag(2) : [Time].[Time].CurrentMember, [Measures].[Store Sales])'\n"
             + "\n"
             + "member [Measures].[Rolling Average of Store Sales over previous 3 periods] as\n"
-            + " 'avg([Time].CurrentMember.Lag(2) : [Time].CurrentMember, [Measures].[Store Sales])'\n"
+            + " 'avg([Time].[Time].CurrentMember.Lag(2) : [Time].[Time].CurrentMember, [Measures].[Store Sales])'\n"
             + "\n"
             + "select\n"
             + " CrossJoin(\n"
-            + "  {[Time].[1997], [Time].[1997].[Q2]},\n"
-            + "  {[Store].[All Stores], \n"
-            + "   [Store].[USA],\n"
-            + "   [Store].[USA].[CA],\n"
-            + "   [Store].[USA].[CA].[San Francisco]}) on columns,\n"
+            + "  {[Time].[Time].[1997], [Time].[Time].[1997].[Q2]},\n"
+            + "  {[Store].[Store].[All Stores], \n"
+            + "   [Store].[Store].[USA],\n"
+            + "   [Store].[Store].[USA].[CA],\n"
+            + "   [Store].[Store].[USA].[CA].[San Francisco]}) on columns,\n"
             + " AddCalculatedMembers([Measures].members) on rows\n"
             + " from Sales", context.getConnectionWithDefaultRole());
 
@@ -315,25 +315,25 @@ import mondrian.rolap.SchemaModifiers;
         Result result = executeQuery(
             "with\n"
             + "member [Measures].[Total Store Sales, Quarter to date] as\n"
-            + " 'sum(PeriodsToDate([Time].[Quarter]), [Measures].[Store Sales])'\n"
+            + " 'sum(PeriodsToDate([Time].[Time].[Quarter]), [Measures].[Store Sales])'\n"
             + "\n"
             + "member [Measures].[Average Store Sales, period to date] as\n"
-            + " 'avg(PeriodsToDate([Time].CurrentMember.Parent.Level), [Measures].[Store Sales])'\n"
+            + " 'avg(PeriodsToDate([Time].[Time].CurrentMember.Parent.Level), [Measures].[Store Sales])'\n"
             + "\n"
             + "member [Measures].[Average Store Sales, Quarter to date] as\n"
-            + " 'avg(PeriodsToDate([Time].[Quarter]), [Measures].[Store Sales])'\n"
+            + " 'avg(PeriodsToDate([Time].[Time].[Quarter]), [Measures].[Store Sales])'\n"
             + "\n"
             + "member [Measures].[Rolling Total of Store Sales over previous 3 periods] as\n"
-            + " 'sum([Time].CurrentMember.Lag(2) : [Time].CurrentMember, [Measures].[Store Sales])'\n"
+            + " 'sum([Time].[Time].CurrentMember.Lag(2) : [Time].[Time].CurrentMember, [Measures].[Store Sales])'\n"
             + "\n"
             + "member [Measures].[Rolling Average of Store Sales over previous 3 periods] as\n"
-            + " 'avg([Time].CurrentMember.Lag(2) : [Time].CurrentMember, [Measures].[Store Sales])'\n"
+            + " 'avg([Time].[Time].CurrentMember.Lag(2) : [Time].[Time].CurrentMember, [Measures].[Store Sales])'\n"
             + "\n"
             + "select\n"
             + " CrossJoin(\n"
-            + "  {[Store].[USA].[CA],\n"
-            + "   [Store].[USA].[CA].[San Francisco]},\n"
-            + "  [Time].[Month].members) on columns,\n"
+            + "  {[Store].[Store].[USA].[CA],\n"
+            + "   [Store].[Store].[USA].[CA].[San Francisco]},\n"
+            + "  [Time].[Time].[Month].members) on columns,\n"
             + " AddCalculatedMembers([Measures].members) on rows\n"
             + " from Sales", context.getConnectionWithDefaultRole());
         assertNotNull(result);
@@ -376,7 +376,7 @@ import mondrian.rolap.SchemaModifiers;
         // Level cannot be converted.
         assertExprThrows(context, "Sales",
             "[Customers].[Country]",
-            "Member expression '[Customers].[Country]' must not be a set");
+            "Member expression '[Customers].[Customers].[Country]' must not be a set");
 
         // Hierarchy can be converted.
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Customers].[Customers]", "266,773");
@@ -384,12 +384,12 @@ import mondrian.rolap.SchemaModifiers;
         // Dimension can be converted, if unambiguous.
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Customers]", "266,773");
 
-        if (SystemWideProperties.instance().SsasCompatibleNaming) {
+        //if (SystemWideProperties.instance().SsasCompatibleNaming) {
+        if (true) {
             // SSAS 2005 does not have default hierarchies.
             assertExprThrows(context, "Sales",
                 "[Time]",
-                "The 'Time' dimension contains more than one hierarchy, "
-                + "therefore the hierarchy must be explicitly specified.");
+                "Could not Calculate the default hierarchy of the given dimension 'Time'. It may contains more than one hierarchy. Specify the hierarchy explicitly.");
         } else {
             // Default to first hierarchy.
             assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Time]", "266,773");
@@ -409,16 +409,16 @@ import mondrian.rolap.SchemaModifiers;
         // Set of tuples cannot be converted.
         assertExprThrows(context, "Sales",
             "{([Customers].[USA], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer])}",
-            "Member expression '{([Customers].[USA], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer])}' must not be a set");
+            "Member expression '{([Customers].[Customers].[USA], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer])}' must not be a set");
         assertExprThrows(context, "Sales",
             "{([Customers].[USA], [Product].[Food]),"
             + "([Customers].[USA], [Product].[Drink])}",
-            "{([Customers].[USA], [Product].[Food]), ([Customers].[USA], [Product].[Drink])}' must not be a set");
+            "{([Customers].[Customers].[USA], [Product].[Product].[Food]), ([Customers].[Customers].[USA], [Product].[Product].[Drink])}' must not be a set");
 
         // Sets cannot be converted.
         assertExprThrows(context, "Sales",
             "{[Product].[Food]}",
-            "Member expression '{[Product].[Food]}' must not be a set");
+            "Member expression '{[Product].[Product].[Food]}' must not be a set");
     }
 
     /**
@@ -456,15 +456,15 @@ import mondrian.rolap.SchemaModifiers;
             + " [Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth].[Portsmouth Imported Beer],\n"
             + " [Measures].[Foo])",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q4].[12], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth].[Portsmouth Imported Beer], [Measures].[Foo]}\n"
+            + "{[Time].[Time].[1997].[Q4].[12], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth].[Portsmouth Imported Beer], [Measures].[Foo]}\n"
             + "Axis #1:\n"
-            + "{[Store].[USA].[WA].[Bellingham]}\n"
-            + "{[Store].[USA].[WA].[Bremerton]}\n"
-            + "{[Store].[USA].[WA].[Seattle]}\n"
-            + "{[Store].[USA].[WA].[Spokane]}\n"
-            + "{[Store].[USA].[WA].[Tacoma]}\n"
-            + "{[Store].[USA].[WA].[Walla Walla]}\n"
-            + "{[Store].[USA].[WA].[Yakima]}\n"
+            + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
+            + "{[Store].[Store].[USA].[WA].[Bremerton]}\n"
+            + "{[Store].[Store].[USA].[WA].[Seattle]}\n"
+            + "{[Store].[Store].[USA].[WA].[Spokane]}\n"
+            + "{[Store].[Store].[USA].[WA].[Tacoma]}\n"
+            + "{[Store].[Store].[USA].[WA].[Walla Walla]}\n"
+            + "{[Store].[Store].[USA].[WA].[Yakima]}\n"
             + "Row #0: Infinity\n"
             + "Row #0: Infinity\n"
             + "Row #0: 0.5\n"
@@ -524,8 +524,8 @@ import mondrian.rolap.SchemaModifiers;
             + "Axis #1:\n"
             + "{[Measures].[With a [bracket]] inside it]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[F]}\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[F]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Row #0: $1,315,580.00\n"
             + "Row #1: $1,352,150.00\n");
     }
@@ -654,9 +654,9 @@ import mondrian.rolap.SchemaModifiers;
             + "Axis #1:\n"
             + "{[Measures].[Colored Profit]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink]}\n"
-            + "{[Product].[Food]}\n"
-            + "{[Product].[Non-Consumable]}\n"
+            + "{[Product].[Product].[Drink]}\n"
+            + "{[Product].[Product].[Food]}\n"
+            + "{[Product].[Product].[Non-Consumable]}\n"
             + "Row #0: |$29,358.98|style=green\n"
             + "Row #1: |$245,764.87|style=green\n"
             + "Row #2: |$64,487.05|style=green\n");
@@ -673,9 +673,9 @@ import mondrian.rolap.SchemaModifiers;
             + "Axis #1:\n"
             + "{[Measures].[Colored Profit]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink]}\n"
-            + "{[Product].[Food]}\n"
-            + "{[Product].[Non-Consumable]}\n"
+            + "{[Product].[Product].[Drink]}\n"
+            + "{[Product].[Product].[Food]}\n"
+            + "{[Product].[Product].[Non-Consumable]}\n"
             + "Row #0: |$29,358.98|style=green\n"
             + "Row #1: |$245,764.87|style=green\n"
             + "Row #2: |$64,487.05|style=green\n");
@@ -752,8 +752,8 @@ import mondrian.rolap.SchemaModifiers;
             + "{[Measures].[Dq in apos]}\n"
             + "{[Measures].[Colored Profit]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[F]}\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[F]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Row #0: an 'apos' in dq\n"
             + "Row #0: a \"dq\" in dq\n"
             + "Row #0: an 'apos' in apos\n"
@@ -778,9 +778,9 @@ import mondrian.rolap.SchemaModifiers;
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #1:\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink]}\n"
-            + "{[Product].[Food]}\n"
-            + "{[Product].[Non-Consumable]}\n");
+            + "{[Product].[Product].[Drink]}\n"
+            + "{[Product].[Product].[Food]}\n"
+            + "{[Product].[Product].[Non-Consumable]}\n");
     }
 
     @ParameterizedTest
@@ -797,7 +797,7 @@ import mondrian.rolap.SchemaModifiers;
             + "Axis #1:\n"
             + "{[Measures].[Store Sqft]}\n"
             + "Axis #2:\n"
-            + "{[Has coffee bar].[Maybe]}\n"
+            + "{[Has coffee bar].[Has coffee bar].[Maybe]}\n"
             + "Row #0: 1,143,192\n");
      }
 
@@ -830,11 +830,11 @@ import mondrian.rolap.SchemaModifiers;
             + "{[Measures].[Store Sales]}\n"
             + "{[Measures].[Profit]}\n"
             + "Axis #2:\n"
-            + "{[Customers].[USA].[CA]}\n"
-            + "{[Customers].[USA].[OR]}\n"
-            + "{[Customers].[USA].[WA]}\n"
-            + "{[Customers].[Highly Profitable States]}\n"
-            + "{[Customers].[Plain States]}\n"
+            + "{[Customers].[Customers].[USA].[CA]}\n"
+            + "{[Customers].[Customers].[USA].[OR]}\n"
+            + "{[Customers].[Customers].[USA].[WA]}\n"
+            + "{[Customers].[Customers].[Highly Profitable States]}\n"
+            + "{[Customers].[Customers].[Plain States]}\n"
             + "Row #0: 159,167.84\n"
             + "Row #0: $95,637.41\n"
             + "Row #1: 142,277.07\n"
@@ -880,10 +880,10 @@ import mondrian.rolap.SchemaModifiers;
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Foo], [Gender].[M]}\n"
-            + "{[Product].[Foo], [Gender].[Bar]}\n"
-            + "{[Product].[Drink], [Gender].[M]}\n"
-            + "{[Product].[Drink], [Gender].[Bar]}\n"
+            + "{[Product].[Product].[Foo], [Gender].[Gender].[M]}\n"
+            + "{[Product].[Product].[Foo], [Gender].[Gender].[Bar]}\n"
+            + "{[Product].[Product].[Drink], [Gender].[Gender].[M]}\n"
+            + "{[Product].[Product].[Drink], [Gender].[Gender].[Bar]}\n"
             + "Row #0: 1\n"
             + "Row #1: 2\n"
             + "Row #2: 12,395\n"
@@ -908,9 +908,9 @@ import mondrian.rolap.SchemaModifiers;
             + "{[Measures].[Unit Sales]}\n"
             + "{[Measures].[Foo]}\n"
             + "Axis #2:\n"
-            + "{[Store].[Canada]}\n"
-            + "{[Store].[Mexico]}\n"
-            + "{[Store].[USA]}\n"
+            + "{[Store].[Store].[Canada]}\n"
+            + "{[Store].[Store].[Mexico]}\n"
+            + "{[Store].[Store].[USA]}\n"
             + "Row #0: \n"
             + "Row #0: foo1.2345E-8bar\n"
             + "Row #1: \n"
@@ -962,8 +962,8 @@ import mondrian.rolap.SchemaModifiers;
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[USA]}\n"
-            + "{[Store].[CA or OR]}\n"
+            + "{[Store].[Store].[USA]}\n"
+            + "{[Store].[Store].[CA or OR]}\n"
             + "Row #0: 266,773\n"
             + "Row #0: 142,407\n");
     }
@@ -999,9 +999,9 @@ import mondrian.rolap.SchemaModifiers;
             + "{[Measures].[Unit Sales]}\n"
             + "{[Measures].[Profit Formatted]}\n"
             + "Axis #2:\n"
-            + "{[Store].[Canada]}\n"
-            + "{[Store].[Mexico]}\n"
-            + "{[Store].[USA]}\n"
+            + "{[Store].[Store].[Canada]}\n"
+            + "{[Store].[Store].[Mexico]}\n"
+            + "{[Store].[Store].[USA]}\n"
             + "Row #0: \n"
             + "Row #0: foo1.2345E-8bar\n"
             + "Row #1: \n"
@@ -1114,12 +1114,12 @@ import mondrian.rolap.SchemaModifiers;
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Product].[Food]}\n"
-            + "{[Product].[Top Product Total]}\n"
+            + "{[Product].[Product].[Food]}\n"
+            + "{[Product].[Product].[Top Product Total]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[All Gender]}\n"
-            + "{[Gender].[F]}\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[All Gender]}\n"
+            + "{[Gender].[Gender].[F]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Row #0: 191,940\n"
             + "Row #0: 266,773\n"
             + "Row #1: 94,814\n"
@@ -1162,10 +1162,10 @@ import mondrian.rolap.SchemaModifiers;
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Education Level].[*CTX_MEMBER_SEL~SUM], [Product].[*CTX_MEMBER_SEL~SUM]}\n"
-            + "{[Education Level].[Bachelors Degree], [Product].[Food]}\n"
-            + "{[Education Level].[Bachelors Degree], [Product].[Non-Consumable]}\n"
-            + "{[Education Level].[Graduate Degree], [Product].[Food]}\n"
+            + "{[Education Level].[Education Level].[*CTX_MEMBER_SEL~SUM], [Product].[Product].[*CTX_MEMBER_SEL~SUM]}\n"
+            + "{[Education Level].[Education Level].[Bachelors Degree], [Product].[Product].[Food]}\n"
+            + "{[Education Level].[Education Level].[Bachelors Degree], [Product].[Product].[Non-Consumable]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree], [Product].[Product].[Food]}\n"
             + "Row #0: 73,671\n"
             + "Row #1: 49,365\n"
             + "Row #2: 13,051\n"
@@ -1205,10 +1205,10 @@ import mondrian.rolap.SchemaModifiers;
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Education Level].[*CTX_MEMBER_SEL~SUM], [Product].[*CTX_MEMBER_SEL~SUM]}\n"
-            + "{[Education Level].[Bachelors Degree], [Product].[Food]}\n"
-            + "{[Education Level].[Bachelors Degree], [Product].[Non-Consumable]}\n"
-            + "{[Education Level].[Graduate Degree], [Product].[Food]}\n"
+            + "{[Education Level].[Education Level].[*CTX_MEMBER_SEL~SUM], [Product].[Product].[*CTX_MEMBER_SEL~SUM]}\n"
+            + "{[Education Level].[Education Level].[Bachelors Degree], [Product].[Product].[Food]}\n"
+            + "{[Education Level].[Education Level].[Bachelors Degree], [Product].[Product].[Non-Consumable]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree], [Product].[Product].[Food]}\n"
             + "Row #0: 76,661\n"
             + "Row #1: 49,365\n"
             + "Row #2: 13,051\n"
@@ -1237,7 +1237,7 @@ import mondrian.rolap.SchemaModifiers;
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Test]}\n"
+            + "{[Product].[Product].[Test]}\n"
             + "Row #0: 191,940\n");
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1250,7 +1250,7 @@ import mondrian.rolap.SchemaModifiers;
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Food].[Test]}\n"
+            + "{[Product].[Product].[Food].[Test]}\n"
             + "Row #0: 191,940\n");
     }
 
@@ -1356,15 +1356,15 @@ import mondrian.rolap.SchemaModifiers;
             + "from [Sales]\n"
             + "where ([Product].[Top], [Time].[1997].[Q3])",
             "Axis #0:\n"
-            + "{[Product].[Top], [Time].[1997].[Q3]}\n"
+            + "{[Product].[Product].[Top], [Time].[Time].[1997].[Q3]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "{[Measures].[Price per Unit]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[F], [Marital Status].[M]}\n"
-            + "{[Gender].[F], [Marital Status].[S]}\n"
-            + "{[Gender].[M], [Marital Status].[M]}\n"
-            + "{[Gender].[M], [Marital Status].[S]}\n"
+            + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+            + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S]}\n"
+            + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M]}\n"
+            + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}\n"
             + "Row #0: 779\n"
             + "Row #0: 2.40\n"
             + "Row #1: 811\n"
@@ -1391,17 +1391,17 @@ import mondrian.rolap.SchemaModifiers;
             + "from [Sales]\n"
             + "where [Top Products] * [Time].[1997].[Q3]",
             "Axis #0:\n"
-            + "{[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos], [Time].[1997].[Q3]}\n"
-            + "{[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Tell Tale], [Time].[1997].[Q3]}\n"
-            + "{[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Ebony], [Time].[1997].[Q3]}\n"
+            + "{[Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos], [Time].[Time].[1997].[Q3]}\n"
+            + "{[Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Tell Tale], [Time].[Time].[1997].[Q3]}\n"
+            + "{[Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Ebony], [Time].[Time].[1997].[Q3]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "{[Measures].[Price per Unit]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[F], [Marital Status].[M]}\n"
-            + "{[Gender].[F], [Marital Status].[S]}\n"
-            + "{[Gender].[M], [Marital Status].[M]}\n"
-            + "{[Gender].[M], [Marital Status].[S]}\n"
+            + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+            + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S]}\n"
+            + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M]}\n"
+            + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}\n"
             + "Row #0: 779\n"
             + "Row #0: 2.40\n"
             + "Row #1: 811\n"
@@ -1425,20 +1425,20 @@ import mondrian.rolap.SchemaModifiers;
             + "from [Sales]\n"
             + "where [Time].[1997].[Q3]",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q3]}\n"
+            + "{[Time].[Time].[1997].[Q3]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Canada].[BC].[Burnaby]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Canada].[BC].[Cliffside]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Canada].[BC].[Haney]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Canada].[BC].[Ladner]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Canada].[BC].[Langford]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Canada].[BC].[Langley]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Canada].[BC].[Metchosin]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Canada].[BC].[N. Vancouver]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Canada].[BC].[Newton]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Canada].[BC].[Oak Bay]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Customers].[Canada].[BC].[Burnaby]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Customers].[Canada].[BC].[Cliffside]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Customers].[Canada].[BC].[Haney]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Customers].[Canada].[BC].[Ladner]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Customers].[Canada].[BC].[Langford]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Customers].[Canada].[BC].[Langley]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Customers].[Canada].[BC].[Metchosin]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Customers].[Canada].[BC].[N. Vancouver]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Customers].[Canada].[BC].[Newton]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Customers].[Customers].[Canada].[BC].[Oak Bay]}\n"
             + "Row #0: \n"
             + "Row #1: \n"
             + "Row #2: \n"
@@ -1470,17 +1470,17 @@ import mondrian.rolap.SchemaModifiers;
             + "from [Sales]\n"
             + "where [Top Product Cities] * [Time].[1997].[Q3]",
             "Axis #0:\n"
-            + "{[Product].[Food].[Snack Foods].[Snack Foods], [Customers].[USA].[WA].[Spokane], [Time].[1997].[Q3]}\n"
-            + "{[Product].[Food].[Produce].[Vegetables], [Customers].[USA].[WA].[Spokane], [Time].[1997].[Q3]}\n"
-            + "{[Product].[Food].[Snack Foods].[Snack Foods], [Customers].[USA].[WA].[Puyallup], [Time].[1997].[Q3]}\n"
+            + "{[Product].[Product].[Food].[Snack Foods].[Snack Foods], [Customers].[Customers].[USA].[WA].[Spokane], [Time].[Time].[1997].[Q3]}\n"
+            + "{[Product].[Product].[Food].[Produce].[Vegetables], [Customers].[Customers].[USA].[WA].[Spokane], [Time].[Time].[1997].[Q3]}\n"
+            + "{[Product].[Product].[Food].[Snack Foods].[Snack Foods], [Customers].[Customers].[USA].[WA].[Puyallup], [Time].[Time].[1997].[Q3]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "{[Measures].[Price per Unit]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[F], [Marital Status].[M]}\n"
-            + "{[Gender].[F], [Marital Status].[S]}\n"
-            + "{[Gender].[M], [Marital Status].[M]}\n"
-            + "{[Gender].[M], [Marital Status].[S]}\n"
+            + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[M]}\n"
+            + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S]}\n"
+            + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M]}\n"
+            + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}\n"
             + "Row #0: 483\n"
             + "Row #0: 2.21\n"
             + "Row #1: 419\n"
@@ -1545,9 +1545,9 @@ import mondrian.rolap.SchemaModifiers;
             + "Axis #1:\n"
             + "{[Measures].[M0]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Food], [Store].[USA].[CA]}\n"
-            + "{[Product].[Food], [Store].[USA].[OR]}\n"
-            + "{[Product].[Food], [Store].[USA].[WA]}\n"
+            + "{[Product].[Product].[Food], [Store].[Store].[USA].[CA]}\n"
+            + "{[Product].[Product].[Food], [Store].[Store].[USA].[OR]}\n"
+            + "{[Product].[Product].[Food], [Store].[Store].[USA].[WA]}\n"
             + "Row #0: 217,506\n"
             + "Row #1: 193,104\n"
             + "Row #2: 359,162\n");
@@ -1576,7 +1576,8 @@ import mondrian.rolap.SchemaModifiers;
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
      void testCycleFalsePositive(Context context) {
-        if (SystemWideProperties.instance().SsasCompatibleNaming) {
+        //if (SystemWideProperties.instance().SsasCompatibleNaming) {
+        if (true) {
             // This test uses old-style [dimension.hierarchy] names.
             return;
         }
@@ -1731,7 +1732,7 @@ import mondrian.rolap.SchemaModifiers;
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time].[Past 4 months]}\n"
+            + "{[Time].[Time].[Past 4 months]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "{[Measures].[Tom1]}\n"
@@ -1758,7 +1759,7 @@ import mondrian.rolap.SchemaModifiers;
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time].[Past 4 months]}\n"
+            + "{[Time].[Time].[Past 4 months]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "{[Measures].[Tom1]}\n"
@@ -1778,7 +1779,7 @@ import mondrian.rolap.SchemaModifiers;
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[USA].[Foo]}\n"
+            + "{[Store].[Store].[USA].[Foo]}\n"
             + "Row #0: 266,773\n";
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Store].[USA].[Foo] as\n"
@@ -1806,7 +1807,7 @@ import mondrian.rolap.SchemaModifiers;
             + " member [Gender].[X].[Y] as 5\n"
             + " select [Gender].[X].[Y] on 0\n"
             + " from [Sales]",
-            "The '[Gender].[X]' calculated member cannot be used as a parent "
+            "The '[Gender].[Gender].[X]' calculated member cannot be used as a parent "
             + "of another calculated member.");
     }
 
@@ -1822,7 +1823,7 @@ import mondrian.rolap.SchemaModifiers;
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Marital Status].[X]}\n"
+            + "{[Marital Status].[Marital Status].[X]}\n"
             + "Row #0: 5\n");
     }
 
@@ -1836,6 +1837,6 @@ import mondrian.rolap.SchemaModifiers;
             + " select [Gender].[M].[X] on 0\n"
             + " from [Sales]",
             "The '[X]' calculated member cannot be created because its parent is "
-            + "at the lowest level in the [Gender] hierarchy.");
+            + "at the lowest level in the [Gender].[Gender] hierarchy.");
     }
 }

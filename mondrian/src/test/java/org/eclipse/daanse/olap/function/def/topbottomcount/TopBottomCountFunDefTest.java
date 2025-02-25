@@ -40,8 +40,8 @@ class TopBottomCountFunDefTest {
     void testBottomCount(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "BottomCount({[Promotion Media].[Media Type].members}, 2, [Measures].[Unit Sales])",
-            "[Promotion Media].[Radio]\n"
-                + "[Promotion Media].[Sunday Paper, Radio, TV]" );
+            "[Promotion Media].[Promotion Media].[Radio]\n"
+                + "[Promotion Media].[Promotion Media].[Sunday Paper, Radio, TV]" );
     }
 
     @ParameterizedTest
@@ -49,8 +49,8 @@ class TopBottomCountFunDefTest {
     void testBottomCountUnordered(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "BottomCount({[Promotion Media].[Media Type].members}, 2)",
-            "[Promotion Media].[Sunday Paper, Radio, TV]\n"
-                + "[Promotion Media].[TV]" );
+            "[Promotion Media].[Promotion Media].[Sunday Paper, Radio, TV]\n"
+                + "[Promotion Media].[Promotion Media].[TV]" );
     }
 
 
@@ -60,8 +60,8 @@ class TopBottomCountFunDefTest {
     void testTopCount(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopCount({[Promotion Media].[Media Type].members}, 2, [Measures].[Unit Sales])",
-            "[Promotion Media].[No Media]\n"
-                + "[Promotion Media].[Daily Paper, Radio, TV]" );
+            "[Promotion Media].[Promotion Media].[No Media]\n"
+                + "[Promotion Media].[Promotion Media].[Daily Paper, Radio, TV]" );
     }
 
     @ParameterizedTest
@@ -69,8 +69,8 @@ class TopBottomCountFunDefTest {
     void testTopCountUnordered(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopCount({[Promotion Media].[Media Type].members}, 2)",
-            "[Promotion Media].[Bulk Mail]\n"
-                + "[Promotion Media].[Cash Register Handout]" );
+            "[Promotion Media].[Promotion Media].[Bulk Mail]\n"
+                + "[Promotion Media].[Promotion Media].[Cash Register Handout]" );
     }
 
     @ParameterizedTest
@@ -78,8 +78,8 @@ class TopBottomCountFunDefTest {
     void testTopCountTuple(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopCount([Customers].[Name].members,2,(Time.[1997].[Q1],[Measures].[Store Sales]))",
-            "[Customers].[USA].[WA].[Spokane].[Grace McLaughlin]\n"
-                + "[Customers].[USA].[WA].[Spokane].[Matt Bellah]" );
+            "[Customers].[Customers].[USA].[WA].[Spokane].[Grace McLaughlin]\n"
+                + "[Customers].[Customers].[USA].[WA].[Spokane].[Matt Bellah]" );
     }
 
     @ParameterizedTest
@@ -104,16 +104,16 @@ class TopBottomCountFunDefTest {
 
     private void checkTopBottomCountPercentDepends(Connection connection, String fun) {
         String s1 =
-            allHiersExcept( "[Measures]", "[Promotion Media]" );
+            allHiersExcept( "[Measures]", "[Promotion Media].[Promotion Media]" );
         assertSetExprDependsOn(connection,
             fun
-                + "({[Promotion Media].[Media Type].members}, "
+                + "({[Promotion Media].[Promotion Media].[Media Type].members}, "
                 + "2, [Measures].[Unit Sales])",
             s1 );
 
         if ( fun.endsWith( "Count" ) ) {
             assertSetExprDependsOn(connection,
-                fun + "({[Promotion Media].[Media Type].members}, 2)",
+                fun + "({[Promotion Media].[Promotion Media].[Media Type].members}, 2)",
                 "{}" );
         }
     }
@@ -139,9 +139,9 @@ class TopBottomCountFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1997].[Q1].[3], [Customers].[USA].[WA].[Spokane].[George Todero]}\n"
-                + "{[Time].[1997].[Q3].[7], [Customers].[USA].[WA].[Spokane].[James Horvat]}\n"
-                + "{[Time].[1997].[Q4].[11], [Customers].[USA].[WA].[Olympia].[Charles Stanley]}\n"
+                + "{[Time].[Time].[1997].[Q1].[3], [Customers].[Customers].[USA].[WA].[Spokane].[George Todero]}\n"
+                + "{[Time].[Time].[1997].[Q3].[7], [Customers].[Customers].[USA].[WA].[Spokane].[James Horvat]}\n"
+                + "{[Time].[Time].[1997].[Q4].[11], [Customers].[Customers].[USA].[WA].[Olympia].[Charles Stanley]}\n"
                 + "Row #0: 234.83\n"
                 + "Row #1: 199.46\n"
                 + "Row #2: 191.90\n";

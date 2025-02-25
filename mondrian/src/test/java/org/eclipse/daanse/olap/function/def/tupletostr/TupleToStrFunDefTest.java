@@ -22,9 +22,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.olap.SystemWideProperties;
-
-
 class TupleToStrFunDefTest {
 
     @ParameterizedTest
@@ -33,39 +30,33 @@ class TupleToStrFunDefTest {
         // Applied to a dimension (which becomes a member)
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TupleToStr([Product])",
-            "[Product].[All Products]" );
+            "[Product].[Product].[All Products]" );
 
         // Applied to a dimension (invalid because has no default hierarchy)
-        if ( SystemWideProperties.instance().SsasCompatibleNaming ) {
-            assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
-                "TupleToStr([Time])",
-                "The 'Time' dimension contains more than one hierarchy, "
-                    + "therefore the hierarchy must be explicitly specified." );
-        } else {
-            assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-                "TupleToStr([Time])",
-                "[Time].[1997]" );
-        }
+
+        assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
+            "TupleToStr([Time])",
+            "Could not Calculate the default hierarchy of the given dimension 'Time'. It may contains more than one hierarchy. Specify the hierarchy explicitly." );
 
         // Applied to a hierarchy
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TupleToStr([Time].[Time])",
-            "[Time].[1997]" );
+            "[Time].[Time].[1997]" );
 
         // Applied to a member
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TupleToStr([Store].[USA].[OR])",
-            "[Store].[USA].[OR]" );
+            "[Store].[Store].[USA].[OR]" );
 
         // Applied to a member (extra set of parens)
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TupleToStr(([Store].[USA].[OR]))",
-            "([Store].[USA].[OR])" );
+            "([Store].[Store].[USA].[OR])" );
 
         // Now, applied to a tuple
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TupleToStr(([Marital Status], [Gender].[M]))",
-            "([Marital Status].[All Marital Status], [Gender].[M])" );
+            "([Marital Status].[Marital Status].[All Marital Status], [Gender].[Gender].[M])" );
 
         // Applied to a tuple containing a null member
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",

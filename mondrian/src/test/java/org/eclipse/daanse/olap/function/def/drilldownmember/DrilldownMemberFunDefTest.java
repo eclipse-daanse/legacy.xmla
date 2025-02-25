@@ -30,36 +30,36 @@ class DrilldownMemberFunDefTest {
         // Expect all children of USA
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownMember({[Store].[USA]}, {[Store].[USA]})",
-            "[Store].[USA]\n"
-                + "[Store].[USA].[CA]\n"
-                + "[Store].[USA].[OR]\n"
-                + "[Store].[USA].[WA]" );
+            "[Store].[Store].[USA]\n"
+                + "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA].[OR]\n"
+                + "[Store].[Store].[USA].[WA]" );
 
         // Expect all children of USA.CA and USA.OR
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownMember({[Store].[USA].[CA], [Store].[USA].[OR]}, "
                 + "{[Store].[USA].[CA], [Store].[USA].[OR], [Store].[USA].[WA]})",
-            "[Store].[USA].[CA]\n"
-                + "[Store].[USA].[CA].[Alameda]\n"
-                + "[Store].[USA].[CA].[Beverly Hills]\n"
-                + "[Store].[USA].[CA].[Los Angeles]\n"
-                + "[Store].[USA].[CA].[San Diego]\n"
-                + "[Store].[USA].[CA].[San Francisco]\n"
-                + "[Store].[USA].[OR]\n"
-                + "[Store].[USA].[OR].[Portland]\n"
-                + "[Store].[USA].[OR].[Salem]" );
+            "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA].[CA].[Alameda]\n"
+                + "[Store].[Store].[USA].[CA].[Beverly Hills]\n"
+                + "[Store].[Store].[USA].[CA].[Los Angeles]\n"
+                + "[Store].[Store].[USA].[CA].[San Diego]\n"
+                + "[Store].[Store].[USA].[CA].[San Francisco]\n"
+                + "[Store].[Store].[USA].[OR]\n"
+                + "[Store].[Store].[USA].[OR].[Portland]\n"
+                + "[Store].[Store].[USA].[OR].[Salem]" );
 
 
         // Second set is empty
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownMember({[Store].[USA]}, {})",
-            "[Store].[USA]" );
+            "[Store].[Store].[USA]" );
 
         // Drill down a leaf member
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownMember({[Store].[All Stores].[USA].[CA].[San Francisco].[Store 14]}, "
                 + "{[Store].[USA].[CA].[San Francisco].[Store 14]})",
-            "[Store].[USA].[CA].[San Francisco].[Store 14]" );
+            "[Store].[Store].[USA].[CA].[San Francisco].[Store 14]" );
 
         // Complex case with option recursive
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -67,31 +67,31 @@ class DrilldownMemberFunDefTest {
                 + "{[Store].[All Stores].[USA], [Store].[All Stores].[USA].[CA], "
                 + "[Store].[All Stores].[USA].[CA].[San Diego], [Store].[All Stores].[USA].[WA]}, "
                 + "RECURSIVE)",
-            "[Store].[USA]\n"
-                + "[Store].[USA].[CA]\n"
-                + "[Store].[USA].[CA].[Alameda]\n"
-                + "[Store].[USA].[CA].[Beverly Hills]\n"
-                + "[Store].[USA].[CA].[Los Angeles]\n"
-                + "[Store].[USA].[CA].[San Diego]\n"
-                + "[Store].[USA].[CA].[San Diego].[Store 24]\n"
-                + "[Store].[USA].[CA].[San Francisco]\n"
-                + "[Store].[USA].[OR]\n"
-                + "[Store].[USA].[WA]\n"
-                + "[Store].[USA].[WA].[Bellingham]\n"
-                + "[Store].[USA].[WA].[Bremerton]\n"
-                + "[Store].[USA].[WA].[Seattle]\n"
-                + "[Store].[USA].[WA].[Spokane]\n"
-                + "[Store].[USA].[WA].[Tacoma]\n"
-                + "[Store].[USA].[WA].[Walla Walla]\n"
-                + "[Store].[USA].[WA].[Yakima]" );
+            "[Store].[Store].[USA]\n"
+                + "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA].[CA].[Alameda]\n"
+                + "[Store].[Store].[USA].[CA].[Beverly Hills]\n"
+                + "[Store].[Store].[USA].[CA].[Los Angeles]\n"
+                + "[Store].[Store].[USA].[CA].[San Diego]\n"
+                + "[Store].[Store].[USA].[CA].[San Diego].[Store 24]\n"
+                + "[Store].[Store].[USA].[CA].[San Francisco]\n"
+                + "[Store].[Store].[USA].[OR]\n"
+                + "[Store].[Store].[USA].[WA]\n"
+                + "[Store].[Store].[USA].[WA].[Bellingham]\n"
+                + "[Store].[Store].[USA].[WA].[Bremerton]\n"
+                + "[Store].[Store].[USA].[WA].[Seattle]\n"
+                + "[Store].[Store].[USA].[WA].[Spokane]\n"
+                + "[Store].[Store].[USA].[WA].[Tacoma]\n"
+                + "[Store].[Store].[USA].[WA].[Walla Walla]\n"
+                + "[Store].[Store].[USA].[WA].[Yakima]" );
 
         // Sets of tuples
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownMember({([Store Type].[Supermarket], [Store].[USA])}, {[Store].[USA]})",
-            "{[Store Type].[Supermarket], [Store].[USA]}\n"
-                + "{[Store Type].[Supermarket], [Store].[USA].[CA]}\n"
-                + "{[Store Type].[Supermarket], [Store].[USA].[OR]}\n"
-                + "{[Store Type].[Supermarket], [Store].[USA].[WA]}" );
+            "{[Store Type].[Store Type].[Supermarket], [Store].[Store].[USA]}\n"
+                + "{[Store Type].[Store Type].[Supermarket], [Store].[Store].[USA].[CA]}\n"
+                + "{[Store Type].[Store Type].[Supermarket], [Store].[Store].[USA].[OR]}\n"
+                + "{[Store Type].[Store Type].[Supermarket], [Store].[Store].[USA].[WA]}" );
     }
 
 }

@@ -31,7 +31,7 @@ class UniqueNameFunDefTest {
     void testMemberUniqueName(Context context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Gender].DefaultMember.UniqueName",
-            "[Gender].[All Gender]" );
+            "[Gender].[Gender].[All Gender]" );
     }
 
     @ParameterizedTest

@@ -509,7 +509,6 @@ public class TestUtil {
 	}
 
 	public static ResultSet executeStatement(Connection connection, String queryString ) throws SQLException {
-		queryString = upgradeQuery( queryString );
         org.eclipse.daanse.olap.api.Statement stmt = connection.createStatement();
 		return stmt.executeQuery( queryString, Optional.empty(), null );
 	}
@@ -877,7 +876,6 @@ public class TestUtil {
 	}
 
 	public static Result executeQueryTimeoutTest(Connection connection, String queryString ) {
-	    queryString = upgradeQuery( queryString );
 	    Query query = connection.parseQuery( queryString );
 	    Statement statement = query.getStatement();
 	    assertThat(statement).isNotNull();
@@ -988,22 +986,6 @@ public class TestUtil {
 	 * @see mondrian.olap.SystemWideProperties#SsasCompatibleNaming
 	 */
 	public static String upgradeActual(String actual) {
-		if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-			actual = actual.replace("[Time.Weekly]", "[Time].[Weekly]");
-			actual = actual.replace("[All Time.Weeklys]", "[All Weeklys]");
-			actual = actual.replace("<HIERARCHY_NAME>Time.Weekly</HIERARCHY_NAME>",
-					"<HIERARCHY_NAME>Weekly</HIERARCHY_NAME>");
-
-			// for a few tests in SchemaTest
-			actual = actual.replace("[Store.MyHierarchy]", "[Store].[MyHierarchy]");
-			actual = actual.replace("[All Store.MyHierarchys]", "[All MyHierarchys]");
-			actual = actual.replace("[Store2].[All Store2s]", "[Store2].[Store].[All Stores]");
-			actual = actual.replace("[Store Type 2.Store Type 2].[All Store Type 2.Store Type 2s]",
-					"[Store Type 2].[All Store Type 2s]");
-			actual = actual.replace("[TIME.CALENDAR]", "[TIME].[CALENDAR]");
-			actual = actual.replace("<Store>true</Store>", "<Store>1</Store>");
-			actual = actual.replace("<Employees>80000.0000</Employees>", "<Employees>80000</Employees>");
-		}
 		return actual;
 	}
 
@@ -1413,11 +1395,7 @@ public class TestUtil {
 	}
 
 	public static String hierarchyName( String dimension, String hierarchy ) {
-		return SystemWideProperties.instance().SsasCompatibleNaming
-				? "[" + dimension + "].[" + hierarchy + "]"
-				: ( hierarchy.equals( dimension )
-				? "[" + dimension + "]"
-				: "[" + dimension + "." + hierarchy + "]" );
+		return "[" + dimension + "].[" + hierarchy + "]";
 	}
 
 	/**
@@ -1533,8 +1511,6 @@ public class TestUtil {
 			boolean bypassSchemaCache,
 			boolean clearCache)
 	{
-		mdxQuery = upgradeQuery(mdxQuery);
-
 		// Run the test once for each pattern in this dialect.
 		// (We could optimize and run it once, collecting multiple queries, and
 		// comparing all queries at the end.)
@@ -1618,27 +1594,6 @@ public class TestUtil {
 								+ "\" and test not run]");
 			}
 		}
-	}
-
-	public static String upgradeQuery( String queryString ) {
-		if ( SystemWideProperties.instance().SsasCompatibleNaming ) {
-			String[] names = {
-					"[Gender]",
-					"[Education Level]",
-					"[Marital Status]",
-					"[Store Type]",
-					"[Yearly Income]",
-			};
-			for ( String name : names ) {
-				queryString = queryString.replace(
-						name + "." + name,
-						name + "." + name + "." + name );
-			}
-			queryString = queryString.replace(
-					"[Time.Weekly].[All Time.Weeklys]",
-					"[Time].[Weekly].[All Weeklys]" );
-		}
-		return queryString;
 	}
 
 	public static String dialectize(DatabaseProduct d, String sql) {

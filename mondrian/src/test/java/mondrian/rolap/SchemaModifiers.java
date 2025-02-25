@@ -5174,11 +5174,11 @@ public class SchemaModifiers {
                         ))
                         .withAggregationLevels(List.of(
                         		AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Year]")
+                                .withName("[Time].[Time].[Year]")
                                 .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .build(),
                         		AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Quarter]")
+                                .withName("[Time].[Time].[Quarter]")
                                 .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .build()
                         		))
@@ -5297,11 +5297,11 @@ public class SchemaModifiers {
                         ))
                         .withAggregationLevels(List.of(
                         		AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Year]")
+                                .withName("[Time].[Time].[Year]")
                                 .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .build(),
                         		AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Quarter]")
+                                .withName("[Time].[Time].[Quarter]")
                                 .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .build()
                         		))
@@ -5428,11 +5428,11 @@ public class SchemaModifiers {
                         ))
                         .withAggregationLevels(List.of(
                         		AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Year]")
+                                .withName("[Time].[Time].[Year]")
                                 .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .build(),
                         		AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Quarter]")
+                                .withName("[Time].[Time].[Quarter]")
                                 .withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_AGG_C_10_SALES_FACT_1997)
                                 .build()
                         		))
@@ -11475,7 +11475,7 @@ public class SchemaModifiers {
                         ))
                         .withAggregationLevels(List.of(
                         		AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Month]")
+                                .withName("[Time].[Time].[Month]")
                                 .withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .withCollapsed(false)
                                 .build()
@@ -11678,7 +11678,7 @@ public class SchemaModifiers {
                         ))
                         .withAggregationLevels(List.of(
                         		AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Year]")
+                                .withName("[Time].[Time].[Year]")
                                 .withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_AGG_C_14_SALES_FACT_1997)
                                 .build()
                         		))
@@ -12069,15 +12069,15 @@ public class SchemaModifiers {
                         ))
                         .withAggregationLevels(List.of(
                         	AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Year]")
+                                .withName("[Time].[Time].[Year]")
                                 .withColumn(FoodmartMappingSupplier.TIME_YEAR_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                 .build(),
                             AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Quarter]")
+                                .withName("[Time].[Time].[Quarter]")
                                 .withColumn(FoodmartMappingSupplier.TIME_QUARTER_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                 .build(),
                             AggregationLevelMappingImpl.builder()
-                                .withName("[Time].[Month]")
+                                .withName("[Time].[Time].[Month]")
                                 .withColumn(FoodmartMappingSupplier.TIME_MONTH_COLUMN_IN_AGG_C_SPECIAL_SALES_FACT_1997)
                                 .build()
                         )).build()
@@ -15360,7 +15360,7 @@ public class SchemaModifiers {
                                                 .withRollupPolicyType(RollupPolicyType.PARTIAL)
                                                 .withMemberGrants(List.of(
                                                 	AccessMemberGrantMappingImpl.builder()
-                                                        .withMember("[Store].[USA].[CA]")
+                                                        .withMember("[Store].[Store].[USA].[CA]")
                                                         .withAccess(AccessMember.ALL)
                                                         .build()
                                                 ))
@@ -15371,7 +15371,7 @@ public class SchemaModifiers {
                                                 .withRollupPolicyType(RollupPolicyType.PARTIAL)
                                                 .withMemberGrants(List.of(
                                                 	AccessMemberGrantMappingImpl.builder()
-                                                        .withMember("[Customers].[USA].[CA]")
+                                                        .withMember("[Customers].[Customers].[USA].[CA]")
                                                         .withAccess(AccessMember.ALL)
                                                         .build()
                                                 ))
@@ -15661,7 +15661,7 @@ public class SchemaModifiers {
                                                 .withAccess(AccessHierarchy.CUSTOM)
                                                 .withMemberGrants(List.of(
                                                 	AccessMemberGrantMappingImpl.builder()
-                                                        .withMember("[Gender].[F]")
+                                                        .withMember("[Gender].[Gender].[F]")
                                                         .withAccess(AccessMember.ALL)
                                                         .build()
                                                 ))
@@ -16723,7 +16723,7 @@ public class SchemaModifiers {
                                             .withRollupPolicyType(RollupPolicyType.PARTIAL)
                                             .withMemberGrants(List.of(
                                             	AccessMemberGrantMappingImpl.builder()
-                                                    .withMember("[Store].[USA].[Non Existent]")
+                                                    .withMember("[Store].[Store].[USA].[Non Existent]")
                                                     .withAccess(AccessMember.ALL)
                                                     .build()
                                             ))
@@ -20571,7 +20571,7 @@ public class SchemaModifiers {
                                                     .withAccess(AccessHierarchy.CUSTOM)
                                                     .withMemberGrants(List.of(
                                                     	AccessMemberGrantMappingImpl.builder()
-                                                            .withMember("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]")
+                                                            .withMember("[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]")
                                                             .withAccess(AccessMember.ALL)
                                                             .build()
                                                     ))
@@ -20784,7 +20784,7 @@ public class SchemaModifiers {
                                                     .withAccess(AccessHierarchy.CUSTOM)
                                                     .withMemberGrants(List.of(
                                                     	AccessMemberGrantMappingImpl.builder()
-                                                            .withMember("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]")
+                                                            .withMember("[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]")
                                                             .withAccess(AccessMember.ALL)
                                                             .build()
                                                     ))

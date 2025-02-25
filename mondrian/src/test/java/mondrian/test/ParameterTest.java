@@ -109,7 +109,7 @@ class ParameterTest {
         assertEquals(m, p.getValue());
         mdx = query.toString();
         assertEqualsVerbose(
-            "select {Parameter(\"Foo\", [Time], [Time].[1997].[Q2].[5], \"Foo\")} ON COLUMNS\n"
+            "select {Parameter(\"Foo\", [Time].[Time], [Time].[Time].[1997].[Q2].[5], \"Foo\")} ON COLUMNS\n"
             + "from [Sales]\n",
             mdx);
     }
@@ -156,7 +156,7 @@ class ParameterTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 135,215\n");
@@ -287,9 +287,9 @@ class ParameterTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time].[1997]}\n"
+            + "{[Time].[Time].[1997]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[F]}\n"
+            + "{[Gender].[Gender].[F]}\n"
             + "Row #0: 131,558\n";
         assertEqualsVerbose(expected, TestUtil.toString(result));
 
@@ -404,7 +404,7 @@ class ParameterTest {
         // wrong dimension
         assertExprThrows(connection, "Sales",
             "Parameter(\"Foo\",[Time],[Product].[All Products],\"Foo\").Name",
-            "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<hierarchy=[Time]>");
+            "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<hierarchy=[Time].[Time]>");
         // non-existent member
         assertExprThrows(connection, "Sales",
             "Parameter(\"Foo\",[Time],[Time].[1997].[Q5],\"Foo\").Name",
@@ -423,7 +423,7 @@ class ParameterTest {
       // wrong dimension
       assertExprThrows(connection, "Sales",
           "Parameter(\"Foo\",[Store],[Product].[All Products],\"Foo\").Name",
-          "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<hierarchy=[Store]>");
+          "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<hierarchy=[Store].[Store]>");
       // non-existent member
       assertExprThrows(connection, "Sales",
           "Parameter(\"Foo\",[Store],[Store].[USA].[NY],\"Foo\").Name",
@@ -435,27 +435,24 @@ class ParameterTest {
     void testParameterHierarchy(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertExprReturns(connection, "Sales",
-            "Parameter(\"Foo\", [Time.Weekly], [Time.Weekly].[1997].[40],\"Foo\").Name",
+            "Parameter(\"Foo\", [Time].[Weekly], [Time].[Weekly].[1997].[40],\"Foo\").Name",
             "40");
         // right dimension, wrong hierarchy
-        final String levelName =
-            SystemWideProperties.instance().SsasCompatibleNaming
-                ? "[Time].[Weekly]"
-                : "[Time.Weekly]";
+        final String levelName = "[Time].[Weekly]";
         assertExprThrows(connection, "Sales",
-            "Parameter(\"Foo\",[Time.Weekly],[Time].[1997].[Q1],\"Foo\").Name",
+            "Parameter(\"Foo\",[Time].[Weekly],[Time].[1997].[Q1],\"Foo\").Name",
             "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<hierarchy="
             + levelName
             + ">");
         // wrong dimension
         assertExprThrows(connection, "Sales",
-            "Parameter(\"Foo\",[Time.Weekly],[Product].[All Products],\"Foo\").Name",
+            "Parameter(\"Foo\",[Time].[Weekly],[Product].[All Products],\"Foo\").Name",
             "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<hierarchy="
             + levelName
             + ">");
         // garbage
         assertExprThrows(connection, "Sales",
-            "Parameter(\"Foo\",[Time.Weekly],[Widget].[All Widgets],\"Foo\").Name",
+            "Parameter(\"Foo\",[Time].[Weekly],[Widget].[All Widgets],\"Foo\").Name",
             "MDX object '[Widget].[All Widgets]' not found in cube 'Sales'");
     }
 
@@ -468,7 +465,7 @@ class ParameterTest {
             "Q3");
         assertExprThrows(connection, "Sales",
             "Parameter(\"Foo\",[Time].[Quarter], [Time].[1997].[Q3].[8], \"Foo\").Name",
-            "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<level=[Time].[Quarter]>");
+            "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<level=[Time].[Time].[Quarter]>");
     }
 
     @ParameterizedTest
@@ -508,11 +505,11 @@ class ParameterTest {
         Connection connection = context.getConnectionWithDefaultRole();
         assertExprReturns(connection, "Sales",
             "Parameter(\"Foo\", [Time], [Time].[Time], \"Description\").UniqueName",
-            "[Time].[1997]");
+            "[Time].[Time].[1997]");
 
         assertExprReturns(connection, "Sales",
             "Parameter(\"Foo\", [Time], [Time].[Time].Children.Item(2), \"Description\").UniqueName",
-            "[Time].[1997].[Q3]");
+            "[Time].[Time].[1997].[Q3]");
     }
 
     /**
@@ -543,13 +540,13 @@ class ParameterTest {
             + "     1),\n"
             + "   \"Description\")",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q4].[11]}\n"
+            + "{[Time].[Time].[1997].[Q4].[11]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink]}\n"
-            + "{[Product].[Food]}\n"
-            + "{[Product].[Non-Consumable]}\n"
+            + "{[Product].[Product].[Drink]}\n"
+            + "{[Product].[Product].[Food]}\n"
+            + "{[Product].[Product].[Non-Consumable]}\n"
             + "Row #0: 2,344\n"
             + "Row #1: 18,278\n"
             + "Row #2: 4,648\n");
@@ -586,10 +583,10 @@ class ParameterTest {
             + " {[Marital Status].children} on columns\n"
             + "from Sales where Parameter(\"GenderParam\",[Gender],[Gender].[M],\"Which gender?\")",
             "Axis #0:\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Axis #1:\n"
-            + "{[Marital Status].[M]}\n"
-            + "{[Marital Status].[S]}\n"
+            + "{[Marital Status].[Marital Status].[M]}\n"
+            + "{[Marital Status].[Marital Status].[S]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 66,460\n"
@@ -607,7 +604,7 @@ class ParameterTest {
             "select {[Measures].[Unit Sales]} on rows,\n"
             + " {[Gender].[F]} on columns\n"
             + "from Sales where Parameter(\"GenderParam\",[Gender],[Gender].[M],\"Which gender?\")",
-            "Hierarchy '[Gender]' appears in more than one independent axis.");
+            "Hierarchy '[Gender].[Gender]' appears in more than one independent axis.");
     }
 
     /** Mondrian can not handle forward references */
@@ -694,7 +691,7 @@ class ParameterTest {
         assertEqualsVerbose(
             "with member [Measures].[A string] as 'Parameter(\"S\", STRING, (\"x\" || \"y\"), \"A string parameter\")'\n"
             + "  member [Measures].[A number] as 'Parameter(\"N\", NUMERIC, (2 + 3), \"A numeric parameter\")'\n"
-            + "select {Parameter(\"P\", [Gender], [Gender].[M], \"Which gender?\"), Parameter(\"Q\", [Gender], [Gender].DefaultMember, \"Another gender?\")} ON COLUMNS,\n"
+            + "select {Parameter(\"P\", [Gender].[Gender], [Gender].[Gender].[M], \"Which gender?\"), Parameter(\"Q\", [Gender].[Gender], [Gender].DefaultMember, \"Another gender?\")} ON COLUMNS,\n"
             + "  {[Measures].[Unit Sales]} ON ROWS\n"
             + "from [Sales]\n",
             Util.unparse(query));
@@ -715,25 +712,25 @@ class ParameterTest {
         String resultString = TestUtil.toString(result);
         assertEqualsVerbose(
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1]}\n"
+            + "{[Time].[Time].[1997].[Q1]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Food].[Baked Goods]}\n"
-            + "{[Product].[Food].[Baking Goods]}\n"
-            + "{[Product].[Food].[Breakfast Foods]}\n"
-            + "{[Product].[Food].[Canned Foods]}\n"
-            + "{[Product].[Food].[Canned Products]}\n"
-            + "{[Product].[Food].[Dairy]}\n"
-            + "{[Product].[Food].[Deli]}\n"
-            + "{[Product].[Food].[Eggs]}\n"
-            + "{[Product].[Food].[Frozen Foods]}\n"
-            + "{[Product].[Food].[Meat]}\n"
-            + "{[Product].[Food].[Produce]}\n"
-            + "{[Product].[Food].[Seafood]}\n"
-            + "{[Product].[Food].[Snack Foods]}\n"
-            + "{[Product].[Food].[Snacks]}\n"
-            + "{[Product].[Food].[Starchy Foods]}\n"
+            + "{[Product].[Product].[Food].[Baked Goods]}\n"
+            + "{[Product].[Product].[Food].[Baking Goods]}\n"
+            + "{[Product].[Product].[Food].[Breakfast Foods]}\n"
+            + "{[Product].[Product].[Food].[Canned Foods]}\n"
+            + "{[Product].[Product].[Food].[Canned Products]}\n"
+            + "{[Product].[Product].[Food].[Dairy]}\n"
+            + "{[Product].[Product].[Food].[Deli]}\n"
+            + "{[Product].[Product].[Food].[Eggs]}\n"
+            + "{[Product].[Product].[Food].[Frozen Foods]}\n"
+            + "{[Product].[Product].[Food].[Meat]}\n"
+            + "{[Product].[Product].[Food].[Produce]}\n"
+            + "{[Product].[Product].[Food].[Seafood]}\n"
+            + "{[Product].[Product].[Food].[Snack Foods]}\n"
+            + "{[Product].[Product].[Food].[Snacks]}\n"
+            + "{[Product].[Product].[Food].[Starchy Foods]}\n"
             + "Row #0: 1,932\n"
             + "Row #1: 5,045\n"
             + "Row #2: 820\n"
@@ -758,11 +755,11 @@ class ParameterTest {
         resultString = TestUtil.toString(result);
         assertEqualsVerbose(
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1]}\n"
+            + "{[Time].[Time].[1997].[Q1]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Food].[Eggs].[Eggs]}\n"
+            + "{[Product].[Product].[Food].[Eggs].[Eggs]}\n"
             + "Row #0: 918\n",
             resultString);
 
@@ -774,12 +771,12 @@ class ParameterTest {
         resultString = TestUtil.toString(result);
         assertEqualsVerbose(
             "Axis #0:\n"
-            + "{[Time].[1997].[Q2].[4]}\n"
+            + "{[Time].[Time].[1997].[Q2].[4]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Food].[Deli].[Meat]}\n"
-            + "{[Product].[Food].[Deli].[Side Dishes]}\n"
+            + "{[Product].[Product].[Food].[Deli].[Meat]}\n"
+            + "{[Product].[Product].[Food].[Deli].[Side Dishes]}\n"
             + "Row #0: 621\n"
             + "Row #1: 187\n",
             resultString);
@@ -854,24 +851,24 @@ class ParameterTest {
         assertAssignParameter(connection,
             para, false, 8,
             "Invalid value '8' for parameter 'x',"
-            + " type MemberType<hierarchy=[Customers]>");
+            + " type MemberType<hierarchy=[Customers].[Customers]>");
         assertAssignParameter(connection,
             para, false, -8.56,
             "Invalid value '-8.56' for parameter 'x',"
-            + " type MemberType<hierarchy=[Customers]>");
+            + " type MemberType<hierarchy=[Customers].[Customers]>");
         assertAssignParameter(connection,
             para, false, new BigDecimal("12.345"),
             "Invalid value '12.345' for parameter 'x',"
-            + " type MemberType<hierarchy=[Customers]>");
+            + " type MemberType<hierarchy=[Customers].[Customers]>");
         assertAssignParameter(connection,
             para, false, new Date(),
-            "' for parameter 'x', type MemberType<hierarchy=[Customers]>");
+            "' for parameter 'x', type MemberType<hierarchy=[Customers].[Customers]>");
         assertAssignParameter(connection,
             para, false, new Timestamp(new Date().getTime()),
-            "' for parameter 'x', type MemberType<hierarchy=[Customers]>");
+            "' for parameter 'x', type MemberType<hierarchy=[Customers].[Customers]>");
         assertAssignParameter(connection,
             para, false, new Time(new Date().getTime()),
-            "' for parameter 'x', type MemberType<hierarchy=[Customers]>");
+            "' for parameter 'x', type MemberType<hierarchy=[Customers].[Customers]>");
 
         // string is OK
         assertAssignParameter(connection, para, false, "[Customers].[Mexico]", null);
@@ -899,8 +896,8 @@ class ParameterTest {
         assertAssignParameter(connection,
             para, false, sr.getMemberByUniqueName(
                 IdImpl.toList("Time", "1997", "Q2", "5"), true),
-            "Invalid value '[Time].[1997].[Q2].[5]' for parameter 'x', "
-            + "type MemberType<hierarchy=[Customers]>");
+            "Invalid value '[Time].[Time].[1997].[Q2].[5]' for parameter 'x', "
+            + "type MemberType<hierarchy=[Customers].[Customers]>");
 
         // Member of right hierarchy.
         assertAssignParameter(connection,
@@ -914,15 +911,15 @@ class ParameterTest {
             false,
             sr.getMemberByUniqueName(
             		IdImpl.toList("Customers", "USA"), true),
-            "Invalid value '[Customers].[USA]' for parameter "
-            + "'x', type MemberType<level=[Customers].[State Province]>");
+            "Invalid value '[Customers].[Customers].[USA]' for parameter "
+            + "'x', type MemberType<level=[Customers].[Customers].[State Province]>");
 
         // Same, using string.
         assertAssignParameter(connection,
             "Parameter(\"x\", [Customers].[State Province], [Customers].[USA].[CA])",
             false, "[Customers].[USA]",
-            "Invalid value '[Customers].[USA]' for parameter "
-            + "'x', type MemberType<level=[Customers].[State Province]>");
+            "Invalid value '[Customers].[Customers].[USA]' for parameter "
+            + "'x', type MemberType<level=[Customers].[Customers].[State Province]>");
 
         // Member of right level.
         assertAssignParameter(connection,
@@ -951,22 +948,22 @@ class ParameterTest {
             "MDX object 'foobar' not found in cube 'Sales'");
         assertAssignParameter(connection,
             para, true, 8,
-            "Invalid value '8' for parameter 'x', type SetType<MemberType<hierarchy=[Customers]>");
+            "Invalid value '8' for parameter 'x', type SetType<MemberType<hierarchy=[Customers].[Customers]>");
         assertAssignParameter(connection,
             para, true, -8.56,
-            "Invalid value '-8.56' for parameter 'x', type SetType<MemberType<hierarchy=[Customers]>");
+            "Invalid value '-8.56' for parameter 'x', type SetType<MemberType<hierarchy=[Customers].[Customers]>");
         assertAssignParameter(connection,
             para, true, new BigDecimal("12.345"),
-            "Invalid value '12.345' for parameter 'x', type SetType<MemberType<hierarchy=[Customers]>");
+            "Invalid value '12.345' for parameter 'x', type SetType<MemberType<hierarchy=[Customers].[Customers]>");
         assertAssignParameter(connection,
             para, true, new Date(),
-            "' for parameter 'x', type SetType<MemberType<hierarchy=[Customers]>");
+            "' for parameter 'x', type SetType<MemberType<hierarchy=[Customers].[Customers]>");
         assertAssignParameter(connection,
             para, true, new Timestamp(new Date().getTime()),
-            "' for parameter 'x', type SetType<MemberType<hierarchy=[Customers]>");
+            "' for parameter 'x', type SetType<MemberType<hierarchy=[Customers].[Customers]>");
         assertAssignParameter(connection,
             para, true, new Time(new Date().getTime()),
-            "' for parameter 'x', type SetType<MemberType<hierarchy=[Customers]>");
+            "' for parameter 'x', type SetType<MemberType<hierarchy=[Customers].[Customers]>");
 
         // strings are OK
         assertAssignParameter(connection,
@@ -1011,7 +1008,7 @@ class ParameterTest {
         // Not valid to set list to null.
         assertAssignParameter(connection,
                 para, true, null,
-            "Invalid value 'null' for parameter 'x', type SetType<MemberType<hierarchy=[Customers]>>");
+            "Invalid value 'null' for parameter 'x', type SetType<MemberType<hierarchy=[Customers].[Customers]>>");
 
         // List that contains one member of wrong hierarchy.
         list =
@@ -1022,15 +1019,15 @@ class ParameterTest {
                     IdImpl.toList("Time", "1997", "Q2", "5"), true));
         assertAssignParameter(connection,
                 para, true, list,
-            "Invalid value '[Time].[1997].[Q2].[5]' for parameter 'x', "
-            + "type MemberType<hierarchy=[Customers]>");
+            "Invalid value '[Time].[Time].[1997].[Q2].[5]' for parameter 'x', "
+            + "type MemberType<hierarchy=[Customers].[Customers]>");
 
         // as above, strings
         assertAssignParameter(connection,
                 para, true,
             "{[Customers].[Mexico], [Time].[1997].[Q2].[5]}",
-            "Invalid value '[Time].[1997].[Q2].[5]' for parameter 'x', "
-            + "type MemberType<hierarchy=[Customers]>");
+            "Invalid value '[Time].[Time].[1997].[Q2].[5]' for parameter 'x', "
+            + "type MemberType<hierarchy=[Customers].[Customers]>");
 
         // List that contains members of correct hierarchy.
         list =
@@ -1052,16 +1049,16 @@ class ParameterTest {
                 "Parameter(\"x\", [Customers].[State Province], {[Customers].[USA].[CA]})",
             true,
             list,
-            "Invalid value '[Customers].[Mexico]' for parameter "
-            + "'x', type MemberType<level=[Customers].[State Province]>");
+            "Invalid value '[Customers].[Customers].[Mexico]' for parameter "
+            + "'x', type MemberType<level=[Customers].[Customers].[State Province]>");
 
         // as above, strings
         assertAssignParameter(connection,
                 "Parameter(\"x\", [Customers].[State Province], {[Customers].[USA].[CA]})",
             true,
             "{[Customers].[USA].[CA], [Customers].[Mexico]}",
-            "Invalid value '[Customers].[Mexico]' for parameter "
-            + "'x', type MemberType<level=[Customers].[State Province]>");
+            "Invalid value '[Customers].[Customers].[Mexico]' for parameter "
+            + "'x', type MemberType<level=[Customers].[Customers].[State Province]>");
 
         // List that contains members of right level, and a null member.
         list =
@@ -1136,16 +1133,16 @@ class ParameterTest {
         try {
             String mdx =
                 "select [Measures].[Unit Sales] on 0,\n"
-                + " Parameter(\"Foo\", [Time], {}, \"Foo\") on 1\n"
+                + " Parameter(\"Foo\", [Time].[Time], {}, \"Foo\") on 1\n"
                 + "from [Sales]";
             Query query = connection.parseQuery(mdx);
             CatalogReader sr = query.getCatalogReader(false);
             Member m1 =
                 sr.getMemberByUniqueName(
-                    IdImpl.toList("Time", "1997", "Q2", "5"), true);
+                    IdImpl.toList("Time", "Time", "1997", "Q2", "5"), true);
             Member m2 =
                 sr.getMemberByUniqueName(
-                    IdImpl.toList("Time", "1997", "Q3"), true);
+                    IdImpl.toList("Time", "Time", "1997", "Q3"), true);
             Parameter p = sr.getParameter("Foo");
             final List<Member> list = Arrays.asList(m1, m2);
             p.setValue(list);
@@ -1156,7 +1153,7 @@ class ParameterTest {
             mdx = query.toString();
             assertEqualsVerbose(
                 "select {[Measures].[Unit Sales]} ON COLUMNS,\n"
-                + "  Parameter(\"Foo\", [Time], {[Time].[1997].[Q2].[5], [Time].[1997].[Q3]}, \"Foo\") ON ROWS\n"
+                + "  Parameter(\"Foo\", [Time].[Time], {[Time].[Time].[1997].[Q2].[5], [Time].[Time].[1997].[Q3]}, \"Foo\") ON ROWS\n"
                 + "from [Sales]\n",
                 mdx);
 
@@ -1167,8 +1164,8 @@ class ParameterTest {
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1997].[Q2].[5]}\n"
-                + "{[Time].[1997].[Q3]}\n"
+                + "{[Time].[Time].[1997].[Q2].[5]}\n"
+                + "{[Time].[Time].[1997].[Q3]}\n"
                 + "Row #0: 21,081\n"
                 + "Row #1: 65,848\n",
                 TestUtil.toString(result));

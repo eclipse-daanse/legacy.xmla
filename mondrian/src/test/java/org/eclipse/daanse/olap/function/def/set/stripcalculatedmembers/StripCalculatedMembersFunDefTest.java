@@ -32,7 +32,7 @@ class StripCalculatedMembersFunDefTest {
 
         assertSetExprDependsOn(connection,
             "StripCalculatedMembers([Customers].CurrentMember.Children)",
-            "{[Customers]}" );
+            "{[Customers].[Customers]}" );
 
         // ----------------------------------------------------
         // Calc members in dimension based on level stripped
@@ -48,14 +48,14 @@ class StripCalculatedMembersFunDefTest {
                 + "FROM Sales "
                 + "WHERE ([1997].[Q1])",
             "Axis #0:\n"
-                + "{[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Store].[USA].[CA]}\n"
-                + "{[Store].[USA].[OR]}\n"
-                + "{[Store].[USA].[WA]}\n"
+                + "{[Store].[Store].[USA].[CA]}\n"
+                + "{[Store].[Store].[USA].[OR]}\n"
+                + "{[Store].[Store].[USA].[WA]}\n"
                 + "Row #0: 16,890\n"
                 + "Row #0: 36,175.20\n"
                 + "Row #1: 19,287\n"

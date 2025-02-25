@@ -64,11 +64,11 @@ class SteelWheelsAggregationTest {
             + "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
-            + "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Customer_DimUsage.Customers Hierarchy].CURRENTMEMBER.ORDERKEY,"
-            + "BASC,ANCESTOR([Customer_DimUsage.Customers Hierarchy].CURRENTMEMBER,[Customer_DimUsage.Customers Hierarchy].[Address]).ORDERKEY,BASC)'\n"
+            + "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Customer_DimUsage].[Customers Hierarchy].CURRENTMEMBER.ORDERKEY,"
+            + "BASC,ANCESTOR([Customer_DimUsage].[Customers Hierarchy].CURRENTMEMBER,[Customer_DimUsage].[Customers Hierarchy].[Address]).ORDERKEY,BASC)'\n"
             + "SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[Price Each]}'\n"
-            + "SET [*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_] AS '[Customer_DimUsage.Customers Hierarchy].[Name].MEMBERS'\n"
-            + "SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Customer_DimUsage.Customers Hierarchy].CURRENTMEMBER)})'\n"
+            + "SET [*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_] AS '[Customer_DimUsage].[Customers Hierarchy].[Name].MEMBERS'\n"
+            + "SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Customer_DimUsage].[Customers Hierarchy].CURRENTMEMBER)})'\n"
             + "SELECT\n"
             + "[*BASE_MEMBERS__Measures_] ON COLUMNS\n"
             + ",[*SORTED_ROW_AXIS] ON ROWS\n"
@@ -80,7 +80,7 @@ class SteelWheelsAggregationTest {
             + "Axis #1:\n"
             + "{[Measures].[Price Each]}\n"
             + "Axis #2:\n"
-            + "{[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]}\n"
+            + "{[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]}\n"
             + "Row #0: 1,701.95\n";
 
     private static final LevelMappingImpl nameLevel = LevelMappingImpl.builder()
@@ -262,7 +262,7 @@ class SteelWheelsAggregationTest {
                                                 .withAccess(AccessHierarchy.CUSTOM)
                                                 .withMemberGrants(List.of(
                                                 	AccessMemberGrantMappingImpl.builder()
-                                                        .withMember("[Customer_DimUsage.Customers Hierarchy].[1 rue Alsace-Lorraine]")
+                                                        .withMember("[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine]")
                                                         .withAccess(AccessMember.ALL)
                                                         .build()
                                                 ))

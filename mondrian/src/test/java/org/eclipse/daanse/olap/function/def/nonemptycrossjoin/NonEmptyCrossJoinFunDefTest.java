@@ -32,7 +32,7 @@ class NonEmptyCrossJoinFunDefTest {
     void testNonEmptyCrossJoin(Context context) {
         // NonEmptyCrossJoin needs to evaluate measures to find out whether
         // cells are empty, so it implicitly depends upon all dimensions.
-        String s1 = allHiersExcept( "[Store]" );
+        String s1 = allHiersExcept( "[Store].[Store]" );
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "NonEmptyCrossJoin([Store].[USA].Children, [Gender].Children)", s1 );
 
@@ -40,41 +40,41 @@ class NonEmptyCrossJoinFunDefTest {
             "NonEmptyCrossJoin("
                 + "[Customers].[All Customers].[USA].[CA].Children, "
                 + "[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good].Children)",
-            "{[Customers].[USA].[CA].[Bellflower], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
+            "{[Customers].[Customers].[USA].[CA].[Bellflower], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
                 + ".[Good Light Beer]}\n"
-                + "{[Customers].[USA].[CA].[Downey], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
+                + "{[Customers].[Customers].[USA].[CA].[Downey], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
                 + ".[Good Imported Beer]}\n"
-                + "{[Customers].[USA].[CA].[Glendale], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
+                + "{[Customers].[Customers].[USA].[CA].[Glendale], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
                 + ".[Good Imported Beer]}\n"
-                + "{[Customers].[USA].[CA].[Glendale], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
+                + "{[Customers].[Customers].[USA].[CA].[Glendale], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
                 + ".[Good Light Beer]}\n"
-                + "{[Customers].[USA].[CA].[Grossmont], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
+                + "{[Customers].[Customers].[USA].[CA].[Grossmont], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
                 + ".[Good Light Beer]}\n"
-                + "{[Customers].[USA].[CA].[Imperial Beach], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
+                + "{[Customers].[Customers].[USA].[CA].[Imperial Beach], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
                 + ".[Good].[Good Light Beer]}\n"
-                + "{[Customers].[USA].[CA].[La Jolla], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
+                + "{[Customers].[Customers].[USA].[CA].[La Jolla], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
                 + ".[Good Imported Beer]}\n"
-                + "{[Customers].[USA].[CA].[Lincoln Acres], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
+                + "{[Customers].[Customers].[USA].[CA].[Lincoln Acres], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
                 + ".[Good].[Good Imported Beer]}\n"
-                + "{[Customers].[USA].[CA].[Lincoln Acres], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
+                + "{[Customers].[Customers].[USA].[CA].[Lincoln Acres], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
                 + ".[Good].[Good Light Beer]}\n"
-                + "{[Customers].[USA].[CA].[Long Beach], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
+                + "{[Customers].[Customers].[USA].[CA].[Long Beach], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
                 + ".[Good].[Good Light Beer]}\n"
-                + "{[Customers].[USA].[CA].[Los Angeles], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
+                + "{[Customers].[Customers].[USA].[CA].[Los Angeles], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
                 + ".[Good].[Good Imported Beer]}\n"
-                + "{[Customers].[USA].[CA].[Newport Beach], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
+                + "{[Customers].[Customers].[USA].[CA].[Newport Beach], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
                 + ".[Good].[Good Imported Beer]}\n"
-                + "{[Customers].[USA].[CA].[Pomona], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
+                + "{[Customers].[Customers].[USA].[CA].[Pomona], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
                 + ".[Good Imported Beer]}\n"
-                + "{[Customers].[USA].[CA].[Pomona], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
+                + "{[Customers].[Customers].[USA].[CA].[Pomona], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]"
                 + ".[Good Light Beer]}\n"
-                + "{[Customers].[USA].[CA].[San Gabriel], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
+                + "{[Customers].[Customers].[USA].[CA].[San Gabriel], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
                 + ".[Good].[Good Light Beer]}\n"
-                + "{[Customers].[USA].[CA].[West Covina], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
+                + "{[Customers].[Customers].[USA].[CA].[West Covina], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
                 + ".[Good].[Good Imported Beer]}\n"
-                + "{[Customers].[USA].[CA].[West Covina], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
+                + "{[Customers].[Customers].[USA].[CA].[West Covina], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
                 + ".[Good].[Good Light Beer]}\n"
-                + "{[Customers].[USA].[CA].[Woodland Hills], [Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
+                + "{[Customers].[Customers].[USA].[CA].[Woodland Hills], [Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]"
                 + ".[Good].[Good Imported Beer]}" );
 
         // empty set

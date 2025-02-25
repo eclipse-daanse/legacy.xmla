@@ -35,8 +35,8 @@ class UnionFunDefTest {
     void testUnionAll(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Union({[Gender].[M]}, {[Gender].[F]}, ALL)",
-            "[Gender].[M]\n"
-                + "[Gender].[F]" ); // order is preserved
+            "[Gender].[Gender].[M]\n"
+                + "[Gender].[Gender].[F]" ); // order is preserved
     }
 
     @ParameterizedTest
@@ -57,22 +57,22 @@ class UnionFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1997].[Q1], [Store].[USA].[CA]}\n"
-                + "{[Time].[1997].[Q1], [Store].[USA].[OR]}\n"
-                + "{[Time].[1997].[Q2], [Store].[USA].[CA]}\n"
-                + "{[Time].[1997].[Q2], [Store].[USA].[OR]}\n"
-                + "{[Time].[1997].[Q3], [Store].[USA].[CA]}\n"
-                + "{[Time].[1997].[Q3], [Store].[USA].[OR]}\n"
-                + "{[Time].[1997].[Q4], [Store].[USA].[CA]}\n"
-                + "{[Time].[1997].[Q4], [Store].[USA].[OR]}\n"
-                + "{[Time].[1997].[Q2], [Store].[Mexico].[DF]}\n"
-                + "{[Time].[1997].[Q2], [Store].[Mexico].[Guerrero]}\n"
-                + "{[Time].[1997].[Q2], [Store].[Mexico].[Jalisco]}\n"
-                + "{[Time].[1997].[Q2], [Store].[Mexico].[Veracruz]}\n"
-                + "{[Time].[1997].[Q3], [Store].[Mexico].[DF]}\n"
-                + "{[Time].[1997].[Q3], [Store].[Mexico].[Guerrero]}\n"
-                + "{[Time].[1997].[Q3], [Store].[Mexico].[Jalisco]}\n"
-                + "{[Time].[1997].[Q3], [Store].[Mexico].[Veracruz]}\n"
+                + "{[Time].[Time].[1997].[Q1], [Store].[Store].[USA].[CA]}\n"
+                + "{[Time].[Time].[1997].[Q1], [Store].[Store].[USA].[OR]}\n"
+                + "{[Time].[Time].[1997].[Q2], [Store].[Store].[USA].[CA]}\n"
+                + "{[Time].[Time].[1997].[Q2], [Store].[Store].[USA].[OR]}\n"
+                + "{[Time].[Time].[1997].[Q3], [Store].[Store].[USA].[CA]}\n"
+                + "{[Time].[Time].[1997].[Q3], [Store].[Store].[USA].[OR]}\n"
+                + "{[Time].[Time].[1997].[Q4], [Store].[Store].[USA].[CA]}\n"
+                + "{[Time].[Time].[1997].[Q4], [Store].[Store].[USA].[OR]}\n"
+                + "{[Time].[Time].[1997].[Q2], [Store].[Store].[Mexico].[DF]}\n"
+                + "{[Time].[Time].[1997].[Q2], [Store].[Store].[Mexico].[Guerrero]}\n"
+                + "{[Time].[Time].[1997].[Q2], [Store].[Store].[Mexico].[Jalisco]}\n"
+                + "{[Time].[Time].[1997].[Q2], [Store].[Store].[Mexico].[Veracruz]}\n"
+                + "{[Time].[Time].[1997].[Q3], [Store].[Store].[Mexico].[DF]}\n"
+                + "{[Time].[Time].[1997].[Q3], [Store].[Store].[Mexico].[Guerrero]}\n"
+                + "{[Time].[Time].[1997].[Q3], [Store].[Store].[Mexico].[Jalisco]}\n"
+                + "{[Time].[Time].[1997].[Q3], [Store].[Store].[Mexico].[Veracruz]}\n"
                 + "Row #0: 16,890\n"
                 + "Row #1: 19,287\n"
                 + "Row #2: 18,052\n"
@@ -97,9 +97,9 @@ class UnionFunDefTest {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Union({[Store].[USA], [Store].[USA], [Store].[USA].[OR]}, "
                 + "{[Store].[USA].[CA], [Store].[USA]})",
-            "[Store].[USA]\n"
-                + "[Store].[USA].[OR]\n"
-                + "[Store].[USA].[CA]" );
+            "[Store].[Store].[USA]\n"
+                + "[Store].[Store].[USA].[OR]\n"
+                + "[Store].[Store].[USA].[CA]" );
     }
 
     @ParameterizedTest
@@ -115,7 +115,7 @@ class UnionFunDefTest {
     void testUnionEmptyRight(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Union({[Gender].[M]}, {})",
-            "[Gender].[M]" );
+            "[Gender].[Gender].[M]" );
     }
 
     @ParameterizedTest
@@ -130,9 +130,9 @@ class UnionFunDefTest {
                 + " ([Gender].[M], [Marital Status].[S])"
                 + "})",
 
-            "{[Gender].[M], [Marital Status].[S]}\n"
-                + "{[Gender].[F], [Marital Status].[S]}\n"
-                + "{[Gender].[M], [Marital Status].[M]}" );
+            "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M]}" );
     }
 
     @ParameterizedTest
@@ -147,9 +147,9 @@ class UnionFunDefTest {
                 + " ([Gender].[M], [Marital Status].[S])"
                 + "}, Distinct)",
 
-            "{[Gender].[M], [Marital Status].[S]}\n"
-                + "{[Gender].[F], [Marital Status].[S]}\n"
-                + "{[Gender].[M], [Marital Status].[M]}" );
+            "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}\n"
+                + "{[Gender].[Gender].[F], [Marital Status].[Marital Status].[S]}\n"
+                + "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M]}" );
     }
 
     @ParameterizedTest

@@ -285,19 +285,16 @@ public class HierarchyUsage {
 
     private String deriveHierarchyName(RolapHierarchy hierarchy) {
         final String nameInner = hierarchy.getName();
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+            final String dimensionName = hierarchy.getDimension().getName();
+        if (nameInner == null
+            || nameInner.equals("")
+            || nameInner.equals(dimensionName))
+        {
             return nameInner;
         } else {
-            final String dimensionName = hierarchy.getDimension().getName();
-            if (nameInner == null
-                || nameInner.equals("")
-                || nameInner.equals(dimensionName))
-            {
-                return nameInner;
-            } else {
-                return dimensionName + '.' + nameInner;
-            }
+            return dimensionName + '.' + nameInner;
         }
+
     }
 
     protected Logger getLogger() {

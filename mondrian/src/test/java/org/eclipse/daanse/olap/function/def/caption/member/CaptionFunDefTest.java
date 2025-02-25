@@ -38,7 +38,7 @@ class CaptionFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[USA]}\n"
+                + "{[Store].[Store].[USA]}\n"
                 + "Row #0: 266,773\n" );
     }
 

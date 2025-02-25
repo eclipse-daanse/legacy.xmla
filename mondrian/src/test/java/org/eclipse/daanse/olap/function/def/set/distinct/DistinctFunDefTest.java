@@ -31,7 +31,7 @@ class DistinctFunDefTest {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Distinct({[Employees].[All Employees].[Sheri Nowmer].[Donna Arnold],"
                 + "[Employees].[Sheri Nowmer].[Donna Arnold]})",
-            "[Employees].[Sheri Nowmer].[Donna Arnold]" );
+            "[Employees].[Employees].[Sheri Nowmer].[Donna Arnold]" );
     }
 
     @ParameterizedTest
@@ -42,8 +42,8 @@ class DistinctFunDefTest {
             "Distinct({[Employees].[All Employees].[Sheri Nowmer].[Donna Arnold],"
                 + "[Employees].[All Employees].[Sheri Nowmer].[Darren Stanz],"
                 + "[Employees].[All Employees].[Sheri Nowmer].[Donna Arnold]})",
-            "[Employees].[Sheri Nowmer].[Donna Arnold]\n"
-                + "[Employees].[Sheri Nowmer].[Darren Stanz]" );
+            "[Employees].[Employees].[Sheri Nowmer].[Donna Arnold]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Darren Stanz]" );
     }
 
     @ParameterizedTest
@@ -55,8 +55,8 @@ class DistinctFunDefTest {
                 + "[Employees].[All Employees].[Sheri Nowmer].[Darren Stanz],"
                 + "[Employees].[All Employees].[Sheri Nowmer].[Donna Arnold],"
                 + "[Employees].[All Employees].[Sheri Nowmer].[Darren Stanz]})",
-            "[Employees].[Sheri Nowmer].[Donna Arnold]\n"
-                + "[Employees].[Sheri Nowmer].[Darren Stanz]" );
+            "[Employees].[Employees].[Sheri Nowmer].[Donna Arnold]\n"
+                + "[Employees].[Employees].[Sheri Nowmer].[Darren Stanz]" );
     }
 
     @ParameterizedTest
@@ -65,7 +65,7 @@ class DistinctFunDefTest {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Distinct({([Time].[1997],[Store].[All Stores].[Mexico]), "
                 + "([Time].[1997], [Store].[All Stores].[Mexico])})",
-            "{[Time].[1997], [Store].[Mexico]}" );
+            "{[Time].[Time].[1997], [Store].[Store].[Mexico]}" );
     }
 
     @ParameterizedTest
@@ -74,9 +74,9 @@ class DistinctFunDefTest {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Distinct({([Time].[1997],[Store].[All Stores].[Mexico]), "
                 + "crossjoin({[Time].[1997]},{[Store].[All Stores].children})})",
-            "{[Time].[1997], [Store].[Mexico]}\n"
-                + "{[Time].[1997], [Store].[Canada]}\n"
-                + "{[Time].[1997], [Store].[USA]}" );
+            "{[Time].[Time].[1997], [Store].[Store].[Mexico]}\n"
+                + "{[Time].[Time].[1997], [Store].[Store].[Canada]}\n"
+                + "{[Time].[Time].[1997], [Store].[Store].[USA]}" );
     }
 
 }

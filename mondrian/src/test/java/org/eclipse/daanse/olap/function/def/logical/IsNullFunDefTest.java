@@ -45,7 +45,7 @@ class IsNullFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[bar]}\n"
                 + "Axis #2:\n"
-                + "{[Store].[foo]}\n"
+                + "{[Store].[Store].[foo]}\n"
                 + "Row #0: false\n" );
     }
 

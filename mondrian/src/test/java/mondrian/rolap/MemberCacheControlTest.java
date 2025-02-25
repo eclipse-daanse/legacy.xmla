@@ -507,30 +507,30 @@ class MemberCacheControlTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Retail].[BC].[Vancouver]}\n"
-            + "{[Retail].[BC].[Victoria]}\n"
-            + "{[Retail].[CA].[Alameda]}\n"
-            + "{[Retail].[CA].[Beverly Hills]}\n"
-            + "{[Retail].[CA].[Los Angeles]}\n"
-            + "{[Retail].[CA].[San Diego]}\n"
-            + "{[Retail].[CA].[San Francisco]}\n"
-            + "{[Retail].[DF].[Mexico City]}\n"
-            + "{[Retail].[DF].[San Andres]}\n"
-            + "{[Retail].[Guerrero].[Acapulco]}\n"
-            + "{[Retail].[Jalisco].[Guadalajara]}\n"
-            + "{[Retail].[OR].[Portland]}\n"
-            + "{[Retail].[OR].[Salem]}\n"
-            + "{[Retail].[Veracruz].[Orizaba]}\n"
-            + "{[Retail].[WA].[Bellingham]}\n"
-            + "{[Retail].[WA].[Bremerton]}\n"
-            + "{[Retail].[WA].[Seattle]}\n"
-            + "{[Retail].[WA].[Spokane]}\n"
-            + "{[Retail].[WA].[Tacoma]}\n"
-            + "{[Retail].[WA].[Walla Walla]}\n"
-            + "{[Retail].[WA].[Yakima]}\n"
-            + "{[Retail].[Yucatan].[Merida]}\n"
-            + "{[Retail].[Zacatecas].[Camacho]}\n"
-            + "{[Retail].[Zacatecas].[Hidalgo]}\n"
+            + "{[Retail].[Retail].[BC].[Vancouver]}\n"
+            + "{[Retail].[Retail].[BC].[Victoria]}\n"
+            + "{[Retail].[Retail].[CA].[Alameda]}\n"
+            + "{[Retail].[Retail].[CA].[Beverly Hills]}\n"
+            + "{[Retail].[Retail].[CA].[Los Angeles]}\n"
+            + "{[Retail].[Retail].[CA].[San Diego]}\n"
+            + "{[Retail].[Retail].[CA].[San Francisco]}\n"
+            + "{[Retail].[Retail].[DF].[Mexico City]}\n"
+            + "{[Retail].[Retail].[DF].[San Andres]}\n"
+            + "{[Retail].[Retail].[Guerrero].[Acapulco]}\n"
+            + "{[Retail].[Retail].[Jalisco].[Guadalajara]}\n"
+            + "{[Retail].[Retail].[OR].[Portland]}\n"
+            + "{[Retail].[Retail].[OR].[Salem]}\n"
+            + "{[Retail].[Retail].[Veracruz].[Orizaba]}\n"
+            + "{[Retail].[Retail].[WA].[Bellingham]}\n"
+            + "{[Retail].[Retail].[WA].[Bremerton]}\n"
+            + "{[Retail].[Retail].[WA].[Seattle]}\n"
+            + "{[Retail].[Retail].[WA].[Spokane]}\n"
+            + "{[Retail].[Retail].[WA].[Tacoma]}\n"
+            + "{[Retail].[Retail].[WA].[Walla Walla]}\n"
+            + "{[Retail].[Retail].[WA].[Yakima]}\n"
+            + "{[Retail].[Retail].[Yucatan].[Merida]}\n"
+            + "{[Retail].[Retail].[Zacatecas].[Camacho]}\n"
+            + "{[Retail].[Retail].[Zacatecas].[Hidalgo]}\n"
             + "Row #0: \n"
             + "Row #0: \n"
             + "Row #0: \n"
@@ -556,12 +556,12 @@ class MemberCacheControlTest {
             + "Row #0: \n"
             + "Row #0: \n");
         assertAxisReturns(conn, "Sales",
-            "[Retail].[CA].Children",
-            "[Retail].[CA].[Alameda]\n"
-            + "[Retail].[CA].[Beverly Hills]\n"
-            + "[Retail].[CA].[Los Angeles]\n"
-            + "[Retail].[CA].[San Diego]\n"
-            + "[Retail].[CA].[San Francisco]");
+            "[Retail].[Retail].[CA].Children",
+            "[Retail].[Retail].[CA].[Alameda]\n"
+            + "[Retail].[Retail].[CA].[Beverly Hills]\n"
+            + "[Retail].[Retail].[CA].[Los Angeles]\n"
+            + "[Retail].[Retail].[CA].[San Diego]\n"
+            + "[Retail].[Retail].[CA].[San Francisco]");
         final MemberReader memberReader = hierarchy.getMemberReader();
         final MemberCache memberCache =
             ((SmartMemberReader) memberReader).getMemberCache();
@@ -592,44 +592,44 @@ class MemberCacheControlTest {
                 AggregationManager.makeRequest(cacheRegionMembers), (RolapConnection)conn));
 
         assertAxisReturns(conn, "Sales",
-            "[Retail].[CA].Children",
-            "[Retail].[CA].[Alameda]\n"
-            + "[Retail].[CA].[Beverly Hills]\n"
-            + "[Retail].[CA].[Los Angeles]\n"
-            + "[Retail].[CA].[San Diego]\n"
-            + "[Retail].[CA].[San Francisco]\n"
-            + "[Retail].[CA].[Berkeley]");
+            "[Retail].[Retail].[CA].Children",
+            "[Retail].[Retail].[CA].[Alameda]\n"
+            + "[Retail].[Retail].[CA].[Beverly Hills]\n"
+            + "[Retail].[Retail].[CA].[Los Angeles]\n"
+            + "[Retail].[Retail].[CA].[San Diego]\n"
+            + "[Retail].[Retail].[CA].[San Francisco]\n"
+            + "[Retail].[Retail].[CA].[Berkeley]");
 
         assertQueryReturns(conn,
-            "select {[Retail].[City].Members} on columns from [Sales]",
+            "select {[Retail].[Retail].[City].Members} on columns from [Sales]",
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Retail].[BC].[Vancouver]}\n"
-            + "{[Retail].[BC].[Victoria]}\n"
-            + "{[Retail].[CA].[Alameda]}\n"
-            + "{[Retail].[CA].[Berkeley]}\n"
-            + "{[Retail].[CA].[Beverly Hills]}\n"
-            + "{[Retail].[CA].[Los Angeles]}\n"
-            + "{[Retail].[CA].[San Diego]}\n"
-            + "{[Retail].[CA].[San Francisco]}\n"
-            + "{[Retail].[DF].[Mexico City]}\n"
-            + "{[Retail].[DF].[San Andres]}\n"
-            + "{[Retail].[Guerrero].[Acapulco]}\n"
-            + "{[Retail].[Jalisco].[Guadalajara]}\n"
-            + "{[Retail].[OR].[Portland]}\n"
-            + "{[Retail].[OR].[Salem]}\n"
-            + "{[Retail].[Veracruz].[Orizaba]}\n"
-            + "{[Retail].[WA].[Bellingham]}\n"
-            + "{[Retail].[WA].[Bremerton]}\n"
-            + "{[Retail].[WA].[Seattle]}\n"
-            + "{[Retail].[WA].[Spokane]}\n"
-            + "{[Retail].[WA].[Tacoma]}\n"
-            + "{[Retail].[WA].[Walla Walla]}\n"
-            + "{[Retail].[WA].[Yakima]}\n"
-            + "{[Retail].[Yucatan].[Merida]}\n"
-            + "{[Retail].[Zacatecas].[Camacho]}\n"
-            + "{[Retail].[Zacatecas].[Hidalgo]}\n"
+            + "{[Retail].[Retail].[BC].[Vancouver]}\n"
+            + "{[Retail].[Retail].[BC].[Victoria]}\n"
+            + "{[Retail].[Retail].[CA].[Alameda]}\n"
+            + "{[Retail].[Retail].[CA].[Berkeley]}\n"
+            + "{[Retail].[Retail].[CA].[Beverly Hills]}\n"
+            + "{[Retail].[Retail].[CA].[Los Angeles]}\n"
+            + "{[Retail].[Retail].[CA].[San Diego]}\n"
+            + "{[Retail].[Retail].[CA].[San Francisco]}\n"
+            + "{[Retail].[Retail].[DF].[Mexico City]}\n"
+            + "{[Retail].[Retail].[DF].[San Andres]}\n"
+            + "{[Retail].[Retail].[Guerrero].[Acapulco]}\n"
+            + "{[Retail].[Retail].[Jalisco].[Guadalajara]}\n"
+            + "{[Retail].[Retail].[OR].[Portland]}\n"
+            + "{[Retail].[Retail].[OR].[Salem]}\n"
+            + "{[Retail].[Retail].[Veracruz].[Orizaba]}\n"
+            + "{[Retail].[Retail].[WA].[Bellingham]}\n"
+            + "{[Retail].[Retail].[WA].[Bremerton]}\n"
+            + "{[Retail].[Retail].[WA].[Seattle]}\n"
+            + "{[Retail].[Retail].[WA].[Spokane]}\n"
+            + "{[Retail].[Retail].[WA].[Tacoma]}\n"
+            + "{[Retail].[Retail].[WA].[Walla Walla]}\n"
+            + "{[Retail].[Retail].[WA].[Yakima]}\n"
+            + "{[Retail].[Retail].[Yucatan].[Merida]}\n"
+            + "{[Retail].[Retail].[Zacatecas].[Camacho]}\n"
+            + "{[Retail].[Retail].[Zacatecas].[Hidalgo]}\n"
             + "Row #0: \n"
             + "Row #0: \n"
             + "Row #0: \n"
@@ -657,20 +657,20 @@ class MemberCacheControlTest {
             + "Row #0: \n");
 
         assertQueryReturns(conn,
-            "select [Retail].Children on 0 from [Sales]",
+            "select [Retail].[Retail].Children on 0 from [Sales]",
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Retail].[BC]}\n"
-            + "{[Retail].[CA]}\n"
-            + "{[Retail].[DF]}\n"
-            + "{[Retail].[Guerrero]}\n"
-            + "{[Retail].[Jalisco]}\n"
-            + "{[Retail].[OR]}\n"
-            + "{[Retail].[Veracruz]}\n"
-            + "{[Retail].[WA]}\n"
-            + "{[Retail].[Yucatan]}\n"
-            + "{[Retail].[Zacatecas]}\n"
+            + "{[Retail].[Retail].[BC]}\n"
+            + "{[Retail].[Retail].[CA]}\n"
+            + "{[Retail].[Retail].[DF]}\n"
+            + "{[Retail].[Retail].[Guerrero]}\n"
+            + "{[Retail].[Retail].[Jalisco]}\n"
+            + "{[Retail].[Retail].[OR]}\n"
+            + "{[Retail].[Retail].[Veracruz]}\n"
+            + "{[Retail].[Retail].[WA]}\n"
+            + "{[Retail].[Retail].[Yucatan]}\n"
+            + "{[Retail].[Retail].[Zacatecas]}\n"
             + "Row #0: \n"
             + "Row #0: 74,748\n"
             + "Row #0: \n"
@@ -717,11 +717,11 @@ class MemberCacheControlTest {
 
         assertAxisReturns(conn, "Sales",
             "[Retail].[CA].Children",
-            "[Retail].[CA].[Alameda]\n"
-            + "[Retail].[CA].[Beverly Hills]\n"
-            + "[Retail].[CA].[Los Angeles]\n"
-            + "[Retail].[CA].[San Diego]\n"
-            + "[Retail].[CA].[San Francisco]");
+            "[Retail].[Retail].[CA].[Alameda]\n"
+            + "[Retail].[Retail].[CA].[Beverly Hills]\n"
+            + "[Retail].[Retail].[CA].[Los Angeles]\n"
+            + "[Retail].[Retail].[CA].[San Diego]\n"
+            + "[Retail].[Retail].[CA].[San Francisco]");
 
         final MemberReader memberReader = hierarchy.getMemberReader();
         final MemberCache memberCache =
@@ -758,11 +758,11 @@ class MemberCacheControlTest {
 
         // The list of children should be updated.
         assertAxisReturns(conn, "Sales",
-            "[Retail].[CA].Children",
-            "[Retail].[CA].[Alameda]\n"
-            + "[Retail].[CA].[Beverly Hills]\n"
-            + "[Retail].[CA].[Los Angeles]\n"
-            + "[Retail].[CA].[San Diego]");
+            "[Retail].[Retail].[CA].Children",
+            "[Retail].[Retail].[CA].[Alameda]\n"
+            + "[Retail].[Retail].[CA].[Beverly Hills]\n"
+            + "[Retail].[Retail].[CA].[Los Angeles]\n"
+            + "[Retail].[Retail].[CA].[San Diego]");
     }
 
     @Disabled //TODO need investigate

@@ -141,8 +141,8 @@ class FastBatchingCellReaderTest extends BatchTestCase{
         + "Non Empty Union(CrossJoin(Generate([*METRIC_CJ_SET], {([Time].[Time].CurrentMember,[Product].CurrentMember)}),{[Education Level].[*CTX_MEMBER_SEL~SUM]}),"
         + "                Generate([*METRIC_CJ_SET], {([Time].[Time].CurrentMember,[Product].CurrentMember,[Education Level].CurrentMember)})) on rows "
         + "From [Sales]", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
-            + "{[Time].[1997], [Product].[Drink], [Education Level].[*CTX_MEMBER_SEL~SUM]}\n"
-            + "{[Time].[1997], [Product].[Drink], [Education Level].[Bachelors Degree]}\n" + "Row #0: 6,423\n"
+            + "{[Time].[Time].[1997], [Product].[Product].[Drink], [Education Level].[Education Level].[*CTX_MEMBER_SEL~SUM]}\n"
+            + "{[Time].[Time].[1997], [Product].[Product].[Drink], [Education Level].[Education Level].[Bachelors Degree]}\n" + "Row #0: 6,423\n"
             + "Row #1: 6,423\n" );
   }
 
@@ -164,8 +164,8 @@ class FastBatchingCellReaderTest extends BatchTestCase{
         + "Select " + "{[Measures].[Store Cost]} on columns, "
         + "NonEmptyCrossJoin({[Product].[Drink].[*CTX_MEMBER_SEL~SUM],[Product].[Food].[*CTX_MEMBER_SEL~SUM]},{[Education Level].[*CTX_MEMBER_SEL~SUM]}) "
         + "on rows From [Sales]", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Store Cost]}\n" + "Axis #2:\n"
-            + "{[Product].[Drink].[*CTX_MEMBER_SEL~SUM], [Education Level].[*CTX_MEMBER_SEL~SUM]}\n"
-            + "{[Product].[Food].[*CTX_MEMBER_SEL~SUM], [Education Level].[*CTX_MEMBER_SEL~SUM]}\n"
+            + "{[Product].[Product].[Drink].[*CTX_MEMBER_SEL~SUM], [Education Level].[Education Level].[*CTX_MEMBER_SEL~SUM]}\n"
+            + "{[Product].[Product].[Food].[*CTX_MEMBER_SEL~SUM], [Education Level].[Education Level].[*CTX_MEMBER_SEL~SUM]}\n"
             + "Row #0: 6,535.30\n" + "Row #1: 3,860.89\n" );
   }
 
@@ -1101,10 +1101,10 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             + "{[Measures].[Count Distinct of Warehouses (Large Independent)]}\n"
             + "{[Measures].[Count All of Warehouses (Large Independent)]}\n"
             + "{[Measures].[Count Distinct Store+Warehouse]}\n" + "{[Measures].[Count All Store+Warehouse]}\n"
-            + "{[Measures].[Store Count]}\n" + "Axis #2:\n" + "{[Store Type].[Deluxe Supermarket]}\n"
-            + "{[Store Type].[Gourmet Supermarket]}\n" + "{[Store Type].[HeadQuarters]}\n"
-            + "{[Store Type].[Mid-Size Grocery]}\n" + "{[Store Type].[Small Grocery]}\n"
-            + "{[Store Type].[Supermarket]}\n" + "Row #0: 1\n" + "Row #0: 0\n" + "Row #0: 0\n" + "Row #0: 6\n"
+            + "{[Measures].[Store Count]}\n" + "Axis #2:\n" + "{[Store Type].[Store Type].[Deluxe Supermarket]}\n"
+            + "{[Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Store Type].[Store Type].[HeadQuarters]}\n"
+            + "{[Store Type].[Store Type].[Mid-Size Grocery]}\n" + "{[Store Type].[Store Type].[Small Grocery]}\n"
+            + "{[Store Type].[Store Type].[Supermarket]}\n" + "Row #0: 1\n" + "Row #0: 0\n" + "Row #0: 0\n" + "Row #0: 6\n"
             + "Row #0: 6\n" + "Row #0: 6\n" + "Row #1: 1\n" + "Row #1: 0\n" + "Row #1: 0\n" + "Row #1: 2\n"
             + "Row #1: 2\n" + "Row #1: 2\n" + "Row #2: \n" + "Row #2: \n" + "Row #2: \n" + "Row #2: \n" + "Row #2: \n"
             + "Row #2: \n" + "Row #3: 0\n" + "Row #3: 1\n" + "Row #3: 1\n" + "Row #3: 4\n" + "Row #3: 4\n"
@@ -1185,9 +1185,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
         "WITH MEMBER [Time].[Time].[1997 Q1 plus Q2] AS 'AGGREGATE({[Time].[1997].[Q1], [Time].[1997].[Q2]})', solve_order=1\n"
             + "SELECT {[Measures].[Customer Count]} ON COLUMNS,\n"
             + "      {[Time].[1997].[Q1], [Time].[1997].[Q2], [Time].[1997 Q1 plus Q2]} ON ROWS\n" + "FROM Sales\n"
-            + "WHERE ([Store].[USA].[CA])", "Axis #0:\n" + "{[Store].[USA].[CA]}\n" + "Axis #1:\n"
-                + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Time].[1997].[Q1]}\n"
-                + "{[Time].[1997].[Q2]}\n" + "{[Time].[1997 Q1 plus Q2]}\n" + "Row #0: 1,110\n" + "Row #1: 1,173\n"
+            + "WHERE ([Store].[USA].[CA])", "Axis #0:\n" + "{[Store].[Store].[USA].[CA]}\n" + "Axis #1:\n"
+                + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Time].[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q2]}\n" + "{[Time].[Time].[1997 Q1 plus Q2]}\n" + "Row #0: 1,110\n" + "Row #1: 1,173\n"
                 + "Row #2: 1,854\n" );
   }
 
@@ -1204,9 +1204,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
         + "SELECT {[Measures].[Unit Sales], [Measures].[Customer Count]} ON COLUMNS,\n"
         + "      {[Time].[1997].[Q1],\n" + "       [Time].[1997].[Q2],\n" + "       [Time].[1997].[Q3].[7],\n"
         + "       [Time].[1997 Q1 plus July]} ON ROWS\n" + "FROM Sales\n" + "WHERE ([Store].[USA].[CA])", "Axis #0:\n"
-            + "{[Store].[USA].[CA]}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n"
-            + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Time].[1997].[Q1]}\n" + "{[Time].[1997].[Q2]}\n"
-            + "{[Time].[1997].[Q3].[7]}\n" + "{[Time].[1997 Q1 plus July]}\n" + "Row #0: 16,890\n" + "Row #0: 1,110\n"
+            + "{[Store].[Store].[USA].[CA]}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n"
+            + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Time].[Time].[1997].[Q1]}\n" + "{[Time].[Time].[1997].[Q2]}\n"
+            + "{[Time].[Time].[1997].[Q3].[7]}\n" + "{[Time].[Time].[1997 Q1 plus July]}\n" + "Row #0: 16,890\n" + "Row #0: 1,110\n"
             + "Row #1: 18,052\n" + "Row #1: 1,173\n" + "Row #2: 5,403\n" + "Row #2: 412\n"
             // !!!
             + "Row #3: 22,293\n"
@@ -1228,8 +1228,8 @@ class FastBatchingCellReaderTest extends BatchTestCase{
         + "        [Promotion Media].[Radio]} ON COLUMNS,\n" + "       {[Time].[1997],\n"
         + "        [Time].[1997].[Q1],\n" + "        [Time].[1997 Q1 plus July]} ON ROWS\n" + "FROM Sales\n"
         + "WHERE [Measures].[Customer Count]", "Axis #0:\n" + "{[Measures].[Customer Count]}\n" + "Axis #1:\n"
-            + "{[Promotion Media].[TV plus Radio]}\n" + "{[Promotion Media].[TV]}\n" + "{[Promotion Media].[Radio]}\n"
-            + "Axis #2:\n" + "{[Time].[1997]}\n" + "{[Time].[1997].[Q1]}\n" + "{[Time].[1997 Q1 plus July]}\n"
+            + "{[Promotion Media].[Promotion Media].[TV plus Radio]}\n" + "{[Promotion Media].[Promotion Media].[TV]}\n" + "{[Promotion Media].[Promotion Media].[Radio]}\n"
+            + "Axis #2:\n" + "{[Time].[Time].[1997]}\n" + "{[Time].[Time].[1997].[Q1]}\n" + "{[Time].[Time].[1997 Q1 plus July]}\n"
             + "Row #0: 455\n" + "Row #0: 274\n" + "Row #0: 186\n" + "Row #1: 139\n" + "Row #1: 99\n" + "Row #1: 40\n"
             + "Row #2: 139\n" + "Row #2: 99\n" + "Row #2: 40\n" );
 
@@ -1316,9 +1316,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
 
     String result =
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Customer Count]}\n" + "{[Measures].[Unit Sales]}\n"
-            + "Axis #2:\n" + "{[Store].[CA plus USA], [Time].[Q1 plus July]}\n"
-            + "{[Store].[USA].[CA], [Time].[Q1 plus July]}\n" + "{[Store].[USA], [Time].[Q1 plus July]}\n"
-            + "{[Store].[CA plus USA], [Time].[1997].[Q1]}\n" + "{[Store].[CA plus USA], [Time].[1997].[Q3].[7]}\n"
+            + "Axis #2:\n" + "{[Store].[Store].[CA plus USA], [Time].[Time].[Q1 plus July]}\n"
+            + "{[Store].[Store].[USA].[CA], [Time].[Time].[Q1 plus July]}\n" + "{[Store].[Store].[USA], [Time].[Time].[Q1 plus July]}\n"
+            + "{[Store].[Store].[CA plus USA], [Time].[Time].[1997].[Q1]}\n" + "{[Store].[Store].[CA plus USA], [Time].[Time].[1997].[Q3].[7]}\n"
             + "Row #0: 3,505\n" + "Row #0: 112,347\n" + "Row #1: 1,386\n" + "Row #1: 22,293\n" + "Row #2: 3,505\n"
             + "Row #2: 90,054\n" + "Row #3: 2,981\n" + "Row #3: 83,181\n" + "Row #4: 1,462\n" + "Row #4: 29,166\n";
 
@@ -1387,9 +1387,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
 
     String result =
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Customer Count]}\n" + "{[Measures].[Unit Sales]}\n"
-            + "Axis #2:\n" + "{[Store].[Select Region], [Time].[Select Time Period]}\n"
-            + "{[Store].[Select Region], [Time].[1997].[Q1]}\n" + "{[Store].[Select Region], [Time].[1997].[Q3].[7]}\n"
-            + "{[Store].[Select Region], [Time].[1997].[Q4]}\n" + "{[Store].[Select Region], [Time].[1997]}\n"
+            + "Axis #2:\n" + "{[Store].[Store].[Select Region], [Time].[Time].[Select Time Period]}\n"
+            + "{[Store].[Store].[Select Region], [Time].[Time].[1997].[Q1]}\n" + "{[Store].[Store].[Select Region], [Time].[Time].[1997].[Q3].[7]}\n"
+            + "{[Store].[Store].[Select Region], [Time].[Time].[1997].[Q4]}\n" + "{[Store].[Store].[Select Region], [Time].[Time].[1997]}\n"
             + "Row #0: 3,753\n" + "Row #0: 229,496\n" + "Row #1: 1,877\n" + "Row #1: 36,177\n" + "Row #2: 845\n"
             + "Row #2: 13,123\n" + "Row #3: 2,073\n" + "Row #3: 37,789\n" + "Row #4: 3,753\n" + "Row #4: 142,407\n";
 
@@ -1415,8 +1415,8 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             + "NonEmptyCrossJoin([*BASE_MEMBERS_Store],{([Product].[*CTX_MEMBER_SEL~SUM])})\n" + "on rows\n"
             + "From [Sales]\n" + "where ([Time].[1997])";
 
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, "Axis #0:\n" + "{[Time].[1997]}\n" + "Axis #1:\n" + "{[Measures].[Customer Count]}\n"
-        + "Axis #2:\n" + "{[Store].[USA].[WA], [Product].[*CTX_MEMBER_SEL~SUM]}\n" + "Row #0: 889\n" );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), query, "Axis #0:\n" + "{[Time].[Time].[1997]}\n" + "Axis #1:\n" + "{[Measures].[Customer Count]}\n"
+        + "Axis #2:\n" + "{[Store].[Store].[USA].[WA], [Product].[Product].[*CTX_MEMBER_SEL~SUM]}\n" + "Row #0: 889\n" );
 
     String mysqlSql =
         "select " + "`store`.`store_state` as `c0`, `time_by_day`.`the_year` as `c1`, "
@@ -1474,8 +1474,8 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             + "member [Measures].[foo] as '([Product].[x],[Measures].[Customer Count])'\n"
             + "select Filter([Gender].members,(Not IsEmpty([Measures].[foo]))) on 0 " + "from Sales";
 
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Gender].[All Gender]}\n" + "{[Gender].[F]}\n"
-        + "{[Gender].[M]}\n" + "Row #0: 266,773\n" + "Row #0: 131,558\n" + "Row #0: 135,215\n" );
+    assertQueryReturns(context.getConnectionWithDefaultRole(), query, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Gender].[Gender].[All Gender]}\n" + "{[Gender].[Gender].[F]}\n"
+        + "{[Gender].[Gender].[M]}\n" + "Row #0: 266,773\n" + "Row #0: 131,558\n" + "Row #0: 135,215\n" );
 
     String mysqlSql =
         "select " + "`time_by_day`.`the_year` as `c0`, " + "count(distinct `sales_fact_1997`.`customer_id`) as `m0` "
@@ -1511,16 +1511,16 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     prepareContext(context);
     // simple case of count distinct measure as second argument to
     // Aggregate(). Should apply distinct-count aggregator (MONDRIAN-2016)
-    assertQueryReturns(connection, "with\n" + "  set periods as [Time].[1997].[Q1].[1] : [Time].[1997].[Q4].[10]\n"
-        + "  member [Time].[agg] as Aggregate(periods, [Measures].[Customer Count])\n" + "select\n"
-        + "  [Time].[agg]  ON COLUMNS,\n" + "  [Gender].[M] on ROWS\n" + "FROM [Sales]", "Axis #0:\n" + "{}\n"
-            + "Axis #1:\n" + "{[Time].[agg]}\n" + "Axis #2:\n" + "{[Gender].[M]}\n" + "Row #0: 2,651\n" );
+    assertQueryReturns(connection, "with\n" + "  set periods as [Time].[Time].[1997].[Q1].[1] : [Time].[Time].[1997].[Q4].[10]\n"
+        + "  member [Time].[Time].[agg] as Aggregate(periods, [Measures].[Customer Count])\n" + "select\n"
+        + "  [Time].[agg]  ON COLUMNS,\n" + "  [Gender].[Gender].[M] on ROWS\n" + "FROM [Sales]", "Axis #0:\n" + "{}\n"
+            + "Axis #1:\n" + "{[Time].[Time].[agg]}\n" + "Axis #2:\n" + "{[Gender].[Gender].[M]}\n" + "Row #0: 2,651\n" );
     assertQueryReturns(connection, "WITH MEMBER [Measures].[My Distinct Count] AS \n"
         + "'AGGREGATE([1997].Children, [Measures].[Customer Count])' \n"
         + "SELECT {[Measures].[My Distinct Count], [Measures].[Customer Count]} ON COLUMNS,\n"
         + "{[1997].Children} ON ROWS\n" + "FROM Sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
             + "{[Measures].[My Distinct Count]}\n" + "{[Measures].[Customer Count]}\n" + "Axis #2:\n"
-            + "{[Time].[1997].[Q1]}\n" + "{[Time].[1997].[Q2]}\n" + "{[Time].[1997].[Q3]}\n" + "{[Time].[1997].[Q4]}\n"
+            + "{[Time].[Time].[1997].[Q1]}\n" + "{[Time].[Time].[1997].[Q2]}\n" + "{[Time].[Time].[1997].[Q3]}\n" + "{[Time].[Time].[1997].[Q4]}\n"
             + "Row #0: 5,581\n" + "Row #0: 2,981\n" + "Row #1: 5,581\n" + "Row #1: 2,973\n" + "Row #2: 5,581\n"
             + "Row #2: 3,026\n" + "Row #3: 5,581\n" + "Row #3: 3,261\n" );
   }
@@ -1610,8 +1610,8 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             + " [Product].[All Products].children on 1 " + "from [2CountDistincts] ";
     Connection connection = context.getConnectionWithDefaultRole();
     assertQueryReturns(connection, queryCAORRollup, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[agg]}\n"
-        + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Product].[Drink]}\n" + "{[Product].[Food]}\n"
-        + "{[Product].[Non-Consumable]}\n" + "Row #0: 2,243\n" + "Row #0: 3,485\n" + "Row #1: 3,711\n"
+        + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Product].[Product].[Drink]}\n" + "{[Product].[Product].[Food]}\n"
+        + "{[Product].[Product].[Non-Consumable]}\n" + "Row #0: 2,243\n" + "Row #0: 3,485\n" + "Row #1: 3,711\n"
         + "Row #1: 5,525\n" + "Row #2: 2,957\n" + "Row #2: 4,468\n" );
 
     // [Customer Count] should override context
@@ -1619,14 +1619,14 @@ class FastBatchingCellReaderTest extends BatchTestCase{
         + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]}, " + "           measures.[Customer Count])'"
         + " select {measures.[Store Count], measures.[Customer Count]} on 0,  " + " [Store].agg on 1 "
         + "from [2CountDistincts] ", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Store Count]}\n"
-            + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Store].[agg]}\n" + "Row #0: 3,753\n"
+            + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Store].[Store].[agg]}\n" + "Row #0: 3,753\n"
             + "Row #0: 3,753\n" );
     // aggregate should pick up measure in context
     assertQueryReturns(connection, "with member Store.agg as "
         + "'aggregate({[Store].[USA].[CA],[Store].[USA].[OR]})'"
         + " select {measures.[Store Count], measures.[Customer Count]} on 0,  " + " [Store].agg on 1 "
         + "from [2CountDistincts] ", "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Store Count]}\n"
-            + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Store].[agg]}\n" + "Row #0: 6\n"
+            + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Store].[Store].[agg]}\n" + "Row #0: 6\n"
             + "Row #0: 3,753\n" );
   }
 
@@ -1642,7 +1642,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
         + "aggregate({[Store].[All Stores].[USA]}, measures.[unit sales])\n"
         + " > 70000, (Store.[All Stores], measures.currentMember), 0)'\n" + "select Store.cond on 0 from sales\n"
         + "where measures.[store sales]\n", "Axis #0:\n" + "{[Measures].[Store Sales]}\n" + "Axis #1:\n"
-            + "{[Store].[cond]}\n" + "Row #0: 565,238.13\n" );
+            + "{[Store].[Store].[cond]}\n" + "Row #0: 565,238.13\n" );
   }
 
   @ParameterizedTest
@@ -1656,8 +1656,8 @@ class FastBatchingCellReaderTest extends BatchTestCase{
             + "Filter([States], not IsEmpty([Measures].[Customer Count])) on rows, "
             + "{[Measures].[Customer Count]} on columns " + "From [Sales] " + "Where ([Product].[Selected Products])";
 
-    assertQueryReturns(context.getConnectionWithDefaultRole(), query, "Axis #0:\n" + "{[Product].[Selected Products]}\n" + "Axis #1:\n"
-        + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Store].[USA].[CA]}\n" + "{[Store].[USA].[OR]}\n"
+    assertQueryReturns(context.getConnectionWithDefaultRole(), query, "Axis #0:\n" + "{[Product].[Product].[Selected Products]}\n" + "Axis #1:\n"
+        + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Store].[Store].[USA].[CA]}\n" + "{[Store].[Store].[USA].[OR]}\n"
         + "Row #0: 2,692\n" + "Row #1: 1,036\n" );
 
     String mysqlSql =
@@ -1863,6 +1863,6 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     ((TestConfig)(context.getConfig())).setCellBatchSize(1);
     //propSaver.set( MondrianProperties.instance().CellBatchSize, 1 );
     assertQueryReturns(connection, "select lastnonempty([education level].members, measures.[unit sales]) on 0 from sales",
-        "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Education Level].[Partial High School]}\n" + "Row #0: 79,155\n" );
+        "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Education Level].[Education Level].[Partial High School]}\n" + "Row #0: 79,155\n" );
   }
 }

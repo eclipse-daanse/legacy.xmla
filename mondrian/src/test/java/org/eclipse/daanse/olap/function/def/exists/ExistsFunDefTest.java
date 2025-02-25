@@ -39,9 +39,9 @@ class ExistsFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[All Customers]}\n"
-                + "{[Customers].[USA]}\n"
-                + "{[Customers].[USA].[CA]}\n"
+                + "{[Customers].[Customers].[All Customers]}\n"
+                + "{[Customers].[Customers].[USA]}\n"
+                + "{[Customers].[Customers].[USA].[CA]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #0: 266,773\n"
                 + "Row #0: 74,748\n" );
@@ -63,11 +63,11 @@ class ExistsFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[All Customers]}\n"
-                + "{[Customers].[USA]}\n"
-                + "{[Customers].[USA].[CA]}\n"
-                + "{[Customers].[USA].[OR]}\n"
-                + "{[Customers].[USA].[WA]}\n"
+                + "{[Customers].[Customers].[All Customers]}\n"
+                + "{[Customers].[Customers].[USA]}\n"
+                + "{[Customers].[Customers].[USA].[CA]}\n"
+                + "{[Customers].[Customers].[USA].[OR]}\n"
+                + "{[Customers].[Customers].[USA].[WA]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #0: 266,773\n"
                 + "Row #0: 74,748\n"
@@ -76,12 +76,12 @@ class ExistsFunDefTest {
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( "
-                + "[Customers].[USA].[CA], (Store.[USA], Gender.[F])) "
+                + "[Customers].[Customers].[USA].[CA], (Store.[USA], Gender.[F])) "
                 + "on 0 from sales",
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[USA].[CA]}\n"
+                + "{[Customers].[Customers].[USA].[CA]}\n"
                 + "Row #0: 74,748\n" );
     }
 
@@ -91,39 +91,39 @@ class ExistsFunDefTest {
         // tests queries w/ a multi-hierarchy dim in either or both args.
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( "
-                + "crossjoin( time.[1997], {[Time.Weekly].[1997].[16]}), "
+                + "crossjoin( time.[1997], {[Time].[Weekly].[1997].[16]}), "
                 + " { Gender.F } ) on 0 from sales",
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Time].[1997], [Time.Weekly].[1997].[16]}\n"
+                + "{[Time].[Time].[1997], [Time].[Weekly].[1997].[16]}\n"
                 + "Row #0: 3,839\n" );
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( "
-                + "time.[1997].[Q1], {[Time.Weekly].[1997].[4]}) "
+                + "time.[1997].[Q1], {[Time].[Weekly].[1997].[4]}) "
                 + " on 0 from sales",
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
                 + "Row #0: 66,291\n" );
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( "
                 + "{ Gender.F }, "
-                + "crossjoin( time.[1997], {[Time.Weekly].[1997].[16]})  ) "
+                + "crossjoin( time.[1997], {[Time].[Weekly].[1997].[16]})  ) "
                 + "on 0 from sales",
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Gender].[F]}\n"
+                + "{[Gender].[Gender].[F]}\n"
                 + "Row #0: 131,558\n" );
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select exists( "
                 + "{ time.[1998] }, "
-                + "crossjoin( time.[1997], {[Time.Weekly].[1997].[16]})  ) "
+                + "crossjoin( time.[1997], {[Time].[Weekly].[1997].[16]})  ) "
                 + "on 0 from sales",
             "Axis #0:\n"
                 + "{}\n"
@@ -149,7 +149,7 @@ class ExistsFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Time].[1998].[Q1]}\n"
+                + "{[Time].[Time].[1998].[Q1]}\n"
                 + "Row #0: \n" );
 
 
@@ -169,7 +169,7 @@ class ExistsFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Time].[1998].[Q1].[1], [Gender].[All Gender]}\n"
+                + "{[Time].[Time].[1998].[Q1].[1], [Gender].[Gender].[All Gender]}\n"
                 + "Row #0: \n" );
     }
 
@@ -189,14 +189,14 @@ class ExistsFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[All Customers]}\n"
-                + "{[Customers].[Mexico]}\n"
-                + "{[Customers].[USA]}\n"
-                + "{[Customers].[Mexico].[Veracruz]}\n"
-                + "{[Customers].[USA].[CA]}\n"
-                + "{[Customers].[USA].[OR]}\n"
-                + "{[Customers].[USA].[WA]}\n"
-                + "{[Customers].[Mexico]}\n"
+                + "{[Customers].[Customers].[All Customers]}\n"
+                + "{[Customers].[Customers].[Mexico]}\n"
+                + "{[Customers].[Customers].[USA]}\n"
+                + "{[Customers].[Customers].[Mexico].[Veracruz]}\n"
+                + "{[Customers].[Customers].[USA].[CA]}\n"
+                + "{[Customers].[Customers].[USA].[OR]}\n"
+                + "{[Customers].[Customers].[USA].[WA]}\n"
+                + "{[Customers].[Customers].[Mexico]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #0: \n"
                 + "Row #0: 266,773\n"
@@ -218,7 +218,7 @@ class ExistsFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Product].[All Products], [Customers].[All Customers]}\n"
+                + "{[Product].[Product].[All Products], [Customers].[Customers].[All Customers]}\n"
                 + "Row #0: 266,773\n" );
     }
 
@@ -233,7 +233,7 @@ class ExistsFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Product].[All Products], [Customers].[USA]}\n"
+                + "{[Product].[Product].[All Products], [Customers].[Customers].[USA]}\n"
                 + "Row #0: 266,773\n" );
     }
 
@@ -248,9 +248,9 @@ class ExistsFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[USA].[CA], [Product].[All Products]}\n"
-                + "{[Customers].[USA].[OR], [Product].[All Products]}\n"
-                + "{[Customers].[USA].[WA], [Product].[All Products]}\n"
+                + "{[Customers].[Customers].[USA].[CA], [Product].[Product].[All Products]}\n"
+                + "{[Customers].[Customers].[USA].[OR], [Product].[Product].[All Products]}\n"
+                + "{[Customers].[Customers].[USA].[WA], [Product].[Product].[All Products]}\n"
                 + "Row #0: 74,748\n"
                 + "Row #0: 67,659\n"
                 + "Row #0: 124,366\n" );
@@ -267,9 +267,9 @@ class ExistsFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[USA].[CA], [Product].[Drink]}\n"
-                + "{[Customers].[USA].[OR], [Product].[Drink]}\n"
-                + "{[Customers].[USA].[WA], [Product].[Drink]}\n"
+                + "{[Customers].[Customers].[USA].[CA], [Product].[Product].[Drink]}\n"
+                + "{[Customers].[Customers].[USA].[OR], [Product].[Product].[Drink]}\n"
+                + "{[Customers].[Customers].[USA].[WA], [Product].[Product].[Drink]}\n"
                 + "Row #0: 7,102\n"
                 + "Row #0: 6,106\n"
                 + "Row #0: 11,389\n" );
@@ -291,9 +291,9 @@ class ExistsFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[USA].[CA], [Time].[1997], [Product].[Drink]}\n"
-                + "{[Customers].[USA].[OR], [Time].[1997], [Product].[Drink]}\n"
-                + "{[Customers].[USA].[WA], [Time].[1997], [Product].[Drink]}\n"
+                + "{[Customers].[Customers].[USA].[CA], [Time].[Time].[1997], [Product].[Product].[Drink]}\n"
+                + "{[Customers].[Customers].[USA].[OR], [Time].[Time].[1997], [Product].[Product].[Drink]}\n"
+                + "{[Customers].[Customers].[USA].[WA], [Time].[Time].[1997], [Product].[Product].[Drink]}\n"
                 + "Row #0: 7,102\n"
                 + "Row #0: 6,106\n"
                 + "Row #0: 11,389\n" );
@@ -313,12 +313,12 @@ class ExistsFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[All Customers]}\n"
-                + "{[Customers].[Canada]}\n"
-                + "{[Customers].[Mexico]}\n"
-                + "{[Customers].[USA]}\n"
-                + "{[Customers].[USA].[CA]}\n"
-                + "{[Customers].[Canada].[BC].[Richmond]}\n"
+                + "{[Customers].[Customers].[All Customers]}\n"
+                + "{[Customers].[Customers].[Canada]}\n"
+                + "{[Customers].[Customers].[Mexico]}\n"
+                + "{[Customers].[Customers].[USA]}\n"
+                + "{[Customers].[Customers].[USA].[CA]}\n"
+                + "{[Customers].[Customers].[Canada].[BC].[Richmond]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #0: \n"
                 + "Row #0: \n"

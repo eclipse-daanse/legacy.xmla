@@ -43,23 +43,14 @@ class MultipleHierarchyTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testWeekly(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        if (SystemWideProperties.instance().SsasCompatibleNaming) {
-            // [Time.Weekly] has an 'all' member, but [Time] does not.
-            assertAxisReturns(connection, "Sales",
-                "{[Time].[Time].CurrentMember}",
-                "[Time].[1997]");
-            assertAxisReturns(connection, "Sales",
-                "{[Time].[Weekly].CurrentMember}",
-                "[Time].[Weekly].[All Weeklys]");
-        } else {
-            // [Time.Weekly] has an 'all' member, but [Time] does not.
-            assertAxisReturns(connection, "Sales",
-                "{[Time].CurrentMember}",
-                "[Time].[1997]");
-            assertAxisReturns(connection, "Sales",
-                "{[Time.Weekly].CurrentMember}",
-                "[Time].[Weekly].[All Weeklys]");
-        }
+        
+        // [Time.Weekly] has an 'all' member, but [Time] does not.
+        assertAxisReturns(connection, "Sales",
+            "{[Time].[Time].CurrentMember}",
+            "[Time].[Time].[1997]");
+        assertAxisReturns(connection, "Sales",
+            "{[Time].[Weekly].CurrentMember}",
+            "[Time].[Weekly].[All Weeklys]");
     }
 
     @ParameterizedTest
@@ -84,22 +75,22 @@ class MultipleHierarchyTest {
             + "{[Measures].[Foo]}\n"
             + "{[Measures].[Foo2]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997].[Q1]}\n"
-            + "{[Time].[1997].[Q2]}\n"
-            + "{[Time].[1997].[Q3]}\n"
-            + "{[Time].[1997].[Q4]}\n"
+            + "{[Time].[Time].[1997].[Q1]}\n"
+            + "{[Time].[Time].[1997].[Q2]}\n"
+            + "{[Time].[Time].[1997].[Q3]}\n"
+            + "{[Time].[Time].[1997].[Q4]}\n"
             + "Row #0: 66,291\n"
-            + "Row #0: [Time.Weekly].[All Time.Weeklys]\n"
-            + "Row #0: [Time].[1997].[Q1]\n"
+            + "Row #0: [Time].[Weekly].[All Weeklys]\n"
+            + "Row #0: [Time].[Time].[1997].[Q1]\n"
             + "Row #1: 62,610\n"
-            + "Row #1: [Time.Weekly].[All Time.Weeklys]\n"
-            + "Row #1: [Time].[1997].[Q2]\n"
+            + "Row #1: [Time].[Weekly].[All Weeklys]\n"
+            + "Row #1: [Time].[Time].[1997].[Q2]\n"
             + "Row #2: 65,848\n"
-            + "Row #2: [Time.Weekly].[All Time.Weeklys]\n"
-            + "Row #2: [Time].[1997].[Q3]\n"
+            + "Row #2: [Time].[Weekly].[All Weeklys]\n"
+            + "Row #2: [Time].[Time].[1997].[Q3]\n"
             + "Row #3: 72,024\n"
-            + "Row #3: [Time.Weekly].[All Time.Weeklys]\n"
-            + "Row #3: [Time].[1997].[Q4]\n");
+            + "Row #3: [Time].[Weekly].[All Weeklys]\n"
+            + "Row #3: [Time].[Time].[1997].[Q4]\n");
     }
 
     @ParameterizedTest
@@ -109,8 +100,8 @@ class MultipleHierarchyTest {
             "select {[Measures].[Unit Sales]} on columns,\n"
             + " {[Store].children} on rows\n"
             + "from [Sales]\n"
-            + "where ([Gender].[M], [Time].[1997], [Time].[1997].[Q1])",
-            "Tuple contains more than one member of hierarchy '[Time]'.");
+            + "where ([Gender].[Gender].[M], [Time].[Time].[1997], [Time].[Time].[1997].[Q1])",
+            "Tuple contains more than one member of hierarchy '[Time].[Time]'.");
     }
 
     @ParameterizedTest
@@ -124,13 +115,13 @@ class MultipleHierarchyTest {
             + hierarchyName("Time", "Weekly")
             + ".[1997], [Time].[1997].[Q1])",
             "Axis #0:\n"
-            + "{[Gender].[M], [Time.Weekly].[1997], [Time].[1997].[Q1]}\n"
+            + "{[Gender].[Gender].[M], [Time].[Weekly].[1997], [Time].[Time].[1997].[Q1]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[Canada]}\n"
-            + "{[Store].[Mexico]}\n"
-            + "{[Store].[USA]}\n"
+            + "{[Store].[Store].[Canada]}\n"
+            + "{[Store].[Store].[Mexico]}\n"
+            + "{[Store].[Store].[USA]}\n"
             + "Row #0: \n"
             + "Row #1: \n"
             + "Row #2: 33,381\n");
@@ -153,8 +144,8 @@ class MultipleHierarchyTest {
             + "Axis #1:\n"
             + "{[Measures].[Sales to Date]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997].[Q2].[4]}\n"
-            + "{[Time].[1997].[Q2].[5]}\n"
+            + "{[Time].[Time].[1997].[Q2].[4]}\n"
+            + "{[Time].[Time].[1997].[Q2].[5]}\n"
             + "Row #0: 86,470\n"
             + "Row #1: 107,551\n");
 
@@ -171,9 +162,9 @@ class MultipleHierarchyTest {
             + "Axis #1:\n"
             + "{[Measures].[Sales to Date]}\n"
             + "Axis #2:\n"
-            + "{[Time.Weekly].[1997].[14]}\n"
-            + "{[Time.Weekly].[1997].[15]}\n"
-            + "{[Time.Weekly].[1997].[16]}\n"
+            + "{[Time].[Weekly].[1997].[14]}\n"
+            + "{[Time].[Weekly].[1997].[15]}\n"
+            + "{[Time].[Weekly].[1997].[16]}\n"
             + "Row #0: 81,670\n"
             + "Row #1: 86,300\n"
             + "Row #2: 90,139\n");
@@ -255,7 +246,7 @@ class MultipleHierarchyTest {
             + "from [Sales]\n"
             + "where [Time].[1997] ",
             "Axis #0:\n"
-            + "{[Time].[1997]}\n"
+            + "{[Time].[Time].[1997]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "{[Measures].[Store Cost]}\n"
@@ -264,14 +255,14 @@ class MultipleHierarchyTest {
             + "{[Measures].[Store type]}\n"
             + "{[Measures].[Store Sqft]}\n"
             + "Axis #2:\n"
-            + "{[NuStore].[All NuStores]}\n"
-            + "{[NuStore].[Canada]}\n"
-            + "{[NuStore].[Canada].[BC]}\n"
-            + "{[NuStore].[Canada].[BC].[Vancouver]}\n"
-            + "{[NuStore].[Canada].[BC].[Vancouver].[Store 19]}\n"
-            + "{[NuStore].[Canada].[BC].[Victoria]}\n"
-            + "{[NuStore].[Mexico]}\n"
-            + "{[NuStore].[USA]}\n"
+            + "{[NuStore].[NuStore].[All NuStores]}\n"
+            + "{[NuStore].[NuStore].[Canada]}\n"
+            + "{[NuStore].[NuStore].[Canada].[BC]}\n"
+            + "{[NuStore].[NuStore].[Canada].[BC].[Vancouver]}\n"
+            + "{[NuStore].[NuStore].[Canada].[BC].[Vancouver].[Store 19]}\n"
+            + "{[NuStore].[NuStore].[Canada].[BC].[Victoria]}\n"
+            + "{[NuStore].[NuStore].[Mexico]}\n"
+            + "{[NuStore].[NuStore].[USA]}\n"
             + "Row #0: 266,773\n"
             + "Row #0: 225,627.23\n"
             + "Row #0: 565,238.13\n"
@@ -336,11 +327,11 @@ class MultipleHierarchyTest {
             + "select [Measures].[Time Child Count] on 0\n"
             + "from [Sales]";
         Connection connection = context.getConnectionWithDefaultRole();
-        if (SystemWideProperties.instance().SsasCompatibleNaming) {
+        //if (SystemWideProperties.instance().SsasCompatibleNaming) {
+        if (true) {
             assertQueryThrows(connection,
                 query,
-                "The 'Time' dimension contains more than one hierarchy, "
-                + "therefore the hierarchy must be explicitly specified.");
+                "Could not Calculate the default hierarchy of the given dimension 'Time'. It may contains more than one hierarchy. Specify the hierarchy explicitly.");
         } else {
             assertQueryReturns(connection,
                 query,
@@ -400,9 +391,9 @@ class MultipleHierarchyTest {
             + "Axis #1:\n"
             + "{[Measures].[*ZERO]}\n"
             + "Axis #2:\n"
-            + "{[NuStore].[Canada]}\n"
-            + "{[NuStore].[Mexico]}\n"
-            + "{[NuStore].[USA]}\n"
+            + "{[NuStore].[NuStore].[Canada]}\n"
+            + "{[NuStore].[NuStore].[Mexico]}\n"
+            + "{[NuStore].[NuStore].[USA]}\n"
             + "Row #0: 0\n"
             + "Row #1: 0\n"
             + "Row #2: 0\n");
@@ -420,7 +411,7 @@ class MultipleHierarchyTest {
             + " ISNULL(`store`.`store_country`) ASC, "
             + "`store`.`store_country` ASC";
         TestUtil.assertNoQuerySql(context.getConnectionWithDefaultRole(),
-            "with member [Time.Weekly].blah as '1' select from sales",
+            "with member [Time].[Weekly].blah as '1' select from sales",
             new SqlPattern[]{
                 new SqlPattern(
                     DatabaseProduct.MYSQL,

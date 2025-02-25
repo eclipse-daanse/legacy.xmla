@@ -34,17 +34,17 @@ class CacheFunDefTest {
         assertExprReturns(context.getConnectionWithDefaultRole(), "Cache('foo' || 'bar')", "foobar" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Gender].Children",
-            "[Gender].[F]\n"
-                + "[Gender].[M]" );
+            "[Gender].[Gender].[F]\n"
+                + "[Gender].[Gender].[M]" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "([Gender].[M], [Marital Status].[S].PrevMember)",
-            "{[Gender].[M], [Marital Status].[M]}" );
+            "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[M]}" );
 
         // inside another expression
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Order(Cache([Gender].Children), Cache(([Measures].[Unit Sales], [Time].[1997].[Q1])), BDESC)",
-            "[Gender].[M]\n"
-                + "[Gender].[F]" );
+            "[Gender].[Gender].[M]\n"
+                + "[Gender].[Gender].[F]" );
 
         // doesn't work with multiple args
         assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",

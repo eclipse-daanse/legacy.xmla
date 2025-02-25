@@ -476,7 +476,6 @@ public class RolapCatalogReader
         DataType category,
         MatchType matchType)
     {
-        if (SystemWideProperties.instance().SsasCompatibleNaming) {
             return new NameResolverImpl().resolve(
                 parent,
                 Util.toOlap4j(names),
@@ -484,13 +483,6 @@ public class RolapCatalogReader
                 category,
                 matchType,
                 getNamespaces());
-        }
-        return lookupCompoundInternal(
-            parent,
-            names,
-            failIfNotFound,
-            category,
-            matchType);
     }
 
     public final OlapElement lookupCompoundInternal(

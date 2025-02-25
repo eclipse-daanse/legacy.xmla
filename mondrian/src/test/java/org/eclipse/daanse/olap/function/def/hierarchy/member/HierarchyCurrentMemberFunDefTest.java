@@ -28,7 +28,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.olap.SystemWideProperties;
 import mondrian.olap.fun.FunctionTest;
 
 
@@ -39,15 +38,15 @@ class HierarchyCurrentMemberFunDefTest {
     void testCurrentMember(Context context) {
         // <Dimension>.CurrentMember
         Connection connection = context.getConnectionWithDefaultRole();
-        assertAxisReturns(connection, "Sales", "[Gender].CurrentMember", "[Gender].[All Gender]" );
+        assertAxisReturns(connection, "Sales", "[Gender].CurrentMember", "[Gender].[Gender].[All Gender]" );
         // <Hierarchy>.CurrentMember
         assertAxisReturns(connection, "Sales",
-            "[Gender].Hierarchy.CurrentMember", "[Gender].[All Gender]" );
+            "[Gender].Hierarchy.CurrentMember", "[Gender].[Gender].[All Gender]" );
 
         // <Level>.CurrentMember
         // MSAS doesn't allow this, but Mondrian does: it implicitly casts
         // level to hierarchy.
-        assertAxisReturns(connection, "Sales", "[Store Name].CurrentMember", "[Store].[All Stores]" );
+        assertAxisReturns(connection, "Sales", "[Store Name].CurrentMember", "[Store].[Store].[All Stores]" );
     }
 
     @Disabled //disabled for CI build
@@ -102,10 +101,7 @@ class HierarchyCurrentMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCurrentMemberMultiHierarchy(Context context) {
-        final String hierarchyName =
-            SystemWideProperties.instance().SsasCompatibleNaming
-                ? "Weekly"
-                : "Time.Weekly";
+        final String hierarchyName = "Weekly";
         final String queryString =
             "with member [Measures].[Foo] as\n"
                 + " 'IIf(([Time].[Time].CurrentMember.Hierarchy.Name = \""
@@ -148,14 +144,14 @@ class HierarchyCurrentMemberFunDefTest {
 
         result =
             executeQuery(connection,
-                queryString + " where [Time.Weekly].[1997]" );
+                queryString + " where [Time].[Weekly].[1997]" );
         assertEquals(
             "-12,885",
             result.getCell( coords ).getFormattedValue() );
 
         result =
             executeQuery(connection,
-                queryString1 + " {[Time.Weekly].[1997]} ON ROWS "
+                queryString1 + " {[Time].[Weekly].[1997]} ON ROWS "
                     + queryString2 );
         assertEquals(
             "-12,885",
