@@ -33,9 +33,9 @@ class CountFunDefTest {
     void testCount(Context context) {
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "count(Crossjoin([Store].[All Stores].[USA].Children, {[Gender].children}), INCLUDEEMPTY)",
-            "{[Gender]}" );
+            "{[Gender].[Gender]}" );
 
-        String s1 = allHiersExcept( "[Store]" );
+        String s1 = allHiersExcept( "[Store].[Store]" );
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "count(Crossjoin([Store].[All Stores].[USA].Children, "
                 + "{[Gender].children}), EXCLUDEEMPTY)",
@@ -128,12 +128,12 @@ class CountFunDefTest {
                 + "{[Measures].[Bar]}\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1997].[Q1]}\n"
-                + "{[Time].[1997].[Q2]}\n"
-                + "{[Time].[1997].[Q3]}\n"
-                + "{[Time].[1997].[Q4]}\n"
-                + "{[Time].[CountExc]}\n"
-                + "{[Time].[CountInc]}\n"
+                + "{[Time].[Time].[1997].[Q1]}\n"
+                + "{[Time].[Time].[1997].[Q2]}\n"
+                + "{[Time].[Time].[1997].[Q3]}\n"
+                + "{[Time].[Time].[1997].[Q4]}\n"
+                + "{[Time].[Time].[CountExc]}\n"
+                + "{[Time].[Time].[CountInc]}\n"
                 + "Row #0: \n"
                 + "Row #0: 0\n"
                 + "Row #0: 66,291\n"

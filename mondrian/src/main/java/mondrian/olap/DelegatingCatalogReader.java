@@ -165,7 +165,6 @@ public abstract class DelegatingCatalogReader implements CatalogReader {
         DataType category,
         MatchType matchType)
     {
-        if (SystemWideProperties.instance().SsasCompatibleNaming) {
             return new NameResolverImpl().resolve(
                 parent,
                 Util.toOlap4j(names),
@@ -173,13 +172,6 @@ public abstract class DelegatingCatalogReader implements CatalogReader {
                 category,
                 matchType,
                 getNamespaces());
-        }
-        return lookupCompoundInternal(
-            parent,
-            names,
-            failIfNotFound,
-            category,
-            matchType);
     }
 
     @Override

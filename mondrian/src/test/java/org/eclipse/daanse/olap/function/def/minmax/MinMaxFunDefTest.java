@@ -48,9 +48,9 @@ class MinMaxFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[Neg]}\n"
-                + "{[Customers].[Min]}\n"
-                + "{[Customers].[Max]}\n"
+                + "{[Customers].[Customers].[Neg]}\n"
+                + "{[Customers].[Customers].[Min]}\n"
+                + "{[Customers].[Customers].[Max]}\n"
                 + "Row #0: -1\n"
                 + "Row #0: -1\n"
                 + "Row #0: -1\n" );

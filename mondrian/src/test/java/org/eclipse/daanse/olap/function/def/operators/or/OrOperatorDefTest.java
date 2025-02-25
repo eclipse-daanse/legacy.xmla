@@ -103,7 +103,7 @@ class OrOperatorDefTest {
                 + "{[Measures].[Customer Count]}\n"
                 + "{[Measures].[Promotion Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Store].[USA]}\n"
+                + "{[Store].[Store].[USA]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #0: 225,627.23\n"
                 + "Row #0: 86,837\n"

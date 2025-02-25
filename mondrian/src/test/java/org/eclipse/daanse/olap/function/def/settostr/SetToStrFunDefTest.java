@@ -30,14 +30,14 @@ class SetToStrFunDefTest {
     void testSetToStr(Context context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "SetToStr([Time].[Time].children)",
-            "{[Time].[1997].[Q1], [Time].[1997].[Q2], [Time].[1997].[Q3], [Time].[1997].[Q4]}" );
+            "{[Time].[Time].[1997].[Q1], [Time].[Time].[1997].[Q2], [Time].[Time].[1997].[Q3], [Time].[Time].[1997].[Q4]}" );
 
         // Now, applied to tuples
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "SetToStr({CrossJoin([Marital Status].children, {[Gender].[M]})})",
             "{"
-                + "([Marital Status].[M], [Gender].[M]), "
-                + "([Marital Status].[S], [Gender].[M])"
+                + "([Marital Status].[Marital Status].[M], [Gender].[Gender].[M]), "
+                + "([Marital Status].[Marital Status].[S], [Gender].[Gender].[M])"
                 + "}" );
     }
 

@@ -52,7 +52,7 @@ class SegmentCacheTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[All Gender]}\n"
+            + "{[Gender].[Gender].[All Gender]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 5,581\n";
@@ -60,7 +60,7 @@ class SegmentCacheTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 2,716\n";

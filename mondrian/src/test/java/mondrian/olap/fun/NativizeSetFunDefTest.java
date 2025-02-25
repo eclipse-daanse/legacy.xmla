@@ -53,8 +53,6 @@ class NativizeSetFunDefTest extends BatchTestCase {
         // lot in this test. There is little to be gained by having this test
         // run for both values. When SSAS-compatible naming is the standard, we
         // should upgrade all the MDX.
-
-        SystemWideProperties.instance().SsasCompatibleNaming = false;
     }
 
     @AfterEach
@@ -862,18 +860,18 @@ class NativizeSetFunDefTest extends BatchTestCase {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
         checkNative(context,
             "WITH"
-            + "  MEMBER [Gender].[umg1] AS "
-            + "  '([Gender].[gender agg], [Measures].[Unit Sales])', SOLVE_ORDER = 8 "
-            + "  MEMBER [Gender].[gender agg] AS"
+            + "  MEMBER [Gender].[Gender].[umg1] AS "
+            + "  '([Gender].[Gender].[gender agg], [Measures].[Unit Sales])', SOLVE_ORDER = 8 "
+            + "  MEMBER [Gender].[Gender].[gender agg] AS"
             + "  'AGGREGATE({[Gender].[Gender].MEMBERS},[Measures].[Unit Sales])', SOLVE_ORDER = 8 "
-            + " MEMBER [Marital Status].[umg2] AS "
-            + " '([Marital Status].[marital agg], [Measures].[Unit Sales])', SOLVE_ORDER = 4 "
-            + " MEMBER [Marital Status].[marital agg] AS "
+            + " MEMBER [Marital Status].[Marital Status].[umg2] AS "
+            + " '([Marital Status].[Marital Status].[marital agg], [Measures].[Unit Sales])', SOLVE_ORDER = 4 "
+            + " MEMBER [Marital Status].[Marital Status].[marital agg] AS "
             + "  'AGGREGATE({[Marital Status].[Marital Status].MEMBERS},[Measures].[Unit Sales])', SOLVE_ORDER = 4 "
             + " SET [s2] AS "
-            + "  'CROSSJOIN({[Marital Status].[Marital Status].MEMBERS}, {{[Gender].[Gender].MEMBERS}, {[Gender].[umg1]}})' "
+            + "  'CROSSJOIN({[Marital Status].[Marital Status].MEMBERS}, {{[Gender].[Gender].MEMBERS}, {[Gender].[Gender].[umg1]}})' "
             + " SET [s1] AS "
-            + "  'CROSSJOIN({[Marital Status].[umg2]}, {[Gender].DEFAULTMEMBER})' "
+            + "  'CROSSJOIN({[Marital Status].[Marital Status].[umg2]}, {[Gender].[Gender].DEFAULTMEMBER})' "
             + " SELECT "
             + "  NativizeSet({[Measures].[Unit Sales]}) DIMENSION PROPERTIES PARENT_LEVEL, CHILDREN_CARDINALITY, PARENT_UNIQUE_NAME ON AXIS(0), "
             + "  NativizeSet({[s2],[s1]}) "
@@ -1393,8 +1391,6 @@ class NativizeSetFunDefTest extends BatchTestCase {
     void testMultipleHierarchySsasTrue(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
 
-        SystemWideProperties.instance().SsasCompatibleNaming = true;
-
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
         // Ssas compatible: time.[weekly].[week]
@@ -1423,13 +1419,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     void testMultipleHierarchySsasFalse(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
 
-        SystemWideProperties.instance().SsasCompatibleNaming = false;
-
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
         // Ssas compatible: [time.weekly].week
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
-            "select nativizeSet(crossjoin( [time.weekly].week.members, { gender.m })) on 0 "
+            "select nativizeSet(crossjoin( [time].[weekly].week.members, { gender.m })) on 0 "
             + "from sales",
             "with member [Time].[_Nativized_Member_Time_Weekly_Week_] as '[Time].DefaultMember'\n"
             + "  set [_Nativized_Set_Time_Weekly_Week_] as '{[Time].[_Nativized_Member_Time_Weekly_Week_]}'\n"

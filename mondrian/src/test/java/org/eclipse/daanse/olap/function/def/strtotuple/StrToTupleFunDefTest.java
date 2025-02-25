@@ -39,12 +39,12 @@ class StrToTupleFunDefTest {
         // single dimension yields member
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{StrToTuple(\"[Time].[1997].[Q2]\", [Time])}",
-            "[Time].[1997].[Q2]" );
+            "[Time].[Time].[1997].[Q2]" );
 
         // multiple dimensions yield tuple
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{StrToTuple(\"([Gender].[F], [Time].[1997].[Q2])\", [Gender], [Time])}",
-            "{[Gender].[F], [Time].[1997].[Q2]}" );
+            "{[Gender].[Gender].[F], [Time].[Time].[1997].[Q2]}" );
 
         // todo: test for garbage at end of string
     }

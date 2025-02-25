@@ -62,12 +62,12 @@ class CachedExistsTest{
             + "FROM [Sales]";
     String expected =
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[*FORMATTED_MEASURE_0]}\n" + "Axis #2:\n"
-            + "{[Education Level].[Bachelors Degree], [Product].[*TOTAL_MEMBER_SEL~SUM]}\n"
-            + "{[Education Level].[Graduate Degree], [Product].[*TOTAL_MEMBER_SEL~SUM]}\n"
-            + "{[Education Level].[Bachelors Degree], [Product].[Food]}\n"
-            + "{[Education Level].[Bachelors Degree], [Product].[Drink]}\n"
-            + "{[Education Level].[Graduate Degree], [Product].[Food]}\n"
-            + "{[Education Level].[Graduate Degree], [Product].[Drink]}\n" + "Row #0: 55,788\n" + "Row #1: 12,580\n"
+            + "{[Education Level].[Education Level].[Bachelors Degree], [Product].[Product].[*TOTAL_MEMBER_SEL~SUM]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree], [Product].[Product].[*TOTAL_MEMBER_SEL~SUM]}\n"
+            + "{[Education Level].[Education Level].[Bachelors Degree], [Product].[Product].[Food]}\n"
+            + "{[Education Level].[Education Level].[Bachelors Degree], [Product].[Product].[Drink]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree], [Product].[Product].[Food]}\n"
+            + "{[Education Level].[Education Level].[Graduate Degree], [Product].[Product].[Drink]}\n" + "Row #0: 55,788\n" + "Row #1: 12,580\n"
             + "Row #2: 49,365\n" + "Row #3: 6,423\n" + "Row #4: 11,255\n" + "Row #5: 1,325\n";
     TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
   }
@@ -90,12 +90,12 @@ class CachedExistsTest{
             + "FROM [Sales]";
     String expected =
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[*FORMATTED_MEASURE_0]}\n" + "Axis #2:\n"
-            + "{[Product].[Drink].[*TOTAL_MEMBER_SEL~SUM]}\n"
-            + "{[Product].[Non-Consumable].[*TOTAL_MEMBER_SEL~SUM]}\n" + "{[Product].[Drink].[Alcoholic Beverages]}\n"
-            + "{[Product].[Drink].[Beverages]}\n" + "{[Product].[Drink].[Dairy]}\n"
-            + "{[Product].[Non-Consumable].[Carousel]}\n" + "{[Product].[Non-Consumable].[Checkout]}\n"
-            + "{[Product].[Non-Consumable].[Health and Hygiene]}\n" + "{[Product].[Non-Consumable].[Household]}\n"
-            + "{[Product].[Non-Consumable].[Periodicals]}\n" + "Row #0: 24,597\n" + "Row #1: 50,236\n"
+            + "{[Product].[Product].[Drink].[*TOTAL_MEMBER_SEL~SUM]}\n"
+            + "{[Product].[Product].[Non-Consumable].[*TOTAL_MEMBER_SEL~SUM]}\n" + "{[Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+            + "{[Product].[Product].[Drink].[Beverages]}\n" + "{[Product].[Product].[Drink].[Dairy]}\n"
+            + "{[Product].[Product].[Non-Consumable].[Carousel]}\n" + "{[Product].[Product].[Non-Consumable].[Checkout]}\n"
+            + "{[Product].[Product].[Non-Consumable].[Health and Hygiene]}\n" + "{[Product].[Product].[Non-Consumable].[Household]}\n"
+            + "{[Product].[Product].[Non-Consumable].[Periodicals]}\n" + "Row #0: 24,597\n" + "Row #1: 50,236\n"
             + "Row #2: 6,838\n" + "Row #3: 13,573\n" + "Row #4: 4,186\n" + "Row #5: 841\n" + "Row #6: 1,779\n"
             + "Row #7: 16,284\n" + "Row #8: 27,038\n" + "Row #9: 4,294\n";
     TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
@@ -122,15 +122,15 @@ class CachedExistsTest{
             + "FROM [Sales]";
     String expected =
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[*FORMATTED_MEASURE_0]}\n" + "Axis #2:\n"
-            + "{[Product].[Drink].[Beverages], [Gender].[*TOTAL_MEMBER_SEL~SUM]}\n"
-            + "{[Product].[Drink].[Dairy], [Gender].[*TOTAL_MEMBER_SEL~SUM]}\n"
-            + "{[Product].[Non-Consumable].[Periodicals], [Gender].[*TOTAL_MEMBER_SEL~SUM]}\n"
-            + "{[Product].[Drink].[*TOTAL_MEMBER_SEL~SUM], [Gender].[*DEFAULT_MEMBER]}\n"
-            + "{[Product].[Non-Consumable].[*TOTAL_MEMBER_SEL~SUM], [Gender].[*DEFAULT_MEMBER]}\n"
-            + "{[Product].[Drink].[Beverages], [Gender].[F]}\n" + "{[Product].[Drink].[Beverages], [Gender].[M]}\n"
-            + "{[Product].[Drink].[Dairy], [Gender].[F]}\n" + "{[Product].[Drink].[Dairy], [Gender].[M]}\n"
-            + "{[Product].[Non-Consumable].[Periodicals], [Gender].[F]}\n"
-            + "{[Product].[Non-Consumable].[Periodicals], [Gender].[M]}\n" + "Row #0: 13,573\n" + "Row #1: 4,186\n"
+            + "{[Product].[Product].[Drink].[Beverages], [Gender].[*TOTAL_MEMBER_SEL~SUM]}\n"
+            + "{[Product].[Product].[Drink].[Dairy], [Gender].[*TOTAL_MEMBER_SEL~SUM]}\n"
+            + "{[Product].[Product].[Non-Consumable].[Periodicals], [Gender].[Gender].[*TOTAL_MEMBER_SEL~SUM]}\n"
+            + "{[Product].[Product].[Drink].[*TOTAL_MEMBER_SEL~SUM], [Gender].[Gender].[*DEFAULT_MEMBER]}\n"
+            + "{[Product].[Product].[Non-Consumable].[*TOTAL_MEMBER_SEL~SUM], [Gender].[Gender].[*DEFAULT_MEMBER]}\n"
+            + "{[Product].[Product].[Drink].[Beverages], [Gender].[F]}\n" + "{[Product].[Product].[Drink].[Beverages], [Gender].[Gender].[M]}\n"
+            + "{[Product].[Product].[Drink].[Dairy], [Gender].[F]}\n" + "{[Product].[Product].[Drink].[Dairy], [Gender].[Gender].[M]}\n"
+            + "{[Product].[Product].[Non-Consumable].[Periodicals], [Gender].[Gender].[F]}\n"
+            + "{[Product].[Product].[Non-Consumable].[Periodicals], [Gender].[Gender].[M]}\n" + "Row #0: 13,573\n" + "Row #1: 4,186\n"
             + "Row #2: 4,294\n" + "Row #3: 17,759\n" + "Row #4: 4,294\n" + "Row #5: 6,776\n" + "Row #6: 6,797\n"
             + "Row #7: 1,987\n" + "Row #8: 2,199\n" + "Row #9: 2,168\n" + "Row #10: 2,126\n";
     TestUtil.assertQueryReturns( context.getConnectionWithDefaultRole(), query, expected );
@@ -201,12 +201,12 @@ class CachedExistsTest{
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink], [Gender].[*TOTAL_MEMBER_SEL~SUM]}\n"
-            + "{[Product].[Non-Consumable], [Gender].[*TOTAL_MEMBER_SEL~SUM]}\n"
-            + "{[Product].[Drink].[*DISPLAY_MEMBER], [Gender].[F]}\n"
-            + "{[Product].[Drink].[*DISPLAY_MEMBER], [Gender].[M]}\n"
-            + "{[Product].[Non-Consumable].[*DISPLAY_MEMBER], [Gender].[F]}\n"
-            + "{[Product].[Non-Consumable].[*DISPLAY_MEMBER], [Gender].[M]}\n"
+            + "{[Product].[Product].[Drink], [Gender].[*TOTAL_MEMBER_SEL~SUM]}\n"
+            + "{[Product].[Product].[Non-Consumable], [Gender].[*TOTAL_MEMBER_SEL~SUM]}\n"
+            + "{[Product].[Product].[Drink].[*DISPLAY_MEMBER], [Gender].[F]}\n"
+            + "{[Product].[Product].[Drink].[*DISPLAY_MEMBER], [Gender].[M]}\n"
+            + "{[Product].[Product].[Non-Consumable].[*DISPLAY_MEMBER], [Gender].[F]}\n"
+            + "{[Product].[Product].[Non-Consumable].[*DISPLAY_MEMBER], [Gender].[M]}\n"
             + "Row #0: 7,582\n"
             + "Row #1: 5,109\n"
             + "Row #2: 3,690\n"
@@ -245,26 +245,26 @@ class CachedExistsTest{
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Joann Mramor], [Product].[Drink], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Joann Mramor], [Product].[Food], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Jack Zucconi], [Product].[Drink], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Jack Zucconi], [Product].[Food], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Mary Francis Benigar], [Product].[Drink], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Mary Francis Benigar], [Product].[Food], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Kristin Miller], [Product].[Drink], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Kristin Miller], [Product].[Food], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[James Horvat], [Product].[Drink], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[James Horvat], [Product].[Food], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Frank Darrell], [Product].[Drink], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Frank Darrell], [Product].[Food], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Ida Rodriguez], [Product].[Drink], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Ida Rodriguez], [Product].[Food], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Matt Bellah], [Product].[Drink], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Matt Bellah], [Product].[Food], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Emily Barela], [Product].[Drink], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Emily Barela], [Product].[Food], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Wildon Cameron], [Product].[Drink], [Store].[USA]}\n"
-            + "{[Customers].[USA].[WA].[Spokane].[Wildon Cameron], [Product].[Food], [Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Joann Mramor], [Product].[Product].[Drink], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Joann Mramor], [Product].[Product].[Food], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Jack Zucconi], [Product].[Product].[Drink], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Jack Zucconi], [Product].[Product].[Food], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Mary Francis Benigar], [Product].[Product].[Drink], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Mary Francis Benigar], [Product].[Product].[Food], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Kristin Miller], [Product].[Product].[Drink], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Kristin Miller], [Product].[Product].[Food], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[James Horvat], [Product].[Product].[Drink], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[James Horvat], [Product].[Product].[Food], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Frank Darrell], [Product].[Product].[Drink], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Frank Darrell], [Product].[Product].[Food], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Ida Rodriguez], [Product].[Product].[Drink], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Ida Rodriguez], [Product].[Product].[Food], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Matt Bellah], [Product].[Product].[Drink], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Matt Bellah], [Product].[Product].[Food], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Emily Barela], [Product].[Product].[Drink], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Emily Barela], [Product].[Product].[Food], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Wildon Cameron], [Product].[Product].[Drink], [Store].[Store].[USA]}\n"
+            + "{[Customers].[Customers].[USA].[WA].[Spokane].[Wildon Cameron], [Product].[Product].[Food], [Store].[Store].[USA]}\n"
             + "Row #0: 57\n"
             + "Row #1: 267\n"
             + "Row #2: 26\n"
@@ -446,28 +446,28 @@ class CachedExistsTest{
     	TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
         "WITH\n" +
         "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],[*BASE_MEMBERS__Time.Weekly_])'\n" +
-        "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time].CURRENTMEMBER.ORDERKEY,BASC,[Time.Weekly].CURRENTMEMBER.ORDERKEY,BASC)'\n" +
+        "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time].CURRENTMEMBER.ORDERKEY,BASC,[Time].[Weekly].CURRENTMEMBER.ORDERKEY,BASC)'\n" +
         "SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[*FORMATTED_MEASURE_0]}'\n" +
-        "SET [*BASE_MEMBERS__Time.Weekly_] AS '[Time.Weekly].[Year].MEMBERS'\n" +
+        "SET [*BASE_MEMBERS__Time.Weekly_] AS '[Time].[Weekly].[Year].MEMBERS'\n" +
         "SET [*BASE_MEMBERS__Time_] AS '[Time].[Year].MEMBERS'\n" +
-        "SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Time].CURRENTMEMBER,[Time.Weekly].CURRENTMEMBER)})'\n" +
+        "SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Time].CURRENTMEMBER,[Time].[Weekly].CURRENTMEMBER)})'\n" +
         "MEMBER [Measures].[*FORMATTED_MEASURE_0] AS '[Measures].[Unit Sales]', FORMAT_STRING = 'Standard', SOLVE_ORDER=500\n" +
-        "MEMBER [Time.Weekly].[*DEFAULT_MEMBER] AS '[Time.Weekly].DEFAULTMEMBER', SOLVE_ORDER=-400\n" +
-        "MEMBER [Time.Weekly].[*TOTAL_MEMBER_SEL~SUM] AS 'SUM(CACHEDEXISTS([*CJ_ROW_AXIS],([Time].CURRENTMEMBER),\"[*CJ_ROW_AXIS]\"))', SOLVE_ORDER=99\n" +
+        "MEMBER [Time].[Weekly].[*DEFAULT_MEMBER] AS '[Time].[Weekly].DEFAULTMEMBER', SOLVE_ORDER=-400\n" +
+        "MEMBER [Time].[Weekly].[*TOTAL_MEMBER_SEL~SUM] AS 'SUM(CACHEDEXISTS([*CJ_ROW_AXIS],([Time].CURRENTMEMBER),\"[*CJ_ROW_AXIS]\"))', SOLVE_ORDER=99\n" +
         "MEMBER [Time].[*TOTAL_MEMBER_SEL~SUM] AS 'SUM([*CJ_ROW_AXIS])', SOLVE_ORDER=100\n" +
         "SELECT\n" +
         "[*BASE_MEMBERS__Measures_] ON COLUMNS\n" +
         ", NON EMPTY\n" +
-        "UNION(CROSSJOIN({[Time].[*TOTAL_MEMBER_SEL~SUM]},{([Time.Weekly].[*DEFAULT_MEMBER])}),UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Time].CURRENTMEMBER)}),{[Time.Weekly].[*TOTAL_MEMBER_SEL~SUM]}),[*SORTED_ROW_AXIS])) ON ROWS\n" +
+        "UNION(CROSSJOIN({[Time].[*TOTAL_MEMBER_SEL~SUM]},{([Time].[Weekly].[*DEFAULT_MEMBER])}),UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Time].CURRENTMEMBER)}),{[Time].[Weekly].[*TOTAL_MEMBER_SEL~SUM]}),[*SORTED_ROW_AXIS])) ON ROWS\n" +
         "FROM [Alternate Sales]",
         "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Time].[*TOTAL_MEMBER_SEL~SUM], [Time.Weekly].[*DEFAULT_MEMBER]}\n"
-            + "{[Time].[1997], [Time.Weekly].[*TOTAL_MEMBER_SEL~SUM]}\n"
-            + "{[Time].[1997], [Time.Weekly].[1997]}\n"
+            + "{[Time].[*TOTAL_MEMBER_SEL~SUM], [Time].[Weekly].[*DEFAULT_MEMBER]}\n"
+            + "{[Time].[1997], [Time].[Weekly].[*TOTAL_MEMBER_SEL~SUM]}\n"
+            + "{[Time].[1997], [Time].[Weekly].[1997]}\n"
             + "Row #0: 266,773\n"
             + "Row #1: 266,773\n"
             + "Row #2: 266,773\n");
@@ -476,26 +476,26 @@ class CachedExistsTest{
     TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
         "WITH\n" +
         "SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time.Weekly_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Time_],[*BASE_MEMBERS__Time.Weekly2_]))'\n" +
-        "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time.Weekly].CURRENTMEMBER.ORDERKEY,BASC,[Time].CURRENTMEMBER.ORDERKEY,BASC,[Time.Weekly2].CURRENTMEMBER.ORDERKEY,BASC)'\n" +
+        "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[Time].[Weekly].CURRENTMEMBER.ORDERKEY,BASC,[Time].CURRENTMEMBER.ORDERKEY,BASC,[Time.Weekly2].CURRENTMEMBER.ORDERKEY,BASC)'\n" +
         "SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[*FORMATTED_MEASURE_0]}'\n" +
         "SET [*BASE_MEMBERS__Time.Weekly2_] AS '[Time.Weekly2].[Year].MEMBERS'\n" +
-        "SET [*BASE_MEMBERS__Time.Weekly_] AS '[Time.Weekly].[Year].MEMBERS'\n" +
+        "SET [*BASE_MEMBERS__Time.Weekly_] AS '[Time].[Weekly].[Year].MEMBERS'\n" +
         "SET [*BASE_MEMBERS__Time_] AS '[Time].[Year].MEMBERS'\n" +
-        "SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Time.Weekly].CURRENTMEMBER,[Time].CURRENTMEMBER,[Time.Weekly2].CURRENTMEMBER)})'\n" +
+        "SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Time].[Weekly].CURRENTMEMBER,[Time].CURRENTMEMBER,[Time.Weekly2].CURRENTMEMBER)})'\n" +
         "MEMBER [Measures].[*FORMATTED_MEASURE_0] AS '[Measures].[Unit Sales]', FORMAT_STRING = 'Standard', SOLVE_ORDER=500\n" +
-        "MEMBER [Time.Weekly2].[*TOTAL_MEMBER_SEL~SUM] AS 'SUM(CACHEDEXISTS([*CJ_ROW_AXIS],([Time.Weekly].CURRENTMEMBER, [Time].CURRENTMEMBER),\"[*CJ_ROW_AXIS]\"))', SOLVE_ORDER=98\n" +
+        "MEMBER [Time.Weekly2].[*TOTAL_MEMBER_SEL~SUM] AS 'SUM(CACHEDEXISTS([*CJ_ROW_AXIS],([Time].[Weekly].CURRENTMEMBER, [Time].CURRENTMEMBER),\"[*CJ_ROW_AXIS]\"))', SOLVE_ORDER=98\n" +
         "SELECT\n" +
         "[*BASE_MEMBERS__Measures_] ON COLUMNS\n" +
         ", NON EMPTY\n" +
-        "UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Time.Weekly].CURRENTMEMBER,[Time].CURRENTMEMBER)}),{[Time.Weekly2].[*TOTAL_MEMBER_SEL~SUM]}),[*SORTED_ROW_AXIS]) ON ROWS\n" +
+        "UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Time].[Weekly].CURRENTMEMBER,[Time].CURRENTMEMBER)}),{[Time.Weekly2].[*TOTAL_MEMBER_SEL~SUM]}),[*SORTED_ROW_AXIS]) ON ROWS\n" +
         "FROM [Alternate Sales]",
         "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[*FORMATTED_MEASURE_0]}\n"
             + "Axis #2:\n"
-            + "{[Time.Weekly].[1997], [Time].[1997], [Time.Weekly2].[*TOTAL_MEMBER_SEL~SUM]}\n"
-            + "{[Time.Weekly].[1997], [Time].[1997], [Time.Weekly2].[1997]}\n"
+            + "{[Time].[Weekly].[1997], [Time].[1997], [Time.Weekly2].[*TOTAL_MEMBER_SEL~SUM]}\n"
+            + "{[Time].[Weekly].[1997], [Time].[1997], [Time.Weekly2].[1997]}\n"
             + "Row #0: 266,773\n"
             + "Row #1: 266,773\n");
   }

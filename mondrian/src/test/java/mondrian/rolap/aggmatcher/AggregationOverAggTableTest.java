@@ -97,9 +97,9 @@ class AggregationOverAggTableTest extends AggTableTestCase {
             + "Axis #1:\n"
             + "{[Measures].[Avg Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[TimeExtra].[1997].[Q1].[1], [Gender].[M]}\n"
-            + "{[TimeExtra].[1997].[Q1].[2], [Gender].[M]}\n"
-            + "{[TimeExtra].[1997].[Q1].[3], [Gender].[M]}\n"
+            + "{[TimeExtra].[TimeExtra].[1997].[Q1].[1], [Gender].[Gender].[M]}\n"
+            + "{[TimeExtra].[TimeExtra].[1997].[Q1].[2], [Gender].[Gender].[M]}\n"
+            + "{[TimeExtra].[TimeExtra].[1997].[Q1].[3], [Gender].[Gender].[M]}\n"
             + "Row #0: 3\n"
             + "Row #1: 3\n"
             + "Row #2: 3\n");

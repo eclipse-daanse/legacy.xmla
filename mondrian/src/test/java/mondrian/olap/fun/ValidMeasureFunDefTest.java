@@ -73,7 +73,7 @@ class ValidMeasureFunDefTest {
     final String query =
         "with member [Measures].[TestValid] as ValidMeasure([Measures].[Unit Sales1])\n"
         + "select [Measures].[TestValid] on columns,\n"
-        + "TopCount([Product.BrandOnly].[Product].members, 1) on rows\n"
+        + "TopCount([Product].[BrandOnly].[Product].members, 1) on rows\n"
         + "from [Virtual Cube]";
     /*
     TestUtil.withSchema(context, schema);
@@ -84,7 +84,7 @@ class ValidMeasureFunDefTest {
         + "{}\n"
         + "Axis #1:\n"
         + "{[Measures].[TestValid]}\n" + "Axis #2:\n"
-        + "{[Product.BrandOnly].[ADJ]}\n" + "Row #0: 266,773\n";
+        + "{[Product].[BrandOnly].[ADJ]}\n" + "Row #0: 266,773\n";
 
     assertQueryReturns(context.getConnectionWithDefaultRole(),
         query, expected);
