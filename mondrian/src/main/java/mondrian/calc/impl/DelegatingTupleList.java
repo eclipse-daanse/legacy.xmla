@@ -114,7 +114,7 @@ public class DelegatingTupleList extends AbstractTupleList
 
     @Override
     public void addTuple(Member... members) {
-        list.add(Util.flatList(members));
+        list.add(  List.of(members));
     }
 
     @Override

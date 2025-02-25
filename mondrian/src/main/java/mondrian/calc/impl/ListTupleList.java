@@ -83,7 +83,7 @@ public class ListTupleList extends AbstractEndToEndTupleList
             }
         };
         if (mutable) {
-            return Util.flatList(list1);
+            return List.copyOf(list1);
         }
         return list1;
     }

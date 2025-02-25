@@ -15,10 +15,10 @@ package org.eclipse.daanse.olap.function.def.crossjoin;
 
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.api.Calc;
@@ -32,7 +32,6 @@ import mondrian.calc.impl.AbstractIterCalc;
 import mondrian.calc.impl.AbstractTupleCursor;
 import mondrian.calc.impl.AbstractTupleIterable;
 import mondrian.calc.impl.TupleCollections;
-import mondrian.olap.Util;
 import mondrian.server.LocusImpl;
 import mondrian.util.CancellationChecker;
 
@@ -119,7 +118,7 @@ public class CrossJoinIterCalc extends AbstractIterCalc {
             public List<Member> current() {
               i1.currentToArray( members, 0 );
               i2.currentToArray( members, arity1 );
-              return Util.flatList( members );
+              return List.of( members );
             }
 
             @Override

@@ -114,7 +114,7 @@ public class ArrayTupleList extends AbstractEndToEndTupleList {
             }
         };
         if ( mutable ) {
-            return Util.flatList( list );
+            return List.copyOf(list);
         }
         return list;
     }

@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.RandomAccess;
 
+import aQute.bnd.unmodifiable.Lists;
 import mondrian.olap.Util;
 
 /**
@@ -121,7 +122,7 @@ public class CartesianProductList<T>
         @SuppressWarnings("java:S2272")
 		public List<T> next() {
             @SuppressWarnings({"unchecked"})
-            List<T> result = Util.flatListCopy(elements);
+            List<T> result = Lists.of(elements.clone());
             moveToNext();
             return result;
         }

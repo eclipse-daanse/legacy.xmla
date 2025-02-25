@@ -43,7 +43,7 @@ public class ImmutableListCalc extends BaseListCalc {
           @Override
           public List<Member> get( int index ) {
             cartesianProductList.getIntoArray( index, members );
-            return Util.flatListCopy( members );
+            return List.of(members.clone());
           }
 
           @Override

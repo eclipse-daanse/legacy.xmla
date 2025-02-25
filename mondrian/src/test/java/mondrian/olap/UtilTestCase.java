@@ -872,40 +872,6 @@ import mondrian.util.ServiceDiscovery;
         assertEquals(arrayList, list);
     }
 
-    @Test
-     void testFlatList() {
-        final List<String> flatAB = Util.flatList("a", "b");
-        final List<String> arrayAB = Arrays.asList("a", "b");
-        assertEquals(arrayAB, flatAB);
-        assertEquals(arrayAB.hashCode(), flatAB.hashCode());
-
-        final List<String> flatABC = Util.flatList("a", "b", "c");
-        final List<String> arrayABC = Arrays.asList("a", "b", "c");
-        assertEquals(flatABC, arrayABC);
-        assertEquals(arrayABC, flatABC);
-        assertEquals(arrayABC.hashCode(), flatABC.hashCode());
-
-        assertEquals("[a, b, c]", flatABC.toString());
-        assertEquals("[a, b]", flatAB.toString());
-
-        final List<String> arrayEmpty = Arrays.asList();
-        final List<String> arrayA = Collections.singletonList("a");
-
-        // mixed 2 & 3
-        final List<List<String>> notAB =
-            Arrays.asList(arrayEmpty, arrayA, arrayABC, flatABC);
-        for (List<String> strings : notAB) {
-            assertNotEquals(strings, flatAB);
-            assertNotEquals(flatAB, strings);
-        }
-        final List<List<String>> notABC =
-            Arrays.asList(arrayEmpty, arrayA, arrayAB, flatAB);
-        for (List<String> strings : notABC) {
-            assertNotEquals(strings, flatABC);
-            assertNotEquals(flatABC, strings);
-        }
-    }
-
     /**
      * Unit test for {@link Composite#of(Iterable[])}.
      */
