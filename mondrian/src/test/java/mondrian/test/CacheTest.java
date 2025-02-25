@@ -31,8 +31,6 @@ import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.server.monitor.ServerInfo;
-
 
 /**
  * Cunning tests to discover whether the cache manager is working to spec

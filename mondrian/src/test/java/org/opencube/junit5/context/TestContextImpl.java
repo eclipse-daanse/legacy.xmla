@@ -20,6 +20,7 @@ import org.eclipse.daanse.olap.api.result.Scenario;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import org.eclipse.daanse.olap.core.LoggingEventBus;
 import org.eclipse.daanse.olap.function.core.FunctionServiceImpl;
 import org.eclipse.daanse.olap.function.core.resolver.NullReservedWordsResolver;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateResolver;
@@ -303,7 +304,6 @@ import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapResultShepherd;
 import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.agg.AggregationManager;
-import mondrian.server.NopEventBus;
 
 public class TestContextImpl extends AbstractBasicContext implements TestContext, RolapContext {
 
@@ -322,7 +322,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 
 	public TestContextImpl() {
         testConfig = new TestConfig();
-        this.monitor = new NopEventBus();
+        this.eventBus = new LoggingEventBus();
 	    shepherd = new RolapResultShepherd(testConfig.rolapConnectionShepherdThreadPollingInterval(),testConfig.rolapConnectionShepherdThreadPollingIntervalUnit(),
             testConfig.rolapConnectionShepherdNbThreads());
 	    aggMgr = new AggregationManager(this);

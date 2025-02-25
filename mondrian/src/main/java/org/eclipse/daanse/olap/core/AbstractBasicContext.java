@@ -20,10 +20,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.eclipse.daanse.olap.api.CatalogCache;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ResultShepherd;
-import org.eclipse.daanse.olap.api.CatalogCache;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
@@ -39,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.rolap.agg.AggregationManager;
-import mondrian.server.NopEventBus;
 
 public abstract class AbstractBasicContext implements Context {
 
@@ -58,7 +57,7 @@ public abstract class AbstractBasicContext implements Context {
 	@SuppressWarnings("unchecked")
 	private final List<Statement> statements =Collections.synchronizedList(new ArrayList<>());
 
-    protected NopEventBus monitor;
+    protected EventBus eventBus;
 
 	protected AggregationManager aggMgr;
 
@@ -174,7 +173,7 @@ public abstract class AbstractBasicContext implements Context {
 		ConnectionStartEvent connectionStartEvent = new ConnectionStartEvent(new ConnectionEventCommon(
 								new ServertEventCommon(
 				new EventCommon(Instant.now()), getName()), connection.getId()));
-		monitor.accept(connectionStartEvent);
+		eventBus.accept(connectionStartEvent);
 //				new ConnectionStartEvent(System.currentTimeMillis(), connection.getContext().getName(),
 //				connection.getId())
 	}
@@ -194,7 +193,7 @@ public abstract class AbstractBasicContext implements Context {
 				new ConnectionEventCommon(
 										new ServertEventCommon(
 						new EventCommon(Instant.now()), getName()), connection.getId()));
-		monitor.accept(connectionEndEvent);
+		eventBus.accept(connectionEndEvent);
 //		new ConnectionEndEvent(System.currentTimeMillis(), getName(), connection.getId())
 	}
 
@@ -215,7 +214,7 @@ public abstract class AbstractBasicContext implements Context {
 						new ServertEventCommon(new EventCommon(Instant.now()), getName()),
 						connection.getId()),
 				statement.getId()));
-		monitor.accept(mdxStatementStartEvent);
+		eventBus.accept(mdxStatementStartEvent);
 //		new StatementStartEvent(System.currentTimeMillis(), connection.getContext().getName(),
 //				connection.getId(), statement.getId())
 	}
@@ -238,7 +237,7 @@ public abstract class AbstractBasicContext implements Context {
 						new ServertEventCommon(new EventCommon(Instant.now()), getName()),
 						connection.getId()), statement.getId()));
 		
-		monitor.accept(mdxStatementEndEvent);
+		eventBus.accept(mdxStatementEndEvent);
 //				new StatementEndEvent(System.currentTimeMillis(), connection.getContext().getName(),
 //				connection.getId(), statement.getId())
 	}
@@ -248,7 +247,7 @@ public abstract class AbstractBasicContext implements Context {
 		if (shutdown) {
 			throw new OlapRuntimeException("Server already shutdown.");
 		}
-		return monitor;
+		return eventBus;
 	}
 
 

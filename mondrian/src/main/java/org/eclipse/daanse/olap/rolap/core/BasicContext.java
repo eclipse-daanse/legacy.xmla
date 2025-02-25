@@ -31,6 +31,7 @@ import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.result.Scenario;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import org.eclipse.daanse.olap.core.LoggingEventBus;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -52,7 +53,6 @@ import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapResultShepherd;
 import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.agg.AggregationManager;
-import mondrian.server.NopEventBus;
 
 @Designate(ocd = BasicContextConfig.class, factory = true)
 @Component(service = Context.class, scope = ServiceScope.SINGLETON)
@@ -104,7 +104,7 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
 	public void activate1(BasicContextConfig configuration) throws Exception {
 
         this.config = configuration;
-		this.monitor = new NopEventBus();
+		this.eventBus = new LoggingEventBus();
 	
 		schemaCache=new RolapCatalogCache(this);
 		queryLimitSemaphore = new Semaphore(config.queryLimit());
