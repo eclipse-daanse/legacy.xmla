@@ -44,7 +44,6 @@ import mondrian.util.ArraySortedSet;
 import mondrian.util.ArrayStack;
 import mondrian.util.ByteString;
 import mondrian.util.CartesianProductList;
-import mondrian.util.CombiningGenerator;
 import mondrian.util.Composite;
 import mondrian.util.ServiceDiscovery;
 
@@ -959,63 +958,6 @@ import mondrian.util.ServiceDiscovery;
             buf.toString());
     }
 
-    /**
-     * Unit test for {@link CombiningGenerator}.
-     */
-    @Test
-     void testCombiningGenerator() {
-        assertEquals(
-            1,
-            new CombiningGenerator<>(Collections.<String>emptyList())
-                .size());
-        assertEquals(
-            1,
-            CombiningGenerator.of(Collections.<String>emptyList())
-                .size());
-        assertEquals(
-            "[[]]",
-            CombiningGenerator.of(Collections.<String>emptyList()).toString());
-        assertEquals(
-            "[[], [a]]",
-            CombiningGenerator.of(Collections.singletonList("a")).toString());
-        assertEquals(
-            "[[], [a], [b], [a, b]]",
-            CombiningGenerator.of(Arrays.asList("a", "b")).toString());
-        assertEquals(
-            "[[], [a], [b], [a, b], [c], [a, c], [b, c], [a, b, c]]",
-            CombiningGenerator.of(Arrays.asList("a", "b", "c")).toString());
-
-        final List<Integer> integerList =
-            Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8);
-        int i = 0;
-        for (List<Integer> integers : CombiningGenerator.of(integerList)) {
-            switch (i++) {
-            case 0:
-                assertTrue(integers.isEmpty());
-                break;
-            case 1:
-                assertEquals(Arrays.asList(0), integers);
-                break;
-            case 6:
-                assertEquals(Arrays.asList(1, 2), integers);
-                break;
-            case 131:
-                assertEquals(Arrays.asList(0, 1, 7), integers);
-                break;
-            }
-        }
-        assertEquals(512, i);
-
-        // Check that can iterate over 2^20 (~ 1m) elements in reasonable time.
-        i = 0;
-        for (List<String> xx
-            : CombiningGenerator.of(Collections.nCopies(20, "x")))
-        {
-//            discard(xx);
-            i++;
-        }
-        assertEquals(1 << 20, i);
-    }
 
     /**
      * Unit test for {@link ByteString}.

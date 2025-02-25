@@ -232,7 +232,7 @@ import mondrian.util.Pair;
  * {@link SegmentWithData} can use {@link SegmentBody} instead. Will save
  * copying.</p>
  *
- * <p>21. Obsolete {@link mondrian.util.CombiningGenerator}.</p>
+ * <p>21. Obsolete  mondrian.util.CombiningGenerator.</p>
  *
  * <p>22. {@link SegmentHeader#constrain(mondrian.spi.SegmentColumn[])} is
  * broken for N-dimensional regions where N &gt; 1. Each call currently
