@@ -47,7 +47,6 @@ import mondrian.util.CartesianProductList;
 import mondrian.util.CombiningGenerator;
 import mondrian.util.Composite;
 import mondrian.util.ServiceDiscovery;
-import mondrian.util.UnionIterator;
 
 /**
  * Tests for methods in {@link mondrian.olap.Util} and, sometimes, classes in
@@ -602,57 +601,7 @@ import mondrian.util.UnionIterator;
         assertEquals(Arrays.asList("x", "y,"), Util.parseCommaList("x,y,,"));
     }
 
-    @Test
-     void testUnionIterator() {
-        final List<String> xyList = Arrays.asList("x", "y");
-        final List<String> abcList = Arrays.asList("a", "b", "c");
-        final List<String> emptyList = Collections.emptyList();
 
-        String total = "";
-        for (String s : UnionIterator.over(xyList, abcList)) {
-            total += s + ";";
-        }
-        assertEquals("x;y;a;b;c;", total);
-
-        total = "";
-        for (String s : UnionIterator.over(xyList, emptyList)) {
-            total += s + ";";
-        }
-        assertEquals("x;y;", total);
-
-        total = "";
-        for (String s : UnionIterator.over(emptyList, xyList, emptyList)) {
-            total += s + ";";
-        }
-        assertEquals("x;y;", total);
-
-        total = "";
-        for (String s : UnionIterator.<String>over()) {
-            total += s + ";";
-        }
-        assertEquals("", total);
-
-        total = "";
-        UnionIterator<String> unionIterator =
-            new UnionIterator<>(xyList, abcList);
-        while (unionIterator.hasNext()) {
-            total += unionIterator.next() + ";";
-        }
-        assertEquals("x;y;a;b;c;", total);
-
-        if (Util.RETROWOVEN) {
-            // Retrowoven code gives 'ArrayStoreException' when it encounters
-            // 'Util.union()' applied to java.util.Iterator objects.
-            return;
-        }
-
-        total = "";
-        for (String s : UnionIterator.over((Iterable<String>) xyList, abcList))
-        {
-            total += s + ";";
-        }
-        assertEquals("x;y;a;b;c;", total);
-    }
     @Test
      void testAreOccurrencesEqual() {
         assertFalse(Util.areOccurencesEqual(Collections.<String>emptyList()));

@@ -29,12 +29,12 @@ import java.util.Set;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.InternalOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.access.AccessHierarchy;
@@ -95,7 +95,6 @@ import mondrian.olap.HierarchyBase;
 import mondrian.olap.IdImpl;
 import mondrian.olap.InvalidHierarchyException;
 import mondrian.olap.StandardProperty;
-import mondrian.olap.AbstractProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
@@ -107,7 +106,6 @@ import mondrian.rolap.sql.SqlQuery;
 import mondrian.rolap.util.PojoUtil;
 import mondrian.rolap.util.RelationUtil;
 import mondrian.spi.CellFormatter;
-import mondrian.util.UnionIterator;
 
 /**
  * <code>RolapHierarchy</code> implements {@link Hierarchy} for a ROLAP database.
@@ -620,19 +618,34 @@ public class RolapHierarchy extends HierarchyBase {
                 getRolapCatalog().getCatalogReader();
             List<RolapMember> calcMemberList =
                 Util.cast(schemaReader.getCalculatedMembers(getLevels()[0]));
-            for (RolapMember rootMember
-                : UnionIterator.over(rootMembers, calcMemberList))
-            {
-                if (rootMember.isHidden()) {
-                    continue;
+            
+            
+            // Note: We require that the root member is not a hidden member
+            // of a ragged hierarchy, but we do not require that it is
+            // visible. In particular, if a cube contains no explicit
+            // measures, the default measure will be the implicitly defined
+            // [Fact Count] measure, which happens to be non-visible.
+            
+            // First look on Root
+            for (RolapMember rootMember : rootMembers)
+                {
+                    if (rootMember.isHidden()) {
+                        continue;
+                    }
+                    defaultMember = rootMember;
+                    break;
                 }
-                // Note: We require that the root member is not a hidden member
-                // of a ragged hierarchy, but we do not require that it is
-                // visible. In particular, if a cube contains no explicit
-                // measures, the default measure will be the implicitly defined
-                // [Fact Count] measure, which happens to be non-visible.
-                defaultMember = rootMember;
-                break;
+            
+            // then if not found look  calcmembers
+            if(defaultMember == null) {
+                for (RolapMember calcMember : calcMemberList)
+                {
+                    if (calcMember.isHidden()) {
+                        continue;
+                    }
+                    defaultMember = calcMember;
+                    break;
+                }
             }
             if (defaultMember == null) {
                 throw new InvalidHierarchyException(MessageFormat.format(invalidHierarchyCondition,
