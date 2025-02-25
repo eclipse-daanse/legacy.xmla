@@ -73,14 +73,14 @@ public class DimensionUtil {
     */
 
 
-    private static CubeMapping getCube(CatalogMapping schema, String cubeName) {
-        for (int i = 0; i < schema.getCubes().size(); i++) {
-            if (schema.getCubes().get(i).getName().equals(cubeName)) {
-                return schema.getCubes().get(i);
-            }
-        }
-        throw Util.newInternal(new StringBuilder("Cannot find cube '").append(cubeName).append("'").toString());
-    }
+//    private static CubeMapping getCube(CatalogMapping schema, String cubeName) {
+//        for (int i = 0; i < schema.getCubes().size(); i++) {
+//            if (schema.getCubes().get(i).getName().equals(cubeName)) {
+//                return schema.getCubes().get(i);
+//            }
+//        }
+//        throw Util.newInternal(new StringBuilder("Cannot find cube '").append(cubeName).append("'").toString());
+//    }
 
     public static DimensionMapping getDimension(CubeMapping cube, CatalogMapping schema, String dimensionName) {
         for (int i = 0; i < cube.getDimensionConnectors().size(); i++) {

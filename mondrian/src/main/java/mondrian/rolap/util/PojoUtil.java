@@ -21,7 +21,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RowMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RowValueMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SqlViewMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryOptimizationHintMapping;
@@ -42,7 +41,6 @@ import org.eclipse.daanse.rolap.mapping.pojo.QueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.RowMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.RowValueMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryOptimizationHintMappingImpl;
 
@@ -54,17 +52,17 @@ public class PojoUtil {
         // constructor
     }
 
-	public static SqlViewMapping getSql(SqlViewMapping s) {
-		if (s != null) {
-			return ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
-					.withsSchema(getDatabaseSchema(s.getSchema()))
-					.withColumns(getColumns(s.getColumns()))
-					.withName(s.getName()))
-					.withSqlStatements(getSqlStatements(s.getSqlStatements()))
-					.build();
-		}
-		return null;
-	}
+//	public static SqlViewMapping getSql(SqlViewMapping s) {
+//		if (s != null) {
+//			return ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
+//					.withsSchema(getDatabaseSchema(s.getSchema()))
+//					.withColumns(getColumns(s.getColumns()))
+//					.withName(s.getName()))
+//					.withSqlStatements(getSqlStatements(s.getSqlStatements()))
+//					.build();
+//		}
+//		return null;
+//	}
 
     private static SqlStatementMappingImpl getSql(SqlStatementMapping s) {
         if (s != null) {
@@ -76,24 +74,24 @@ public class PojoUtil {
         return null;
     }
 
-    private static List<SqlStatementMappingImpl> getSqlStatements(List<? extends SqlStatementMapping> sqlStatements) {
-   		if (sqlStatements != null) {
-   			sqlStatements.stream().map(s -> getSqlStatement(s)).toList();
-   		}
-   		return List.of();
-	}
+//    private static List<SqlStatementMappingImpl> getSqlStatements(List<? extends SqlStatementMapping> sqlStatements) {
+//   		if (sqlStatements != null) {
+//   			sqlStatements.stream().map(s -> getSqlStatement(s)).toList();
+//   		}
+//   		return List.of();
+//	}
 
-    public static SqlStatementMappingImpl getSqlStatement(SqlStatementMapping s) {
-    	List<String> dialects = getDialects(s.getDialects());
-    	return SqlStatementMappingImpl.builder().withDialects(dialects).withSql(s.getSql()).build();
-    }
+//    public static SqlStatementMappingImpl getSqlStatement(SqlStatementMapping s) {
+//    	List<String> dialects = getDialects(s.getDialects());
+//    	return SqlStatementMappingImpl.builder().withDialects(dialects).withSql(s.getSql()).build();
+//    }
 
-	private static List<String> getDialects(List<String> dialects) {
-		if (dialects != null) {
-			dialects.stream().map(String::new).toList();
-		}
-		return List.of();
-	}
+//	private static List<String> getDialects(List<String> dialects) {
+//		if (dialects != null) {
+//			dialects.stream().map(String::new).toList();
+//		}
+//		return List.of();
+//	}
 
 	/**
      * Copies a {@link QueryMapping}.
