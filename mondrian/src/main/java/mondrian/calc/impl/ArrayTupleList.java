@@ -287,7 +287,7 @@ public class ArrayTupleList extends AbstractEndToEndTupleList {
             final int rem = newCapacity % arity;
             newCapacity = Math.min( newCapacity + arity - rem, maxMembers );
 
-            objectData = Util.copyOf( objectData, newCapacity );
+            objectData = Arrays.copyOf( objectData, newCapacity );
         }
     }
 

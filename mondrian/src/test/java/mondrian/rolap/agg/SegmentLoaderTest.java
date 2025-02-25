@@ -24,6 +24,7 @@ import java.sql.Types;
 import java.time.Duration;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -348,7 +349,7 @@ class SegmentLoaderTest extends BatchTestCase {
         return new AbstractList<>() {
             @Override
             public Object[] get(int index) {
-                return Util.copyOf(data.get(index), length);
+                return Arrays.copyOf(data.get(index), length);
             }
 
             @Override

@@ -41,6 +41,7 @@ import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
@@ -2084,7 +2085,7 @@ public class Util {
         for (T[] a : as) {
             n += a.length;
         }
-        T[] copy = Util.copyOf(a0, n);
+        T[] copy = Arrays.copyOf(a0, n);
         n = a0.length;
         for (T[] a : as) {
             System.arraycopy(a, 0, copy, n, a.length);
@@ -2104,7 +2105,7 @@ public class Util {
      * @see #appendArrays
      */
     public static <T> T[] append(T[] a, T o) {
-        T[] a2 = Util.copyOf(a, a.length + 1);
+        T[] a2 = Arrays.copyOf(a, a.length + 1);
         a2[a.length] = o;
         return a2;
     }
@@ -2156,44 +2157,6 @@ public class Util {
             original, 0, copy, 0, Math.min(original.length, newLength));
         return copy;
     }
-
-    /**
-     * Like <code>{@link java.util.Arrays}.copyOf(Object[], int)</code>, but
-     * exists prior to JDK 1.6.
-     *
-     * @param original the array to be copied
-     * @param newLength the length of the copy to be returned
-     * @return a copy of the original array, truncated or padded with zeros
-     *     to obtain the specified length
-     */
-    public static <T> T[] copyOf(T[] original, int newLength) {
-        //noinspection unchecked
-        return (T[]) copyOf(original, newLength, original.getClass());
-    }
-
-    /**
-     * Copies the specified array.
-     *
-     * @param original the array to be copied
-     * @param newLength the length of the copy to be returned
-     * @param newType the class of the copy to be returned
-     * @return a copy of the original array, truncated or padded with nulls
-     *     to obtain the specified length
-     */
-    public static <T, U> T[] copyOf(
-        U[] original, int newLength, Class<? extends T[]> newType)
-    {
-        @SuppressWarnings({"unchecked", "RedundantCast"})
-        T[] copy = ((Object)newType == (Object)Object[].class)
-            ? (T[]) new Object[newLength]
-            : (T[]) Array.newInstance(newType.getComponentType(), newLength);
-        //noinspection SuspiciousSystemArraycopy
-        System.arraycopy(
-            original, 0, copy, 0,
-            Math.min(original.length, newLength));
-        return copy;
-    }
-
 
     /**
      * Creates a very simple implementation of {@link Validator}. (Only

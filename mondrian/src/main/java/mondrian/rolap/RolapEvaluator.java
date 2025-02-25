@@ -430,7 +430,7 @@ public final RolapEvaluator push() {
       if ( newCapacity < minCapacity ) {
         newCapacity = minCapacity;
       }
-      commands = Util.copyOf( commands, newCapacity );
+      commands = Arrays.copyOf( commands, newCapacity );
     }
   }
 
