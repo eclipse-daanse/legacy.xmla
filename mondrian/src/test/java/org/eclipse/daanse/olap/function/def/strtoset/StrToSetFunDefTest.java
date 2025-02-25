@@ -42,8 +42,8 @@ class StrToSetFunDefTest {
             "StrToSet("
                 + " \"{[Gender].[F], [Gender].[M]}\","
                 + " [Gender])",
-            "[Gender].[F]\n"
-                + "[Gender].[M]" );
+            "[Gender].[Gender].[F]\n"
+                + "[Gender].[Gender].[M]" );
 
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "StrToSet("

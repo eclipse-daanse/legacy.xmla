@@ -42,9 +42,9 @@ class ValidMeasureFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[with VM]}\n"
                 + "Axis #2:\n"
-                + "{[Warehouse].[Canada]}\n"
-                + "{[Warehouse].[Mexico]}\n"
-                + "{[Warehouse].[USA]}\n"
+                + "{[Warehouse].[Warehouse].[Canada]}\n"
+                + "{[Warehouse].[Warehouse].[Mexico]}\n"
+                + "{[Warehouse].[Warehouse].[USA]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #1: 266,773\n"
                 + "Row #2: 266,773\n" );
@@ -112,9 +112,9 @@ class ValidMeasureFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[with VM]}\n"
                 + "Axis #2:\n"
-                + "{[Warehouse].[Canada]}\n"
-                + "{[Warehouse].[Mexico]}\n"
-                + "{[Warehouse].[USA]}\n"
+                + "{[Warehouse].[Warehouse].[Canada]}\n"
+                + "{[Warehouse].[Warehouse].[Mexico]}\n"
+                + "{[Warehouse].[Warehouse].[USA]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #1: 266,773\n"
                 + "Row #2: 266,773\n" );
@@ -187,7 +187,7 @@ class ValidMeasureFunDefTest {
                 + "member measures.vm as 'ValidMeasure(measures.[warehouse sales])' \n"
                 + "select from [warehouse and sales] where (measures.vm, gender.f) \n",
             "Axis #0:\n"
-                + "{[Measures].[vm], [Gender].[F]}\n"
+                + "{[Measures].[vm], [Gender].[Gender].[F]}\n"
                 + "196,770.888" );
     }
 

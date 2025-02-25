@@ -78,62 +78,62 @@ public class FunctionTest {//extends FoodMartTestCase {
 
   public static final String[] AllHiers = {
           "[Measures]",
-          "[Store]",
-          "[Store Size in SQFT]",
-          "[Store Type]",
-          "[Time]",
-          SystemWideProperties.instance().SsasCompatibleNaming ? "[Time].[Weekly]" : "[Time.Weekly]",
-          "[Product]",
-          "[Promotion Media]",
-          "[Promotions]",
-          "[Customers]",
-          "[Education Level]",
-          "[Gender]",
-          "[Marital Status]",
-          "[Yearly Income]"
+          "[Store].[Store]",
+          "[Store Size in SQFT].[Store Size in SQFT]",
+          "[Store Type].[Store Type]",
+          "[Time].[Time]",
+          "[Time].[Weekly]",
+          "[Product].[Product]",
+          "[Promotion Media].[Promotion Media]",
+          "[Promotions].[Promotions]",
+          "[Customers].[Customers]",
+          "[Education Level].[Education Level]",
+          "[Gender].[Gender]",
+          "[Marital Status].[Marital Status]",
+          "[Yearly Income].[Yearly Income]"
   };
 
   public static final String months =
-    "[Time].[1997].[Q1].[1]\n"
-      + "[Time].[1997].[Q1].[2]\n"
-      + "[Time].[1997].[Q1].[3]\n"
-      + "[Time].[1997].[Q2].[4]\n"
-      + "[Time].[1997].[Q2].[5]\n"
-      + "[Time].[1997].[Q2].[6]\n"
-      + "[Time].[1997].[Q3].[7]\n"
-      + "[Time].[1997].[Q3].[8]\n"
-      + "[Time].[1997].[Q3].[9]\n"
-      + "[Time].[1997].[Q4].[10]\n"
-      + "[Time].[1997].[Q4].[11]\n"
-      + "[Time].[1997].[Q4].[12]";
+    "[Time].[Time].[1997].[Q1].[1]\n"
+      + "[Time].[Time].[1997].[Q1].[2]\n"
+      + "[Time].[Time].[1997].[Q1].[3]\n"
+      + "[Time].[Time].[1997].[Q2].[4]\n"
+      + "[Time].[Time].[1997].[Q2].[5]\n"
+      + "[Time].[Time].[1997].[Q2].[6]\n"
+      + "[Time].[Time].[1997].[Q3].[7]\n"
+      + "[Time].[Time].[1997].[Q3].[8]\n"
+      + "[Time].[Time].[1997].[Q3].[9]\n"
+      + "[Time].[Time].[1997].[Q4].[10]\n"
+      + "[Time].[Time].[1997].[Q4].[11]\n"
+      + "[Time].[Time].[1997].[Q4].[12]";
 
   public static final String quarters =
-    "[Time].[1997].[Q1]\n"
-      + "[Time].[1997].[Q2]\n"
-      + "[Time].[1997].[Q3]\n"
-      + "[Time].[1997].[Q4]";
+    "[Time].[Time].[1997].[Q1]\n"
+      + "[Time].[Time].[1997].[Q2]\n"
+      + "[Time].[Time].[1997].[Q3]\n"
+      + "[Time].[Time].[1997].[Q4]";
 
-  public static final String year1997 = "[Time].[1997]";
+  public static final String year1997 = "[Time].[Time].[1997]";
 
   public static final String hierarchized1997 =
     year1997
       + "\n"
-      + "[Time].[1997].[Q1]\n"
-      + "[Time].[1997].[Q1].[1]\n"
-      + "[Time].[1997].[Q1].[2]\n"
-      + "[Time].[1997].[Q1].[3]\n"
-      + "[Time].[1997].[Q2]\n"
-      + "[Time].[1997].[Q2].[4]\n"
-      + "[Time].[1997].[Q2].[5]\n"
-      + "[Time].[1997].[Q2].[6]\n"
-      + "[Time].[1997].[Q3]\n"
-      + "[Time].[1997].[Q3].[7]\n"
-      + "[Time].[1997].[Q3].[8]\n"
-      + "[Time].[1997].[Q3].[9]\n"
-      + "[Time].[1997].[Q4]\n"
-      + "[Time].[1997].[Q4].[10]\n"
-      + "[Time].[1997].[Q4].[11]\n"
-      + "[Time].[1997].[Q4].[12]";
+      + "[Time].[Time].[1997].[Q1]\n"
+      + "[Time].[Time].[1997].[Q1].[1]\n"
+      + "[Time].[Time].[1997].[Q1].[2]\n"
+      + "[Time].[Time].[1997].[Q1].[3]\n"
+      + "[Time].[Time].[1997].[Q2]\n"
+      + "[Time].[Time].[1997].[Q2].[4]\n"
+      + "[Time].[Time].[1997].[Q2].[5]\n"
+      + "[Time].[Time].[1997].[Q2].[6]\n"
+      + "[Time].[Time].[1997].[Q3]\n"
+      + "[Time].[Time].[1997].[Q3].[7]\n"
+      + "[Time].[Time].[1997].[Q3].[8]\n"
+      + "[Time].[Time].[1997].[Q3].[9]\n"
+      + "[Time].[Time].[1997].[Q4]\n"
+      + "[Time].[Time].[1997].[Q4].[10]\n"
+      + "[Time].[Time].[1997].[Q4].[11]\n"
+      + "[Time].[Time].[1997].[Q4].[12]";
 
   public static final String NullNumericExpr =
     " ([Measures].[Unit Sales],"
@@ -141,10 +141,7 @@ public class FunctionTest {//extends FoodMartTestCase {
       + "   [Product].[All Products].[Drink].[Alcoholic Beverages]."
       + "[Beer and Wine].[Beer].[Good].[Good Imported Beer])";
 
-  private static final String TimeWeekly =
-    SystemWideProperties.instance().SsasCompatibleNaming
-      ? "[Time].[Weekly]"
-      : "[Time.Weekly]";
+  private static final String TimeWeekly = "[Time].[Weekly]";
 
 
 
@@ -180,10 +177,10 @@ public class FunctionTest {//extends FoodMartTestCase {
       + "Axis #1:\n"
       + "{[Measures].[foo]}\n"
       + "Axis #2:\n"
-      + "{[Time].[1997].[Q1]}\n"
-      + "{[Time].[1997].[Q2]}\n"
-      + "{[Time].[1997].[Q3]}\n"
-      + "{[Time].[1997].[Q4]}\n"
+      + "{[Time].[Time].[1997].[Q1]}\n"
+      + "{[Time].[Time].[1997].[Q2]}\n"
+      + "{[Time].[Time].[1997].[Q3]}\n"
+      + "{[Time].[Time].[1997].[Q4]}\n"
       + "Row #0: \n"
       + "Row #1: \n"
       + "Row #2: \n"
@@ -229,11 +226,11 @@ public class FunctionTest {//extends FoodMartTestCase {
     // MSAS fails here, but Mondrian doesn't.
     TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
       "[Gender].[All Gender].Parent.Level.UniqueName",
-      "[Gender].[(All)]" );
+      "[Gender].[Gender].[(All)]" );
 
     // MSAS fails here, but Mondrian doesn't.
     TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "[Gender].[All Gender].Parent.Hierarchy.UniqueName", "[Gender]" );
+      "[Gender].[All Gender].Parent.Hierarchy.UniqueName", "[Gender].[Gender]" );
 
     // MSAS fails here, but Mondrian doesn't.
     TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -246,7 +243,7 @@ public class FunctionTest {//extends FoodMartTestCase {
     if ( isDefaultNullMemberRepresentation() ) {
       // MSAS returns "" here.
       TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-        "[Gender].[All Gender].Parent.UniqueName", "[Gender].[#null]" );
+        "[Gender].[All Gender].Parent.UniqueName", "[Gender].[Gender].[#null]" );
 
       // MSAS returns "" here.
       TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -271,29 +268,29 @@ public class FunctionTest {//extends FoodMartTestCase {
         + "Axis #1:\n"
         + "{[Measures].[X]}\n"
         + "Axis #2:\n"
-        + "{[Product].[Drink].[Alcoholic Beverages]}\n"
-        + "{[Product].[Drink].[Beverages]}\n"
-        + "{[Product].[Drink].[Dairy]}\n"
-        + "{[Product].[Food].[Baked Goods]}\n"
-        + "{[Product].[Food].[Baking Goods]}\n"
-        + "{[Product].[Food].[Breakfast Foods]}\n"
-        + "{[Product].[Food].[Canned Foods]}\n"
-        + "{[Product].[Food].[Canned Products]}\n"
-        + "{[Product].[Food].[Dairy]}\n"
-        + "{[Product].[Food].[Deli]}\n"
-        + "{[Product].[Food].[Eggs]}\n"
-        + "{[Product].[Food].[Frozen Foods]}\n"
-        + "{[Product].[Food].[Meat]}\n"
-        + "{[Product].[Food].[Produce]}\n"
-        + "{[Product].[Food].[Seafood]}\n"
-        + "{[Product].[Food].[Snack Foods]}\n"
-        + "{[Product].[Food].[Snacks]}\n"
-        + "{[Product].[Food].[Starchy Foods]}\n"
-        + "{[Product].[Non-Consumable].[Carousel]}\n"
-        + "{[Product].[Non-Consumable].[Checkout]}\n"
-        + "{[Product].[Non-Consumable].[Health and Hygiene]}\n"
-        + "{[Product].[Non-Consumable].[Household]}\n"
-        + "{[Product].[Non-Consumable].[Periodicals]}\n"
+        + "{[Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+        + "{[Product].[Product].[Drink].[Beverages]}\n"
+        + "{[Product].[Product].[Drink].[Dairy]}\n"
+        + "{[Product].[Product].[Food].[Baked Goods]}\n"
+        + "{[Product].[Product].[Food].[Baking Goods]}\n"
+        + "{[Product].[Product].[Food].[Breakfast Foods]}\n"
+        + "{[Product].[Product].[Food].[Canned Foods]}\n"
+        + "{[Product].[Product].[Food].[Canned Products]}\n"
+        + "{[Product].[Product].[Food].[Dairy]}\n"
+        + "{[Product].[Product].[Food].[Deli]}\n"
+        + "{[Product].[Product].[Food].[Eggs]}\n"
+        + "{[Product].[Product].[Food].[Frozen Foods]}\n"
+        + "{[Product].[Product].[Food].[Meat]}\n"
+        + "{[Product].[Product].[Food].[Produce]}\n"
+        + "{[Product].[Product].[Food].[Seafood]}\n"
+        + "{[Product].[Product].[Food].[Snack Foods]}\n"
+        + "{[Product].[Product].[Food].[Snacks]}\n"
+        + "{[Product].[Product].[Food].[Starchy Foods]}\n"
+        + "{[Product].[Product].[Non-Consumable].[Carousel]}\n"
+        + "{[Product].[Product].[Non-Consumable].[Checkout]}\n"
+        + "{[Product].[Product].[Non-Consumable].[Health and Hygiene]}\n"
+        + "{[Product].[Product].[Non-Consumable].[Household]}\n"
+        + "{[Product].[Product].[Non-Consumable].[Periodicals]}\n"
         + "Row #0: 14,029.08\n"
         + "Row #1: 27,748.53\n"
         + "Row #2: \n"
@@ -416,9 +413,9 @@ public class FunctionTest {//extends FoodMartTestCase {
         + "Axis #1:\n"
         + "{[Measures].[without VM]}\n"
         + "Axis #2:\n"
-        + "{[Warehouse].[Canada]}\n"
-        + "{[Warehouse].[Mexico]}\n"
-        + "{[Warehouse].[USA]}\n"
+        + "{[Warehouse].[Warehouse].[Canada]}\n"
+        + "{[Warehouse].[Warehouse].[Mexico]}\n"
+        + "{[Warehouse].[Warehouse].[USA]}\n"
         + "Row #0: \n"
         + "Row #1: \n"
         + "Row #2: \n" );
@@ -452,12 +449,12 @@ public class FunctionTest {//extends FoodMartTestCase {
         + "FROM [Sales] \n"
         + "WHERE ([Measures].[Declining Stores Count], [Time].[1998].[Q3], [Store].[XL_QZX])",
       "Axis #0:\n"
-        + "{[Measures].[Declining Stores Count], [Time].[1998].[Q3], [Store].[XL_QZX]}\n"
+        + "{[Measures].[Declining Stores Count], [Time].[Time].[1998].[Q3], [Store].[Store].[XL_QZX]}\n"
         + "Axis #1:\n"
-        + "{[Product].[All Products]}\n"
-        + "{[Product].[Drink]}\n"
-        + "{[Product].[Food]}\n"
-        + "{[Product].[Non-Consumable]}\n"
+        + "{[Product].[Product].[All Products]}\n"
+        + "{[Product].[Product].[Drink]}\n"
+        + "{[Product].[Product].[Food]}\n"
+        + "{[Product].[Product].[Non-Consumable]}\n"
         + "Row #0: .00\n"
         + "Row #0: .00\n"
         + "Row #0: .00\n"
@@ -482,10 +479,10 @@ public class FunctionTest {//extends FoodMartTestCase {
         + "Axis #1:\n"
         + "{[Measures].[Unit Sales]}\n"
         + "Axis #2:\n"
-        + "{[Product].[Drink].[Alcoholic Beverages]}\n"
-        + "{[Product].[Drink].[Beverages]}\n"
-        + "{[Product].[Drink].[Dairy]}\n"
-        + "{[Product].[Non-Consumable].[Other]}\n"
+        + "{[Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+        + "{[Product].[Product].[Drink].[Beverages]}\n"
+        + "{[Product].[Product].[Drink].[Dairy]}\n"
+        + "{[Product].[Product].[Non-Consumable].[Other]}\n"
         + "Row #0: 6,838\n"
         + "Row #1: 13,573\n"
         + "Row #2: 4,186\n"
@@ -499,12 +496,12 @@ public class FunctionTest {//extends FoodMartTestCase {
     // list, which set operator must make mutable.
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "{[Store].[USA].[CA].children, [Store].[USA]}",
-      "[Store].[USA].[CA].[Alameda]\n"
-        + "[Store].[USA].[CA].[Beverly Hills]\n"
-        + "[Store].[USA].[CA].[Los Angeles]\n"
-        + "[Store].[USA].[CA].[San Diego]\n"
-        + "[Store].[USA].[CA].[San Francisco]\n"
-        + "[Store].[USA]" );
+      "[Store].[Store].[USA].[CA].[Alameda]\n"
+        + "[Store].[Store].[USA].[CA].[Beverly Hills]\n"
+        + "[Store].[Store].[USA].[CA].[Los Angeles]\n"
+        + "[Store].[Store].[USA].[CA].[San Diego]\n"
+        + "[Store].[Store].[USA].[CA].[San Francisco]\n"
+        + "[Store].[Store].[USA]" );
   }
 
   @ParameterizedTest
@@ -517,10 +514,10 @@ public class FunctionTest {//extends FoodMartTestCase {
 		String expr = "([Gender].[M], [Time].[Time].Children.Item(2), [Measures].[Unit Sales])";
 		String expectedCalc = """
 mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
-    org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Gender].[M]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
-    org.eclipse.daanse.olap.function.def.set.setitem.SetItemFunDef$3(type=MemberType<hierarchy=[Time]>, resultStyle=VALUE, callCount=0, callMillis=0)
-        org.eclipse.daanse.olap.function.def.set.children.ChildrenCalc(type=SetType<MemberType<hierarchy=[Time]>>, resultStyle=LIST, callCount=0, callMillis=0)
-            org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Time]>, resultStyle=VALUE, callCount=0, callMillis=0)
+    org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Gender].[Gender].[M]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
+    org.eclipse.daanse.olap.function.def.set.setitem.SetItemFunDef$3(type=MemberType<hierarchy=[Time].[Time]>, resultStyle=VALUE, callCount=0, callMillis=0)
+        org.eclipse.daanse.olap.function.def.set.children.ChildrenCalc(type=SetType<MemberType<hierarchy=[Time].[Time]>>, resultStyle=LIST, callCount=0, callMillis=0)
+            org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc(type=MemberType<hierarchy=[Time].[Time]>, resultStyle=VALUE, callCount=0, callMillis=0)
         org.eclipse.daanse.olap.calc.base.constant.ConstantIntegerCalc(type=DecimalType(0), resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
     org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Measures].[Unit Sales]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
 							""";
@@ -546,25 +543,20 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
 
     // coerce args (hierarchy, member, member, dimension)
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "{([Time.Weekly], [Measures].[Store Sales], [Marital Status].[M], [Promotion Media])}",
-      "{[Time].[Weekly].[All Weeklys], [Measures].[Store Sales], [Marital Status].[M], [Promotion Media].[All "
+      "{([Time].[Weekly], [Measures].[Store Sales], [Marital Status].[M], [Promotion Media])}",
+      "{[Time].[Weekly].[All Weeklys], [Measures].[Store Sales], [Marital Status].[Marital Status].[M], [Promotion Media].[Promotion Media].[All "
         + "Media]}" );
 
     // usage of different hierarchies in the [Time] dimension
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-      "{([Time.Weekly], [Measures].[Store Sales], [Marital Status].[M], [Time].[Time])}",
-      "{[Time].[Weekly].[All Weeklys], [Measures].[Store Sales], [Marital Status].[M], [Time].[1997]}" );
+      "{([Time].[Weekly], [Measures].[Store Sales], [Marital Status].[M], [Time].[Time])}",
+      "{[Time].[Weekly].[All Weeklys], [Measures].[Store Sales], [Marital Status].[Marital Status].[M], [Time].[Time].[1997]}" );
 
     // two usages of the [Time].[Weekly] hierarchy
-    if ( SystemWideProperties.instance().SsasCompatibleNaming ) {
-      assertAxisThrows(context.getConnectionWithDefaultRole(),
-        "{([Time].[Weekly], [Measures].[Store Sales], [Marital Status].[M], [Time].[Weekly])}",
-        "Tuple contains more than one member of hierarchy '[Time].[Weekly]'." , "Sales");
-    } else {
-      assertAxisThrows(context.getConnectionWithDefaultRole(),
-        "{([Time.Weekly], [Measures].[Store Sales], [Marital Status].[M], [Time.Weekly])}",
-        "Tuple contains more than one member of hierarchy '[Time.Weekly]'." , "Sales");
-    }
+    
+    assertAxisThrows(context.getConnectionWithDefaultRole(),
+      "{([Time].[Weekly], [Measures].[Store Sales], [Marital Status].[M], [Time].[Weekly])}",
+      "Tuple contains more than one member of hierarchy '[Time].[Weekly]'." , "Sales");
 
     // cannot coerce integer to member
     assertAxisThrows(context.getConnectionWithDefaultRole(),
@@ -577,19 +569,19 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
   void testTupleItem(Context context) {
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(2)",
-      "[Gender].[M]" );
+      "[Gender].[Gender].[M]" );
 
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "([Time].[1997].[Q1].[1], [Customers].[All Customers].[USA].[OR], [Gender].[All Gender].[M]).item(1)",
-      "[Customers].[USA].[OR]" );
+      "[Customers].[Customers].[USA].[OR]" );
 
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "{[Time].[1997].[Q1].[1]}.item(0)",
-      "[Time].[1997].[Q1].[1]" );
+      "[Time].[Time].[1997].[Q1].[1]" );
 
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "{[Time].[1997].[Q1].[1]}.Item(0).Item(0)",
-      "[Time].[1997].[Q1].[1]" );
+      "[Time].[Time].[1997].[Q1].[1]" );
 
     // given out of bounds index, item returns null
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -636,8 +628,8 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Product].[Test]}\n"
-        + "{[Product].[Food]}\n"
+        + "{[Product].[Product].[Test]}\n"
+        + "{[Product].[Product].[Food]}\n"
         + "Axis #2:\n"
         + "{[Measures].[Store Sales]}\n"
         + "Row #0: 191,940.00\n"
@@ -651,13 +643,13 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "([Store].[USA], [Gender].[F])", "{}" );
 
     assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
-      "([Store].[USA], [Gender])", "{[Gender]}" );
+      "([Store].[USA], [Gender])", "{[Gender].[Gender]}" );
 
     // in a scalar context, the expression depends on everything except
     // the explicitly stated dimensions
     assertExprDependsOn(context.getConnectionWithDefaultRole(),
       "([Store].[USA], [Gender])",
-      allHiersExcept( "[Store]" ) );
+      allHiersExcept( "[Store].[Store]" ) );
 
     // The result should be all dims except [Gender], but there's a small
     // bug in MemberValueCalc.dependsOn where we escalate 'might depend' to
@@ -715,7 +707,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "Axis #1:\n"
         + "{[Measures].[Unit Sales]}\n"
         + "Axis #2:\n"
-        + "{[Gender].[M], [Store].[All Stores]}\n"
+        + "{[Gender].[Gender].[M], [Store].[Store].[All Stores]}\n"
         + "Row #0: 135,215\n" );
 
     // the set function eliminates tuples which are wholly or partially
@@ -725,7 +717,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + " ([Gender].[M], [Marital Status].parent),\n" // part null
         + " ([Gender].parent, [Marital Status].parent),\n" // wholly null
         + " ([Gender].[M], [Marital Status])", // not null
-      "{[Gender].[M], [Marital Status].[All Marital Status]}" );
+      "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[All Marital Status]}" );
 
     if ( isDefaultNullMemberRepresentation() ) {
       // The tuple constructor returns a null tuple if one of its
@@ -777,12 +769,12 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
     // Should return Beverly Hills in California.
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "[Store].[Store City].[Beverly Hills]",
-      "[Store].[USA].[CA].[Beverly Hills]" );
+      "[Store].[Store].[USA].[CA].[Beverly Hills]" );
 
     // There are two months named "1" in the time dimension: one
     // for 1997 and one for 1998.  <Level>.<Member> should return
     // the first one.
-    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "[Time].[Month].[1]", "[Time].[1997].[Q1].[1]" );
+    assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "[Time].[Month].[1]", "[Time].[Time].[1997].[Q1].[1]" );
 
     // Shouldn't be able to find a member named "Q1" on the month level.
     assertAxisThrows(context.getConnectionWithDefaultRole(),
@@ -832,19 +824,19 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Product].[CaseTest]}\n"
+        + "{[Product].[Product].[CaseTest]}\n"
         + "Axis #2:\n"
-        + "{[Gender].[M]}\n"
+        + "{[Gender].[Gender].[M]}\n"
         + "Row #0: 131,558\n" );
 
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "CASE WHEN 1+1 = 2 THEN [Gender].[F] ELSE [Gender].[F].Parent END",
-      "[Gender].[F]" );
+      "[Gender].[Gender].[F]" );
 
     // try case match for good measure
     assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
       "CASE 1 WHEN 2 THEN [Gender].[F] ELSE [Gender].[F].Parent END",
-      "[Gender].[All Gender]" );
+      "[Gender].[Gender].[All Gender]" );
   }
 
   @ParameterizedTest
@@ -1212,7 +1204,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1226,7 +1218,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1240,7 +1232,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1254,7 +1246,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1268,7 +1260,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1295,7 +1287,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1310,7 +1302,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1325,7 +1317,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1340,7 +1332,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1382,7 +1374,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1421,7 +1413,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1434,7 +1426,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA]}\n"
+        + "{[Store].[Store].[USA]}\n"
         + "Row #0: 266,773\n" );
   }
 
@@ -1448,7 +1440,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1462,7 +1454,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1477,7 +1469,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1491,7 +1483,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "Axis #0:\n"
         + "{}\n"
         + "Axis #1:\n"
-        + "{[Store].[USA].[WA].[Bellingham]}\n"
+        + "{[Store].[Store].[USA].[WA].[Bellingham]}\n"
         + "Row #0: 2,237\n" );
   }
 
@@ -1629,9 +1621,9 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "Axis #1:\n"
         + "{[Measures].[Unit Sales]}\n"
         + "Axis #2:\n"
-        + "{[Gender].[All Gender]}\n"
-        + "{[Gender].[F]}\n"
-        + "{[Gender].[M]}\n"
+        + "{[Gender].[Gender].[All Gender]}\n"
+        + "{[Gender].[Gender].[F]}\n"
+        + "{[Gender].[Gender].[M]}\n"
         + "Row #0: 266,773\n"
         + "Row #1: 131,558\n"
         + "Row #2: 135,215\n";
@@ -1728,9 +1720,9 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       + "Axis #1:\n"
       + "{[Measures].[Unit Sales]}\n"
       + "Axis #2:\n"
-      + "{[Gender].[All Gender]}\n"
-      + "{[Gender].[F]}\n"
-      + "{[Gender].[M]}\n"
+      + "{[Gender].[Gender].[All Gender]}\n"
+      + "{[Gender].[Gender].[F]}\n"
+      + "{[Gender].[Gender].[M]}\n"
       + "Row #0: 266,773\n"
       + "Row #1: 131,558\n"
       + "Row #2: 135,215\n";
@@ -1748,17 +1740,17 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "WHERE {[Time].[1997].[Q2],[Time].[1998].[Q1]}";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Time].[1997].[Q2]}\n"
-        + "{[Time].[1998].[Q1]}\n"
+        + "{[Time].[Time].[1997].[Q2]}\n"
+        + "{[Time].[Time].[1998].[Q1]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Axis #2:\n"
-        + "{[Education Level].[All Education Levels]}\n"
-        + "{[Education Level].[Bachelors Degree]}\n"
-        + "{[Education Level].[Graduate Degree]}\n"
-        + "{[Education Level].[High School Degree]}\n"
-        + "{[Education Level].[Partial College]}\n"
-        + "{[Education Level].[Partial High School]}\n"
+        + "{[Education Level].[Education Level].[All Education Levels]}\n"
+        + "{[Education Level].[Education Level].[Bachelors Degree]}\n"
+        + "{[Education Level].[Education Level].[Graduate Degree]}\n"
+        + "{[Education Level].[Education Level].[High School Degree]}\n"
+        + "{[Education Level].[Education Level].[Partial College]}\n"
+        + "{[Education Level].[Education Level].[Partial High School]}\n"
         + "Row #0: 2,973\n"
         + "Row #1: 760\n"
         + "Row #2: 178\n"
@@ -1789,16 +1781,16 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "WHERE {[Time].[H1 1997]}";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Time].[H1 1997]}\n"
+        + "{[Time].[Time].[H1 1997]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Axis #2:\n"
-        + "{[Education Level].[All Education Levels]}\n"
-        + "{[Education Level].[Bachelors Degree]}\n"
-        + "{[Education Level].[Graduate Degree]}\n"
-        + "{[Education Level].[High School Degree]}\n"
-        + "{[Education Level].[Partial College]}\n"
-        + "{[Education Level].[Partial High School]}\n"
+        + "{[Education Level].[Education Level].[All Education Levels]}\n"
+        + "{[Education Level].[Education Level].[Bachelors Degree]}\n"
+        + "{[Education Level].[Education Level].[Graduate Degree]}\n"
+        + "{[Education Level].[Education Level].[High School Degree]}\n"
+        + "{[Education Level].[Education Level].[Partial College]}\n"
+        + "{[Education Level].[Education Level].[Partial High School]}\n"
         + "Row #0: 4,257\n"
         + "Row #1: 1,109\n"
         + "Row #2: 240\n"
@@ -1830,17 +1822,17 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "WHERE {[Time].[H1 1997],[Time].[1998].[Q1]}";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Time].[H1 1997]}\n"
-        + "{[Time].[1998].[Q1]}\n"
+        + "{[Time].[Time].[H1 1997]}\n"
+        + "{[Time].[Time].[1998].[Q1]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Axis #2:\n"
-        + "{[Education Level].[All Education Levels]}\n"
-        + "{[Education Level].[Bachelors Degree]}\n"
-        + "{[Education Level].[Graduate Degree]}\n"
-        + "{[Education Level].[High School Degree]}\n"
-        + "{[Education Level].[Partial College]}\n"
-        + "{[Education Level].[Partial High School]}\n"
+        + "{[Education Level].[Education Level].[All Education Levels]}\n"
+        + "{[Education Level].[Education Level].[Bachelors Degree]}\n"
+        + "{[Education Level].[Education Level].[Graduate Degree]}\n"
+        + "{[Education Level].[Education Level].[High School Degree]}\n"
+        + "{[Education Level].[Education Level].[Partial College]}\n"
+        + "{[Education Level].[Education Level].[Partial High School]}\n"
         + "Row #0: 4,257\n"
         + "Row #1: 1,109\n"
         + "Row #2: 240\n"
@@ -1872,17 +1864,17 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "WHERE {[Time].[1998].[Q1], [Time].[H1 1997]}";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Time].[1998].[Q1]}\n"
-        + "{[Time].[H1 1997]}\n"
+        + "{[Time].[Time].[1998].[Q1]}\n"
+        + "{[Time].[Time].[H1 1997]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Axis #2:\n"
-        + "{[Education Level].[All Education Levels]}\n"
-        + "{[Education Level].[Bachelors Degree]}\n"
-        + "{[Education Level].[Graduate Degree]}\n"
-        + "{[Education Level].[High School Degree]}\n"
-        + "{[Education Level].[Partial College]}\n"
-        + "{[Education Level].[Partial High School]}\n"
+        + "{[Education Level].[Education Level].[All Education Levels]}\n"
+        + "{[Education Level].[Education Level].[Bachelors Degree]}\n"
+        + "{[Education Level].[Education Level].[Graduate Degree]}\n"
+        + "{[Education Level].[Education Level].[High School Degree]}\n"
+        + "{[Education Level].[Education Level].[Partial College]}\n"
+        + "{[Education Level].[Education Level].[Partial High School]}\n"
         + "Row #0: 4,257\n"
         + "Row #1: 1,109\n"
         + "Row #2: 240\n"
@@ -1912,7 +1904,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "WHERE ([Time].[H1 1997],[Education Level].[Partial College])";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Time].[H1 1997], [Education Level].[Partial College]}\n"
+        + "{[Time].[Time].[H1 1997], [Education Level].[Education Level].[Partial College]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 394\n";
@@ -1944,7 +1936,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "WHERE ([Time].[H1 1997],[Education Level].[Partial])";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Time].[H1 1997], [Education Level].[Partial]}\n"
+        + "{[Time].[Time].[H1 1997], [Education Level].[Education Level].[Partial]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 1,671\n";
@@ -1973,7 +1965,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "WHERE CROSSJOIN ([Time].[1997].[Q1] , [Education Level].[Partial College])";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Time].[1997].[Q1], [Education Level].[Partial College]}\n"
+        + "{[Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial College]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 278\n";
@@ -2001,7 +1993,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "WHERE CROSSJOIN ([Time].[H1 1997] , [Education Level].[Partial College])";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Time].[H1 1997], [Education Level].[Partial College]}\n"
+        + "{[Time].[Time].[H1 1997], [Education Level].[Education Level].[Partial College]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 394\n";
@@ -2032,7 +2024,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "WHERE CROSSJOIN ([Time].[H1 1997] , [Education Level].[Partial])";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Time].[H1 1997], [Education Level].[Partial]}\n"
+        + "{[Time].[Time].[H1 1997], [Education Level].[Education Level].[Partial]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 1,671\n";
@@ -2060,8 +2052,8 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "WHERE CROSSJOIN ({[Time].[1997].[Q1], [Time].[1997].[Q2]} , [Education Level].[Partial College])";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Time].[1997].[Q1], [Education Level].[Partial College]}\n"
-        + "{[Time].[1997].[Q2], [Education Level].[Partial College]}\n"
+        + "{[Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial College]}\n"
+        + "{[Time].[Time].[1997].[Q2], [Education Level].[Education Level].[Partial College]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 394\n";
@@ -2079,12 +2071,12 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "College],[Education Level].[Partial High School]})";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Time].[1997].[Q1], [Education Level].[Partial College]}\n"
-        + "{[Time].[1997].[Q1], [Education Level].[Partial High School]}\n"
-        + "{[Time].[1997].[Q2], [Education Level].[Partial College]}\n"
-        + "{[Time].[1997].[Q2], [Education Level].[Partial High School]}\n"
-        + "{[Time].[1998].[Q1], [Education Level].[Partial College]}\n"
-        + "{[Time].[1998].[Q1], [Education Level].[Partial High School]}\n"
+        + "{[Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial College]}\n"
+        + "{[Time].[Time].[1997].[Q1], [Education Level].[Education Level].[Partial High School]}\n"
+        + "{[Time].[Time].[1997].[Q2], [Education Level].[Education Level].[Partial College]}\n"
+        + "{[Time].[Time].[1997].[Q2], [Education Level].[Education Level].[Partial High School]}\n"
+        + "{[Time].[Time].[1998].[Q1], [Education Level].[Education Level].[Partial College]}\n"
+        + "{[Time].[Time].[1998].[Q1], [Education Level].[Education Level].[Partial High School]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 1,671\n";
@@ -2112,8 +2104,8 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "WHERE CROSSJOIN ({[Time].[H1 1997],[Time].[1998].[Q1]} , [Education Level].[Partial College])";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Time].[H1 1997], [Education Level].[Partial College]}\n"
-        + "{[Time].[1998].[Q1], [Education Level].[Partial College]}\n"
+        + "{[Time].[Time].[H1 1997], [Education Level].[Education Level].[Partial College]}\n"
+        + "{[Time].[Time].[1998].[Q1], [Education Level].[Education Level].[Partial College]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 394\n";
@@ -2141,10 +2133,10 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "Level].[Partial High School]})";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Time].[H1 1997], [Education Level].[Partial College]}\n"
-        + "{[Time].[H1 1997], [Education Level].[Partial High School]}\n"
-        + "{[Time].[1998].[Q1], [Education Level].[Partial College]}\n"
-        + "{[Time].[1998].[Q1], [Education Level].[Partial High School]}\n"
+        + "{[Time].[Time].[H1 1997], [Education Level].[Education Level].[Partial College]}\n"
+        + "{[Time].[Time].[H1 1997], [Education Level].[Education Level].[Partial High School]}\n"
+        + "{[Time].[Time].[1998].[Q1], [Education Level].[Education Level].[Partial College]}\n"
+        + "{[Time].[Time].[1998].[Q1], [Education Level].[Education Level].[Partial High School]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Row #0: 1,671\n";
@@ -2178,12 +2170,12 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
         + "{[Education Level].[Partial]} ";
     String expectedResult =
       "Axis #0:\n"
-        + "{[Education Level].[Partial]}\n"
+        + "{[Education Level].[Education Level].[Partial]}\n"
         + "Axis #1:\n"
         + "{[Measures].[Customer Count]}\n"
         + "Axis #2:\n"
-        + "{[Time].[H1 1997]}\n"
-        + "{[Time].[1997].[Q1]}\n"
+        + "{[Time].[Time].[H1 1997]}\n"
+        + "{[Time].[Time].[1997].[Q1]}\n"
         + "Row #0: 1,671\n"
         + "Row #1: 1,173\n";
     assertQueryReturns(context.getConnectionWithDefaultRole(), query, expectedResult );

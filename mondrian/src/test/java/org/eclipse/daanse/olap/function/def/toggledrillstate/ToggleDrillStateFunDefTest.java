@@ -32,11 +32,11 @@ class ToggleDrillStateFunDefTest {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "ToggleDrillState({[Customers].[USA],[Customers].[Canada]},"
                 + "{[Customers].[USA],[Customers].[USA].[CA]})",
-            "[Customers].[USA]\n"
-                + "[Customers].[USA].[CA]\n"
-                + "[Customers].[USA].[OR]\n"
-                + "[Customers].[USA].[WA]\n"
-                + "[Customers].[Canada]" );
+            "[Customers].[Customers].[USA]\n"
+                + "[Customers].[Customers].[USA].[CA]\n"
+                + "[Customers].[Customers].[USA].[OR]\n"
+                + "[Customers].[Customers].[USA].[WA]\n"
+                + "[Customers].[Customers].[Canada]" );
     }
 
     @ParameterizedTest
@@ -45,30 +45,30 @@ class ToggleDrillStateFunDefTest {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "ToggleDrillState([Product].[Product Department].members, "
                 + "{[Product].[All Products].[Food].[Snack Foods]})",
-            "[Product].[Drink].[Alcoholic Beverages]\n"
-                + "[Product].[Drink].[Beverages]\n"
-                + "[Product].[Drink].[Dairy]\n"
-                + "[Product].[Food].[Baked Goods]\n"
-                + "[Product].[Food].[Baking Goods]\n"
-                + "[Product].[Food].[Breakfast Foods]\n"
-                + "[Product].[Food].[Canned Foods]\n"
-                + "[Product].[Food].[Canned Products]\n"
-                + "[Product].[Food].[Dairy]\n"
-                + "[Product].[Food].[Deli]\n"
-                + "[Product].[Food].[Eggs]\n"
-                + "[Product].[Food].[Frozen Foods]\n"
-                + "[Product].[Food].[Meat]\n"
-                + "[Product].[Food].[Produce]\n"
-                + "[Product].[Food].[Seafood]\n"
-                + "[Product].[Food].[Snack Foods]\n"
-                + "[Product].[Food].[Snack Foods].[Snack Foods]\n"
-                + "[Product].[Food].[Snacks]\n"
-                + "[Product].[Food].[Starchy Foods]\n"
-                + "[Product].[Non-Consumable].[Carousel]\n"
-                + "[Product].[Non-Consumable].[Checkout]\n"
-                + "[Product].[Non-Consumable].[Health and Hygiene]\n"
-                + "[Product].[Non-Consumable].[Household]\n"
-                + "[Product].[Non-Consumable].[Periodicals]" );
+            "[Product].[Product].[Drink].[Alcoholic Beverages]\n"
+                + "[Product].[Product].[Drink].[Beverages]\n"
+                + "[Product].[Product].[Drink].[Dairy]\n"
+                + "[Product].[Product].[Food].[Baked Goods]\n"
+                + "[Product].[Product].[Food].[Baking Goods]\n"
+                + "[Product].[Product].[Food].[Breakfast Foods]\n"
+                + "[Product].[Product].[Food].[Canned Foods]\n"
+                + "[Product].[Product].[Food].[Canned Products]\n"
+                + "[Product].[Product].[Food].[Dairy]\n"
+                + "[Product].[Product].[Food].[Deli]\n"
+                + "[Product].[Product].[Food].[Eggs]\n"
+                + "[Product].[Product].[Food].[Frozen Foods]\n"
+                + "[Product].[Product].[Food].[Meat]\n"
+                + "[Product].[Product].[Food].[Produce]\n"
+                + "[Product].[Product].[Food].[Seafood]\n"
+                + "[Product].[Product].[Food].[Snack Foods]\n"
+                + "[Product].[Product].[Food].[Snack Foods].[Snack Foods]\n"
+                + "[Product].[Product].[Food].[Snacks]\n"
+                + "[Product].[Product].[Food].[Starchy Foods]\n"
+                + "[Product].[Product].[Non-Consumable].[Carousel]\n"
+                + "[Product].[Product].[Non-Consumable].[Checkout]\n"
+                + "[Product].[Product].[Non-Consumable].[Health and Hygiene]\n"
+                + "[Product].[Product].[Non-Consumable].[Household]\n"
+                + "[Product].[Product].[Non-Consumable].[Periodicals]" );
     }
 
     @ParameterizedTest
@@ -82,9 +82,9 @@ class ToggleDrillStateFunDefTest {
                 + " [Time].[1997].[Q2].[6],"
                 + " [Time].[1997].[Q3]},"
                 + "{[Time].[1997].[Q2]})",
-            "[Time].[1997].[Q1]\n"
-                + "[Time].[1997].[Q2]\n"
-                + "[Time].[1997].[Q3]" );
+            "[Time].[Time].[1997].[Q1]\n"
+                + "[Time].[Time].[1997].[Q2]\n"
+                + "[Time].[Time].[1997].[Q3]" );
     }
 
     // bug 634860
@@ -98,13 +98,13 @@ class ToggleDrillStateFunDefTest {
                 + " ([Store].[USA],"
                 + "  [Product].[All Products].[Drink])},\n"
                 + "{[Store].[All stores].[USA].[CA]})",
-            "{[Store].[USA].[CA], [Product].[Drink].[Alcoholic Beverages]}\n"
-                + "{[Store].[USA].[CA].[Alameda], [Product].[Drink].[Alcoholic Beverages]}\n"
-                + "{[Store].[USA].[CA].[Beverly Hills], [Product].[Drink].[Alcoholic Beverages]}\n"
-                + "{[Store].[USA].[CA].[Los Angeles], [Product].[Drink].[Alcoholic Beverages]}\n"
-                + "{[Store].[USA].[CA].[San Diego], [Product].[Drink].[Alcoholic Beverages]}\n"
-                + "{[Store].[USA].[CA].[San Francisco], [Product].[Drink].[Alcoholic Beverages]}\n"
-                + "{[Store].[USA], [Product].[Drink]}" );
+            "{[Store].[Store].[USA].[CA], [Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+                + "{[Store].[Store].[USA].[CA].[Alameda], [Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+                + "{[Store].[Store].[USA].[CA].[Beverly Hills], [Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+                + "{[Store].[Store].[USA].[CA].[Los Angeles], [Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+                + "{[Store].[Store].[USA].[CA].[San Diego], [Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+                + "{[Store].[Store].[USA].[CA].[San Francisco], [Product].[Product].[Drink].[Alcoholic Beverages]}\n"
+                + "{[Store].[Store].[USA], [Product].[Product].[Drink]}" );
     }
 
     @ParameterizedTest

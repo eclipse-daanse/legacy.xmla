@@ -65,8 +65,6 @@ public class SystemWideProperties extends MondrianPropertiesBase {
             getProperty("mondrian.olap.NullMemberRepresentation", "#null");
         ResultLimit =
             this.getInteger("mondrian.result.limit", 0);
-        SsasCompatibleNaming =
-            this.getBoolean("mondrian.olap.SsasCompatibleNaming", false);
 
     }
 
@@ -220,16 +218,6 @@ public class SystemWideProperties extends MondrianPropertiesBase {
      */
     @PropertyAnnotation(path = "mondrian.result.limit")
     public transient Integer ResultLimit;
-
-    /**
-     * <p>Property that defines
-     * whether to enable new naming behavior.</p>
-     *
-     * <p>If true, hierarchies are named [Dimension].[Hierarchy]; if false,
-     * [Dimension.Hierarchy].</p>
-     */
-    @PropertyAnnotation(path = "mondrian.olap.SsasCompatibleNaming")
-    public transient Boolean SsasCompatibleNaming;
 
 }
 

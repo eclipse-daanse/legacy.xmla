@@ -41,25 +41,24 @@ import mondrian.olap.fun.FunctionTest;
 
 public class XtdFunDefTest {
 
-	private static final String TimeWeekly = SystemWideProperties.instance().SsasCompatibleNaming ? "[Time].[Weekly]"
-			: "[Time.Weekly]";
+	private static final String TimeWeekly = "[Time].[Time].[Weekly]";
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testYtd(Context context) {
 
-		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Ytd()", "[Time].[1997]");
+		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Ytd()", "[Time].[Time].[1997]");
 
 		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Ytd([Time].[1997].[Q3])", """
-				[Time].[1997].[Q1]
-				[Time].[1997].[Q2]
-				[Time].[1997].[Q3]""");
+				[Time].[Time].[1997].[Q1]
+				[Time].[Time].[1997].[Q2]
+				[Time].[Time].[1997].[Q3]""");
 
 		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Ytd([Time].[1997].[Q2].[4])", """
-				[Time].[1997].[Q1].[1]
-				[Time].[1997].[Q1].[2]
-				[Time].[1997].[Q1].[3]
-				[Time].[1997].[Q2].[4]""");
+				[Time].[Time].[1997].[Q1].[1]
+				[Time].[Time].[1997].[Q1].[2]
+				[Time].[Time].[1997].[Q1].[3]
+				[Time].[Time].[1997].[Q2].[4]""");
 
 		assertAxisThrows(context.getConnectionWithDefaultRole(), "Ytd([Store])",
 				"Argument to function 'Ytd' must belong to Time hierarchy", "Sales");
@@ -82,27 +81,27 @@ public class XtdFunDefTest {
 				generate(
 				  {[Time].[1997].[Q1].[2], [Time].[1997].[Q3].[7]},
 				 {Ytd( [Time].[Time].currentMember)})""", """
-				[Time].[1997].[Q1].[1]
-				[Time].[1997].[Q1].[2]
-				[Time].[1997].[Q1].[3]
-				[Time].[1997].[Q2].[4]
-				[Time].[1997].[Q2].[5]
-				[Time].[1997].[Q2].[6]
-				[Time].[1997].[Q3].[7]""");
+				[Time].[Time].[1997].[Q1].[1]
+				[Time].[Time].[1997].[Q1].[2]
+				[Time].[Time].[1997].[Q1].[3]
+				[Time].[Time].[1997].[Q2].[4]
+				[Time].[Time].[1997].[Q2].[5]
+				[Time].[Time].[1997].[Q2].[6]
+				[Time].[Time].[1997].[Q3].[7]""");
 
 		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", """
 				generate(
 				  {[Time].[1997].[Q1].[2], [Time].[1997].[Q3].[7]},
 				 {Ytd( [Time].[Time].currentMember)}, ALL)""", """
-				[Time].[1997].[Q1].[1]
-				[Time].[1997].[Q1].[2]
-				[Time].[1997].[Q1].[1]
-				[Time].[1997].[Q1].[2]
-				[Time].[1997].[Q1].[3]
-				[Time].[1997].[Q2].[4]
-				[Time].[1997].[Q2].[5]
-				[Time].[1997].[Q2].[6]
-				[Time].[1997].[Q3].[7]""");
+				[Time].[Time].[1997].[Q1].[1]
+				[Time].[Time].[1997].[Q1].[2]
+				[Time].[Time].[1997].[Q1].[1]
+				[Time].[Time].[1997].[Q1].[2]
+				[Time].[Time].[1997].[Q1].[3]
+				[Time].[Time].[1997].[Q2].[4]
+				[Time].[Time].[1997].[Q2].[5]
+				[Time].[Time].[1997].[Q2].[6]
+				[Time].[Time].[1997].[Q3].[7]""");
 
 		FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
 				"count(generate({[Time].[1997].[Q4].[11]}, {Qtd( [Time].[Time].currentMember)}))", 2, 0);
@@ -121,10 +120,10 @@ public class XtdFunDefTest {
 				from [Sales]
 				where [Time].[1997].[Q2].[5]""", """
 				Axis #0:
-				{[Time].[1997].[Q2].[5]}
+				{[Time].[Time].[1997].[Q2].[5]}
 				Axis #1:
 				{[Measures].[Foo]}
-				Row #0: {[Time].[1997].[Q2].[4], [Time].[1997].[Q2].[5]}
+				Row #0: {[Time].[Time].[1997].[Q2].[4], [Time].[Time].[1997].[Q2].[5]}
 				""");
 
 		// one arg, a month
@@ -151,10 +150,10 @@ public class XtdFunDefTest {
 				from [Sales]
 				where [Time].[1997].[Q2].[5]""", """
 				Axis #0:
-				{[Time].[1997].[Q2].[5]}
+				{[Time].[Time].[1997].[Q2].[5]}
 				Axis #1:
 				{[Measures].[Foo]}
-				Row #0: {[Time].[1997].[Q2].[5]}
+				Row #0: {[Time].[Time].[1997].[Q2].[5]}
 				""");
 
 		// one arg, a month

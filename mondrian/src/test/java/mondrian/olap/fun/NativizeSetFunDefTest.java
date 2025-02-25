@@ -53,8 +53,6 @@ class NativizeSetFunDefTest extends BatchTestCase {
         // lot in this test. There is little to be gained by having this test
         // run for both values. When SSAS-compatible naming is the standard, we
         // should upgrade all the MDX.
-
-        SystemWideProperties.instance().SsasCompatibleNaming = false;
     }
 
     @AfterEach
@@ -1393,8 +1391,6 @@ class NativizeSetFunDefTest extends BatchTestCase {
     void testMultipleHierarchySsasTrue(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
 
-        SystemWideProperties.instance().SsasCompatibleNaming = true;
-
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
         // Ssas compatible: time.[weekly].[week]
@@ -1423,13 +1419,11 @@ class NativizeSetFunDefTest extends BatchTestCase {
     void testMultipleHierarchySsasFalse(Context context) {
         ((TestConfig)context.getConfig()).setNativizeMinThreshold(0);
 
-        SystemWideProperties.instance().SsasCompatibleNaming = false;
-
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = false;
 
         // Ssas compatible: [time.weekly].week
         assertQueryIsReWritten(context.getConnectionWithDefaultRole(),
-            "select nativizeSet(crossjoin( [time.weekly].week.members, { gender.m })) on 0 "
+            "select nativizeSet(crossjoin( [time].[weekly].week.members, { gender.m })) on 0 "
             + "from sales",
             "with member [Time].[_Nativized_Member_Time_Weekly_Week_] as '[Time].DefaultMember'\n"
             + "  set [_Nativized_Set_Time_Weekly_Week_] as '{[Time].[_Nativized_Member_Time_Weekly_Week_]}'\n"

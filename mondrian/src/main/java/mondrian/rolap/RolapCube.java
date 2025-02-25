@@ -1947,8 +1947,7 @@ public class RolapCube extends CubeBase {
      */
     public synchronized HierarchyUsage[] getUsages(Hierarchy hierarchy) {
         String name = hierarchy.getName();
-        if (!name.equals(hierarchy.getDimension().getName())
-            && SystemWideProperties.instance().SsasCompatibleNaming)
+        if (!name.equals(hierarchy.getDimension().getName()))
         {
             name = new StringBuilder(hierarchy.getDimension().getName()).append(".").append(name).toString();
         }

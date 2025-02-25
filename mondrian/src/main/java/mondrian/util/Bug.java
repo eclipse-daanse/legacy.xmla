@@ -50,7 +50,6 @@ public class Bug {
      * instead.
      *
      * <p>See also the property
-     * {@link mondrian.olap.SystemWideProperties#SsasCompatibleNaming},
      * which allows the user to choose certain behaviors which are compatible
      * with SSAS 2005 but incompatible with Mondrian's previous behavior.
      */

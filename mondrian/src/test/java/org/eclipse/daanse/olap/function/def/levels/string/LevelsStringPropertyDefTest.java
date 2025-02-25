@@ -26,7 +26,7 @@ class LevelsStringPropertyDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testHierarchyLevelsString(Context context) {
         TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "[Time].[Time].Levels(\"Year\").UniqueName", "[Time].[Year]" );
+            "[Time].[Time].Levels(\"Year\").UniqueName", "[Time].[Time].[Year]" );
     }
 
     @ParameterizedTest

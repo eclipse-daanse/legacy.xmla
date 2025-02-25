@@ -53,7 +53,7 @@ class MultiplyOperatorDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Store].[All Stores]}\n"
+                + "{[Store].[Store].[All Stores]}\n"
                 + "Axis #2:\n"
                 + "{[Measures].[Store Sales]}\n"
                 + "{[Measures].[A]}\n"

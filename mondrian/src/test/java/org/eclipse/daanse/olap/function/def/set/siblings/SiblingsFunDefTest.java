@@ -30,8 +30,8 @@ class SiblingsFunDefTest {
     void testSiblingsA(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Time].[1997].Siblings}",
-            "[Time].[1997]\n"
-                + "[Time].[1998]" );
+            "[Time].[Time].[1997]\n"
+                + "[Time].[Time].[1998]" );
     }
 
     @ParameterizedTest
@@ -39,7 +39,7 @@ class SiblingsFunDefTest {
     void testSiblingsB(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Store].Siblings}",
-            "[Store].[All Stores]" );
+            "[Store].[Store].[All Stores]" );
     }
 
     @ParameterizedTest
@@ -47,9 +47,9 @@ class SiblingsFunDefTest {
     void testSiblingsC(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Store].[USA].[CA].Siblings}",
-            "[Store].[USA].[CA]\n"
-                + "[Store].[USA].[OR]\n"
-                + "[Store].[USA].[WA]" );
+            "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA].[OR]\n"
+                + "[Store].[Store].[USA].[WA]" );
     }
 
     @ParameterizedTest
