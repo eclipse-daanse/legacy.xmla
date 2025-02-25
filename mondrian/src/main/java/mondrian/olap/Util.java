@@ -32,7 +32,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,21 +41,16 @@ import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Properties;
-import java.util.Random;
-import java.util.RandomAccess;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -72,7 +66,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -89,7 +82,6 @@ import org.eclipse.daanse.olap.api.QueryTiming;
 import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
-import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -208,11 +200,6 @@ public class Util {
 
 
     private static final UtilCompatible compatible;
-
-
-    private static final SecureRandom random = new SecureRandom();
-    private static final String udfClassMustBePublicAndStatic =
-        "Failed to load user-defined function ''{0}'': class ''{1}'' must be public and static";
 
     static {
         compatible = new UtilCompatibleJdk16();
@@ -1145,25 +1132,6 @@ public class Util {
         buf.append('\'');
     }
 
-    /**
-     * Creates a random number generator.
-     *
-     * @param seed Seed for random number generator.
-     *   If 0, generate a seed from the system clock and print the value
-     *   chosen. (This is effectively non-deterministic.)
-     *   If -1, generate a seed from an internal random number generator.
-     *   (This is deterministic, but ensures that different tests have
-     *   different seeds.)
-     *
-     * @return A random number generator.
-     */
-    public static Random createRandom(long seed) {
-        if (seed == 0) {
-            seed = random.nextLong();
-            LOGGER.debug("random: seed={}", seed);
-        }
-        return new SecureRandom();
-    }
 
     /**
      * Returns whether a property is valid for a member of a given level.
@@ -1256,139 +1224,6 @@ public class Util {
                 .append("' in this context").toString());
     }
 
-    /**
-     * Converts a list of SQL-style patterns into a Java regular expression.
-     *
-     * <p>For example, {"Foo_", "Bar%BAZ"} becomes "Foo.|Bar.*BAZ".
-     *
-     * @param wildcards List of SQL-style wildcard expressions
-     * @return Regular expression
-     */
-    public static String wildcardToRegexp(List<String> wildcards) {
-        StringBuilder buf = new StringBuilder();
-        for (String value : wildcards) {
-            if (buf.length() > 0) {
-                buf.append('|');
-            }
-            int i = 0;
-            while (true) {
-                int percent = value.indexOf('%', i);
-                int underscore = value.indexOf('_', i);
-                if (percent == -1 && underscore == -1) {
-                    if (i < value.length()) {
-                        buf.append(Pattern.quote(value.substring(i)));
-                    }
-                    break;
-                }
-                if (underscore >= 0 && (underscore < percent || percent < 0)) {
-                    if (i < underscore) {
-                        buf.append(
-                        		Pattern.quote(value.substring(i, underscore)));
-                    }
-                    buf.append('.');
-                    i = underscore + 1;
-                } else if (percent >= 0
-                    && (percent < underscore || underscore < 0))
-                {
-                    if (i < percent) {
-                    buf.append(
-                    		Pattern.quote(value.substring(i, percent)));
-                    }
-                    buf.append(".*");
-                    i = percent + 1;
-                } else {
-                    throw new IllegalArgumentException();
-                }
-            }
-        }
-        return buf.toString();
-    }
-
-    /**
-     * Converts a camel-case name to an upper-case name with underscores.
-     *
-     * <p>For example, <code>camelToUpper("FooBar")</code> returns "FOO_BAR".
-     *
-     * @param s Camel-case string
-     * @return  Upper-case string
-     */
-    public static String camelToUpper(String s) {
-        if (s != null) {
-            StringBuilder buf = new StringBuilder(s.length() + 10);
-            int prevUpper = -1;
-            for (int i = 0; i < s.length(); ++i) {
-                char c = s.charAt(i);
-                if (Character.isUpperCase(c)) {
-                    if (i > prevUpper + 1) {
-                        buf.append('_');
-                    }
-                    prevUpper = i;
-                } else {
-                    c = Character.toUpperCase(c);
-                }
-                buf.append(c);
-            }
-            return buf.toString();
-        }
-        return s;
-    }
-
-    /**
-     * Parses a comma-separated list.
-     *
-     * <p>If a value contains a comma, escape it with a second comma. For
-     * example, <code>parseCommaList("x,y,,z")</code> returns
-     * <code>{"x", "y,z"}</code>.
-     *
-     * @param nameCommaList List of names separated by commas
-     * @return List of names
-     */
-    public static List<String> parseCommaList(String nameCommaList) {
-        if (nameCommaList.equals("")) {
-            return Collections.emptyList();
-        }
-        if (nameCommaList.endsWith(",")) {
-            // Special treatment for list ending in ",", because split ignores
-            // entries after separator.
-            final String zzz = "zzz";
-            final List<String> list = parseCommaList(nameCommaList + zzz);
-            String last = list.get(list.size() - 1);
-            if (last.equals(zzz)) {
-                list.remove(list.size() - 1);
-            } else {
-                list.set(
-                    list.size() - 1,
-                    last.substring(0, last.length() - zzz.length()));
-            }
-            return list;
-        }
-        List<String> names = new ArrayList<>();
-        final String[] strings = nameCommaList.split(",");
-        for (String string : strings) {
-            final int count = names.size();
-            if (count > 0
-                && names.get(count - 1).equals(""))
-            {
-                if (count == 1) {
-                    if (string.equals("")) {
-                        names.add("");
-                    } else {
-                        names.set(
-                            0,
-                            "," + string);
-                    }
-                } else {
-                    names.set(
-                        count - 2,
-                        new StringBuilder(names.get(count - 2)).append(",").append(string).toString());
-                    names.remove(count - 1);
-                }
-            } else {
-                names.add(string);
-            }
-        }
-        return names;
-    }
 
     /**
      * Closes and cancels a {@link Statement} using the correct methods
@@ -1476,16 +1311,6 @@ public class Util {
         }
     }
 
-    private static final Map<String, TimeUnit> TIME_UNITS =
-        Map.of(
-            "ns", TimeUnit.NANOSECONDS,
-            "us", TimeUnit.MICROSECONDS,
-            "ms", TimeUnit.MILLISECONDS,
-            "s", TimeUnit.SECONDS,
-            "m", TimeUnit.MINUTES,
-            "h", TimeUnit.HOURS,
-            "d", TimeUnit.DAYS);
-
     /**
      * Converts a list of olap4j-style segments to a list of mondrian-style
      * segments.
@@ -1545,89 +1370,6 @@ public class Util {
         default:
             throw Util.unexpected(quoting);
         }
-    }
-
-    /**
-     * Applies a collection of filters to an iterable.
-     *
-     * @param iterable Iterable
-     * @param conds Zero or more conditions
-     * @param <T>
-     * @return Iterable that returns only members of underlying iterable for
-     *     for which all conditions evaluate to true
-     */
-    //TODO: use streams
-    @Deprecated()
-    public static <T> Iterable<T> filter(
-        final Iterable<T> iterable,
-        final Predicate<T>... conds)
-    {
-        if (conds.length == 0) {
-            return iterable;
-        }
-        return new Iterable<>() {
-            @Override
-			public Iterator<T> iterator() {
-                return new Iterator<>() {
-                    final Iterator<T> iterator = iterable.iterator();
-                    T next;
-                    boolean hasNext = moveToNext();
-
-                    private boolean moveToNext() {
-                        outer:
-                        while (iterator.hasNext()) {
-                            next = iterator.next();
-                            for (Predicate<T> cond : conds) {
-                                if (!cond.test(next)) {
-                                    continue outer;
-                                }
-                            }
-                            return true;
-                        }
-                        return false;
-                    }
-
-                    @Override
-					public boolean hasNext() {
-                        return hasNext;
-                    }
-
-                    @Override
-					public T next() {
-                        if(!hasNext()) {
-                            throw new NoSuchElementException();
-                        }
-                        T t = next;
-                        hasNext = moveToNext();
-                        return t;
-                    }
-
-                    @Override
-					public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-                };
-            }
-        };
-    }
-
-    /**
-     * Sorts a collection of objects using a {@link java.util.Comparator} and returns a
-     * list.
-     *
-     * @param collection Collection
-     * @param comparator Comparator
-     * @param <T> Element type
-     * @return Sorted list
-     */
-    public static <T> List<T> sort(
-        Collection<T> collection,
-        Comparator<T> comparator)
-    {
-        Object[] a = collection.toArray(new Object[collection.size()]);
-        //noinspection unchecked
-        Arrays.sort(a, (Comparator<? super Object>) comparator);
-        return cast(Arrays.asList(a));
     }
 
     public static List<IdentifierSegment> toOlap4j(
@@ -2071,22 +1813,6 @@ public class Util {
     }
 
     /**
-     * Converts an error into an array of strings, the most recent error first.
-     *
-     * @param e the error; may be null. Errors are chained according to their
-     *    {@link Throwable#getCause cause}.
-     */
-    public static String[] convertStackToString(Throwable e) {
-        List<String> list = new ArrayList<>();
-        while (e != null) {
-            String sMsg = getErrorMessage(e);
-            list.add(sMsg);
-            e = e.getCause();
-        }
-        return list.toArray(new String[list.size()]);
-    }
-
-    /**
      * Constructs the message associated with an arbitrary Java error, making
      * up one based on the stack trace if there is none. As
      * {@link #getErrorMessage(Throwable,boolean)}, but does not print the
@@ -2302,186 +2028,6 @@ public class Util {
         @Override
 		public Iterator<Pair<String, String>> iterator() {
             return list.iterator();
-        }
-    }
-
-    /**
-     * Converts an OLE DB connect string into a {@link PropertyList}.
-     *
-     * <p> For example, <code>"Provider=MSOLAP; DataSource=LOCALHOST;"</code>
-     * becomes the set of (key, value) pairs <code>{("Provider","MSOLAP"),
-     * ("DataSource", "LOCALHOST")}</code>. Another example is
-     * <code>Provider='sqloledb';Data Source='MySqlServer';Initial
-     * Catalog='Pubs';Integrated Security='SSPI';</code>.
-     *
-     * <p> This method implements as much as possible of the <a
-     * href="http://msdn.microsoft.com/library/en-us/oledb/htm/oledbconnectionstringsyntax.asp"
-     * target="_blank">OLE DB connect string syntax
-     * specification</a>. To find what it <em>actually</em> does, take
-     * a look at the <code>mondrian.olap.UtilTestCase</code> test case.
-     */
-    public static PropertyList parseConnectString(String s) {
-        return new ConnectStringParser(s).parse();
-    }
-
-    private static class ConnectStringParser {
-        private final String s;
-        private final int n;
-        private int i;
-        private final StringBuilder nameBuf;
-        private final StringBuilder valueBuf;
-
-        private ConnectStringParser(String s) {
-            this.s = s;
-            this.i = 0;
-            this.n = s.length();
-            this.nameBuf = new StringBuilder(64);
-            this.valueBuf = new StringBuilder(64);
-        }
-
-        PropertyList parse() {
-            PropertyList list = new PropertyList();
-            while (i < n) {
-                parsePair(list);
-            }
-            return list;
-        }
-        /**
-         * Reads "name=value;" or "name=value<EOF>".
-         */
-        void parsePair(PropertyList list) {
-            String name = parseName();
-            if (name == null) {
-                return;
-            }
-            String value;
-            if (i >= n) {
-                value = "";
-            } else if (s.charAt(i) == ';') {
-                i++;
-                value = "";
-            } else {
-                value = parseValue();
-            }
-            list.put(name, value);
-        }
-
-        /**
-         * Reads "name=". Name can contain equals sign if equals sign is
-         * doubled. Returns null if there is no name to read.
-         */
-        String parseName() {
-            nameBuf.setLength(0);
-            while (true) {
-                char c = s.charAt(i);
-                switch (c) {
-                case '=':
-                    i++;
-                    if (i < n && (c = s.charAt(i)) == '=') {
-                        // doubled equals sign; take one of them, and carry on
-                        i++;
-                        nameBuf.append(c);
-                        break;
-                    }
-                    String name = nameBuf.toString();
-                    name = name.trim();
-                    return name;
-                case ' ':
-                    if (nameBuf.length() == 0) {
-                        // ignore preceding spaces
-                        i++;
-                        if (i >= n) {
-                            // there is no name, e.g. trailing spaces after
-                            // semicolon, 'x=1; y=2; '
-                            return null;
-                        }
-                        break;
-                    } else {
-                        // fall through
-                    }
-                default:
-                    nameBuf.append(c);
-                    i++;
-                    if (i >= n) {
-                        return nameBuf.toString().trim();
-                    }
-                }
-            }
-        }
-
-        /**
-         * Reads "value;" or "value<EOF>"
-         */
-        String parseValue() {
-            char c;
-            // skip over leading white space
-            while ((c = s.charAt(i)) == ' ') {
-                i++;
-                if (i >= n) {
-                    return "";
-                }
-            }
-            if (c == '"' || c == '\'') {
-                String value = parseQuoted(c);
-                // skip over trailing white space
-                while (i < n && (s.charAt(i)) == ' ') {
-                    i++;
-                }
-                if (i >= n) {
-                    return value;
-                } else if (s.charAt(i) == ';') {
-                    i++;
-                    return value;
-                } else {
-                    throw new UtilException(
-                        new StringBuilder("quoted value ended too soon, at position ").append(i)
-                            .append(" in '").append(s).append("'").toString());
-                }
-            } else {
-                String value;
-                int semi = s.indexOf(';', i);
-                if (semi >= 0) {
-                    value = s.substring(i, semi);
-                    i = semi + 1;
-                } else {
-                    value = s.substring(i);
-                    i = n;
-                }
-                return value.trim();
-            }
-        }
-        /**
-         * Reads a string quoted by a given character. Occurrences of the
-         * quoting character must be doubled. For example,
-         * <code>parseQuoted('"')</code> reads <code>"a ""new"" string"</code>
-         * and returns <code>a "new" string</code>.
-         */
-        String parseQuoted(char q) {
-            char c = s.charAt(i++);
-            Util.assertTrue(c == q);
-            valueBuf.setLength(0);
-            while (i < n) {
-                c = s.charAt(i);
-                if (c == q) {
-                    i++;
-                    if (i < n) {
-                        c = s.charAt(i);
-                        if (c == q) {
-                            valueBuf.append(c);
-                            i++;
-                            continue;
-                        }
-                    }
-                    return valueBuf.toString();
-                } else {
-                    valueBuf.append(c);
-                    i++;
-                }
-            }
-            throw new UtilException(
-                new StringBuilder("Connect string '").append(s)
-                    .append("' contains unterminated quoted value '").append(valueBuf.toString())
-                    .append("'").toString());
         }
     }
 
