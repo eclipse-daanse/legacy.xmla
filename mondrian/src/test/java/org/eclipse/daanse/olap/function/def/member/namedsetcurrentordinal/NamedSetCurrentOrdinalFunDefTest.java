@@ -22,8 +22,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.olap.Util;
-
 
 class NamedSetCurrentOrdinalFunDefTest {
     /**
@@ -32,11 +30,6 @@ class NamedSetCurrentOrdinalFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNamedSetCurrentOrdinalWithOrder(Context context) {
-        // The <Named Set>.CurrentOrdinal only works correctly when named sets
-        // are evaluated as iterables, and JDK 1.4 only supports lists.
-        if ( Util.RETROWOVEN) {
-            return;
-        }
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with set [Time Regular] as [Time].[Time].Members\n"
                 + " set [Time Reversed] as"
@@ -122,11 +115,6 @@ class NamedSetCurrentOrdinalFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNamedSetCurrentOrdinalWithGenerate(Context context) {
-        // The <Named Set>.CurrentOrdinal only works correctly when named sets
-        // are evaluated as iterables, and JDK 1.4 only supports lists.
-        if ( Util.RETROWOVEN) {
-            return;
-        }
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             " with set [Time Regular] as [Time].[Time].Members\n"
                 + "set [Every Other Time] as\n"
@@ -178,11 +166,6 @@ class NamedSetCurrentOrdinalFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNamedSetCurrentOrdinalWithFilter(Context context) {
-        // The <Named Set>.CurrentOrdinal only works correctly when named sets
-        // are evaluated as iterables, and JDK 1.4 only supports lists.
-        if ( Util.RETROWOVEN) {
-            return;
-        }
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with set [Time Regular] as [Time].[Time].Members\n"
                 + " set [Time Subset] as "

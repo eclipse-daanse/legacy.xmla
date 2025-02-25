@@ -214,8 +214,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
      *    ResultStyle.MUTABLE_LIST
      * For java4, use LIST
      */
-    private ResultStyle resultStyle =
-        Util.RETROWOVEN ? ResultStyle.LIST : ResultStyle.ITERABLE;
+    private ResultStyle resultStyle = ResultStyle.ITERABLE;
 
     private Map<String, Object> evalCache = new HashMap<>();
 
@@ -574,10 +573,6 @@ public class QueryImpl extends AbstractQueryPart implements Query {
     public void setResultStyle(ResultStyle resultStyle) {
         switch (resultStyle) {
         case ITERABLE:
-            // For java4, use LIST
-            this.resultStyle = (Util.RETROWOVEN)
-                ? ResultStyle.LIST : ResultStyle.ITERABLE;
-            break;
         case LIST:
         case MUTABLE_LIST:
             this.resultStyle = resultStyle;

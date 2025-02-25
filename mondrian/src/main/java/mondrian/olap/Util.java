@@ -15,7 +15,6 @@
 package mondrian.olap;
 
 import static mondrian.olap.fun.FunUtil.DOUBLE_EMPTY;
-import static mondrian.olap.fun.FunUtil.DOUBLE_NULL;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -29,7 +28,6 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.lang.ref.Reference;
 import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -79,12 +77,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import mondrian.olap.exceptions.MdxCantFindMemberException;
-import mondrian.olap.exceptions.MdxChildObjectNotFoundException;
-import mondrian.olap.exceptions.MemberNotFoundException;
-
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.MatchType;
@@ -92,7 +87,6 @@ import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.ProfileHandler;
 import org.eclipse.daanse.olap.api.QueryTiming;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.access.AccessMember;
@@ -140,12 +134,14 @@ import mondrian.mdx.NamedSetExpressionImpl;
 import mondrian.mdx.QueryPrintWriter;
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.mdx.UnresolvedFunCallImpl;
+import mondrian.olap.exceptions.MdxCantFindMemberException;
+import mondrian.olap.exceptions.MdxChildObjectNotFoundException;
+import mondrian.olap.exceptions.MemberNotFoundException;
 import mondrian.olap.fun.FunUtil;
 import mondrian.olap.fun.sort.Sorter;
 import mondrian.rolap.RolapLevel;
 import mondrian.rolap.RolapMember;
 import mondrian.rolap.RolapUtil;
-import mondrian.spi.UserDefinedFunction;
 import mondrian.util.ArraySortedSet;
 import mondrian.util.ConcatenableList;
 import mondrian.util.Pair;
@@ -210,16 +206,6 @@ public class Util {
             ? 0x0400
             : 0x0300;
 
-    /**
-     * Whether the code base has re-engineered using retroweaver.
-     * If this is the case, some functionality is not available, but a lot of
-     * things are available via {@link mondrian.util.UtilCompatible}.
-     * Retroweaver has some problems involving {@link java.util.EnumSet}.
-     */
-    @SuppressWarnings("java:S1872")
-    public static final boolean RETROWOVEN =
-        AccessMember.class.getSuperclass().getName().equals(
-            "net.sourceforge.retroweaver.runtime.java.lang.Enum");
 
     private static final UtilCompatible compatible;
 

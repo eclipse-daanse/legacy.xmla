@@ -167,22 +167,7 @@ public class AbstractExpCompiler implements ExpressionCompiler {
             throw new IllegalArgumentException("preferredResultTypes should not be null");
         }
         int substitutions = 0;
-        if (Util.RETROWOVEN) {
-            // Copy and replace ITERABLE
-            // A number of functions declare that they can accept
-            // ITERABLEs so here is where that those are converted to innocent
-            // LISTs for jdk1.4 and other retrowoven code.
-            final List<ResultStyle> tmp =
-                    new ArrayList<>(preferredResultTypes.size());
-            for (ResultStyle preferredResultType : preferredResultTypes) {
-                if (preferredResultType == ResultStyle.ITERABLE) {
-                    preferredResultType = ResultStyle.LIST;
-                    ++substitutions;
-                }
-                tmp.add(preferredResultType);
-            }
-            preferredResultTypes = tmp;
-        }
+
         final List<ResultStyle> save = resultStyles;
         try {
             resultStyles = preferredResultTypes;

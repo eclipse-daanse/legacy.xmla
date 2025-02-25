@@ -135,7 +135,6 @@ public class CrossJoinTest {
 
   @Test
   void testListTupleListTupleIterCalc() {
-    if ( !Util.RETROWOVEN) {
         Statement statement = mock(Statement.class);
         RolapConnection rolapConnection = mock(RolapConnection.class);
         Context context = mock(Context.class);
@@ -149,7 +148,6 @@ public class CrossJoinTest {
         new CrossJoinIterCalc( getResolvedFunCall(), null, crossJoinFunDef.getCtag() );
 
       doTupleTupleIterTest( calc, excMock );
-    }
   }
 
     private void doTupleTupleIterTest(
