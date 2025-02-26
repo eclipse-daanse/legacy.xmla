@@ -11,8 +11,7 @@
 
 -runsystemcapabilities: ${native_capability}
 
--runproperties: \
-    org.slf4j.simpleLogger.defaultLogLevel=debug
+-runproperties: org.slf4j.simpleLogger.defaultLogLevel=debug
 
 -runfw: org.apache.felix.framework
 
@@ -105,4 +104,4 @@
     #tester.names='mondrian.rolap.TestAggregationManager'
     #tester.names='mondrian.rolap.aggmatcher.AggMeasureFactCountTest'
 -runproperties.tester: \
-	tester.names='mondrian.olap.NullMemberRepresentationTest'
+	tester.names='mondrian.rolap.TestAggregationManager'

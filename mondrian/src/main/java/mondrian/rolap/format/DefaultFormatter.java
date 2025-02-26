@@ -29,14 +29,6 @@ class DefaultFormatter {
             if (value instanceof Number) {
                 BigDecimal numberValue =
                         new BigDecimal(value.toString()).stripTrailingZeros();
-
-                // Can be removed if running on Java 8.
-                // That's an old bug, and now it's closed:
-                // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6480539
-                if (BigDecimal.ZERO.compareTo(numberValue) == 0) {
-                    numberValue = BigDecimal.ZERO;
-                }
-
                 return numberValue.toPlainString();
             }
             return value.toString();

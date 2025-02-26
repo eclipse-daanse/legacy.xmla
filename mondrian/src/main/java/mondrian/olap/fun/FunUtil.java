@@ -23,19 +23,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
-import org.eclipse.daanse.mdx.model.api.expression.operation.InfixOperationAtom;
-import org.eclipse.daanse.mdx.model.api.expression.operation.InternalOperationAtom;
-import org.eclipse.daanse.mdx.model.api.expression.operation.MethodOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
-import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
-import org.eclipse.daanse.mdx.model.api.expression.operation.PostfixOperationAtom;
-import org.eclipse.daanse.mdx.model.api.expression.operation.PrefixOperationAtom;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.MatchType;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.access.AccessMember;
@@ -65,7 +58,6 @@ import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
 import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
 import org.eclipse.daanse.olap.calc.api.todo.TupleList;
-import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFunDef;
 import org.eclipse.daanse.olap.function.def.parentheses.ParenthesesFunDef;
 import org.eclipse.daanse.olap.function.def.set.SetFunDef;
@@ -505,157 +497,6 @@ public class FunUtil extends Util {
             total == 0 ? 0 :d / total * 100 );
       }
     }
-  }
-
-  @Deprecated
-  public static OperationAtom decodeSyntacticTypeToOp( String flags,String name ) {
-	    char c = flags.charAt( 0 );
-	    switch ( c ) {
-	      case 'p':
-	        return new PlainPropertyOperationAtom(name);
-	      case 'f':
-	        return new FunctionOperationAtom(name);
-	      case 'm':
-	        return new MethodOperationAtom(name);
-	      case 'i':
-	        return new InfixOperationAtom(name);
-	      case 'P':
-	        return new PrefixOperationAtom(name);
-	      case 'Q':
-	        return new PostfixOperationAtom(name);
-	      case 'I':
-	        return new InternalOperationAtom(name);
-	      default:
-	        throw Util.newInternal(
-	          new StringBuilder("unknown syntax code '").append(c).append("' in string '")
-	              .append(flags).append("'").toString() );
-	    }
-	  }
-
-  /**
-   * Decodes the signature of a function into a category code which describes the return type of the operator.
-   *
-   * <p>For example, <code>decodeReturnType("fnx")</code> returns
-   * <code>{@link DataType#NUMERIC}</code>, indicating this function has a
-   * numeric return value.
-   *
-   * @param flags The signature of an operator, as used by the {@code flags} parameter used to construct a {@link
-   *              AbstractFunctionDefinition}.
-   * @return An array {@link DataType} codes.
-   */
-  @Deprecated
-  public static DataType decodeReturnCategory( String flags ) {
-    final DataType returnCategory = FunUtil.decodeCategory( flags, 1 );
-    return returnCategory;
-  }
-
-  /**
-   * Decodes the {@code offset}th character of an encoded method signature into a type category.
-   *
-   * <p>The codes are:
-   * <table border="1">
-   *
-   * <tr><td>a</td><td>{@link DataType#ARRAY}</td></tr>
-   *
-   * <tr><td>d</td><td>{@link DataType#DIMENSION}</td></tr>
-   *
-   * <tr><td>h</td><td>{@link DataType#HIERARCHY}</td></tr>
-   *
-   * <tr><td>l</td><td>{@link DataType#LEVEL}</td></tr>
-   *
-   * <tr><td>b</td><td>{@link DataType#LOGICAL}</td></tr>
-   *
-   * <tr><td>m</td><td>{@link DataType#MEMBER}</td></tr>
-   *
-   * <tr><td>N</td><td>Constant {@link DataType#NUMERIC}</td></tr>
-   *
-   * <tr><td>n</td><td>{@link DataType#NUMERIC}</td></tr>
-   *
-   * <tr><td>x</td><td>{@link DataType#SET}</td></tr>
-   *
-   * <tr><td>#</td><td>Constant {@link DataType#STRING}</td></tr>
-   *
-   * <tr><td>S</td><td>{@link DataType#STRING}</td></tr>
-   *
-   * <tr><td>t</td><td>{@link DataType#TUPLE}</td></tr>
-   *
-   * <tr><td>v</td><td>{@link DataType#VALUE}</td></tr>
-   *
-   * <tr><td>y</td><td>{@link DataType#SYMBOL}</td></tr>
-   *
-   * </table>
-   *
-   * @param flags  Encoded signature string
-   * @param offset 0-based offset of character within string
-   * @return A {@link DataType}
-   */
-  @Deprecated
-  public static DataType decodeCategory( String flags, int offset ) {
-    char c = flags.charAt( offset );
-    switch ( c ) {
-      case 'a':
-        return DataType.ARRAY;
-      case 'd':
-        return DataType.DIMENSION;
-      case 'h':
-        return DataType.HIERARCHY;
-      case 'l':
-        return DataType.LEVEL;
-      case 'b':
-        return DataType.LOGICAL;
-      case 'm':
-        return DataType.MEMBER;
-      case 'N':
-        return DataType.NUMERIC; //Was Constant
-      case 'n':
-        return DataType.NUMERIC;
-      case 'I':
-        return DataType.INTEGER ;//Was Constant
-      case 'i':
-        return  DataType.INTEGER;
-      case 'x':
-        return DataType.SET;
-      case '#':
-        return DataType.STRING;
-      case 'S':
-        return DataType.STRING;//Was Constant
-      case 't':
-        return DataType.TUPLE;
-      case 'v':
-        return DataType.VALUE;
-      case 'y':
-        return DataType.SYMBOL;
-      case 'U':
-        return DataType.NULL;
-      case 'e':
-        return DataType.EMPTY;
-      case 'D':
-        return DataType.DATE_TIME;
-      default:
-        throw Util.newInternal(
-          new StringBuilder("unknown type code '").append(c)
-              .append("' in string '").append(flags).append("'").toString() );
-    }
-  }
-
-  /**
-   * Decodes a string of parameter types into an array of type codes.
-   *
-   * <p>Each character is decoded using {@link #decodeCategory(String, int)}.
-   * For example, <code>decodeParameterTypes("nx")</code> returns
-   * <code>{{@link DataType#NUMERIC}, {@link DataType#SET}}</code>.
-   *
-   * @param flags The signature of an operator, as used by the {@code flags} parameter used to construct a {@link
-   *              AbstractFunctionDefinition}.
-   * @return An array {@link DataType} codes.
-   */
-  @Deprecated
-  public static DataType[] decodeParameterCategories( String flags ) {
-	  DataType[] parameterCategories = new DataType[ flags.length() - 2 ];
-    for ( int i = 0; i < parameterCategories.length; i++ ) {
-      parameterCategories[ i ] = FunUtil.decodeCategory( flags, i + 2 );
-    }
-    return parameterCategories;
   }
 
   public static double percentile(

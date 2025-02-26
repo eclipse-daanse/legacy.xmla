@@ -15,8 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.RandomAccess;
 
-import mondrian.olap.Util;
-
 /**
  * List that generates the cartesian product of its component lists.
  *

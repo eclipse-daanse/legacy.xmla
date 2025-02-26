@@ -12,7 +12,6 @@ package mondrian.test;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Statement;
@@ -24,9 +23,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.server.monitor.ConnectionInfo;
-import mondrian.server.monitor.ServerInfo;
 
 /**
  * Unit test for monitoring, including {@link EventBus}.
