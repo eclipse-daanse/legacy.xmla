@@ -29,16 +29,16 @@ class AscendantsFunDefTest {
     void testAscendants(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Ascendants([Store].[USA].[CA])",
-            "[Store].[USA].[CA]\n"
-                + "[Store].[USA]\n"
-                + "[Store].[All Stores]" );
+            "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA]\n"
+                + "[Store].[Store].[All Stores]" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAscendantsAll(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
-            "Ascendants([Store].DefaultMember)", "[Store].[All Stores]" );
+            "Ascendants([Store].DefaultMember)", "[Store].[Store].[All Stores]" );
     }
 
     @ParameterizedTest

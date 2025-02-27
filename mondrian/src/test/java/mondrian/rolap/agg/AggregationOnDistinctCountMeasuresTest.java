@@ -175,7 +175,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 5,581\n");
@@ -192,7 +192,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 5,581\n");
@@ -213,7 +213,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 2,716\n";
@@ -265,7 +265,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 2,716\n";
@@ -325,7 +325,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 1,389\n");
@@ -341,7 +341,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 5,581\n");
@@ -357,9 +357,9 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
             + "Axis #2:\n"
-            + "{[Measures].[Customer Count], [Gender].[M]}\n"
+            + "{[Measures].[Customer Count], [Gender].[Gender].[M]}\n"
             + "Row #0: 1,389\n");
     }
 
@@ -378,7 +378,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Store].[X]}\n"
+            + "{[Store].[Store].[X]}\n"
             + "Row #0: 4,544\n");
     }
 
@@ -399,7 +399,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: \n";
       assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, expectedResult);
       ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
@@ -418,7 +418,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[X]}\n"
+            + "{[Gender].[Gender].[X]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 5,581\n");
@@ -440,7 +440,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: \n");
     }
 
@@ -458,7 +458,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: 5,581\n");
     }
 
@@ -477,7 +477,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: 5,581\n");
 
       assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -491,7 +491,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: 5,581\n");
     }
 
@@ -510,7 +510,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: \n");
 
       assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -524,7 +524,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse].[X]}\n"
+            + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: 5,581\n");
     }
 
@@ -555,7 +555,7 @@ class AggregationOnDistinctCountMeasuresTest {
               + "Axis #1:\n"
               + "{[Measures].[Customer Count]}\n"
               + "Axis #2:\n"
-              + "{[Product].[X]}\n"
+              + "{[Product].[Product].[X]}\n"
               + "Row #0: #ERR: mondrian.olap.fun.MondrianEvaluationException: "
               + "Aggregation is not supported over a list with more than 7 predicates (see property MaxConstraints)\n");
 
@@ -567,7 +567,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Store Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[X]}\n"
+            + "{[Product].[Product].[X]}\n"
             + "Row #0: 11,257.28\n");
 
         // aggregation over a non-distinct-count measure in slicer should be
@@ -586,14 +586,14 @@ class AggregationOnDistinctCountMeasuresTest {
             + "[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Top Measure],\n"
             + "[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Walrus]}",
             "Axis #0:\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Pearl]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Portsmouth]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Top Measure]}\n"
-            + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Walrus]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Good]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Portsmouth]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Top Measure]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].[Walrus]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Pearl]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Portsmouth]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Top Measure]}\n"
+            + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine].[Walrus]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Store Sales]}\n"
             + "Row #0: 11,257.28\n");
@@ -626,9 +626,9 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAggregateMaxConstraints(Context context) {
       prepareContext(context);
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
 
         SystemWideProperties.instance().MaxConstraints = 5;
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -653,9 +653,9 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink]}\n"
-            + "{[Product].[Food]}\n"
-            + "{[Product].[Non-Consumable]}\n"
+            + "{[Product].[Product].[Drink]}\n"
+            + "{[Product].[Product].[Food]}\n"
+            + "{[Product].[Product].[Non-Consumable]}\n"
             + "Row #0: 458\n"
             + "Row #1: 3,746\n"
             + "Row #2: 937\n");
@@ -929,7 +929,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Cost Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse2].[TwoMembers]}\n"
+            + "{[Warehouse2].[Warehouse2].[TwoMembers]}\n"
             + "Row #0: 220\n";
 
         assertQueryReturns(context.getConnectionWithDefaultRole(), query, result);
@@ -1054,7 +1054,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Cost Count]}\n"
             + "Axis #2:\n"
-            + "{[Warehouse2].[TwoMembers]}\n"
+            + "{[Warehouse2].[Warehouse2].[TwoMembers]}\n"
             + "Row #0: 220\n";
       withSchema(context, TestMultiLevelsMixedNullNonNullChildModifier::new);
       assertQueryReturns(context.getConnectionWithDefaultRole(), query, result);
@@ -1131,9 +1131,9 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[OR]}\n"
-            + "{[Store].[COG_OQP_USR_Aggregate(Store)]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[COG_OQP_USR_Aggregate(Store)]}\n"
             + "Row #0: 2,716\n"
             + "Row #1: 1,037\n"
             + "Row #2: 5,581\n";
@@ -1212,9 +1212,9 @@ class AggregationOnDistinctCountMeasuresTest {
             + "{[Measures].[Customer Count]}\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Store].[USA].[CA]}\n"
-            + "{[Store].[USA].[OR]}\n"
-            + "{[Store].[COG_OQP_USR_Aggregate(Store)]}\n"
+            + "{[Store].[Store].[USA].[CA]}\n"
+            + "{[Store].[Store].[USA].[OR]}\n"
+            + "{[Store].[Store].[COG_OQP_USR_Aggregate(Store)]}\n"
             + "Row #0: 2,716\n"
             + "Row #0: 74,748\n"
             + "Row #1: 1,037\n"
@@ -1299,10 +1299,10 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[All Gender]}\n"
-            + "{[Gender].[F]}\n"
-            + "{[Gender].[M]}\n"
-            + "{[Gender].[COG_OQP_USR_Aggregate(Gender)]}\n"
+            + "{[Gender].[Gender].[All Gender]}\n"
+            + "{[Gender].[Gender].[F]}\n"
+            + "{[Gender].[Gender].[M]}\n"
+            + "{[Gender].[Gender].[COG_OQP_USR_Aggregate(Gender)]}\n"
             + "Row #0: 5,581\n"
             + "Row #1: 2,755\n"
             + "Row #2: 2,826\n"
@@ -1345,7 +1345,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[x]}\n"
+            + "{[Gender].[Gender].[x]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 5,581\n";
@@ -1510,7 +1510,7 @@ class AggregationOnDistinctCountMeasuresTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Product].[Agg]}\n"
+            + "{[Product].[Product].[Agg]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Row #0: 189\n";
@@ -1747,8 +1747,8 @@ class AggregationOnDistinctCountMeasuresTest {
             + "{[Measures].[Customer Count]}\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[AGG]}\n"
-            + "{[Gender].[AGG2]}\n"
+            + "{[Gender].[Gender].[AGG]}\n"
+            + "{[Gender].[Gender].[AGG2]}\n"
             + "Row #0: 2,755\n"
             + "Row #0: 131,558\n"
             + "Row #1: 2,826\n"
@@ -1772,7 +1772,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[AGG]}\n"
+            + "{[Gender].[Gender].[AGG]}\n"
             + "Row #0: 5,581\n");
     }
 
@@ -1935,9 +1935,9 @@ class AggregationOnDistinctCountMeasuresTest {
                     "Axis #0:\n"
                     + "{}\n"
                     + "Axis #1:\n"
-                    + "{[Customers].[USA]}\n"
-                    + "{[Customers].[USA].[OR]}\n"
-                    + "{[Customers].[USA].[WA]}\n"
+                    + "{[Customers].[Customers].[USA]}\n"
+                    + "{[Customers].[Customers].[USA].[OR]}\n"
+                    + "{[Customers].[Customers].[USA].[WA]}\n"
                     + "Axis #2:\n"
                     + "{[Measures].[Customer Count]}\n"
                     + "Row #0: 2,865\n"
@@ -1996,7 +1996,7 @@ class AggregationOnDistinctCountMeasuresTest {
         TupleList optimized =
             optimizeChildren(tl);
         assertEquals(
-            "[[[Store].[USA], [Gender].[All Gender]], [[Store].[USA], [Gender].[F]]]", optimized.toString());
+            "[[[Store].[Store].[USA], [Gender].[Gender].[All Gender]], [[Store].[Store].[USA], [Gender].[Gender].[F]]]", optimized.toString());
     }
 
     private boolean tuppleListContains(
@@ -2272,7 +2272,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "Axis #1:\n"
             + "{[Measures].[Customer Count]}\n"
             + "Axis #2:\n"
-            + "{[Time].[1997]}\n"
+            + "{[Time].[Time].[1997]}\n"
             + "Row #0: 5,581\n");
         // aggregate table has count for months, make sure it is used
         ((TestConfig)context.getConfig()).setUseAggregates(true);
@@ -2368,12 +2368,12 @@ class AggregationOnDistinctCountMeasuresTest {
             + " UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Gender].CURRENTMEMBER)}),{[Store Type].[*TOTAL_MEMBER_SEL~AGG]}),[*SORTED_ROW_AXIS]) ON ROWS\r\n"
             + " FROM [Sales]\r\n" + " WHERE ([*CJ_SLICER_AXIS])\r\n" );
     String resultString = TestUtil.toString( result );
-    assertEqualsVerbose( "Axis #0:\n" + "{[Product].[Drink]}\n" + "{[Product].[Food]}\n" + "Axis #1:\n"
+    assertEqualsVerbose( "Axis #0:\n" + "{[Product].[Drink]}\n" + "{[Product].[Product].[Food]}\n" + "Axis #1:\n"
         + "{[Measures].[*FORMATTED_MEASURE_0]}\n" + "Axis #2:\n"
-        + "{[Gender].[F], [Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
-        + "{[Gender].[M], [Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
-        + "{[Gender].[F], [Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[F], [Store Type].[Supermarket]}\n"
-        + "{[Gender].[M], [Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[M], [Store Type].[Supermarket]}\n"
+        + "{[Gender].[Gender].[F], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
+        + "{[Gender].[Gender].[M], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
+        + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Supermarket]}\n"
+        + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Supermarket]}\n"
         + "Row #0: 2,044\n" + "Row #1: 2,084\n" + "Row #2: 512\n" // Less than 519 above because slicer was applied
         + "Row #3: 1,884\n" + "Row #4: 531\n" + "Row #5: 1,929\n", upgradeActual( resultString ) );
     Execution e = ( (ResultBase) result ).getExecution();
@@ -2409,11 +2409,11 @@ class AggregationOnDistinctCountMeasuresTest {
             + " UNION(CROSSJOIN(GENERATE([*CJ_ROW_AXIS], {([Gender].CURRENTMEMBER)}),{[Store Type].[*TOTAL_MEMBER_SEL~AGG]}),[*SORTED_ROW_AXIS]) ON ROWS\r\n"
             + " FROM [Sales]\r\n" + " WHERE ([*CJ_SLICER_AXIS])" );
     String resultString = TestUtil.toString( result );
-    assertEqualsVerbose( "Axis #0:\n" + "{[Product].[Drink]}\n" + "{[Product].[Food]}\n" + "Axis #1:\n"
-        + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Gender].[F], [Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
-        + "{[Gender].[M], [Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
-        + "{[Gender].[F], [Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[F], [Store Type].[Supermarket]}\n"
-        + "{[Gender].[M], [Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[M], [Store Type].[Supermarket]}\n"
+    assertEqualsVerbose( "Axis #0:\n" + "{[Product].[Product].[Drink]}\n" + "{[Product].[Product].[Food]}\n" + "Axis #1:\n"
+        + "{[Measures].[Customer Count]}\n" + "Axis #2:\n" + "{[Gender].[Gender].[F], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
+        + "{[Gender].[Gender].[M], [Store Type].[Store Type].[*TOTAL_MEMBER_SEL~AGG]}\n"
+        + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[F], [Store Type].[Store Type].[Supermarket]}\n"
+        + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Gourmet Supermarket]}\n" + "{[Gender].[Gender].[M], [Store Type].[Store Type].[Supermarket]}\n"
         + "Row #0: 2,044\n" + "Row #1: 2,084\n" + "Row #2: 512\n" + "Row #3: 1,884\n" + "Row #4: 531\n"
         + "Row #5: 1,929\n", upgradeActual( resultString ) );
     Execution e = ( (ResultBase) result ).getExecution();

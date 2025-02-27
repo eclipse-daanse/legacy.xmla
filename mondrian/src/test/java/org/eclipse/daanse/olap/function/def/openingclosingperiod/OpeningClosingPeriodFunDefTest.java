@@ -220,14 +220,14 @@ class OpeningClosingPeriodFunDefTest {
         Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
             "ClosingPeriod([Time].[Month], [Time].[Time].CurrentMember)",
-            "{[Time]}" );
+            "{[Time].[Time]}" );
 
         String s1 = FunctionTest.allHiersExcept( "[Measures]" );
         assertExprDependsOn(connection,
             "(([Measures].[Store Sales],"
                 + " ClosingPeriod([Time].[Month], [Time].[Time].CurrentMember)) - "
                 + "([Measures].[Store Cost],"
-                + " ClosingPeriod([Time].[Month], [Time].[Time].CurrentMember)))",
+                + " ClosingPeriod([Time].[Time].[Month], [Time].[Time].CurrentMember)))",
             s1 );
 
         assertMemberExprDependsOn(connection,
@@ -242,18 +242,18 @@ class OpeningClosingPeriodFunDefTest {
 
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Month], [Time].[1997].[Q3])",
-            "[Time].[1997].[Q3].[9]" );
+            "[Time].[Time].[1997].[Q3].[9]" );
 
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Quarter], [Time].[1997])",
-            "[Time].[1997].[Q4]" );
+            "[Time].[Time].[1997].[Q4]" );
 
         assertAxisReturns(connection, "Sales",
-            "ClosingPeriod([Time].[Year], [Time].[1997])", "[Time].[1997]" );
+            "ClosingPeriod([Time].[Year], [Time].[1997])", "[Time].[Time].[1997]" );
 
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Month], [Time].[1997])",
-            "[Time].[1997].[Q4].[12]" );
+            "[Time].[Time].[1997].[Q4].[12]" );
 
         // leaf member
 
@@ -265,17 +265,17 @@ class OpeningClosingPeriodFunDefTest {
 
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Month], [Time].[1997].[Q3].[8])",
-            "[Time].[1997].[Q3].[8]" );
+            "[Time].[Time].[1997].[Q3].[8]" );
 
         // non-Time dimension
 
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Product].[Product Name], [Product].[All Products].[Drink])",
-            "[Product].[Drink].[Dairy].[Dairy].[Milk].[Gorilla].[Gorilla Whole Milk]" );
+            "[Product].[Product].[Drink].[Dairy].[Dairy].[Milk].[Gorilla].[Gorilla Whole Milk]" );
 
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Product].[Product Family], [Product].[All Products].[Drink])",
-            "[Product].[Drink]" );
+            "[Product].[Product].[Drink]" );
 
         // 'all' level
 
@@ -287,13 +287,13 @@ class OpeningClosingPeriodFunDefTest {
         //getContext().withCube( "[Sales Ragged]" ).
         assertAxisReturns(connection, "[Sales Ragged]",
             "ClosingPeriod([Store].[Store City], [Store].[All Stores].[Israel])",
-            "[Store].[Israel].[Israel].[Tel Aviv]" );
+            "[Store].[Store].[Israel].[Israel].[Tel Aviv]" );
 
         // Default member is [Time].[1997].
         assertAxisReturns(connection, "Sales",
             "ClosingPeriod([Time].[Month])", "[Time].[1997].[Q4].[12]" );
 
-        assertAxisReturns(connection, "Sales", "ClosingPeriod()", "[Time].[1997].[Q4]" );
+        assertAxisReturns(connection, "Sales", "ClosingPeriod()", "[Time].[Time].[1997].[Q4]" );
 
         //Context testContext = getContext().withCube( "[Sales Ragged]" );
         assertAxisReturns(connection, "[Sales Ragged]",

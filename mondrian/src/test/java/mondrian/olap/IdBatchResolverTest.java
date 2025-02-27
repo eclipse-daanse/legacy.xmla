@@ -101,11 +101,11 @@ class IdBatchResolverTest  {
                 + "[Product].[Food].[Starchy Foods]}"
                 + "on 0 FROM SALES"),
             list(
-                "[Product].[Food].[Dairy]",
-                "[Product].[Food].[Deli]",
-                "[Product].[Food].[Eggs]",
-                "[Product].[Food].[Produce]",
-                "[Product].[Food].[Starchy Foods]"));
+                "[Product].[Product].[Food].[Dairy]",
+                "[Product].[Product].[Food].[Deli]",
+                "[Product].[Product].[Food].[Eggs]",
+                "[Product].[Product].[Food].[Produce]",
+                "[Product].[Product].[Food].[Starchy Foods]"));
 
         // verify lookupMemberChildrenByNames is called as expected with
         // batched children's names.
@@ -156,8 +156,8 @@ class IdBatchResolverTest  {
         // [Time.Weekly].[All]
         batchResolve(context,
             "with member Gender.levelRef as "
-            + "'Sum(Descendants([Time.Weekly].CurrentMember, [Time.Weekly].Week))' "
-            + "select Gender.levelRef on 0 from sales where [Time.Weekly].[1997]");
+            + "'Sum(Descendants([Time].[Weekly].CurrentMember, [Time].[Weekly].Week))' "
+            + "select Gender.levelRef on 0 from sales where [Time].[Weekly].[1997]");
         verify(
             query.getCatalogReader(true), times(1))
             .lookupMemberChildrenByNames(
@@ -165,7 +165,7 @@ class IdBatchResolverTest  {
                 childNames.capture(),
                 matchType.capture());
         assertEquals(
-            "[Time.Weekly].[All Time.Weeklys]",
+            "[Time].[Weekly].[All Time].[Weeklys]",
             parentMember.getAllValues().get(0).getUniqueName());
         assertEquals(
             "[[1997]]",
@@ -275,11 +275,11 @@ class IdBatchResolverTest  {
                 + "FROM [Sales]\n"
                 + "WHERE ([*CJ_SLICER_AXIS])"),
             list(
-                "[Store Size in SQFT].[#null]",
-                "[Store Size in SQFT].[20319]",
-                "[Store Size in SQFT].[21215]",
-                "[Store Size in SQFT].[22478]",
-                "[Store Size in SQFT].[23598]"));
+                "[Store Size in SQFT].[Store Size in SQFT].[#null]",
+                "[Store Size in SQFT].[Store Size in SQFT].[20319]",
+                "[Store Size in SQFT].[Store Size in SQFT].[21215]",
+                "[Store Size in SQFT].[Store Size in SQFT].[22478]",
+                "[Store Size in SQFT].[Store Size in SQFT].[23598]"));
 
         verify(
             query.getCatalogReader(true), times(1))
@@ -289,7 +289,7 @@ class IdBatchResolverTest  {
                 matchType.capture());
 
         assertEquals(
-            "[Store Size in SQFT].[All Store Size in SQFTs]",
+            "[Store Size in SQFT].[Store Size in SQFT].[All Store Size in SQFTs]",
             parentMember.getAllValues().get(0).getUniqueName());
         assertTrue(childNames.getAllValues().get(0).size() == 5);
         assertEquals(
@@ -298,47 +298,7 @@ class IdBatchResolverTest  {
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testMultiHierarchyNonSSAS(Context context) {
-        SystemWideProperties.instance().SsasCompatibleNaming = false;
-        assertContains(
-            "Resolved map omitted one or more members",
-            batchResolve(context,
-                "WITH\n"
-                + "SET [*NATIVE_CJ_SET] AS 'FILTER([*BASE_MEMBERS__Time.Weekly_], NOT ISEMPTY ([Measures].[Unit Sales]))'\n"
-                + "SET [*BASE_MEMBERS__Time.Weekly_] AS '{[Time.Weekly].[1997].[4],[Time.Weekly].[1997].[5],[Time.Weekly].[1997].[6]}'\n"
-                + "SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[*FORMATTED_MEASURE_0]}'\n"
-                + "SET [*CJ_SLICER_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([Time.Weekly].CURRENTMEMBER)})'\n"
-                + "MEMBER [Measures].[*FORMATTED_MEASURE_0] AS '[Measures].[Unit Sales]', FORMAT_STRING = 'Standard', SOLVE_ORDER=500\n"
-                + "SELECT\n"
-                + "[*BASE_MEMBERS__Measures_] ON COLUMNS\n"
-                + "FROM [Sales]\n"
-                + "WHERE ([*CJ_SLICER_AXIS])"),
-            list(
-                "[Time.Weekly].[1997].[4]",
-                "[Time.Weekly].[1997].[5]",
-                "[Time.Weekly].[1997].[6]"));
-
-        verify(
-            query.getCatalogReader(true), times(2))
-            .lookupMemberChildrenByNames(
-                parentMember.capture(),
-                childNames.capture(),
-                matchType.capture());
-        assertEquals(
-            "[Time.Weekly].[All Time.Weeklys]",
-            parentMember.getAllValues().get(0).getUniqueName());
-        assertTrue(childNames.getAllValues().get(0).size() == 1);
-        assertEquals(
-            "1997",
-            childNames.getAllValues().get(0).get(0).getName());
-        assertEquals(
-            "[[4], [5], [6]]",
-            sortedNames(childNames.getAllValues().get(1)));
-    }
-	@ParameterizedTest
-	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testMultiHierarchySSAS(Context context) {
-        SystemWideProperties.instance().SsasCompatibleNaming = true;
         assertContains(
             "Resolved map omitted one or more members",
             batchResolve(context,
@@ -395,8 +355,8 @@ class IdBatchResolverTest  {
                 + "FROM [HR]\n"
                 + "WHERE ([*CJ_SLICER_AXIS])"),
                 list(
-                    "[Employees].[Sheri Nowmer].[Derrick Whelply]",
-                    "[Employees].[Sheri Nowmer].[Michael Spence]"));
+                    "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]",
+                    "[Employees].[Employees].[Sheri Nowmer].[Michael Spence]"));
 
         verify(
             query.getCatalogReader(true), times(2))

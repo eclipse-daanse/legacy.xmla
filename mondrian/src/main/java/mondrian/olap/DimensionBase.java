@@ -120,31 +120,20 @@ public abstract class DimensionBase
         // looking for level - we can check that by checking of hierarchy and
         // dimension name is the same.
         //
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            if (oe == null || oe.getName().equalsIgnoreCase(getName())) {
-                OlapElement oeLevel =
-                    getHierarchy().lookupChild(schemaReader, s, matchType);
-                if (oeLevel != null) {
-                    return oeLevel; // level match overrides hierarchy match
-                }
-            }
+        // New (SSAS-compatible) behavior. If there is no matching
+        // hierarchy, find the first level with the given name.
+        if (oe != null) {
             return oe;
-        } else {
-            // New (SSAS-compatible) behavior. If there is no matching
-            // hierarchy, find the first level with the given name.
+        }
+        final List<Hierarchy> hierarchyList =
+            schemaReader.getDimensionHierarchies(this);
+        for (Hierarchy hierarchy : hierarchyList) {
+            oe = hierarchy.lookupChild(schemaReader, s, matchType);
             if (oe != null) {
                 return oe;
             }
-            final List<Hierarchy> hierarchyList =
-                schemaReader.getDimensionHierarchies(this);
-            for (Hierarchy hierarchy : hierarchyList) {
-                oe = hierarchy.lookupChild(schemaReader, s, matchType);
-                if (oe != null) {
-                    return oe;
-                }
-            }
-            return null;
         }
+        return null;
     }
 
 

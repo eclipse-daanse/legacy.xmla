@@ -31,8 +31,8 @@ class HeadTailFunDefTest {
     void testHead(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Head([Store].Children, 2)",
-            "[Store].[Canada]\n"
-                + "[Store].[Mexico]" );
+            "[Store].[Store].[Canada]\n"
+                + "[Store].[Store].[Mexico]" );
     }
 
     @ParameterizedTest
@@ -48,7 +48,7 @@ class HeadTailFunDefTest {
     void testHeadDefault(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Head([Store].Children)",
-            "[Store].[Canada]" );
+            "[Store].[Store].[Canada]" );
     }
 
     @ParameterizedTest
@@ -56,9 +56,9 @@ class HeadTailFunDefTest {
     void testHeadOvershoot(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Head([Store].Children, 2 + 2)",
-            "[Store].[Canada]\n"
-                + "[Store].[Mexico]\n"
-                + "[Store].[USA]" );
+            "[Store].[Store].[Canada]\n"
+                + "[Store].[Store].[Mexico]\n"
+                + "[Store].[Store].[USA]" );
     }
 
     @ParameterizedTest
@@ -102,8 +102,8 @@ class HeadTailFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[All Customers]}\n"
-                + "{[Customers].[All Customers]}\n"
+                + "{[Customers].[Customers].[All Customers]}\n"
+                + "{[Customers].[Customers].[All Customers]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #0: 266,773\n" );
 
@@ -162,8 +162,8 @@ class HeadTailFunDefTest {
     void testTail(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Tail([Store].Children, 2)",
-            "[Store].[Mexico]\n"
-                + "[Store].[USA]" );
+            "[Store].[Store].[Mexico]\n"
+                + "[Store].[Store].[USA]" );
     }
 
     @ParameterizedTest
@@ -179,7 +179,7 @@ class HeadTailFunDefTest {
     void testTailDefault(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Tail([Store].Children)",
-            "[Store].[USA]" );
+            "[Store].[Store].[USA]" );
     }
 
     @ParameterizedTest
@@ -187,9 +187,9 @@ class HeadTailFunDefTest {
     void testTailOvershoot(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Tail([Store].Children, 2 + 2)",
-            "[Store].[Canada]\n"
-                + "[Store].[Mexico]\n"
-                + "[Store].[USA]" );
+            "[Store].[Store].[Canada]\n"
+                + "[Store].[Store].[Mexico]\n"
+                + "[Store].[Store].[USA]" );
     }
 
     @ParameterizedTest

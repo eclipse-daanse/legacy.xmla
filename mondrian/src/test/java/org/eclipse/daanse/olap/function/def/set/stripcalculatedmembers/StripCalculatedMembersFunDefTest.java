@@ -32,7 +32,7 @@ class StripCalculatedMembersFunDefTest {
 
         assertSetExprDependsOn(connection,
             "StripCalculatedMembers([Customers].CurrentMember.Children)",
-            "{[Customers]}" );
+            "{[Customers].[Customers]}" );
 
         // ----------------------------------------------------
         // Calc members in dimension based on level stripped

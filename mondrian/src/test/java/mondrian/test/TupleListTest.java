@@ -156,7 +156,7 @@ class TupleListTest {
         assertEquals(list2, list0);
 
         assertEquals("[]", list0.toString());
-        assertEquals("[[[Store].[USA], [Gender].[F]]]", list1.toString());
+        assertEquals("[[[Store].[Store].[USA], [Gender].[Gender].[F]]]", list1.toString());
         assertEquals("[]", list2.toString());
 
         // For various lists, sublist returns the whole thing.
@@ -196,7 +196,7 @@ class TupleListTest {
         assertEquals(2, fm.size());
         assertEquals(2, fm.getArity());
         assertEquals(
-            "[[[Gender].[F], [Store].[USA]], [[Gender].[M], [Store].[USA]]]",
+            "[[[Gender].[Gender].[F], [Store].[Store].[USA]], [[Gender].[Gender].[M], [Store].[Store].[USA]]]",
             fm.toString());
 
         checkProject(fm);
@@ -218,9 +218,9 @@ class TupleListTest {
             + "Axis #1:\n"
             + "{[Measures].[Store Sales]}\n"
             + "Axis #2:\n"
-            + "{[Customers].[Canada]}\n"
-            + "{[Customers].[Mexico]}\n"
-            + "{[Customers].[USA]}\n"
+            + "{[Customers].[Customers].[Canada]}\n"
+            + "{[Customers].[Customers].[Mexico]}\n"
+            + "{[Customers].[Customers].[USA]}\n"
             + "Row #0: \n"
             + "Row #1: \n"
             + "Row #2: 565,238.13\n");

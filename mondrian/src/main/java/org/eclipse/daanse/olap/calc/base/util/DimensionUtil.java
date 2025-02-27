@@ -35,16 +35,8 @@ public class DimensionUtil {
 		if (hierarchies.length == 1) {
 			return Optional.of(hierarchies[0]);
 		}
-		if (SystemWideProperties.instance().SsasCompatibleNaming) {
-			// In SSAS 2005, dimensions with more than one hierarchy do not have
-			// a default hierarchy.
-			return Optional.empty();
-		}
-		for (Hierarchy hierarchy : hierarchies) {
-			if (hierarchy.getName() == null || hierarchy.getUniqueName().equals(dimension.getUniqueName())) {
-				return Optional.of(hierarchy);
-			}
-		}
+		// In SSAS 2005, dimensions with more than one hierarchy do not have
+		// a default hierarchy.
 		return Optional.empty();
 	}
 

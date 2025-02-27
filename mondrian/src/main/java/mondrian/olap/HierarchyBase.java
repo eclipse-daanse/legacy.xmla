@@ -84,38 +84,19 @@ public abstract class HierarchyBase
         this.visible = visible;
 
         String nameInner = dimension.getName();
-        if (SystemWideProperties.instance().SsasCompatibleNaming) {
-            if(dimension.getDimensionType() == DimensionType.MEASURES_DIMENSION) {
-                this.subName = subName;
-                this.name = nameInner;
-                this.uniqueName = Dimension.MEASURES_UNIQUE_NAME;
-            }
-            else {
-                if (subName == null) {
-                    // e.g. "Time"
-                    subName = nameInner;
-                }
-                this.subName = subName;
-                this.name = subName;
-                this.uniqueName = Util.makeFqName(dimension, this.name);
-            }
-        } else {
+        if(dimension.getDimensionType() == DimensionType.MEASURES_DIMENSION) {
             this.subName = subName;
-            if (this.subName != null) {
-                // e.g. "Time.Weekly"
-                this.name = new StringBuilder(nameInner).append(".").append(subName).toString();
-                if (this.subName.equals(nameInner)) {
-                    this.uniqueName = dimension.getUniqueName();
-                } else {
-                    // e.g. "[Time.Weekly]"
-                    this.uniqueName = Util.makeFqName(this.name);
-                }
-            } else {
+            this.name = nameInner;
+            this.uniqueName = Dimension.MEASURES_UNIQUE_NAME;
+        }
+        else {
+            if (subName == null) {
                 // e.g. "Time"
-                this.name = nameInner;
-                // e.g. "[Time]"
-                this.uniqueName = dimension.getUniqueName();
+                subName = nameInner;
             }
+            this.subName = subName;
+            this.name = subName;
+            this.uniqueName = Util.makeFqName(dimension, this.name);
         }
     }
 

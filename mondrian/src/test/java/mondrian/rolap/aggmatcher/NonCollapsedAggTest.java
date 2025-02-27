@@ -413,9 +413,9 @@ class NonCollapsedAggTest extends AggTableTestCase {
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         prepareContext(context);
         // MONDRIAN-1085
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,

@@ -35,13 +35,13 @@ class AllMembersFunDefTest {
         // <Level>.allmembers
         assertAxisReturns(connection, "Sales",
             "{[Customers].[Country].allmembers}",
-            "[Customers].[Canada]\n"
-                + "[Customers].[Mexico]\n"
-                + "[Customers].[USA]" );
+            "[Customers].[Customers].[Canada]\n"
+                + "[Customers].[Customers].[Mexico]\n"
+                + "[Customers].[Customers].[USA]" );
 
         // <Level>.allmembers applied to 'all' level
         assertAxisReturns(connection, "Sales",
-            "{[Customers].[(All)].allmembers}", "[Customers].[All Customers]" );
+            "{[Customers].[(All)].allmembers}", "[Customers].[Customers].[All Customers]" );
 
         // <Level>.allmembers applied to measures dimension
         // Note -- cube-level calculated members ARE present

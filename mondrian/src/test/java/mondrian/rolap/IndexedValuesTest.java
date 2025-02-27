@@ -42,7 +42,7 @@ class IndexedValuesTest {
             + "{[Measures].[Org Salary]}\n"
             + "{[Measures].[Count]}\n"
             + "Axis #2:\n"
-            + "{[Employees].[Sheri Nowmer]}\n"
+            + "{[Employees].[Employees].[Sheri Nowmer]}\n"
             + "Row #0: $39,431.67\n"
             + "Row #0: 7,392\n";
         Connection connection = context.getConnectionWithDefaultRole();
@@ -55,9 +55,9 @@ class IndexedValuesTest {
             desiredResult);
 
         // Member keys only work with SsasCompatibleNaming=true
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
 
         // Query using key; expect same result.
         assertQueryReturns(connection,
