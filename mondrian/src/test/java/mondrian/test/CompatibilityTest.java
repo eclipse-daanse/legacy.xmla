@@ -147,10 +147,10 @@ class CompatibilityTest {
         checkAxis(connection, "[Measures].[Unit Sales]", "[mEaSuReS].[Unit Sales]");
         checkAxis(connection, "[Measures].[Unit Sales]", "[measures].[Unit Sales]");
 
-        checkAxis(connection, "[Customers].[All Customers]", "[Customers].[All Customers]");
-        checkAxis(connection, "[Customers].[All Customers]", "[CUSTOMERS].[All Customers]");
-        checkAxis(connection, "[Customers].[All Customers]", "[cUsToMeRs].[All Customers]");
-        checkAxis(connection, "[Customers].[All Customers]", "[customers].[All Customers]");
+        checkAxis(connection, "[Customers].[Customers].[All Customers]", "[Customers].[All Customers]");
+        checkAxis(connection, "[Customers].[Customers].[All Customers]", "[CUSTOMERS].[All Customers]");
+        checkAxis(connection, "[Customers].[Customers].[All Customers]", "[cUsToMeRs].[All Customers]");
+        checkAxis(connection, "[Customers].[Customers].[All Customers]", "[customers].[All Customers]");
     }
 
     /**
@@ -165,10 +165,10 @@ class CompatibilityTest {
         checkAxis(connection, "[Measures].[Unit Sales]", "mEaSuReS.[Unit Sales]");
         checkAxis(connection, "[Measures].[Unit Sales]", "measures.[Unit Sales]");
 
-        checkAxis(connection, "[Customers].[All Customers]", "Customers.[All Customers]");
-        checkAxis(connection, "[Customers].[All Customers]", "CUSTOMERS.[All Customers]");
-        checkAxis(connection, "[Customers].[All Customers]", "cUsToMeRs.[All Customers]");
-        checkAxis(connection, "[Customers].[All Customers]", "customers.[All Customers]");
+        checkAxis(connection, "[Customers].[Customers].[All Customers]", "Customers.[All Customers]");
+        checkAxis(connection, "[Customers].[Customers].[All Customers]", "CUSTOMERS.[All Customers]");
+        checkAxis(connection, "[Customers].[Customers].[All Customers]", "cUsToMeRs.[All Customers]");
+        checkAxis(connection, "[Customers].[Customers].[All Customers]", "customers.[All Customers]");
     }
 
     /**
@@ -187,15 +187,15 @@ class CompatibilityTest {
         checkAxis(connection, "[Measures].[Profit]", "[Measures].[PROFIT]");
         checkAxis(connection, "[Measures].[Profit]", "[Measures].[profit]");
 
-        checkAxis(connection, "[Customers].[All Customers]", "[Customers].[All Customers]");
-        checkAxis(connection, "[Customers].[All Customers]", "[Customers].[ALL CUSTOMERS]");
-        checkAxis(connection, "[Customers].[All Customers]", "[Customers].[aLl CuStOmErS]");
-        checkAxis(connection, "[Customers].[All Customers]", "[Customers].[all customers]");
+        checkAxis(connection, "[Customers].[Customers].[All Customers]", "[Customers].[All Customers]");
+        checkAxis(connection, "[Customers].[Customers].[All Customers]", "[Customers].[ALL CUSTOMERS]");
+        checkAxis(connection, "[Customers].[Customers].[All Customers]", "[Customers].[aLl CuStOmErS]");
+        checkAxis(connection, "[Customers].[Customers].[All Customers]", "[Customers].[all customers]");
 
-        checkAxis(connection, "[Customers].[Mexico]", "[Customers].[Mexico]");
-        checkAxis(connection, "[Customers].[Mexico]", "[Customers].[MEXICO]");
-        checkAxis(connection, "[Customers].[Mexico]", "[Customers].[mExIcO]");
-        checkAxis(connection, "[Customers].[Mexico]", "[Customers].[mexico]");
+        checkAxis(connection, "[Customers].[Customers].[Mexico]", "[Customers].[Mexico]");
+        checkAxis(connection, "[Customers].[Customers].[Mexico]", "[Customers].[MEXICO]");
+        checkAxis(connection, "[Customers].[Customers].[Mexico]", "[Customers].[mExIcO]");
+        checkAxis(connection, "[Customers].[Customers].[Mexico]", "[Customers].[mexico]");
     }
 
     /**
@@ -261,9 +261,9 @@ class CompatibilityTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Product].[ProdCalc]}\n"
+            + "{[Product].[Product].[ProdCalc]}\n"
             + "Axis #2:\n"
-            + "{[Store].[StoreCalc]}\n"
+            + "{[Store].[Store].[StoreCalc]}\n"
             + "Row #0: 1\n");
     }
 
@@ -281,19 +281,19 @@ class CompatibilityTest {
 
         checkAxis(
     		connection,
-            "[Customers].[Mexico]",
+            "[Customers].[Customers].[Mexico]",
             "[Customers].Mexico");
         checkAxis(
     		connection,
-            "[Customers].[Mexico]",
+            "[Customers].[Customers].[Mexico]",
             "[Customers].MEXICO");
         checkAxis(
     		connection,
-            "[Customers].[Mexico]",
+            "[Customers].[Customers].[Mexico]",
             "[Customers].mExIcO");
         checkAxis(
     		connection,
-            "[Customers].[Mexico]",
+            "[Customers].[Customers].[Mexico]",
             "[Customers].mexico");
     }
 
@@ -305,24 +305,24 @@ class CompatibilityTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testHierarchyNames(Context foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
-        checkAxis(connection, "[Customers].[All Customers]", "[Customers].[All Customers]");
+        checkAxis(connection, "[Customers].[Customers].[All Customers]", "[Customers].[All Customers]");
         checkAxis(
     		connection,
-            "[Customers].[All Customers]",
+            "[Customers].[Customers].[All Customers]",
             "[Customers].[Customers].[All Customers]");
         checkAxis(
     		connection,
-            "[Customers].[All Customers]",
+            "[Customers].[Customers].[All Customers]",
             "Customers.[Customers].[All Customers]");
         checkAxis(
     		connection,
-            "[Customers].[All Customers]",
+            "[Customers].[Customers].[All Customers]",
             "[Customers].Customers.[All Customers]");
         if (false) {
             // don't know if this makes sense
             checkAxis(
         		connection,
-                "[Customers].[All Customers]",
+                "[Customers].[Customers].[All Customers]",
                 "[Customers.Customers].[All Customers]");
         }
     }
@@ -413,7 +413,7 @@ class CompatibilityTest {
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Alternative Promotion].[#null]}\n"
+            + "{[Alternative Promotion].[Alternative Promotion].[#null]}\n"
             + "Row #0: \n");
     }
 
@@ -501,8 +501,8 @@ class CompatibilityTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Alternative Promotion].[#null]}\n"
-            + "{[Alternative Promotion].[Promo1]}\n"
+            + "{[Alternative Promotion].[Alternative Promotion].[#null]}\n"
+            + "{[Alternative Promotion].[Alternative Promotion].[Promo1]}\n"
             + "Row #0: 195,448\n"
             + "Row #0: \n");
     }
@@ -627,10 +627,10 @@ class CompatibilityTest {
 
     private void assertAxisWithDimensionPrefix(Connection connection, boolean prefixNeeded) {
         ((TestConfig)connection.getContext().getConfig()).setNeedDimensionPrefix(prefixNeeded);
-        TestUtil.assertAxisReturns(connection, "Sales", "[Gender].[M]", "[Gender].[M]");
-        TestUtil.assertAxisReturns(connection, "Sales", "[Gender].[All Gender].[M]", "[Gender].[M]");
-        TestUtil.assertAxisReturns(connection, "Sales", "[Store].[USA]", "[Store].[USA]");
-        TestUtil.assertAxisReturns(connection, "Sales", "[Store].[All Stores].[USA]", "[Store].[USA]");
+        TestUtil.assertAxisReturns(connection, "Sales", "[Gender].[Gender].[M]", "[Gender].[Gender].[M]");
+        TestUtil.assertAxisReturns(connection, "Sales", "[Gender].[Gender].[All Gender].[M]", "[Gender].[Gender].[M]");
+        TestUtil.assertAxisReturns(connection, "Sales", "[Store].[Store].[USA]", "[Store].[Store].[USA]");
+        TestUtil.assertAxisReturns(connection, "Sales", "[Store].[Store].[All Stores].[USA]", "[Store].[Store].[USA]");
     }
 
     @ParameterizedTest
@@ -639,10 +639,10 @@ class CompatibilityTest {
     	context.getCatalogCache().clear();
     	Connection connection = context.getConnectionWithDefaultRole();
         ((TestConfig)context.getConfig()).setNeedDimensionPrefix(false);
-        TestUtil.assertAxisReturns(connection, "Sales", "{[M]}", "[Gender].[M]");
-        TestUtil.assertAxisReturns(connection, "Sales", "{M}", "[Gender].[M]");
-        TestUtil.assertAxisReturns(connection, "Sales", "{[USA].[CA]}", "[Store].[USA].[CA]");
-        TestUtil.assertAxisReturns(connection, "Sales", "{USA.CA}", "[Store].[USA].[CA]");
+        TestUtil.assertAxisReturns(connection, "Sales", "{[M]}", "[Gender].[Gender].[M]");
+        TestUtil.assertAxisReturns(connection, "Sales", "{M}", "[Gender].[Gender].[M]");
+        TestUtil.assertAxisReturns(connection, "Sales", "{[USA].[CA]}", "[Store].[Store].[USA].[CA]");
+        TestUtil.assertAxisReturns(connection, "Sales", "{USA.CA}", "[Store].[Store].[USA].[CA]");
         ((TestConfig)context.getConfig()).setNeedDimensionPrefix(true);
         TestUtil.assertAxisThrows(
     		connection,

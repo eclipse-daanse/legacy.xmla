@@ -63,16 +63,10 @@ class DefaultMemberFunDefTest {
             executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Time.Weekly].DefaultMember} on columns\n"
                     + "from Sales" );
-        assertEquals(
-            SystemWideProperties.instance().SsasCompatibleNaming
-                ? "All Weeklys"
-                : "All Time.Weeklys",
+        assertEquals("All Weeklys",
             result.getAxes()[ 0 ].getPositions().get( 0 ).get( 0 ).getName() );
 
-        final String memberUname =
-            SystemWideProperties.instance().SsasCompatibleNaming
-                ? "[Time2].[Weekly].[1997].[23]"
-                : "[Time2.Weekly].[1997].[23]";
+        final String memberUname ="[Time2].[Weekly].[1997].[23]";
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
       "Sales",

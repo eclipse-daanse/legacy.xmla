@@ -109,7 +109,7 @@ class ParameterTest {
         assertEquals(m, p.getValue());
         mdx = query.toString();
         assertEqualsVerbose(
-            "select {Parameter(\"Foo\", [Time], [Time].[1997].[Q2].[5], \"Foo\")} ON COLUMNS\n"
+            "select {Parameter(\"Foo\", [Time].[Time], [Time].[Time].[1997].[Q2].[5], \"Foo\")} ON COLUMNS\n"
             + "from [Sales]\n",
             mdx);
     }
@@ -156,7 +156,7 @@ class ParameterTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 135,215\n");
@@ -287,9 +287,9 @@ class ParameterTest {
             "Axis #0:\n"
             + "{}\n"
             + "Axis #1:\n"
-            + "{[Time].[1997]}\n"
+            + "{[Time].[Time].[1997]}\n"
             + "Axis #2:\n"
-            + "{[Gender].[F]}\n"
+            + "{[Gender].[Gender].[F]}\n"
             + "Row #0: 131,558\n";
         assertEqualsVerbose(expected, TestUtil.toString(result));
 
@@ -438,10 +438,7 @@ class ParameterTest {
             "Parameter(\"Foo\", [Time.Weekly], [Time.Weekly].[1997].[40],\"Foo\").Name",
             "40");
         // right dimension, wrong hierarchy
-        final String levelName =
-            SystemWideProperties.instance().SsasCompatibleNaming
-                ? "[Time].[Weekly]"
-                : "[Time.Weekly]";
+        final String levelName = "[Time].[Weekly]";
         assertExprThrows(connection, "Sales",
             "Parameter(\"Foo\",[Time.Weekly],[Time].[1997].[Q1],\"Foo\").Name",
             "Default value of parameter 'Foo' is not consistent with the parameter type 'MemberType<hierarchy="
@@ -508,11 +505,11 @@ class ParameterTest {
         Connection connection = context.getConnectionWithDefaultRole();
         assertExprReturns(connection, "Sales",
             "Parameter(\"Foo\", [Time], [Time].[Time], \"Description\").UniqueName",
-            "[Time].[1997]");
+            "[Time].[Time].[1997]");
 
         assertExprReturns(connection, "Sales",
             "Parameter(\"Foo\", [Time], [Time].[Time].Children.Item(2), \"Description\").UniqueName",
-            "[Time].[1997].[Q3]");
+            "[Time].[Time].[1997].[Q3]");
     }
 
     /**
@@ -543,13 +540,13 @@ class ParameterTest {
             + "     1),\n"
             + "   \"Description\")",
             "Axis #0:\n"
-            + "{[Time].[1997].[Q4].[11]}\n"
+            + "{[Time].[Time].[1997].[Q4].[11]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Drink]}\n"
-            + "{[Product].[Food]}\n"
-            + "{[Product].[Non-Consumable]}\n"
+            + "{[Product].[Product].[Drink]}\n"
+            + "{[Product].[Product].[Food]}\n"
+            + "{[Product].[Product].[Non-Consumable]}\n"
             + "Row #0: 2,344\n"
             + "Row #1: 18,278\n"
             + "Row #2: 4,648\n");
@@ -586,10 +583,10 @@ class ParameterTest {
             + " {[Marital Status].children} on columns\n"
             + "from Sales where Parameter(\"GenderParam\",[Gender],[Gender].[M],\"Which gender?\")",
             "Axis #0:\n"
-            + "{[Gender].[M]}\n"
+            + "{[Gender].[Gender].[M]}\n"
             + "Axis #1:\n"
-            + "{[Marital Status].[M]}\n"
-            + "{[Marital Status].[S]}\n"
+            + "{[Marital Status].[Marital Status].[M]}\n"
+            + "{[Marital Status].[Marital Status].[S]}\n"
             + "Axis #2:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Row #0: 66,460\n"
@@ -694,7 +691,7 @@ class ParameterTest {
         assertEqualsVerbose(
             "with member [Measures].[A string] as 'Parameter(\"S\", STRING, (\"x\" || \"y\"), \"A string parameter\")'\n"
             + "  member [Measures].[A number] as 'Parameter(\"N\", NUMERIC, (2 + 3), \"A numeric parameter\")'\n"
-            + "select {Parameter(\"P\", [Gender], [Gender].[M], \"Which gender?\"), Parameter(\"Q\", [Gender], [Gender].DefaultMember, \"Another gender?\")} ON COLUMNS,\n"
+            + "select {Parameter(\"P\", [Gender].[Gender], [Gender].[Gender].[M], \"Which gender?\"), Parameter(\"Q\", [Gender].[Gender], [Gender].[Gender].DefaultMember, \"Another gender?\")} ON COLUMNS,\n"
             + "  {[Measures].[Unit Sales]} ON ROWS\n"
             + "from [Sales]\n",
             Util.unparse(query));
@@ -715,25 +712,25 @@ class ParameterTest {
         String resultString = TestUtil.toString(result);
         assertEqualsVerbose(
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1]}\n"
+            + "{[Time].[Time].[1997].[Q1]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Food].[Baked Goods]}\n"
-            + "{[Product].[Food].[Baking Goods]}\n"
-            + "{[Product].[Food].[Breakfast Foods]}\n"
-            + "{[Product].[Food].[Canned Foods]}\n"
-            + "{[Product].[Food].[Canned Products]}\n"
-            + "{[Product].[Food].[Dairy]}\n"
-            + "{[Product].[Food].[Deli]}\n"
-            + "{[Product].[Food].[Eggs]}\n"
-            + "{[Product].[Food].[Frozen Foods]}\n"
-            + "{[Product].[Food].[Meat]}\n"
-            + "{[Product].[Food].[Produce]}\n"
-            + "{[Product].[Food].[Seafood]}\n"
-            + "{[Product].[Food].[Snack Foods]}\n"
-            + "{[Product].[Food].[Snacks]}\n"
-            + "{[Product].[Food].[Starchy Foods]}\n"
+            + "{[Product].[Product].[Food].[Baked Goods]}\n"
+            + "{[Product].[Product].[Food].[Baking Goods]}\n"
+            + "{[Product].[Product].[Food].[Breakfast Foods]}\n"
+            + "{[Product].[Product].[Food].[Canned Foods]}\n"
+            + "{[Product].[Product].[Food].[Canned Products]}\n"
+            + "{[Product].[Product].[Food].[Dairy]}\n"
+            + "{[Product].[Product].[Food].[Deli]}\n"
+            + "{[Product].[Product].[Food].[Eggs]}\n"
+            + "{[Product].[Product].[Food].[Frozen Foods]}\n"
+            + "{[Product].[Product].[Food].[Meat]}\n"
+            + "{[Product].[Product].[Food].[Produce]}\n"
+            + "{[Product].[Product].[Food].[Seafood]}\n"
+            + "{[Product].[Product].[Food].[Snack Foods]}\n"
+            + "{[Product].[Product].[Food].[Snacks]}\n"
+            + "{[Product].[Product].[Food].[Starchy Foods]}\n"
             + "Row #0: 1,932\n"
             + "Row #1: 5,045\n"
             + "Row #2: 820\n"
@@ -758,11 +755,11 @@ class ParameterTest {
         resultString = TestUtil.toString(result);
         assertEqualsVerbose(
             "Axis #0:\n"
-            + "{[Time].[1997].[Q1]}\n"
+            + "{[Time].[Time].[1997].[Q1]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Food].[Eggs].[Eggs]}\n"
+            + "{[Product].[Product].[Food].[Eggs].[Eggs]}\n"
             + "Row #0: 918\n",
             resultString);
 
@@ -774,12 +771,12 @@ class ParameterTest {
         resultString = TestUtil.toString(result);
         assertEqualsVerbose(
             "Axis #0:\n"
-            + "{[Time].[1997].[Q2].[4]}\n"
+            + "{[Time].[Time].[1997].[Q2].[4]}\n"
             + "Axis #1:\n"
             + "{[Measures].[Unit Sales]}\n"
             + "Axis #2:\n"
-            + "{[Product].[Food].[Deli].[Meat]}\n"
-            + "{[Product].[Food].[Deli].[Side Dishes]}\n"
+            + "{[Product].[Product].[Food].[Deli].[Meat]}\n"
+            + "{[Product].[Product].[Food].[Deli].[Side Dishes]}\n"
             + "Row #0: 621\n"
             + "Row #1: 187\n",
             resultString);
@@ -1156,7 +1153,7 @@ class ParameterTest {
             mdx = query.toString();
             assertEqualsVerbose(
                 "select {[Measures].[Unit Sales]} ON COLUMNS,\n"
-                + "  Parameter(\"Foo\", [Time], {[Time].[1997].[Q2].[5], [Time].[1997].[Q3]}, \"Foo\") ON ROWS\n"
+                + "  Parameter(\"Foo\", [Time].[Time], {[Time].[Time].[1997].[Q2].[5], [Time].[Time].[1997].[Q3]}, \"Foo\") ON ROWS\n"
                 + "from [Sales]\n",
                 mdx);
 
@@ -1167,8 +1164,8 @@ class ParameterTest {
                 + "Axis #1:\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Time].[1997].[Q2].[5]}\n"
-                + "{[Time].[1997].[Q3]}\n"
+                + "{[Time].[Time].[1997].[Q2].[5]}\n"
+                + "{[Time].[Time].[1997].[Q3]}\n"
                 + "Row #0: 21,081\n"
                 + "Row #1: 65,848\n",
                 TestUtil.toString(result));

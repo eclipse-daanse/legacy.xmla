@@ -42,7 +42,7 @@ class GenerateFunDefTest {
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "Generate([Product].CurrentMember.Children, Crossjoin({[Product].CurrentMember}, Crossjoin([Store].[Store "
                 + "State].Members, [Store Type].Members)), ALL)",
-            "{[Product]}" );
+            "{[Product].[Product]}" );
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "Generate([Product].[All Products].Children, Crossjoin({[Product].CurrentMember}, Crossjoin([Store].[Store "
                 + "State].Members, [Store Type].Members)), ALL)",
@@ -52,7 +52,7 @@ class GenerateFunDefTest {
             "{}" );
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "Generate({[Store].[USA], [Store].[USA].[CA]}, {[Gender].CurrentMember})",
-            "{[Gender]}" );
+            "{[Gender].[Gender]}" );
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "Generate({[Store].[USA], [Store].[USA].[CA]}, {[Gender].[M]})",
             "{}" );
@@ -63,14 +63,14 @@ class GenerateFunDefTest {
     void testGenerate(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Generate({[Store].[USA], [Store].[USA].[CA]}, {[Store].CurrentMember.Children})",
-            "[Store].[USA].[CA]\n"
-                + "[Store].[USA].[OR]\n"
-                + "[Store].[USA].[WA]\n"
-                + "[Store].[USA].[CA].[Alameda]\n"
-                + "[Store].[USA].[CA].[Beverly Hills]\n"
-                + "[Store].[USA].[CA].[Los Angeles]\n"
-                + "[Store].[USA].[CA].[San Diego]\n"
-                + "[Store].[USA].[CA].[San Francisco]" );
+            "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA].[OR]\n"
+                + "[Store].[Store].[USA].[WA]\n"
+                + "[Store].[Store].[USA].[CA].[Alameda]\n"
+                + "[Store].[Store].[USA].[CA].[Beverly Hills]\n"
+                + "[Store].[Store].[USA].[CA].[Los Angeles]\n"
+                + "[Store].[Store].[USA].[CA].[San Diego]\n"
+                + "[Store].[Store].[USA].[CA].[San Francisco]" );
     }
 
     @ParameterizedTest
@@ -79,13 +79,13 @@ class GenerateFunDefTest {
         // SSAS implicitly converts arg #2 to a set
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Generate({[Store].[USA], [Store].[USA].[CA]}, [Store].PrevMember, ALL)",
-            "[Store].[Mexico]\n"
-                + "[Store].[Mexico].[Zacatecas]" );
+            "[Store].[Store].[Mexico]\n"
+                + "[Store].[Store].[Mexico].[Zacatecas]" );
 
         // SSAS implicitly converts arg #1 to a set
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Generate([Store].[USA], [Store].PrevMember, ALL)",
-            "[Store].[Mexico]" );
+            "[Store].[Store].[Mexico]" );
     }
 
     @ParameterizedTest
@@ -95,13 +95,13 @@ class GenerateFunDefTest {
             "Generate({[Store].[USA].[CA], [Store].[USA].[OR].[Portland]},"
                 + " Ascendants([Store].CurrentMember),"
                 + " ALL)",
-            "[Store].[USA].[CA]\n"
-                + "[Store].[USA]\n"
-                + "[Store].[All Stores]\n"
-                + "[Store].[USA].[OR].[Portland]\n"
-                + "[Store].[USA].[OR]\n"
-                + "[Store].[USA]\n"
-                + "[Store].[All Stores]" );
+            "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA]\n"
+                + "[Store].[Store].[All Stores]\n"
+                + "[Store].[Store].[USA].[OR].[Portland]\n"
+                + "[Store].[Store].[USA].[OR]\n"
+                + "[Store].[Store].[USA]\n"
+                + "[Store].[Store].[All Stores]" );
     }
 
     @ParameterizedTest
@@ -110,11 +110,11 @@ class GenerateFunDefTest {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Generate({[Store].[USA].[CA], [Store].[USA].[OR].[Portland]},"
                 + " Ascendants([Store].CurrentMember))",
-            "[Store].[USA].[CA]\n"
-                + "[Store].[USA]\n"
-                + "[Store].[All Stores]\n"
-                + "[Store].[USA].[OR].[Portland]\n"
-                + "[Store].[USA].[OR]" );
+            "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA]\n"
+                + "[Store].[Store].[All Stores]\n"
+                + "[Store].[Store].[USA].[OR].[Portland]\n"
+                + "[Store].[Store].[USA].[OR]" );
     }
 
     @ParameterizedTest
@@ -124,7 +124,7 @@ class GenerateFunDefTest {
             "Generate({([Store].[USA].[CA],[Product].[All Products]), "
                 + "([Store].[USA].[CA],[Product].[All Products])},"
                 + "{([Store].CurrentMember, [Product].CurrentMember)})",
-            "{[Store].[USA].[CA], [Product].[All Products]}" );
+            "{[Store].[Store].[USA].[CA], [Product].[Product].[All Products]}" );
     }
 
     @ParameterizedTest
@@ -137,10 +137,10 @@ class GenerateFunDefTest {
                 + "    TopCount([Product].[Brand Name].members, \n"
                 + "    2,\n"
                 + "    [Measures].[Unit Sales])))",
-            "{[Store].[USA].[CA], [Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos]}\n"
-                + "{[Store].[USA].[CA], [Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Tell Tale]}\n"
-                + "{[Store].[USA].[CA].[San Francisco], [Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Ebony]}\n"
-                + "{[Store].[USA].[CA].[San Francisco], [Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[High "
+            "{[Store].[Store].[USA].[CA], [Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Hermanos]}\n"
+                + "{[Store].[Store].[USA].[CA], [Product].[Food].[Produce].[Product].[Vegetables].[Fresh Vegetables].[Tell Tale]}\n"
+                + "{[Store].[Store].[USA].[CA].[San Francisco], [Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[Ebony]}\n"
+                + "{[Store].[Store].[USA].[CA].[San Francisco], [Product].[Product].[Food].[Produce].[Vegetables].[Fresh Vegetables].[High "
                 + "Top]}" );
     }
 

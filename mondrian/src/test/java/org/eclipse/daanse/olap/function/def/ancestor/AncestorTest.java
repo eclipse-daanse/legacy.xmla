@@ -120,13 +120,13 @@ public class AncestorTest {
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
 	void testAncestorDepends(Context context) {
 		Connection con = context.getConnectionWithDefaultRole();
-		assertExprDependsOn(con, "Ancestor([Store].CurrentMember, [Store].[Store Country]).Name", "{[Store]}");
+		assertExprDependsOn(con, "Ancestor([Store].CurrentMember, [Store].[Store Country]).Name", "{[Store].[Store]}");
 
-		assertExprDependsOn(con, "Ancestor([Store].[All Stores].[USA], [Store].CurrentMember.Level).Name", "{[Store]}");
+		assertExprDependsOn(con, "Ancestor([Store].[All Stores].[USA], [Store].CurrentMember.Level).Name", "{[Store].[Store]}");
 
 		assertExprDependsOn(con, "Ancestor([Store].[All Stores].[USA], [Store].[Store Country]).Name", "{}");
 
-		assertExprDependsOn(con, "Ancestor([Store].CurrentMember, 2+1).Name", "{[Store]}");
+		assertExprDependsOn(con, "Ancestor([Store].CurrentMember, 2+1).Name", "{[Store].[Store]}");
 	}
 
 }

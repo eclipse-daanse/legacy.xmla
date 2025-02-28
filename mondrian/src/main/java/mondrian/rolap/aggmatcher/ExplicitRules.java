@@ -781,7 +781,8 @@ public class ExplicitRules {
                     List<Segment> names = Util.parseIdentifier(nameInner);
                     // must be [hierarchy usage name].[level name]
                     if (!(names.size() == 2
-                        || SystemWideProperties.instance().SsasCompatibleNaming
+                        //|| SystemWideProperties.instance().SsasCompatibleNaming
+                          || true
                         && names.size() == 3))
                     {
                         msgRecorder.reportError(

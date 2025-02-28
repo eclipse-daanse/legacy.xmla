@@ -16723,7 +16723,7 @@ public class SchemaModifiers {
                                             .withRollupPolicyType(RollupPolicyType.PARTIAL)
                                             .withMemberGrants(List.of(
                                             	AccessMemberGrantMappingImpl.builder()
-                                                    .withMember("[Store].[USA].[Non Existent]")
+                                                    .withMember("[Store].[Store].[USA].[Non Existent]")
                                                     .withAccess(AccessMember.ALL)
                                                     .build()
                                             ))

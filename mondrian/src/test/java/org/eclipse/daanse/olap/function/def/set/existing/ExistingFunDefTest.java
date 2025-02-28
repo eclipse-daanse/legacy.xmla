@@ -39,9 +39,9 @@ class ExistingFunDefTest {
                 + "Axis #1:\n"
                 + "{[Measures].[ExistingCount]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Food]}\n"
-                + "{[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Food]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
                 + "Row #0: 8\n"
                 + "Row #1: 62\n"
                 + "Row #2: 32\n" );
@@ -125,10 +125,10 @@ class ExistingFunDefTest {
                 + "  from [Sales]\n"
                 + "  where {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]} ",
             "Axis #0:\n"
-                + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]}\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[subcategorystring]}\n"
-                + "Row #0: {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Drink].[Alcoholic "
+                + "Row #0: {[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Product].[Drink].[Alcoholic "
                 + "Beverages].[Beer and Wine].[Wine]}\n" );
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -138,12 +138,12 @@ class ExistingFunDefTest {
                 + " WHERE {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Drink].[Alcoholic "
                 + "Beverages].[Beer and Wine].[Wine], [Product].[Food].[Eggs].[Eggs] } ",
             "Axis #0:\n"
-                + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]}\n"
-                + "{[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine]}\n"
-                + "{[Product].[Food].[Eggs].[Eggs]}\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer]}\n"
+                + "{[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Wine]}\n"
+                + "{[Product].[Product].[Food].[Eggs].[Eggs]}\n"
                 + "Axis #1:\n"
                 + "{[Measures].[*CALCULATED_MEASURE_1]}\n"
-                + "Row #0: {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Product].[Food].[Eggs].[Eggs]}\n" );
+                + "Row #0: {[Product].[Product].[Drink].[Alcoholic Beverages].[Beer and Wine], [Product].[Food].[Eggs].[Eggs]}\n" );
     }
 
     @ParameterizedTest
@@ -162,10 +162,10 @@ class ExistingFunDefTest {
                 + "{[Measures].[Unit Sales]}\n"
                 + "{[Measures].[Edible Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Food]}\n"
-                + "{[Product].[Non-Consumable]}\n"
-                + "{[Product].[All Products]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Food]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[All Products]}\n"
                 + "Row #0: 24,597\n"
                 + "Row #0: 24,597\n"
                 + "Row #1: 191,940\n"
@@ -197,9 +197,9 @@ class ExistingFunDefTest {
                 + "{[Measures].[Top 10 Brand Sales]}\n"
                 + "{[Measures].[Rest Brand Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Food]}\n"
-                + "{[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Food]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
                 + "Row #0: 24,597\n"
                 + "Row #0: 9,448\n"
                 + "Row #0: 15,149\n"
@@ -227,9 +227,9 @@ class ExistingFunDefTest {
                 + "{[Measures].[StaticSumNC]}\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Drink]}\n"
-                + "{[Product].[Food]}\n"
-                + "{[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[Drink]}\n"
+                + "{[Product].[Product].[Food]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
                 + "Row #0: 50,236\n"
                 + "Row #0: 24,597\n"
                 + "Row #1: 50,236\n"
@@ -249,7 +249,7 @@ class ExistingFunDefTest {
                 + "{[Measures].[StaticSumNC]}\n"
                 + "{[Measures].[Unit Sales]}\n"
                 + "Axis #2:\n"
-                + "{[Product].[Non-Consumable]}\n"
+                + "{[Product].[Product].[Non-Consumable]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #0: 50,236\n" );
     }

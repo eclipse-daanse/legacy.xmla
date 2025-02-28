@@ -31,8 +31,8 @@ class HeadTailFunDefTest {
     void testHead(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Head([Store].Children, 2)",
-            "[Store].[Canada]\n"
-                + "[Store].[Mexico]" );
+            "[Store].[Store].[Canada]\n"
+                + "[Store].[Store].[Mexico]" );
     }
 
     @ParameterizedTest
@@ -48,7 +48,7 @@ class HeadTailFunDefTest {
     void testHeadDefault(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Head([Store].Children)",
-            "[Store].[Canada]" );
+            "[Store].[Store].[Canada]" );
     }
 
     @ParameterizedTest
@@ -56,9 +56,9 @@ class HeadTailFunDefTest {
     void testHeadOvershoot(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Head([Store].Children, 2 + 2)",
-            "[Store].[Canada]\n"
-                + "[Store].[Mexico]\n"
-                + "[Store].[USA]" );
+            "[Store].[Store].[Canada]\n"
+                + "[Store].[Store].[Mexico]\n"
+                + "[Store].[Store].[USA]" );
     }
 
     @ParameterizedTest
@@ -102,8 +102,8 @@ class HeadTailFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[All Customers]}\n"
-                + "{[Customers].[All Customers]}\n"
+                + "{[Customers].[Customers].[All Customers]}\n"
+                + "{[Customers].[Customers].[All Customers]}\n"
                 + "Row #0: 266,773\n"
                 + "Row #0: 266,773\n" );
 
@@ -134,8 +134,8 @@ class HeadTailFunDefTest {
             "Axis #0:\n"
                 + "{}\n"
                 + "Axis #1:\n"
-                + "{[Customers].[COG_OQP_INT_t2]}\n"
-                + "{[Customers].[All Customers]}\n"
+                + "{[Customers].[Customers].[COG_OQP_INT_t2]}\n"
+                + "{[Customers].[Customers].[All Customers]}\n"
                 + "Row #0: 1\n"
                 + "Row #0: 266,773\n" );
 
@@ -148,12 +148,12 @@ class HeadTailFunDefTest {
                 + "    ALL),\n"
                 + "  Tail([Customers].[USA].[OR].Children, 2),"
                 + "  ALL)",
-            "[Customers].[USA].[CA].[West Covina]\n"
-                + "[Customers].[USA].[CA].[Woodland Hills]\n"
-                + "[Customers].[USA].[WA].[Anacortes]\n"
-                + "[Customers].[USA].[WA].[Ballard]\n"
-                + "[Customers].[USA].[OR].[W. Linn]\n"
-                + "[Customers].[USA].[OR].[Woodburn]" );
+            "[Customers].[Customers].[USA].[CA].[West Covina]\n"
+                + "[Customers].[Customers].[USA].[CA].[Woodland Hills]\n"
+                + "[Customers].[Customers].[USA].[WA].[Anacortes]\n"
+                + "[Customers].[Customers].[USA].[WA].[Ballard]\n"
+                + "[Customers].[Customers].[USA].[OR].[W. Linn]\n"
+                + "[Customers].[Customers].[USA].[OR].[Woodburn]" );
     }
 
 
@@ -162,8 +162,8 @@ class HeadTailFunDefTest {
     void testTail(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Tail([Store].Children, 2)",
-            "[Store].[Mexico]\n"
-                + "[Store].[USA]" );
+            "[Store].[Store].[Mexico]\n"
+                + "[Store].[Store].[USA]" );
     }
 
     @ParameterizedTest
@@ -179,7 +179,7 @@ class HeadTailFunDefTest {
     void testTailDefault(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Tail([Store].Children)",
-            "[Store].[USA]" );
+            "[Store].[Store].[USA]" );
     }
 
     @ParameterizedTest
@@ -187,9 +187,9 @@ class HeadTailFunDefTest {
     void testTailOvershoot(Context context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Tail([Store].Children, 2 + 2)",
-            "[Store].[Canada]\n"
-                + "[Store].[Mexico]\n"
-                + "[Store].[USA]" );
+            "[Store].[Store].[Canada]\n"
+                + "[Store].[Store].[Mexico]\n"
+                + "[Store].[Store].[USA]" );
     }
 
     @ParameterizedTest

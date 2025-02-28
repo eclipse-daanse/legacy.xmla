@@ -31,7 +31,7 @@ class PlusOperatorDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPlus(Context context) {
         assertExprDependsOn(context.getConnectionWithDefaultRole(), "1 + 2", "{}" );
-        String s1 = allHiersExcept( "[Measures]", "[Gender]" );
+        String s1 = allHiersExcept( "[Measures]", "[Gender].[Gender]" );
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "([Measures].[Unit Sales], [Gender].[F]) + 2", s1 );
 

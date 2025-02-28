@@ -34,9 +34,9 @@ class IntersectFunDefTest {
             "Intersect({[Time].[1997].[Q2], [Time].[1997], [Time].[1997].[Q1], [Time].[1997].[Q2]}, "
                 + "{[Time].[1998], [Time].[1997], [Time].[1997].[Q2], [Time].[1997]}, "
                 + "ALL)",
-            "[Time].[1997].[Q2]\n"
-                + "[Time].[1997]\n"
-                + "[Time].[1997].[Q2]" );
+            "[Time].[Time].[1997].[Q2]\n"
+                + "[Time].[Time].[1997]\n"
+                + "[Time].[Time].[1997].[Q2]" );
     }
 
     @ParameterizedTest
@@ -48,8 +48,8 @@ class IntersectFunDefTest {
             "Intersect(\n"
                 + "  {[Time].[1997].[Q2], [Time].[1997], [Time].[1997].[Q1], [Time].[1997].[Q2]}, "
                 + "{[Time].[1998], [Time].[1997], [Time].[1997].[Q2], [Time].[1997]})",
-            "[Time].[1997].[Q2]\n"
-                + "[Time].[1997]" );
+            "[Time].[Time].[1997].[Q2]\n"
+                + "[Time].[Time].[1997]" );
     }
 
     @ParameterizedTest
@@ -65,8 +65,8 @@ class IntersectFunDefTest {
                 + "   ([Time].[1997], [Gender].[F]),\n"
                 + "   ([Time].[1997].[Q2], [Gender].[M]),\n"
                 + "   ([Time].[1997], [Gender])})",
-            "{[Time].[1997].[Q2], [Gender].[M]}\n"
-                + "{[Time].[1997], [Gender].[F]}" );
+            "{[Time].[Time].[1997].[Q2], [Gender].[Gender].[M]}\n"
+                + "{[Time].[Time].[1997], [Gender].[Gender].[F]}" );
     }
 
     @ParameterizedTest

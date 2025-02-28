@@ -145,7 +145,7 @@ class Ssas2005CompatibilityTest {
         // If there is a dimension, hierarchy, level with the same name X,
         // then [X].[X] might reasonably resolve to hierarchy or the level.
         // SSAS resolves to hierarchy, old mondrian resolves to level.
-        if (SystemWideProperties.instance().SsasCompatibleNaming) {
+        
             // SSAS gives error with the <Level>.Ordinal function:
             //   The ORDINAL function expects a level expression for
             //   the  argument. A hierarchy expression was used.
@@ -168,37 +168,6 @@ class Ssas2005CompatibilityTest {
             TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
                 "[Currency].[Currency].[Currency].Members.Count",
                 "14");
-        } else {
-            // Old mondrian behavior prefers level.
-            prepareContext(context);
-            Connection connection = context.getConnectionWithDefaultRole();
-            assertExprReturns(connection, "Warehouse and Sales",
-                "[Currency].[Currency].Ordinal",
-                "1");
-
-            // In old mondrian, [Currency].[Currency] resolves to a level,
-            // then gets implicitly converted to a hierarchy.
-            assertExprReturns(connection, "Warehouse and Sales",
-                "[Currency].[Currency].Levels(0).Name",
-                "(All)");
-
-            // Returns the level "[Currency].[Currency]"; the hierarchy would be
-            // "[Currency]"
-            assertExprReturns(connection, "Warehouse and Sales",
-                "[Currency].[Currency].UniqueName",
-                "[Currency].[Currency]");
-
-            // In old mondrian, [Currency].[Currency] resolves to level. There
-            // are 14 hierarchy members (which do not include 'Any currency')
-            assertExprReturns(connection, "Warehouse and Sales",
-                "[Currency].[Currency].Members.Count",
-                "14");
-
-            // Fails to parse 3 levels
-            assertExprThrows(connection, "Warehouse and Sales",
-                "[Currency].[Currency].[Currency].Members.Count",
-                "MDX object '[Currency].[Currency].[Currency]' not found in cube 'Warehouse and Sales'");
-        }
     }
 
     @ParameterizedTest
@@ -221,9 +190,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionDotHierarchyDotLevelDotMembers(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // [dimension].[hierarchy].[level] is valid on dimension with multiple
         // hierarchies;
         // SSAS2005 succeeds
@@ -235,9 +204,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionDotHierarchyDotLevel(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // [dimension].[hierarchy].[level] is valid on dimension with single
         // hierarchy
         // SSAS2005 succeeds
@@ -273,9 +242,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNamingDimensionDotLevel(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // [dimension].[level] is valid if level name is unique within all
         // hierarchies. (Note that [Week] is a level in hierarchy
         // [Time].[Time by Week]; here is no attribute [Time].[Week].)
@@ -302,9 +271,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNamingDimensionDotLevel2(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // Date2 is a level that occurs in only 1 hierarchy
         // There is no attribute called Date2
         runQ(context,
@@ -388,9 +357,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMultipleHierarchyRequiresQualification(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // [dimension].members for a dimension with one hierarchy
         // (and some attributes)
         // SSAS2005 gives error:
@@ -427,7 +396,8 @@ class Ssas2005CompatibilityTest {
             + " {[Store].[Store Country].[USA].CHILDREN} ON ROWS\n"
             + " FROM [Sales]\n"
             + " WHERE ([Measures].[ProfitPercent])";
-        if (SystemWideProperties.instance().SsasCompatibleNaming) {
+        //if (SystemWideProperties.instance().SsasCompatibleNaming) {
+        if (true) {
             assertQueryThrows(context.getConnectionWithDefaultRole(),
                 mdx,
                 "Hierarchy for calculated member '[Time].[First Half 97]' not found");
@@ -472,9 +442,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnqualifiedHierarchy(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // [hierarchy].members for a dimension with one hierarchy
         // (and some attributes)
         // SSAS2005 succeeds
@@ -504,9 +474,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testYtd(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // We use 'Generate' to establish context for Ytd without passing it
         // an explicit argument.
         // SSAS returns [Q1], [Q2], [Q3].
@@ -529,9 +499,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAxesOutOfOrder(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // TODO: run this in SSAS
         // Ssas2000 disallowed out-of-order axes. Don't know about Ssas2005.
         prepareContext(context);
@@ -555,9 +525,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionMembersRequiresHierarchyQualification(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         context.getCatalogCache().clear();
         // [dimension].members for a dimension with multiple hierarchies
         // SSAS2005 gives error:
@@ -575,9 +545,9 @@ class Ssas2005CompatibilityTest {
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionMemberRequiresHierarchyQualification(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // [dimension].CurrentMember
         // SSAS2005 gives error:
         //   Query (1, 8) The 'Product' dimension contains more than
@@ -642,9 +612,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testImplicitCurrentMemberRequiresHierarchyQualification(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // a function that causes an implicit call to CurrentMember
         // SSAS2005 gives error:
         //   Query (1, 8) The 'Product' dimension contains more than
@@ -670,9 +640,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testUnqualifiedHierarchyCurrentMember(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // [hierarchy].CurrentMember
         // SSAS2005 succeeds
         runQ(context,
@@ -952,9 +922,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionWithMultipleHierarchiesDotParent(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // [Dimension].Parent
         // SSAS2005 returns error:
         //   The 'Product' dimension contains more than one hierarchy,
@@ -1094,9 +1064,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDupHierarchyOnAxes(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // same hierarchy on both axes
         // SSAS2005 gives error:
         //   The Products hierarchy already appears in the Axis0 axis.
@@ -1126,9 +1096,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionDotHierarchyOnAxis(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // Dimension is implicitly converted to member
         // so is OK on axis.
         runQ(context,
@@ -1268,9 +1238,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMemberIdentifiedByDimensionAndKey(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // Member identified by dimension, key;
         // works on SSAS;
         // gives {[Washington Berry Juice], 231}.
@@ -1285,9 +1255,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDimensionHierarchyKey(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // member identified by dimension, hierarchy, key
         // works on SSAS
         // gives {[Washington Berry Juice], 231}
@@ -1301,9 +1271,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCompoundKey(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // compound key
         // succeeds on SSAS
         prepareContext(context);
@@ -1335,9 +1305,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCompoundKeyStringBad(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // too few values in key
         prepareContext(context);
         assertQueryThrows(context.getConnectionWithDefaultRole(),
@@ -1365,9 +1335,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCompoundKeyString(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // succeeds on SSAS (gives 1 row)
         prepareContext(context);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1419,9 +1389,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNameAfterCompositeKey(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         prepareContext(context);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] on 0,\n"
@@ -1440,9 +1410,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCompoundKeyAll(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         prepareContext(context);
         assertExprReturns(context.getConnectionWithDefaultRole(), "Warehouse and Sales",
                 "[Customer].Level.Name",
@@ -1458,9 +1428,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCompoundKeyParent(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         prepareContext(context);
         assertAxisReturns(context.getConnectionWithDefaultRole(), "[Warehouse and Sales]",
                 "[Store].[Stores].[Store City].&[San Francisco]&CA.Parent",
@@ -1470,9 +1440,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCompoundKeyNull(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // Note: [Store Size in SQFT].[#null] is the member whose name is null;
         //   [Store Size in SQFT].&[#null] is the member whose key is null.
         // REVIEW: Does SSAS use the same syntax, '&[#null]', for null key?
@@ -1508,9 +1478,9 @@ class Ssas2005CompatibilityTest {
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testKeyNonExistent(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // SSAS gives 1 row
         runQ(context,
             "select [Measures].[Unit Sales] on 0,\n"
@@ -1540,9 +1510,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAxesLabelsOutOfSequence(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // succeeds on SSAS
         prepareContext(context);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1561,9 +1531,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testAxisLabelsNotContiguousFails(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // SSAS gives error:
         //   Query (1, 8) Axis numbers specified in a query must be sequentially
         //   specified, and cannot contain gaps.
@@ -1579,9 +1549,9 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLotsOfAxes(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // lots of axes, mixed ways of specifying axes
         // SSAS succeeds, although Studio says:
         //   Results cannot be displayed for cellsets with more than two axes.
@@ -1760,10 +1730,10 @@ class Ssas2005CompatibilityTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCrossjoinMember(Context context) {
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
             // Can't resolve [Products] under old mondrian
-            return;
-        }
+        //    return;
+        //}
         // Mondrian currently gives error:
         //   No function matches signature 'crossjoin(<Member>, <Set>)'
         if (!IMPLEMENTED) {
@@ -1823,13 +1793,10 @@ class Ssas2005CompatibilityTest {
 
         assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select {"
-            + (SystemWideProperties.instance().SsasCompatibleNaming
-                ? "[SameName].[SameName].[SameName]"
-                : "[SameName].[SameName]")
+            + "[SameName].[SameName].[SameName]"
             + "} on 0 from Sales",
             "Mondrian Error:No function matches signature '{<Level>}'");
 
-        if (SystemWideProperties.instance().SsasCompatibleNaming) {
             assertQueryReturns(context.getConnectionWithDefaultRole(),
                 "select {[SameName].[SameName].[SameName].[SameName]} on 0 from Sales",
                 "Axis #0:\n"
@@ -1837,15 +1804,6 @@ class Ssas2005CompatibilityTest {
                 + "Axis #1:\n"
                 + "{[SameName].[SameName].[SameName]}\n"
                 + "Row #0: \n");
-        } else {
-            assertQueryReturns(context.getConnectionWithDefaultRole(),
-                "select {[SameName].[SameName].[SameName]} on 0 from Sales",
-                "Axis #0:\n"
-                + "{}\n"
-                + "Axis #1:\n"
-                + "{[SameName].[SameName].[SameName]}\n"
-                + "Row #0: \n");
-        }
     }
 
     @Disabled //TODO need investigate
@@ -1923,9 +1881,9 @@ class Ssas2005CompatibilityTest {
             "[Time].[1997].Level.UniqueName",
             timeByWeek + ".[Year2]");
 
-        if (!SystemWideProperties.instance().SsasCompatibleNaming) {
-            return;
-        }
+        //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
+        //    return;
+        //}
         // now for a calc member defined in a query
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Time].[Time2].[Foo] as\n"

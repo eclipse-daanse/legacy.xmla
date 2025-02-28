@@ -49,19 +49,19 @@ class PropertiesFunDefTest {
     void testPropertiesOnDimension(Context context) {
         // [Store] is a dimension. When called with a property like FirstChild,
         // it is implicitly converted to a member.
-        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "[Store].FirstChild", "[Store].[Canada]" );
+        assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "[Store].FirstChild", "[Store].[Store].[Canada]" );
 
         // The same should happen with the <Member>.Properties(<String>)
         // function; now the bug is fixed, it does. Dimension is implicitly
         // converted to member.
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Store].Properties('MEMBER_UNIQUE_NAME')",
-            "[Store].[All Stores]" );
+            "[Store].[Store].[All Stores]" );
 
         // Hierarchy is implicitly converted to member.
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Store].[USA].Hierarchy.Properties('MEMBER_UNIQUE_NAME')",
-            "[Store].[All Stores]" );
+            "[Store].[Store].[All Stores]" );
     }
 
     /**
@@ -102,7 +102,7 @@ class PropertiesFunDefTest {
         Cell cell;
         member = result.getAxes()[ 1 ].getPositions().get( 18 ).get( 0 );
         assertEquals(
-            "[Store].[USA].[WA].[Bellingham].[Store 2]",
+            "[Store].[Store].[USA].[WA].[Bellingham].[Store 2]",
             member.getUniqueName() );
         cell = result.getCell( new int[] { 0, 18 } );
         assertEquals( "2,237", cell.getFormattedValue() );
@@ -110,7 +110,7 @@ class PropertiesFunDefTest {
         assertEquals( ".17", cell.getFormattedValue() );
         member = result.getAxes()[ 1 ].getPositions().get( 3 ).get( 0 );
         assertEquals(
-            "[Store].[Mexico].[DF].[San Andres].[Store 21]",
+            "[Store].[Store].[Mexico].[DF].[San Andres].[Store 21]",
             member.getUniqueName() );
         cell = result.getCell( new int[] { 0, 3 } );
         assertEquals( "", cell.getFormattedValue() );

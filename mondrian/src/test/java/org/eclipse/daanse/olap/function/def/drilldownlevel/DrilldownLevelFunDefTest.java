@@ -30,85 +30,85 @@ class DrilldownLevelFunDefTest {
         // Expect all children of USA
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevel({[Store].[USA]}, [Store].[Store Country])",
-            "[Store].[USA]\n"
-                + "[Store].[USA].[CA]\n"
-                + "[Store].[USA].[OR]\n"
-                + "[Store].[USA].[WA]" );
+            "[Store].[Store].[USA]\n"
+                + "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA].[OR]\n"
+                + "[Store].[Store].[USA].[WA]" );
 
         // Expect same set, because [USA] is already drilled
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevel({[Store].[USA], [Store].[USA].[CA]}, [Store].[Store Country])",
-            "[Store].[USA]\n"
-                + "[Store].[USA].[CA]" );
+            "[Store].[Store].[USA]\n"
+                + "[Store].[Store].[USA].[CA]" );
 
         // Expect drill, because [USA] isn't already drilled. You can't
         // drill down on [CA] and get to [USA]
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevel({[Store].[USA].[CA],[Store].[USA]}, [Store].[Store Country])",
-            "[Store].[USA].[CA]\n"
-                + "[Store].[USA]\n"
-                + "[Store].[USA].[CA]\n"
-                + "[Store].[USA].[OR]\n"
-                + "[Store].[USA].[WA]" );
+            "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA]\n"
+                + "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA].[OR]\n"
+                + "[Store].[Store].[USA].[WA]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevel({[Store].[USA].[CA],[Store].[USA]},, 0)",
-            "[Store].[USA].[CA]\n"
-                + "[Store].[USA].[CA].[Alameda]\n"
-                + "[Store].[USA].[CA].[Beverly Hills]\n"
-                + "[Store].[USA].[CA].[Los Angeles]\n"
-                + "[Store].[USA].[CA].[San Diego]\n"
-                + "[Store].[USA].[CA].[San Francisco]\n"
-                + "[Store].[USA]\n"
-                + "[Store].[USA].[CA]\n"
-                + "[Store].[USA].[OR]\n"
-                + "[Store].[USA].[WA]" );
+            "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA].[CA].[Alameda]\n"
+                + "[Store].[Store].[USA].[CA].[Beverly Hills]\n"
+                + "[Store].[Store].[USA].[CA].[Los Angeles]\n"
+                + "[Store].[Store].[USA].[CA].[San Diego]\n"
+                + "[Store].[Store].[USA].[CA].[San Francisco]\n"
+                + "[Store].[Store].[USA]\n"
+                + "[Store].[Store].[USA].[CA]\n"
+                + "[Store].[Store].[USA].[OR]\n"
+                + "[Store].[Store].[USA].[WA]" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevel({[Store].[USA].[CA],[Store].[USA]} * {[Gender].Members},, 0)",
-            "{[Store].[USA].[CA], [Gender].[All Gender]}\n"
-                + "{[Store].[USA].[CA].[Alameda], [Gender].[All Gender]}\n"
-                + "{[Store].[USA].[CA].[Beverly Hills], [Gender].[All Gender]}\n"
-                + "{[Store].[USA].[CA].[Los Angeles], [Gender].[All Gender]}\n"
-                + "{[Store].[USA].[CA].[San Diego], [Gender].[All Gender]}\n"
-                + "{[Store].[USA].[CA].[San Francisco], [Gender].[All Gender]}\n"
-                + "{[Store].[USA].[CA], [Gender].[F]}\n"
-                + "{[Store].[USA].[CA].[Alameda], [Gender].[F]}\n"
-                + "{[Store].[USA].[CA].[Beverly Hills], [Gender].[F]}\n"
-                + "{[Store].[USA].[CA].[Los Angeles], [Gender].[F]}\n"
-                + "{[Store].[USA].[CA].[San Diego], [Gender].[F]}\n"
-                + "{[Store].[USA].[CA].[San Francisco], [Gender].[F]}\n"
-                + "{[Store].[USA].[CA], [Gender].[M]}\n"
-                + "{[Store].[USA].[CA].[Alameda], [Gender].[M]}\n"
-                + "{[Store].[USA].[CA].[Beverly Hills], [Gender].[M]}\n"
-                + "{[Store].[USA].[CA].[Los Angeles], [Gender].[M]}\n"
-                + "{[Store].[USA].[CA].[San Diego], [Gender].[M]}\n"
-                + "{[Store].[USA].[CA].[San Francisco], [Gender].[M]}\n"
-                + "{[Store].[USA], [Gender].[All Gender]}\n"
-                + "{[Store].[USA].[CA], [Gender].[All Gender]}\n"
-                + "{[Store].[USA].[OR], [Gender].[All Gender]}\n"
-                + "{[Store].[USA].[WA], [Gender].[All Gender]}\n"
-                + "{[Store].[USA], [Gender].[F]}\n"
-                + "{[Store].[USA].[CA], [Gender].[F]}\n"
-                + "{[Store].[USA].[OR], [Gender].[F]}\n"
-                + "{[Store].[USA].[WA], [Gender].[F]}\n"
-                + "{[Store].[USA], [Gender].[M]}\n"
-                + "{[Store].[USA].[CA], [Gender].[M]}\n"
-                + "{[Store].[USA].[OR], [Gender].[M]}\n"
-                + "{[Store].[USA].[WA], [Gender].[M]}" );
+            "{[Store].[Store].[USA].[CA], [Gender].[Gender].[All Gender]}\n"
+                + "{[Store].[Store].[USA].[CA].[Alameda], [Gender].[Gender].[All Gender]}\n"
+                + "{[Store].[Store].[USA].[CA].[Beverly Hills], [Gender].[Gender].[All Gender]}\n"
+                + "{[Store].[Store].[USA].[CA].[Los Angeles], [Gender].[Gender].[All Gender]}\n"
+                + "{[Store].[Store].[USA].[CA].[San Diego], [Gender].[Gender].[All Gender]}\n"
+                + "{[Store].[Store].[USA].[CA].[San Francisco], [Gender].[Gender].[All Gender]}\n"
+                + "{[Store].[Store].[USA].[CA], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA].[CA].[Alameda], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA].[CA].[Beverly Hills], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA].[CA].[Los Angeles], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA].[CA].[San Diego], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA].[CA].[San Francisco], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA].[CA], [Gender].[Gender].[M]}\n"
+                + "{[Store].[Store].[USA].[CA].[Alameda], [Gender].[Gender].[M]}\n"
+                + "{[Store].[Store].[USA].[CA].[Beverly Hills], [Gender].[Gender].[M]}\n"
+                + "{[Store].[Store].[USA].[CA].[Los Angeles], [Gender].[Gender].[M]}\n"
+                + "{[Store].[Store].[USA].[CA].[San Diego], [Gender].[Gender].[M]}\n"
+                + "{[Store].[Store].[USA].[CA].[San Francisco], [Gender].[Gender].[M]}\n"
+                + "{[Store].[Store].[USA], [Gender].[Gender].[All Gender]}\n"
+                + "{[Store].[Store].[USA].[CA], [Gender].[Gender].[All Gender]}\n"
+                + "{[Store].[Store].[USA].[OR], [Gender].[Gender].[All Gender]}\n"
+                + "{[Store].[Store].[USA].[WA], [Gender].[Gender].[All Gender]}\n"
+                + "{[Store].[Store].[USA], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA].[CA], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA].[OR], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA].[WA], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA], [Gender].[Gender].[M]}\n"
+                + "{[Store].[Store].[USA].[CA], [Gender].[Gender].[M]}\n"
+                + "{[Store].[Store].[USA].[OR], [Gender].[Gender].[M]}\n"
+                + "{[Store].[Store].[USA].[WA], [Gender].[Gender].[M]}" );
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevel({[Store].[USA].[CA],[Store].[USA]} * {[Gender].Members},, 1)",
-            "{[Store].[USA].[CA], [Gender].[All Gender]}\n"
-                + "{[Store].[USA].[CA], [Gender].[F]}\n"
-                + "{[Store].[USA].[CA], [Gender].[M]}\n"
-                + "{[Store].[USA].[CA], [Gender].[F]}\n"
-                + "{[Store].[USA].[CA], [Gender].[M]}\n"
-                + "{[Store].[USA], [Gender].[All Gender]}\n"
-                + "{[Store].[USA], [Gender].[F]}\n"
-                + "{[Store].[USA], [Gender].[M]}\n"
-                + "{[Store].[USA], [Gender].[F]}\n"
-                + "{[Store].[USA], [Gender].[M]}" );
+            "{[Store].[Store].[USA].[CA], [Gender].[Gender].[All Gender]}\n"
+                + "{[Store].[Store].[USA].[CA], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA].[CA], [Gender].[Gender].[M]}\n"
+                + "{[Store].[Store].[USA].[CA], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA].[CA], [Gender].[Gender].[M]}\n"
+                + "{[Store].[Store].[USA], [Gender].[Gender].[All Gender]}\n"
+                + "{[Store].[Store].[USA], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA], [Gender].[Gender].[M]}\n"
+                + "{[Store].[Store].[USA], [Gender].[Gender].[F]}\n"
+                + "{[Store].[Store].[USA], [Gender].[Gender].[M]}" );
     }
 
 }

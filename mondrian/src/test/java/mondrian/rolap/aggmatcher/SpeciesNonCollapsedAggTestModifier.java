@@ -240,7 +240,7 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
                             ))
                             .withAggregationLevels(List.of(
                                 AggregationLevelMappingImpl.builder()
-                                    .withName("[Animal.Animals].[Genus]")
+                                    .withName("[Animal].[Animals].[Genus]")
                                     .withColumn(genIdAggSpeciesMart)
                                     .withCollapsed(false)
                                     .build()
@@ -274,15 +274,15 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
                                         .withRollupPolicyType(RollupPolicyType.PARTIAL)
                                         .withMemberGrants(List.of(
                                         	AccessMemberGrantMappingImpl.builder()
-                                                .withMember("[Animal.Animals].[Family].[Loricariidae]")
+                                                .withMember("[Animal].[Animals].[Family].[Loricariidae]")
                                                 .withAccess(AccessMember.ALL)
                                                 .build(),
                                             AccessMemberGrantMappingImpl.builder()
-                                                .withMember("[Animal.Animals].[Family].[Cichlidae]")
+                                                .withMember("[Animal].[Animals].[Family].[Cichlidae]")
                                                 .withAccess(AccessMember.ALL)
                                                 .build(),
                                             AccessMemberGrantMappingImpl.builder()
-                                                .withMember("[Animal.Animals].[Family].[Cyprinidae]")
+                                                .withMember("[Animal].[Animals].[Family].[Cyprinidae]")
                                                 .withAccess(AccessMember.NONE)
                                                 .build()
                                         ))
