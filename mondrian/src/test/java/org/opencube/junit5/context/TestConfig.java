@@ -44,7 +44,6 @@ public class TestConfig implements BasicContextConfig {
 	private int queryTimeout = QUERY_TIMEOUT_DEFAULT_VALUE;// ?
 	private boolean optimizePredicates = OPTIMIZE_PREDICATES_DEFAULT_VALUE;
 	private boolean nullDenominatorProducesNull = NULL_DENOMINATOR_PRODUCES_NULL_DEFAULT_VALUE;
-	private boolean needDimensionPrefix = NEED_DIMENSION_PREFIX_DEFAULT_VALUE;
 	private int nativizeMinThreshold = NATIVIZE_MIN_THRESHOLD_DEFAULT_VALUE;
 	private int nativizeMaxResults = NATIVIZE_MAX_RESULTS_DEFAULT_VALUE;
 	private int sparseSegmentCountThreshold = SPARSE_SEGMENT_COUNT_THRESHOLD_DEFAULT_VALUE;
@@ -401,15 +400,6 @@ public class TestConfig implements BasicContextConfig {
 	@Override
 	public Boolean nullDenominatorProducesNull() {
 		return nullDenominatorProducesNull;
-	}
-
-	public void setNeedDimensionPrefix(boolean needDimensionPrefix) {
-		this.needDimensionPrefix = needDimensionPrefix;
-	}
-
-	@Override
-	public Boolean needDimensionPrefix() {
-		return needDimensionPrefix;
 	}
 
 	public void setNativizeMinThreshold(int nativizeMinThreshold) {

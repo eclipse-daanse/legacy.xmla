@@ -616,49 +616,4 @@ class CompatibilityTest {
             assertEquals("135,215", cell.getPropertyValue("Formatted_Value"));
         }
     }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testWithDimensionPrefix(Context foodMartContext) {
-    	Connection connection = foodMartContext.getConnectionWithDefaultRole();
-        assertAxisWithDimensionPrefix(connection, true);
-        assertAxisWithDimensionPrefix(connection, false);
-    }
-
-    private void assertAxisWithDimensionPrefix(Connection connection, boolean prefixNeeded) {
-        ((TestConfig)connection.getContext().getConfig()).setNeedDimensionPrefix(prefixNeeded);
-        TestUtil.assertAxisReturns(connection, "Sales", "[Gender].[Gender].[M]", "[Gender].[Gender].[M]");
-        TestUtil.assertAxisReturns(connection, "Sales", "[Gender].[Gender].[All Gender].[M]", "[Gender].[Gender].[M]");
-        TestUtil.assertAxisReturns(connection, "Sales", "[Store].[Store].[USA]", "[Store].[Store].[USA]");
-        TestUtil.assertAxisReturns(connection, "Sales", "[Store].[Store].[All Stores].[USA]", "[Store].[Store].[USA]");
-    }
-
-    @ParameterizedTest
-    @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testWithNoDimensionPrefix(Context context) {
-    	context.getCatalogCache().clear();
-    	Connection connection = context.getConnectionWithDefaultRole();
-        ((TestConfig)context.getConfig()).setNeedDimensionPrefix(false);
-        TestUtil.assertAxisReturns(connection, "Sales", "{[M]}", "[Gender].[Gender].[M]");
-        TestUtil.assertAxisReturns(connection, "Sales", "{M}", "[Gender].[Gender].[M]");
-        TestUtil.assertAxisReturns(connection, "Sales", "{[USA].[CA]}", "[Store].[Store].[USA].[CA]");
-        TestUtil.assertAxisReturns(connection, "Sales", "{USA.CA}", "[Store].[Store].[USA].[CA]");
-        ((TestConfig)context.getConfig()).setNeedDimensionPrefix(true);
-        TestUtil.assertAxisThrows(
-    		connection,
-            "{[M]}",
-            "MDX object '[M]' not found in cube 'Sales'", "Sales");
-        TestUtil.assertAxisThrows(
-    		connection,
-            "{M}",
-            "MDX object 'M' not found in cube 'Sales'", "Sales");
-        TestUtil.assertAxisThrows(
-    		connection,
-            "{[USA].[CA]}",
-            "MDX object '[USA].[CA]' not found in cube 'Sales'", "Sales");
-        TestUtil.assertAxisThrows(
-    		connection,
-            "{USA.CA}",
-            "MDX object 'USA.CA' not found in cube 'Sales'", "Sales");
-    }
 }

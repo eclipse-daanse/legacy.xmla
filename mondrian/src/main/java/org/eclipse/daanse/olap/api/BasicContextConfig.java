@@ -361,10 +361,6 @@ public interface BasicContextConfig {
     @AttributeDefinition(name = "%ignoreMeasureForNonJoiningDimension.name", description = "%ignoreMeasureForNonJoiningDimension.description", type = AttributeType.BOOLEAN)
     default Boolean ignoreMeasureForNonJoiningDimension() { return IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION_DEFAULT_VALUE; }
 
-    //Property determines if elements of dimension (levels, hierarchies, members) need to be prefixed with dimension name in MDX query. For example when the property is true, the following queries will error out. The same queries will work when this property is set to false. select {[M]} on 0 from sales select {[USA]} on 0 from sales select {[USA].[CA].[Santa Monica]}  on 0 from sales When the property is set to true, any query where elements are prefixed with dimension name as below will work select {[Gender].[F]} on 0 from sales select {[Customers].[Santa Monica]} on 0 from sales. Please note that this property does not govern the behaviour wherein [Gender].[M] is resolved into a fully qualified [Gender].[M] In a scenario where the schema is very large and dimensions have large number of members a MDX query that has a invalid member in it will cause mondrian to to go through all the dimensions, levels, hierarchies,  members and properties trying to resolve the element name. This behavior consumes considerable time and resources on the server. Setting this property to true will make it fail fast in a scenario where it is desirable.
-    @AttributeDefinition(name = "%needDimensionPrefix.name", description = "%needDimensionPrefix.description", type = AttributeType.BOOLEAN)
-    default Boolean needDimensionPrefix() { return NEED_DIMENSION_PREFIX_DEFAULT_VALUE; }
-
     //Property that controls the behavior of {@link Property#SOLVE_ORDER solve order} of calculated members and sets. Valid values are "scoped" and "absolute" (the default). See  {@link mondrian.olap.SolveOrderMode} for details.
     @AttributeDefinition(name = "%solveOrderMode.name", description = "%solveOrderMode.description", type = AttributeType.STRING)
     default String solveOrderMode() { return SOLVE_ORDER_MODE_DEFAULT_VALUE; }
