@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:roma="https://www.daanse.org/spec/org.eclipse.daanse.rolap.mapping">
+  <roma:InlineTableQuery id="FactQuery" alias="Fact" table="Fact"/>
+  <roma:Catalog description="Schema of a minimal cube consisting of one measurement and based on an virtual inline table" name="CubeOneMeasureInlineTable" cubes="CubeOneMeasure" dbschemas="databaseSchema"/>
+  <roma:DatabaseSchema id="databaseSchema">
+    <tables xsi:type="roma:InlineTable" id="Fact" name="Fact">
+      <columns id="Fact_KEY" name="KEY" type="VARCHAR"/>
+      <columns id="Fact_VALUE" name="VALUE" type="INTEGER"/>
+      <rows>
+        <rowValues column="Fact_KEY" value="A"/>
+        <rowValues column="Fact_VALUE" value="100.5"/>
+      </rows>
+    </tables>
+  </roma:DatabaseSchema>
+  <roma:PhysicalCube id="CubeOneMeasure" name="CubeOneMeasure" query="FactQuery">
+    <measureGroups>
+      <measures id="Measure-Sum" name="Measure-Sum" column="Fact_VALUE"/>
+    </measureGroups>
+  </roma:PhysicalCube>
+</xmi:XMI>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:roma="https://www.daanse.org/spec/org.eclipse.daanse.rolap.mapping">
+  <roma:Catalog description="Minimal Cube With MeasureExpression" name="Minimal_Cubes_With_MeasureExpression" cubes="CubeOneNumericMeasureDifferentFormatStrings" dbschemas="databaseSchema"/>
+  <roma:DatabaseSchema id="databaseSchema">
+    <tables xsi:type="roma:PhysicalTable" id="FACT" name="FACT">
+      <columns id="Fact_KEY" name="KEY" type="VARCHAR"/>
+      <columns id="Fact_VALUE" name="VALUE" type="INTEGER"/>
+      <columns id="Fact_VALUE_NUMERIC" name="VALUE_NUMERIC" type="NUMERIC"/>
+    </tables>
+    <tables xsi:type="roma:PhysicalTable" id="MEASURE_TABLE" name="MEASURE_TABLE">
+      <columns id="MEASURE_TABLE_ID" name="ID" type="INTEGER"/>
+      <columns id="MEASURE_TABLE_VALUE" name="VALUE" type="INTEGER"/>
+      <columns id="MEASURE_TABLE_FLAG" name="FLAG" type="INTEGER"/>
+    </tables>
+  </roma:DatabaseSchema>
+  <roma:TableQuery id="FactQuery" table="FACT"/>
+  <roma:PhysicalCube id="CubeOneNumericMeasureDifferentFormatStrings" name="CubeOneNumericMeasureDifferentFormatStrings" query="FactQuery">
+    <measureGroups>
+      <measures id="Measure1-Sum" name="Measure1-Sum">
+        <measureExpression>
+          <sqls sql="(select sum(&quot;MEASURE_TABLE&quot;.&quot;VALUE&quot;) from &quot;MEASURE_TABLE&quot; where &quot;MEASURE_TABLE&quot;.&quot;FLAG&quot; = 1)">
+            <dialects>generic</dialects>
+            <dialects>h2</dialects>
+          </sqls>
+        </measureExpression>
+      </measures>
+      <measures id="Measure2-Sum" name="Measure2-Sum">
+        <measureExpression>
+          <sqls sql="(CASE WHEN &quot;FACT&quot;.&quot;VALUE&quot; > 21 THEN 50 ELSE &quot;FACT&quot;.&quot;VALUE&quot; END)">
+            <dialects>generic</dialects>
+            <dialects>h2</dialects>
+          </sqls>
+        </measureExpression>
+      </measures>
+    </measureGroups>
+  </roma:PhysicalCube>
+</xmi:XMI>

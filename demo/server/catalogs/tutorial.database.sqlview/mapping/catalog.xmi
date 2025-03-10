@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:roma="https://www.daanse.org/spec/org.eclipse.daanse.rolap.mapping">
+  <roma:Catalog id="_cat" name="Database - SqlView" dbschemas="_dbschema"/>
+  <roma:DatabaseSchema id="_dbschema">
+    <tables xsi:type="roma:SqlView" id="_tab" name="sqlview">
+      <columns id="_col" name="ColumnOne" type="VARCHAR"/>
+      <sqlStatements sql="select t.c as ColumnOne from table t">
+        <dialects>h2</dialects>
+      </sqlStatements>
+    </tables>
+  </roma:DatabaseSchema>
+</xmi:XMI>
