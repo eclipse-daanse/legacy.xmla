@@ -139,6 +139,8 @@ public interface Context {
 
     BasicContextConfig getConfig();
 
+    <T> T getConfigValue(String key, T dflt ,Class<T> clazz); 
+
     Semaphore getQueryLimitSemaphore();
 
 	Optional<Map<Object, Object>> getSqlMemberSourceValuePool();

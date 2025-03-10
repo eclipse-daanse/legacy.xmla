@@ -139,13 +139,11 @@ import mondrian.olap.CubeBase;
 import mondrian.olap.FormulaImpl;
 import mondrian.olap.IdImpl;
 import mondrian.olap.NameResolverImpl;
-import mondrian.olap.StandardProperty;
 import mondrian.olap.QueryAxisImpl;
 import mondrian.olap.QueryImpl;
 import mondrian.olap.RoleImpl;
 import mondrian.olap.SetBase;
 import mondrian.olap.StandardProperty;
-import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.exceptions.BadMeasureSourceException;
 import mondrian.olap.exceptions.CalcMemberNotUniqueException;
@@ -217,13 +215,6 @@ public class RolapCube extends CubeBase {
 
     final List<RolapHierarchy> hierarchyList =
         new ArrayList<>();
-
-    /**
-     * Set to true when a cube is being modified after creation.
-     *
-     * @see #isLoadInProgress()
-     */
-    private boolean loadInProgress = false;
 
     private Map<RolapLevel, RolapCubeLevel> virtualToBaseMap =
         new HashMap<>();
@@ -2424,8 +2415,7 @@ public class RolapCube extends CubeBase {
     }
 
     public boolean isLoadInProgress() {
-        return loadInProgress
-            || getCatalog().getCatalogLoadDate() == null;
+        return getCatalog().getCatalogLoadDate() == null;
     }
 
     /**

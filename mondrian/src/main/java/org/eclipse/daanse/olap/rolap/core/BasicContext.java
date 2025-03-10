@@ -28,9 +28,7 @@ import org.eclipse.daanse.olap.api.BasicContextConfig;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.function.FunctionService;
-import org.eclipse.daanse.olap.api.result.Scenario;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
-import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.core.LoggingEventBus;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
@@ -48,15 +46,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import aQute.bnd.metatype.annotations.Designate;
+import mondrian.rolap.AbstractRolapContext;
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapResultShepherd;
-import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.agg.AggregationManager;
 
 @Designate(ocd = BasicContextConfig.class, factory = true)
 @Component(service = Context.class, scope = ServiceScope.SINGLETON)
-public class BasicContext extends AbstractBasicContext implements RolapContext{
+public class BasicContext extends AbstractRolapContext implements RolapContext{
 
 	public static final String PID = "org.eclipse.daanse.olap.rolap.core.BasicContext";
 
@@ -97,8 +96,9 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
     private MdxParserProvider mdxParserProvider;
 
 	@Activate
-	public void activate(Map<String, Object> coniguration) throws Exception {
-		activate1(CONVERTER.convert(coniguration).to(BasicContextConfig.class));
+	public void activate(Map<String, Object> configuration) throws Exception {
+		updateConfiguration(configuration);
+		activate1(CONVERTER.convert(configuration).to(BasicContextConfig.class));
 	}
 
 	public void activate1(BasicContextConfig configuration) throws Exception {
@@ -124,8 +124,9 @@ public class BasicContext extends AbstractBasicContext implements RolapContext{
 	}
 
 	@Deactivate
-	public void deactivate(Map<String, Object> coniguration) throws Exception {
+	public void deactivate(Map<String, Object> configuration) throws Exception {
 		shutdown();
+		updateConfiguration(null);
 	}
 
 	@Override

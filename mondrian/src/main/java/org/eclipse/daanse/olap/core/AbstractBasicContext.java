@@ -15,9 +15,9 @@ package org.eclipse.daanse.olap.core;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.daanse.olap.api.CatalogCache;
@@ -69,6 +69,13 @@ public abstract class AbstractBasicContext implements Context {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBasicContext.class);
 
 	private static final AtomicLong ID_GENERATOR = new AtomicLong();
+	
+	private Map<String, Object> configuration = null;
+
+
+	protected void updateConfiguration(Map<String, Object> configuration) {
+		this.configuration = configuration;
+	}
 
 	@Override
 	protected void finalize() throws Throwable {
@@ -226,5 +233,22 @@ public abstract class AbstractBasicContext implements Context {
 	@Override
 	public CatalogCache getCatalogCache() {
 		return schemaCache;
+	}
+	
+	@Override
+	public <T> T getConfigValue(String key, T dflt, Class<T> clazz) {
+		
+		if (configuration == null) {
+			return dflt;
+		} else {
+			Object value = configuration.get(key);
+			if (value == null) {
+				return dflt;
+			}
+			if (clazz.isInstance(value)) {
+				return clazz.cast(value);
+			}
+			return dflt;
+		}
 	}
 }
