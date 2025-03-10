@@ -24,8 +24,6 @@ import java.util.Set;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Catalog;
-import org.eclipse.daanse.olap.core.AbstractBasicContext;
-//import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.xmla.bridge.ContextGroupXmlaServiceConfig;
 import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
 import org.eclipse.daanse.xmla.api.PropertyDefinition;
@@ -199,9 +197,10 @@ public class OtherDiscoverService {
 
     public List<DiscoverKeywordsResponseRow> discoverKeywords(DiscoverKeywordsRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         List<DiscoverKeywordsResponseRow> result = new ArrayList<>();
-
-        for (String keyword : AbstractBasicContext.KEYWORD_LIST) {
-            result.add(new DiscoverKeywordsResponseRowR(keyword));
+        if (this.contextsListSupplyer.getContexts() != null && !this.contextsListSupplyer.getContexts().isEmpty()) {
+            for (String keyword : this.contextsListSupplyer.getContexts().get(0).getKeywordList()) {
+                result.add(new DiscoverKeywordsResponseRowR(keyword));
+            }
         }
         return result;
     }

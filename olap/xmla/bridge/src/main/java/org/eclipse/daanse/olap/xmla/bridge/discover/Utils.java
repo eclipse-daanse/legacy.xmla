@@ -41,6 +41,7 @@ import org.eclipse.daanse.olap.api.element.KPI;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
+import org.eclipse.daanse.olap.api.element.StoredMeasure;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.result.Property;
 import org.eclipse.daanse.olap.api.result.Property.TypeFlag;
@@ -108,9 +109,6 @@ import org.eclipse.daanse.xmla.model.record.discover.mdschema.properties.MdSchem
 import org.eclipse.daanse.xmla.model.record.discover.mdschema.sets.MdSchemaSetsResponseRowR;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.rolap.RolapAggregator;
-import mondrian.rolap.RolapStoredMeasure;
 
 public class Utils {
 
@@ -2320,25 +2318,25 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalo
     }
 
     private static MeasureAggregatorEnum getAggregator(Member m) {
-        if (m instanceof RolapStoredMeasure rolapStoredMeasure) {
-            RolapAggregator rolapAggregator = rolapStoredMeasure.getAggregator();
-            if (rolapAggregator != null) {
-                if (rolapAggregator == RolapAggregator.Avg) {
+        if (m instanceof StoredMeasure storedMeasure) {
+            String aggregateFunction = storedMeasure.getAggregateFunction();
+            if (aggregateFunction != null) {
+                if (aggregateFunction.equalsIgnoreCase("Avg")) {
                     return MeasureAggregatorEnum.MDMEASURE_AGGR_AVG;
                 }
-                if (rolapAggregator == RolapAggregator.Sum) {
+                if (aggregateFunction.equalsIgnoreCase("Sum")) {
                     return MeasureAggregatorEnum.MDMEASURE_AGGR_SUM;
                 }
-                if (rolapAggregator == RolapAggregator.Count) {
+                if (aggregateFunction.equalsIgnoreCase("Count")) {
                     return MeasureAggregatorEnum.MDMEASURE_AGGR_COUNT;
                 }
-                if (rolapAggregator == RolapAggregator.DistinctCount) {
+                if (aggregateFunction.equalsIgnoreCase("DistinctCount")) {
                     return MeasureAggregatorEnum.MDMEASURE_AGGR_DST;
                 }
-                if (rolapAggregator == RolapAggregator.Max) {
+                if (aggregateFunction.equalsIgnoreCase("Max")) {
                     return MeasureAggregatorEnum.MDMEASURE_AGGR_MAX;
                 }
-                if (rolapAggregator == RolapAggregator.Min) {
+                if (aggregateFunction.equalsIgnoreCase("Min")) {
                     return MeasureAggregatorEnum.MDMEASURE_AGGR_MIN;
                 }
             }

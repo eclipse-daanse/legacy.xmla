@@ -152,6 +152,8 @@ class OtherDiscoverServiceTest {
     @Test
     void discoverKeywords() {
         DiscoverKeywordsRequest request = mock(DiscoverKeywordsRequest.class);
+        when(cls.getContexts()).thenReturn(List.of(context1, context2));
+        when(context1.getKeywordList()).thenReturn(Context.KEYWORD_LIST);
         List<DiscoverKeywordsResponseRow> rows = service.discoverKeywords(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(256)
             .extracting(DiscoverKeywordsResponseRow::keyword)

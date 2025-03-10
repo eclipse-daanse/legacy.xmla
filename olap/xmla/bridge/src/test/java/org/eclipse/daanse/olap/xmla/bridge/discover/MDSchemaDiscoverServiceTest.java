@@ -255,6 +255,8 @@ class MDSchemaDiscoverServiceTest {
 
         when(hierarchy1.getUniqueName()).thenReturn("hierarchy1UniqueName");
         when(hierarchy2.getUniqueName()).thenReturn("hierarchy2UniqueName");
+        when(hierarchy1.getName()).thenReturn("hierarchy1Name");
+        when(hierarchy2.getName()).thenReturn("hierarchy2Name");
         when(hierarchy1.getLevels()).thenAnswer(setupDummyArrayAnswer(level1));
         when(hierarchy2.getLevels()).thenAnswer(setupDummyArrayAnswer(level1));
         when(level1.getLevelType()).thenReturn(LevelType.REGULAR);
@@ -401,29 +403,29 @@ class MDSchemaDiscoverServiceTest {
         assertThat(rows).isNotNull().hasSize(8);
 
         checkMdSchemaHierarchiesResponseRow(rows.get(0), "schema2Name", "schema2Name", "cube1Name",
-            "dimension1UniqueName", "cube1Name Cube - hierarchy1Name Hierarchy",
+            "dimension1UniqueName", "cube1Name Cube - dimension1Name.hierarchy1Name Hierarchy",
             "hierarchy1Name", 0, "hierarchy1UniqueName");
         checkMdSchemaHierarchiesResponseRow(rows.get(1), "schema2Name", "schema2Name", "cube1Name",
-            "dimension2UniqueName", "cube1Name Cube - hierarchy1Name Hierarchy",
+            "dimension2UniqueName", "cube1Name Cube - dimension2Name.hierarchy1Name Hierarchy",
             "hierarchy1Name", 2, "hierarchy1UniqueName");
         checkMdSchemaHierarchiesResponseRow(rows.get(2), "schema2Name", "schema2Name", "cube2Name",
-            "dimension1UniqueName", "cube2Name Cube - hierarchy1Name Hierarchy",
+            "dimension1UniqueName", "cube2Name Cube - dimension1Name.hierarchy1Name Hierarchy",
             "hierarchy1Name", 0, "hierarchy1UniqueName");
         checkMdSchemaHierarchiesResponseRow(rows.get(3), "schema2Name", "schema2Name", "cube2Name",
-            "dimension2UniqueName", "cube2Name Cube - hierarchy1Name Hierarchy",
+            "dimension2UniqueName", "cube2Name Cube - dimension2Name.hierarchy1Name Hierarchy",
             "hierarchy1Name", 2, "hierarchy1UniqueName");
 
         checkMdSchemaHierarchiesResponseRow(rows.get(4), "schema2Name", "schema2Name", "cube1Name",
-            "dimension1UniqueName", "cube1Name Cube - hierarchy2Name Hierarchy",
+            "dimension1UniqueName", "cube1Name Cube - dimension1Name.hierarchy2Name Hierarchy",
             "hierarchy2Name", 1, "hierarchy2UniqueName");
         checkMdSchemaHierarchiesResponseRow(rows.get(5), "schema2Name", "schema2Name", "cube1Name",
-            "dimension2UniqueName", "cube1Name Cube - hierarchy2Name Hierarchy",
+            "dimension2UniqueName", "cube1Name Cube - dimension2Name.hierarchy2Name Hierarchy",
             "hierarchy2Name", 3, "hierarchy2UniqueName");
         checkMdSchemaHierarchiesResponseRow(rows.get(6), "schema2Name", "schema2Name", "cube2Name",
-            "dimension1UniqueName", "cube2Name Cube - hierarchy2Name Hierarchy",
+            "dimension1UniqueName", "cube2Name Cube - dimension1Name.hierarchy2Name Hierarchy",
             "hierarchy2Name", 1, "hierarchy2UniqueName");
         checkMdSchemaHierarchiesResponseRow(rows.get(7), "schema2Name", "schema2Name", "cube2Name",
-            "dimension2UniqueName", "cube2Name Cube - hierarchy2Name Hierarchy",
+            "dimension2UniqueName", "cube2Name Cube - dimension2Name.hierarchy2Name Hierarchy",
             "hierarchy2Name", 3, "hierarchy2UniqueName");
     }
 
@@ -557,7 +559,7 @@ class MDSchemaDiscoverServiceTest {
             "level1Name", "level1UniqueName",
             "level1Caption", 0,
             1, LevelTypeEnum.ALL,
-            "cube1Name Cube - hierarchy1Name Hierarchy - level1Name Level");
+            "cube1Name Cube - dimension1UniqueName.hierarchy1Name Hierarchy - level1Name Level");
         checkMdSchemaLevelsResponseRow(rows.get(1),
             "schema2Name", "cube1Name",
             "dimension1UniqueName", "hierarchy1UniqueName",
@@ -807,6 +809,8 @@ class MDSchemaDiscoverServiceTest {
 
         when(dimension1.getHierarchies()).thenAnswer(setupDummyArrayAnswer(hierarchy1, hierarchy2));
         when(dimension2.getHierarchies()).thenAnswer(setupDummyArrayAnswer(hierarchy1, hierarchy2));
+        when(dimension1.getName()).thenReturn("dimension1Name");
+        when(dimension2.getName()).thenReturn("dimension2Name");
         when(dimension1.getUniqueName()).thenReturn("dimension1UniqueName");
         when(dimension2.getUniqueName()).thenReturn("dimension2UniqueName");
 
@@ -823,12 +827,12 @@ class MDSchemaDiscoverServiceTest {
         checkMdSchemaPropertiesResponseRow(rows.get(0), "schema2Name", "cube1Name",
             "dimension1UniqueName", "hierarchy1UniqueName", "level1UniqueName", PropertyTypeEnum.PROPERTY_MEMBER,
             "property1Name", "property1Caption", LevelDbTypeEnum.DBTYPE_WSTR,
-            "cube1Name Cube - hierarchy1Name Hierarchy - level1Name Level - property1Name Property",
+            "cube1Name Cube - dimension1Name.hierarchy1Name Hierarchy - level1Name Level - property1Name Property",
             PropertyContentTypeEnum.REGULAR);
         checkMdSchemaPropertiesResponseRow(rows.get(31), "schema2Name", "cube2Name",
                 "dimension2UniqueName", "hierarchy2UniqueName", "level2UniqueName", PropertyTypeEnum.PROPERTY_MEMBER,
                 "property2Name", "property2Caption", LevelDbTypeEnum.DBTYPE_WSTR,
-                "cube2Name Cube - hierarchy2Name Hierarchy - level2Name Level - property2Name Property",
+                "cube2Name Cube - dimension2Name.hierarchy2Name Hierarchy - level2Name Level - property2Name Property",
                 PropertyContentTypeEnum.REGULAR);
 
     }

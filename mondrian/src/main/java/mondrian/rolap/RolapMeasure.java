@@ -11,7 +11,7 @@
 
 package mondrian.rolap;
 
-import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.Measure;
 
 /**
  * Interface implemented by all measures (both stored and calculated).
@@ -19,7 +19,7 @@ import org.eclipse.daanse.olap.api.element.Member;
  * @author jhyde
  * @since 10 August, 2001
  */
-public interface RolapMeasure extends Member {
+public interface RolapMeasure extends Measure {
     /**
      * Returns the object that formats cells of this measure, or null to use
      * default formatting.

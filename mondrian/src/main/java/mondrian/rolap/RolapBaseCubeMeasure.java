@@ -204,4 +204,9 @@ public class RolapBaseCubeMeasure
             return Datatype.VARCHAR;
         }
     }
+
+    @Override
+    public String getAggregateFunction() {
+        return getAggregator().getName();
+    }
 }

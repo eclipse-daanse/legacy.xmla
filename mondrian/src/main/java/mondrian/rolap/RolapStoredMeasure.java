@@ -13,6 +13,7 @@
 
 package mondrian.rolap;
 
+import org.eclipse.daanse.olap.api.element.StoredMeasure;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 
 /**
@@ -25,7 +26,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
  * @author jhyde
  * @since 10 August, 2001
  */
-public interface RolapStoredMeasure extends RolapMeasure {
+public interface RolapStoredMeasure extends RolapMeasure, StoredMeasure {
     /**
      * Returns the cube this measure belongs to.
      */

@@ -82,4 +82,9 @@ public class RolapVirtualCubeMeasure
 	public MetaData getMetaData() {
         return metaData;
     }
+
+    @Override
+    public String getAggregateFunction() {
+        return getAggregator().getName();
+    }
 }

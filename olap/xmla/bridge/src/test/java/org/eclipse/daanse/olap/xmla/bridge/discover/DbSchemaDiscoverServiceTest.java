@@ -373,7 +373,9 @@ class DbSchemaDiscoverServiceTest {
         when(hierar1.getLevels()).thenAnswer(setupDummyArrayAnswer(level1, level2));
         when(hierar1.getName()).thenReturn("hierarchy1Name");
 
+        when(dim1.getName()).thenReturn("dim1Name");
         when(dim1.getHierarchies()).thenAnswer(setupDummyArrayAnswer(hierar1, hierar2));
+        when(dim2.getName()).thenReturn("dim2Name");
         when(dim2.getHierarchies()).thenAnswer(setupDummyArrayAnswer(hierar1, hierar2));
 
         when(cub1.getName()).thenReturn("cube1Name");
@@ -385,14 +387,14 @@ class DbSchemaDiscoverServiceTest {
         List<DbSchemaTablesResponseRow> rows = service.dbSchemaTables(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(10);
         checkDbSchemaTablesResponseRow(rows.get(0), "schema2Name", "cube1Name", "TABLE", "schema2Name - cube1Name Cube");
-        checkDbSchemaTablesResponseRow(rows.get(1), "schema2Name", "cube1Name:hierarchy1Name:level1Name",
+        checkDbSchemaTablesResponseRow(rows.get(1), "schema2Name", "cube1Name:dim1Name.hierarchy1Name:level1Name",
             "SYSTEM TABLE", "level1Description");
-        checkDbSchemaTablesResponseRow(rows.get(2), "schema2Name", "cube1Name:hierarchy1Name:level2Name",
-            "SYSTEM TABLE", "schema2Name - cube1Name Cube - hierarchy1Name Hierarchy - level2Name Level");     
-        checkDbSchemaTablesResponseRow(rows.get(3), "schema2Name", "cube1Name:hierarchy1Name:level1Name",
+        checkDbSchemaTablesResponseRow(rows.get(2), "schema2Name", "cube1Name:dim1Name.hierarchy1Name:level2Name",
+            "SYSTEM TABLE", "schema2Name - cube1Name Cube - dim1Name.hierarchy1Name Hierarchy - level2Name Level");
+        checkDbSchemaTablesResponseRow(rows.get(3), "schema2Name", "cube1Name:dim2Name.hierarchy1Name:level1Name",
             "SYSTEM TABLE", "level1Description");
-        checkDbSchemaTablesResponseRow(rows.get(4), "schema2Name", "cube1Name:hierarchy1Name:level2Name",
-            "SYSTEM TABLE", "schema2Name - cube1Name Cube - hierarchy1Name Hierarchy - level2Name Level");
+        checkDbSchemaTablesResponseRow(rows.get(4), "schema2Name", "cube1Name:dim2Name.hierarchy1Name:level2Name",
+            "SYSTEM TABLE", "schema2Name - cube1Name Cube - dim2Name.hierarchy1Name Hierarchy - level2Name Level");
     }
 
     @Test
@@ -431,14 +433,14 @@ class DbSchemaDiscoverServiceTest {
         List<DbSchemaTablesResponseRow> rows = service.dbSchemaTables(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(10);
         checkDbSchemaTablesResponseRow(rows.get(0), "schema2Name", "cube1Name", "TABLE", "schema2Name - cube1Name Cube");
-        checkDbSchemaTablesResponseRow(rows.get(1), "schema2Name", "cube1Name:hierarchy1Name:level1Name",
+        checkDbSchemaTablesResponseRow(rows.get(1), "schema2Name", "cube1Name:dimension1Name.hierarchy1Name:level1Name",
             "SYSTEM TABLE", "level1Description");
-        checkDbSchemaTablesResponseRow(rows.get(2), "schema2Name", "cube1Name:hierarchy1Name:level2Name",
-            "SYSTEM TABLE", "schema2Name - cube1Name Cube - hierarchy1Name Hierarchy - level2Name Level");
-        checkDbSchemaTablesResponseRow(rows.get(3), "schema2Name", "cube1Name:hierarchy1Name:level1Name",
+        checkDbSchemaTablesResponseRow(rows.get(2), "schema2Name", "cube1Name:dimension1Name.hierarchy1Name:level2Name",
+            "SYSTEM TABLE", "schema2Name - cube1Name Cube - dimension1Name.hierarchy1Name Hierarchy - level2Name Level");
+        checkDbSchemaTablesResponseRow(rows.get(3), "schema2Name", "cube1Name:dimension2Name.hierarchy1Name:level1Name",
             "SYSTEM TABLE", "level1Description");
-        checkDbSchemaTablesResponseRow(rows.get(4), "schema2Name", "cube1Name:hierarchy1Name:level2Name",
-            "SYSTEM TABLE", "schema2Name - cube1Name Cube - hierarchy1Name Hierarchy - level2Name Level");
+        checkDbSchemaTablesResponseRow(rows.get(4), "schema2Name", "cube1Name:dimension2Name.hierarchy1Name:level2Name",
+            "SYSTEM TABLE", "schema2Name - cube1Name Cube - dimension2Name.hierarchy1Name Hierarchy - level2Name Level");
     }
 
     @Test
