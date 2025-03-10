@@ -139,7 +139,7 @@ public class SystemWideProperties extends MondrianPropertiesBase {
      * particular cube in which it is being used.</p>
      *
      * <p>The default is {@code true}, that is, use a cache. If you wish to use
-     * the member cache control aspects of {@link mondrian.olap.CacheControl},
+     * the member cache control aspects of {@link org.eclipse.daanse.olap.api.CacheControl},
      * you must set this property to {@code false}.</p>
      *
      * <p>RolapCubeMember has recently become more lightweight to

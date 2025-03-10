@@ -10,15 +10,15 @@
 * Contributors:
 *   SmartCity Jena - initial
 */
-
 package org.eclipse.daanse.olap.api.monitor.event;
 
 /**
  * The Record SqlStatementStartEvent.
  *
  * @param sqlStatementEventInfo
- * @param cellRequestCount Number of missed cells that led to this request
+ * @param cellRequestCount      Number of missed cells that led to this request
  */
-public record SqlStatementStartEvent(SqlStatementEventCommon sqlStatementEventCommon, long cellRequestCount) implements SqlStatementEvent {
+public record SqlStatementStartEvent(SqlStatementEventCommon sqlStatementEventCommon, long cellRequestCount)
+        implements SqlStatementEvent {
 
 }

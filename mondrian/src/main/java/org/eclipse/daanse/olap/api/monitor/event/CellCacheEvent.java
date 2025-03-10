@@ -31,41 +31,43 @@ package org.eclipse.daanse.olap.api.monitor.event;
 import org.eclipse.daanse.olap.api.CacheControl;
 
 public sealed interface CellCacheEvent extends ExecutionEvent
-		permits CellCacheSegmentCreateEvent, CellCacheSegmentDeleteEvent {
-	 /**
+        permits CellCacheSegmentCreateEvent, CellCacheSegmentDeleteEvent {
+    /**
      * Enumeration of sources of a cell cache segment.
      */
     public enum Source {
         /**
          * A segment that is placed into the cache by an external cache.
          *
-         * <p>Some caches (e.g. memcached) never generate this kind of
-         * event.</p>
+         * <p>
+         * Some caches (e.g. memcached) never generate this kind of event.
+         * </p>
          *
-         * <p>In JBoss Infinispan, one scenario that causes this kind of event
-         * is as follows. A user issues an MDX query against a different
-         * Mondrian node in the same Infinispan cluster. To resolve missing
-         * cells, that node issues a SQL statement to load a segment. Infinispan
-         * propagates that segment to its peers, and each peer is notified that
-         * an "external segment" is now in the cache.</p>
+         * <p>
+         * In JBoss Infinispan, one scenario that causes this kind of event is as
+         * follows. A user issues an MDX query against a different Mondrian node in the
+         * same Infinispan cluster. To resolve missing cells, that node issues a SQL
+         * statement to load a segment. Infinispan propagates that segment to its peers,
+         * and each peer is notified that an "external segment" is now in the cache.
+         * </p>
          */
         EXTERNAL,
 
         /**
-         * A segment that has been loaded in response to a user query,
-         * and populated by generating and executing a SQL statement.
+         * A segment that has been loaded in response to a user query, and populated by
+         * generating and executing a SQL statement.
          */
         SQL,
 
         /**
-         * a segment that has been loaded in response to a user query,
-         * and populated by rolling up existing cache segments.
+         * a segment that has been loaded in response to a user query, and populated by
+         * rolling up existing cache segments.
          */
         ROLLUP,
 
         /**
-         * a segment that has been deleted by a call through
-         * the {@link CacheControl} API.
+         * a segment that has been deleted by a call through the {@link CacheControl}
+         * API.
          */
         CACHE_CONTROL,
     }

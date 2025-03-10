@@ -17,14 +17,14 @@ import org.eclipse.daanse.olap.api.monitor.event.Event;
 
 public interface EventBus extends java.util.function.Consumer<Event> {
 
-	/**
-	 * Accepts an Event
-	 *
-	 * @param event the event
-	 */
-	@Override
-	default void accept(Event event) {
+    /**
+     * Accepts an Event
+     *
+     * @param event the event
+     */
+    @Override
+    default void accept(Event event) {
 
-	}
+    }
 
 }

@@ -143,7 +143,7 @@ public abstract class AbstractBasicContext implements Context {
 		
 		ConnectionStartEvent connectionStartEvent = new ConnectionStartEvent(new ConnectionEventCommon(
 								new ServertEventCommon(
-				new EventCommon(Instant.now()), getName()), connection.getId()));
+				EventCommon.ofNow(), getName()), connection.getId()));
 		eventBus.accept(connectionStartEvent);
 //				new ConnectionStartEvent(System.currentTimeMillis(), connection.getContext().getName(),
 //				connection.getId())
@@ -163,7 +163,7 @@ public abstract class AbstractBasicContext implements Context {
 		ConnectionEndEvent connectionEndEvent = new ConnectionEndEvent(
 				new ConnectionEventCommon(
 										new ServertEventCommon(
-						new EventCommon(Instant.now()), getName()), connection.getId()));
+										EventCommon.ofNow(), getName()), connection.getId()));
 		eventBus.accept(connectionEndEvent);
 //		new ConnectionEndEvent(System.currentTimeMillis(), getName(), connection.getId())
 	}
@@ -182,7 +182,7 @@ public abstract class AbstractBasicContext implements Context {
 		
 		MdxStatementStartEvent mdxStatementStartEvent = new MdxStatementStartEvent(new MdxStatementEventCommon(
 				new ConnectionEventCommon(
-						new ServertEventCommon(new EventCommon(Instant.now()), getName()),
+						new ServertEventCommon(EventCommon.ofNow(), getName()),
 						connection.getId()),
 				statement.getId()));
 		eventBus.accept(mdxStatementStartEvent);
@@ -205,7 +205,7 @@ public abstract class AbstractBasicContext implements Context {
 		
 		MdxStatementEndEvent mdxStatementEndEvent = new MdxStatementEndEvent(
 				new MdxStatementEventCommon(new ConnectionEventCommon(
-						new ServertEventCommon(new EventCommon(Instant.now()), getName()),
+						new ServertEventCommon(EventCommon.ofNow(), getName()),
 						connection.getId()), statement.getId()));
 		
 		eventBus.accept(mdxStatementEndEvent);

@@ -10,10 +10,9 @@
 * Contributors:
 *   SmartCity Jena - initial
 */
-
 package org.eclipse.daanse.olap.api.monitor.event;
 
 public record ExecutionPhaseEvent(ExecutionEventCommon executionEventCommon, int phase, int hitCount, int missCount,
-		int pendingCount) implements ExecutionEvent{
+        int pendingCount) implements ExecutionEvent {
 
 }

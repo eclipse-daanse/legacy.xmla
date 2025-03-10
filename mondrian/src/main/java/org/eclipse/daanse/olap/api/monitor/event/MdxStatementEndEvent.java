@@ -10,9 +10,8 @@
 * Contributors:
 *   SmartCity Jena - initial
 */
-
 package org.eclipse.daanse.olap.api.monitor.event;
 
-public record MdxStatementEndEvent(MdxStatementEventCommon mdxStatementEventCommon ) implements StatementEvent{
+public record MdxStatementEndEvent(MdxStatementEventCommon mdxStatementEventCommon) implements StatementEvent {
 
 }

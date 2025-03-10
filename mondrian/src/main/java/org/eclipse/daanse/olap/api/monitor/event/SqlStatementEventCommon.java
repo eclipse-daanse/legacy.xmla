@@ -13,22 +13,8 @@
 
 package org.eclipse.daanse.olap.api.monitor.event;
 
-import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEvent.Purpose;
 
-import mondrian.server.LocusImpl;
-
 public record SqlStatementEventCommon(EventCommon eventCommon, long mdxStatementId, long sqlStatementId, String sql,
-		Purpose purpose) {
-
-	public static long mdxStatementIdOf(LocusImpl locus) {
-		if (locus.getExecution() != null) {
-			final Statement statement = locus.getExecution().getMondrianStatement();
-			if (statement != null) {
-				return statement.getId();
-			}
-		}
-		return -1;
-	}
-
+        Purpose purpose) {
 }

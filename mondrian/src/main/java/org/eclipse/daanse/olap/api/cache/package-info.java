@@ -10,8 +10,7 @@
 * Contributors:
 *   SmartCity Jena - initial
 */
-package org.eclipse.daanse.olap.api.monitor.event;
 
-public sealed interface StatementEvent extends OlapEvent permits MdxStatementStartEvent, MdxStatementEndEvent {
-
-}
+@org.osgi.annotation.bundle.Export
+@org.osgi.annotation.versioning.Version("0.0.1")
+package org.eclipse.daanse.olap.api.cache;

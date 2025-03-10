@@ -12,6 +12,7 @@
 */
 package org.eclipse.daanse.olap.api.monitor.event;
 
-public sealed interface OlapEvent extends Event permits ExecutionEvent, SqlStatementEvent, StatementEvent , ConnectionEvent {
+public sealed interface OlapEvent extends Event
+        permits ExecutionEvent, SqlStatementEvent, StatementEvent, ConnectionEvent {
 
 }

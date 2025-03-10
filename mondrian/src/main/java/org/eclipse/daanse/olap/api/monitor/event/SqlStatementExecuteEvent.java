@@ -13,6 +13,7 @@
 
 package org.eclipse.daanse.olap.api.monitor.event;
 
-public record SqlStatementExecuteEvent(SqlStatementEventCommon sqlStatementEventCommon, long executeNanos) implements SqlStatementEvent{
+public record SqlStatementExecuteEvent(SqlStatementEventCommon sqlStatementEventCommon, long executeNanos)
+        implements SqlStatementEvent {
 
 }
