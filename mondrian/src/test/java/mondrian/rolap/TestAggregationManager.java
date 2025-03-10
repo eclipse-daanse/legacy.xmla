@@ -404,7 +404,7 @@ class TestAggregationManager extends BatchTestCase {
         String value = "CA";
         Connection connection = context.getConnectionWithDefaultRole();
         final boolean fail = true;
-        Cube salesCube = connection.getCatalog().lookupCube(cube, fail);
+        Cube salesCube = connection.getCatalog().lookupCube(cube).orElseThrow();
         Member storeSqftMeasure =
             salesCube.getCatalogReader(null).getMemberByUniqueName(
                 Util.parseIdentifier(measure), fail);

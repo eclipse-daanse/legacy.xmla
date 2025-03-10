@@ -3853,7 +3853,7 @@ public class BasicQueryTest {
             + "  </CalculatedMember>\n" + "</Cube>", null, null, null, null );
      */
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier20::new);
-    CatalogReader scr = context.getConnectionWithDefaultRole().getCatalog().lookupCube( cubeName, true ).getCatalogReader( null );
+    CatalogReader scr = context.getConnectionWithDefaultRole().getCatalog().lookupCube( cubeName ).orElseThrow().getCatalogReader( null );
     Member member = scr.getMemberByUniqueName( IdImpl.toList( "Measures", "Unit Sales" ), true );
     Object visible = member.getPropertyValue( StandardProperty.VISIBLE.getName() );
     assertEquals( Boolean.FALSE, visible );

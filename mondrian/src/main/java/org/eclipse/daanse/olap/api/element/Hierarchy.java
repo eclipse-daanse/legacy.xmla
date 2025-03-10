@@ -10,7 +10,6 @@
  * Contributors:
  *  SmartCity Jena - refactor, clean API
  */
-
 package org.eclipse.daanse.olap.api.element;
 
 import java.util.List;
@@ -26,36 +25,42 @@ public interface Hierarchy extends OlapElement, MetaElement {
      * Returns the dimension this hierarchy belongs to.
      */
     @Override
-	Dimension getDimension();
+    Dimension getDimension();
+
     /**
      * Returns the levels in this hierarchy.
      *
-     * <p>If a hierarchy is subject to access-control, some of the levels may
-     * not be visible; use {@link CatalogReader#getHierarchyLevels} instead.
+     * <p>
+     * If a hierarchy is subject to access-control, some of the levels may not be
+     * visible; use {@link CatalogReader#getHierarchyLevels} instead.
      *
      * @post return != null
      */
     Level[] getLevels();
+
     /**
      * Returns the default member of this hierarchy.
      *
-     * <p>If a hierarchy is subject to access-control, the default member may
-     * not be visible, so use {@link CatalogReader#getHierarchyDefaultMember}.
+     * <p>
+     * If a hierarchy is subject to access-control, the default member may not be
+     * visible, so use {@link CatalogReader#getHierarchyDefaultMember}.
      *
      * @post return != null
      */
     Member getDefaultMember();
+
     /**
      * Returns the "All" member of this hierarchy.
      *
      * @post return != null
      */
     Member getAllMember();
+
     /**
-     * Returns a special member representing the "null" value. This never
-     * occurs on an axis, but may occur if functions such as <code>Lead</code>,
-     * <code>NextMember</code> and <code>ParentMember</code> walk off the end
-     * of the hierarchy.
+     * Returns a special member representing the "null" value. This never occurs on
+     * an axis, but may occur if functions such as <code>Lead</code>,
+     * <code>NextMember</code> and <code>ParentMember</code> walk off the end of the
+     * hierarchy.
      *
      * @post return != null
      */
@@ -67,35 +72,35 @@ public interface Hierarchy extends OlapElement, MetaElement {
      * Creates a member of this hierarchy. If this is the measures hierarchy, a
      * calculated member is created, and <code>formula</code> must not be null.
      */
-    Member createMember(
-        Member parent, Level level, String name, Formula formula);
+    Member createMember(Member parent, Level level, String name, Formula formula);
 
     /**
      * Returns the unique name of this hierarchy, always including the dimension
      * name, e.g. "[Time].[Time]", regardless of whether
      * {@link SystemWideProperties#SsasCompatibleNaming} is enabled.
      *
-     * @deprecated Will be removed in mondrian-4.0, when
-     * {@link #getUniqueName()} will have this behavior.
+     * @deprecated Will be removed in mondrian-4.0, when {@link #getUniqueName()}
+     *             will have this behavior.
      *
      * @return Unique name of hierarchy.
      */
     @Deprecated
-	String getUniqueNameSsas();
+    String getUniqueNameSsas();
 
     String getDisplayFolder();
 
     String origin();
 
     List<Member> getRootMembers();
-	/**
-	 * Returns the ordinal of this hierarchy in its cube.
-	 *
-	 * <p>Temporarily defined against RolapHierarchy; will be moved to
-	 * RolapCubeHierarchy as soon as the measures hierarchy is a
-	 * RolapCubeHierarchy.
-	 *
-	 * @return Ordinal of this hierarchy in its cube
-	 */
-	int getOrdinalInCube();
+
+    /**
+     * Returns the ordinal of this hierarchy in its cube.
+     *
+     * <p>
+     * Temporarily defined against RolapHierarchy; will be moved to
+     * RolapCubeHierarchy as soon as the measures hierarchy is a RolapCubeHierarchy.
+     *
+     * @return Ordinal of this hierarchy in its cube
+     */
+    int getOrdinalInCube();
 }

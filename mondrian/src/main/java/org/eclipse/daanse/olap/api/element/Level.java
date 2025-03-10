@@ -17,6 +17,7 @@ package org.eclipse.daanse.olap.api.element;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
 
 import mondrian.olap.AbstractProperty;
 
@@ -31,32 +32,41 @@ public interface Level extends OlapElement, MetaElement {
     /**
      * Returns the depth of this level.
      *
-     * <p>Note #1: In an access-controlled context, the first visible level of
-     * a hierarchy (as returned by {@link CatalogReader#getHierarchyLevels}) may
-     * not have a depth of 0.</p>
+     * <p>
+     * Note #1: In an access-controlled context, the first visible level of a
+     * hierarchy (as returned by {@link CatalogReader#getHierarchyLevels}) may not
+     * have a depth of 0.
+     * </p>
      *
-     * <p>Note #2: In a parent-child hierarchy, the depth of a member (as
-     * returned by {@link CatalogReader#getMemberDepth}) may not be the same as
-     * the depth of its level.
+     * <p>
+     * Note #2: In a parent-child hierarchy, the depth of a member (as returned by
+     * {@link CatalogReader#getMemberDepth}) may not be the same as the depth of its
+     * level.
      */
     int getDepth();
+
     @Override
-	Hierarchy getHierarchy();
+    Hierarchy getHierarchy();
 
     Level getChildLevel();
+
     Level getParentLevel();
+
     boolean isAll();
+
     boolean areMembersUnique();
+
     LevelType getLevelType();
 
     /** Returns properties defined against this level. */
     AbstractProperty[] getProperties();
+
     /** Returns properties defined against this level and parent levels. */
     Property[] getInheritedProperties();
 
     /**
-      * Returns the object that is used to format members of this level.
-      */
+     * Returns the object that is used to format members of this level.
+     */
     MemberFormatter getMemberFormatter();
 
     /**

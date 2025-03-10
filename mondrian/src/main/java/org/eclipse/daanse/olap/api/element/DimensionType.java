@@ -33,7 +33,6 @@ public enum DimensionType {
      */
     MEASURES_DIMENSION("MeasuresDimension");
 
-
     private final String value;
 
     DimensionType(String v) {
@@ -45,7 +44,7 @@ public enum DimensionType {
     }
 
     public static DimensionType fromValue(String v) {
-        for (DimensionType c: DimensionType.values()) {
+        for (DimensionType c : DimensionType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

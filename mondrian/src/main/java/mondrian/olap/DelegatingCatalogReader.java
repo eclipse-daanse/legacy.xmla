@@ -22,6 +22,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.MatchType;
+import org.eclipse.daanse.olap.api.NameResolver;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.Parameter;
@@ -175,7 +176,7 @@ public abstract class DelegatingCatalogReader implements CatalogReader {
     }
 
     @Override
-	public List<NameResolverImpl.Namespace> getNamespaces() {
+	public List<NameResolver.Namespace> getNamespaces() {
         return schemaReader.getNamespaces();
     }
 
@@ -264,7 +265,7 @@ public abstract class DelegatingCatalogReader implements CatalogReader {
     }
 
     @Override
-	public Cube[] getCubes() {
+	public List<Cube> getCubes() {
         return schemaReader.getCubes();
     }
 

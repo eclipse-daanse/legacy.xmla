@@ -12,7 +12,6 @@ package mondrian.rolap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -77,7 +76,6 @@ class RolapCubeDimensionTest {
 
     assertEquals(null, rcd.lookupFactCube(cubeDim, schema));
     verify(schema, times(0)).lookupCube(anyString());
-    verify(schema, times(0)).lookupCube(anyString(), anyBoolean());
   }
 
   @Test

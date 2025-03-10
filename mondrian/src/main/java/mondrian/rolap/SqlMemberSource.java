@@ -81,7 +81,7 @@ class SqlMemberSource
     SqlMemberSource(RolapHierarchy hierarchy) {
         this.hierarchy = hierarchy;
         this.context =
-            hierarchy.getRolapCatalog().getCatalogReader().getContext();
+            hierarchy.getRolapCatalog().getCatalogReaderWithDefaultRole().getContext();
         assignOrderKeys =
             SystemWideProperties.instance().CompareSiblingsByOrderKey;
         oValuePool = context.getSqlMemberSourceValuePool();

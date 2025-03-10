@@ -18,12 +18,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.element.MemberFormatter;
+import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
+import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import mondrian.olap.StandardProperty;
-import mondrian.spi.PropertyFormatter;
 
 /**
  * Unit Test for {@link RolapMemberBase}.
@@ -47,12 +47,12 @@ class RolapMemberBaseTest {
     // mocks
     private Object memberKey;
     private RolapLevel level;
-    private PropertyFormatter propertyFormatter;
+    private MemberPropertyFormatter propertyFormatter;
 
     @BeforeEach
     public void beforeEach() {
         level = mock(RolapLevel.class);
-        propertyFormatter = mock(PropertyFormatter.class);
+        propertyFormatter = mock(MemberPropertyFormatter.class);
         memberKey = Integer.MAX_VALUE;
         RolapHierarchy hierarchy = mock(RolapHierarchy.class);
         RolapDimension dimension = mock(TestPublicRolapDimension.class);
@@ -84,9 +84,9 @@ class RolapMemberBaseTest {
         when(property1.getFormatter()).thenReturn(propertyFormatter);
         RolapProperty[] properties = {property1, property2};
         when(level.getProperties()).thenReturn(properties);
-        when(propertyFormatter.formatProperty(
+        when(propertyFormatter.format(
             any(Member.class),
-            anyString(),
+            any(),
             eq(PROPERTY_VALUE_TO_FORMAT)))
             .thenReturn(FORMATTED_PROPERTY_VALUE);
         rolapMemberBase.setProperty(PROPERTY_NAME_1, PROPERTY_VALUE_TO_FORMAT);
@@ -116,7 +116,7 @@ class RolapMemberBaseTest {
     void testShouldUseMemberFormatterForCaption() {
         MemberFormatter memberFormatter = mock(MemberFormatter.class);
         when(level.getMemberFormatter()).thenReturn(memberFormatter);
-        when(memberFormatter.formatMember(rolapMemberBase))
+        when(memberFormatter.format(rolapMemberBase))
             .thenReturn(FORMATTED_CAPTION);
 
         String caption = rolapMemberBase.getCaption();

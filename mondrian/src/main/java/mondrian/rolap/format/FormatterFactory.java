@@ -13,11 +13,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
-import org.eclipse.daanse.olap.api.element.MemberFormatter;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-
-import mondrian.spi.CellFormatter;
-import mondrian.spi.PropertyFormatter;
+import org.eclipse.daanse.olap.api.formatter.CellFormatter;
+import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
+import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 
 
 /**
@@ -38,7 +37,7 @@ public class FormatterFactory {
         new DefaultFormatter();
 
 
-    private static final PropertyFormatter DEFAULT_PROPERTY_FORMATTER =
+    private static final MemberPropertyFormatter DEFAULT_PROPERTY_FORMATTER =
         new PropertyFormatterAdapter(DEFAULT_FORMATTER);
 
     private static final MemberFormatter DEFAULT_MEMBER_FORMATTER =
@@ -112,7 +111,7 @@ public class FormatterFactory {
      *     if empty context is passed.
      * </p>
      */
-    public PropertyFormatter createPropertyFormatter(
+    public MemberPropertyFormatter createPropertyFormatter(
         FormatterCreateContext context)
     {
         try {

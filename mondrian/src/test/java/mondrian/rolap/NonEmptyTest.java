@@ -6035,7 +6035,7 @@ class NonEmptyTest extends BatchTestCase {
   }
 
   SmartMemberReader getSmartMemberReader( Connection con, String hierName ) {
-    RolapCube cube = (RolapCube) con.getCatalog().lookupCube( "Sales", true );
+    RolapCube cube = (RolapCube) con.getCatalog().lookupCube( "Sales" ).orElseThrow();
     RolapCatalogReader schemaReader =
       (RolapCatalogReader) cube.getCatalogReader();
     RolapHierarchy hierarchy =
@@ -6049,7 +6049,7 @@ class NonEmptyTest extends BatchTestCase {
 
   private SmartMemberReader getSharedSmartMemberReader(
     Connection con, String hierName ) {
-    RolapCube cube = (RolapCube) con.getCatalog().lookupCube( "Sales", true );
+    RolapCube cube = (RolapCube) con.getCatalog().lookupCube( "Sales").orElseThrow();
     RolapCatalogReader schemaReader =
       (RolapCatalogReader) cube.getCatalogReader();
     RolapCubeHierarchy hierarchy =

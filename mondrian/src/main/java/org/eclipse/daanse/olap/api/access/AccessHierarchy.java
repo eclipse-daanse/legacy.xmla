@@ -12,6 +12,9 @@
 */
 package org.eclipse.daanse.olap.api.access;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 public enum AccessHierarchy {
     /** No access to an object and its children. */
     NONE,
@@ -27,4 +30,7 @@ public enum AccessHierarchy {
         return this.name();
     }
 
+
+    public static final Set<AccessHierarchy> ALLOWED_SET = EnumSet.of(AccessHierarchy.NONE, AccessHierarchy.ALL,
+            AccessHierarchy.CUSTOM);
 }

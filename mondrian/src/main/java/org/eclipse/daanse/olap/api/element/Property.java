@@ -28,59 +28,58 @@
 package org.eclipse.daanse.olap.api.element;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
-
-import mondrian.spi.PropertyFormatter;
+import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 
 public interface Property {
 
-	/**
-	 * Returns the datatype of the property.
-	 */
-	Datatype getType();
+    /**
+     * Returns the datatype of the property.
+     */
+    Datatype getType();
 
-	PropertyFormatter getFormatter();
+    MemberPropertyFormatter getFormatter();
 
-	/**
-	 * Returns the caption of this property.
-	 */
-	String getCaption();
+    /**
+     * Returns the caption of this property.
+     */
+    String getCaption();
 
-	/**
-	 * Returns whether this property is for system use only.
-	 */
-	boolean isInternal();
+    /**
+     * Returns whether this property is for system use only.
+     */
+    boolean isInternal();
 
-	/**
-	 * Returns whether this property is a standard member property.
-	 */
-	boolean isMemberProperty();
+    /**
+     * Returns whether this property is a standard member property.
+     */
+    boolean isMemberProperty();
 
-	/**
-	 * Returns whether this property is a standard cell property.
-	 */
-	boolean isCellProperty();
+    /**
+     * Returns whether this property is a standard cell property.
+     */
+    boolean isCellProperty();
 
-	String getName();
+    String getName();
 
-	String getDescription();
+    String getDescription();
 
-	public enum Datatype {
-		TYPE_STRING(null), TYPE_NUMERIC(null), TYPE_INTEGER(BestFitColumnType.INT), TYPE_LONG(BestFitColumnType.LONG),
-		TYPE_BOOLEAN(null), TYPE_DATE(null), TYPE_TIME(null), TYPE_TIMESTAMP(null), TYPE_OTHER(null);
+    public enum Datatype {
+        TYPE_STRING(null), TYPE_NUMERIC(null), TYPE_INTEGER(BestFitColumnType.INT), TYPE_LONG(BestFitColumnType.LONG),
+        TYPE_BOOLEAN(null), TYPE_DATE(null), TYPE_TIME(null), TYPE_TIMESTAMP(null), TYPE_OTHER(null);
 
-		private BestFitColumnType type;
+        private BestFitColumnType type;
 
-		Datatype(BestFitColumnType type) {
-			this.type = type;
-		}
+        Datatype(BestFitColumnType type) {
+            this.type = type;
+        }
 
-		public BestFitColumnType getInternalType() {
-			return type;
-		}
+        public BestFitColumnType getInternalType() {
+            return type;
+        }
 
-		public boolean isNumeric() {
-			return this == TYPE_NUMERIC || this == TYPE_INTEGER || this == TYPE_LONG;
-		}
-	}
+        public boolean isNumeric() {
+            return this == TYPE_NUMERIC || this == TYPE_INTEGER || this == TYPE_LONG;
+        }
+    }
 
 }

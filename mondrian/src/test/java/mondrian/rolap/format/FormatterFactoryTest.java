@@ -13,12 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.eclipse.daanse.olap.api.element.MemberFormatter;
+import org.eclipse.daanse.olap.api.formatter.CellFormatter;
+import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
+import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import mondrian.spi.CellFormatter;
-import mondrian.spi.PropertyFormatter;
 
 class FormatterFactoryTest {
 
@@ -51,7 +50,7 @@ class FormatterFactoryTest {
             factory.createCellFormatter(cellFormatterContext);
         MemberFormatter memberFormatter =
             factory.createRolapMemberFormatter(memberFormatterContext);
-        PropertyFormatter propertyFormatter =
+        MemberPropertyFormatter propertyFormatter =
             factory.createPropertyFormatter(propertyFormatterContext);
 
         assertNotNull(cellFormatter);
@@ -81,7 +80,7 @@ class FormatterFactoryTest {
             factory.createCellFormatter(context);
         MemberFormatter memberFormatter =
             factory.createRolapMemberFormatter(context);
-        PropertyFormatter propertyFormatter =
+        MemberPropertyFormatter propertyFormatter =
             factory.createPropertyFormatter(context);
 
         assertNotNull(cellFormatter);
@@ -119,7 +118,7 @@ class FormatterFactoryTest {
             factory.createCellFormatter(cellFormatterContext);
         MemberFormatter memberFormatter =
             factory.createRolapMemberFormatter(memberFormatterContext);
-        PropertyFormatter propertyFormatter =
+        MemberPropertyFormatter propertyFormatter =
             factory.createPropertyFormatter(propertyFormatterContext);
 
         assertNotNull(cellFormatter);
@@ -155,7 +154,7 @@ class FormatterFactoryTest {
      * When formatter creating is requested,
      * factory should return a default implementation
      * for:
-     * <li>{@link PropertyFormatter}</li>
+     * <li>{@link MemberPropertyFormatter}</li>
      * <li>{@link MemberFormatter}</li>
      * </p>
      */
@@ -164,7 +163,7 @@ class FormatterFactoryTest {
         FormatterCreateContext context =
             new FormatterCreateContext.Builder("name").build();
 
-        PropertyFormatter propertyFormatter =
+        MemberPropertyFormatter propertyFormatter =
             factory.createPropertyFormatter(context);
         MemberFormatter memberFormatter =
             factory.createRolapMemberFormatter(context);

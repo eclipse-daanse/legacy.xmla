@@ -105,8 +105,7 @@ class AccessControlTest {
     void testCatalogReader(Context foodMartContext) {
         final Connection connection = foodMartContext.getConnectionWithDefaultRole();
         Catalog schema = connection.getCatalog();
-        final boolean fail = true;
-        Cube cube = schema.lookupCube("Sales", fail);
+        Cube cube = schema.lookupCube("Sales").orElseThrow();
         final CatalogReader schemaReader =
             cube.getCatalogReader(connection.getRole());
         final CatalogReader schemaReader1 = schemaReader.withoutAccessControl();
@@ -121,7 +120,7 @@ class AccessControlTest {
         final Connection connection = foodMartContext.getConnectionWithDefaultRole();
         RoleImpl role = ((RoleImpl) connection.getRole()).makeMutableClone();
         Catalog schema = connection.getCatalog();
-        Cube salesCube = schema.lookupCube("Sales", true);
+        Cube salesCube = schema.lookupCube("Sales").orElseThrow();
         // todo: add Schema.lookupDimension
         final CatalogReader schemaReader = salesCube.getCatalogReader(role);
         Dimension genderDimension =
@@ -403,7 +402,7 @@ class AccessControlTest {
         final Role role = connection.getRole(); // restricted
         Catalog schema = connection.getCatalog();
         final boolean fail = true;
-        Cube salesCube = schema.lookupCube("Sales", fail);
+        Cube salesCube = schema.lookupCube("Sales").orElseThrow();
         final CatalogReader schemaReader =
             salesCube.getCatalogReader(null).withLocus();
         final Member member =
@@ -420,8 +419,7 @@ class AccessControlTest {
     {
         final Role role = connection.getRole();
         Catalog schema = connection.getCatalog();
-        final boolean fail = true;
-        Cube cube = schema.lookupCube(cubeName, fail);
+        Cube cube = schema.lookupCube(cubeName).orElseThrow();
         final AccessCube actualAccess = role.getAccess(cube);
         assertEquals(expectedAccess, actualAccess, cubeName);
     }
@@ -435,7 +433,7 @@ class AccessControlTest {
         final Role role = connection.getRole();
         Catalog schema = connection.getCatalog();
         final boolean fail = true;
-        Cube cube = schema.lookupCube(cubeName, fail);
+        Cube cube = schema.lookupCube(cubeName).orElseThrow();
         final CatalogReader schemaReader =
             cube.getCatalogReader(null); // unrestricted
         final Hierarchy hierarchy =
@@ -455,7 +453,7 @@ class AccessControlTest {
         final Role role = connection.getRole();
         Catalog schema = connection.getCatalog();
         final boolean fail = true;
-        Cube cube = schema.lookupCube(cubeName, fail);
+        Cube cube = schema.lookupCube(cubeName).orElseThrow();
         final CatalogReader schemaReader =
             cube.getCatalogReader(null); // unrestricted
         final Hierarchy hierarchy =
@@ -984,8 +982,8 @@ class AccessControlTest {
         boolean mustGet = true;
         Connection connection = foodMartContext.getConnectionWithDefaultRole();
         Catalog schema = connection.getCatalog();
-        Cube salesCube = schema.lookupCube("Sales", mustGet);
-        Cube warehouseCube = schema.lookupCube("Warehouse", mustGet);
+        Cube salesCube = schema.lookupCube("Sales").orElseThrow();
+        Cube warehouseCube = schema.lookupCube("Warehouse").orElseThrow();
         Hierarchy measuresInSales = salesCube.lookupHierarchy(
             new IdImpl.NameSegmentImpl("Measures", Quoting.UNQUOTED), false);
         Hierarchy storeInWarehouse = warehouseCube.lookupHierarchy(
@@ -1036,7 +1034,7 @@ class AccessControlTest {
         RoleImpl role = new RoleImpl();
         Catalog schema = connection.getCatalog();
         final boolean fail = true;
-        Cube salesCube = schema.lookupCube("Sales", fail);
+        Cube salesCube = schema.lookupCube("Sales").orElseThrow();
         final CatalogReader schemaReader =
             salesCube.getCatalogReader(null).withLocus();
         Hierarchy storeHierarchy = salesCube.lookupHierarchy(
@@ -1099,7 +1097,7 @@ class AccessControlTest {
         }
 
         // No access to HR cube.
-        Cube hrCube = schema.lookupCube("HR", fail);
+        Cube hrCube = schema.lookupCube("HR").orElseThrow();
         role.grant(hrCube, AccessCube.NONE);
 
         role.makeImmutable();
@@ -1649,7 +1647,7 @@ class AccessControlTest {
     	Connection connection = foodMartContext.getConnection(props);
         final Cube cube =
             connection.getCatalog()
-                .lookupCube("Sales", true);
+                .lookupCube("Sales").orElseThrow();
         final HierarchyAccess accessDetails =
             connection.getRole().getAccessDetails(
                 cube.lookupHierarchy(
@@ -2716,7 +2714,7 @@ class AccessControlTest {
             RoleImpl role = (RoleImpl)this.role;
             role.grant(schema, AccessCatalog.NONE);
 
-            Cube cube = schema.lookupCube("HR", true);
+            Cube cube = schema.lookupCube("HR").orElseThrow();
             role.grant(cube, AccessCube.ALL);
 
             Hierarchy hierarchy = cube.lookupHierarchy(
@@ -2731,7 +2729,7 @@ class AccessControlTest {
             boolean foundMember = false;
 
             List <Member> members =
-                schema.getCatalogReader().withLocus()
+                schema.getCatalogReaderWithDefaultRole().withLocus()
                     .getLevelMembers(topLevel, true);
 
             for (Member member : members) {

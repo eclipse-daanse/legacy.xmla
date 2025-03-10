@@ -468,7 +468,7 @@ public interface CatalogReader {
     /**
      * Returns the list of accessible cubes.
      */
-    Cube[] getCubes();
+    List<Cube> getCubes();
 
     /**
      * Returns a list of calculated members in a given hierarchy.

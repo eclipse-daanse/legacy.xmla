@@ -46,11 +46,11 @@ import java.util.regex.Pattern;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.CacheControl;
+import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Quoting;
-import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -839,11 +839,11 @@ public class TestUtil {
 	public static Cube cubeByName(Connection connection, String cubeName) {
         CatalogReader reader = connection.getCatalogReader().withLocus();
 
-        Cube[] cubes = reader.getCubes();
+        List<Cube> cubes = reader.getCubes();
         return cubeByName(cubeName, cubes);
     }
 
-    public static Cube cubeByName(String cubeName, Cube[] cubes) {
+    public static Cube cubeByName(String cubeName, List<Cube> cubes) {
         Cube resultCube = null;
         for (Cube cube : cubes) {
             if (cubeName.equals(cube.getName())) {
@@ -1654,7 +1654,7 @@ public class TestUtil {
 		// Clear the cache for the Sales cube, so the query runs as if
 		// for the first time. (TODO: Cleaner way to do this.)
 		final Cube salesCube =
-				connection.getCatalog().lookupCube(cube.getName(), true);
+				connection.getCatalog().lookupCube(cube.getName()).orElseThrow();
 		RolapHierarchy hierarchy =
 				(RolapHierarchy) salesCube.lookupHierarchy(
 						new IdImpl.NameSegmentImpl("Store", Quoting.UNQUOTED),
@@ -1886,8 +1886,8 @@ public class TestUtil {
 		}
 	}
 
-    public static Optional<Cube> getCubeByNameFromArray(Cube[] cubes, String name){
-	    return Arrays.stream(cubes).filter(c -> name.equals(c.getName())).findFirst();
+    public static Optional<Cube> getCubeByNameFromArray(List<Cube> cubes, String name){
+	    return cubes.stream().filter(c -> name.equals(c.getName())).findFirst();
     }
 
     public static Optional<Dimension> getDimensionByNameFromArray(Dimension[] dimensions, String name){

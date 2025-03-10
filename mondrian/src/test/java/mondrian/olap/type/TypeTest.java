@@ -346,7 +346,7 @@ class TypeTest {
         return connection.getCatalogReader().withLocus();
     }
 
-    private static Cube getCubeWithName(String cubeName, Cube[] cubes) {
+    private static Cube getCubeWithName(String cubeName, List<Cube> cubes) {
         Cube resultCube = null;
         for (Cube cube : cubes) {
             if (cubeName.equals(cube.getName())) {

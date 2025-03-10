@@ -45,7 +45,9 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.NamedSet;
+import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
@@ -132,7 +134,6 @@ import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.aggmatcher.AggTableManager;
-import mondrian.spi.PropertyFormatter;
 import mondrian.util.Bug;
 
 //import org.apache.logging.log4j.spi.LoggerContext;
@@ -5300,12 +5301,12 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestCubeCaptionModifier::new);
-        final Cube[] cubes =
+        final List<Cube> cubes =
             context.getConnectionWithDefaultRole().getCatalog().getCubes();
-        Optional<Cube> optionalCube1 = Arrays.stream(cubes).filter(c -> "Cube with caption".equals(c.getName())).findFirst();
+        Optional<Cube> optionalCube1 = cubes.stream().filter(c -> "Cube with caption".equals(c.getName())).findFirst();
         final Cube cube = optionalCube1.orElseThrow(() -> new RuntimeException("Cube with name \"Cube with caption\" is absent"));
         assertEquals("Cube with caption", cube.getCaption());
-        Optional<Cube> optionalCube2 = Arrays.stream(cubes).filter(c -> "Warehouse and Sales with caption".equals(c.getName())).findFirst();
+        Optional<Cube> optionalCube2 = cubes.stream().filter(c -> "Warehouse and Sales with caption".equals(c.getName())).findFirst();
         final Cube cube2 =
             optionalCube2.orElseThrow(() -> new RuntimeException("Cube with name \"Warehouse and Sales with caption\" is absent"));
         assertEquals("Warehouse and Sales with caption", cube2.getCaption());
@@ -8307,16 +8308,16 @@ class SchemaTest {
     }
 
     /**
-     * Implementation of {@link PropertyFormatter} that throws.
+     * Implementation of {@link MemberPropertyFormatter} that throws.
      */
-    public static class DummyPropertyFormatter implements PropertyFormatter {
+    public static class DummyPropertyFormatter implements MemberPropertyFormatter {
         public DummyPropertyFormatter(Context context) {
             throw new RuntimeException("oops");
         }
 
         @Override
-		public String formatProperty(
-            Member member, String propertyName, Object propertyValue)
+		public String format(
+            Member member, Property propertyName, Object propertyValue)
         {
             return null;
         }
@@ -9486,7 +9487,7 @@ class SchemaTest {
             withSchema(context, TestCubesVisibilityModifier::new);
             final Cube cube =
                 context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo", true);
+                    .lookupCube("Foo").orElseThrow();
             assertTrue(testValue.equals(cube.isVisible()));
         }
     }
@@ -9540,7 +9541,7 @@ class SchemaTest {
             withSchema(context, TestVirtualCubesVisibilityModifier::new);
             final Cube cube =
                 context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo", true);
+                    .lookupCube("Foo").orElseThrow();
             assertTrue(testValue.equals(cube.isVisible()));
         }
     }
@@ -9620,7 +9621,7 @@ class SchemaTest {
             withSchema(context, TestDimensionVisibilityModifier::new);
             final Cube cube =
                 context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo", true);
+                    .lookupCube("Foo").orElseThrow();
             Dimension dim = null;
             for (Dimension dimCheck : cube.getDimensions()) {
                 if (dimCheck.getName().equals("Bar")) {
@@ -9680,7 +9681,7 @@ class SchemaTest {
             withSchema(context, TestVirtualDimensionVisibilityModifier::new);
             final Cube cube =
                 context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo", true);
+                    .lookupCube("Foo").orElseThrow();
             Dimension dim = null;
             for (Dimension dimCheck : cube.getDimensions()) {
                 if (dimCheck.getName().equals("Customers")) {
@@ -9777,7 +9778,7 @@ class SchemaTest {
 
             final Cube cube =
                 context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo", true);
+                    .lookupCube("Foo").orElseThrow();
 
             Dimension dim = null;
             for (Dimension dimCheck : cube.getDimensions()) {
@@ -9869,7 +9870,7 @@ class SchemaTest {
             withSchema(context, TestHierarchyVisibilityModifier::new);
             final Cube cube =
                 context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo", true);
+                    .lookupCube("Foo").orElseThrow();
             Dimension dim = null;
             for (Dimension dimCheck : cube.getDimensions()) {
                 if (dimCheck.getName().equals("Bar")) {
@@ -9958,7 +9959,7 @@ class SchemaTest {
             withSchema(context, TestLevelVisibilityModifier::new);
             final Cube cube =
                 context.getConnectionWithDefaultRole().getCatalog()
-                    .lookupCube("Foo", true);
+                    .lookupCube("Foo").orElseThrow();
             Dimension dim = null;
             for (Dimension dimCheck : cube.getDimensions()) {
                 if (dimCheck.getName().equals("Bar")) {
@@ -11246,7 +11247,7 @@ class SchemaTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMondrian1390(Context context) throws Exception {
         Catalog schema = context.getConnectionWithDefaultRole().getCatalog();
-        Cube salesCube = schema.lookupCube("Sales", true);
+        Cube salesCube = schema.lookupCube("Sales").orElseThrow();
         CatalogReader sr = salesCube.getCatalogReader(null).withLocus();
         List<Member> members = sr.getLevelMembers(
             (Level)Util.lookupCompound(

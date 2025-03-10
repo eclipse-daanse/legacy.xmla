@@ -10,18 +10,18 @@
 package mondrian.rolap.format;
 
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.Property;
+import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 
-import mondrian.spi.PropertyFormatter;
-
-class PropertyFormatterTestImpl implements PropertyFormatter {
+class PropertyFormatterTestImpl implements MemberPropertyFormatter {
 
     public PropertyFormatterTestImpl() {
     }
 
     @Override
-    public String formatProperty(
+    public String format(
         Member member,
-        String propertyName,
+        Property propertyName,
         Object propertyValue)
     {
         return null;

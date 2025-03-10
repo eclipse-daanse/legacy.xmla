@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.CalculatedFormula;
 import org.eclipse.daanse.olap.api.query.component.DmvQuery;
 import org.eclipse.daanse.olap.api.query.component.DrillThrough;
@@ -159,6 +161,7 @@ import org.eclipse.daanse.xmla.model.record.xmla_empty.EmptyresultR;
 
 public class OlapExecuteService implements ExecuteService {
 
+    private static final String MDX_CUBE_0_NOT_FOUND = "MDX cube ''{0}'' not found";
     public static final String SESSION_ID = "sessionId";
     public static final String CODE3238658121 = "3238658121";
     private ContextListSupplyer contextsListSupplyer;
@@ -332,7 +335,7 @@ public class OlapExecuteService implements ExecuteService {
 		} else if (transactionCommand.getCommand() == Command.COMMIT) {
             ScenarioSession session = ScenarioSession.get(sessionId);
             Scenario scenario = session.getScenario();
-            Cube[]cubes = connection.getCatalog().getCubes();
+            List<Cube> cubes = connection.getCatalog().getCubes();
             if (cubes != null) {
                 for (Cube cube : cubes) {
                     cube.commit(scenario.getSessionValues(), userId);
@@ -389,7 +392,9 @@ public class OlapExecuteService implements ExecuteService {
                     );
                     Cell cell = cellSet.getCell(Arrays.asList(0));
                     AllocationPolicy allocationPolicy = convertAllocation(updateClauseImpl.getAllocation());
-                    Cube cube = connection.getCatalog().lookupCube(update.getCubeName(), true);
+                    String cubeName = update.getCubeName();
+                    Cube cube = connection.getCatalog().lookupCube(cubeName).orElseThrow(
+                            () -> createCubeNotFoundException(cubeName));
                     List<Map<String, Map.Entry<Datatype, Object>>> values = cube.getAllocationValues(tupleString, cell.getValue(), allocationPolicy);
                     scenario.getSessionValues().addAll(values);
                     connection.getCacheControl(null).flushSchemaCache();
@@ -398,6 +403,7 @@ public class OlapExecuteService implements ExecuteService {
         }
         return new StatementResponseR(null, null);
     }
+
 
     private AllocationPolicy convertAllocation(Allocation allocation) {
             switch (allocation) {
@@ -418,7 +424,9 @@ public class OlapExecuteService implements ExecuteService {
 
     private StatementResponse executeRefresh(Connection connection, Refresh refresh) {
         Catalog catalog = connection.getCatalog();
-        Cube cube = catalog.lookupCube(refresh.getCubeName(), true);
+        String cubeName = refresh.getCubeName();
+        Cube cube = catalog.lookupCube(cubeName).orElseThrow(
+                () -> createCubeNotFoundException(cubeName));
         flushCache(cube, connection);
         return new StatementResponseR(null, null);
     }
@@ -692,7 +700,9 @@ public class OlapExecuteService implements ExecuteService {
     private StatementResponse executeCalculatedFormula(Connection connection, CalculatedFormula calculatedFormula) {
         Formula formula = calculatedFormula.getFormula();
         final Catalog schema = connection.getCatalog();
-        final Cube cube = schema.lookupCube(calculatedFormula.getCubeName(), true);
+        String cubeName = calculatedFormula.getCubeName();
+        final Cube cube = schema.lookupCube(cubeName).orElseThrow(
+                () -> createCubeNotFoundException(cubeName));
         if (formula.isMember()) {
             cube.createCalculatedMember(formula);
         } else {
@@ -760,6 +770,9 @@ public class OlapExecuteService implements ExecuteService {
                 connection.close();
             }
         }
+    }
+    private static OlapRuntimeException createCubeNotFoundException(String cubeName) {
+        return new OlapRuntimeException(MessageFormat.format(MDX_CUBE_0_NOT_FOUND, cubeName));
     }
 
 }

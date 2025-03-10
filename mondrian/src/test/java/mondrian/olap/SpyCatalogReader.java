@@ -228,7 +228,7 @@ public class SpyCatalogReader implements CatalogReader {
 	}
 
 	@Override
-	public Cube[] getCubes() {
+	public List<Cube> getCubes() {
 		return delegate.getCubes();
 	}
 

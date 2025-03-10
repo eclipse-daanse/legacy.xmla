@@ -36,6 +36,7 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.MatchType;
+import org.eclipse.daanse.olap.api.NameResolver;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.ProfileHandler;
@@ -1625,7 +1626,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
      */
     private static class QueryCatalogReader
         extends DelegatingCatalogReader
-        implements NameResolverImpl.Namespace
+        implements NameResolver.Namespace
     {
         private final QueryImpl query;
 
@@ -1949,7 +1950,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
                 parentOlapElement = query.getRolapMember(rolapMember);
             }
             OlapElement child = null;
-            for (NameResolverImpl.Namespace namespace : this.getNamespaces()) {
+            for (NameResolver.Namespace namespace : this.getNamespaces()) {
                 if(namespace != this) {
                     child = namespace.lookupChild(parentOlapElement, segment);
                     if (child != null) {
@@ -1972,8 +1973,8 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         }
 
         @Override
-		public List<NameResolverImpl.Namespace> getNamespaces() {
-            final List<NameResolverImpl.Namespace> list =
+		public List<NameResolver.Namespace> getNamespaces() {
+            final List<NameResolver.Namespace> list =
                 new ArrayList<>();
             list.add(this);
             list.addAll(super.getNamespaces());
@@ -2050,7 +2051,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
      */
     private static class ScopedCatalogReader
         extends DelegatingCatalogReader
-        implements NameResolverImpl.Namespace
+        implements NameResolver.Namespace
     {
         private final QueryValidator queryValidator;
         private final boolean accessControlled;
@@ -2080,8 +2081,8 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         }
 
         @Override
-		public List<NameResolverImpl.Namespace> getNamespaces() {
-            final List<NameResolverImpl.Namespace> list =
+		public List<NameResolver.Namespace> getNamespaces() {
+            final List<NameResolver.Namespace> list =
                 new ArrayList<>();
             list.add(this);
             list.addAll(super.getNamespaces());

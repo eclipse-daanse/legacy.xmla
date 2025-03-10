@@ -9,14 +9,13 @@
 // All Rights Reserved.
 */
 
-package mondrian.spi;
+package org.eclipse.daanse.olap.api.formatter;
 
 import org.eclipse.daanse.olap.api.element.Member;
 
-/**
- * SPI to redefine a member property display string.
- */
-public interface PropertyFormatter {
-    String formatProperty(
-        Member member, String propertyName, Object propertyValue);
+
+public interface MemberFormatter {
+
+
+    String format(Member member);
 }

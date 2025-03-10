@@ -22,12 +22,12 @@ import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.olap.AbstractProperty;
-import mondrian.spi.PropertyFormatter;
 
 /**
  * <code>RolapProperty</code> is the definition of a member property.
@@ -42,7 +42,7 @@ public class RolapProperty extends AbstractProperty implements OlapElement {
     /** Array of RolapProperty of length 0. */
     static final RolapProperty[] emptyArray = new RolapProperty[0];
 
-    private final PropertyFormatter formatter;
+    private final MemberPropertyFormatter formatter;
     private final String caption;
     private final boolean dependsOnLevelValue;
     private RolapLevel level;
@@ -69,7 +69,7 @@ public class RolapProperty extends AbstractProperty implements OlapElement {
         String name,
         Datatype type,
         SQLExpressionMapping exp,
-        PropertyFormatter formatter,
+        MemberPropertyFormatter formatter,
         String caption,
         Boolean dependsOnLevelValue,
         boolean internal,
@@ -90,7 +90,7 @@ public class RolapProperty extends AbstractProperty implements OlapElement {
     }
 
     @Override
-	public PropertyFormatter getFormatter() {
+	public MemberPropertyFormatter getFormatter() {
         return formatter;
     }
 

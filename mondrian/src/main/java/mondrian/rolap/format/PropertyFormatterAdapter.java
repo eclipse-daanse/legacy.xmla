@@ -10,14 +10,14 @@
 package mondrian.rolap.format;
 
 import org.eclipse.daanse.olap.api.element.Member;
-
-import mondrian.spi.PropertyFormatter;
+import org.eclipse.daanse.olap.api.element.Property;
+import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 
 /**
- * Adapter to comply SPI {@link PropertyFormatter}
+ * Adapter to comply SPI {@link MemberPropertyFormatter}
  * using the default formatter implementation.
  */
-class PropertyFormatterAdapter implements PropertyFormatter {
+class PropertyFormatterAdapter implements MemberPropertyFormatter {
     private DefaultFormatter numberFormatter;
 
     PropertyFormatterAdapter(DefaultFormatter numberFormatter) {
@@ -25,9 +25,9 @@ class PropertyFormatterAdapter implements PropertyFormatter {
     }
 
     @Override
-    public String formatProperty(
+    public String format(
         Member member,
-        String propertyName,
+        Property property,
         Object propertyValue)
     {
         return numberFormatter.format(propertyValue);

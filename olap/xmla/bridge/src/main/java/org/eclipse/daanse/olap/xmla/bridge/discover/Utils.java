@@ -135,7 +135,7 @@ public class Utils {
         Optional<String> oColumnName,
         Optional<ColumnOlapTypeEnum> oColumnOlapType){
 
-        return Stream.of(catalog.getCubes()).sorted(Comparator.comparing(Cube::getName)).flatMap(
+        return catalog.getCubes().stream().sorted(Comparator.comparing(Cube::getName)).flatMap(
                 c -> getDbSchemaColumnsResponseRow(catalog.getName(), null, c, oTableName, oColumnName, oColumnOlapType)
                         .stream())
                 .toList();
@@ -417,7 +417,7 @@ public class Utils {
         Optional<String> baseCubeName,
         Optional<CubeSourceEnum> cubeSource
     ) {
-            List<Cube> cubes = Arrays.asList(catalog.getCubes());
+            List<Cube> cubes = catalog.getCubes();
         	return Utils.getCubesWithFilter(cubes, cubeName).stream()
                 	.flatMap(cube -> getMdSchemaCubesResponseRow(catalog.getName(), cube).stream()).toList();
 	    }
@@ -661,7 +661,7 @@ public class Utils {
     private static List<DbSchemaTablesInfoResponseRow> getDbSchemaTablesInfoResponseRow(
         Catalog catalog, String tableName, TableTypeEnum tableType
     ) {
-            return Stream.of(catalog.getCubes())
+            return catalog.getCubes().stream()
                 .sorted(Comparator.comparing(Cube::getName))
                 .map(c -> getDbSchemaTablesInfoResponseRow(catalog.getName(), null, c, tableName, tableType))
                 .toList();
@@ -805,7 +805,7 @@ public class Utils {
         Optional<CubeSourceEnum> oCubeSource,
         Optional<String> oHierarchyUniqueName
     ) {
-        List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalog.getCubes());
+        List<Cube> cubes = catalog.getCubes() == null ? List.of() : catalog.getCubes();
         return getCubesWithFilter(cubes, oCubeName).stream().
             map(cube -> getMdSchemaSetsResponseRowCube(catalog.getName(), schemaName, cube,
                 oSetName, oScope, oCubeSource,
@@ -942,7 +942,7 @@ public class Utils {
         Optional<TreeOpEnum> oTreeOp,
         Optional<Boolean> emitInvisibleMembers
     ) {
-        List<Cube> cubes =  Arrays.asList(catalog.getCubes());
+        List<Cube> cubes =  catalog.getCubes();
         return getCubesWithFilter(cubes, oCubeName).stream().
             map(c -> getMdSchemaMembersResponseRow(catalog.getName(), null, c,
                 oDimensionUniqueName, oHierarchyUniqueName, oLevelUniqueName, oLevelNumber,
@@ -1189,7 +1189,7 @@ public class Utils {
         Optional<String> oDimensionUniqueName,
         Optional<VisibilityEnum> oDimensionVisibility
     ) {
-        List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalog.getCubes());
+        List<Cube> cubes = catalog.getCubes() == null ? List.of() : catalog.getCubes();
         return getCubesWithFilter(cubes, oCubeName).stream().
             map(c -> getMdSchemaMeasureGroupDimensionsResponseRow( catalog.getName(),null, c,
                 oDimensionUniqueName, oDimensionVisibility)).
@@ -1244,7 +1244,7 @@ public class Utils {
         Optional<VisibilityEnum> oDimensionVisibility,
         Optional<Boolean> deep
     ) {
-        List<Cube> cubes = schema.getCubes() == null ? List.of() : Arrays.asList(schema.getCubes());
+        List<Cube> cubes = schema.getCubes() == null ? List.of() : schema.getCubes();
         return getCubesWithFilter(cubes, oCubeName).stream().
             map(c -> getMdSchemaDimensionsResponseRow(catalogName, schema.getName(), c, oDimensionName,
                 oDimensionUniqueName, cubeSource, oDimensionVisibility, deep)).
@@ -1395,7 +1395,7 @@ public class Utils {
         Optional<String> oLevelUniqueName,
         Optional<VisibilityEnum> oLevelVisibility
     ) {
-        List<Cube> cubes = schema.getCubes() == null ? List.of() : Arrays.asList(schema.getCubes());
+        List<Cube> cubes = schema.getCubes() == null ? List.of() : schema.getCubes();
         return getCubesWithFilter(cubes, oCubeName)
             .stream()
             .sorted(Comparator.comparing(Cube::getName))
@@ -1702,7 +1702,7 @@ public class Utils {
         Optional<Integer> oHierarchyOrigin,
         Optional<Boolean> deep
     ) {
-        List<Cube> cubes = s.getCubes() == null ? List.of() : Arrays.asList(s.getCubes());
+        List<Cube> cubes = s.getCubes() == null ? List.of() : s.getCubes();
         return getCubesWithFilter(cubes, oCubeName).stream()
             .map(c -> getMdSchemaHierarchiesResponseRow(
                 c,
@@ -1905,7 +1905,7 @@ oHierarchyName)
         Optional<String> oCubeName,
         Optional<String> oMeasureGroupName
     ) {
-        return getCubeWithFilter(Stream.of(catalog.getCubes()).toList(), oCubeName).stream()
+        return getCubeWithFilter(catalog.getCubes(), oCubeName).stream()
             .map(c -> getMdSchemaMeasureGroupsResponseRow(catalog.getName(), null, c, oMeasureGroupName))
             .toList();
     }
@@ -1987,7 +1987,7 @@ oHierarchyName)
         Optional<CubeSourceEnum> oCubeSource,
         Optional<VisibilityEnum> oPropertyVisibility
 ){
-List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalog.getCubes());
+List<Cube> cubes = catalog.getCubes() == null ? List.of() : catalog.getCubes();
         return getCubesWithFilter(cubes, oCubeName).stream()
             .map(c -> getMdSchemaPropertiesResponseRow(catalog.getName(), null, c, oDimensionUniqueName,
                 oHierarchyUniqueName,
@@ -2205,7 +2205,7 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalo
         Optional<String> oMeasureGroupName,
         boolean shouldEmitInvisibleMembers
     ) {
-        List<Cube> cubes = schema.getCubes() == null ? List.of() : Arrays.asList(schema.getCubes());
+        List<Cube> cubes = schema.getCubes() == null ? List.of() : schema.getCubes();
         return getCubesWithFilter(cubes, oCubeName).stream()
             .map(c -> getMdSchemaMeasuresResponseRow(catalogName, schema.getName(), c, oMeasureName,
                 oMeasureUniqueName, oMeasureGroupName, shouldEmitInvisibleMembers))

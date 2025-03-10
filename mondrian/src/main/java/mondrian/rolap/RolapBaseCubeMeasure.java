@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.api.formatter.CellFormatter;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 
@@ -22,7 +23,6 @@ import mondrian.olap.StandardProperty;
 import mondrian.olap.StandardProperty;
 import mondrian.olap.StringLiteralImpl;
 import mondrian.olap.exceptions.CastInvalidTypeException;
-import mondrian.spi.CellFormatter;
 
 /**
  * Measure which is computed from a SQL column (or expression) and which is

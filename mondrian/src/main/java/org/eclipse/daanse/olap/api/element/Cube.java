@@ -12,7 +12,6 @@
  * Contributors:
  *  SmartCity Jena - refactor, clean API
  */
-
 package org.eclipse.daanse.olap.api.element;
 
 import java.util.List;
@@ -27,7 +26,6 @@ import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.result.AllocationPolicy;
-
 
 /**
  * Cube.
@@ -51,24 +49,23 @@ public interface Cube extends OlapElement, MetaElement {
     List<Member> getMeasures();
 
     /**
-     * Finds a hierarchy whose name (or unique name, if <code>unique</code> is
-     * true) equals <code>s</code>.
+     * Finds a hierarchy whose name (or unique name, if <code>unique</code> is true)
+     * equals <code>s</code>.
      */
     Hierarchy lookupHierarchy(NameSegment s, boolean unique);
 
     /**
-     * Returns Member[]. It builds Member[] by analyzing cellset, which
-     * gets created by running mdx sQuery.  <code>query</code> has to be in the
-     * format of something like "[with calculated members] select *members* on
-     * columns from <code>this</code>".
+     * Returns Member[]. It builds Member[] by analyzing cellset, which gets created
+     * by running mdx sQuery. <code>query</code> has to be in the format of
+     * something like "[with calculated members] select *members* on columns from
+     * <code>this</code>".
      */
     Member[] getMembersForQuery(String query, List<Member> calcMembers);
 
     /**
-     * Returns a {@link CatalogReader} for which this cube is the context for
-     * lookup up members.
-     * If <code>role</code> is null, the returned schema reader also obeys the
-     * access-control profile of role.
+     * Returns a {@link CatalogReader} for which this cube is the context for lookup
+     * up members. If <code>role</code> is null, the returned schema reader also
+     * obeys the access-control profile of role.
      */
     CatalogReader getCatalogReader(Role role);
 
@@ -83,8 +80,7 @@ public interface Cube extends OlapElement, MetaElement {
     /**
      * Finds out non joining dimensions for this cube.
      *
-     * @param otherDims Set of dimensions to be tested for existence
-     *     in this cube
+     * @param otherDims Set of dimensions to be tested for existence in this cube
      * @return Set of dimensions that do not exist (non joining) in this cube
      */
     Set<Dimension> nonJoiningDimensions(Set<Dimension> otherDims);
@@ -106,27 +102,27 @@ public interface Cube extends OlapElement, MetaElement {
      * Returns the number of members in a level, returning an approximation if
      * acceptable.
      *
-     * @param level Level
+     * @param level       Level
      * @param approximate Whether an approximation is acceptable
-     * @param materialize Whether to go to disk if no approximation
-     *   for the count is available and the members are not in
-     *   cache. If false, returns {@link Integer#MIN_VALUE} if value
-     *   is not in cache.
+     * @param materialize Whether to go to disk if no approximation for the count is
+     *                    available and the members are not in cache. If false,
+     *                    returns {@link Integer#MIN_VALUE} if value is not in
+     *                    cache.
      */
-    int getLevelCardinality(
-        Level level, boolean approximate, boolean materialize);
+    int getLevelCardinality(Level level, boolean approximate, boolean materialize);
 
     List<? extends KPI> getKPIs();
 
-	/**
-	 * Returns a list of all hierarchies in this cube, in order of dimension.
-	 *
-	 * <p>TODO: Make this method return RolapCubeHierarchy, when the measures
-	 * hierarchy is a RolapCubeHierarchy.
-	 *
-	 * @return List of hierarchies
-	 */
-	List<Hierarchy> getHierarchies();
+    /**
+     * Returns a list of all hierarchies in this cube, in order of dimension.
+     *
+     * <p>
+     * TODO: Make this method return RolapCubeHierarchy, when the measures hierarchy
+     * is a RolapCubeHierarchy.
+     *
+     * @return List of hierarchies
+     */
+    List<Hierarchy> getHierarchies();
 
     void modifyFact(List<Map<String, Entry<Datatype, Object>>> sessionValues);
 

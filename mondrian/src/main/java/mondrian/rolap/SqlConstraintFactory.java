@@ -193,7 +193,7 @@ public class SqlConstraintFactory {
     }
 
     private CatalogReader getCatalogReader(RolapLevel level) {
-        return level.getHierarchy().getRolapCatalog().getCatalogReader();
+        return level.getHierarchy().getRolapCatalog().getCatalogReaderWithDefaultRole();
     }
 
     /**

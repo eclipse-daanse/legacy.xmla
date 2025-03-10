@@ -12,19 +12,24 @@
 */
 package org.eclipse.daanse.olap.api.access;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 public enum AccessMember {
+
     /** No access to an object and its children. */
     NONE,
+
     /** All access to an object and its children. */
     ALL,
+
     /**
-     * A grant that covers none of the children
-     * unless explicitly granted.
+     * A grant that covers none of the children unless explicitly granted.
      */
     CUSTOM,
+
     /**
-     * Grant that covers all children except those denied.
-     * (internal use only)
+     * Grant that covers all children except those denied. (internal use only)
      */
     RESTRICTED;
 
@@ -32,5 +37,7 @@ public enum AccessMember {
     public String toString() {
         return this.name();
     }
+
+    public static final Set<AccessMember> ALLOWED_SET = EnumSet.of(AccessMember.NONE, AccessMember.ALL);
 
 }

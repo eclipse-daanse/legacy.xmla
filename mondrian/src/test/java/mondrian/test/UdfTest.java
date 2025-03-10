@@ -40,8 +40,10 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.element.MemberFormatter;
 import org.eclipse.daanse.olap.api.element.Property;
+import org.eclipse.daanse.olap.api.formatter.CellFormatter;
+import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
+import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.CellSet;
@@ -67,8 +69,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.olap.Util;
 import mondrian.rolap.SchemaModifiers;
-import mondrian.spi.CellFormatter;
-import mondrian.spi.PropertyFormatter;
 import mondrian.spi.UserDefinedFunction;
 
 /**
@@ -1969,7 +1969,7 @@ public class UdfTest {
      */
     public static class FooBarMemberFormatter implements MemberFormatter {
         @Override
-		public String formatMember(Member member) {
+		public String format(Member member) {
             return "foo" + member.getName() + "bar";
         }
     }
@@ -1980,7 +1980,7 @@ public class UdfTest {
      */
     public static class FooBarCellFormatter implements CellFormatter {
         @Override
-		public String formatCell(Object value) {
+		public String format(Object value) {
             return "foo" + value + "bar";
         }
     }
@@ -1989,12 +1989,12 @@ public class UdfTest {
      * Property formatter for test purposes. Returns name of the member and
      * property, then the value, prefixed with "foo" and suffixed with "bar".
      */
-    public static class FooBarPropertyFormatter implements PropertyFormatter {
+    public static class FooBarPropertyFormatter implements MemberPropertyFormatter {
         @Override
-		public String formatProperty(
-            Member member, String propertyName, Object propertyValue)
+		public String format(
+            Member member, Property property, Object propertyValue)
         {
-            return "foo" + member.getName() + "/" + propertyName + "/"
+            return "foo" + member.getName() + "/" + property.getName() + "/"
                    + propertyValue + "bar";
         }
     }

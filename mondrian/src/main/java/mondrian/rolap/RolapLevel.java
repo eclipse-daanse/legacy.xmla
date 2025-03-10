@@ -33,6 +33,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Property;
+import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
@@ -55,7 +56,6 @@ import mondrian.rolap.format.FormatterFactory;
 import mondrian.rolap.util.ExpressionUtil;
 import mondrian.rolap.util.LevelUtil;
 import mondrian.rolap.util.RelationUtil;
-import mondrian.spi.PropertyFormatter;
 
 /**
  * <code>RolapLevel</code> implements {@link Level} for a ROLAP database.
@@ -430,7 +430,7 @@ public class RolapLevel extends LevelBase {
                         .formatterDef(xmlProperty.getFormatter())
                         .formatterAttr(xmlProperty.getFormatter() != null ? xmlProperty.getFormatter().getRef() : null)
                         .build();
-            PropertyFormatter formatter =
+            MemberPropertyFormatter formatter =
                 FormatterFactory.instance()
                     .createPropertyFormatter(formatterContext);
 

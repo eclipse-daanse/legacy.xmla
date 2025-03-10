@@ -21,8 +21,8 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.element.MemberFormatter;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 
 import mondrian.olap.fun.FunUtil;
@@ -117,7 +117,7 @@ public String getCaption() {
     //  we will call this interface to provide the display string
     MemberFormatter mf = getLevel().getMemberFormatter();
     if ( mf != null ) {
-      return mf.formatMember( this );
+      return mf.format( this );
     }
 
     // fallback if formatter is null
@@ -273,11 +273,13 @@ public Expression getExpression() {
   // implement Member
   @Override
 public List<Member> getAncestorMembers() {
+      
+      // if i see this member i am allowed to see the ancestors
     final CatalogReader schemaReader =
-      getDimension().getCatalog().getCatalogReader();
-    final ArrayList<Member> ancestorList = new ArrayList<>();
-    schemaReader.getMemberAncestors( this, ancestorList );
-    return ancestorList;
+      getDimension().getCatalog().getCatalogReaderWithDefaultRole();
+    final ArrayList<Member> ancestors = new ArrayList<>();
+    schemaReader.getMemberAncestors( this, ancestors );
+    return ancestors;
   }
 
   /**

@@ -9,15 +9,8 @@
 *
 * Contributors:
 *   SmartCity Jena - initial
-*   Stefan Bischof (bipolis.org) - initial
 */
-package org.eclipse.daanse.olap.api.element;
 
-import java.util.List;
-
-public interface DatabaseSchema {
-
-    List<DatabaseTable> getDbTables();
-
-    String getName();
-}
+@org.osgi.annotation.bundle.Export
+@org.osgi.annotation.versioning.Version("0.0.1")
+package org.eclipse.daanse.olap.api.formatter;

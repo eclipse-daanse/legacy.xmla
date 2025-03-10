@@ -9,15 +9,10 @@
 *
 * Contributors:
 *   SmartCity Jena - initial
-*   Stefan Bischof (bipolis.org) - initial
 */
-package org.eclipse.daanse.olap.api.element;
+package org.eclipse.daanse.olap.api.formatter;
 
-import java.util.List;
+public interface CellFormatter {
 
-public interface DatabaseSchema {
-
-    List<DatabaseTable> getDbTables();
-
-    String getName();
+    String format(Object value);
 }

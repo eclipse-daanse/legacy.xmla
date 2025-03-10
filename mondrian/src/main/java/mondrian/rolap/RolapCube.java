@@ -52,6 +52,7 @@ import org.eclipse.daanse.olap.api.DrillThroughColumn;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.MatchType;
+import org.eclipse.daanse.olap.api.NameResolver;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.OlapAction;
 import org.eclipse.daanse.olap.api.Parameter;
@@ -73,6 +74,7 @@ import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.api.formatter.CellFormatter;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.CellProperty;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -154,7 +156,6 @@ import mondrian.rolap.format.FormatterFactory;
 import mondrian.rolap.util.DimensionUtil;
 import mondrian.rolap.util.PojoUtil;
 import mondrian.server.LocusImpl;
-import mondrian.spi.CellFormatter;
 
 /**
  * <code>RolapCube</code> implements {@link Cube} for a ROLAP database.
@@ -3195,7 +3196,7 @@ public class RolapCube extends CubeBase {
      */
     private class RolapCubeCatalogReader
         extends RolapCatalogReader
-        implements NameResolverImpl.Namespace
+        implements NameResolver.Namespace
     {
         public RolapCubeCatalogReader(Context context,Role role) {
             super(context,role, RolapCube.this.schema);
@@ -3358,11 +3359,11 @@ public class RolapCube extends CubeBase {
         }
 
         @Override
-		public List<NameResolverImpl.Namespace> getNamespaces() {
-            final List<NameResolverImpl.Namespace> list =
+		public List<NameResolver.Namespace> getNamespaces() {
+            final List<NameResolver.Namespace> list =
                 new ArrayList<>();
             list.add(this);
-            list.addAll(catalog.getCatalogReader().getNamespaces());
+            list.addAll(catalog.getCatalogReaderWithDefaultRole().getNamespaces());
             return list;
         }
 

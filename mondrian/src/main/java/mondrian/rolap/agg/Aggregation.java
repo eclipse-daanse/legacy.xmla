@@ -295,7 +295,7 @@ public class Aggregation {
                 //  cache for the drilldown case, the children will be
                 //  in the cache
                 // - if not, forget this optimization.
-                CatalogReader scr = star.getCatalog().getCatalogReader();
+                CatalogReader scr = star.getCatalog().getCatalogReaderWithDefaultRole();
                 int childCount = scr.getChildrenCountFromCache(parent);
                 if (childCount == -1) {
                    // nothing gotten from cache
@@ -314,7 +314,7 @@ public class Aggregation {
 
             if (!done && level != null) {
                 // if the level members are cached, we do not need "count *"
-                CatalogReader scr = star.getCatalog().getCatalogReader();
+                CatalogReader scr = star.getCatalog().getCatalogReaderWithDefaultRole();
                 int memberCount = scr.getLevelCardinality(level, true, false);
                 if (memberCount > 0) {
                     bloats[i] = constraintLength / memberCount;

@@ -33,10 +33,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.DriverManager;
 import java.text.MessageFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -188,7 +188,7 @@ public class RolapCatalog implements Catalog {
 
 	protected final List<RolapCatalogParameter> parameterList = new ArrayList<>();
 
-	private Date catalogLoadDate;
+	private Instant catalogLoadTime;
 
 	/**
 	 * List of warnings. Populated when a schema is created by a connection that has
@@ -319,12 +319,12 @@ public class RolapCatalog implements Catalog {
 	}
 
 	private void setSchemaLoadDate() {
-		catalogLoadDate = new Date();
+		catalogLoadTime = Instant.now();
 	}
 
 	@Override
-	public Date getCatalogLoadDate() {
-		return catalogLoadDate;
+	public Instant getCatalogLoadDate() {
+		return catalogLoadTime;
 	}
 
 	@Override
@@ -547,7 +547,7 @@ public class RolapCatalog implements Catalog {
 
 	// package-local visibility for testing purposes
 	void handleCatalogGrant(RoleImpl role, AccessCatalogGrantMapping schemaGrantMapings) {
-		role.grant(this, getAccessCatalog(schemaGrantMapings.getAccess().getValue(), schemaAllowed));
+		role.grant(this, getAccessCatalog(schemaGrantMapings.getAccess().getValue(), AccessCatalog.ALLOWED_SET));
 		for (AccessCubeGrantMapping cubeGrant : schemaGrantMapings.getCubeGrants()) {
 			handleCubeGrant(role, cubeGrant);
 		}
@@ -560,7 +560,7 @@ public class RolapCatalog implements Catalog {
 			throw Util.newError(
 					new StringBuilder("Unknown cube '").append(cubeGrant.getCube().getName()).append("'").toString());
 		}
-		role.grant(cube, getAccessCube(cubeGrant.getAccess().name(), cubeAllowed));
+		role.grant(cube, getAccessCube(cubeGrant.getAccess().name(), AccessCube.ALLOWED_SET));
 
 		CatalogReader reader = cube.getCatalogReader(null);
 		for (AccessDimensionGrantMapping accessDimGrantMapping : cubeGrant.getDimensionGrants()) {
@@ -576,7 +576,7 @@ public class RolapCatalog implements Catalog {
 			} else {
 				dimension = lookup(cube, reader, DataType.DIMENSION, "Measures");
 			}
-			role.grant(dimension, getAccessDimension(accessDimGrantMapping.getAccess().name(), dimensionAllowed));
+			role.grant(dimension, getAccessDimension(accessDimGrantMapping.getAccess().name(), AccessDimension.ALLOWED_SET));
 		}
 
 		for (AccessHierarchyGrantMapping hierarchyGrant : cubeGrant.getHierarchyGrants()) {
@@ -594,7 +594,7 @@ public class RolapCatalog implements Catalog {
 			hierarchy = lookup(cube, reader, DataType.HIERARCHY, "[Measures]");
 		}
 
-		final AccessHierarchy hierarchyAccess = getAccessHierarchy(hierarchyGrant.getAccess().name(), hierarchyAllowed);
+		final AccessHierarchy hierarchyAccess = getAccessHierarchy(hierarchyGrant.getAccess().name(), AccessHierarchy.ALLOWED_SET);
 		// Level topLevel = findLevelForHierarchyGrant(
 		// cube, reader, hierarchyAccess, hierarchyGrant.getTopLevel(), "topLevel");
 		Level topLevel = cube.lookupLevel(hierarchyGrant.getTopLevel(), hierarchy);
@@ -638,7 +638,7 @@ public class RolapCatalog implements Catalog {
 					throw Util.newError(new StringBuilder("Member '").append(member).append("' is not in hierarchy '")
 							.append(hierarchy).append("'").toString());
 				}
-				role.grant(member, getAccessMember(memberGrant.getAccess().name(), memberAllowed));
+				role.grant(member, getAccessMember(memberGrant.getAccess().name(), AccessMember.ALLOWED_SET));
 			}
 		}
 
@@ -732,22 +732,12 @@ public class RolapCatalog implements Catalog {
 		return mapMappingToRolapCube.get(cubeMapping);
 	}
 
-	@Override
-	public RolapCube lookupCube(String cubeName) {
-		return mapMappingToRolapCube.entrySet().stream()
-				.filter(e -> Util.normalizeName(e.getKey().getName()).equals(Util.normalizeName(cubeName))).findFirst()
-				.map(Entry::getValue).orElse(null);
-
-	}
-
-	@Override
-	public RolapCube lookupCube(String cubeName, boolean failIfNotFound) {
-		RolapCube cube = lookupCube(cubeName);
-		if (cube == null && failIfNotFound) {
-			throw new OlapRuntimeException(MessageFormat.format("MDX cube ''{0}'' not found", cubeName));
-		}
-		return cube;
-	}
+    @Override
+    public Optional<RolapCube> lookupCube(String cubeName) {
+        return mapMappingToRolapCube.entrySet().stream()
+                .filter(e -> Util.normalizeName(e.getKey().getName()).equals(Util.normalizeName(cubeName))).findFirst()
+                .map(Entry::getValue);
+    }
 
 	/**
 	 * Returns an xmlCalculatedMember called 'calcMemberName' in the cube called
@@ -803,19 +793,14 @@ public class RolapCatalog implements Catalog {
 	}
 
 	@Override
-	public Cube[] getCubes() {
+	public List<Cube> getCubes() {
 		Collection<RolapCube> cubes = mapMappingToRolapCube.values();
-		return cubes.toArray(new RolapCube[cubes.size()]);
+		return cubes.stream()
+		        .collect(Collectors.toList());
 	}
 
 	public List<RolapCube> getCubeList() {
 		return new ArrayList<>(mapMappingToRolapCube.values());
-	}
-
-	@Override
-	public Hierarchy[] getSharedHierarchies() {
-		Collection<RolapHierarchy> hierarchies = mapSharedHierarchyNameToHierarchy.values();
-		return hierarchies.toArray(new RolapHierarchy[hierarchies.size()]);
 	}
 
 	RolapHierarchy getSharedHierarchy(final DimensionMapping name) {
@@ -956,7 +941,7 @@ public class RolapCatalog implements Catalog {
 	}
 
 	@Override
-	public CatalogReader getCatalogReader() {
+	public CatalogReader getCatalogReaderWithDefaultRole() {
 		return new RolapCatalogReader(context, defaultRole, this).withLocus();
 	}
 
@@ -990,11 +975,6 @@ public class RolapCatalog implements Catalog {
 	@Override
 	public String getDescription() {
 		return description;
-	}
-
-	@Override
-	public List<String> getAccessRoles() {
-		return mapNameToRole.keySet().stream().map(AccessRoleMapping::getName).toList();
 	}
 
 	@Override

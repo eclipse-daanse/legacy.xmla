@@ -17,7 +17,6 @@ import static org.eclipse.daanse.olap.action.impl.DrillThroughUtils.getCoordinat
 import static org.eclipse.daanse.olap.action.impl.DrillThroughUtils.getDrillThroughQuery;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -188,7 +187,7 @@ public class ActionServiceImpl implements ActionService {
         Optional<CubeSourceEnum> oCubeSource
     ) {
         List<MdSchemaActionsResponseRow> result = new ArrayList<>();
-        List<Cube> cubes = catalog.getCubes() == null ? List.of() : Arrays.asList(catalog.getCubes());
+        List<Cube> cubes = catalog.getCubes() == null ? List.of() : catalog.getCubes();
         result.addAll(getCubesWithFilter(cubes, cubeName).stream()
             .map(c -> getMdSchemaActionsResponseRow(catalogName, catalog.getName(), c, oActionName, oActionType,
                 oCoordinate, coordinateType, invocation, oCubeSource))

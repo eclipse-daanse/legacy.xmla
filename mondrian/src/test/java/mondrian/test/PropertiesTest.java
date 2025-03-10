@@ -15,6 +15,7 @@ import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.withSchema;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.Connection;
@@ -55,7 +56,7 @@ class PropertiesTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMandatoryMemberProperties(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
         CatalogReader scr = salesCube.getCatalogReader(null).withLocus();
         Member member =
             scr.getMemberByUniqueName(
@@ -196,7 +197,7 @@ class PropertiesTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGetChildCardinalityPropertyValue(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
         CatalogReader scr = salesCube.getCatalogReader(null);
         Member memberForCardinalityTest =
             scr.getMemberByUniqueName(
@@ -345,9 +346,9 @@ class PropertiesTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPropertyDescription(Context context) throws Exception {
         withSchema(context, SchemaModifiers.PropertiesTestModifier::new);
-        Cube[] cubes = context.getConnectionWithDefaultRole().getCatalog()
+        List<Cube> cubes = context.getConnectionWithDefaultRole().getCatalog()
             .getCubes();
-        Optional<Cube> optionalCube = Arrays.stream(cubes).filter(c -> c.getName().equals("Foo")).findFirst();
+        Optional<Cube> optionalCube = cubes.stream().filter(c -> c.getName().equals("Foo")).findFirst();
         Cube cube = optionalCube.orElseThrow(() -> new RuntimeException("Cube with name Foo absent"));
         Optional<Dimension> optionalDimension  = Arrays.stream(cube.getDimensions()).filter(d -> d.getName().equals("Promotions")).findFirst();
         Dimension dimension = optionalDimension.orElseThrow(() -> new RuntimeException("Dimension with name Foo absent"));

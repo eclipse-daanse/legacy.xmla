@@ -13,7 +13,7 @@
  */
 package org.eclipse.daanse.olap.api.element;
 
-public interface StoredMeasure extends Measure{
+public interface StoredMeasure extends Measure {
 
     String getAggregateFunction();
 

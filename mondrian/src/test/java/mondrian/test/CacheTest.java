@@ -134,7 +134,7 @@ class CacheTest {
 //           beforeAfter);
     }
 
-    private Cube getCubeWithName(String cubeName, Cube[] cubes) {
+    private Cube getCubeWithName(String cubeName, List<Cube> cubes) {
         for (Cube cube : cubes) {
             if (cubeName.equals(cube.getName())) {
                 return cube;

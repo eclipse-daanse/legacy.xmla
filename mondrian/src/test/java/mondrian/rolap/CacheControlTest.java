@@ -604,7 +604,7 @@ class CacheControlTest {
         CacheControl cacheControl)
     {
         // Flush a region of the cache.
-        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
 
         // Region consists of [Time].[1997].[Q1] and its children, and products
         // [Beer] and [Dairy].
@@ -676,7 +676,7 @@ class CacheControlTest {
         Connection connection,
         CacheControl cacheControl)
     {
-        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
 
         // Region consists of [Time].[1997].[Q1] and its children.
         final CatalogReader schemaReader =
@@ -706,7 +706,7 @@ class CacheControlTest {
         Connection connection,
         CacheControl cacheControl)
     {
-        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
 
         // Region consists of [Time].[1997].[Q2].[4] and its children.
         final CatalogReader schemaReader =
@@ -739,7 +739,7 @@ class CacheControlTest {
         Connection connection,
         CacheControl cacheControl)
     {
-        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
 
         // Region consists of [Time].[1997] and its children.
         final CatalogReader schemaReader = salesCube.getCatalogReader(null);
@@ -770,7 +770,7 @@ class CacheControlTest {
         Connection connection,
         CacheControl cacheControl)
     {
-        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
 
         // Region consists of [Product].[Food], [Product].[Drink] and their
         // children.
@@ -806,7 +806,7 @@ class CacheControlTest {
         CacheControl cacheControl)
     {
         final Cube salesCube =
-            connection.getCatalog().lookupCube("Sales", true);
+            connection.getCatalog().lookupCube("Sales").orElseThrow();
 
         final CatalogReader schemaReader =
             salesCube.getCatalogReader(null).withLocus();
@@ -829,7 +829,7 @@ class CacheControlTest {
         CacheControl cacheControl)
     {
         final Cube salesCube =
-            connection.getCatalog().lookupCube("Sales", true);
+            connection.getCatalog().lookupCube("Sales").orElseThrow();
 
         final CatalogReader schemaReader =
             salesCube.getCatalogReader(null).withLocus();
@@ -866,7 +866,7 @@ class CacheControlTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNegative(Context context) {
         final Connection connection = context.getConnectionWithDefaultRole();
-        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
         final CatalogReader schemaReader = salesCube.getCatalogReader(null);
         final CacheControl cacheControl = connection.getCacheControl(null);
         final Member memberQ1 =
@@ -1012,7 +1012,7 @@ class CacheControlTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCrossjoin(Context context) {
         final Connection connection = context.getConnectionWithDefaultRole();
-        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
         final CacheControl cacheControl = connection.getCacheControl(null);
 
         // Region consists of [Time].[1997].[Q1] and its children, and products
@@ -1105,7 +1105,7 @@ class CacheControlTest {
             names[i] = name.substring(1, name.length() - 1);
             ids.add(new IdImpl.NameSegmentImpl(names[i]));
         }
-        final Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        final Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
         final CacheControl cacheControl = connection.getCacheControl(null);
         final CatalogReader schemaReader =
             salesCube.getCatalogReader(null).withLocus();
@@ -1198,7 +1198,7 @@ class CacheControlTest {
         final CacheControl cacheControl = connection.getCacheControl(null);
         final Cube cube =
             connection
-                .getCatalog().lookupCube("Sales", true);
+                .getCatalog().lookupCube("Sales").orElseThrow();
         Hierarchy hier =
             cube.getDimensions()[2].getHierarchies()[0];
         Member hierMember = hier.getAllMember();
@@ -1250,7 +1250,7 @@ class CacheControlTest {
 
         // Flush the cache.
         final Cube salesCube =
-                connection.getCatalog().lookupCube("Sales", true);
+                connection.getCatalog().lookupCube("Sales").orElseThrow();
         final Hierarchy storeHierarchy =
             salesCube.lookupHierarchy(
                 new IdImpl.NameSegmentImpl(

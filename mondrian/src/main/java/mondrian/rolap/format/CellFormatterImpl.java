@@ -8,7 +8,7 @@
  */
 package mondrian.rolap.format;
 
-import mondrian.spi.CellFormatter;
+import org.eclipse.daanse.olap.api.formatter.CellFormatter;
 
 public class CellFormatterImpl implements CellFormatter {
 
@@ -16,7 +16,7 @@ public class CellFormatterImpl implements CellFormatter {
     }
 
     @Override
-    public String formatCell(Object value) {
+    public String format(Object value) {
         return "test " + value.toString();
     }
 }

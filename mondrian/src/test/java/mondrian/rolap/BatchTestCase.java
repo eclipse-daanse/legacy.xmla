@@ -588,7 +588,7 @@ public class BatchTestCase{
         // Clear the cache for the Sales cube, so the query runs as if
         // for the first time. (TODO: Cleaner way to do this.)
         final Cube salesCube =
-                connection.getCatalog().lookupCube("Sales", false);
+                connection.getCatalog().lookupCube("Sales").orElse(null);
         if (salesCube != null) {
             RolapHierarchy hierarchy =
                     (RolapHierarchy) salesCube.lookupHierarchy(
@@ -796,15 +796,14 @@ public class BatchTestCase{
     protected RolapStar.Measure getMeasure(Connection connection, String cube, String measureName) {
         //final Connection connection = getFoodMartConnection(context);
         final boolean fail = true;
-        Cube salesCube = connection.getCatalog().lookupCube(cube, fail);
+        Cube salesCube = connection.getCatalog().lookupCube(cube).orElseThrow();
         Member measure = salesCube.getCatalogReader(null).getMemberByUniqueName(
             Util.parseIdentifier(measureName), fail);
         return RolapStar.getStarMeasure(measure);
     }
 
     protected RolapCube getCube(Connection connection, final String cube) {
-        final boolean fail = true;
-        return (RolapCube) connection.getCatalog().lookupCube(cube, fail);
+        return (RolapCube) connection.getCatalog().lookupCube(cube).orElseThrow();
     }
 
     /**
@@ -868,7 +867,7 @@ public class BatchTestCase{
 
     RolapNativeRegistry getRegistry(Connection connection) {
         RolapCube cube =
-            (RolapCube) connection.getCatalog().lookupCube("Sales", true);
+            (RolapCube) connection.getCatalog().lookupCube("Sales").orElseThrow();
         RolapCatalogReader schemaReader =
             (RolapCatalogReader) cube.getCatalogReader();
         return schemaReader.getCatalog().getNativeRegistry();

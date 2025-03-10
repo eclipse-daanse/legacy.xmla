@@ -20,10 +20,10 @@ import org.eclipse.daanse.olap.api.element.OlapElement.LocalizedProperty;
 
 public interface MetaData {
 
-	Optional<String> getLocalized(LocalizedProperty prop, Locale locale);
+    Optional<String> getLocalized(LocalizedProperty prop, Locale locale);
 
-	Object get(String key);
+    Object get(String key);
 
-	Integer size();
+    Integer size();
 
 }

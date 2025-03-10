@@ -60,7 +60,7 @@ class RolapStarTest {
 
     RolapStar getRolapStar(Connection con, String starName) {
         RolapCube cube =
-            (RolapCube) con.getCatalog().lookupCube(starName, true);
+            (RolapCube) con.getCatalog().lookupCube(starName).orElseThrow();
         return cube.getStar();
     }
 

@@ -172,7 +172,7 @@ class MemberCacheControlTest {
         String cubeName,
         String... names)
     {
-        Cube cube = connection.getCatalog().lookupCube(cubeName, true);
+        Cube cube = connection.getCatalog().lookupCube(cubeName).orElseThrow();
         CatalogReader scr = cube.getCatalogReader(null).withLocus();
         return (RolapMember)
             scr.getMemberByUniqueName(IdImpl.toList(names), true);
@@ -1060,7 +1060,7 @@ class MemberCacheControlTest {
             context.getConnectionWithDefaultRole().getCacheControl(null);
         final Cube salesCube =
                 context.getConnectionWithDefaultRole()
-                .getCatalog().lookupCube("Sales", true);
+                .getCatalog().lookupCube("Sales").orElseThrow();
 
         final Logger logger = RolapUtil.SQL_LOGGER;
         final StringWriter sw = new StringWriter();

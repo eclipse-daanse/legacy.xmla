@@ -64,7 +64,7 @@ class RolapCubeTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testProcessFormatStringAttributeToIgnoreNullFormatString(Context context) {
         RolapCube cube =
-            (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales", false);
+            (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales").orElseThrow();
         StringBuilder builder = new StringBuilder();
         cube.processFormatStringAttribute(
             CalculatedMemberMappingImpl.builder().build(), builder);
@@ -75,7 +75,7 @@ class RolapCubeTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testProcessFormatStringAttribute(Context context) {
         RolapCube cube =
-            (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales", false);
+            (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales").orElseThrow();
         StringBuilder builder = new StringBuilder();
         CalculatedMemberMappingImpl xmlCalcMember =
         		CalculatedMemberMappingImpl.builder().build();
@@ -366,13 +366,13 @@ class RolapCubeTest {
     void testBasedCubesForVirtualCube(Context context) {
       Connection connection = context.getConnectionWithDefaultRole();
       RolapCube cubeSales =
-          (RolapCube) connection.getCatalog().lookupCube("Sales", false);
+          (RolapCube) connection.getCatalog().lookupCube("Sales").orElseThrow();
       RolapCube cubeWarehouse =
           (RolapCube) connection.getCatalog().lookupCube(
-              "Warehouse", false);
+              "Warehouse").orElseThrow();
       RolapCube cube =
           (RolapCube) connection.getCatalog().lookupCube(
-              "Warehouse and Sales", false);
+              "Warehouse and Sales").orElseThrow();
       assertNotNull(cube);
       assertNotNull(cubeSales);
       assertNotNull(cubeWarehouse);
@@ -388,7 +388,7 @@ class RolapCubeTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testBasedCubesForNotVirtualCubeIsThisCube(Context context) {
       RolapCube cubeSales =
-          (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales", false);
+          (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales").orElseThrow();
       assertNotNull(cubeSales);
       assertEquals(false, cubeSales.isVirtual());
       List<RolapCube> baseCubes = cubeSales.getBaseCubes();

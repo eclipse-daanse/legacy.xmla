@@ -96,7 +96,7 @@ class RolapCubeHierarchyTest {
     doReturn(cubeDimension_cube_isVirtual).when(cubeDimension_cube).isVirtual();
     doReturn(cubeDimension_schema).when(cubeDimension).getCatalog();
     doReturn(schemaReader).when(cubeDimension_schema)
-    .getCatalogReader();
+    .getCatalogReaderWithDefaultRole();
     doReturn(cubeDimension_schema_connection).when(cubeDimension_schema)
       .getInternalConnection();
     doReturn(cubeDimension_schema_connection_DS)
@@ -155,7 +155,7 @@ class RolapCubeHierarchyTest {
     doReturn(cubeDimension_schema_connection).when(cubeDimension_schema)
       .getInternalConnection();
     doReturn(schemaReader).when(cubeDimension_schema)
-    .getCatalogReader();
+    .getCatalogReaderWithDefaultRole();
     doReturn(cubeDimension_schema_connection_DS)
       .when(cubeDimension_schema_connection).getDataSource();
     doReturn(cubeDimension_uniqueName).when(cubeDimension).getUniqueName();
@@ -216,7 +216,7 @@ class RolapCubeHierarchyTest {
     doReturn(cubeDimension_schema_connection).when(cubeDimension_schema)
       .getInternalConnection();
     doReturn(schemaReader).when(cubeDimension_schema)
-    .getCatalogReader();
+    .getCatalogReaderWithDefaultRole();
     doReturn(cubeDimension_schema_connection_DS)
       .when(cubeDimension_schema_connection).getDataSource();
     doReturn(cubeDimension_uniqueName).when(cubeDimension).getUniqueName();
@@ -280,7 +280,7 @@ class RolapCubeHierarchyTest {
     doReturn(cubeDimension_schema_connection).when(cubeDimension_schema)
       .getInternalConnection();
     doReturn(schemaReader).when(cubeDimension_schema)
-    .getCatalogReader();
+    .getCatalogReaderWithDefaultRole();
     doReturn(cubeDimension_schema_connection_DS)
       .when(cubeDimension_schema_connection).getDataSource();
     doReturn(cubeDimension_uniqueName).when(cubeDimension).getUniqueName();

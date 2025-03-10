@@ -111,7 +111,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     aggMgr = abc.getAggregationManager();
     locus = new LocusImpl( e, "FastBatchingCellReaderTest", null );
     LocusImpl.push( locus );
-    salesCube = (RolapCube) connection.getCatalogReader().withLocus().getCubes()[0];
+    salesCube = (RolapCube) connection.getCatalogReader().withLocus().getCubes().get(0);
   }
 
   private BatchLoader createFbcr( Boolean useGroupingSets, RolapCube cube ) {

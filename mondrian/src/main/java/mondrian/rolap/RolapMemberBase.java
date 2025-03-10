@@ -27,6 +27,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Property;
+import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.element.OlapMetaData;
@@ -41,7 +42,6 @@ import mondrian.olap.MemberBase;
 import mondrian.olap.StandardProperty;
 import mondrian.olap.Util;
 import mondrian.server.LocusImpl;
-import mondrian.spi.PropertyFormatter;
 import mondrian.util.Bug;
 
 /**
@@ -668,9 +668,9 @@ public class RolapMemberBase
             }
         }
         Object propertyValue = getPropertyValue(propertyName);
-        PropertyFormatter pf;
+        MemberPropertyFormatter pf;
         if (prop != null && (pf = prop.getFormatter()) != null) {
-            return pf.formatProperty(this, propertyName, propertyValue);
+            return pf.format(this, prop, propertyValue);
         }
         // fallback
         return propertyValue == null ? null : propertyValue.toString();
@@ -680,7 +680,7 @@ public class RolapMemberBase
 	public boolean isParentChildLeaf() {
         if (isParentChildLeaf == null) {
             isParentChildLeaf = getLevel().isParentChild()
-                && getDimension().getCatalog().getCatalogReader()
+                && getDimension().getCatalog().getCatalogReaderWithDefaultRole()
                 .getMemberChildren(this).size() == 0;
         }
         return isParentChildLeaf;

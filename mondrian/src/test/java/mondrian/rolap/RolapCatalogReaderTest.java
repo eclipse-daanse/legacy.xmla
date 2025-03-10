@@ -71,9 +71,9 @@ class RolapCatalogReaderTest {
         try {
             CatalogReader reader = connection.getCatalogReader().withLocus();
 
-            Cube[] cubes = reader.getCubes();
+            List<Cube> cubes = reader.getCubes();
 
-            assertEquals(expectedCubes.length, cubes.length);
+            assertEquals(expectedCubes.length, cubes.size());
 
             assertCubeExists(expectedCubes, cubes);
         } finally {
@@ -93,9 +93,9 @@ class RolapCatalogReaderTest {
         try {
             CatalogReader reader = connection.getCatalogReader().withLocus();
 
-            Cube[] cubes = reader.getCubes();
+            List<Cube> cubes = reader.getCubes();
 
-            assertEquals(expectedCubes.length, cubes.length);
+            assertEquals(expectedCubes.length, cubes.size());
 
             assertCubeExists(expectedCubes, cubes);
         } finally {
@@ -114,9 +114,9 @@ class RolapCatalogReaderTest {
         try {
             CatalogReader reader = connection.getCatalogReader().withLocus();
 
-            Cube[] cubes = reader.getCubes();
+            List<Cube> cubes = reader.getCubes();
 
-            assertEquals(expectedCubes.length, cubes.length);
+            assertEquals(expectedCubes.length, cubes.size());
 
             assertCubeExists(expectedCubes, cubes);
         } finally {
@@ -145,7 +145,7 @@ class RolapCatalogReaderTest {
         }
     }
 
-    private void assertCubeExists(String[] expectedCubes, Cube[] cubes) {
+    private void assertCubeExists(String[] expectedCubes, List<Cube> cubes) {
         List cubesAsList = Arrays.asList(expectedCubes);
 
         for (Cube cube : cubes) {

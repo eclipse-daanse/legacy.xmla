@@ -12,7 +12,7 @@
 package mondrian.rolap;
 
 import org.eclipse.daanse.olap.api.element.LevelType;
-import org.eclipse.daanse.olap.api.element.MemberFormatter;
+import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;

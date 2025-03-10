@@ -35,9 +35,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.daanse.olap.api.element.Property;
+import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.eclipse.daanse.olap.api.query.component.Expression;
-
-import mondrian.spi.PropertyFormatter;
 
 public final class StandardProperty extends AbstractProperty {
 
@@ -260,7 +259,7 @@ public final class StandardProperty extends AbstractProperty {
 	 * cell values of this member.
 	 *
 	 * <p>
-	 * The class must implement the {@link mondrian.spi.CellFormatter} interface.
+	 * The class must implement the {@link org.eclipse.daanse.olap.api.formatter.CellFormatter} interface.
 	 *
 	 * <p>
 	 * Despite its name, this is a member property.
@@ -454,7 +453,7 @@ public final class StandardProperty extends AbstractProperty {
 			Arrays.asList("format", "format_string", "FORMAT", FORMAT_STRING.getName()));
 
 	@Override
-	public PropertyFormatter getFormatter() {
+	public MemberPropertyFormatter getFormatter() {
 		return null;
 	}
 

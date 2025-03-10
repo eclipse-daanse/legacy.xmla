@@ -26,6 +26,7 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.MatchType;
+import org.eclipse.daanse.olap.api.NameResolver;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.Parameter;
@@ -34,7 +35,6 @@ import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
-import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -71,7 +71,7 @@ import mondrian.rolap.sql.TupleConstraint;
 public class RolapCatalogReader
     implements CatalogReader,
         RolapNativeSet.CatalogReaderWithMemberReaderAvailable,
-        NameResolverImpl.Namespace
+        NameResolver.Namespace
 {
     protected final Role role;
     private final Map<Hierarchy, MemberReader> hierarchyReaders =
@@ -497,8 +497,8 @@ public class RolapCatalogReader
     }
 
     @Override
-	public List<NameResolverImpl.Namespace> getNamespaces() {
-        return Collections.<NameResolverImpl.Namespace>singletonList(this);
+	public List<NameResolver.Namespace> getNamespaces() {
+        return Collections.<NameResolver.Namespace>singletonList(this);
     }
 
     @Override
@@ -735,17 +735,8 @@ public class RolapCatalogReader
     }
 
     @Override
-	public Cube[] getCubes() {
-        Cube[] cubes = catalog.getCubes();
-        List<Cube> visibleCubes = new ArrayList<>(cubes.length);
-
-        for (Cube cube : cubes) {
-            if (role.canAccess(cube)) {
-                visibleCubes.add(cube);
-            }
-        }
-
-        return visibleCubes.toArray(new Cube[visibleCubes.size()]);
+	public List<Cube> getCubes() {
+     return   catalog.getCubes().stream().filter(role::canAccess).toList();
     }
 
     @Override

@@ -51,6 +51,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.api.formatter.CellFormatter;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
@@ -105,7 +106,6 @@ import mondrian.rolap.sql.MemberChildrenConstraint;
 import mondrian.rolap.sql.SqlQuery;
 import mondrian.rolap.util.PojoUtil;
 import mondrian.rolap.util.RelationUtil;
-import mondrian.spi.CellFormatter;
 
 /**
  * <code>RolapHierarchy</code> implements {@link Hierarchy} for a ROLAP database.
@@ -480,7 +480,7 @@ public class RolapHierarchy extends HierarchyBase {
             // First look up from within this hierarchy. Works for unqualified
             // names, e.g. [USA].[CA].
             defaultMember = (Member) Util.lookupCompound(
-                getRolapCatalog().getCatalogReader(),
+                getRolapCatalog().getCatalogReaderWithDefaultRole(),
                 this,
                 uniqueNameParts,
                 false,
@@ -491,7 +491,7 @@ public class RolapHierarchy extends HierarchyBase {
             // e.g. [Store].[USA].[CA] or [Time].[Weekly].[1997].[Q2].
             if (defaultMember == null) {
                 defaultMember = (Member) Util.lookupCompound(
-                    getRolapCatalog().getCatalogReader(),
+                    getRolapCatalog().getCatalogReaderWithDefaultRole(),
                     new DummyElement(),
                     uniqueNameParts,
                     false,
@@ -614,7 +614,7 @@ public class RolapHierarchy extends HierarchyBase {
         if (defaultMember == null) {
             List<RolapMember> rootMembers = memberReader.getRootMembers();
             final CatalogReader schemaReader =
-                getRolapCatalog().getCatalogReader();
+                getRolapCatalog().getCatalogReaderWithDefaultRole();
             List<RolapMember> calcMemberList =
                 Util.cast(schemaReader.getCalculatedMembers(getLevels()[0]));
             

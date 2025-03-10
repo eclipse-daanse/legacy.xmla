@@ -13,19 +13,26 @@
 
 package org.eclipse.daanse.olap.api.access;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 public enum AccessDimension {
     /** No access to an object and its children. */
     NONE,
+
     /**
-     * A grant that covers none of the children
-     * unless explicitly granted.
+     * A grant that covers none of the children unless explicitly granted.
      */
     CUSTOM,
+
     /** Access to all shared dimensions (applies to schema grant). */
     ALL;
+
     @Override
     public String toString() {
         return this.name();
     }
 
+    public static final Set<AccessDimension> ALLOWED_SET = EnumSet.of(AccessDimension.NONE, AccessDimension.ALL,
+            AccessDimension.CUSTOM);
 }

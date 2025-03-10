@@ -274,8 +274,7 @@ class TupleListTest {
      */
     private Member xxx(Connection connection, String memberName) {
         Catalog schema = connection.getCatalog();
-        final boolean fail = true;
-        Cube salesCube = schema.lookupCube("Sales", fail);
+        Cube salesCube = schema.lookupCube("Sales").orElseThrow();
         final CatalogReader schemaReader =
             salesCube.getCatalogReader(null).withLocus(); // unrestricted
         return schemaReader.getMemberByUniqueName(

@@ -277,13 +277,13 @@ public class ConcurrentValidatingQueryRunner extends Thread {
         CacheControl cacheControl =
             connection.getCacheControl(null);
 
-        Cube salesCube = connection.getCatalog().lookupCube("Sales", true);
+        Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
         CacheControl.CellRegion measuresRegion =
             cacheControl.createMeasuresRegion(salesCube);
         cacheControl.flush(measuresRegion);
 
         Cube whsalesCube =
-            connection.getCatalog().lookupCube("Warehouse and Sales", true);
+            connection.getCatalog().lookupCube("Warehouse and Sales").orElseThrow();
         measuresRegion =
             cacheControl.createMeasuresRegion(whsalesCube);
         cacheControl.flush(measuresRegion);
@@ -302,7 +302,7 @@ public class ConcurrentValidatingQueryRunner extends Thread {
         // Lookup members
         Cube salesCube =
             connection.getCatalog().lookupCube(
-                "Sales", true);
+                "Sales").orElseThrow();
         CatalogReader schemaReader =
             salesCube.getCatalogReader(null);
 

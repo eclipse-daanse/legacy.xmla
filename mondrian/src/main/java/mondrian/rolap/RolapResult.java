@@ -41,6 +41,7 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.api.formatter.CellFormatter;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.DimensionExpression;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -95,7 +96,6 @@ import mondrian.olap.fun.sort.Sorter;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.agg.CellRequestQuantumExceededException;
 import mondrian.server.LocusImpl;
-import mondrian.spi.CellFormatter;
 import mondrian.util.CancellationChecker;
 import mondrian.util.Format;
 import mondrian.util.ObjectPool;
@@ -1825,7 +1825,7 @@ public Cell getCell( int[] pos ) {
 
     @Override
 	public String format( Object value, String formatString ) {
-      return cf.formatCell( value );
+      return cf.format( value );
     }
   }
 

@@ -10,7 +10,7 @@
 package mondrian.rolap.format;
 
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.element.MemberFormatter;
+import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
 
 class MemberFormatterTestImpl implements MemberFormatter {
 
@@ -18,7 +18,7 @@ class MemberFormatterTestImpl implements MemberFormatter {
     }
 
     @Override
-    public String formatMember(Member member) {
+    public String format(Member member) {
         return null;
     }
 }

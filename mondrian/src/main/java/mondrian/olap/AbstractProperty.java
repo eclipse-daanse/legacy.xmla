@@ -1,8 +1,7 @@
 package mondrian.olap;
 
 import org.eclipse.daanse.olap.api.element.Property;
-
-import mondrian.spi.PropertyFormatter;
+import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 
 public abstract class AbstractProperty implements Property {
 
@@ -35,7 +34,7 @@ public abstract class AbstractProperty implements Property {
 	}
 
 	@Override
-	public PropertyFormatter getFormatter() {
+	public MemberPropertyFormatter getFormatter() {
 		return null;
 	}
 
