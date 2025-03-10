@@ -237,7 +237,7 @@ public class PojoUtil {
 	}
 
 	// TODO: migrate to util.Converter
-	private static ColumnMappingImpl getColumn(ColumnMapping column) {
+	public static ColumnMappingImpl getColumn(ColumnMapping column) {
         if (column != null) {
             String name = column.getName();
             ColumnDataType type = column.getType();

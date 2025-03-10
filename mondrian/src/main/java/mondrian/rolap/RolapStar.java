@@ -462,13 +462,13 @@ public class RolapStar {
                     JoinQueryMappingImpl.builder()
                     .withLeft(JoinedQueryElementMappingImpl.builder()
                     		.withAlias(left instanceof RelationalQueryMapping relation ? RelationUtil.getAlias(relation) : null)
-                    		.withKey((ColumnMappingImpl) join.getLeft().getKey())
+                    		.withKey(PojoUtil.getColumn(join.getLeft().getKey()))
                     		.withQuery(PojoUtil.copy(left))
                     		.build())
 
                     .withRight(JoinedQueryElementMappingImpl.builder()
                     		.withAlias(right instanceof RelationalQueryMapping relation ? RelationUtil.getAlias(relation) : null)
-                    		.withKey((ColumnMappingImpl) join.getRight().getKey())
+                    		.withKey(PojoUtil.getColumn(join.getRight().getKey()))
                     		.withQuery(PojoUtil.copy(right))
                     		.build())
                     .build();
