@@ -13,6 +13,10 @@
  */
 package org.eclipse.daanse.olap.xmla.bridge.execute;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.eclipse.daanse.xmla.api.common.enums.ItemTypeEnum;
 import org.eclipse.daanse.xmla.api.discover.dbschema.catalogs.DbSchemaCatalogsResponseRow;
 import org.eclipse.daanse.xmla.api.discover.dbschema.columns.DbSchemaColumnsResponseRow;
@@ -46,10 +50,6 @@ import org.eclipse.daanse.xmla.api.mddataset.RowSetRowItem;
 import org.eclipse.daanse.xmla.model.record.mddataset.RowSetR;
 import org.eclipse.daanse.xmla.model.record.mddataset.RowSetRowItemR;
 import org.eclipse.daanse.xmla.model.record.mddataset.RowSetRowR;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class DiscoveryResponseConvertor {
 

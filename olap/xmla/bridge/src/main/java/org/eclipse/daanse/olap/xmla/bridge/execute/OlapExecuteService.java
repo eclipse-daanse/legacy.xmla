@@ -157,8 +157,6 @@ import org.eclipse.daanse.xmla.model.record.execute.statement.StatementResponseR
 import org.eclipse.daanse.xmla.model.record.mddataset.RowSetR;
 import org.eclipse.daanse.xmla.model.record.xmla_empty.EmptyresultR;
 
-import mondrian.olap.UpdateImpl;
-
 public class OlapExecuteService implements ExecuteService {
 
     public static final String SESSION_ID = "sessionId";
@@ -352,7 +350,7 @@ public class OlapExecuteService implements ExecuteService {
             Scenario scenario = session.getScenario();
             connection.setScenario(scenario);
             for (UpdateClause updateClause : update.getUpdateClauses()) {
-                if (updateClause instanceof UpdateImpl.UpdateClauseImpl updateClauseImpl) {
+                if (updateClause instanceof UpdateClause updateClauseImpl) {
                     StringWriter sw = new StringWriter();
                     PrintWriter pw = new mondrian.mdx.QueryPrintWriter(sw);
                     updateClause.getTupleExp().unparse(pw);

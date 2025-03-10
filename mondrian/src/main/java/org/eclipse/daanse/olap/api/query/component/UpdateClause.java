@@ -13,10 +13,14 @@
  */
 package org.eclipse.daanse.olap.api.query.component;
 
+import org.eclipse.daanse.mdx.model.api.select.Allocation;
+
 public non-sealed interface UpdateClause extends QueryComponent {
 
     Expression getTupleExp();
 
     Expression getValueExp();
+
+	Allocation getAllocation();
 
 }

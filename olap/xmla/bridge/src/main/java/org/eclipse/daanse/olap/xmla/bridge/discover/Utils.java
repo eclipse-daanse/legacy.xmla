@@ -109,7 +109,6 @@ import org.eclipse.daanse.xmla.model.record.discover.mdschema.sets.MdSchemaSetsR
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.SystemWideProperties;
 import mondrian.rolap.RolapAggregator;
 import mondrian.rolap.RolapStoredMeasure;
 

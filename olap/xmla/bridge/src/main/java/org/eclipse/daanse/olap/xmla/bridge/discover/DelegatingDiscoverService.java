@@ -13,6 +13,8 @@
 */
 package org.eclipse.daanse.olap.xmla.bridge.discover;
 
+import java.util.List;
+
 import org.eclipse.daanse.olap.action.api.ActionService;
 import org.eclipse.daanse.olap.xmla.bridge.ContextGroupXmlaServiceConfig;
 import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
@@ -73,8 +75,6 @@ import org.eclipse.daanse.xmla.api.discover.mdschema.properties.MdSchemaProperti
 import org.eclipse.daanse.xmla.api.discover.mdschema.properties.MdSchemaPropertiesResponseRow;
 import org.eclipse.daanse.xmla.api.discover.mdschema.sets.MdSchemaSetsRequest;
 import org.eclipse.daanse.xmla.api.discover.mdschema.sets.MdSchemaSetsResponseRow;
-
-import java.util.List;
 
 /*
  * Delegates to a other class that share same kind of information.

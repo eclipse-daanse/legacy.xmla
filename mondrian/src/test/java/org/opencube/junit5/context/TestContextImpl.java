@@ -16,7 +16,6 @@ import org.eclipse.daanse.mdx.parser.ccc.MdxParserProviderImpl;
 import org.eclipse.daanse.olap.api.BasicContextConfig;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.function.FunctionService;
-import org.eclipse.daanse.olap.api.result.Scenario;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
@@ -299,10 +298,10 @@ import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 
+import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapResultShepherd;
-import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.agg.AggregationManager;
 
 public class TestContextImpl extends AbstractBasicContext implements TestContext, RolapContext {

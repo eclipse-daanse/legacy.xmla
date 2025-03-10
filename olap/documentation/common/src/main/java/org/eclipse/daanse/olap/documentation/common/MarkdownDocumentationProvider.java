@@ -1535,7 +1535,12 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 	}
 
 	private String getNullable(ColumnMapping column) {
-		return column.getNullable() ? "is null " : "not null ";
+		
+		if (column.getNullable() != null) {
+			return column.getNullable() ? "is null " : "not null ";
+		} else {
+			return "is null ";
+		}
 	}
 
 	private List<? extends ColumnMapping> getMissedColumnsFromDbStructureFromSchema(List<? extends DatabaseSchemaMapping> databaseSchemaList, String tableName, List<ColumnDefinition> columnList) {

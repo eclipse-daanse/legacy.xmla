@@ -25,6 +25,7 @@ import java.util.Set;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+//import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.xmla.bridge.ContextGroupXmlaServiceConfig;
 import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
 import org.eclipse.daanse.xmla.api.PropertyDefinition;
