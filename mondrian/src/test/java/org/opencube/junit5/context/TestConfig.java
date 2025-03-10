@@ -20,7 +20,6 @@ public class TestConfig implements BasicContextConfig {
 	private boolean enableDrillThrough = ENABLE_DRILL_THROUGH_DEFAULT_VALUE;
 	private boolean enableNativeFilter = ENABLE_NATIVE_FILTER_DEFAULT_VALUE;
 	private boolean enableNativeCrossJoin = ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE;
-	private boolean enableNativeNonEmpty = ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE;
 	private boolean enableNativeTopCount = ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE;
 	private boolean enableInMemoryRollup = ENABLE_IN_MEMORY_ROLLUP_DEFAULT_VALUE;
 	private boolean expandNonNative = EXPAND_NON_NATIVE_DEFAULT_VALUE;
@@ -185,15 +184,6 @@ public class TestConfig implements BasicContextConfig {
 	@Override
 	public Boolean enableNativeCrossJoin() {
 		return enableNativeCrossJoin;
-	}
-
-	public void setEnableNativeNonEmpty(boolean enableNativeNonEmpty) {
-		this.enableNativeNonEmpty = enableNativeNonEmpty;
-	}
-
-	@Override
-	public Boolean enableNativeNonEmpty() {
-		return enableNativeNonEmpty;
 	}
 
 	public void setEnableNativeTopCount(boolean enableNativeTopCount) {

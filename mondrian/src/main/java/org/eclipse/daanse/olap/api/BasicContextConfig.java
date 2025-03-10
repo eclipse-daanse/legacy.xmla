@@ -100,7 +100,6 @@ public interface BasicContextConfig {
     boolean ENABLE_DRILL_THROUGH_DEFAULT_VALUE = true;
     boolean ENABLE_NATIVE_FILTER_DEFAULT_VALUE = true;
     boolean ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE = true;
-    boolean ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE = true;
     boolean ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE = true;
     boolean ENABLE_IN_MEMORY_ROLLUP_DEFAULT_VALUE = true;
     boolean EXPAND_NON_NATIVE_DEFAULT_VALUE = false;
@@ -265,10 +264,6 @@ public interface BasicContextConfig {
     //If enabled some Filter() will be computed in SQL.
     @AttributeDefinition(name = "%enableNativeFilter.name", description = "%enableNativeFilter.description", type = AttributeType.BOOLEAN)
     default Boolean enableNativeFilter() { return ENABLE_NATIVE_FILTER_DEFAULT_VALUE; }
-
-    //If enabled some NON EMPTY set operations like member.children, level.members and member descendants will be computed in SQL.
-    @AttributeDefinition(name = "%enableNativeNonEmpty.name", description = "%enableNativeNonEmpty.description", type = AttributeType.BOOLEAN)
-    default Boolean enableNativeNonEmpty() { return ENABLE_NATIVE_NON_EMPTY_DEFAULT_VALUE; }
 
     //Alerting action to take in case native evaluation of a function is enabled but not supported for that function's usage in a particular query.  (No alert is ever raised in cases where native evaluation would definitely have been wasted effort.) Recognized actions: OFF: do nothing (default action, also used if unrecognized action is specified) WARN: log a warning to RolapUtil logger ERROR: throw an instance of NativeEvaluationUnsupportedException
     @AttributeDefinition(name = "%alertNativeEvaluationUnsupported.name", description = "%alertNativeEvaluationUnsupported.description", type = AttributeType.STRING)
