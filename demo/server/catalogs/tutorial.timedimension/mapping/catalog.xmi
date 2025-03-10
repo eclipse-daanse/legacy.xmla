@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:roma="https://www.daanse.org/spec/org.eclipse.daanse.rolap.mapping">
+  <roma:Catalog description="Schema with cube with Time Dimension" name="Minimal_Cube_with_Time_Dimension" cubes="CubeTimeDimension" dbschemas="databaseSchema"/>
+  <roma:DatabaseSchema id="databaseSchema">
+    <tables xsi:type="roma:PhysicalTable" id="Fact" name="Fact">
+      <columns id="Fact_DATE_KEY" name="DATE_KEY" type="TIMESTAMP"/>
+      <columns id="Fact_VALUE" name="VALUE" type="INTEGER"/>
+    </tables>
+  </roma:DatabaseSchema>
+  <roma:Column id="Fact_QTR_NAME" name="QTR_NAME" type="VARCHAR"/>
+  <roma:Column id="Fact_MONTH_NAME" name="MONTH_NAME" type="VARCHAR"/>
+  <roma:Column id="Fact_DAY_IN_MONTH" name="DAY_IN_MONTH" type="INTEGER"/>
+  <roma:Column id="Fact_WEEK_IN_MONTH" name="WEEK_IN_MONTH" type="INTEGER"/>
+  <roma:Column id="Fact_QTR_ID" name="QTR_ID" type="VARCHAR"/>
+  <roma:Column id="Fact_MONTH_ID" name="MONTH_ID" type="VARCHAR"/>
+  <roma:Column id="Fact_YEAR_ID" name="YEAR_ID" type="INTEGER"/>
+  <roma:TableQuery id="FactQuery" table="Fact"/>
+  <roma:Level id="Months" name="Months" column="Fact_MONTH_NAME" type="TimeMonths" ordinalColumn="Fact_MONTH_ID"/>
+  <roma:Level id="Years" name="Years" column="Fact_YEAR_ID" type="TimeYears" columnType="Integer" uniqueMembers="true"/>
+  <roma:Level id="Quarters" name="Quarters" column="Fact_QTR_NAME" type="TimeQuarters" ordinalColumn="Fact_QTR_ID"/>
+  <roma:Level id="Day" name="Day" column="Fact_DAY_IN_MONTH" type="TimeDays" columnType="Numeric"/>
+  <roma:Level id="Week" name="Week" column="Fact_WEEK_IN_MONTH" type="TimeWeeks"/>
+  <roma:Hierarchy id="hierarchy" levels="Years Quarters Months Week Day" allMemberName="All Years" hasAll="true" primaryKey="Fact_DATE_KEY" query="FactQuery"/>
+  <roma:TimeDimension id="Time" name="Time" hierarchies="hierarchy"/>
+  <roma:PhysicalCube id="CubeTimeDimension" name="CubeTimeDimension" query="FactQuery">
+    <dimensionConnectors dimension="Time" overrideDimensionName="Time"/>
+    <measureGroups>
+      <measures id="Measure-Sum" name="Measure-Sum" column="Fact_VALUE"/>
+    </measureGroups>
+  </roma:PhysicalCube>
+</xmi:XMI>

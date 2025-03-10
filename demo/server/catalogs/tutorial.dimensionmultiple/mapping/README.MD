@@ -1,0 +1,55 @@
+Cube with multiple dimensions
+
+
+
+## Definition
+
+This files represent the complete definition of the catalog.
+
+```xmi
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:roma="https://www.daanse.org/spec/org.eclipse.daanse.rolap.mapping">
+  <roma:Catalog description="Schema of a minimal cube with two dimensions" name="Minimal_Two_Dimensions" cubes="CubeTwoDimensions" dbschemas="databaseSchema"/>
+  <roma:DatabaseSchema id="databaseSchema">
+    <tables xsi:type="roma:PhysicalTable" id="Fact" name="Fact">
+      <columns id="Fact_DIM1_KEY" name="DIM1_KEY" type="INTEGER"/>
+      <columns id="Fact_DIM2_KEY" name="DIM2_KEY" type="INTEGER"/>
+      <columns id="Fact_VALUE" name="VALUE" type="INTEGER"/>
+    </tables>
+    <tables xsi:type="roma:PhysicalTable" id="DIM_1" name="DIM_1">
+      <columns id="Dim1_KEY" name="KEY" type="INTEGER"/>
+      <columns id="Dim1_NAME" name="NAME" type="VARCHAR"/>
+    </tables>
+    <tables xsi:type="roma:PhysicalTable" id="DIM_2" name="DIM_2">
+      <columns id="Dim2_KEY" name="KEY" type="INTEGER"/>
+      <columns id="Dim2_NAME" name="NAME" type="VARCHAR"/>
+    </tables>
+  </roma:DatabaseSchema>
+  <roma:TableQuery id="FactQuery" table="Fact"/>
+  <roma:TableQuery id="Dim1Query" table="DIM_1"/>
+  <roma:Level id="D1H1L1" name="D1H1L1" column="Dim1_KEY" nameColumn="Dim1_NAME"/>
+  <roma:Hierarchy id="D1H1" name="D1H1" levels="D1H1L1" hasAll="true" primaryKey="Dim1_KEY" query="Dim1Query"/>
+  <roma:Hierarchy id="D2H1" name="D21H1" levels="D1H1L1" hasAll="true" primaryKey="Dim1_KEY" query="Dim1Query"/>
+  <roma:StandardDimension id="D2" name="D2" hierarchies="D2H1"/>
+  <roma:StandardDimension id="D1" name="D1" hierarchies="D1H1"/>
+  <roma:PhysicalCube id="CubeTwoDimensions" name="CubeTwoDimensions" query="FactQuery">
+    <dimensionConnectors foreignKey="Fact_DIM1_KEY" dimension="D1" overrideDimensionName="Dimension1"/>
+    <dimensionConnectors foreignKey="Fact_DIM2_KEY" dimension="D2" overrideDimensionName="Dimension2"/>
+    <measureGroups>
+      <measures id="Measure" name="Measure" column="Fact_VALUE"/>
+    </measureGroups>
+  </roma:PhysicalCube>
+</xmi:XMI>
+
+```
+## csv data
+
+
+This files represent the data in the tables.
+
+- [DIM_1](./data/DIM_1.csv)
+
+- [DIM_2](./data/DIM_2.csv)
+
+- [Fact](./data/Fact.csv)
+

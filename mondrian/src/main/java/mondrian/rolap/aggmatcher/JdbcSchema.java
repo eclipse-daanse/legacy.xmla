@@ -727,7 +727,7 @@ public class JdbcSchema {
 			for (ColumnMapping rdbColumn : list) {
 
 				String nameInner = rdbColumn.getName();
-				int type = JDBCType.valueOf(rdbColumn.getType().name()).getVendorTypeNumber();
+				int type = rdbColumn.getType() != null ? JDBCType.valueOf(rdbColumn.getType().name()).getVendorTypeNumber() : 0;
 				ColumnDataType typeName = rdbColumn.getType();
 				Integer columnSize = rdbColumn.getColumnSize() == null ? 0 : rdbColumn.getColumnSize();
 				Integer decimalDigits = rdbColumn.getDecimalDigits() == null ? 0 : rdbColumn.getDecimalDigits();
@@ -737,7 +737,7 @@ public class JdbcSchema {
 
 				Column column = new Column(nameInner);
 				column.setType(type);
-				column.setTypeName(typeName.name());
+				column.setTypeName(typeName != null ? typeName.name() : null);
 				column.setColumnSize(columnSize);
 				column.setDecimalDigits(decimalDigits);
 				column.setNumPrecRadix(numPrecRadix);

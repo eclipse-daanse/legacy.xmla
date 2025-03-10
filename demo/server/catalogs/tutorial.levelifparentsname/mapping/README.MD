@@ -1,0 +1,59 @@
+
+
+
+## Definition
+
+This files represent the complete definition of the catalog.
+
+```xmi
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:roma="https://www.daanse.org/spec/org.eclipse.daanse.rolap.mapping">
+  <roma:Catalog description="Schema of a minimal cube with single Hierarchy Hidden Members with IfParentsName" name="Minimal_Single_Hierarchy_Hidden_Members_with_IfParentsName" cubes="HiddenMembersIfParentName" dbschemas="databaseSchema"/>
+  <roma:DatabaseSchema id="databaseSchema">
+    <tables xsi:type="roma:PhysicalTable" id="Fact" name="Fact">
+      <columns id="Fact_DIM_KEY" name="DIM_KEY" type="INTEGER"/>
+      <columns id="Fact_VALUE" name="VALUE" type="INTEGER"/>
+    </tables>
+    <tables xsi:type="roma:PhysicalTable" id="Level_1" name="Level_1">
+      <columns id="Level_1_KEY" name="KEY" type="INTEGER"/>
+      <columns id="Level_1_NAME" name="NAME" type="VARCHAR"/>
+    </tables>
+    <tables xsi:type="roma:PhysicalTable" id="Level_2" name="Level_2">
+      <columns id="Level_2_KEY" name="KEY" type="INTEGER"/>
+      <columns id="Level_2_NAME" name="NAME" type="VARCHAR"/>
+      <columns id="Level_2_L1_KEY" name="L1_KEY" type="INTEGER"/>
+    </tables>
+  </roma:DatabaseSchema>
+  <roma:TableQuery id="queryFact" table="Fact"/>
+  <roma:JoinQuery id="queryJoin1">
+    <left key="Level_2_L1_KEY">
+      <query xsi:type="roma:TableQuery" id="queryLevel2" table="Level_2"/>
+    </left>
+    <right key="Level_1_KEY">
+      <query xsi:type="roma:TableQuery" id="queryLevel1" table="Level_1"/>
+    </right>
+  </roma:JoinQuery>
+  <roma:Level id="h1Level2" name="Level2" column="Level_2_KEY" hideMemberIf="IfParentsName" nameColumn="Level_2_NAME" table="Level_2"/>
+  <roma:Level id="h1Level1" name="Level1" column="Level_1_KEY" nameColumn="Level_1_NAME" table="Level_1"/>
+  <roma:Hierarchy id="Hierarchy1" name="Hierarchy1" levels="h1Level1 h1Level2" hasAll="true" primaryKey="Level_2_KEY" primaryKeyTable="Level_2" query="queryJoin1"/>
+  <roma:StandardDimension id="DimensionMembersHiddenIfParentsName" name="DimensionMembersHiddenIfParentsName" hierarchies="Hierarchy1"/>
+  <roma:PhysicalCube id="HiddenMembersIfParentName" name="HiddenMembersIfParentName" query="queryFact">
+    <dimensionConnectors foreignKey="Fact_DIM_KEY" dimension="DimensionMembersHiddenIfParentsName" overrideDimensionName="DimensionMembersHiddenIfBlankName"/>
+    <measureGroups>
+      <measures id="Measure1" name="Measure1" column="Fact_VALUE"/>
+    </measureGroups>
+  </roma:PhysicalCube>
+</xmi:XMI>
+
+```
+## csv data
+
+
+This files represent the data in the tables.
+
+- [Fact](./data/Fact.csv)
+
+- [Level_1](./data/Level_1.csv)
+
+- [Level_2](./data/Level_2.csv)
+

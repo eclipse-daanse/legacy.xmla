@@ -1,0 +1,43 @@
+A mininmal cube with a simple measure-based calculated member.
+
+
+
+## Definition
+
+This files represent the complete definition of the catalog.
+
+```xmi
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:roma="https://www.daanse.org/spec/org.eclipse.daanse.rolap.mapping">
+  <roma:Catalog description="Schema of a minimal cube with two calculated members" name="Minimal_Cubes_With_Two_Calculated_Members" cubes="CubeTwoMeasuresPlusCalculatedMeasures" dbschemas="databaseSchema"/>
+  <roma:DatabaseSchema id="databaseSchema">
+    <tables xsi:type="roma:PhysicalTable" id="Fact" name="Fact">
+      <columns id="Fact_KEY" name="KEY" type="VARCHAR"/>
+      <columns id="Fact_VALUE" name="VALUE" type="INTEGER"/>
+    </tables>
+  </roma:DatabaseSchema>
+  <roma:TableQuery id="FactQuery" table="Fact"/>
+  <roma:Level id="Level" name="Level" column="Fact_KEY"/>
+  <roma:Hierarchy id="Hierarchy1" name="Hierarchy1" levels="Level" hasAll="true" primaryKey="Fact_KEY" query="FactQuery"/>
+  <roma:StandardDimension id="D1" name="D1" hierarchies="Hierarchy1"/>
+  <roma:PhysicalCube id="CubeTwoMeasuresPlusCalculatedMeasures" name="CubeTwoMeasuresPlusCalculatedMeasures" query="FactQuery">
+    <calculatedMembers id="CM1" name="CM1" formula="[Measures].[Measure1-Sum] / [Measures].[Measure2-Count]"/>
+    <calculatedMembers id="CM2" name="CM2" formula="[Measures].[Measure1-Sum] / [Measures].[Measure2-Count]" parent="[Dimension1].[Hierarchy1].[All Hierarchy1s]" hierarchy="Hierarchy1">
+      <calculatedMemberProperties id="P1" name="FORMAT_STRING" value="0.0%"/>
+    </calculatedMembers>
+    <dimensionConnectors foreignKey="Fact_KEY" dimension="D1" overrideDimensionName="Dimension1"/>
+    <measureGroups>
+      <measures id="Measure1-Sum" name="Measure1-Sum" column="Fact_VALUE"/>
+      <measures id="Measure2-Count" name="Measure2-Count" column="Fact_VALUE" aggregator="count"/>
+    </measureGroups>
+  </roma:PhysicalCube>
+</xmi:XMI>
+
+```
+## csv data
+
+
+This files represent the data in the tables.
+
+- [Fact](./data/Fact.csv)
+

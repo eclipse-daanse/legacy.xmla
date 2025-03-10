@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:roma="https://www.daanse.org/spec/org.eclipse.daanse.rolap.mapping">
+  <roma:Catalog id="_cat" name="Database - Schema" dbschemas="_dbschema2 _dbschema1"/>
+  <roma:DatabaseSchema id="_dbschema1" description="theDescription" name="foo">
+    <tables xsi:type="roma:PhysicalTable" id="_tab1" name="theTable">
+      <columns id="_colt1c1" name="theColumn" type="VARCHAR"/>
+    </tables>
+  </roma:DatabaseSchema>
+  <roma:DatabaseSchema id="_dbschema2">
+    <tables xsi:type="roma:PhysicalTable" id="_tab2" name="theTable">
+      <columns id="_colt2c1" name="theColumn" type="VARCHAR"/>
+    </tables>
+  </roma:DatabaseSchema>
+</xmi:XMI>

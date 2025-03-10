@@ -1,3 +1,0 @@
-CURRENTVALUE,NEWVALUE,ALLOCATIONPOLICY,CUBE_NAME,MEMBERUNIQUENAMES
-DECIMAL(10.4),DECIMAL(10.4),VARCHAR(100),VARCHAR(100),VARCHAR(500)
-204.0,16000.0,"EQUAL_ALLOCATION","HR0","[Measures].[Count],[Time.Time1].[1997],[Store].[USA].[CA].[Alameda].[HQ],[Pay Type].[All Pay Types],[Store Type].[All Store Types],[Position].[All Position],[Department].[All Departments],[Employees].[All Employees],[Employees$Closure].[All Employees$Closure]"

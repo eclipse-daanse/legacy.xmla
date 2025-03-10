@@ -837,7 +837,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     private void writeAggregationSection(FileWriter writer, CatalogMapping catalog, PhysicalCubeMapping cube,
     		RolapContext context) {
     	Optional<TableQueryMapping> tableQuery = getFactTableQuery(cube);
-        if (!tableQuery.isPresent() && tableQuery.get().getAggregationTables() != null) {
+        if (tableQuery.isPresent() && tableQuery.get().getAggregationTables() != null) {
             try (Connection connection = context.getDataSource().getConnection()) {
                 List<? extends AggregationTableMapping> aggregationTables = tableQuery.get().getAggregationTables();
                 DatabaseMetaData databaseMetaData = connection.getMetaData();
