@@ -29,8 +29,8 @@
 package org.eclipse.daanse.olap.api.monitor.event;
 
 public sealed interface SqlStatementEvent extends OlapEvent
-		permits SqlStatementStartEvent, SqlStatementEndEvent, SqlStatementExecuteEvent {
-	public enum Purpose {
-		DRILL_THROUGH, CELL_SEGMENT, TUPLES, OTHER
-	}
+        permits SqlStatementStartEvent, SqlStatementEndEvent, SqlStatementExecuteEvent {
+    public enum Purpose {
+        DRILL_THROUGH, CELL_SEGMENT, TUPLES, OTHER
+    }
 }

@@ -10,7 +10,6 @@
 * Contributors:
 *   SmartCity Jena - initial
 */
-
 package org.eclipse.daanse.olap.api.monitor.event;
 
 public sealed interface Event permits OlapEvent, UserSpaceEvent {

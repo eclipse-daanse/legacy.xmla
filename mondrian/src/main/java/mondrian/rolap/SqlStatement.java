@@ -197,11 +197,11 @@ public class SqlStatement {
         }
       }
 
-		long mdxStatementId = SqlStatementEventCommon.mdxStatementIdOf(locus);
-		SqlStatementStartEvent event = new SqlStatementStartEvent(//
-				new SqlStatementEventCommon(new EventCommon(startTime), id, mdxStatementId, sql, getPurpose()),
-				getCellRequestCount());
-		locus.getContext().getMonitor().accept(event);
+    long mdxStatementId = mdxStatementIdOf(locus);
+    SqlStatementStartEvent event = new SqlStatementStartEvent(//
+        new SqlStatementEventCommon(new EventCommon(startTime), id, mdxStatementId, sql, getPurpose()),
+        getCellRequestCount());
+    locus.getContext().getMonitor().accept(event);
 
 //        new SqlStatementStartEvent(
 //          startTimeMillis,
@@ -238,19 +238,19 @@ public class SqlStatement {
       status = new StringBuilder(", exec ").append(executeMillis).append(" ms").toString();
 
 
-		SqlStatementExecuteEvent execEvent = new SqlStatementExecuteEvent(//
-				new SqlStatementEventCommon(new EventCommon(timeMillis), id, mdxStatementId, sql, getPurpose()),
-				executeNanos);
+    SqlStatementExecuteEvent execEvent = new SqlStatementExecuteEvent(//
+        new SqlStatementEventCommon(new EventCommon(timeMillis), id, mdxStatementId, sql, getPurpose()),
+        executeNanos);
 
-		locus.getContext().getMonitor().accept(execEvent);
+    locus.getContext().getMonitor().accept(execEvent);
 
 //      new SqlStatementExecuteEvent(
-//    		  timeMillis,
-//    		  id,
-//    		  locus,
-//    		  sql,
-//    		  getPurpose(),
-//    		  executeNanos )
+//          timeMillis,
+//          id,
+//          locus,
+//          sql,
+//          getPurpose(),
+//          executeNanos )
 
       // Compute accessors. They ensure that we use the most efficient
       // method (e.g. getInt, getDouble, getObject) for the type of the
@@ -318,14 +318,14 @@ public class SqlStatement {
           new StringBuilder(locus.message).append("; sql=[").append(sql).append("]").toString() );
     }
 
-	Instant endTime = Instant.now();
-	Duration duration;
-	if (startTime == null) {
-		// execution didn't start at all
-		duration = Duration.ZERO;
-	} else {
-		duration = Duration.between(startTime, endTime);
-	}
+  Instant endTime = Instant.now();
+  Duration duration;
+  if (startTime == null) {
+    // execution didn't start at all
+    duration = Duration.ZERO;
+  } else {
+    duration = Duration.between(startTime, endTime);
+  }
     String status = formatTimingStatus( duration, rowCount );
 
     locus.getExecution().getQueryTiming().markFull(
@@ -350,12 +350,12 @@ public class SqlStatement {
         "SqlStatement closed that was never executed: " + id );
     }
 
-	long mdxStatementId = SqlStatementEventCommon.mdxStatementIdOf(locus);
-	SqlStatementEndEvent endEvent = new SqlStatementEndEvent(//
-			new SqlStatementEventCommon(new EventCommon(endTime), id, mdxStatementId, sql, getPurpose()), rowCount,
-			false, null);
+  long mdxStatementId = mdxStatementIdOf(locus);
+  SqlStatementEndEvent endEvent = new SqlStatementEndEvent(//
+      new SqlStatementEventCommon(new EventCommon(endTime), id, mdxStatementId, sql, getPurpose()), rowCount,
+      false, null);
 
-	locus.getContext().getMonitor().accept(endEvent);
+  locus.getContext().getMonitor().accept(endEvent);
 
 //      new SqlStatementEndEvent(
 //        endTime,
@@ -403,21 +403,21 @@ public class SqlStatement {
       case OBJECT:
         return new Accessor() {
           @Override
-		public Object get() throws SQLException {
+    public Object get() throws SQLException {
             return resultSet.getObject( columnPlusOne );
           }
         };
       case STRING:
         return new Accessor() {
           @Override
-		public Object get() throws SQLException {
+    public Object get() throws SQLException {
             return resultSet.getString( columnPlusOne );
           }
         };
       case INT:
         return new Accessor() {
           @Override
-		public Object get() throws SQLException {
+    public Object get() throws SQLException {
             final int val = resultSet.getInt( columnPlusOne );
             if ( val == 0 && resultSet.wasNull() ) {
               return null;
@@ -428,7 +428,7 @@ public class SqlStatement {
       case LONG:
         return new Accessor() {
           @Override
-		public Object get() throws SQLException {
+    public Object get() throws SQLException {
             final long val = resultSet.getLong( columnPlusOne );
             if ( val == 0 && resultSet.wasNull() ) {
               return null;
@@ -439,7 +439,7 @@ public class SqlStatement {
       case DOUBLE:
         return new Accessor() {
           @Override
-		public Object get() throws SQLException {
+    public Object get() throws SQLException {
             final double val = resultSet.getDouble( columnPlusOne );
             if ( val == 0 && resultSet.wasNull() ) {
               return null;
@@ -452,7 +452,7 @@ public class SqlStatement {
         // there is currently no plan to support the DECIMAL/BigDecimal type internally
         return new Accessor() {
           @Override
-		public Object get() throws SQLException {
+    public Object get() throws SQLException {
             final BigDecimal decimal = resultSet.getBigDecimal( columnPlusOne );
             if ( decimal == null && resultSet.wasNull() ) {
               return null;
@@ -643,5 +643,15 @@ public class SqlStatement {
 
   public Context getContext() {
         return context;
+  }
+  
+  public static long mdxStatementIdOf(LocusImpl locus) {
+    if (locus.getExecution() != null) {
+      final org.eclipse.daanse.olap.api.Statement statement = locus.getExecution().getMondrianStatement();
+      if (statement != null) {
+        return statement.getId();
+      }
+    }
+    return -1;
   }
 }

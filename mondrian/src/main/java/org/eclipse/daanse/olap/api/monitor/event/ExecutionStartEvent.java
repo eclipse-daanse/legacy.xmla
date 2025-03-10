@@ -10,9 +10,8 @@
 * Contributors:
 *   SmartCity Jena - initial
 */
-
 package org.eclipse.daanse.olap.api.monitor.event;
 
-public record ExecutionStartEvent(ExecutionEventCommon eventCommon, String mdx) implements ExecutionEvent{
+public record ExecutionStartEvent(ExecutionEventCommon eventCommon, String mdx) implements ExecutionEvent {
 
 }

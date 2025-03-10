@@ -145,7 +145,7 @@ public class ExecutionImpl implements Execution{
     		new MdxStatementEventCommon(
 					new ConnectionEventCommon(
 							new ServertEventCommon(
-    		new EventCommon(Instant.now()), context.getName()),connection
+    		EventCommon.ofNow(), context.getName()),connection
             .getId()), statement.getId()), id), phase, hitCountInc, missCountInc, pendingCountInc);
 
 	context.getMonitor().accept(executionPhaseEvent);

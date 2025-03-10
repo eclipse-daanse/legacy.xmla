@@ -13,7 +13,7 @@
 
 package org.eclipse.daanse.olap.api.monitor.event;
 
-public record SqlStatementEndEvent(SqlStatementEventCommon sqlStatementEventInfo, long rowFetchCount,
-		boolean canceled, Throwable throwable) implements SqlStatementEvent{
+public record SqlStatementEndEvent(SqlStatementEventCommon sqlStatementEventInfo, long rowFetchCount, boolean canceled,
+        Throwable throwable) implements SqlStatementEvent {
 
 }

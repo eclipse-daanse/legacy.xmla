@@ -9,9 +9,10 @@
 *
 * Contributors:
 *   SmartCity Jena - initial
-*/package org.eclipse.daanse.olap.api.monitor.event;
+*/
+package org.eclipse.daanse.olap.api.monitor.event;
 
 public record CellCacheSegmentDeleteEvent(CellCacheEventCommon cellCacheEventCommon, int coordinateCount)
-		implements CellCacheEvent {
+        implements CellCacheEvent {
 
 }

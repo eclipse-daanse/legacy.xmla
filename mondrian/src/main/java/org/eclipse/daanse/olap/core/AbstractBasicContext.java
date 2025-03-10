@@ -15,9 +15,9 @@ package org.eclipse.daanse.olap.core;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.daanse.olap.api.CatalogCache;
@@ -69,6 +69,13 @@ public abstract class AbstractBasicContext implements Context {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBasicContext.class);
 
 	private static final AtomicLong ID_GENERATOR = new AtomicLong();
+	
+	private Map<String, Object> configuration = null;
+
+
+	protected void updateConfiguration(Map<String, Object> configuration) {
+		this.configuration = configuration;
+	}
 
 	@Override
 	protected void finalize() throws Throwable {
@@ -136,7 +143,7 @@ public abstract class AbstractBasicContext implements Context {
 		
 		ConnectionStartEvent connectionStartEvent = new ConnectionStartEvent(new ConnectionEventCommon(
 								new ServertEventCommon(
-				new EventCommon(Instant.now()), getName()), connection.getId()));
+				EventCommon.ofNow(), getName()), connection.getId()));
 		eventBus.accept(connectionStartEvent);
 //				new ConnectionStartEvent(System.currentTimeMillis(), connection.getContext().getName(),
 //				connection.getId())
@@ -156,7 +163,7 @@ public abstract class AbstractBasicContext implements Context {
 		ConnectionEndEvent connectionEndEvent = new ConnectionEndEvent(
 				new ConnectionEventCommon(
 										new ServertEventCommon(
-						new EventCommon(Instant.now()), getName()), connection.getId()));
+										EventCommon.ofNow(), getName()), connection.getId()));
 		eventBus.accept(connectionEndEvent);
 //		new ConnectionEndEvent(System.currentTimeMillis(), getName(), connection.getId())
 	}
@@ -175,7 +182,7 @@ public abstract class AbstractBasicContext implements Context {
 		
 		MdxStatementStartEvent mdxStatementStartEvent = new MdxStatementStartEvent(new MdxStatementEventCommon(
 				new ConnectionEventCommon(
-						new ServertEventCommon(new EventCommon(Instant.now()), getName()),
+						new ServertEventCommon(EventCommon.ofNow(), getName()),
 						connection.getId()),
 				statement.getId()));
 		eventBus.accept(mdxStatementStartEvent);
@@ -198,7 +205,7 @@ public abstract class AbstractBasicContext implements Context {
 		
 		MdxStatementEndEvent mdxStatementEndEvent = new MdxStatementEndEvent(
 				new MdxStatementEventCommon(new ConnectionEventCommon(
-						new ServertEventCommon(new EventCommon(Instant.now()), getName()),
+						new ServertEventCommon(EventCommon.ofNow(), getName()),
 						connection.getId()), statement.getId()));
 		
 		eventBus.accept(mdxStatementEndEvent);
@@ -226,5 +233,22 @@ public abstract class AbstractBasicContext implements Context {
 	@Override
 	public CatalogCache getCatalogCache() {
 		return schemaCache;
+	}
+	
+	@Override
+	public <T> T getConfigValue(String key, T dflt, Class<T> clazz) {
+		
+		if (configuration == null) {
+			return dflt;
+		} else {
+			Object value = configuration.get(key);
+			if (value == null) {
+				return dflt;
+			}
+			if (clazz.isInstance(value)) {
+				return clazz.cast(value);
+			}
+			return dflt;
+		}
 	}
 }

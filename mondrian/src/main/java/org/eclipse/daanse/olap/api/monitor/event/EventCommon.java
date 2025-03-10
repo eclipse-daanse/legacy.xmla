@@ -17,5 +17,7 @@ import java.time.Instant;
 
 public record EventCommon(Instant timestamp) {
 
-
+	public static EventCommon ofNow() {
+		return new EventCommon(Instant.now());
+	}
 }
