@@ -2888,10 +2888,10 @@ class TestAggregationManager extends BatchTestCase {
                         .withAggregatorType(MeasureAggregatorType.SUM)
                         .withFormatString("Standard")
                         .build();
-                ColumnMappingImpl salesRegion = ColumnMappingImpl.builder().withName("sales_region").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-                ColumnMappingImpl salesCity = ColumnMappingImpl.builder().withName("sales_city").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-                ColumnMappingImpl salesDistrictId = ColumnMappingImpl.builder().withName("sales_district_id").withType(ColumnDataType.INTEGER).build();
-                ColumnMappingImpl regionId = ColumnMappingImpl.builder().withName("region_id").withType(ColumnDataType.INTEGER).build();
+                ColumnMappingImpl salesRegion = ColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                ColumnMappingImpl salesCity = ColumnMappingImpl.builder().withName("sales_city").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                ColumnMappingImpl salesDistrictId = ColumnMappingImpl.builder().withName("sales_district_id").withDataType(ColumnDataType.INTEGER).build();
+                ColumnMappingImpl regionId = ColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 salesRegion, salesCity, salesDistrictId, regionId

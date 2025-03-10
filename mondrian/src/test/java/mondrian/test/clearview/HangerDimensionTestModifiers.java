@@ -61,7 +61,7 @@ public class HangerDimensionTestModifiers {
          */
 
         protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
-            ColumnMappingImpl hangerKey = ColumnMappingImpl.builder().withName("HANGER_KEY").withType(ColumnDataType.NUMERIC).build();
+            ColumnMappingImpl hangerKey = ColumnMappingImpl.builder().withName("HANGER_KEY").withDataType(ColumnDataType.NUMERIC).build();
             InlineTableMappingImpl t = InlineTableMappingImpl.builder()
             .withColumns(List.of(hangerKey))
             .withRows(List.of(

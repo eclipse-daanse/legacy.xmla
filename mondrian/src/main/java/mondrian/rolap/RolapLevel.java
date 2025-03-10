@@ -373,7 +373,7 @@ public class RolapLevel extends LevelBase {
             mappingLevel.getParentChildLink(),
             createProperties(mappingLevel),
             (mappingLevel.isUniqueMembers() ? FLAG_UNIQUE : 0),
-            org.eclipse.daanse.jdbc.db.dialect.api.Datatype.fromValue(mappingLevel.getDataType().getValue()),
+            org.eclipse.daanse.jdbc.db.dialect.api.Datatype.fromValue(mappingLevel.getColumn().getDataType().getValue()),
             null,
             //toInternalType(mappingLevel.getDataType().getValue()),
             HideMemberCondition.fromValue(mappingLevel.getHideMemberIfType().getValue()),

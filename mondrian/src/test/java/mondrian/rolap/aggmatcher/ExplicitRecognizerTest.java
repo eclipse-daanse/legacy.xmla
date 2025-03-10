@@ -54,17 +54,17 @@ class ExplicitRecognizerTest extends AggTableTestCase {
     //## TableName: exp_agg_test
     //## ColumnNames:  testyear,testqtr,testmonthord,testmonthname,testmonthcap,testmonprop1,testmonprop2,gender,test_unit_sales,test_store_cost,fact_count
     //## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),INTEGER,DECIMAL(10,4),INTEGER
-    ColumnMappingImpl testyearExpAggTest = ColumnMappingImpl.builder().withName("testyear").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl testqtrExpAggTest = ColumnMappingImpl.builder().withName("testqtr").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl testmonthordExpAggTest = ColumnMappingImpl.builder().withName("testmonthord").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl testmonthnameExpAggTest = ColumnMappingImpl.builder().withName("testmonthname").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl testmonthcapExpAggTest = ColumnMappingImpl.builder().withName("testmonthcap").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl testmonprop1ExpAggTest = ColumnMappingImpl.builder().withName("testmonprop1").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl testmonprop2ExpAggTest = ColumnMappingImpl.builder().withName("testmonprop2").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl genderExpAggTest = ColumnMappingImpl.builder().withName("gender").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl testUnitSalesExpAggTest = ColumnMappingImpl.builder().withName("test_unit_sales").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl testStoreCostExpAggTest = ColumnMappingImpl.builder().withName("test_store_cost").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).build();
-    ColumnMappingImpl factCountExpAggTest = ColumnMappingImpl.builder().withName("fact_count").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl testyearExpAggTest = ColumnMappingImpl.builder().withName("testyear").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl testqtrExpAggTest = ColumnMappingImpl.builder().withName("testqtr").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl testmonthordExpAggTest = ColumnMappingImpl.builder().withName("testmonthord").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl testmonthnameExpAggTest = ColumnMappingImpl.builder().withName("testmonthname").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl testmonthcapExpAggTest = ColumnMappingImpl.builder().withName("testmonthcap").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl testmonprop1ExpAggTest = ColumnMappingImpl.builder().withName("testmonprop1").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl testmonprop2ExpAggTest = ColumnMappingImpl.builder().withName("testmonprop2").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl genderExpAggTest = ColumnMappingImpl.builder().withName("gender").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl testUnitSalesExpAggTest = ColumnMappingImpl.builder().withName("test_unit_sales").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl testStoreCostExpAggTest = ColumnMappingImpl.builder().withName("test_store_cost").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).build();
+    ColumnMappingImpl factCountExpAggTest = ColumnMappingImpl.builder().withName("fact_count").withDataType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl expAggTest = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("exp_agg_test")
             .withColumns(List.of(
                     testyearExpAggTest,
@@ -83,16 +83,16 @@ class ExplicitRecognizerTest extends AggTableTestCase {
     //## TableName:  exp_agg_test_distinct_count
     //## ColumnNames:  fact_count,testyear,gender,store_name,store_country,store_st,store_cty,store_add,unit_s,cust_cnt
     //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),VARCHAR(30),INTEGER,INTEGER
-    ColumnMappingImpl factCountExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("fact_count").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl testyearExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("testyear").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl genderExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("gender").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl storeNameExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("store_name").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl storeCountryExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("store_country").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl storeStExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("store_st").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl storeCtyExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("store_cty").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl storeAddExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("store_add").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl unitSExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("unit_s").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl custCntExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("cust_cnt").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl factCountExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("fact_count").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl testyearExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("testyear").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl genderExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("gender").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl storeNameExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("store_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl storeCountryExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("store_country").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl storeStExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("store_st").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl storeCtyExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("store_cty").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl storeAddExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("store_add").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl unitSExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("unit_s").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl custCntExpAggTestDistinctCount = ColumnMappingImpl.builder().withName("cust_cnt").withDataType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl expAggTestDistinctCount = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("exp_agg_test_distinct_count")
             .withColumns(List.of(
                 factCountExpAggTestDistinctCount,

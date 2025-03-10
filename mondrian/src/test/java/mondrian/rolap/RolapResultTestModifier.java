@@ -129,30 +129,30 @@ public class RolapResultTestModifier extends PojoMappingModifier {
     	//## TableName: FT1
     	//## ColumnNames: d1_id,d2_id,value
     	//## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2)
-        ColumnMappingImpl d1IdFt1 = ColumnMappingImpl.builder().withName("d1_id").withType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl d2IdFt1 = ColumnMappingImpl.builder().withName("d2_id").withType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl valueFt1 = ColumnMappingImpl.builder().withName("value").withType(ColumnDataType.NUMERIC).withColumnSize(10).withDecimalDigits(2).build();
+        ColumnMappingImpl d1IdFt1 = ColumnMappingImpl.builder().withName("d1_id").withDataType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl d2IdFt1 = ColumnMappingImpl.builder().withName("d2_id").withDataType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl valueFt1 = ColumnMappingImpl.builder().withName("value").withDataType(ColumnDataType.NUMERIC).withColumnSize(10).withDecimalDigits(2).build();
         PhysicalTableMappingImpl ft1 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("FT1")
                 .withColumns(List.of(d1IdFt1, d2IdFt1, valueFt1))).build();
         //## ColumnNames: d1_id,d2_id,value,vextra
         //## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2),DECIMAL(10,2):null
-        ColumnMappingImpl d1IdFt2 = ColumnMappingImpl.builder().withName("d1_id").withType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl d2IdFt2 = ColumnMappingImpl.builder().withName("d2_id").withType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl valueFt2 = ColumnMappingImpl.builder().withName("value").withType(ColumnDataType.NUMERIC).withColumnSize(10).withDecimalDigits(2).build();
-        ColumnMappingImpl vextraFt2 = ColumnMappingImpl.builder().withName("vextra").withType(ColumnDataType.NUMERIC).withColumnSize(10).withDecimalDigits(2).build();
+        ColumnMappingImpl d1IdFt2 = ColumnMappingImpl.builder().withName("d1_id").withDataType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl d2IdFt2 = ColumnMappingImpl.builder().withName("d2_id").withDataType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl valueFt2 = ColumnMappingImpl.builder().withName("value").withDataType(ColumnDataType.NUMERIC).withColumnSize(10).withDecimalDigits(2).build();
+        ColumnMappingImpl vextraFt2 = ColumnMappingImpl.builder().withName("vextra").withDataType(ColumnDataType.NUMERIC).withColumnSize(10).withDecimalDigits(2).build();
         PhysicalTableMappingImpl ft2 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("FT2")
                 .withColumns(List.of(d1IdFt2, d2IdFt2, valueFt2))).build();
 
         //## ColumnNames: d1_id,name
         //## ColumnTypes: INTEGER,VARCHAR(20)
-        ColumnMappingImpl d1IdD1 = ColumnMappingImpl.builder().withName("d1_id").withType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl nameD1 = ColumnMappingImpl.builder().withName("name").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+        ColumnMappingImpl d1IdD1 = ColumnMappingImpl.builder().withName("d1_id").withDataType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl nameD1 = ColumnMappingImpl.builder().withName("name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
         PhysicalTableMappingImpl d1 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("D1")
                 .withColumns(List.of(d1IdD1, nameD1))).build();
         //## ColumnNames: d2_id,name
         //## ColumnTypes: INTEGER,VARCHAR(20)
-        ColumnMappingImpl d2IdD2 = ColumnMappingImpl.builder().withName("d2_id").withType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl nameD2 = ColumnMappingImpl.builder().withName("name").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+        ColumnMappingImpl d2IdD2 = ColumnMappingImpl.builder().withName("d2_id").withDataType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl nameD2 = ColumnMappingImpl.builder().withName("name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
         PhysicalTableMappingImpl d2 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("D2")
                 .withColumns(List.of(d2IdD2, nameD2))).build();
 

@@ -356,7 +356,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         ((TestConfig)context.getConfig()).setDisableCaching(true);
         prepareContext(context);
-        ColumnMappingImpl notExist = ColumnMappingImpl.builder().withName("not_exist").withType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl notExist = ColumnMappingImpl.builder().withName("not_exist").withDataType(ColumnDataType.INTEGER).build();
         List<AggregationTableMappingImpl> aggTables = List.of(
             AggregationNameMappingImpl.builder()
                 .withName(AggMeasureFactCountTestModifier.aggC6FactCsv2016)
@@ -509,7 +509,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         ((TestConfig)context.getConfig()).setDisableCaching(true);
         prepareContext(context);
-        ColumnMappingImpl notExist = ColumnMappingImpl.builder().withName("not_exist").withType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl notExist = ColumnMappingImpl.builder().withName("not_exist").withDataType(ColumnDataType.INTEGER).build();
         List<AggregationTableMappingImpl> aggTables = List.of(
             AggregationNameMappingImpl.builder()
                 .withName(AggMeasureFactCountTestModifier.aggC6FactCsv2016)

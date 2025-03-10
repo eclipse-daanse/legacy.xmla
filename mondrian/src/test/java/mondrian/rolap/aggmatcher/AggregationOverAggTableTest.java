@@ -36,12 +36,12 @@ class AggregationOverAggTableTest extends AggTableTestCase {
 	//## TableName:  agg_c_avg_sales_fact_1997
 	//## ColumnNames:  the_year,quarter,month_of_year,gender,unit_sales,fact_count
 	//## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30),INTEGER:NULL,INTEGER
-    ColumnMappingImpl theYearAggCAvgSalesFact1997 = ColumnMappingImpl.builder().withName("the_year").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl quarterAggCAvgSalesFact1997 = ColumnMappingImpl.builder().withName("quarter").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl monthOfYearAggCAvgSalesFact1997 = ColumnMappingImpl.builder().withName("month_of_year").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl genderAggCAvgSalesFact1997 = ColumnMappingImpl.builder().withName("gender").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-    ColumnMappingImpl unitSalesAggCAvgSalesFact1997 = ColumnMappingImpl.builder().withName("unit_sales").withType(ColumnDataType.INTEGER).withNullable(true).build();
-    ColumnMappingImpl factCountAggCAvgSalesFact1997 = ColumnMappingImpl.builder().withName("fact_count").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl theYearAggCAvgSalesFact1997 = ColumnMappingImpl.builder().withName("the_year").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl quarterAggCAvgSalesFact1997 = ColumnMappingImpl.builder().withName("quarter").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl monthOfYearAggCAvgSalesFact1997 = ColumnMappingImpl.builder().withName("month_of_year").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl genderAggCAvgSalesFact1997 = ColumnMappingImpl.builder().withName("gender").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl unitSalesAggCAvgSalesFact1997 = ColumnMappingImpl.builder().withName("unit_sales").withDataType(ColumnDataType.INTEGER).withNullable(true).build();
+    ColumnMappingImpl factCountAggCAvgSalesFact1997 = ColumnMappingImpl.builder().withName("fact_count").withDataType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl aggCAvgSalesFact1997 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("agg_c_avg_sales_fact_1997")
             .withColumns(List.of(
                 theYearAggCAvgSalesFact1997,

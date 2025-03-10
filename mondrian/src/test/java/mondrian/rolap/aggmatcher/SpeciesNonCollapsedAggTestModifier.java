@@ -57,41 +57,41 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
 	//## TableName: DIM_SPECIES
 	//## ColumnNames: FAMILY_ID,GENUS_ID,SPECIES_ID,SPECIES_NAME
 	//## ColumnTypes: INTEGER,INTEGER,INTEGER,VARCHAR(30)
-	ColumnMappingImpl familyIdDimSpecies = ColumnMappingImpl.builder().withName("FAMILY_ID").withType(ColumnDataType.INTEGER).build();
-	ColumnMappingImpl genisIdDimSpecies = ColumnMappingImpl.builder().withName("GENUS_ID").withType(ColumnDataType.INTEGER).build();
-	ColumnMappingImpl speciesIdDimSpecies = ColumnMappingImpl.builder().withName("SPECIES_ID").withType(ColumnDataType.INTEGER).build();
-	ColumnMappingImpl speciesNameDimSpecies = ColumnMappingImpl.builder().withName("SPECIES_NAME").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+	ColumnMappingImpl familyIdDimSpecies = ColumnMappingImpl.builder().withName("FAMILY_ID").withDataType(ColumnDataType.INTEGER).build();
+	ColumnMappingImpl genisIdDimSpecies = ColumnMappingImpl.builder().withName("GENUS_ID").withDataType(ColumnDataType.INTEGER).build();
+	ColumnMappingImpl speciesIdDimSpecies = ColumnMappingImpl.builder().withName("SPECIES_ID").withDataType(ColumnDataType.INTEGER).build();
+	ColumnMappingImpl speciesNameDimSpecies = ColumnMappingImpl.builder().withName("SPECIES_NAME").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalTableMappingImpl dimSpecies = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("DIM_SPECIES")
             .withColumns(List.of(familyIdDimSpecies, genisIdDimSpecies, speciesIdDimSpecies, speciesNameDimSpecies))).build();
     //## TableName: DIM_FAMILY
     //## ColumnNames: FAMILY_ID,FAMILY_NAME
     //## ColumnTypes: INTEGER,VARCHAR(30)
-    ColumnMappingImpl familyIdDimFamily = ColumnMappingImpl.builder().withName("FAMILY_ID").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl familyNameDimFamily = ColumnMappingImpl.builder().withName("FAMILY_NAME").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl familyIdDimFamily = ColumnMappingImpl.builder().withName("FAMILY_ID").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl familyNameDimFamily = ColumnMappingImpl.builder().withName("FAMILY_NAME").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalTableMappingImpl dimFamily = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("DIM_FAMILY")
             .withColumns(List.of(familyIdDimFamily, familyNameDimFamily))).build();
     //## TableName: DIM_GENUS
     //## ColumnNames: FAMILY_ID,GENUS_ID,GENUS_NAME
     //## ColumnTypes: INTEGER,INTEGER,VARCHAR(30)
-    ColumnMappingImpl familyIdDimGenus = ColumnMappingImpl.builder().withName("FAMILY_ID").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl genusIdDimGenus = ColumnMappingImpl.builder().withName("GENUS_ID").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl genusNameDimGenus = ColumnMappingImpl.builder().withName("GENUS_NAME").withType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    ColumnMappingImpl familyIdDimGenus = ColumnMappingImpl.builder().withName("FAMILY_ID").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl genusIdDimGenus = ColumnMappingImpl.builder().withName("GENUS_ID").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl genusNameDimGenus = ColumnMappingImpl.builder().withName("GENUS_NAME").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalTableMappingImpl dimGenus = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("DIM_GENUS")
             .withColumns(List.of(familyIdDimGenus, genusIdDimGenus, genusNameDimGenus))).build();
     //## TableName: species_mart
     //## ColumnNames: SPECIES_ID,POPULATION
     //## ColumnTypes: INTEGER,INTEGER
-    ColumnMappingImpl speciesIdSpeciesMart = ColumnMappingImpl.builder().withName("SPECIES_ID").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl populationSpeciesMart = ColumnMappingImpl.builder().withName("POPULATION").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl speciesIdSpeciesMart = ColumnMappingImpl.builder().withName("SPECIES_ID").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl populationSpeciesMart = ColumnMappingImpl.builder().withName("POPULATION").withDataType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl speciesMart = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("species_mart")
             .withColumns(List.of(speciesIdSpeciesMart, populationSpeciesMart))).build();
 
     //## TableName: AGG_SPECIES_MART
     //## ColumnNames: GEN_ID,POPULATION,FACT_COUNT
     //## ColumnTypes: INTEGER,INTEGER,INTEGER
-    ColumnMappingImpl genIdAggSpeciesMart = ColumnMappingImpl.builder().withName("GEN_ID").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl populationAggSpeciesMart = ColumnMappingImpl.builder().withName("POPULATION").withType(ColumnDataType.INTEGER).build();
-    ColumnMappingImpl factCountAggSpeciesMart = ColumnMappingImpl.builder().withName("FACT_COUNT").withType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl genIdAggSpeciesMart = ColumnMappingImpl.builder().withName("GEN_ID").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl populationAggSpeciesMart = ColumnMappingImpl.builder().withName("POPULATION").withDataType(ColumnDataType.INTEGER).build();
+    ColumnMappingImpl factCountAggSpeciesMart = ColumnMappingImpl.builder().withName("FACT_COUNT").withDataType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl aggSpeciesMart = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("AGG_SPECIES_MART")
             .withColumns(List.of(genIdAggSpeciesMart, populationAggSpeciesMart, factCountAggSpeciesMart))).build();
 

@@ -74,27 +74,27 @@ public class Checkin_7634Modifier extends PojoMappingModifier {
     @Override
     protected List<? extends CubeMapping> catalogCubes(CatalogMapping schemaMappingOriginal) {
         List<CubeMapping> result = new ArrayList<>();
-        ColumnMappingImpl cust_loc_id_geography7631 = ColumnMappingImpl.builder().withName("cust_loc_id").withType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl state_cd = ColumnMappingImpl.builder().withName("state_cd").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
-        ColumnMappingImpl city_nm = ColumnMappingImpl.builder().withName("city_nm").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
-        ColumnMappingImpl zip_cd = ColumnMappingImpl.builder().withName("zip_cd").withType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+        ColumnMappingImpl cust_loc_id_geography7631 = ColumnMappingImpl.builder().withName("cust_loc_id").withDataType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl state_cd = ColumnMappingImpl.builder().withName("state_cd").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+        ColumnMappingImpl city_nm = ColumnMappingImpl.builder().withName("city_nm").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+        ColumnMappingImpl zip_cd = ColumnMappingImpl.builder().withName("zip_cd").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
         PhysicalTableMappingImpl geography7631 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("geography7631")
                 .withColumns(List.of(
                         cust_loc_id_geography7631, state_cd, city_nm, zip_cd
                         ))).build();
-        ColumnMappingImpl cust_loc_id_table7634 = ColumnMappingImpl.builder().withName("cust_loc_id").withType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl prod_id_table7634 = ColumnMappingImpl.builder().withName("prod_id").withType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl first_table7634 = ColumnMappingImpl.builder().withName("first").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
-        ColumnMappingImpl request_value_table7634 = ColumnMappingImpl.builder().withName("request_value").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
-        ColumnMappingImpl shipped_value_table7634 = ColumnMappingImpl.builder().withName("shipped_value").withType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
+        ColumnMappingImpl cust_loc_id_table7634 = ColumnMappingImpl.builder().withName("cust_loc_id").withDataType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl prod_id_table7634 = ColumnMappingImpl.builder().withName("prod_id").withDataType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl first_table7634 = ColumnMappingImpl.builder().withName("first").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
+        ColumnMappingImpl request_value_table7634 = ColumnMappingImpl.builder().withName("request_value").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
+        ColumnMappingImpl shipped_value_table7634 = ColumnMappingImpl.builder().withName("shipped_value").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
         PhysicalTableMappingImpl table7634 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("table7634")
                 .withColumns(List.of(
                         cust_loc_id_table7634, prod_id_table7634, first_table7634, request_value_table7634, shipped_value_table7634
                         ))).build();
-        ColumnMappingImpl prod_id_prod7631 = ColumnMappingImpl.builder().withName("prod_id").withType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl class_prod7631 = ColumnMappingImpl.builder().withName("class").withType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl brand_prod7631 = ColumnMappingImpl.builder().withName("brand").withType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl item_prod7631 = ColumnMappingImpl.builder().withName("item").withType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl prod_id_prod7631 = ColumnMappingImpl.builder().withName("prod_id").withDataType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl class_prod7631 = ColumnMappingImpl.builder().withName("class").withDataType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl brand_prod7631 = ColumnMappingImpl.builder().withName("brand").withDataType(ColumnDataType.INTEGER).build();
+        ColumnMappingImpl item_prod7631 = ColumnMappingImpl.builder().withName("item").withDataType(ColumnDataType.INTEGER).build();
         PhysicalTableMappingImpl prod7631 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("prod7631")
                 .withColumns(List.of(
                 		prod_id_prod7631, class_prod7631, brand_prod7631, item_prod7631

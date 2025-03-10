@@ -2098,7 +2098,7 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : catalog.getCubes();
         Optional<CubeSourceEnum> oCubeSource,
         Optional<VisibilityEnum> oPropertyVisibility
     ) {
-        List<mondrian.olap.AbstractProperty> properties = level.getProperties() == null ? List.of() :
+        List<org.eclipse.daanse.olap.api.element.Property> properties = level.getProperties() == null ? List.of() :
          Arrays.asList(level.getProperties());
         return getPropertiesWithFilterByUniqueName(properties, oPropertyName)
             .stream().filter(p -> p != null)
@@ -2106,8 +2106,8 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : catalog.getCubes();
             .toList();
     }
 
-    private static List<mondrian.olap.AbstractProperty> getPropertiesWithFilterByUniqueName(
-        List<mondrian.olap.AbstractProperty> properties,
+    private static List<org.eclipse.daanse.olap.api.element.Property> getPropertiesWithFilterByUniqueName(
+        List<org.eclipse.daanse.olap.api.element.Property> properties,
         Optional<String> oPropertyName
     ) {
         if (oPropertyName.isPresent()) {

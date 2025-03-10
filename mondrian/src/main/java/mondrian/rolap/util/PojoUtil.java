@@ -240,14 +240,14 @@ public class PojoUtil {
 	public static ColumnMappingImpl getColumn(ColumnMapping column) {
         if (column != null) {
             String name = column.getName();
-            ColumnDataType type = column.getType();
+            ColumnDataType type = column.getDataType();
             Integer columnSize = column.getColumnSize();
             Integer decimalDigits = column.getDecimalDigits();
             Integer numPrecRadix = column.getNumPrecRadix();
             Integer charOctetLength = column.getCharOctetLength();
             Boolean nullable = column.getNullable();
             String description = column.getDescription();
-            ColumnMappingImpl c = ColumnMappingImpl.builder().withName(name).withType(type)
+            ColumnMappingImpl c = ColumnMappingImpl.builder().withName(name).withDataType(type)
                     .withColumnSize(orZero(columnSize))
                     .withDecimalDigits(orZero(decimalDigits))
                     .withNumPrecRadix(orZero(numPrecRadix))

@@ -352,7 +352,7 @@ class PropertiesTest {
         Cube cube = optionalCube.orElseThrow(() -> new RuntimeException("Cube with name Foo absent"));
         Optional<Dimension> optionalDimension  = Arrays.stream(cube.getDimensions()).filter(d -> d.getName().equals("Promotions")).findFirst();
         Dimension dimension = optionalDimension.orElseThrow(() -> new RuntimeException("Dimension with name Foo absent"));
-        Optional<AbstractProperty> optionalProperty = Arrays.stream(dimension.getHierarchies()[0].getLevels()[1].getProperties())
+        Optional<Property> optionalProperty = Arrays.stream(dimension.getHierarchies()[0].getLevels()[1].getProperties())
             .filter(p -> p.getName().equals("BarProp")).findFirst();
         Property property =  optionalProperty.orElseThrow(() -> new RuntimeException("Property with name BarProp absent"));
         assertEquals(
