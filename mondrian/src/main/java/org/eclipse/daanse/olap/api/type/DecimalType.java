@@ -13,8 +13,6 @@ package org.eclipse.daanse.olap.api.type;
 
 import java.util.Objects;
 
-import mondrian.olap.Util;
-
 /**
  * Subclass of {@link NumericType} which guarantees fixed number of decimal
  * places. In particular, a decimal with zero scale is an integer.
@@ -48,7 +46,7 @@ public class DecimalType extends NumericType {
             precision == Integer.MAX_VALUE
                 ? "DecimalType(" + scale + ")"
                 : "DecimalType(" + precision + ", " + scale + ")");
-        Util.assertPrecondition(precision > 0, "precision > 0");
+        assert precision>0;
         this.precision = precision;
         this.scale = scale;
     }

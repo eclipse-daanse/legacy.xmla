@@ -460,16 +460,7 @@ public class ExecutionImpl implements Execution{
     this.expCacheMissCount = missCount;
   }
 
-  /**
-   * Enumeration of the states of an Execution instance.
-   */
-  public enum State {
-    /**
-     * Identifies the state in which an execution is before it has started resolving the query. This doesn't mean that
-     * there are no current SQL statements already beeing executed.
-     */
-    FRESH, RUNNING, ERROR, CANCELED, TIMEOUT, DONE,
-  }
+
 
   public int getExpCacheHitCount() {
     return expCacheHitCount;

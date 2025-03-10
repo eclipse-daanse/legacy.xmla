@@ -19,7 +19,6 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
 
-import mondrian.olap.AbstractProperty;
 
 /**
  * A <code>Level</code> is a group of {@link Member}s in a {@link Hierarchy},
@@ -59,7 +58,7 @@ public interface Level extends OlapElement, MetaElement {
     LevelType getLevelType();
 
     /** Returns properties defined against this level. */
-    AbstractProperty[] getProperties();
+    Property[] getProperties();
 
     /** Returns properties defined against this level and parent levels. */
     Property[] getInheritedProperties();

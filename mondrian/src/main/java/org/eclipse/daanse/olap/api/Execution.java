@@ -32,42 +32,53 @@ import java.time.Duration;
 
 public interface Execution {
 
-	void cancelSqlStatements();
+    void cancelSqlStatements();
 
-	Statement getMondrianStatement();
+    Statement getMondrianStatement();
 
-	void setOutOfMemory(String string);
+    void setOutOfMemory(String string);
 
-	long getId();
+    long getId();
 
-	void checkCancelOrTimeout();
+    void checkCancelOrTimeout();
 
-	boolean isCancelOrTimeout();
+    boolean isCancelOrTimeout();
 
-	Duration getElapsedMillis();
+    Duration getElapsedMillis();
 
-	void tracePhase(int hitCount, int missCount, int pendingCount);
+    void tracePhase(int hitCount, int missCount, int pendingCount);
 
-	void setCellCacheHitCount(int hitCount);
+    void setCellCacheHitCount(int hitCount);
 
-	void setCellCacheMissCount(int missCount);
+    void setCellCacheMissCount(int missCount);
 
-	void setCellCachePendingCount(int pendingCount);
+    void setCellCachePendingCount(int pendingCount);
 
-	void setExpCacheCounts(int expResultCacheHitCount, int expResultCacheMissCount);
+    void setExpCacheCounts(int expResultCacheHitCount, int expResultCacheMissCount);
 
-	void registerStatement(Locus locus, java.sql.Statement stmt);
+    void registerStatement(Locus locus, java.sql.Statement stmt);
 
-	void end();
+    void end();
 
-	void start();
+    void start();
 
-	void cancel();
+    void cancel();
 
-	QueryTiming getQueryTiming();
+    QueryTiming getQueryTiming();
 
-	int getExpCacheHitCount();
+    int getExpCacheHitCount();
 
-	int getExpCacheMissCount();
+    int getExpCacheMissCount();
 
+    /**
+     * Enumeration of the states of an Execution instance.
+     */
+    public enum State {
+        /**
+         * Identifies the state in which an execution is before it has started resolving
+         * the query. This doesn't mean that there are no current SQL statements already
+         * beeing executed.
+         */
+        FRESH, RUNNING, ERROR, CANCELED, TIMEOUT, DONE,
+    }
 }

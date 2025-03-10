@@ -210,12 +210,12 @@ public class RolapLevel extends LevelBase {
             }
         }
         this.properties = properties;
-        List<AbstractProperty> list = new ArrayList<>();
+        List<Property> list = new ArrayList<>();
         for (Level level = this; level != null;
              level = level.getParentLevel())
         {
-            final AbstractProperty[] levelProperties = level.getProperties();
-            for (final AbstractProperty levelProperty : levelProperties) {
+            final Property[] levelProperties = level.getProperties();
+            for (final Property levelProperty : levelProperties) {
                 Property existingProperty = lookupProperty(
                     list, levelProperty.getName());
                 if (existingProperty == null) {
@@ -342,7 +342,7 @@ public class RolapLevel extends LevelBase {
         return nameExp;
     }
 
-    private Property lookupProperty(List<AbstractProperty> list, String propertyName) {
+    private Property lookupProperty(List<Property> list, String propertyName) {
         for (Property property : list) {
             if (property.getName().equals(propertyName)) {
                 return property;

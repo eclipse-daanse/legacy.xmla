@@ -4,10 +4,6 @@ import java.util.concurrent.Callable;
 
 import org.eclipse.daanse.olap.api.result.Result;
 
-import mondrian.olap.QueryCanceledException;
-import mondrian.olap.QueryTimeoutException;
-import mondrian.olap.ResourceLimitExceededException;
-
 public interface ResultShepherd {
 
 	/**
@@ -20,10 +16,10 @@ public interface ResultShepherd {
 	 * release all other resources gracefully in the background.
 	 * @param execution An Execution instance.
 	 * @param callable A callable to monitor returning a Result instance.
-	 * @throws ResourceLimitExceededException if some resource limit specified
+	 * @throws mondrian.olap.ResourceLimitExceededException if some resource limit specified
 	 * in the property file was exceeded
-	 * @throws QueryCanceledException if query was canceled during execution
-	 * @throws QueryTimeoutException if query exceeded timeout specified in
+	 * @throws mondrian.olap.QueryCanceledException if query was canceled during execution
+	 * @throws mondrian.olap.QueryTimeoutException if query exceeded timeout specified in
 	 * the property file
 	 * @return A Result object, as supplied by the Callable passed as a
 	 * parameter.

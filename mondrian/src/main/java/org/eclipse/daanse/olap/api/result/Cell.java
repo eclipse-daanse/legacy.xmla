@@ -19,7 +19,6 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 
-import mondrian.olap.Util;
 
 /**
  * A <code>Cell</code> is an item in the grid of a {@link Result}.  It is

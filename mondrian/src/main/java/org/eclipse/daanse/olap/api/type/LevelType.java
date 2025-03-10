@@ -17,8 +17,6 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 
-import mondrian.olap.Util;
-
 /**
  * The type of an expression which represents a level.
  *
@@ -47,16 +45,13 @@ public class LevelType implements Type {
         this.hierarchy = hierarchy;
         this.level = level;
         if (level != null) {
-            Util.assertPrecondition(hierarchy != null, "hierarchy != null");
-            Util.assertPrecondition(
-                level.getHierarchy() == hierarchy,
-                "level.getHierarchy() == hierarchy");
+            assert hierarchy != null;
+            assert
+                level.getHierarchy() == hierarchy;
         }
         if (hierarchy != null) {
-            Util.assertPrecondition(dimension != null, "dimension != null");
-            Util.assertPrecondition(
-                hierarchy.getDimension() == dimension,
-                "hierarchy.getDimension() == dimension");
+            assert dimension != null;
+            assert hierarchy.getDimension() == dimension;
         }
         StringBuilder buf = new StringBuilder("LevelType<");
         if (level != null) {

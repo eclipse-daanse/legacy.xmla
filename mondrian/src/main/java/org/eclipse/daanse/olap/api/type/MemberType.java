@@ -16,7 +16,6 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 
-import mondrian.olap.Util;
 
 /**
  * The type of an expression which represents a member.
@@ -53,16 +52,16 @@ public class MemberType implements Type {
         this.level = level;
         this.member = member;
         if (member != null) {
-            Util.assertPrecondition(level != null);
-            Util.assertPrecondition(member.getLevel() == level);
+            assert level != null;
+            assert member.getLevel() == level;
         }
         if (level != null) {
-            Util.assertPrecondition(hierarchy != null);
-            Util.assertPrecondition(level.getHierarchy() == hierarchy);
+            assert hierarchy != null;
+            assert level.getHierarchy() == hierarchy;
         }
         if (hierarchy != null) {
-            Util.assertPrecondition(dimension != null);
-            Util.assertPrecondition(hierarchy.getDimension() == dimension);
+            assert dimension != null;
+            assert hierarchy.getDimension() == dimension;
         }
         StringBuilder buf = new StringBuilder("MemberType<");
         if (member != null) {
