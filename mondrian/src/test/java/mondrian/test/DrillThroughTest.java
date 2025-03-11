@@ -49,7 +49,6 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -63,6 +62,7 @@ import mondrian.olap.IdImpl;
 import mondrian.olap.SystemWideProperties;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapLevel;
+import mondrian.rolap.RolapSqlExpression;
 import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.SchemaModifiers;
@@ -399,7 +399,7 @@ class DrillThroughTest {
         }
         for (Level l : h.getLevels()) {
             if (l.getName().equals(levelName)) {
-            	SQLExpressionMapping exp = ((RolapLevel) l).getNameExp();
+            	RolapSqlExpression exp = ((RolapLevel) l).getNameExp();
                 String nameExpStr = getExpression(exp, star.getSqlQuery());
                 nameExpStr = nameExpStr.replace('"', '`') ;
                 return nameExpStr;

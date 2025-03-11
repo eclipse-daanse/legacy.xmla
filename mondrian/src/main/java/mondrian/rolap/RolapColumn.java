@@ -1,13 +1,22 @@
+/*
+ * Copyright (c) 2025 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   SmartCity Jena, Stefan Bischof - initial
+ *
+ */
 package mondrian.rolap;
 
 import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
-import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
-
-public class RolapColumn implements SQLExpressionMapping {
+public class RolapColumn extends RolapSqlExpression {
 
     private String table;
     private String name;
@@ -27,8 +36,8 @@ public class RolapColumn implements SQLExpressionMapping {
     }
 
     @Override
-	public List<? extends SqlStatementMapping> getSqls() {
-		return List.of(SqlStatementMappingImpl.builder()
+	public List<RolapSqlStatement> getSqls() {
+		return List.of(RolapSqlStatement.builder()
 				.withSql( table == null ? name : new StringBuilder(table).append(".").append(name).toString())
 				.withDialects(List.of("generic"))
 				.build());

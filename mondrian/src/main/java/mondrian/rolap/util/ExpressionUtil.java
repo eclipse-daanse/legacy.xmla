@@ -15,14 +15,13 @@ package mondrian.rolap.util;
 
 import java.util.Objects;
 
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
-
 import mondrian.rolap.RolapColumn;
+import mondrian.rolap.RolapSqlExpression;
 import mondrian.rolap.sql.SqlQuery;
 
 public class ExpressionUtil {
 
-    public static int hashCode(SQLExpressionMapping expression) {
+    public static int hashCode(RolapSqlExpression expression) {
         if (expression instanceof mondrian.rolap.RolapColumn column) {
             return column.getName().hashCode() ^ (column.getTable()==null ? 0 : column.getTable().hashCode());
         }
@@ -36,7 +35,7 @@ public class ExpressionUtil {
         return expression.hashCode();
     }
 
-    public static boolean equals(SQLExpressionMapping expression, Object obj) {
+    public static boolean equals(RolapSqlExpression expression, Object obj) {
         if (expression instanceof mondrian.rolap.RolapColumn col) {
             if (!(obj instanceof mondrian.rolap.RolapColumn that)) {
                 return false;
@@ -45,7 +44,7 @@ public class ExpressionUtil {
                 Objects.equals(col.getTable(), that.getTable());
         }
         if (expression != null) {
-            if (!(obj instanceof SQLExpressionMapping that)) {
+            if (!(obj instanceof RolapSqlExpression that)) {
                 return false;
             }
             if (expression.getSqls().size() != that.getSqls().size()) {
@@ -61,7 +60,7 @@ public class ExpressionUtil {
         return expression.equals(obj);
     }
 
-    public static String genericExpression(SQLExpressionMapping expression) {
+    public static String genericExpression(RolapSqlExpression expression) {
             for (int i = 0; i < expression.getSqls().size(); i++) {
                 if (expression.getSqls().get(i).getDialects().stream().anyMatch(d ->  "generic".equals(d))) {
                     return expression.getSqls().get(i).getSql();
@@ -70,21 +69,21 @@ public class ExpressionUtil {
             return expression.getSqls().get(0).getSql();
     }
 
-    public static String toString(SQLExpressionMapping expression) {
+    public static String toString(RolapSqlExpression expression) {
     	if (expression != null && expression.getSqls() != null && !expression.getSqls().isEmpty()) {
     		return expression.getSqls().get(0).getSql();
     	}
     	return null;
     }
 
-    public static String getExpression(SQLExpressionMapping expression, SqlQuery query) {
+    public static String getExpression(RolapSqlExpression expression, SqlQuery query) {
         if (expression instanceof RolapColumn c) {
             return query.getDialect().quoteIdentifier(c.getTable(), c.getName());
         }
         return SQLUtil.toCodeSet(expression.getSqls()).chooseQuery(query.getDialect());
     }
 
-    public static String getTableAlias(SQLExpressionMapping expression) {
+    public static String getTableAlias(RolapSqlExpression expression) {
         if (expression instanceof RolapColumn c) {
             return c.getTable();
         }

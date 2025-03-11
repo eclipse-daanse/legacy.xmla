@@ -46,8 +46,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ParentChildLinkMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingColumnImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
@@ -720,7 +719,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                         .withType(InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .withLevelType(LevelType.TIME_YEARS)
-                        .withCaptionExpression(SQLExpressionMappingImpl.builder()
+                        .withCaptionExpression(SQLExpressionMappingColumnImpl.builder()
                             .withSqls(List.of(
                                 SqlStatementMappingImpl.builder().withDialects(List.of("access")).withSql("cstr(the_year) + '-12-31'").build(),
                                 SqlStatementMappingImpl.builder().withDialects(List.of("mysql")).withSql("concat(cast(`the_year` as char(4)), '-12-31')").build(),
@@ -963,7 +962,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                             LevelMappingImpl.builder()
                                                 .withName("Name")
                                                 .withUniqueMembers(true)
-                                                .withKeyExpression(SQLExpressionMappingImpl.builder()
+                                                .withKeyExpression(SQLExpressionMappingColumnImpl.builder()
                                                     .withSqls(List.of(
                                                         SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("oracle"))
@@ -1800,7 +1799,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                             LevelMappingImpl.builder()
                                                 .withName("Name")
                                                 .withUniqueMembers(true)
-                                                .withKeyExpression(SQLExpressionMappingImpl
+                                                .withKeyExpression(SQLExpressionMappingColumnImpl
                                                     .builder()
                                                     .withSqls(List.of(
                                                         SqlStatementMappingImpl.builder()

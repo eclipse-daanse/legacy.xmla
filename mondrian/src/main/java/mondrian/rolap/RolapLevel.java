@@ -40,7 +40,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MemberPropertyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.ParentChildLinkMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,17 +69,17 @@ public class RolapLevel extends LevelBase {
     /**
      * The column or expression which yields the level's key.
      */
-    protected SQLExpressionMapping keyExp;
+    protected RolapSqlExpression keyExp;
 
     /**
      * The column or expression which yields the level's ordinal.
      */
-    protected SQLExpressionMapping ordinalExp;
+    protected RolapSqlExpression ordinalExp;
 
     /**
      * The column or expression which yields the level members' caption.
      */
-    protected SQLExpressionMapping captionExp;
+    protected RolapSqlExpression captionExp;
 
     private final Datatype datatype;
 
@@ -104,10 +103,10 @@ public class RolapLevel extends LevelBase {
      * Ths expression which gives the name of members of this level. If null,
      * members are named using the key expression.
      */
-    protected SQLExpressionMapping nameExp;
+    protected RolapSqlExpression nameExp;
     /** The expression which joins to the parent member in a parent-child
      * hierarchy, or null if this is a regular hierarchy. */
-    protected SQLExpressionMapping parentExp;
+    protected RolapSqlExpression parentExp;
     /** Value which indicates a null parent in a parent-child hierarchy. */
     private final String nullParentValue;
 
@@ -133,11 +132,11 @@ public class RolapLevel extends LevelBase {
         boolean visible,
         String description,
         int depth,
-        SQLExpressionMapping keyExp,
-        SQLExpressionMapping nameExp,
-        SQLExpressionMapping captionExp,
-        SQLExpressionMapping ordinalExp,
-        SQLExpressionMapping parentExp,
+        RolapSqlExpression keyExp,
+        RolapSqlExpression nameExp,
+        RolapSqlExpression captionExp,
+        RolapSqlExpression ordinalExp,
+        RolapSqlExpression parentExp,
         String nullParentValue,
         ParentChildLinkMapping mappingClosure,
         RolapProperty[] properties,
@@ -279,22 +278,22 @@ public class RolapLevel extends LevelBase {
     String getTableName() {
         String tableName = null;
 
-        SQLExpressionMapping expr = getKeyExp();
+        RolapSqlExpression expr = getKeyExp();
         if (expr instanceof RolapColumn mc) {
             tableName = ExpressionUtil.getTableAlias(mc);
         }
         return tableName;
     }
 
-    public SQLExpressionMapping getKeyExp() {
+    public RolapSqlExpression getKeyExp() {
         return keyExp;
     }
 
-    public SQLExpressionMapping getOrdinalExp() {
+    public RolapSqlExpression getOrdinalExp() {
         return ordinalExp;
     }
 
-    public SQLExpressionMapping getCaptionExp() {
+    public RolapSqlExpression getCaptionExp() {
         return captionExp;
     }
 
@@ -333,12 +332,12 @@ public class RolapLevel extends LevelBase {
         return parentExp != null;
     }
 
-    public SQLExpressionMapping getParentExp() {
+    public RolapSqlExpression getParentExp() {
         return parentExp;
     }
 
     // RME: this has to be public for two of the DrillThroughTest test.
-    public SQLExpressionMapping getNameExp() {
+    public RolapSqlExpression getNameExp() {
         return nameExp;
     }
 
@@ -413,7 +412,7 @@ public class RolapLevel extends LevelBase {
     private static RolapProperty[] createProperties(LevelMapping xmlLevel)
     {
         List<RolapProperty> list = new ArrayList<>();
-        final SQLExpressionMapping nameExp = LevelUtil.getNameExp(xmlLevel);
+        final RolapSqlExpression nameExp = LevelUtil.getNameExp(xmlLevel);
 
         if (nameExp != null) {
             list.add(
@@ -619,7 +618,7 @@ public class RolapLevel extends LevelBase {
                     keyValues.add(keyValue);
                 }
             }
-            final List<SQLExpressionMapping> keyExps = getInheritedKeyExps();
+            final List<RolapSqlExpression> keyExps = getInheritedKeyExps();
             if (keyExps.size() != keyValues.size()) {
                 throw Util.newError(
                     new StringBuilder("Wrong number of values in member key; ")
@@ -666,11 +665,11 @@ public class RolapLevel extends LevelBase {
         return null;
     }
 
-    private List<SQLExpressionMapping> getInheritedKeyExps() {
-        final List<SQLExpressionMapping> list =
+    private List<RolapSqlExpression> getInheritedKeyExps() {
+        final List<RolapSqlExpression> list =
             new ArrayList<>();
         for (RolapLevel x = this;; x = (RolapLevel) x.getParentLevel()) {
-            final SQLExpressionMapping keyExp1 = x.getKeyExp();
+            final RolapSqlExpression keyExp1 = x.getKeyExp();
             if (keyExp1 != null) {
                 list.add(keyExp1);
             }

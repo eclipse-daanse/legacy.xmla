@@ -97,6 +97,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.ActionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberPropertyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
@@ -110,10 +111,11 @@ import org.eclipse.daanse.rolap.mapping.api.model.MeasureGroupMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.NamedSetMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.PhysicalColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
@@ -680,16 +682,13 @@ public class RolapCube extends CubeBase {
         int ordinal,
         final MeasureMapping measureMapping)
     {
-    	SQLExpressionMapping measureExp;
-        if (measureMapping.getColumn() != null) {
-            if (measureMapping.getMeasureExpression() != null) {
-                throw new BadMeasureSourceException(
-                    cubeMapping.getName(), measureMapping.getName());
-            }
-            measureExp = new mondrian.rolap.RolapColumn(
-                getAlias(getFact()), measureMapping.getColumn().getName());
-        } else if (measureMapping.getMeasureExpression() != null) {
-            measureExp = measureMapping.getMeasureExpression();
+        ColumnMapping columnMapping = measureMapping.getColumn();
+        RolapSqlExpression measureExp;
+        if (columnMapping instanceof PhysicalColumnMapping pc) {
+            measureExp = new RolapColumn(
+                getAlias(getFact()), pc.getName());
+        } else if (columnMapping instanceof SQLExpressionColumnMapping scm) {
+            measureExp = new RolapSqlExpression(scm);
         } else if (measureMapping.getAggregatorType().equals(MeasureAggregatorType.COUNT)) {
             // it's ok if count has no expression; it means 'count(*)'
             measureExp = null;

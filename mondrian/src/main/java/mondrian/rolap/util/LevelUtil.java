@@ -16,10 +16,11 @@ package mondrian.rolap.util;
 import java.util.Objects;
 
 import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 
 import mondrian.rolap.RolapColumn;
+import mondrian.rolap.RolapSqlExpression;
 
 public class LevelUtil {
 
@@ -27,9 +28,9 @@ public class LevelUtil {
         // constructor
     }
 
-    public static SQLExpressionMapping getKeyExp(LevelMapping level) {
-        if (level.getKeyExpression() != null) {
-            return level.getKeyExpression();
+    public static RolapSqlExpression getKeyExp(LevelMapping level) {
+        if (level.getColumn() instanceof SQLExpressionColumnMapping sec) {
+            return new RolapSqlExpression(sec);
         } else if (level.getColumn() != null) {
             return new RolapColumn(level.getTable() != null ? level.getTable().getName() : null, level.getColumn().getName());
         } else {
@@ -37,9 +38,9 @@ public class LevelUtil {
         }
     }
 
-    public static SQLExpressionMapping getNameExp(LevelMapping level) {
-        if (level.getNameExpression() != null) {
-            return level.getNameExpression();
+    public static RolapSqlExpression getNameExp(LevelMapping level) {
+        if (level.getColumn() instanceof SQLExpressionColumnMapping sec) {
+            return new RolapSqlExpression(sec);
         } else if (level.getNameColumn() != null && !Objects.equals(level.getNameColumn(), level.getColumn())) {
             return new RolapColumn(getTableName(level.getTable()), level.getNameColumn().getName());
         } else {
@@ -54,9 +55,9 @@ public class LevelUtil {
         return null;
 	}
 
-	public static SQLExpressionMapping getCaptionExp(LevelMapping level) {
-        if (level.getCaptionExpression() != null) {
-            return level.getCaptionExpression();
+	public static RolapSqlExpression getCaptionExp(LevelMapping level) {
+	    if (level.getCaptionColumn() instanceof SQLExpressionColumnMapping sec) {
+            return new RolapSqlExpression(sec);
         } else if (level.getCaptionColumn() != null) {
             return new RolapColumn(getTableName(level.getTable()), level.getCaptionColumn().getName());
         } else {
@@ -64,9 +65,9 @@ public class LevelUtil {
         }
     }
 
-    public static SQLExpressionMapping getOrdinalExp(LevelMapping level) {
-        if (level.getOrdinalExpression() != null) {
-            return level.getOrdinalExpression();
+    public static RolapSqlExpression getOrdinalExp(LevelMapping level) {
+        if (level.getOrdinalColumn() instanceof SQLExpressionColumnMapping sec) {
+            return new RolapSqlExpression(sec);
         } else if (level.getOrdinalColumn() != null) {
             return new RolapColumn(getTableName(level.getTable()), level.getOrdinalColumn().getName());
         } else {
@@ -74,9 +75,9 @@ public class LevelUtil {
         }
     }
 
-    public static SQLExpressionMapping getParentExp(LevelMapping level) {
-        if (level.getParentExpression() != null) {
-            return level.getParentExpression();
+    public static RolapSqlExpression getParentExp(LevelMapping level) {
+        if (level.getParentColumn() instanceof SQLExpressionColumnMapping sec) {
+            return new RolapSqlExpression(sec);
         } else if (level.getParentColumn() != null) {
             return new RolapColumn(getTableName(level.getTable()), level.getParentColumn().getName());
         } else {
@@ -84,7 +85,7 @@ public class LevelUtil {
         }
     }
 
-    public static SQLExpressionMapping getPropertyExp(LevelMapping level, int i) {
+    public static RolapSqlExpression getPropertyExp(LevelMapping level, int i) {
         return new RolapColumn(getTableName(level.getTable()), level.getMemberProperties().get(i).getColumn().getName());
     }
 }

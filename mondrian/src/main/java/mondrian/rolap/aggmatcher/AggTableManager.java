@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
@@ -222,7 +223,7 @@ public class AggTableManager {
 
                     for (JdbcSchema.Table dbTable : db.getTables()) {
                         String name = dbTable.getName();
-                        List<ColumnMappingImpl> columns =  dbTable.getColumns().stream().map(c -> ColumnMappingImpl.builder().withName(c.getName()).withDataType(ColumnDataType.valueOf(c.getTypeName())).build()).toList();
+                        List<ColumnMapping> columns =  dbTable.getColumns().stream().map(c -> (ColumnMapping)ColumnMappingImpl.builder().withName(c.getName()).withDataType(ColumnDataType.valueOf(c.getTypeName())).build()).toList();
                         PhysicalTableMappingImpl t = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName(name).withColumns(columns).withsSchema(schemaInner)).build();
 
                         // Do the catalog schema aggregate excludes, exclude
@@ -354,7 +355,7 @@ public class AggTableManager {
                 tableHints = PojoUtil.getOptimizationHints(table.getOptimizationHints());
             }
             String tableName = dbFactTable.getName();
-            List<ColumnMappingImpl> columns =  dbFactTable.getColumns().stream().map(c -> ColumnMappingImpl.builder().withName(c.getName()).withDataType(ColumnDataType.valueOf(c.getTypeName())).build()).toList();
+            List<ColumnMapping> columns =  dbFactTable.getColumns().stream().map(c -> ((ColumnMapping)ColumnMappingImpl.builder().withName(c.getName()).withDataType(ColumnDataType.valueOf(c.getTypeName())).build())).toList();
             PhysicalTableMappingImpl t = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName(tableName).withColumns(columns).withsSchema(schemaInner)).build();
 
             String alias = null;

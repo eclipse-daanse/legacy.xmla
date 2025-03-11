@@ -59,7 +59,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingColumnImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
@@ -1333,7 +1333,7 @@ class TestAggregationManager extends BatchTestCase {
                             LevelMappingImpl.builder()
                                 .withName("Store Country")
                                 .withUniqueMembers(true)
-                                .withKeyExpression(SQLExpressionMappingImpl.builder()
+                                .withKeyExpression(SQLExpressionMappingColumnImpl.builder()
                                 		.withSqls(List.of(
                                         SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("oracle"))
@@ -1384,7 +1384,7 @@ class TestAggregationManager extends BatchTestCase {
                             LevelMappingImpl.builder()
                                 .withName("Store Country")
                                 .withUniqueMembers(true)
-                                .withKeyExpression(SQLExpressionMappingImpl.builder()
+                                .withKeyExpression(SQLExpressionMappingColumnImpl.builder()
                                     .withSqls(List.of(
                                         SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("oracle"))

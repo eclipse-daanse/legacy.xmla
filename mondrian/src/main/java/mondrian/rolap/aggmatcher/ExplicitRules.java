@@ -48,7 +48,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelPropertyMappingImpl;
@@ -57,12 +56,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.olap.StandardProperty;
-import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.recorder.MessageRecorder;
 import mondrian.rolap.RolapAggregator;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapLevel;
+import mondrian.rolap.RolapSqlExpression;
 import mondrian.rolap.RolapStar;
 
 /**
@@ -756,7 +755,7 @@ public class ExplicitRules {
                 return rlevel;
             }
 
-            public SQLExpressionMapping getRolapFieldName() {
+            public RolapSqlExpression getRolapFieldName() {
                 return rlevel.getKeyExp();
             }
 

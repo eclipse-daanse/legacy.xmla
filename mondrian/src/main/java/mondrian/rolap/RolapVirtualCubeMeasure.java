@@ -10,7 +10,6 @@
 package mondrian.rolap;
 
 import org.eclipse.daanse.olap.api.element.MetaData;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 
 /**
  * Measure which is defined in a virtual cube, and based on a stored measure
@@ -64,7 +63,7 @@ public class RolapVirtualCubeMeasure
     }
 
     @Override
-	public SQLExpressionMapping getMondrianDefExpression() {
+	public RolapSqlExpression getMondrianDefExpression() {
         return cubeMeasure.getMondrianDefExpression();
     }
 

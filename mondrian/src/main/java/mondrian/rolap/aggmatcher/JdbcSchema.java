@@ -34,7 +34,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalTableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SystemTableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
@@ -45,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.rolap.RolapAggregator;
 import mondrian.rolap.RolapLevel;
+import mondrian.rolap.RolapSqlExpression;
 import mondrian.rolap.RolapStar;
 
 /**
@@ -217,7 +217,7 @@ public class JdbcSchema {
 
                 // hierarchy stuff
                 public RelationalQueryMapping relation;
-                public SQLExpressionMapping joinExp;
+                public RolapSqlExpression joinExp;
                 public String levelColumnName;
 
                 // level stuff
@@ -283,8 +283,8 @@ public class JdbcSchema {
                     return symbolicName;
                 }
 
-                public SQLExpressionMapping getOrdinalExp() {
-                	SQLExpressionMapping ordinalExp = null;
+                public RolapSqlExpression getOrdinalExp() {
+                    RolapSqlExpression ordinalExp = null;
                     if (ordinalColumn != null) {
                         ordinalExp =
                             new mondrian.rolap.RolapColumn(
@@ -293,8 +293,8 @@ public class JdbcSchema {
                     return ordinalExp;
                 }
 
-                public SQLExpressionMapping getCaptionExp() {
-                	SQLExpressionMapping captionExp = null;
+                public RolapSqlExpression getCaptionExp() {
+                    RolapSqlExpression captionExp = null;
                     if (captionColumn != null) {
                         captionExp =
                             new mondrian.rolap.RolapColumn(
@@ -303,8 +303,8 @@ public class JdbcSchema {
                     return captionExp;
                 }
 
-                public Map<String, SQLExpressionMapping> getProperties() {
-                    Map<String, SQLExpressionMapping> map =
+                public Map<String, RolapSqlExpression> getProperties() {
+                    Map<String, RolapSqlExpression> map =
                         new HashMap<>();
                     if (properties == null) {
                         return map;

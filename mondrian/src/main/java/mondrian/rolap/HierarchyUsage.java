@@ -27,12 +27,10 @@ import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 
 /**
@@ -134,7 +132,7 @@ public class HierarchyUsage {
      * The expression (usually a {@link mondrian.olap.MappingColumn}) by
      * which the hierarchy which is joined to the fact table.
      */
-    private SQLExpressionMapping joinExp;
+    private RolapSqlExpression joinExp;
 
     private final Kind kind;
 
@@ -327,7 +325,7 @@ public class HierarchyUsage {
         return this.joinTable;
     }
 
-    public SQLExpressionMapping getJoinExp() {
+    public RolapSqlExpression getJoinExp() {
         return this.joinExp;
     }
 

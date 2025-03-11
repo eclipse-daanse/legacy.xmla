@@ -10,16 +10,13 @@
 package mondrian.rolap;
 
 import java.text.MessageFormat;
-import java.util.Map;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.formatter.CellFormatter;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 
-import mondrian.olap.StandardProperty;
 import mondrian.olap.StandardProperty;
 import mondrian.olap.StringLiteralImpl;
 import mondrian.olap.exceptions.CastInvalidTypeException;
@@ -49,7 +46,7 @@ public class RolapBaseCubeMeasure
     /**
      * For SQL generator. Column which holds the value of the measure.
      */
-    private final SQLExpressionMapping expression;
+    private final RolapSqlExpression expression;
 
     /**
      * For SQL generator. Has values "SUM", "COUNT", etc.
@@ -91,7 +88,7 @@ public class RolapBaseCubeMeasure
         String caption,
         String description,
         String formatString,
-        SQLExpressionMapping expression,
+        RolapSqlExpression expression,
         String aggregatorName,
         InternalDataType datatype,
         MetaData metadata)
@@ -156,7 +153,7 @@ public class RolapBaseCubeMeasure
     }
 
     @Override
-	public SQLExpressionMapping getMondrianDefExpression() {
+	public RolapSqlExpression getMondrianDefExpression() {
         return expression;
     }
 

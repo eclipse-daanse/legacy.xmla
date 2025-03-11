@@ -108,7 +108,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.RowMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.RowValueMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingColumnImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
@@ -8244,7 +8244,7 @@ class SchemaTest {
                         .withName("Gender")
                         .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
                         .withUniqueMembers(true)
-                        .withCaptionExpression(SQLExpressionMappingImpl.builder()
+                        .withCaptionExpression(SQLExpressionMappingColumnImpl.builder()
                         	.withSqls(List.of(SqlStatementMappingImpl.builder().withSql("'foobar'").withDialects(List.of("generic")).build()))
                         .build()).build();
 
@@ -11024,7 +11024,7 @@ class SchemaTest {
                 if ("HR".equals(cube.getName())) {
                         SqlStatementMappingImpl sql = SqlStatementMappingImpl.builder().withSql("`position_title` + " + n).withDialects(
                             List.of("generic")).build();
-                        SQLExpressionMappingImpl ex = SQLExpressionMappingImpl.builder().withSqls(List.of(sql)).build();
+                        SQLExpressionMappingColumnImpl ex = SQLExpressionMappingColumnImpl.builder().withSqls(List.of(sql)).build();
                         LevelMappingImpl level = LevelMappingImpl.builder()
                         	.withName("Position Title")
                         	.withUniqueMembers(false)

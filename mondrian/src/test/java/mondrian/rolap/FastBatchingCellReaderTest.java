@@ -46,7 +46,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingColumnImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -1032,7 +1032,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                   .withName("Count Distinct of Warehouses (Large Owned)")
                                   .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
                                   .withFormatString("#,##0")
-                                  .withMeasureExpression(SQLExpressionMappingImpl.builder()
+                                  .withColumn(SQLExpressionMappingColumnImpl.builder()
                                 		  .withSqls(List.of(SqlStatementMappingImpl.builder()
                                 				  .withDialects(List.of("generic"))
                                 				  .withSql("(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Owned')")
@@ -1043,7 +1043,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                   .withName("Count Distinct of Warehouses (Large Independent)")
                                   .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
                                   .withFormatString("#,##0")
-                                  .withMeasureExpression(SQLExpressionMappingImpl.builder()
+                                  .withColumn(SQLExpressionMappingColumnImpl.builder()
                                 		  .withSqls(List.of(SqlStatementMappingImpl.builder()
                                 				  .withDialects(List.of("generic"))
                                 				  .withSql("(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')")
@@ -1054,7 +1054,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                   .withName("Count All of Warehouses (Large Independent)")
                                   .withAggregatorType(MeasureAggregatorType.COUNT)
                                   .withFormatString("#,##0")
-                                  .withMeasureExpression(SQLExpressionMappingImpl.builder()
+                                  .withColumn(SQLExpressionMappingColumnImpl.builder()
                                 		  .withSqls(List.of(SqlStatementMappingImpl.builder()
                                 				  .withDialects(List.of("generic"))
                                 				  .withSql("(select `warehouse_class`.`warehouse_class_id` AS `warehouse_class_id` from `warehouse_class` AS `warehouse_class` where `warehouse_class`.`warehouse_class_id` = `warehouse`.`warehouse_class_id` and `warehouse_class`.`description` = 'Large Independent')")
@@ -1065,7 +1065,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                   .withName("Count Distinct Store+Warehouse")
                                   .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
                                   .withFormatString("#,##0")
-                                  .withMeasureExpression(SQLExpressionMappingImpl.builder()
+                                  .withColumn(SQLExpressionMappingColumnImpl.builder()
                                 		  .withSqls(List.of(SqlStatementMappingImpl.builder()
                                 				  .withDialects(List.of("generic"))
                                 				  .withSql("`store_id`+`warehouse_id`")
@@ -1076,7 +1076,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                   .withName("Count All Store+Warehouse")
                                   .withAggregatorType(MeasureAggregatorType.COUNT)
                                   .withFormatString("#,##0")
-                                  .withMeasureExpression(SQLExpressionMappingImpl.builder()
+                                  .withColumn(SQLExpressionMappingColumnImpl.builder()
                                 		  .withSqls(List.of(SqlStatementMappingImpl.builder()
                                 				  .withDialects(List.of("generic"))
                                 				  .withSql("`store_id`+`warehouse_id`")

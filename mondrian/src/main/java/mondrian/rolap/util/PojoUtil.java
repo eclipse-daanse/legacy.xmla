@@ -126,8 +126,8 @@ public class PojoUtil {
             QueryMappingImpl left = copy(left(join));
             QueryMappingImpl right = copy(right(join));
             return JoinQueryMappingImpl.builder()
-            		.withLeft(JoinedQueryElementMappingImpl.builder().withAlias(getLeftAlias(join)).withKey(getColumn(join.getLeft().getKey())).withQuery(left).build())
-            		.withRight(JoinedQueryElementMappingImpl.builder().withAlias(getRightAlias(join)).withKey(getColumn(join.getRight().getKey())).withQuery(right).build())
+            		.withLeft(JoinedQueryElementMappingImpl.builder().withAlias(getLeftAlias(join)).withKey((ColumnMappingImpl) getColumn(join.getLeft().getKey())).withQuery(left).build())
+            		.withRight(JoinedQueryElementMappingImpl.builder().withAlias(getRightAlias(join)).withKey((ColumnMappingImpl) getColumn(join.getRight().getKey())).withQuery(right).build())
             		.build();
         } else {
             throw Util.newInternal(BAD_RELATION_TYPE + relation);
@@ -136,7 +136,7 @@ public class PojoUtil {
 
 	public static InlineTableMappingImpl getInlineTable(InlineTableMapping table) {
     	List<RowMapping> rows = getRows(table.getRows());
-    	List<ColumnMappingImpl> columns = getColumns(table.getColumns());
+    	List<ColumnMapping> columns = getColumns(table.getColumns());
     	DatabaseSchemaMappingImpl schema = getDatabaseSchema(table.getSchema());
     	InlineTableMappingImpl inlineTable = InlineTableMappingImpl.builder().build();
         inlineTable.setName(table.getName());
@@ -229,7 +229,7 @@ public class PojoUtil {
         return null;
 	}
 
-	private static List<ColumnMappingImpl> getColumns(List<? extends ColumnMapping> columns) {
+	private static List<ColumnMapping> getColumns(List<? extends ColumnMapping> columns) {
 		if (columns != null) {
             return columns.stream().map(c -> getColumn(c)).toList();
         }
@@ -237,7 +237,7 @@ public class PojoUtil {
 	}
 
 	// TODO: migrate to util.Converter
-	public static ColumnMappingImpl getColumn(ColumnMapping column) {
+	public static ColumnMapping getColumn(ColumnMapping column) {
         if (column != null) {
             String name = column.getName();
             ColumnDataType type = column.getDataType();
@@ -267,13 +267,13 @@ public class PojoUtil {
 	public static PhysicalTableMappingImpl getPhysicalTable(TableMapping table) {
 		if (table != null) {
             String name = table.getName();
-            List<ColumnMappingImpl> columns = getColumns(table.getColumns());
+            List<ColumnMapping> columns = getColumns(table.getColumns());
             DatabaseSchemaMappingImpl schema = getDatabaseSchema(table.getSchema());
             String description = table.getDescription();
             PhysicalTableMappingImpl t = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder()
                     .withName(name).withColumns(columns).withsSchema(schema).withsDdescription(description)).build();
             if (t.getColumns() != null) {
-                t.getColumns().forEach(c -> c.setTable(table));
+                t.getColumns().forEach(c -> ((ColumnMappingImpl)c).setTable(table));
             }
             return t;
         }

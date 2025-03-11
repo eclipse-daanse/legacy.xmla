@@ -79,7 +79,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.ParentChildLinkMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
@@ -726,7 +725,7 @@ public class RolapHierarchy extends HierarchyBase {
      *    topmost ('all') expression, which may require more columns and more
      *    joins
      */
-    void addToFromInverse(SqlQuery query, SQLExpressionMapping expression) {
+    void addToFromInverse(SqlQuery query, RolapSqlExpression expression) {
         if (getRelation() == null) {
             throw Util.newError(
                 new StringBuilder("cannot add hierarchy ").append(getUniqueName())
@@ -754,7 +753,7 @@ public class RolapHierarchy extends HierarchyBase {
      *    topmost ('all') expression, which may require more columns and more
      *    joins
      */
-    void addToFrom(SqlQuery query, SQLExpressionMapping expression) {
+    void addToFrom(SqlQuery query, RolapSqlExpression expression) {
         if (getRelation() == null) {
             throw Util.newError(
                 new StringBuilder("cannot add hierarchy ").append(getUniqueName())
@@ -1234,8 +1233,8 @@ public class RolapHierarchy extends HierarchyBase {
         peerHier.allLevelName = getAllLevelName();
         peerHier.sharedHierarchyName = getSharedHierarchyName();
         JoinQueryMappingImpl join = JoinQueryMappingImpl.builder()
-        		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(PojoUtil.getColumn(clos.getParentColumn())).withQuery(PojoUtil.copy(clos.getTable())).build())
-        		.withRight(JoinedQueryElementMappingImpl.builder().withKey(PojoUtil.getColumn(clos.getChildColumn())).withQuery(PojoUtil.copy(relation)).build())
+        		.withLeft(JoinedQueryElementMappingImpl.builder().withKey((ColumnMappingImpl) PojoUtil.getColumn(clos.getParentColumn())).withQuery(PojoUtil.copy(clos.getTable())).build())
+        		.withRight(JoinedQueryElementMappingImpl.builder().withKey((ColumnMappingImpl) PojoUtil.getColumn(clos.getChildColumn())).withQuery(PojoUtil.copy(relation)).build())
         		.build();
         peerHier.relation = join;
 
@@ -1245,7 +1244,7 @@ public class RolapHierarchy extends HierarchyBase {
         // Employee closure hierarchy, this level has a row for every employee.
         int index = peerHier.levels.length;
         int flags = src.getFlags() &~ RolapLevel.FLAG_UNIQUE;
-        SQLExpressionMapping keyExp =
+        RolapSqlExpression keyExp =
             new RolapColumn(clos.getTable().getTable().getName(), clos.getParentColumn().getName());
 
         RolapLevel level =

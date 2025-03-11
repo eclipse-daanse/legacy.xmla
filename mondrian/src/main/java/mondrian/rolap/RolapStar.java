@@ -52,7 +52,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
@@ -251,7 +250,7 @@ public class RolapStar {
         localBars.remove();
     }
 
-    public static String generateExprString(SQLExpressionMapping expression, SqlQuery query) {
+    public static String generateExprString(RolapSqlExpression expression, SqlQuery query) {
         if(expression instanceof mondrian.rolap.RolapColumn col) {
             return query.getDialect().quoteIdentifier(col.getTable(),
             		col.getName());
@@ -462,13 +461,13 @@ public class RolapStar {
                     JoinQueryMappingImpl.builder()
                     .withLeft(JoinedQueryElementMappingImpl.builder()
                     		.withAlias(left instanceof RelationalQueryMapping relation ? RelationUtil.getAlias(relation) : null)
-                    		.withKey(PojoUtil.getColumn(join.getLeft().getKey()))
+                    		.withKey((ColumnMappingImpl) PojoUtil.getColumn(join.getLeft().getKey()))
                     		.withQuery(PojoUtil.copy(left))
                     		.build())
 
                     .withRight(JoinedQueryElementMappingImpl.builder()
                     		.withAlias(right instanceof RelationalQueryMapping relation ? RelationUtil.getAlias(relation) : null)
-                    		.withKey(PojoUtil.getColumn(join.getRight().getKey()))
+                    		.withKey((ColumnMappingImpl) PojoUtil.getColumn(join.getRight().getKey()))
                     		.withQuery(PojoUtil.copy(right))
                     		.build())
                     .build();
@@ -881,7 +880,7 @@ public class RolapStar {
         };
 
         private final Table table;
-        private final SQLExpressionMapping expression;
+        private final RolapSqlExpression expression;
         private final Datatype datatype;
         private final BestFitColumnType internalType;
         private final String name;
@@ -920,7 +919,7 @@ public class RolapStar {
         private Column(
             String name,
             Table table,
-            SQLExpressionMapping expression,
+            RolapSqlExpression expression,
             Datatype datatype)
         {
             this(
@@ -931,7 +930,7 @@ public class RolapStar {
         private Column(
             String name,
             Table table,
-            SQLExpressionMapping expression,
+            RolapSqlExpression expression,
             Datatype datatype,
             BestFitColumnType internalType,
             Column nameColumn,
@@ -1036,7 +1035,7 @@ public class RolapStar {
             return isNameColumn;
         }
 
-        public SQLExpressionMapping getExpression() {
+        public RolapSqlExpression getExpression() {
             return expression;
         }
 
@@ -1220,7 +1219,7 @@ public class RolapStar {
             String cubeName,
             RolapAggregator aggregator,
             Table table,
-            SQLExpressionMapping expression,
+            RolapSqlExpression expression,
             Datatype datatype)
         {
             super(name, table, expression, datatype);
@@ -1398,7 +1397,7 @@ public class RolapStar {
          * Given a Expression return a column with that expression
          * or null.
          */
-        public Column lookupColumnByExpression(SQLExpressionMapping expr) {
+        public Column lookupColumnByExpression(RolapSqlExpression expr) {
             for (Column column : getColumns()) {
                 if (column instanceof Measure) {
                     continue;
@@ -1602,7 +1601,7 @@ public class RolapStar {
         private Column makeColumnForLevelExpr(
             RolapLevel level,
             String name,
-            SQLExpressionMapping expr,
+            RolapSqlExpression expr,
             Datatype datatype,
             BestFitColumnType internalType,
             Column nameColumn,
@@ -1665,7 +1664,7 @@ public class RolapStar {
             RolapProperty property,
             RolapLevel level,
             String name,
-            SQLExpressionMapping expr,
+            RolapSqlExpression expr,
             Datatype datatype,
             BestFitColumnType internalType,
             Column nameColumn,
@@ -1917,7 +1916,7 @@ public class RolapStar {
          * the child table with the matching left join condition.
          */
         public RolapStar.Table findTableWithLeftCondition(
-            final SQLExpressionMapping left)
+            final RolapSqlExpression left)
         {
             for (Table child : getChildren()) {
                 Condition condition = child.joinCondition;
@@ -2036,14 +2035,14 @@ public class RolapStar {
     public static class Condition {
         private static final Logger LOGGER = LoggerFactory.getLogger(Condition.class);
 
-        private final SQLExpressionMapping left;
-        private final SQLExpressionMapping right;
+        private final RolapSqlExpression left;
+        private final RolapSqlExpression right;
         // set in Table constructor
         Table table;
 
         Condition(
-        		SQLExpressionMapping left,
-        		SQLExpressionMapping right)
+                RolapSqlExpression left,
+                RolapSqlExpression right)
         {
             assert left != null;
             assert right != null;
@@ -2056,13 +2055,13 @@ public class RolapStar {
             this.left = left;
             this.right = right;
         }
-        public SQLExpressionMapping getLeft() {
+        public RolapSqlExpression getLeft() {
             return left;
         }
         public String getLeft(final SqlQuery query) {
             return RolapStar.generateExprString(this.left, query);
         }
-        public SQLExpressionMapping getRight() {
+        public RolapSqlExpression getRight() {
             return right;
         }
         public String getRight(final SqlQuery query) {
@@ -2148,7 +2147,7 @@ public class RolapStar {
                 visit(condition.right));
         }
 
-        public SQLExpressionMapping visit(SQLExpressionMapping expression) {
+        public RolapSqlExpression visit(RolapSqlExpression expression) {
             if (expression == null) {
                 return null;
             }

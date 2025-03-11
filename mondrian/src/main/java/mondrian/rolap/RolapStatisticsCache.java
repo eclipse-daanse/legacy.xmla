@@ -20,7 +20,6 @@ import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 
@@ -132,7 +131,7 @@ public class RolapStatisticsCache {
 
     public long getColumnCardinality(
     	RelationalQueryMapping relation,
-    	SQLExpressionMapping expression,
+    	RolapSqlExpression expression,
         long approxCardinality)
     {
         if (approxCardinality >= 0) {

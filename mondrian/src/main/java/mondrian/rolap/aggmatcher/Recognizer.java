@@ -30,7 +30,6 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +40,7 @@ import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapColumn;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapLevel;
+import mondrian.rolap.RolapSqlExpression;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.Utils;
 import mondrian.rolap.sql.SqlQuery;
@@ -1034,7 +1034,7 @@ public abstract class Recognizer {
      * mondrian.olap.KeyExpression}, returns null. This
      * will result in an error.
      */
-    protected String getColumnName(SQLExpressionMapping expr) {
+    protected String getColumnName(RolapSqlExpression expr) {
         msgRecorder.pushContextName("Recognizer.getColumnName");
 
         try {

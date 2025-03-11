@@ -23,7 +23,6 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +47,7 @@ public class RolapProperty extends AbstractProperty implements OlapElement {
     private RolapLevel level;
 
     /** The column or expression which yields the property's value. */
-    private final SQLExpressionMapping exp;
+    private final RolapSqlExpression exp;
 
     private RolapStar.Column column = null;
 
@@ -68,7 +67,7 @@ public class RolapProperty extends AbstractProperty implements OlapElement {
     RolapProperty(
         String name,
         Datatype type,
-        SQLExpressionMapping exp,
+        RolapSqlExpression exp,
         MemberPropertyFormatter formatter,
         String caption,
         Boolean dependsOnLevelValue,
@@ -85,7 +84,7 @@ public class RolapProperty extends AbstractProperty implements OlapElement {
         this.level = level;
     }
 
-    public SQLExpressionMapping getExp() {
+    public RolapSqlExpression getExp() {
         return exp;
     }
 

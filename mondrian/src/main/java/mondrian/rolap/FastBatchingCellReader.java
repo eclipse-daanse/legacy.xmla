@@ -29,7 +29,6 @@ import java.util.concurrent.Future;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
-import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1517,9 +1516,9 @@ class BatchLoader {
             for (RolapStar.Measure measure : measuresList) {
                 if (measure.getAggregator().isDistinct()
                     && measure.getExpression() instanceof
-                    SQLExpressionMapping measureExpr)
+                    RolapSqlExpression measureExpr)
                 {
-                    SqlStatementMapping measureSql = measureExpr.getSqls().get(0);
+                    RolapSqlStatement measureSql = measureExpr.getSqls().get(0);
                     // Checks if the SQL contains "SELECT" to detect the case a
                     // subquery is used to define the measure. This is not a
                     // perfect check, because a SQL expression on column names

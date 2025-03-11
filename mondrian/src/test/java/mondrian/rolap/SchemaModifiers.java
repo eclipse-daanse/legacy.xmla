@@ -85,7 +85,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.RowMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.RowValueMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingColumnImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
@@ -4293,7 +4293,7 @@ public class SchemaModifiers {
                 	.withName("zero")
                 	.withAggregatorType(MeasureAggregatorType.SUM)
                 	.withMeasureGroup(mg)
-                	.withMeasureExpression(SQLExpressionMappingImpl.builder()
+                	.withColumn(SQLExpressionMappingColumnImpl.builder()
                         .withSqls(List.of(
                         	SqlStatementMappingImpl.builder()
                                 .withDialects(List.of("generic"))
@@ -4386,7 +4386,7 @@ public class SchemaModifiers {
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
-                                        .withNameExpression(SQLExpressionMappingImpl.builder()
+                                        .withNameExpression(SQLExpressionMappingColumnImpl.builder()
                                         	.withSqls(List.of(SqlStatementMappingImpl.builder()
                                                     .withDialects(List.of("generic"))
                                                     .withSql("case when " + dialect.quoteIdentifier( "product", "product_id" ) + "=0 then 'Zero' else 'Non-Zero' end")
@@ -4403,7 +4403,7 @@ public class SchemaModifiers {
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
-                                        .withNameExpression(SQLExpressionMappingImpl.builder()
+                                        .withNameExpression(SQLExpressionMappingColumnImpl.builder()
                                         		.withSqls(List.of(
                                         			SqlStatementMappingImpl.builder()
                                                     .withDialects(List.of("generic"))
@@ -4420,7 +4420,7 @@ public class SchemaModifiers {
                                         .withUniqueMembers(false)
                                         .withLevelType(LevelType.REGULAR)
                                         .withHideMemberIfType(HideMemberIfType.NEVER)
-                                        .withNameExpression(SQLExpressionMappingImpl.builder()
+                                        .withNameExpression(SQLExpressionMappingColumnImpl.builder()
                                         	.withSqls(List.of(
                                         		SqlStatementMappingImpl.builder()
                                                     .withDialects(List.of("generic"))
@@ -4581,7 +4581,7 @@ public class SchemaModifiers {
                 		MeasureMappingImpl.builder()
                         .withName("zero")
                         .withAggregatorType(MeasureAggregatorType.SUM)
-                        .withMeasureExpression(SQLExpressionMappingImpl.builder()
+                        .withColumn(SQLExpressionMappingColumnImpl.builder()
                         	.withSqls(List.of(
                         		SqlStatementMappingImpl.builder()
                                     .withDialects(List.of("generic"))
@@ -4917,7 +4917,7 @@ public class SchemaModifiers {
 				.build(),
 			LevelMappingImpl.builder()
 				.withName("Quarter").withUniqueMembers(false).withLevelType(LevelType.TIME_QUARTERS)
-				.withKeyExpression(SQLExpressionMappingImpl.builder()
+				.withKeyExpression(SQLExpressionMappingColumnImpl.builder()
 						.withSqls(List.of(
                             SqlStatementMappingImpl.builder()
                             	.withDialects(List.of("generic"))
@@ -5994,7 +5994,7 @@ public class SchemaModifiers {
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                             .withAggregatorType(MeasureAggregatorType.SUM)
                             .withFormatString("Standard")
-                            .withMeasureExpression(SQLExpressionMappingImpl.builder()
+                            .withColumn(SQLExpressionMappingColumnImpl.builder()
                             		.withSqls(List.of(
                                         SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("generic"))
@@ -6234,7 +6234,7 @@ public class SchemaModifiers {
                                 MeasureMappingImpl.builder()
                                 .withName("zero")
                                 .withAggregatorType(MeasureAggregatorType.SUM)
-                                .withMeasureExpression(SQLExpressionMappingImpl.builder()
+                                .withColumn(SQLExpressionMappingColumnImpl.builder()
                                     .withSqls(List.of(
                                         SqlStatementMappingImpl.builder()
                                             .withDialects(List.of("generic"))
@@ -6321,7 +6321,7 @@ public class SchemaModifiers {
                                     MeasureMappingImpl.builder()
                                         .withName("Measure")
                                         .withAggregatorType(MeasureAggregatorType.SUM)
-                                        .withMeasureExpression(SQLExpressionMappingImpl.builder()
+                                        .withColumn(SQLExpressionMappingColumnImpl.builder()
                                             .withSqls(List.of(
                                                 SqlStatementMappingImpl.builder().withDialects(List.of("generic")).withSql("1").build()
                                             )).build())
@@ -6631,7 +6631,7 @@ public class SchemaModifiers {
                                     .withName("Promotion Name")
                                     .withColumn(FoodmartMappingSupplier.PROMOTION_NAME_COLUMN_IN_PROMOTION)
                                     .withUniqueMembers(true)
-                                    .withKeyExpression(SQLExpressionMappingImpl.builder()
+                                    .withKeyExpression(SQLExpressionMappingColumnImpl.builder()
                                         .withSqls(List.of(
                                             SqlStatementMappingImpl.builder()
                                                 .withSql("RTRIM("+ colName + ")")
@@ -6695,7 +6695,7 @@ public class SchemaModifiers {
                                     .withName("Promotion Name")
                                     .withColumn(FoodmartMappingSupplier.PROMOTION_NAME_COLUMN_IN_PROMOTION)
                                     .withUniqueMembers(true)
-                                    .withOrdinalExpression(SQLExpressionMappingImpl.builder()
+                                    .withOrdinalExpression(SQLExpressionMappingColumnImpl.builder()
                                         .withSqls(List.of(
                                             SqlStatementMappingImpl.builder()
                                                 .withSql("RTRIM("+ colName + ")")
@@ -6814,7 +6814,7 @@ public class SchemaModifiers {
                                     .withName("Promotion Name")
                                     .withColumn(FoodmartMappingSupplier.PROMOTION_NAME_COLUMN_IN_PROMOTION)
                                     .withUniqueMembers(true)
-                                    .withCaptionExpression(SQLExpressionMappingImpl.builder()
+                                    .withCaptionExpression(SQLExpressionMappingColumnImpl.builder()
                                         .withSqls(List.of(
                                             SqlStatementMappingImpl.builder()
                                                 .withSql("RTRIM("+ colName + ")")
@@ -6877,7 +6877,7 @@ public class SchemaModifiers {
                                     .withName("Promotion Name")
                                     .withColumn(FoodmartMappingSupplier.PROMOTION_NAME_COLUMN_IN_PROMOTION)
                                     .withUniqueMembers(true)
-                                    .withCaptionExpression(SQLExpressionMappingImpl.builder()
+                                    .withCaptionExpression(SQLExpressionMappingColumnImpl.builder()
                                         .withSqls(List.of(
                                             SqlStatementMappingImpl.builder()
                                                 .withSql("RTRIM("+ this.colName + ")")
@@ -6954,7 +6954,7 @@ public class SchemaModifiers {
                                     .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                                     .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
                                     .withNullParentValue("0")
-                                    .withParentExpression(SQLExpressionMappingImpl.builder()
+                                    .withParentExpression(SQLExpressionMappingColumnImpl.builder()
                                         .withSqls(List.of(
                                             SqlStatementMappingImpl.builder()
                                                 .withSql("RTRIM("+ colName + ")")
@@ -7042,7 +7042,7 @@ public class SchemaModifiers {
                                     .withName("Promotion Name")
                                     .withColumn(FoodmartMappingSupplier.PROMOTION_NAME_COLUMN_IN_PROMOTION)
                                     .withUniqueMembers(true)
-                                    .withKeyExpression(SQLExpressionMappingImpl.builder()
+                                    .withKeyExpression(SQLExpressionMappingColumnImpl.builder()
                                         .withSqls(List.of(
                                             SqlStatementMappingImpl.builder()
                                                 .withSql("RTRIM("+ this.colName + ")")
@@ -7127,7 +7127,7 @@ public class SchemaModifiers {
                         .withUniqueMembers(false)
                         .withLevelType(LevelType.TIME_QUARTERS)
                         .withKeyExpression(
-                            SQLExpressionMappingImpl.builder()
+                            SQLExpressionMappingColumnImpl.builder()
                                 .withSqls(List.of(
                                     SqlStatementMappingImpl.builder()
                                         .withSql("RTRIM(quarter)")
@@ -7498,7 +7498,7 @@ public class SchemaModifiers {
 										.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PROMOTION_TABLE).build())
 										.withLevels(List.of(LevelMappingImpl.builder().withName("Promotion Name")
 												.withColumn(FoodmartMappingSupplier.PROMOTION_NAME_COLUMN_IN_PROMOTION).withUniqueMembers(true)
-												.withKeyExpression(SQLExpressionMappingImpl.builder()
+												.withKeyExpression(SQLExpressionMappingColumnImpl.builder()
 														.withSqls(List.of(SqlStatementMappingImpl.builder()
 																.withSql(
 																		"ERROR_TEST_FUNCTION_NAME(" + colName + ")")
@@ -7553,7 +7553,7 @@ public class SchemaModifiers {
 												LevelMappingImpl.builder()
 												.withName("Promotion Name")
 												.withColumn(FoodmartMappingSupplier.PROMOTION_NAME_COLUMN_IN_PROMOTION).withUniqueMembers(true)
-												.withKeyExpression(SQLExpressionMappingImpl.builder()
+												.withKeyExpression(SQLExpressionMappingColumnImpl.builder()
 														.withSqls(List.of(SqlStatementMappingImpl.builder()
 																.withSql("RTRIM(" + colName + ")")
 																.withDialects(List.of("generic")).build()))
@@ -7820,7 +7820,7 @@ public class SchemaModifiers {
             								.withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
                                             .withUniqueMembers(true)
                                             .withHideMemberIfType(HideMemberIfType.IF_BLANK_NAME)
-                                            .withNameExpression(SQLExpressionMappingImpl.builder()
+                                            .withNameExpression(SQLExpressionMappingColumnImpl.builder()
                                             		.withSqls(List.of(
                                             			SqlStatementMappingImpl.builder()
                                             			.withDialects(List.of("generic"))
@@ -8350,7 +8350,7 @@ public class SchemaModifiers {
                 			.withName("typeMeasure")
                 			.withAggregatorType(aggregator)
                 			.withDatatype(type != null ? InternalDataType.fromValue(type) : null)
-                			.withMeasureExpression(SQLExpressionMappingImpl.builder()
+                			.withColumn(SQLExpressionMappingColumnImpl.builder()
                 					.withSqls(List.of(
                 						SqlStatementMappingImpl.builder()
                 						.withDialects(List.of("generic"))
@@ -11247,7 +11247,7 @@ public class SchemaModifiers {
                             										.withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                             										.withType(InternalDataType.NUMERIC)
                             										.withUniqueMembers(true)
-                            										.withNameExpression(SQLExpressionMappingImpl.builder()
+                            										.withNameExpression(SQLExpressionMappingColumnImpl.builder()
                             											.withSqls(List.of(
                             												SqlStatementMappingImpl.builder()
                             													.withDialects(List.of("oracle"))
@@ -13307,7 +13307,7 @@ public class SchemaModifiers {
                         						.withName("Store Name")
                         						.withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                         						.withUniqueMembers(true)
-                        						.withOrdinalExpression(SQLExpressionMappingImpl.builder()
+                        						.withOrdinalExpression(SQLExpressionMappingColumnImpl.builder()
                         							.withSqls(List.of(
                         								SqlStatementMappingImpl.builder().withSql("Iif(store_name = 'HQ', null, store_name)").withDialects(List.of("access")).build(),
                         								SqlStatementMappingImpl.builder().withSql("case \"store_name\" when 'HQ' then null else \"store_name\" end").withDialects(List.of("oracle")).build(),
@@ -17641,7 +17641,7 @@ public class SchemaModifiers {
                             .withType(InternalDataType.DATE)
                             .withUniqueMembers(true)
                             .withLevelType(LevelType.TIME_YEARS)
-                            .withKeyExpression(SQLExpressionMappingImpl.builder()
+                            .withKeyExpression(SQLExpressionMappingColumnImpl.builder()
                             		.withSqls(List.of(
                                                 SqlStatementMappingImpl.builder()
                                                     .withSql("cast(\"the_date\" as DATE)\n")
@@ -17745,7 +17745,7 @@ public class SchemaModifiers {
                             .withName("StoreSqft")
                             .withType(InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
-                            .withKeyExpression(SQLExpressionMappingImpl.builder()
+                            .withKeyExpression(SQLExpressionMappingColumnImpl.builder()
                             		.withSqls(List.of(
                                                 SqlStatementMappingImpl.builder()
                                                 	.withDialects(List.of("mysql"))
@@ -17789,7 +17789,7 @@ public class SchemaModifiers {
                                                 .withName("Big Unit Sales")
                                                 .withAggregatorType(MeasureAggregatorType.SUM)
                                                 .withFormatString("Standard")
-                                                .withMeasureExpression(SQLExpressionMappingImpl.builder()
+                                                .withColumn(SQLExpressionMappingColumnImpl.builder()
                                                     .withSqls(List.of(
                                                         SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("vertica"))
