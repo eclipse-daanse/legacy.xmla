@@ -63,7 +63,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CellFormatterMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
@@ -2544,8 +2544,8 @@ public class SchemaModifiers {
          */
 
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
-            ColumnMappingImpl storeId = ColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
-            ColumnMappingImpl employeeId = ColumnMappingImpl.builder().withName("employee_id").withDataType(ColumnDataType.INTEGER).build();
+            PhysicalColumnMappingImpl storeId = PhysicalColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
+            PhysicalColumnMappingImpl employeeId = PhysicalColumnMappingImpl.builder().withName("employee_id").withDataType(ColumnDataType.INTEGER).build();
             InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
             .withColumns(List.of(storeId, employeeId))
             .withRows(List.of(
@@ -8411,7 +8411,7 @@ public class SchemaModifiers {
             List<DimensionConnectorMapping> result = new ArrayList<>();
             result.addAll(super.cubeDimensionConnectors(cube));
             if ("Sales".equals(cube.getName())) {
-            	ColumnMappingImpl nuStoreId = ColumnMappingImpl.builder().withName("NuStore_id").withDataType(ColumnDataType.INTEGER).withTable(FoodmartMappingSupplier.STORE_TABLE).build();
+            	PhysicalColumnMappingImpl nuStoreId = PhysicalColumnMappingImpl.builder().withName("NuStore_id").withDataType(ColumnDataType.INTEGER).withTable(FoodmartMappingSupplier.STORE_TABLE).build();
             	result.add(DimensionConnectorMappingImpl.builder()
             		.withOverrideDimensionName("NuStore")
             		.withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
@@ -8580,7 +8580,7 @@ public class SchemaModifiers {
             List<DimensionConnectorMapping> result = new ArrayList<>();
             result.addAll(super.cubeDimensionConnectors(cube));
             if ("Sales".equals(cube.getName())) {
-            	ColumnMappingImpl nuStoreId = ColumnMappingImpl.builder().withName("NuStore_id").withDataType(ColumnDataType.INTEGER).withTable(FoodmartMappingSupplier.STORE_TABLE).build();
+            	PhysicalColumnMappingImpl nuStoreId = PhysicalColumnMappingImpl.builder().withName("NuStore_id").withDataType(ColumnDataType.INTEGER).withTable(FoodmartMappingSupplier.STORE_TABLE).build();
             	result.add(DimensionConnectorMappingImpl.builder()
             		.withOverrideDimensionName("NuStore")
             		.withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
@@ -8824,8 +8824,8 @@ public class SchemaModifiers {
              + "</Dimension>"));
             */
 
-        ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withDataType(ColumnDataType.NUMERIC).build();
-        ColumnMappingImpl desc = ColumnMappingImpl.builder().withName("desc").withDataType(ColumnDataType.VARCHAR).build();
+        PhysicalColumnMappingImpl id = PhysicalColumnMappingImpl.builder().withName("id").withDataType(ColumnDataType.NUMERIC).build();
+        PhysicalColumnMappingImpl desc = PhysicalColumnMappingImpl.builder().withName("desc").withDataType(ColumnDataType.VARCHAR).build();
         InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
         .withColumns(List.of(id, desc))
         .withRows(List.of(
@@ -8968,8 +8968,8 @@ public class SchemaModifiers {
         protected List<? extends CubeMapping> catalogCubes(CatalogMapping catalogOriginal) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.catalogCubes(catalogOriginal));
-            ColumnMappingImpl promoId = ColumnMappingImpl.builder().withName("promo_id").withDataType(ColumnDataType.NUMERIC).build();
-            ColumnMappingImpl promoName = ColumnMappingImpl.builder().withName("promo_name").withDataType(ColumnDataType.VARCHAR).build();
+            PhysicalColumnMappingImpl promoId = PhysicalColumnMappingImpl.builder().withName("promo_id").withDataType(ColumnDataType.NUMERIC).build();
+            PhysicalColumnMappingImpl promoName = PhysicalColumnMappingImpl.builder().withName("promo_name").withDataType(ColumnDataType.VARCHAR).build();
             InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
@@ -9324,7 +9324,7 @@ public class SchemaModifiers {
         protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
             List<DimensionConnectorMapping> result = new ArrayList<>();
             result.addAll(super.cubeDimensionConnectors(cube));
-            ColumnMappingImpl foo = ColumnMappingImpl.builder().withName("foo").withDataType(ColumnDataType.NUMERIC).build();
+            PhysicalColumnMappingImpl foo = PhysicalColumnMappingImpl.builder().withName("foo").withDataType(ColumnDataType.NUMERIC).build();
             InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
             .withColumns(List.of(foo))
             .withRows(List.of()).build();
@@ -12021,8 +12021,8 @@ public class SchemaModifiers {
             + "</Schema>\n";
 
          */
-    	private static final ColumnMappingImpl foo = ColumnMappingImpl.builder().withName("foo").withDataType(ColumnDataType.INTEGER).build();
-    	private static final ColumnMappingImpl bar = ColumnMappingImpl.builder().withName("bar").withDataType(ColumnDataType.INTEGER).build();
+    	private static final PhysicalColumnMappingImpl foo = PhysicalColumnMappingImpl.builder().withName("foo").withDataType(ColumnDataType.INTEGER).build();
+    	private static final PhysicalColumnMappingImpl bar = PhysicalColumnMappingImpl.builder().withName("bar").withDataType(ColumnDataType.INTEGER).build();
 
     	private static final TableQueryMappingImpl t = TableQueryMappingImpl.builder()
     			.withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE)
@@ -12743,8 +12743,8 @@ public class SchemaModifiers {
             + "</Schema>";
 
          */
-    	private static final ColumnMappingImpl storeIdX = ColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
-    	private static final ColumnMappingImpl valueX = ColumnMappingImpl.builder().withName("value").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    	private static final PhysicalColumnMappingImpl storeIdX = PhysicalColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
+    	private static final PhysicalColumnMappingImpl valueX = PhysicalColumnMappingImpl.builder().withName("value").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     	//## ColumnNames: store_id,value
     	//## ColumnTypes: INTEGER,VARCHAR(30)
     	private static final PhysicalTableMappingImpl  storeX = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("store_y")
@@ -12769,8 +12769,8 @@ public class SchemaModifiers {
         ))
         .build();
 
-    	private static final ColumnMappingImpl storeIdY = ColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
-    	private static final ColumnMappingImpl valueY = ColumnMappingImpl.builder().withName("value").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+    	private static final PhysicalColumnMappingImpl storeIdY = PhysicalColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
+    	private static final PhysicalColumnMappingImpl valueY = PhysicalColumnMappingImpl.builder().withName("value").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     	//## ColumnNames: store_id,value
     	//## ColumnTypes: INTEGER,VARCHAR(30)
     	private static final PhysicalTableMappingImpl  storeY = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("store_y")
@@ -12801,9 +12801,9 @@ public class SchemaModifiers {
         }
 
         protected CatalogMapping modifyCatalog(CatalogMapping catalog) {
-            ColumnMappingImpl store_id_cheques = ColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
-            ColumnMappingImpl prod_id_cheques = ColumnMappingImpl.builder().withName("prod_id").withDataType(ColumnDataType.INTEGER).build();
-            ColumnMappingImpl amount_cheques = ColumnMappingImpl.builder().withName("amount").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
+            PhysicalColumnMappingImpl store_id_cheques = PhysicalColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
+            PhysicalColumnMappingImpl prod_id_cheques = PhysicalColumnMappingImpl.builder().withName("prod_id").withDataType(ColumnDataType.INTEGER).build();
+            PhysicalColumnMappingImpl amount_cheques = PhysicalColumnMappingImpl.builder().withName("amount").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
             PhysicalTableMappingImpl cheques = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("cheques")
                     .withColumns(List.of(
                             store_id_cheques, prod_id_cheques, amount_cheques
@@ -12811,10 +12811,10 @@ public class SchemaModifiers {
             //## TableName: agg_lp_595_cheques
             //## ColumnNames: firstprefix_value,secondprefix_value,amount,FACT_COUNT
             //## ColumnTypes: VARCHAR(30),VARCHAR(30),DECIMAL(10,2),INTEGER
-            ColumnMappingImpl firstprefixValueAggLp595Cheques = ColumnMappingImpl.builder().withName("firstprefix_value").withDataType(ColumnDataType.VARCHAR).withColumnSize(30).build();
-            ColumnMappingImpl secondprefixValueAggLp595Cheques = ColumnMappingImpl.builder().withName("secondprefix_value").withDataType(ColumnDataType.VARCHAR).withColumnSize(30).build();
-            ColumnMappingImpl amountAggLp595Cheques = ColumnMappingImpl.builder().withName("amount").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
-            ColumnMappingImpl factCountAggLp595Cheques = ColumnMappingImpl.builder().withName("FACT_COUNT").withDataType(ColumnDataType.INTEGER).build();
+            PhysicalColumnMappingImpl firstprefixValueAggLp595Cheques = PhysicalColumnMappingImpl.builder().withName("firstprefix_value").withDataType(ColumnDataType.VARCHAR).withColumnSize(30).build();
+            PhysicalColumnMappingImpl secondprefixValueAggLp595Cheques = PhysicalColumnMappingImpl.builder().withName("secondprefix_value").withDataType(ColumnDataType.VARCHAR).withColumnSize(30).build();
+            PhysicalColumnMappingImpl amountAggLp595Cheques = PhysicalColumnMappingImpl.builder().withName("amount").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
+            PhysicalColumnMappingImpl factCountAggLp595Cheques = PhysicalColumnMappingImpl.builder().withName("FACT_COUNT").withDataType(ColumnDataType.INTEGER).build();
             PhysicalTableMappingImpl aggLp595Cheques = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("agg_lp_595_cheques")
                     .withColumns(List.of(
                             firstprefixValueAggLp595Cheques, secondprefixValueAggLp595Cheques, amountAggLp595Cheques
@@ -13170,8 +13170,8 @@ public class SchemaModifiers {
         protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
             List<CubeMapping> result = new ArrayList<>();
             result.addAll(super.catalogCubes(schema));
-            ColumnMappingImpl promoId = ColumnMappingImpl.builder().withName("promo_id").withDataType(ColumnDataType.NUMERIC).build();
-            ColumnMappingImpl promoName = ColumnMappingImpl.builder().withName("promo_name").withDataType(ColumnDataType.VARCHAR).build();
+            PhysicalColumnMappingImpl promoId = PhysicalColumnMappingImpl.builder().withName("promo_id").withDataType(ColumnDataType.NUMERIC).build();
+            PhysicalColumnMappingImpl promoName = PhysicalColumnMappingImpl.builder().withName("promo_name").withDataType(ColumnDataType.VARCHAR).build();
             InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
@@ -19836,8 +19836,8 @@ public class SchemaModifiers {
 
         @Override
         protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
-        	ColumnMappingImpl ordernumber = ColumnMappingImpl.builder().withName("ORDERNUMBER").withDataType(ColumnDataType.INTEGER).build();
-        	ColumnMappingImpl orderdate = ColumnMappingImpl.builder().withName("ORDERDATE").withDataType(ColumnDataType.TIMESTAMP).build();
+        	PhysicalColumnMappingImpl ordernumber = PhysicalColumnMappingImpl.builder().withName("ORDERNUMBER").withDataType(ColumnDataType.INTEGER).build();
+        	PhysicalColumnMappingImpl orderdate = PhysicalColumnMappingImpl.builder().withName("ORDERDATE").withDataType(ColumnDataType.TIMESTAMP).build();
             PhysicalTableMappingImpl orders = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("orders")
                     .withColumns(List.of(
                             ordernumber, orderdate
@@ -21157,8 +21157,8 @@ public class SchemaModifiers {
             ))
             .build();
 
-        	ColumnMappingImpl unitSalesSalesFact1998 = ColumnMappingImpl.builder().withName("unit_sales").withDataType(ColumnDataType.INTEGER).build();
-        	ColumnMappingImpl customerIdSalesFact1998 = ColumnMappingImpl.builder().withName("customer_id").withDataType(ColumnDataType.INTEGER).build();
+        	PhysicalColumnMappingImpl unitSalesSalesFact1998 = PhysicalColumnMappingImpl.builder().withName("unit_sales").withDataType(ColumnDataType.INTEGER).build();
+        	PhysicalColumnMappingImpl customerIdSalesFact1998 = PhysicalColumnMappingImpl.builder().withName("customer_id").withDataType(ColumnDataType.INTEGER).build();
             PhysicalTableMappingImpl salesFact1998 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("sales_fact_1998")
                     .withColumns(List.of(
                             unitSalesSalesFact1998, customerIdSalesFact1998

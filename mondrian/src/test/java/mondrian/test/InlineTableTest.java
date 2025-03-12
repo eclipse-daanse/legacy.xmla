@@ -24,7 +24,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -66,8 +66,8 @@ class InlineTableTest {
             }
 
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                ColumnMappingImpl promoId = ColumnMappingImpl.builder().withName("promo_id").withDataType(ColumnDataType.NUMERIC).build();
-                ColumnMappingImpl promoName = ColumnMappingImpl.builder().withName("promo_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+                PhysicalColumnMappingImpl promoId = PhysicalColumnMappingImpl.builder().withName("promo_id").withDataType(ColumnDataType.NUMERIC).build();
+                PhysicalColumnMappingImpl promoName = PhysicalColumnMappingImpl.builder().withName("promo_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
                 InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                 .withColumns(List.of(promoId, promoName))
                 .withRows(List.of(
@@ -205,8 +205,8 @@ class InlineTableTest {
                 super(catalog);
             }
 
-            private static final ColumnMappingImpl promoId = ColumnMappingImpl.builder().withName("promo_id").withDataType(ColumnDataType.INTEGER).build();
-            private static final ColumnMappingImpl promoName = ColumnMappingImpl.builder().withName("promo_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+            private static final PhysicalColumnMappingImpl promoId = PhysicalColumnMappingImpl.builder().withName("promo_id").withDataType(ColumnDataType.INTEGER).build();
+            private static final PhysicalColumnMappingImpl promoName = PhysicalColumnMappingImpl.builder().withName("promo_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
             private static final InlineTableMappingImpl t = InlineTableMappingImpl.builder()
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
@@ -357,8 +357,8 @@ class InlineTableTest {
             }
 
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                ColumnMappingImpl nationName = ColumnMappingImpl.builder().withName("nation_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
-                ColumnMappingImpl nationShortcode = ColumnMappingImpl.builder().withName("nation_shortcode").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+                PhysicalColumnMappingImpl nationName = PhysicalColumnMappingImpl.builder().withName("nation_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+                PhysicalColumnMappingImpl nationShortcode = PhysicalColumnMappingImpl.builder().withName("nation_shortcode").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
                 InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                 .withName("nation")
                 .withColumns(List.of(nationName, nationShortcode))
@@ -543,8 +543,8 @@ class InlineTableTest {
 
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-                ColumnMappingImpl nationName = ColumnMappingImpl.builder().withName("nation_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
-                ColumnMappingImpl nationShortcode = ColumnMappingImpl.builder().withName("nation_shortcode").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+                PhysicalColumnMappingImpl nationName = PhysicalColumnMappingImpl.builder().withName("nation_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+                PhysicalColumnMappingImpl nationShortcode = PhysicalColumnMappingImpl.builder().withName("nation_shortcode").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
                 InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                 .withColumns(List.of(nationName, nationShortcode))
                 .withRows(List.of(
@@ -559,8 +559,8 @@ class InlineTableTest {
                                RowValueMappingImpl.builder().withColumn(nationShortcode).withValue("CA").build())).build()
                 ))
                 .build();
-                ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withDataType(ColumnDataType.NUMERIC).build();
-                ColumnMappingImpl date = ColumnMappingImpl.builder().withName("date").withDataType(ColumnDataType.DATE).build();
+                PhysicalColumnMappingImpl id = PhysicalColumnMappingImpl.builder().withName("id").withDataType(ColumnDataType.NUMERIC).build();
+                PhysicalColumnMappingImpl date = PhysicalColumnMappingImpl.builder().withName("date").withDataType(ColumnDataType.DATE).build();
                 InlineTableMappingImpl tt = InlineTableMappingImpl.builder()
                 .withColumns(List.of(id, date))
                 .withRows(List.of(

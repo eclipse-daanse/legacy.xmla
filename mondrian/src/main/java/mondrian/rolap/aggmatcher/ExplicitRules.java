@@ -51,7 +51,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelPropertyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -640,7 +640,7 @@ public class ExplicitRules {
          */
         private static void handleNameColumn(AggregationLevelMapping aggLevel) {
         	AggregationLevelPropertyMapping nameProp =
-        			AggregationLevelPropertyMappingImpl.builder().withName(StandardProperty.NAME.getName()).withColumn((ColumnMappingImpl) aggLevel.getNameColumn()).build();
+        			AggregationLevelPropertyMappingImpl.builder().withName(StandardProperty.NAME.getName()).withColumn((PhysicalColumnMappingImpl) aggLevel.getNameColumn()).build();
         	//TODO
             //aggLevel.getAggregationLevelProperties().add(nameProp);
         }

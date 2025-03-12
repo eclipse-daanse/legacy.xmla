@@ -49,7 +49,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
@@ -2888,10 +2888,10 @@ class TestAggregationManager extends BatchTestCase {
                         .withAggregatorType(MeasureAggregatorType.SUM)
                         .withFormatString("Standard")
                         .build();
-                ColumnMappingImpl salesRegion = ColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-                ColumnMappingImpl salesCity = ColumnMappingImpl.builder().withName("sales_city").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-                ColumnMappingImpl salesDistrictId = ColumnMappingImpl.builder().withName("sales_district_id").withDataType(ColumnDataType.INTEGER).build();
-                ColumnMappingImpl regionId = ColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl salesRegion = PhysicalColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                PhysicalColumnMappingImpl salesCity = PhysicalColumnMappingImpl.builder().withName("sales_city").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                PhysicalColumnMappingImpl salesDistrictId = PhysicalColumnMappingImpl.builder().withName("sales_district_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl regionId = PhysicalColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 salesRegion, salesCity, salesDistrictId, regionId
@@ -3624,7 +3624,7 @@ class TestAggregationManager extends BatchTestCase {
          */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier7::new);
         Connection connection = context.getConnectionWithDefaultRole();
-        
+
 		RolapCatalog rolapCatalog = (RolapCatalog) connection.getCatalogReader().getCatalog();
         RolapStar star = rolapCatalog.getRolapStarRegistry().getStar("sales_fact_1997");
         AggStar aggStar1 = getAggStar(star, "agg_c_10_sales_fact_1997");
@@ -3632,7 +3632,7 @@ class TestAggregationManager extends BatchTestCase {
             getAggStar(star, "agg_c_10_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(chooseAggregateByVolume)).thenReturn(0l);
-        
+
 		RolapCatalog rolapCatalog2 = (RolapCatalog) connection.getCatalogReader().getCatalog();
 		rolapCatalog2.getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
         boolean[] rollup = { false };
@@ -3713,7 +3713,7 @@ class TestAggregationManager extends BatchTestCase {
             getAggStar(star, "agg_c_special_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(context.getConfig().chooseAggregateByVolume())).thenReturn(0l);
-        
+
         RolapCatalog rolapCatalog2 = (RolapCatalog) context.getConnectionWithDefaultRole().getCatalogReader()
                 .getCatalog();
         rolapCatalog2.getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
@@ -3809,7 +3809,7 @@ class TestAggregationManager extends BatchTestCase {
                 + "</Schema>");
          */
         withSchema(context, SchemaModifiers.TestAggregationManagerModifier4::new);
-        
+
         RolapCatalog rolapCatalog = (RolapCatalog) context.getConnectionWithDefaultRole().getCatalogReader()
                 .getCatalog();
         RolapStar star = rolapCatalog.getRolapStarRegistry().getStar("sales_fact_1997");
@@ -3817,10 +3817,10 @@ class TestAggregationManager extends BatchTestCase {
             getAggStar(star, "agg_g_ms_pcat_sales_fact_1997"));
         // make sure the test AggStar will be prioritized first
         when(aggStarSpy.getSize(context.getConfig().chooseAggregateByVolume())).thenReturn(0l);
-        
+
         RolapCatalog rolapCatalog2 = (RolapCatalog) context.getConnectionWithDefaultRole().getCatalogReader()
                 .getCatalog();
-        
+
         rolapCatalog2.getRolapStarRegistry().getStar("sales_fact_1997").addAggStar(aggStarSpy);
         boolean[] rollup = { false };
         AggStar returnedStar = AggregationManager

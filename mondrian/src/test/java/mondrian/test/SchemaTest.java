@@ -86,7 +86,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AnnotationMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
@@ -683,8 +683,8 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                	ColumnMappingImpl yearly_income = ColumnMappingImpl.builder().withName("yearly_income").withDataType(ColumnDataType.INTEGER).build();
-                	ColumnMappingImpl customer_id = ColumnMappingImpl.builder().withName("customer_id").withDataType(ColumnDataType.INTEGER).build();
+                	PhysicalColumnMappingImpl yearly_income = PhysicalColumnMappingImpl.builder().withName("yearly_income").withDataType(ColumnDataType.INTEGER).build();
+                	PhysicalColumnMappingImpl customer_id = PhysicalColumnMappingImpl.builder().withName("customer_id").withDataType(ColumnDataType.INTEGER).build();
                     PhysicalTableMappingImpl customer_not_found = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("customer_not_found")
                             .withColumns(List.of(
                                     customer_id, yearly_income
@@ -747,7 +747,7 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnMappingImpl customer_id = ColumnMappingImpl.builder().withName("customer_id").withDataType(ColumnDataType.INTEGER).build();
+                    PhysicalColumnMappingImpl customer_id = PhysicalColumnMappingImpl.builder().withName("customer_id").withDataType(ColumnDataType.INTEGER).build();
                     PhysicalTableMappingImpl customer_not_found = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("customer_not_found")
                             .withColumns(List.of(
                                     customer_id
@@ -808,7 +808,7 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnMappingImpl yearly_income = ColumnMappingImpl.builder().withName("yearly_income").withDataType(ColumnDataType.INTEGER).build();
+                    PhysicalColumnMappingImpl yearly_income = PhysicalColumnMappingImpl.builder().withName("yearly_income").withDataType(ColumnDataType.INTEGER).build();
                     PhysicalTableMappingImpl customer_not_found = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("customer_not_found")
                             .withColumns(List.of(
                                     yearly_income
@@ -1452,9 +1452,9 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withDataType(ColumnDataType.INTEGER).build();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl sales_region = PhysicalColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                PhysicalColumnMappingImpl sales_district_id = PhysicalColumnMappingImpl.builder().withName("sales_district_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl region_id = PhysicalColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 sales_region, sales_district_id, region_id
@@ -1723,9 +1723,9 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withDataType(ColumnDataType.INTEGER).build();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl sales_region = PhysicalColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                PhysicalColumnMappingImpl sales_district_id = PhysicalColumnMappingImpl.builder().withName("sales_district_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl region_id = PhysicalColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 sales_region, sales_district_id, region_id
@@ -2017,8 +2017,8 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                PhysicalColumnMappingImpl region_id = PhysicalColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl sales_region = PhysicalColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
@@ -2235,8 +2235,8 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                PhysicalColumnMappingImpl region_id = PhysicalColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl sales_region = PhysicalColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
@@ -2454,8 +2454,8 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                PhysicalColumnMappingImpl region_id = PhysicalColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl sales_region = PhysicalColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
@@ -2669,8 +2669,8 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                PhysicalColumnMappingImpl region_id = PhysicalColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl sales_region = PhysicalColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region
@@ -6705,9 +6705,9 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withDataType(ColumnDataType.INTEGER).build();
-                    ColumnMappingImpl bin = ColumnMappingImpl.builder().withName("bin").withDataType(ColumnDataType.INTEGER).build();
-                    ColumnMappingImpl name = ColumnMappingImpl.builder().withName("name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+                    PhysicalColumnMappingImpl id = PhysicalColumnMappingImpl.builder().withName("id").withDataType(ColumnDataType.INTEGER).build();
+                    PhysicalColumnMappingImpl bin = PhysicalColumnMappingImpl.builder().withName("bin").withDataType(ColumnDataType.INTEGER).build();
+                    PhysicalColumnMappingImpl name = PhysicalColumnMappingImpl.builder().withName("name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
                     InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                     .withColumns(List.of(id, bin, name))
                     .withRows(List.of(
@@ -6850,9 +6850,9 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withDataType(ColumnDataType.INTEGER).build();
-                    ColumnMappingImpl bigNum = ColumnMappingImpl.builder().withName("big_num").withDataType(ColumnDataType.INTEGER).build();
-                    ColumnMappingImpl name = ColumnMappingImpl.builder().withName("name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+                    PhysicalColumnMappingImpl id = PhysicalColumnMappingImpl.builder().withName("id").withDataType(ColumnDataType.INTEGER).build();
+                    PhysicalColumnMappingImpl bigNum = PhysicalColumnMappingImpl.builder().withName("big_num").withDataType(ColumnDataType.INTEGER).build();
+                    PhysicalColumnMappingImpl name = PhysicalColumnMappingImpl.builder().withName("name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
                     InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                     .withColumns(List.of(id, bigNum, name))
                     .withRows(List.of(
@@ -6965,9 +6965,9 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnMappingImpl id = ColumnMappingImpl.builder().withName("id").withDataType(ColumnDataType.INTEGER).build();
-                    ColumnMappingImpl bigNum = ColumnMappingImpl.builder().withName("big_num").withDataType(ColumnDataType.INTEGER).build();
-                    ColumnMappingImpl name = ColumnMappingImpl.builder().withName("name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+                    PhysicalColumnMappingImpl id = PhysicalColumnMappingImpl.builder().withName("id").withDataType(ColumnDataType.INTEGER).build();
+                    PhysicalColumnMappingImpl bigNum = PhysicalColumnMappingImpl.builder().withName("big_num").withDataType(ColumnDataType.INTEGER).build();
+                    PhysicalColumnMappingImpl name = PhysicalColumnMappingImpl.builder().withName("name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
                     InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                     .withColumns(List.of(id, bigNum, name))
                     .withRows(List.of(
@@ -7576,9 +7576,9 @@ class SchemaTest {
 
             @Override
             protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl region_id = PhysicalColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl sales_region = PhysicalColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                PhysicalColumnMappingImpl sales_district_id = PhysicalColumnMappingImpl.builder().withName("sales_district_id").withDataType(ColumnDataType.INTEGER).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region, sales_district_id
@@ -8441,7 +8441,7 @@ class SchemaTest {
                                 ))
                         		.build()))
                         .build();
-                    ColumnMappingImpl salesStateProvince = ColumnMappingImpl.builder().withName("sales_state_province").build();
+                    PhysicalColumnMappingImpl salesStateProvince = PhysicalColumnMappingImpl.builder().withName("sales_state_province").build();
                     SqlSelectQueryMappingImpl vv = SqlSelectQueryMappingImpl.builder()
                             .withAlias("sales_fact_1997_test")
                             .withSql(
@@ -10401,10 +10401,10 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                ColumnMappingImpl region_id = ColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
-                ColumnMappingImpl sales_region = ColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-                ColumnMappingImpl sales_city = ColumnMappingImpl.builder().withName("sales_city").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-                ColumnMappingImpl sales_district_id = ColumnMappingImpl.builder().withName("sales_district_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl region_id = PhysicalColumnMappingImpl.builder().withName("region_id").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl sales_region = PhysicalColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                PhysicalColumnMappingImpl sales_city = PhysicalColumnMappingImpl.builder().withName("sales_city").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+                PhysicalColumnMappingImpl sales_district_id = PhysicalColumnMappingImpl.builder().withName("sales_district_id").withDataType(ColumnDataType.INTEGER).build();
                 PhysicalTableMappingImpl region = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("region")
                         .withColumns(List.of(
                                 region_id, sales_region, sales_district_id
@@ -11101,12 +11101,12 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    ColumnMappingImpl lvl1Id = ColumnMappingImpl.builder().withName("lvl_1_id").withDataType(ColumnDataType.INTEGER).build();
-                    ColumnMappingImpl lvl1Name = ColumnMappingImpl.builder().withName("lvl_1_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
-                    ColumnMappingImpl lvl2Id = ColumnMappingImpl.builder().withName("lvl_2_id").withDataType(ColumnDataType.INTEGER).build();
-                    ColumnMappingImpl lvl2Name = ColumnMappingImpl.builder().withName("lvl_2_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
-                    ColumnMappingImpl lvl3Id = ColumnMappingImpl.builder().withName("lvl_3_id").withDataType(ColumnDataType.INTEGER).build();
-                    ColumnMappingImpl lvl3Name = ColumnMappingImpl.builder().withName("lvl_3_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+                    PhysicalColumnMappingImpl lvl1Id = PhysicalColumnMappingImpl.builder().withName("lvl_1_id").withDataType(ColumnDataType.INTEGER).build();
+                    PhysicalColumnMappingImpl lvl1Name = PhysicalColumnMappingImpl.builder().withName("lvl_1_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+                    PhysicalColumnMappingImpl lvl2Id = PhysicalColumnMappingImpl.builder().withName("lvl_2_id").withDataType(ColumnDataType.INTEGER).build();
+                    PhysicalColumnMappingImpl lvl2Name = PhysicalColumnMappingImpl.builder().withName("lvl_2_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+                    PhysicalColumnMappingImpl lvl3Id = PhysicalColumnMappingImpl.builder().withName("lvl_3_id").withDataType(ColumnDataType.INTEGER).build();
+                    PhysicalColumnMappingImpl lvl3Name = PhysicalColumnMappingImpl.builder().withName("lvl_3_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
                     InlineTableMappingImpl t = InlineTableMappingImpl.builder()
                     .withColumns(List.of(lvl1Id, lvl1Name, lvl2Id, lvl2Name, lvl3Id, lvl3Name))
                     .withRows(List.of(

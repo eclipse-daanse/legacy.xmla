@@ -125,7 +125,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.WritebackMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.WritebackTableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.pojo.AnnotationMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
@@ -2662,7 +2662,7 @@ public class RolapCube extends CubeBase {
             if (rightDepth > leftDepth) {
                 // switch
                 String leftAlias = getLeftAlias(join);
-                ColumnMappingImpl leftKey = join.getLeft().getKey();;
+                PhysicalColumnMappingImpl leftKey = join.getLeft().getKey();;
                 QueryMappingImpl left = copy(left(join));
                 QueryMappingImpl right = copy(right(join));
                 join.getLeft().setAlias(getRightAlias(join));
@@ -2703,9 +2703,9 @@ public class RolapCube extends CubeBase {
                 JoinedQueryElementMappingImpl right = join.getRight();
                 JoinedQueryElementMappingImpl left = join.getLeft();
                 right.setAlias(getRightAlias(jleft));
-                right.setKey((ColumnMappingImpl) jleft.getRight().getKey());
+                right.setKey((PhysicalColumnMappingImpl) jleft.getRight().getKey());
                 left.setAlias(getLeftAlias(jleft));
-                left.setKey((ColumnMappingImpl) jleft.getLeft().getKey());
+                left.setKey((PhysicalColumnMappingImpl) jleft.getLeft().getKey());
             }
         }
     }
@@ -3751,7 +3751,7 @@ public class RolapCube extends CubeBase {
     public void commit(List<Map<String, Map.Entry<Datatype, Object>>> sessionValues, String userId) {
         WritebackUtil.commit(this, schema.getInternalConnection(), sessionValues, userId);
     }
-    
+
     public List<Map<String, Entry<Datatype, Object>>> getAllocationValues(String tupleString, Object value, AllocationPolicy allocationPolicy) {
         return WritebackUtil.getAllocationValues(this,
                 tupleString,

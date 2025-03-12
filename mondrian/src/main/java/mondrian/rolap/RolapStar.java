@@ -57,7 +57,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryOptimizationHintMapping;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
@@ -461,13 +461,13 @@ public class RolapStar {
                     JoinQueryMappingImpl.builder()
                     .withLeft(JoinedQueryElementMappingImpl.builder()
                     		.withAlias(left instanceof RelationalQueryMapping relation ? RelationUtil.getAlias(relation) : null)
-                    		.withKey((ColumnMappingImpl) PojoUtil.getColumn(join.getLeft().getKey()))
+                    		.withKey((PhysicalColumnMappingImpl) PojoUtil.getColumn(join.getLeft().getKey()))
                     		.withQuery(PojoUtil.copy(left))
                     		.build())
 
                     .withRight(JoinedQueryElementMappingImpl.builder()
                     		.withAlias(right instanceof RelationalQueryMapping relation ? RelationUtil.getAlias(relation) : null)
-                    		.withKey((ColumnMappingImpl) PojoUtil.getColumn(join.getRight().getKey()))
+                    		.withKey((PhysicalColumnMappingImpl) PojoUtil.getColumn(join.getRight().getKey()))
                     		.withQuery(PojoUtil.copy(right))
                     		.build())
                     .build();

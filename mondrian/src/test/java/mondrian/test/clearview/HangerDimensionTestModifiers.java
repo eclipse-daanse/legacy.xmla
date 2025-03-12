@@ -23,7 +23,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableMappingImpl;
@@ -61,7 +61,7 @@ public class HangerDimensionTestModifiers {
          */
 
         protected List<? extends DimensionConnectorMapping> cubeDimensionConnectors(CubeMapping cube) {
-            ColumnMappingImpl hangerKey = ColumnMappingImpl.builder().withName("HANGER_KEY").withDataType(ColumnDataType.NUMERIC).build();
+            PhysicalColumnMappingImpl hangerKey = PhysicalColumnMappingImpl.builder().withName("HANGER_KEY").withDataType(ColumnDataType.NUMERIC).build();
             InlineTableMappingImpl t = InlineTableMappingImpl.builder()
             .withColumns(List.of(hangerKey))
             .withRows(List.of(

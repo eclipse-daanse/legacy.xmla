@@ -80,7 +80,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.ParentChildLinkMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
 import org.slf4j.Logger;
@@ -381,7 +381,7 @@ public class RolapHierarchy extends HierarchyBase {
             }
         }
 
-        String sharedDimensionName = cubeDimensionMapping.getDimension() != null && cubeDimensionMapping.getDimension().getName() != null 
+        String sharedDimensionName = cubeDimensionMapping.getDimension() != null && cubeDimensionMapping.getDimension().getName() != null
         		? cubeDimensionMapping.getDimension().getName() : cubeDimensionMapping.getOverrideDimensionName();
         this.sharedHierarchyName = sharedDimensionName;
         if (subName != null) {
@@ -616,14 +616,14 @@ public class RolapHierarchy extends HierarchyBase {
                 getRolapCatalog().getCatalogReaderWithDefaultRole();
             List<RolapMember> calcMemberList =
                 Util.cast(schemaReader.getCalculatedMembers(getLevels()[0]));
-            
-            
+
+
             // Note: We require that the root member is not a hidden member
             // of a ragged hierarchy, but we do not require that it is
             // visible. In particular, if a cube contains no explicit
             // measures, the default measure will be the implicitly defined
             // [Fact Count] measure, which happens to be non-visible.
-            
+
             // First look on Root
             for (RolapMember rootMember : rootMembers)
                 {
@@ -633,7 +633,7 @@ public class RolapHierarchy extends HierarchyBase {
                     defaultMember = rootMember;
                     break;
                 }
-            
+
             // then if not found look  calcmembers
             if(defaultMember == null) {
                 for (RolapMember calcMember : calcMemberList)
@@ -1233,8 +1233,8 @@ public class RolapHierarchy extends HierarchyBase {
         peerHier.allLevelName = getAllLevelName();
         peerHier.sharedHierarchyName = getSharedHierarchyName();
         JoinQueryMappingImpl join = JoinQueryMappingImpl.builder()
-        		.withLeft(JoinedQueryElementMappingImpl.builder().withKey((ColumnMappingImpl) PojoUtil.getColumn(clos.getParentColumn())).withQuery(PojoUtil.copy(clos.getTable())).build())
-        		.withRight(JoinedQueryElementMappingImpl.builder().withKey((ColumnMappingImpl) PojoUtil.getColumn(clos.getChildColumn())).withQuery(PojoUtil.copy(relation)).build())
+        		.withLeft(JoinedQueryElementMappingImpl.builder().withKey((PhysicalColumnMappingImpl) PojoUtil.getColumn(clos.getParentColumn())).withQuery(PojoUtil.copy(clos.getTable())).build())
+        		.withRight(JoinedQueryElementMappingImpl.builder().withKey((PhysicalColumnMappingImpl) PojoUtil.getColumn(clos.getChildColumn())).withQuery(PojoUtil.copy(relation)).build())
         		.build();
         peerHier.relation = join;
 

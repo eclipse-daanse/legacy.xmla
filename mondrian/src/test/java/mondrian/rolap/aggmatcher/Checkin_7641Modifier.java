@@ -22,7 +22,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
@@ -75,27 +75,27 @@ public class Checkin_7641Modifier  extends PojoMappingModifier {
     protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
         //## ColumnNames: cust_loc_id,prod_id,first,request_value,shipped_value
         //## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2),DECIMAL(10,2),DECIMAL(10,2)
-        ColumnMappingImpl custLocIdCheckin7641 = ColumnMappingImpl.builder().withName("cust_loc_id").withDataType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl prodIdCheckin7641 = ColumnMappingImpl.builder().withName("prod_id").withDataType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl firstCheckin7641 = ColumnMappingImpl.builder().withName("first").withDataType(ColumnDataType.NUMERIC).withColumnSize(10).withDecimalDigits(2).build();
-        ColumnMappingImpl requestValueCheckin7641 = ColumnMappingImpl.builder().withName("request_value").withDataType(ColumnDataType.NUMERIC).withColumnSize(10).withDecimalDigits(2).build();
-        ColumnMappingImpl shippedValueCheckin7641 = ColumnMappingImpl.builder().withName("request_value").withDataType(ColumnDataType.NUMERIC).withColumnSize(10).withDecimalDigits(2).build();
+        PhysicalColumnMappingImpl custLocIdCheckin7641 = PhysicalColumnMappingImpl.builder().withName("cust_loc_id").withDataType(ColumnDataType.INTEGER).build();
+        PhysicalColumnMappingImpl prodIdCheckin7641 = PhysicalColumnMappingImpl.builder().withName("prod_id").withDataType(ColumnDataType.INTEGER).build();
+        PhysicalColumnMappingImpl firstCheckin7641 = PhysicalColumnMappingImpl.builder().withName("first").withDataType(ColumnDataType.NUMERIC).withColumnSize(10).withDecimalDigits(2).build();
+        PhysicalColumnMappingImpl requestValueCheckin7641 = PhysicalColumnMappingImpl.builder().withName("request_value").withDataType(ColumnDataType.NUMERIC).withColumnSize(10).withDecimalDigits(2).build();
+        PhysicalColumnMappingImpl shippedValueCheckin7641 = PhysicalColumnMappingImpl.builder().withName("request_value").withDataType(ColumnDataType.NUMERIC).withColumnSize(10).withDecimalDigits(2).build();
         PhysicalTableMappingImpl checkin7641 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("checkin7641")
                 .withColumns(List.of(custLocIdCheckin7641, prodIdCheckin7641, firstCheckin7641, requestValueCheckin7641, shippedValueCheckin7641))).build();
         //## ColumnNames: cust_loc_id,state_cd,city_nm,zip_cd
         //## ColumnTypes: INTEGER,VARCHAR(20),VARCHAR(20),VARCHAR(20)
-        ColumnMappingImpl custLocIdGeography7641 = ColumnMappingImpl.builder().withName("cust_loc_id").withDataType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl stateCdGeography7641 = ColumnMappingImpl.builder().withName("state_cd").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
-        ColumnMappingImpl cityNmGeography7641 = ColumnMappingImpl.builder().withName("city_nm").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
-        ColumnMappingImpl zipCdGeography7641 = ColumnMappingImpl.builder().withName("zip_cd").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+        PhysicalColumnMappingImpl custLocIdGeography7641 = PhysicalColumnMappingImpl.builder().withName("cust_loc_id").withDataType(ColumnDataType.INTEGER).build();
+        PhysicalColumnMappingImpl stateCdGeography7641 = PhysicalColumnMappingImpl.builder().withName("state_cd").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+        PhysicalColumnMappingImpl cityNmGeography7641 = PhysicalColumnMappingImpl.builder().withName("city_nm").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
+        PhysicalColumnMappingImpl zipCdGeography7641 = PhysicalColumnMappingImpl.builder().withName("zip_cd").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
         PhysicalTableMappingImpl geography7641 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("geography7641")
                 .withColumns(List.of(custLocIdCheckin7641, stateCdGeography7641, cityNmGeography7641, zipCdGeography7641))).build();
         //## ColumnNames: prod_id,class,brand,item
         //## ColumnTypes: INTEGER,VARCHAR(30),VARCHAR(30),VARCHAR(30)
-        ColumnMappingImpl prodIdProd7611 = ColumnMappingImpl.builder().withName("prod_id").withDataType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl classProd7611 = ColumnMappingImpl.builder().withName("class").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-        ColumnMappingImpl brandProd7611 = ColumnMappingImpl.builder().withName("brand").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
-        ColumnMappingImpl itemProd7611 = ColumnMappingImpl.builder().withName("item").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+        PhysicalColumnMappingImpl prodIdProd7611 = PhysicalColumnMappingImpl.builder().withName("prod_id").withDataType(ColumnDataType.INTEGER).build();
+        PhysicalColumnMappingImpl classProd7611 = PhysicalColumnMappingImpl.builder().withName("class").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+        PhysicalColumnMappingImpl brandProd7611 = PhysicalColumnMappingImpl.builder().withName("brand").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+        PhysicalColumnMappingImpl itemProd7611 = PhysicalColumnMappingImpl.builder().withName("item").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
         PhysicalTableMappingImpl prod7611 = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("prod7611")
                 .withColumns(List.of(classProd7611, brandProd7611, itemProd7611))).build();
 

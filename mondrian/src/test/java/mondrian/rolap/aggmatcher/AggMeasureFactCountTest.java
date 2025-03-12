@@ -34,7 +34,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationPatternMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationTableMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -356,7 +356,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         ((TestConfig)context.getConfig()).setDisableCaching(true);
         prepareContext(context);
-        ColumnMappingImpl notExist = ColumnMappingImpl.builder().withName("not_exist").withDataType(ColumnDataType.INTEGER).build();
+        PhysicalColumnMappingImpl notExist = PhysicalColumnMappingImpl.builder().withName("not_exist").withDataType(ColumnDataType.INTEGER).build();
         List<AggregationTableMappingImpl> aggTables = List.of(
             AggregationNameMappingImpl.builder()
                 .withName(AggMeasureFactCountTestModifier.aggC6FactCsv2016)
@@ -509,7 +509,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         ((TestConfig)context.getConfig()).setReadAggregates(true);
         ((TestConfig)context.getConfig()).setDisableCaching(true);
         prepareContext(context);
-        ColumnMappingImpl notExist = ColumnMappingImpl.builder().withName("not_exist").withDataType(ColumnDataType.INTEGER).build();
+        PhysicalColumnMappingImpl notExist = PhysicalColumnMappingImpl.builder().withName("not_exist").withDataType(ColumnDataType.INTEGER).build();
         List<AggregationTableMappingImpl> aggTables = List.of(
             AggregationNameMappingImpl.builder()
                 .withName(AggMeasureFactCountTestModifier.aggC6FactCsv2016)

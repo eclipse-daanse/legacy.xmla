@@ -30,7 +30,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationPatternMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationTableMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
@@ -126,8 +126,8 @@ public class PojoUtil {
             QueryMappingImpl left = copy(left(join));
             QueryMappingImpl right = copy(right(join));
             return JoinQueryMappingImpl.builder()
-            		.withLeft(JoinedQueryElementMappingImpl.builder().withAlias(getLeftAlias(join)).withKey((ColumnMappingImpl) getColumn(join.getLeft().getKey())).withQuery(left).build())
-            		.withRight(JoinedQueryElementMappingImpl.builder().withAlias(getRightAlias(join)).withKey((ColumnMappingImpl) getColumn(join.getRight().getKey())).withQuery(right).build())
+            		.withLeft(JoinedQueryElementMappingImpl.builder().withAlias(getLeftAlias(join)).withKey((PhysicalColumnMappingImpl) getColumn(join.getLeft().getKey())).withQuery(left).build())
+            		.withRight(JoinedQueryElementMappingImpl.builder().withAlias(getRightAlias(join)).withKey((PhysicalColumnMappingImpl) getColumn(join.getRight().getKey())).withQuery(right).build())
             		.build();
         } else {
             throw Util.newInternal(BAD_RELATION_TYPE + relation);
@@ -175,7 +175,7 @@ public class PojoUtil {
 			List<? extends AggregationMeasureMapping> aggregationMeasures) {
 		if (aggregationMeasures != null) {
 			return aggregationMeasures.stream().map(c -> AggregationMeasureMappingImpl.builder()
-					.withColumn((ColumnMappingImpl)c.getColumn())
+					.withColumn((PhysicalColumnMappingImpl)c.getColumn())
 					.withName(c.getName())
 					.withRollupType(c.getRollupType())
 					.build()).toList();
@@ -218,7 +218,7 @@ public class PojoUtil {
 
 	private static List<? extends RowValueMapping> getRowValues(List<? extends RowValueMapping> list) {
 		if (list != null) {
-			return list.stream().map(c -> RowValueMappingImpl.builder().withValue(c.getValue()).withColumn((ColumnMappingImpl)c.getColumn()).build()).toList();
+			return list.stream().map(c -> RowValueMappingImpl.builder().withValue(c.getValue()).withColumn((PhysicalColumnMappingImpl)c.getColumn()).build()).toList();
 		}
 		return List.of();	}
 
@@ -247,7 +247,7 @@ public class PojoUtil {
             Integer charOctetLength = column.getCharOctetLength();
             Boolean nullable = column.getNullable();
             String description = column.getDescription();
-            ColumnMappingImpl c = ColumnMappingImpl.builder().withName(name).withDataType(type)
+            PhysicalColumnMappingImpl c = PhysicalColumnMappingImpl.builder().withName(name).withDataType(type)
                     .withColumnSize(orZero(columnSize))
                     .withDecimalDigits(orZero(decimalDigits))
                     .withNumPrecRadix(orZero(numPrecRadix))
@@ -273,7 +273,7 @@ public class PojoUtil {
             PhysicalTableMappingImpl t = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder()
                     .withName(name).withColumns(columns).withsSchema(schema).withsDdescription(description)).build();
             if (t.getColumns() != null) {
-                t.getColumns().forEach(c -> ((ColumnMappingImpl)c).setTable(table));
+                t.getColumns().forEach(c -> ((PhysicalColumnMappingImpl)c).setTable(table));
             }
             return t;
         }

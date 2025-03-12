@@ -28,7 +28,7 @@ import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -263,23 +263,23 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
                                         .withLevels(List.of(
                                             LevelMappingImpl.builder()
                                                 .withName("Year")
-                                                .withColumn((ColumnMappingImpl) getYearCol())
+                                                .withColumn((PhysicalColumnMappingImpl) getYearCol())
                                                 .withType(InternalDataType.NUMERIC)
                                                 .withUniqueMembers(true)
                                                 .withLevelType(LevelType.TIME_YEARS)
                                                 .build(),
                                             LevelMappingImpl.builder()
                                                 .withName("Quarter")
-                                                .withColumn((ColumnMappingImpl) getQuarterCol())
+                                                .withColumn((PhysicalColumnMappingImpl) getQuarterCol())
                                                 .withUniqueMembers(false)
                                                 .withLevelType(LevelType.TIME_QUARTERS)
                                                 .build(),
                                             LevelMappingImpl.builder()
                                                 .withName("Month")
-                                                .withColumn((ColumnMappingImpl) getMonthCol())
-                                                .withCaptionColumn((ColumnMappingImpl) getMonthCaptionCol())
-                                                .withOrdinalColumn((ColumnMappingImpl) getMonthOrdinalCol())
-                                                .withNameColumn((ColumnMappingImpl) getMonthNameCol())
+                                                .withColumn((PhysicalColumnMappingImpl) getMonthCol())
+                                                .withCaptionColumn((PhysicalColumnMappingImpl) getMonthCaptionCol())
+                                                .withOrdinalColumn((PhysicalColumnMappingImpl) getMonthOrdinalCol())
+                                                .withNameColumn((PhysicalColumnMappingImpl) getMonthNameCol())
                                                 .withUniqueMembers(false)
                                                 .withType(InternalDataType.NUMERIC)
                                                 .withLevelType(LevelType.TIME_MONTHS)

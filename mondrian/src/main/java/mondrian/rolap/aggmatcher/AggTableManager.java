@@ -26,7 +26,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
@@ -223,7 +223,7 @@ public class AggTableManager {
 
                     for (JdbcSchema.Table dbTable : db.getTables()) {
                         String name = dbTable.getName();
-                        List<ColumnMapping> columns =  dbTable.getColumns().stream().map(c -> (ColumnMapping)ColumnMappingImpl.builder().withName(c.getName()).withDataType(ColumnDataType.valueOf(c.getTypeName())).build()).toList();
+                        List<ColumnMapping> columns =  dbTable.getColumns().stream().map(c -> (ColumnMapping)PhysicalColumnMappingImpl.builder().withName(c.getName()).withDataType(ColumnDataType.valueOf(c.getTypeName())).build()).toList();
                         PhysicalTableMappingImpl t = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName(name).withColumns(columns).withsSchema(schemaInner)).build();
 
                         // Do the catalog schema aggregate excludes, exclude
@@ -355,7 +355,7 @@ public class AggTableManager {
                 tableHints = PojoUtil.getOptimizationHints(table.getOptimizationHints());
             }
             String tableName = dbFactTable.getName();
-            List<ColumnMapping> columns =  dbFactTable.getColumns().stream().map(c -> ((ColumnMapping)ColumnMappingImpl.builder().withName(c.getName()).withDataType(ColumnDataType.valueOf(c.getTypeName())).build())).toList();
+            List<ColumnMapping> columns =  dbFactTable.getColumns().stream().map(c -> ((ColumnMapping)PhysicalColumnMappingImpl.builder().withName(c.getName()).withDataType(ColumnDataType.valueOf(c.getTypeName())).build())).toList();
             PhysicalTableMappingImpl t = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName(tableName).withColumns(columns).withsSchema(schemaInner)).build();
 
             String alias = null;

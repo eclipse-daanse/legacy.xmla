@@ -25,7 +25,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationForeignKeyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.ColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
@@ -84,25 +84,25 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
     protected List<? extends CubeMapping> catalogCubes(CatalogMapping schema) {
     	//## ColumnNames: prod_id,store_id,amount
     	//## ColumnTypes: INTEGER,INTEGER,DECIMAL(10,2)
-        ColumnMappingImpl store_id_cheques = ColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl prod_id_cheques = ColumnMappingImpl.builder().withName("prod_id").withDataType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl amount_cheques = ColumnMappingImpl.builder().withName("amount").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
+        PhysicalColumnMappingImpl store_id_cheques = PhysicalColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
+        PhysicalColumnMappingImpl prod_id_cheques = PhysicalColumnMappingImpl.builder().withName("prod_id").withDataType(ColumnDataType.INTEGER).build();
+        PhysicalColumnMappingImpl amount_cheques = PhysicalColumnMappingImpl.builder().withName("amount").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
         PhysicalTableMappingImpl cheques = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("cheques")
                 .withColumns(List.of(
                         store_id_cheques, prod_id_cheques, amount_cheques
                         ))).build();
         //## ColumnNames: store_id,value
         //## ColumnTypes: INTEGER,DECIMAL(10,2)
-        ColumnMappingImpl store_id_store_x = ColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl value_store_x = ColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
+        PhysicalColumnMappingImpl store_id_store_x = PhysicalColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
+        PhysicalColumnMappingImpl value_store_x = PhysicalColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(2).build();
         PhysicalTableMappingImpl store_x = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("store_x")
                 .withColumns(List.of(
                         store_id_store_x, value_store_x
                         ))).build();
         //## ColumnNames: prod_id,name
         //## ColumnTypes: INTEGER,VARCHAR(30)
-        ColumnMappingImpl prod_id_product_x = ColumnMappingImpl.builder().withName("prod_id").withDataType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl name_product_x = ColumnMappingImpl.builder().withName("name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
+        PhysicalColumnMappingImpl prod_id_product_x = PhysicalColumnMappingImpl.builder().withName("prod_id").withDataType(ColumnDataType.INTEGER).build();
+        PhysicalColumnMappingImpl name_product_x = PhysicalColumnMappingImpl.builder().withName("name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
         PhysicalTableMappingImpl product_x = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("product_x")
                 .withColumns(List.of(
                         prod_id_product_x, name_product_x
@@ -110,9 +110,9 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
         //## TableName: agg_lp_xxx_cheques
         //## ColumnNames: store_id,amount_AVG,FACT_COUNT
         //## ColumnTypes: INTEGER,DECIMAL(10,2),INTEGER
-        ColumnMappingImpl storeId = ColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
-        ColumnMappingImpl amountAvg = ColumnMappingImpl.builder().withName("amount_AVG").withDataType(ColumnDataType.DECIMAL).withCharOctetLength(10).withDecimalDigits(2).build();
-        ColumnMappingImpl factCount = ColumnMappingImpl.builder().withName("FACT_COUNT").withDataType(ColumnDataType.INTEGER).build();
+        PhysicalColumnMappingImpl storeId = PhysicalColumnMappingImpl.builder().withName("store_id").withDataType(ColumnDataType.INTEGER).build();
+        PhysicalColumnMappingImpl amountAvg = PhysicalColumnMappingImpl.builder().withName("amount_AVG").withDataType(ColumnDataType.DECIMAL).withCharOctetLength(10).withDecimalDigits(2).build();
+        PhysicalColumnMappingImpl factCount = PhysicalColumnMappingImpl.builder().withName("FACT_COUNT").withDataType(ColumnDataType.INTEGER).build();
         PhysicalTableMappingImpl aggLpXxxCheques = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("agg_lp_xxx_cheques")
                 .withColumns(List.of(
                 		storeId, amountAvg, factCount
