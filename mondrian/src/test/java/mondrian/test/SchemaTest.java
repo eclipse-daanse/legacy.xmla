@@ -8244,9 +8244,9 @@ class SchemaTest {
                         .withName("Gender")
                         .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
                         .withUniqueMembers(true)
-                        .withCaptionExpression(SQLExpressionMappingColumnImpl.builder()
+                        .withCaptionColumn(SQLExpressionMappingColumnImpl.builder()
                         	.withSqls(List.of(SqlStatementMappingImpl.builder().withSql("'foobar'").withDialects(List.of("generic")).build()))
-                        .build()).build();
+                            .withDataType(ColumnDataType.VARCHAR).build()).build();
 
                     HierarchyMappingImpl h = HierarchyMappingImpl.builder()
                         .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -11024,12 +11024,12 @@ class SchemaTest {
                 if ("HR".equals(cube.getName())) {
                         SqlStatementMappingImpl sql = SqlStatementMappingImpl.builder().withSql("`position_title` + " + n).withDialects(
                             List.of("generic")).build();
-                        SQLExpressionMappingColumnImpl ex = SQLExpressionMappingColumnImpl.builder().withSqls(List.of(sql)).build();
+                        SQLExpressionMappingColumnImpl ex = SQLExpressionMappingColumnImpl.builder().withSqls(List.of(sql)).withDataType(ColumnDataType.VARCHAR).build();
                         LevelMappingImpl level = LevelMappingImpl.builder()
                         	.withName("Position Title")
                         	.withUniqueMembers(false)
                         	.withOrdinalColumn(FoodmartMappingSupplier.POSITION_ID_COLUMN_IN_EMPLOYEE)
-                            .withKeyExpression(ex).build();
+                            .withColumn(ex).build();
                         HierarchyMappingImpl hierarchy = HierarchyMappingImpl
                             .builder()
                             .withHasAll(true)

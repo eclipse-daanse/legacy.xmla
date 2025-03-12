@@ -37,6 +37,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
@@ -735,7 +736,7 @@ class SqlQueryTest  extends BatchTestCase {
                                             .withName("Salary").withColumn(FoodmartMappingSupplier.SALARY_COLUMN_IN_EMPLOYEE)
                                             .withType(InternalDataType.NUMERIC).withUniqueMembers(true)
                                             .withApproxRowCount("10000000")
-                                            .withCaptionExpression(
+                                            .withCaptionColumn(
                                                 SQLExpressionMappingColumnImpl.builder()
                                                     .withSqls(List.of(
                                                         SqlStatementMappingImpl.builder()
@@ -743,6 +744,7 @@ class SqlQueryTest  extends BatchTestCase {
                                                             .withSql("cast(cast(\"salary\" as double)*cast(1000.0 as double)/cast(3.1234567890123456 as double) as double)")
                                                             .build()
                                                     ))
+                                                    .withDataType(ColumnDataType.DECIMAL)
                                                     .build()
                                             )
                                             .build()

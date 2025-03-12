@@ -19,6 +19,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
@@ -719,13 +720,13 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                         .withType(InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .withLevelType(LevelType.TIME_YEARS)
-                        .withCaptionExpression(SQLExpressionMappingColumnImpl.builder()
+                        .withCaptionColumn(SQLExpressionMappingColumnImpl.builder()
                             .withSqls(List.of(
                                 SqlStatementMappingImpl.builder().withDialects(List.of("access")).withSql("cstr(the_year) + '-12-31'").build(),
                                 SqlStatementMappingImpl.builder().withDialects(List.of("mysql")).withSql("concat(cast(`the_year` as char(4)), '-12-31')").build(),
                                 SqlStatementMappingImpl.builder().withDialects(List.of("derby")).withSql("'foobar'").build(),
                                 SqlStatementMappingImpl.builder().withDialects(List.of("generic")).withSql("\"the_year\" || '-12-31'").build()
-                            )).build())
+                            )).withDataType(ColumnDataType.VARCHAR).build())
                         .build(),
                     LevelMappingImpl.builder()
                         .withName("Quarter")
@@ -962,7 +963,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                             LevelMappingImpl.builder()
                                                 .withName("Name")
                                                 .withUniqueMembers(true)
-                                                .withKeyExpression(SQLExpressionMappingColumnImpl.builder()
+                                                .withColumn(SQLExpressionMappingColumnImpl.builder()
                                                     .withSqls(List.of(
                                                         SqlStatementMappingImpl.builder()
                                                             .withDialects(List.of("oracle"))
@@ -984,7 +985,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                                             .withDialects(List.of("mssql"))
                                                             .withSql("fname, ' ', lname\n")
                                                             .build()
-                                                    )).build())
+                                                    )).withDataType(ColumnDataType.VARCHAR).build())
                                                 .withMemberProperties(List.of(
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Gender")
@@ -1799,7 +1800,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                             LevelMappingImpl.builder()
                                                 .withName("Name")
                                                 .withUniqueMembers(true)
-                                                .withKeyExpression(SQLExpressionMappingColumnImpl
+                                                .withColumn(SQLExpressionMappingColumnImpl
                                                     .builder()
                                                     .withSqls(List.of(
                                                         SqlStatementMappingImpl.builder()
@@ -1827,7 +1828,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                                             .withSql("\"lname\"\n")
                                                             .build()
 
-                                                    )).build())
+                                                    )).withDataType(ColumnDataType.VARCHAR).build())
                                                 .withMemberProperties(List.of(
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Gender")

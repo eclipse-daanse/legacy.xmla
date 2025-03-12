@@ -39,7 +39,7 @@ public class LevelUtil {
     }
 
     public static RolapSqlExpression getNameExp(LevelMapping level) {
-        if (level.getColumn() instanceof SQLExpressionColumnMapping sec) {
+        if (level.getNameColumn() instanceof SQLExpressionColumnMapping sec) {
             return new RolapSqlExpression(sec);
         } else if (level.getNameColumn() != null && !Objects.equals(level.getNameColumn(), level.getColumn())) {
             return new RolapColumn(getTableName(level.getTable()), level.getNameColumn().getName());
