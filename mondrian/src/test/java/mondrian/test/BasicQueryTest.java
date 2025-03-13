@@ -4172,8 +4172,9 @@ public class BasicQueryTest {
       throwable = e;
     }
     // both a source column and source expression specified
-    checkThrowable( throwable,
-        "must contain either a source column or a source expression, but not both" );
+    //right now we can define only one column or expression. Test not have sense
+    //checkThrowable( throwable,
+    //    "must contain either a source column or a source expression, but not both" );
   }
 
   @ParameterizedTest

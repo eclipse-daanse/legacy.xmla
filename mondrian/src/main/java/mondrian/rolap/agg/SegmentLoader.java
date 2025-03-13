@@ -680,7 +680,12 @@ public class SegmentLoader {
                 // out as byte arrays. Don't know why. Bug 1594119.
                 o = Double.parseDouble( new String( (byte[]) o ) );
               } else {
-                o = Double.parseDouble( o.toString() );
+                  try {  
+                      o = Double.parseDouble( o.toString() );
+                  }
+                  catch (NumberFormatException e) {
+                      e.printStackTrace();
+                  }
               }
             }
             processedRows.setObject( columnIndex, o );

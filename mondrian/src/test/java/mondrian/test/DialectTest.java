@@ -854,7 +854,7 @@ class DialectTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testGenerateInline(Context context) throws SQLException {
-    final List<String> typeList = Arrays.asList( "String", "Numeric" );
+    final List<String> typeList = Arrays.asList( "Varchar", "Numeric" );
     final List<String> nameList = Arrays.asList( "x", "y" );
     assertInline(context,
             nameList, typeList,
@@ -878,7 +878,7 @@ class DialectTest {
             new String[] { "can't stop", "1" }, new String[] { "back\\slash", "2" } );
 
     // date value
-    final List<String> typeList2 = Arrays.asList( "String", "Date" );
+    final List<String> typeList2 = Arrays.asList( "Varchar", "Date" );
     assertInline(context,
             nameList, typeList2,
             new String[] { "a", "2008-04-29" }, new String[] { "b", "2007-01-02" } );
@@ -994,7 +994,7 @@ class DialectTest {
         for ( int i = 0; i < typeList.size(); i++ ) {
           final String s;
           final String type = typeList.get( i );
-          if ( type.equals( "String" ) ) {
+          if ( type.equals( "Varchar" ) ) {
             s = resultSet.getString( i + 1 );
           } else if ( type.equals( "Date" ) ) {
             s = String.valueOf( resultSet.getDate( i + 1 ) );
