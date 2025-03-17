@@ -52,6 +52,7 @@ public abstract class DimensionBase
         String description,
         DimensionType dimensionType)
     {
+        Util.assertTrue(name != null, "Dimension or DimensionConnector name should be not null");
         this.name = name;
         this.caption = caption;
         this.visible = visible;

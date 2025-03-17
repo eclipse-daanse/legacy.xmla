@@ -1208,7 +1208,7 @@ public class RolapCube extends CubeBase {
         // rolap cube dimension object
         return new RolapCubeDimension(
             this, dimension, mappingCubeDimension,
-            mappingCubeDimension.getOverrideDimensionName(), dimensionOrdinal,
+            RolapDimension.getDimensionName(mappingCubeDimension), dimensionOrdinal,
             cubeHierarchyList);
     }
 

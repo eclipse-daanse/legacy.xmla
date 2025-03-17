@@ -103,13 +103,13 @@ class RolapDimension extends DimensionBase {
         RolapCatalog schema,
         RolapCube cube,
         DimensionMapping mappingDimension,
-        DimensionConnectorMapping mappingCubeDimension)
+        DimensionConnectorMapping dimensionConnector)
     {
         this(
             schema,
-            mappingCubeDimension.getOverrideDimensionName(),
-            mappingCubeDimension.getOverrideDimensionName(),
-            mappingCubeDimension.isVisible(),
+            getDimensionName(dimensionConnector),
+            getDimensionName(dimensionConnector),
+            dimensionConnector.isVisible(),
             mappingDimension != null ? mappingDimension.getDescription() : null,
             DimensionTypeUtil.getDimensionType(mappingDimension),
             RolapMetaData.createMetaData(mappingDimension != null ? mappingDimension.getAnnotations() : null));
@@ -120,14 +120,11 @@ class RolapDimension extends DimensionBase {
             Util.assertTrue(cube.getCatalog() == schema);
         }
 
-        if (!Util.isEmpty(mappingCubeDimension.getOverrideDimensionName())) {
-            setCaption(mappingCubeDimension.getOverrideDimensionName());
-        }
         if (mappingDimension != null) {
         	this.hierarchies = new RolapHierarchy[mappingDimension.getHierarchies().size()];
         	for (int i = 0; i < mappingDimension.getHierarchies().size(); i++) {
         		RolapHierarchy hierarchy = new RolapHierarchy(
-        				cube, this, mappingDimension.getHierarchies().get(i), mappingCubeDimension);
+        				cube, this, mappingDimension.getHierarchies().get(i), dimensionConnector);
         		hierarchies[i] = hierarchy;
         	}
         }        
@@ -170,6 +167,10 @@ class RolapDimension extends DimensionBase {
                 }
             }
         }
+    }
+
+    public static String getDimensionName(DimensionConnectorMapping mappingCubeDimension) {
+        return  mappingCubeDimension.getOverrideDimensionName() != null ? mappingCubeDimension.getOverrideDimensionName() : mappingCubeDimension.getDimension().getName();
     }
 
     @Override
