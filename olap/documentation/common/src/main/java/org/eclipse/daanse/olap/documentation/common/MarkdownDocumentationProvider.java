@@ -470,7 +470,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         List<String> missedTableNames
     ) {
         List<String> result = new ArrayList<>();
-        String primaryKeyTable = getTableName(h.getPrimaryKeyTable());
+        String primaryKeyTable = getTableName(h.getPrimaryKey().getTable());
         if (primaryKeyTable == null) {
             Optional<String> optionalTable = getFactTableName(h.getQuery());
             if (optionalTable.isPresent()) {

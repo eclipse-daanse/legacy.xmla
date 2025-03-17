@@ -407,32 +407,27 @@ class InlineTableTest {
                             		.withHierarchies(List.of(
                             			HierarchyMappingImpl.builder()
                             				.withHasAll(true)
-                            				.withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
                             				.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
                             				.withQuery(j)
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Store Country")
-                                            .withTable(t)
                                             .withColumn(nationName)
                                             .withNameColumn(nationShortcode)
                                             .withUniqueMembers(true)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Store State")
-                                            .withTable(FoodmartMappingSupplier.STORE_TABLE)
                                             .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                                             .withUniqueMembers(true)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Store City")
-                                            .withTable(FoodmartMappingSupplier.STORE_TABLE)
                                             .withColumn(FoodmartMappingSupplier.STORE_CITY_COLUMN_IN_STORE)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Store Name")
-                                            .withTable(FoodmartMappingSupplier.STORE_TABLE)
                                             .withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                                             .withUniqueMembers(true)
                                             .build()

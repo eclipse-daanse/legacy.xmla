@@ -364,7 +364,6 @@ class SchemaTest {
                     LevelMappingImpl level1 = LevelMappingImpl
                         .builder()
                         .withName("Product Class")
-                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                         .withNameColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                         .withColumn(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
                         .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
@@ -373,14 +372,12 @@ class SchemaTest {
                     LevelMappingImpl level2 = LevelMappingImpl
                         .builder()
                         .withName("Brand Name")
-                        .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                         .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                         .withUniqueMembers(false)
                         .build();
                     LevelMappingImpl level3 = LevelMappingImpl
                         .builder()
                         .withName("Product Name")
-                        .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                         .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                         .withUniqueMembers(true)
                         .build();
@@ -388,7 +385,6 @@ class SchemaTest {
                         .builder()
                         .withHasAll(false)
                         .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                        .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                         .withQuery(join)
                         .withLevels(List.of(level1, level2, level3))
                         .build();
@@ -763,7 +759,6 @@ class SchemaTest {
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(customer_id)
-                            .withPrimaryKeyTable(customer_not_found)
                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
                             .withLevels(List.of(level))
                             .build();
@@ -817,7 +812,6 @@ class SchemaTest {
                             .builder()
                             .withName("Yearly Income")
                             .withColumn(yearly_income)
-                            .withTable(customer_not_found)
                             .withUniqueMembers(true)
                             .build();
                     HierarchyMappingImpl hierarchy = HierarchyMappingImpl
@@ -1499,46 +1493,39 @@ class SchemaTest {
                 LevelMappingImpl l11 = LevelMappingImpl
                     .builder()
                     .withName("Store Country")
-                    .withTable(FoodmartMappingSupplier.STORE_TABLE)
                     .withColumn(FoodmartMappingSupplier.STORE_COUNTRY_COLUMN_IN_STORE)
                     .build();
                 LevelMappingImpl l12 = LevelMappingImpl
                     .builder()
                     .withName("Store Region")
-                    .withTable(region)
                     .withColumn(sales_region)
                     .build();
                 LevelMappingImpl l13 = LevelMappingImpl
                     .builder()
                     .withName("Store Name")
-                    .withTable(FoodmartMappingSupplier.STORE_TABLE)
                     .withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                     .build();
                 LevelMappingImpl l21 = LevelMappingImpl
                     .builder()
                     .withName("Country")
-                    .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withColumn(FoodmartMappingSupplier.COUNTRY_COLUMN_IN_CUSTOMER)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l22 = LevelMappingImpl
                     .builder()
                     .withName("Region")
-                    .withTable(region)
                     .withColumn(sales_region)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l23 = LevelMappingImpl
                     .builder()
                     .withName("City")
-                    .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withColumn(FoodmartMappingSupplier.CITY_COLUMN_IN_CUSTOMER)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l24 = LevelMappingImpl
                     .builder()
                     .withName("Name")
-                    .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                     .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
@@ -1547,28 +1534,24 @@ class SchemaTest {
                 LevelMappingImpl l31 = LevelMappingImpl
                     .builder()
                     .withName("Country")
-                    .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withColumn(FoodmartMappingSupplier.COUNTRY_COLUMN_IN_CUSTOMER)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l32 = LevelMappingImpl
                     .builder()
                     .withName("Region")
-                    .withTable(region)
                     .withColumn(sales_region)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l33 = LevelMappingImpl
                     .builder()
                     .withName("City")
-                    .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withColumn(FoodmartMappingSupplier.CITY_COLUMN_IN_CUSTOMER)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l34 = LevelMappingImpl
                     .builder()
                     .withName("Name")
-                    .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                     .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
@@ -1577,7 +1560,6 @@ class SchemaTest {
                 HierarchyMappingImpl h11 = HierarchyMappingImpl
                     .builder()
                     .withHasAll(true)
-                    .withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
                     .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                     .withQuery(join11)
                     .withLevels(List.of(l11, l12, l13))
@@ -1586,7 +1568,6 @@ class SchemaTest {
                     .builder()
                     .withName("MyHierarchy")
                     .withHasAll(true)
-                    .withPrimaryKeyTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                     .withQuery(join12)
                     .withLevels(List.of(l21, l22, l23, l24))
@@ -1596,7 +1577,6 @@ class SchemaTest {
                     .builder()
                     .withHasAll(true)
                     .withAllMemberName("All Customers")
-                    .withPrimaryKeyTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                     .withQuery(join21)
                     .withLevels(List.of(l31, l32, l33, l34))
@@ -1769,60 +1749,51 @@ class SchemaTest {
                 LevelMappingImpl l11 = LevelMappingImpl
                     .builder()
                     .withName("Store Country")
-                    .withTable(FoodmartMappingSupplier.STORE_TABLE)
                     .withColumn(FoodmartMappingSupplier.STORE_CITY_COLUMN_IN_STORE)
                     .build();
                 LevelMappingImpl l12 = LevelMappingImpl
                     .builder()
                     .withName("Store Region")
-                    .withTable(region)
                     .withColumn(sales_region)
                     .build();
                 LevelMappingImpl l13 = LevelMappingImpl
                     .builder()
                     .withName("Store Name")
-                    .withTable(FoodmartMappingSupplier.STORE_TABLE)
                     .withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                     .build();
                 LevelMappingImpl l21 = LevelMappingImpl
                     .builder()
                     .withName("Store Country")
-                    .withTable(FoodmartMappingSupplier.STORE_TABLE)
                     .withColumn(FoodmartMappingSupplier.STORE_COUNTRY_COLUMN_IN_STORE)
                     .build();
 
                 LevelMappingImpl l22 = LevelMappingImpl
                     .builder()
                     .withName("Store Region")
-                    .withTable(region)
                     .withColumn(sales_region)
                     .build();
 
                 LevelMappingImpl l23 = LevelMappingImpl
                     .builder()
                     .withName("Store Name")
-                    .withTable(FoodmartMappingSupplier.STORE_TABLE)
                     .withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                     .build();
 
                 LevelMappingImpl l31 = LevelMappingImpl
                     .builder()
                     .withName("Country")
-                    .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withColumn(FoodmartMappingSupplier.COUNTRY_COLUMN_IN_CUSTOMER)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l32 = LevelMappingImpl
                     .builder()
                     .withName("Region")
-                    .withTable(region)
                     .withColumn(sales_region)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l33 = LevelMappingImpl
                     .builder()
                     .withName("City")
-                    .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withColumn(FoodmartMappingSupplier.CITY_COLUMN_IN_CUSTOMER)
                     .withUniqueMembers(false)
                     .build();
@@ -1830,7 +1801,6 @@ class SchemaTest {
                 LevelMappingImpl l34 = LevelMappingImpl
                     .builder()
                     .withName("Name")
-                    .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                     .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
@@ -1838,7 +1808,6 @@ class SchemaTest {
                 HierarchyMappingImpl h11 = HierarchyMappingImpl
                     .builder()
                     .withHasAll(true)
-                    .withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
                     .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                     .withQuery(join11)
                     .withLevels(List.of(l11, l12, l13))
@@ -1847,7 +1816,6 @@ class SchemaTest {
                     .builder()
                     .withName("MyHierarchy")
                     .withHasAll(true)
-                    .withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
                     .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                     .withQuery(join12)
                     .withLevels(List.of(l21, l22, l23))
@@ -1857,7 +1825,6 @@ class SchemaTest {
                     .builder()
                     .withHasAll(true)
                     .withAllMemberName("All Customers")
-                    .withPrimaryKeyTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                     .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                     .withQuery(join21)
                     .withLevels(List.of(l31, l32, l33, l34))
@@ -2034,21 +2001,18 @@ class SchemaTest {
             	LevelMappingImpl l11 = LevelMappingImpl
                         .builder()
                         .withName("Store Country")
-                        .withTable(FoodmartMappingSupplier.STORE_TABLE)
                         .withColumn(FoodmartMappingSupplier.STORE_COUNTRY_COLUMN_IN_STORE)
                         .withUniqueMembers(true)
                         .build();
             	LevelMappingImpl l12 = LevelMappingImpl
                         .builder()
                         .withName("Store Region")
-                        .withTable(region)
                         .withColumn(sales_region)
                         .withUniqueMembers(true)
                         .build();
             	LevelMappingImpl l13 = LevelMappingImpl
                         .builder()
                         .withName("Store Name")
-                        .withTable(FoodmartMappingSupplier.STORE_TABLE)
                         .withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                         .withUniqueMembers(true)
                         .build();
@@ -2056,7 +2020,6 @@ class SchemaTest {
                 HierarchyMappingImpl h1 = HierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
-                        .withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                         .withQuery(join1)
                         .withLevels(List.of(l11, l12, l13))
@@ -2074,28 +2037,24 @@ class SchemaTest {
             	LevelMappingImpl l21 = LevelMappingImpl
                         .builder()
                         .withName("Country")
-                        .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withColumn(FoodmartMappingSupplier.COUNTRY_COLUMN_IN_CUSTOMER)
                         .withUniqueMembers(true)
                         .build();
             	LevelMappingImpl l22 = LevelMappingImpl
                         .builder()
                         .withName("Region")
-                        .withTable(region)
                         .withColumn(sales_region)
                         .withUniqueMembers(true)
                         .build();
             	LevelMappingImpl l23 = LevelMappingImpl
                         .builder()
                         .withName("City")
-                        .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withColumn(FoodmartMappingSupplier.CITY_COLUMN_IN_CUSTOMER)
                         .withUniqueMembers(false)
                         .build();
             	LevelMappingImpl l24 = LevelMappingImpl
                         .builder()
                         .withName("Name")
-                        .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                         .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
@@ -2105,7 +2064,6 @@ class SchemaTest {
                         .builder()
                         .withHasAll(true)
                         .withAllMemberName("All Customers")
-                        .withPrimaryKeyTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                         .withQuery(join2)
                         .withLevels(List.of(l21, l22, l23, l24))
@@ -2253,21 +2211,18 @@ class SchemaTest {
                 LevelMappingImpl l11 = LevelMappingImpl
                     .builder()
                     .withName("Store Country")
-                    .withTable(FoodmartMappingSupplier.STORE_TABLE)
                     .withColumn(FoodmartMappingSupplier.STORE_CITY_COLUMN_IN_STORE)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l12 = LevelMappingImpl
                     .builder()
                     .withName("Store Region")
-                    .withTable(region)
                     .withColumn(sales_region)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l13 = LevelMappingImpl
                         .builder()
                         .withName("Store Name")
-                        .withTable(FoodmartMappingSupplier.STORE_TABLE)
                         .withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                         .withUniqueMembers(true)
                         .build();
@@ -2275,7 +2230,6 @@ class SchemaTest {
                 HierarchyMappingImpl h1 = HierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
-                        .withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                         .withQuery(join1)
                         .withLevels(List.of(l11, l12, l13))
@@ -2293,7 +2247,6 @@ class SchemaTest {
                 LevelMappingImpl l21 = LevelMappingImpl
                         .builder()
                         .withName("Country")
-                        .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withColumn(FoodmartMappingSupplier.COUNTRY_COLUMN_IN_CUSTOMER)
                         .withUniqueMembers(true)
                         .build();
@@ -2301,21 +2254,18 @@ class SchemaTest {
                         .builder()
                         .withName("Region")
                         //.withTable("customer_region") //TODO use alias as table
-                        .withTable(region)
                         .withColumn(sales_region)
                         .withUniqueMembers(true)
                         .build();
                 LevelMappingImpl l23 = LevelMappingImpl
                         .builder()
                         .withName("City")
-                        .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withColumn(FoodmartMappingSupplier.CITY_COLUMN_IN_CUSTOMER)
                         .withUniqueMembers(false)
                         .build();
                 LevelMappingImpl l24 = LevelMappingImpl
                         .builder()
                         .withName("Name")
-                        .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                         .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
@@ -2325,7 +2275,6 @@ class SchemaTest {
                         .builder()
                         .withHasAll(true)
                         .withAllMemberName("All Customers")
-                        .withPrimaryKeyTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                         .withQuery(join2)
                         .withLevels(List.of(l21, l22, l23, l24))
@@ -2471,7 +2420,6 @@ class SchemaTest {
             	LevelMappingImpl l11 = LevelMappingImpl
                         .builder()
                         .withName("Store Country")
-                        .withTable(FoodmartMappingSupplier.STORE_TABLE)
                         .withColumn(FoodmartMappingSupplier.STORE_COUNTRY_COLUMN_IN_STORE)
                         .withUniqueMembers(true)
                         .build();
@@ -2479,14 +2427,12 @@ class SchemaTest {
                         .builder()
                         .withName("Store Region")
                         //.withTable("store_region") //TODO use alias as table
-                        .withTable(region)
                         .withColumn(sales_region)
                         .withUniqueMembers(true)
                         .build();
             	LevelMappingImpl l13 = LevelMappingImpl
                         .builder()
                         .withName("Store Name")
-                        .withTable(FoodmartMappingSupplier.STORE_TABLE)
                         .withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                         .withUniqueMembers(true)
                         .build();
@@ -2494,7 +2440,6 @@ class SchemaTest {
                 HierarchyMappingImpl h1 = HierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
-                        .withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                         .withQuery(join1)
                         .withLevels(List.of(l11, l12, l13))
@@ -2511,7 +2456,6 @@ class SchemaTest {
             	LevelMappingImpl l21 = LevelMappingImpl
                         .builder()
                         .withName("Country")
-                        .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withColumn(FoodmartMappingSupplier.COUNTRY_COLUMN_IN_CUSTOMER)
                         .withUniqueMembers(true)
                         .build();
@@ -2519,21 +2463,19 @@ class SchemaTest {
                         .builder()
                         .withName("Region")
                         //.withTable("customer_region") //TODO use alias as table
-                        .withTable(region) //TODO use alias as table
+                        //TODO use alias as table
                         .withColumn(sales_region)
                         .withUniqueMembers(true)
                         .build();
             	LevelMappingImpl l23 = LevelMappingImpl
                         .builder()
-                        .withName("City")
-                        .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
+                        .withName("City")                        
                         .withColumn(FoodmartMappingSupplier.CITY_COLUMN_IN_CUSTOMER)
                         .withUniqueMembers(false)
                         .build();
             	LevelMappingImpl l24 = LevelMappingImpl
                         .builder()
                         .withName("Name")
-                        .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                         .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
@@ -2543,7 +2485,6 @@ class SchemaTest {
                         .builder()
                         .withHasAll(true)
                         .withAllMemberName("All Customers")
-                        .withPrimaryKeyTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                         .withQuery(join2)
                         .withLevels(List.of(l21, l22, l23, l24))
@@ -4757,7 +4698,6 @@ class SchemaTest {
                     LevelMappingImpl level = LevelMappingImpl
                             .builder()
                             .withName("Store2")
-                            .withTable(FoodmartMappingSupplier.STORE_RAGGED_TABLE)
                             .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE_RAGGED)
                             .withCaptionColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE_RAGGED)
                             .withUniqueMembers(true)
@@ -4931,7 +4871,6 @@ class SchemaTest {
                     LevelMappingImpl level = LevelMappingImpl
                             .builder()
                             .withName("Store2")
-                            .withTable(FoodmartMappingSupplier.STORE_RAGGED_TABLE)
                             .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE_RAGGED)
                             .withCaptionColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE_RAGGED)
                             .withUniqueMembers(true)
@@ -6081,7 +6020,6 @@ class SchemaTest {
                         LevelMappingImpl.builder()
                             .withName("Gender")
                             //.withTable("gender2") //TODO use alias
-                            .withTable(FoodmartMappingSupplier.CUSTOMER_TABLE)
                             .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
                             .withUniqueMembers(true)
                             .build()
@@ -7118,7 +7056,6 @@ class SchemaTest {
                         LevelMappingImpl level = LevelMappingImpl
                             .builder()
                             .withName("Product Class")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                             .withNameColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
                             .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
@@ -7128,7 +7065,6 @@ class SchemaTest {
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                            .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                             .withQuery(join)
                             .withLevels(List.of(level))
                             .build();
@@ -7193,7 +7129,6 @@ class SchemaTest {
                         LevelMappingImpl level = LevelMappingImpl
                             .builder()
                             .withName("Product Class")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                             .withNameColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
                             .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
@@ -7203,7 +7138,6 @@ class SchemaTest {
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                            .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                             .withQuery(join)
                             .withLevels(List.of(level))
                             .build();
@@ -7673,7 +7607,6 @@ class SchemaTest {
 
                     HierarchyMappingImpl h11 = HierarchyMappingImpl.builder()
                         .withHasAll(true)
-                        .withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                         //.withCaption("Hierarchy caption")
                         .withDescription("Hierarchy description")
@@ -7687,7 +7620,6 @@ class SchemaTest {
                         .withLevels(List.of(
                             LevelMappingImpl.builder()
                                 .withName("Store Country")
-                                .withTable(FoodmartMappingSupplier.STORE_TABLE)
                                 .withColumn(FoodmartMappingSupplier.STORE_COUNTRY_COLUMN_IN_STORE)
                                 .withDescription("Level description")
                                 //.withCaption("Level caption")
@@ -7700,12 +7632,10 @@ class SchemaTest {
                                 .build(),
                             LevelMappingImpl.builder()
                                 .withName("Store Region")
-                                .withTable(region)
                                 .withColumn(sales_region)
                                 .build(),
                             LevelMappingImpl.builder()
                                 .withName("Store Name")
-                                .withTable(FoodmartMappingSupplier.STORE_TABLE)
                                 .withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                                 .build()
                         ))
@@ -8753,44 +8683,37 @@ class SchemaTest {
                 if ("Sales".equals(cube.getName())) {
                     LevelMappingImpl l1 = LevelMappingImpl.builder()
                             .withName("Product Family")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                             .withUniqueMembers(true)
                             .build();
                     LevelMappingImpl l2 = LevelMappingImpl.builder()
                             .withName("Product Department")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                             .withUniqueMembers(false)
                             .build();
                     LevelMappingImpl l3 = LevelMappingImpl.builder()
                             .withName("Product Category")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                             .withUniqueMembers(false)
                             .build();
                     LevelMappingImpl l4 = LevelMappingImpl.builder()
                             .withName("Product Subcategory")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                             .withUniqueMembers(false)
                             .build();
                     LevelMappingImpl l5 = LevelMappingImpl.builder()
                             .withName("Product Class")
-                            .withTable(FoodmartMappingSupplier.STORE_TABLE)
                             .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                             .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
                             .build();
                     LevelMappingImpl l6 = LevelMappingImpl.builder()
                             .withName("Brand Name")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                             .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                             .withUniqueMembers(false)
                             .build();
                     LevelMappingImpl l7 = LevelMappingImpl.builder()
                             .withName("Product Name")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                             .withUniqueMembers(true)
                             .build();
@@ -8811,7 +8734,6 @@ class SchemaTest {
 
                         HierarchyMappingImpl h = HierarchyMappingImpl.builder()
                             .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                            .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                             .withQuery(j)
                             .withLevels(List.of(l1, l2, l3, l4, l5, l6, l7))
                             .build();
@@ -8883,44 +8805,37 @@ class SchemaTest {
             protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
                 LevelMappingImpl l1 = LevelMappingImpl.builder()
                         .withName("Product Family")
-                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                         .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                         .withUniqueMembers(true)
                         .build();
                     LevelMappingImpl l2 = LevelMappingImpl.builder()
                         .withName("Product Department")
-                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                         .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                         .withUniqueMembers(false)
                         .build();
                     LevelMappingImpl l3 = LevelMappingImpl.builder()
                         .withName("Product Category")
-                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                         .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                         .withUniqueMembers(false)
                         .build();
                     LevelMappingImpl l4 = LevelMappingImpl.builder()
                         .withName("Product Subcategory")
-                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                         .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                         .withUniqueMembers(false)
                         .build();
                     LevelMappingImpl l5 = LevelMappingImpl.builder()
                         .withName("Product Class")
-                        .withTable(FoodmartMappingSupplier.STORE_TABLE)
                         .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                         .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .build();
                     LevelMappingImpl l6 = LevelMappingImpl.builder()
                         .withName("Brand Name")
-                        .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                         .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                         .withUniqueMembers(false)
                         .build();
                     LevelMappingImpl l7 = LevelMappingImpl.builder()
                         .withName("Product Name")
-                        .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                         .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                         .withUniqueMembers(true)
                         .build();
@@ -8944,7 +8859,6 @@ class SchemaTest {
                     HierarchyMappingImpl h1 = HierarchyMappingImpl.builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                        .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                         .withQuery(j)
                         .withLevels(List.of(l1, l2, l3, l4, l5, l6, l7))
                         .build();
@@ -9115,44 +9029,37 @@ class SchemaTest {
                 if ("Sales".equals(cube.getName())) {
                     LevelMappingImpl l1 = LevelMappingImpl.builder()
                             .withName("Product Family")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                             .withUniqueMembers(true)
                             .build();
                     LevelMappingImpl l2 = LevelMappingImpl.builder()
                             .withName("Product Department")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                             .withUniqueMembers(false)
                             .build();
                     LevelMappingImpl l3 = LevelMappingImpl.builder()
                             .withName("Product Category")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                             .withUniqueMembers(false)
                             .build();
                     LevelMappingImpl l4 = LevelMappingImpl.builder()
                             .withName("Product Subcategory")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                             .withUniqueMembers(false)
                             .build();
                     LevelMappingImpl l5 = LevelMappingImpl.builder()
                             .withName("Product Class")
-                            .withTable(FoodmartMappingSupplier.STORE_TABLE)
                             .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                             .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
                             .build();
                     LevelMappingImpl l6 = LevelMappingImpl.builder()
                             .withName("Brand Name")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                             .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                             .withUniqueMembers(false)
                             .build();
                     LevelMappingImpl l7 = LevelMappingImpl.builder()
                             .withName("Product Name")
-                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                             .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                             .withUniqueMembers(true)
                             .build();
@@ -9175,7 +9082,6 @@ class SchemaTest {
 
                     HierarchyMappingImpl h = HierarchyMappingImpl.builder()
                             .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                            .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                             .withQuery(j)
                             .withLevels(List.of(l1, l2, l3, l4, l5, l6, l7))
                             .build();
@@ -10030,45 +9936,38 @@ class SchemaTest {
 
                 LevelMappingImpl l1 = LevelMappingImpl.builder()
                     .withName("Product Family")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l2 = LevelMappingImpl.builder()
                     .withName("Product Department")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l3 = LevelMappingImpl.builder()
                     .withName("Product Category")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(false)
                     .build();
 
                 LevelMappingImpl l4 = LevelMappingImpl.builder()
                     .withName("Product Subcategory")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l5 = LevelMappingImpl.builder()
                     .withName("Brand Name")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                     .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l6 = LevelMappingImpl.builder()
                     .withName("Product Name")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                     .withUniqueMembers(true)
                     .build();
 
                 LevelMappingImpl l7 = LevelMappingImpl.builder()
                     .withName("Product Id")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                     .withUniqueMembers(true)
                     .build();
@@ -10094,7 +9993,6 @@ class SchemaTest {
                                 HierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                    .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                     .withQuery(JoinQueryMappingImpl.builder()
                                     		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
                                     				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_TABLE).build())
@@ -10237,44 +10135,37 @@ class SchemaTest {
 
                 LevelMappingImpl l1 = LevelMappingImpl.builder()
                     .withName("Product Family")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l2 = LevelMappingImpl.builder()
                     .withName("Product Department")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l3 = LevelMappingImpl.builder()
                     .withName("Product Category")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l4 = LevelMappingImpl.builder()
                     .withName("Product Subcategory")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l5 = LevelMappingImpl.builder()
                     .withName("Brand Name")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                     .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l6 = LevelMappingImpl.builder()
                     .withName("Product Name")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                     .withUniqueMembers(true)
                     .build();
 
                 LevelMappingImpl l7 = LevelMappingImpl.builder()
                     .withName("Product Id")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                     .withUniqueMembers(true)
                     .build();
@@ -10300,7 +10191,6 @@ class SchemaTest {
                                    HierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                    .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                     .withQuery(JoinQueryMappingImpl.builder()
                                     	.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
                             				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_TABLE).build())
@@ -10451,44 +10341,37 @@ class SchemaTest {
 
                 LevelMappingImpl l1 = LevelMappingImpl.builder()
                     .withName("Product Family")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l2 = LevelMappingImpl.builder()
                     .withName("Product Department")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l3 = LevelMappingImpl.builder()
                     .withName("Product Category")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l4 = LevelMappingImpl.builder()
                     .withName("Product Subcategory")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l5 = LevelMappingImpl.builder()
                     .withName("Brand Name")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                     .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l6 = LevelMappingImpl.builder()
                     .withName("Product Name")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                     .withUniqueMembers(true)
                     .build();
 
                 LevelMappingImpl l7 = LevelMappingImpl.builder()
                     .withName("Product Id")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                     .withUniqueMembers(true)
                     .build();
@@ -10507,7 +10390,6 @@ class SchemaTest {
                                 HierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                    .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                     .withQuery(
                                     	JoinQueryMappingImpl.builder()
                                         	.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
@@ -10532,7 +10414,6 @@ class SchemaTest {
                                 HierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
-                                    .withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
                                     .withQuery(
                                         	JoinQueryMappingImpl.builder()
                                             	.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.REGION_ID_COLUMN_IN_STORE)
@@ -10545,13 +10426,11 @@ class SchemaTest {
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Store Region")
-                                            .withTable(region)
                                             .withColumn(sales_city)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Store Id")
-                                            .withTable(FoodmartMappingSupplier.STORE_TABLE)
                                             .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                                             .withUniqueMembers(true)
                                             .build()
@@ -10844,43 +10723,36 @@ class SchemaTest {
 
                 LevelMappingImpl l1 = LevelMappingImpl.builder()
                     .withName("Product Family")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l2 = LevelMappingImpl.builder()
                     .withName("Product Department")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l3 = LevelMappingImpl.builder()
                     .withName("Product Category")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l4 = LevelMappingImpl.builder()
                     .withName("Product Subcategory")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l5 = LevelMappingImpl.builder()
                     .withName("Brand Name")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                     .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                     .withUniqueMembers(false)
                     .build();
                 LevelMappingImpl l6 = LevelMappingImpl.builder()
                     .withName("Product Name")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                     .withUniqueMembers(true)
                     .build();
                 LevelMappingImpl l7 = LevelMappingImpl.builder()
                     .withName("Product Id")
-                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                     .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                     .withUniqueMembers(true)
                     .build();
@@ -10906,7 +10778,6 @@ class SchemaTest {
                                 HierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                    .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                     .withQuery(
                                     		JoinQueryMappingImpl.builder()
                                         	.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
@@ -11305,7 +11176,6 @@ class SchemaTest {
                             HierarchyMappingImpl.builder()
                                 .withHasAll(true)
                                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                                .withPrimaryKeyTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
                                 .withQuery(
                                 		JoinQueryMappingImpl.builder()
                                     	.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_EMPLOYEE)
@@ -11321,25 +11191,21 @@ class SchemaTest {
                                 .withLevels(List.of(
                                     LevelMappingImpl.builder()
                                         .withName("Store Country")
-                                        .withTable(FoodmartMappingSupplier.STORE_TABLE)
                                         .withColumn(FoodmartMappingSupplier.STORE_COUNTRY_COLUMN_IN_STORE)
                                         .withUniqueMembers(true)
                                         .build(),
                                     LevelMappingImpl.builder()
                                         .withName("Store State")
-                                        .withTable(FoodmartMappingSupplier.STORE_TABLE)
                                         .withColumn(FoodmartMappingSupplier.STORE_STATE_COLUMN_IN_STORE)
                                         .withUniqueMembers(true)
                                         .build(),
                                     LevelMappingImpl.builder()
                                         .withName("Store City")
-                                        .withTable(FoodmartMappingSupplier.STORE_TABLE)
                                         .withColumn(FoodmartMappingSupplier.STORE_CITY_COLUMN_IN_STORE)
                                         .withUniqueMembers(false)
                                         .build(),
                                     LevelMappingImpl.builder()
                                         .withName("Store Name")
-                                        .withTable(FoodmartMappingSupplier.STORE_TABLE)
                                         .withColumn(FoodmartMappingSupplier.STORE_NAME_COLUMN_IN_STORE)
                                         .withUniqueMembers(true)
                                         .withMemberProperties(List.of(
@@ -11396,7 +11262,6 @@ class SchemaTest {
                             	HierarchyMappingImpl.builder()
                                 .withHasAll(true)
                                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                                .withPrimaryKeyTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
                                 .withQuery(
                                 		JoinQueryMappingImpl.builder()
                                     	.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.POSITION_ID_COLUMN_IN_EMPLOYEE)
@@ -11412,7 +11277,6 @@ class SchemaTest {
                                 .withLevels(List.of(
                                     LevelMappingImpl.builder()
                                         .withName("Pay Type")
-                                        .withTable(FoodmartMappingSupplier.POSITION_TABLE)
                                         .withColumn(FoodmartMappingSupplier.PAY_TYPE_COLUMN_IN_POSITION)
                                         .withUniqueMembers(true)
                                         .build()
@@ -11429,7 +11293,6 @@ class SchemaTest {
                                 .withHierarchies(List.of(
                                 HierarchyMappingImpl.builder()
                                 .withHasAll(true)
-                                .withPrimaryKeyTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
                                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                 .withQuery(
                                 		JoinQueryMappingImpl.builder()
@@ -11446,7 +11309,6 @@ class SchemaTest {
                                 .withLevels(List.of(
                                     LevelMappingImpl.builder()
                                         .withName("Store Type")
-                                        .withTable(FoodmartMappingSupplier.STORE_TABLE)
                                         .withColumn(FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE)
                                         .build()
                                 ))

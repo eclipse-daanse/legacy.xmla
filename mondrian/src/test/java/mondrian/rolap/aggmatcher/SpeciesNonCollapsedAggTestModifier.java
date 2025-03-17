@@ -160,7 +160,6 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
                 .withHasAll(true)
                 .withAllMemberName("All Animals")
                 .withPrimaryKey(speciesIdDimSpecies)
-                .withPrimaryKeyTable(dimSpecies)
                 .withQuery(JoinQueryMappingImpl.builder()
                 		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(genisIdDimSpecies)
                 				.withQuery(TableQueryMappingImpl.builder().withTable(dimSpecies).build())
@@ -181,7 +180,6 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
                 .withLevels(List.of(
                     LevelMappingImpl.builder()
                         .withName("Family")
-                        .withTable(dimFamily)
                         .withColumn(familyIdDimFamily)
                         .withNameColumn(familyNameDimFamily)
                         .withUniqueMembers(true)
@@ -190,7 +188,6 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
                         .build(),
                     LevelMappingImpl.builder()
                         .withName("Genus")
-                        .withTable(dimGenus)
                         .withColumn(genusIdDimGenus)
                         .withNameColumn(genusNameDimGenus)
                         .withUniqueMembers(true)
@@ -199,7 +196,6 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
                         .build(),
                     LevelMappingImpl.builder()
                         .withName("Species")
-                        .withTable(dimSpecies)
                         .withColumn(speciesIdDimSpecies)
                         .withNameColumn(speciesNameDimSpecies)
                         .withUniqueMembers(true)

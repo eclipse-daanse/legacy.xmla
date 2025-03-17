@@ -421,7 +421,7 @@ public class HierarchyUsage {
             this.joinTable =
                 findJoinTable(
                     hierarchy,
-                    hierarchy.getHierarchyMapping().getPrimaryKeyTable());
+                    hierarchy.getHierarchyMapping().getPrimaryKey().getTable());
             this.joinExp =
                 new mondrian.rolap.RolapColumn(
                     getAlias(this.joinTable),

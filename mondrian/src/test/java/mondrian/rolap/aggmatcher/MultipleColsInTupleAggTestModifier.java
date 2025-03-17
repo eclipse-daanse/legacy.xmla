@@ -251,7 +251,6 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
                         HierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withPrimaryKey(prodIdProductCsv)
-                            .withPrimaryKeyTable(productCsv)
                             .withQuery(JoinQueryMappingImpl.builder()
                             		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(prodCatProductCsv)
                             				.withQuery(TableQueryMappingImpl.builder().withTable(productCsv).build())
@@ -270,7 +269,6 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
                             .withLevels(List.of(
                                 LevelMappingImpl.builder()
                                     .withName("Category")
-                                    .withTable(cat)
                                     .withColumn(catCat)
                                     .withOrdinalColumn(ordCat)
                                     .withCaptionColumn(capCat)
@@ -280,7 +278,6 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
                                     .build(),
                                 LevelMappingImpl.builder()
                                     .withName("Product Category")
-                                    .withTable(productCat)
                                     .withColumn(name2ProductCat)
                                     .withOrdinalColumn(ordProductCat)
                                     .withCaptionColumn(capProductCat)
@@ -288,7 +285,6 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
                                     .build(),
                                 LevelMappingImpl.builder()
                                     .withName("Product Name")
-                                    .withTable(productCsv)
                                     .withColumn(name1ProductCsv)
                                     .withUniqueMembers(true)
                                     .withMemberProperties(List.of(

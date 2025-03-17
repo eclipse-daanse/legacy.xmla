@@ -391,7 +391,6 @@ public class SchemaModifiers {
             HierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                .withPrimaryKeyTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
                 .withQuery(JoinQueryMappingImpl.builder()
                 		.withLeft(JoinedQueryElementMappingImpl.builder()
                 				.withKey(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
@@ -406,12 +405,12 @@ public class SchemaModifiers {
                     LevelMappingImpl.builder()
                         .withName("Role")
                         //.withTable("employee_manager").withColumn("management_role").withUniqueMembers(true) //TODO use alias
-                        .withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).withColumn(FoodmartMappingSupplier.MANAGEMENT_ROLE_COLUMN_IN_EMPLOYEE).withUniqueMembers(true)
+                        .withColumn(FoodmartMappingSupplier.MANAGEMENT_ROLE_COLUMN_IN_EMPLOYEE).withUniqueMembers(true)
                         .build(),
                         LevelMappingImpl.builder()
                         .withName("Title")
                         //.withTable("employee_manager").withColumn("position_title").withUniqueMembers(false) //TODO use alias
-                        .withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).withColumn(FoodmartMappingSupplier.POSITION_TITLE_COLUMN_IN_EMPLOYEE).withUniqueMembers(false)
+                        .withColumn(FoodmartMappingSupplier.POSITION_TITLE_COLUMN_IN_EMPLOYEE).withUniqueMembers(false)
                         .build()
                 ))
                 .build()
@@ -1389,7 +1388,6 @@ public class SchemaModifiers {
                     .withName("Closure")
                     .withType(InternalDataType.NUMERIC)
                     .withUniqueMembers(false)
-                    .withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE)
                     .withColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
                     .build();
                 LevelMappingImpl level2 = LevelMappingImpl
@@ -1397,7 +1395,6 @@ public class SchemaModifiers {
                     .withName("Employee")
                     .withType(InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
-                    .withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE)
                     .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
                     .build();
                 HierarchyMappingImpl hierarchy = HierarchyMappingImpl
@@ -1405,7 +1402,6 @@ public class SchemaModifiers {
                     .withHasAll(true)
                     .withAllMemberName("All Employees")
                     .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                    .withPrimaryKeyTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE)
                     .withQuery(JoinQueryMappingImpl.builder()
                     		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
                     				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
@@ -1472,7 +1468,6 @@ public class SchemaModifiers {
                 LevelMappingImpl level1 = LevelMappingImpl
                     .builder()
                     .withName("Employee Stores")
-                    .withTable(FoodmartMappingSupplier.STORE_TABLE)
                     .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                     .withUniqueMembers(true)
                     .build();
@@ -1481,7 +1476,6 @@ public class SchemaModifiers {
                     .builder()
                     .withName("Employee Id")
                     .withType(InternalDataType.NUMERIC)
-                    .withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
                     .withUniqueMembers(true)
                     .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                     .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
@@ -1526,7 +1520,6 @@ public class SchemaModifiers {
                     .withHasAll(true)
                     .withAllMemberName("All Employees")
                     .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                    .withPrimaryKeyTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
                     .withQuery(JoinQueryMappingImpl.builder()
                     		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_EMPLOYEE)
                     				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
@@ -1562,7 +1555,6 @@ public class SchemaModifiers {
     	            HierarchyMappingImpl.builder()
     	                .withHasAll(true)
     	                .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-    	                .withPrimaryKeyTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
     	                .withQuery((JoinQueryMappingImpl.builder()
                         		.withLeft(JoinedQueryElementMappingImpl.builder().withKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_EMPLOYEE)
                         				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
@@ -1576,7 +1568,6 @@ public class SchemaModifiers {
                             LevelMappingImpl.builder()
                                 .withName("Employee Id")
                                 .withType(InternalDataType.NUMERIC)
-                                .withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
                                 .withUniqueMembers(true)
                                 .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                 .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
@@ -2167,7 +2158,6 @@ public class SchemaModifiers {
                 .withHasAll(true)
                 .withAllMemberName("All Employees")
                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                .withPrimaryKeyTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
                 .withLevels(List.of(
                     LevelMappingImpl.builder()
@@ -2586,7 +2576,6 @@ public class SchemaModifiers {
                         .withName("Employee")
                         .withHasAll(false)
                         .withPrimaryKey(storeId)
-                        .withPrimaryKeyTable(itt)
                         .withQuery(
                             JoinQueryMappingImpl.builder()
                             	.withLeft(
@@ -2600,7 +2589,6 @@ public class SchemaModifiers {
                         .withLevels(List.of(
                             LevelMappingImpl.builder()
                                 .withName("Employee")
-                                .withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
                                 .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                 .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
                                 .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
@@ -2670,7 +2658,6 @@ public class SchemaModifiers {
     				HierarchyMappingImpl.builder()
     					.withHasAll(true)
     					.withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-    					.withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
     					.withQuery(JoinQueryMappingImpl.builder()
     							.withLeft(JoinedQueryElementMappingImpl.builder()
                             			.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
@@ -2683,7 +2670,7 @@ public class SchemaModifiers {
     							.build())
     					.withLevels(List.of(
     						LevelMappingImpl.builder()
-    							.withName("Product Name").withTable(FoodmartMappingSupplier.PRODUCT_TABLE).withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT).withUniqueMembers(true)
+    							.withName("Product Name").withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT).withUniqueMembers(true)
     							.build()
 
     					))
@@ -2692,7 +2679,6 @@ public class SchemaModifiers {
         				.withName("BrandOnly")
         				.withHasAll(true)
     					.withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-    					.withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
     					.withQuery(JoinQueryMappingImpl.builder()
     							.withLeft(JoinedQueryElementMappingImpl.builder()
                             			.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
@@ -2705,7 +2691,7 @@ public class SchemaModifiers {
     							.build())
     					.withLevels(List.of(
     						LevelMappingImpl.builder()
-    							.withName("Product").withTable(FoodmartMappingSupplier.PRODUCT_TABLE).withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT).withUniqueMembers(false)
+    							.withName("Product").withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT).withUniqueMembers(false)
     							.build()
 
     					))
@@ -3238,13 +3224,11 @@ public class SchemaModifiers {
                 					.withLevels(List.of(
                 							LevelMappingImpl.builder()
                 							.withName("Brand Name")
-                							.withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                 							.withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                 							.withUniqueMembers(false)
                 							.build(),
                 							LevelMappingImpl.builder()
                 							.withName("Product Name")
-                							.withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                 							.withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                 							.withUniqueMembers(true)
                 							.withHideMemberIfType(HideMemberIfType.IF_BLANK_NAME)
@@ -3299,13 +3283,11 @@ public class SchemaModifiers {
                         				.withLevels(List.of(
                         						LevelMappingImpl.builder()
                         							.withName("Brand Name")
-                        							.withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                         							.withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                         							.withUniqueMembers(false)
                         							.build(),
                         						LevelMappingImpl.builder()
                         							.withName("Product Name")
-                        							.withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                         							.withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                         							.withUniqueMembers(true)
                         							.withHideMemberIfType(hideMemberIf)
@@ -3357,14 +3339,12 @@ public class SchemaModifiers {
                             	.withLevels(List.of(
                             			LevelMappingImpl.builder()
                             				.withName("Brand Name")
-                            				.withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                             				.withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                             				.withUniqueMembers(false)
                             				.withHideMemberIfType(HideMemberIfType.IF_BLANK_NAME)
                             				.build(),
                             			LevelMappingImpl.builder()
                             				.withName("Product Name")
-                            				.withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                             				.withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                             				.withUniqueMembers(true)
                             				.build()
@@ -3959,7 +3939,6 @@ public class SchemaModifiers {
                     			HierarchyMappingImpl.builder()
                     				.withHasAll(true)
                     				.withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                    				.withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                     				.withQuery(JoinQueryMappingImpl.builder()
                     						.withLeft(JoinedQueryElementMappingImpl.builder()
                     							.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
@@ -3974,19 +3953,16 @@ public class SchemaModifiers {
                     				.withLevels(List.of(
                     					LevelMappingImpl.builder()
                     						.withName("Drink")
-                    						.withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     						.withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                     						.withUniqueMembers(true)
                     						.build(),
                     					LevelMappingImpl.builder()
                     						.withName("Beverages")
-                    						.withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     						.withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                     						.withUniqueMembers(false)
                     						.build(),
                     					LevelMappingImpl.builder()
                     						.withName("Product Category")
-                    						.withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                     						.withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                     						.withUniqueMembers(false)
                     						.build()
@@ -4103,7 +4079,6 @@ public class SchemaModifiers {
                         			HierarchyMappingImpl.builder()
                                     	.withHasAll(true)
                                     	.withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                    	.withPrimaryKeyTable(t)
                                     	.withQuery(v)
                                     	.withLevels(List.of(
                                     		LevelMappingImpl.builder()
@@ -4362,7 +4337,6 @@ public class SchemaModifiers {
                                 .withAllMemberName("All")
                                 .withAllMemberCaption("All")
                                 .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                 .withQuery(JoinQueryMappingImpl.builder()
                                 		.withLeft(JoinedQueryElementMappingImpl.builder()
                                 			.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
@@ -4380,7 +4354,6 @@ public class SchemaModifiers {
                                     LevelMappingImpl.builder()
                                         .withName("IsZero")
                                         .withVisible(true)
-                                        .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                         .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                         .withType(InternalDataType.INTEGER)
                                         .withUniqueMembers(false)
@@ -4398,7 +4371,6 @@ public class SchemaModifiers {
                                     LevelMappingImpl.builder()
                                         .withName("SubCat")
                                         .withVisible(true)
-                                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                         .withColumn(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
                                         .withType(InternalDataType.STRING)
                                         .withUniqueMembers(false)
@@ -4415,7 +4387,6 @@ public class SchemaModifiers {
                                     LevelMappingImpl.builder()
                                         .withName("ProductName")
                                         .withVisible(true)
-                                        .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                         .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                         .withType(InternalDataType.INTEGER)
                                         .withUniqueMembers(false)
@@ -4786,7 +4757,6 @@ public class SchemaModifiers {
                                                         HierarchyMappingImpl.builder()
                                                             .withHasAll(true)
                                                             .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                                            .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                                             .withQuery(JoinQueryMappingImpl.builder()
                                         							.withLeft(JoinedQueryElementMappingImpl.builder()
                                                                 			.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
@@ -4801,7 +4771,6 @@ public class SchemaModifiers {
                                                             .withLevels(List.of(
                                                                 LevelMappingImpl.builder()
                                                                     .withName("Product Subcategory")
-                                                                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                                     .withColumn(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT_CLASS)
                                                                     .withUniqueMembers(false)
                                                                     .build()
@@ -4939,7 +4908,6 @@ public class SchemaModifiers {
     	private static final HierarchyMappingImpl productHierarchy = HierarchyMappingImpl.builder()
 		.withHasAll(true)
 		.withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-		.withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
 		.withQuery(JoinQueryMappingImpl.builder()
 				.withLeft(JoinedQueryElementMappingImpl.builder()
             			.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
@@ -4953,7 +4921,6 @@ public class SchemaModifiers {
 		.withLevels(List.of(
             LevelMappingImpl.builder()
                 .withName("Product Family")
-                .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                 .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                 .withUniqueMembers(true)
                 .build()
@@ -5639,7 +5606,6 @@ public class SchemaModifiers {
                                 HierarchyMappingImpl.builder()
                                     .withHasAll(false)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                    .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                     .withQuery(JoinQueryMappingImpl.builder()
                             				.withLeft(JoinedQueryElementMappingImpl.builder()
                                         			.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
@@ -5653,37 +5619,31 @@ public class SchemaModifiers {
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Product Family")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(true)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Department")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Category")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Subcategory")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Brand Name")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                             .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Name")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                                             .withUniqueMembers(true)
                                             .build()
@@ -6383,7 +6343,6 @@ public class SchemaModifiers {
                                     .withHierarchies(List.of(
                                         HierarchyMappingImpl.builder()
                                             .withHasAll(true)
-                                            .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                             .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                             .withQuery(JoinQueryMappingImpl.builder()
                                     				.withLeft(JoinedQueryElementMappingImpl.builder()
@@ -6400,7 +6359,6 @@ public class SchemaModifiers {
                                             .withLevels(List.of(
                                                     LevelMappingImpl.builder()
                                                         .withName("Product Family")
-                                                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                         .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                                                         .withUniqueMembers(false)
                                                         .build()
@@ -6431,7 +6389,6 @@ public class SchemaModifiers {
                                     .withHierarchies(List.of(
                                         HierarchyMappingImpl.builder()
                                             .withHasAll(true)
-                                            .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                             .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                             .withQuery(JoinQueryMappingImpl.builder()
                                     				.withLeft(JoinedQueryElementMappingImpl.builder()
@@ -6448,7 +6405,6 @@ public class SchemaModifiers {
                                             .withLevels(List.of(
                                                     LevelMappingImpl.builder()
                                                         .withName("Product Family")
-                                                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                         .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                                                         //.uniqueMembers(false)
                                                         .build()
@@ -7150,7 +7106,6 @@ public class SchemaModifiers {
             HierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                 .withQuery(JoinQueryMappingImpl.builder()
         				.withLeft(JoinedQueryElementMappingImpl.builder()
                     			.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
@@ -7163,7 +7118,6 @@ public class SchemaModifiers {
                 .withLevels(List.of(
                     LevelMappingImpl.builder()
                         .withName("Product Family")
-                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                         .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                         .withUniqueMembers(true)
                         .build()
@@ -10612,7 +10566,6 @@ public class SchemaModifiers {
                             						HierarchyMappingImpl.builder()
                                                     .withHasAll(true)
                                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                                    .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                                     .withQuery(
                                                     	JoinQueryMappingImpl.builder()
                                                     	.withLeft(
@@ -10628,7 +10581,6 @@ public class SchemaModifiers {
                                                     .withLevels(List.of(
                                                         LevelMappingImpl.builder()
                                                             .withName("Product Family")
-                                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                             .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                                                             .withUniqueMembers(true)
                                                             .build()
@@ -11162,7 +11114,6 @@ public class SchemaModifiers {
                                                 HierarchyMappingImpl.builder()
                                                     .withHasAll(true)
                                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                                    .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                                     .withQuery(
                                                         JoinQueryMappingImpl.builder()
                                                         .withLeft(
@@ -11180,37 +11131,31 @@ public class SchemaModifiers {
                                                     .withLevels(List.of(
                                                         LevelMappingImpl.builder()
                                                             .withName("Product Family")
-                                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                             .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                                                             .withUniqueMembers(true)
                                                             .build(),
                                                         LevelMappingImpl.builder()
                                                             .withName("Product Department")
-                                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                             .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                                                             .withUniqueMembers(false)
                                                             .build(),
                                                         LevelMappingImpl.builder()
                                                             .withName("Product Category")
-                                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                             .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                                             .withUniqueMembers(false)
                                                             .build(),
                                                         LevelMappingImpl.builder()
                                                             .withName("Product Subcategory")
-                                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                             .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                                             .withUniqueMembers(false)
                                                             .build(),
                                                         LevelMappingImpl.builder()
                                                             .withName("Brand Name")
-                                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                                             .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                                                             .withUniqueMembers(false)
                                                             .build(),
                                                         LevelMappingImpl.builder()
                                                             .withName("Product Name")
-                                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                                             .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                                                             .withUniqueMembers(true)
                                                             .build()
@@ -18523,7 +18468,7 @@ public class SchemaModifiers {
                                     		.withName("Product")
                                     		.withHierarchies(List.of(
                                             HierarchyMappingImpl.builder()
-                                                .withHasAll(true).withName("Products").withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT).withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
+                                                .withHasAll(true).withName("Products").withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                                 .withQuery(
                                                         JoinQueryMappingImpl.builder()
                                                         .withLeft(
@@ -18541,37 +18486,31 @@ public class SchemaModifiers {
                                                 .withLevels(List.of(
                                                     LevelMappingImpl.builder()
                                                         .withName("Product Family")
-                                                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                         .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                                                         .withUniqueMembers(true)
                                                         .build(),
                                                     LevelMappingImpl.builder()
                                                         .withName("Product Department")
-                                                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                         .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                                                         .withUniqueMembers(false)
                                                         .build(),
                                                     LevelMappingImpl.builder()
                                                         .withName("Product Category")
-                                                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                         .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                                         .withUniqueMembers(false)
                                                         .build(),
                                                     LevelMappingImpl.builder()
                                                         .withName("Product Subcategory")
-                                                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                         .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                                         .withUniqueMembers(false)
                                                         .build(),
                                                     LevelMappingImpl.builder()
                                                         .withName("Brand Name")
-                                                        .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                                         .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                                                         .withUniqueMembers(false)
                                                         .build(),
                                                     LevelMappingImpl.builder()
                                                         .withName("Product Name")
-                                                        .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                                         .withNameColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                                                         .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                                         .withUniqueMembers(true)
@@ -18582,7 +18521,6 @@ public class SchemaModifiers {
                                                 .withName("Product Name")
                                                 .withHasAll(true)
                                                 .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                                .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                                 .withQuery(
                                                         JoinQueryMappingImpl.builder()
                                                         .withLeft(
@@ -18600,7 +18538,6 @@ public class SchemaModifiers {
                                                 .withLevels(List.of(
                                                     LevelMappingImpl.builder()
                                                         .withName("Product Name")
-                                                        .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                                         .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                                                         .withUniqueMembers(true)
                                                         .build()
@@ -19038,13 +18975,11 @@ public class SchemaModifiers {
                                                 .withHasAll(true).withName("")
                                                 .withAllMemberName("All Products")
                                                 .withPrimaryKey(SteelwheelsSupplier.PRODUCTCODE_COLUMN_IN_PRODUCTS)
-                                                .withPrimaryKeyTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                                                 //.withCaption("")
                                                 .withQuery(TableQueryMappingImpl.builder().withTable(SteelwheelsSupplier.PRODUCTS_TABLE).build())
                                                 .withLevels(List.of(
                                                     LevelMappingImpl.builder()
                                                         .withName("Line")
-                                                        .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                                                         .withColumn(SteelwheelsSupplier.PRODUCTCODE_COLUMN_IN_PRODUCTS)
                                                         .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(false)
@@ -19053,7 +18988,6 @@ public class SchemaModifiers {
                                                         .build(),
                                                     LevelMappingImpl.builder()
                                                         .withName("Vendor")
-                                                        .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                                                         .withColumn(SteelwheelsSupplier.PRODUCTVENDOR_COLUMN_IN_PRODUCTS)
                                                         .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(false)
@@ -19062,7 +18996,6 @@ public class SchemaModifiers {
                                                         .build(),
                                                     LevelMappingImpl.builder()
                                                         .withName("Product")
-                                                        .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                                                         .withColumn(SteelwheelsSupplier.PRODUCTNAME_COLUMN_IN_PRODUCTS)
                                                         .withType(InternalDataType.STRING)
                                                         .withUniqueMembers(true)
@@ -19587,7 +19520,6 @@ public class SchemaModifiers {
                     .withLevels(List.of(
                     		LevelMappingImpl.builder()
                             .withName("Line")
-                            .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                             .withColumn(SteelwheelsSupplier.PRODUCTLINE_COLUMN_IN_PRODUCTS)
                             .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
@@ -19596,7 +19528,6 @@ public class SchemaModifiers {
                             .build(),
                             LevelMappingImpl.builder()
                             .withName("Vendor")
-                            .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                             .withColumn(SteelwheelsSupplier.PRODUCTVENDOR_COLUMN_IN_PRODUCTS)
                             .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
@@ -19605,7 +19536,6 @@ public class SchemaModifiers {
                             .build(),
                             LevelMappingImpl.builder()
                             .withName("Product")
-                            .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                             .withColumn(SteelwheelsSupplier.PRODUCTNAME_COLUMN_IN_PRODUCTS)
                             .withType(InternalDataType.STRING)
                             .withUniqueMembers(true)
@@ -20054,7 +19984,6 @@ public class SchemaModifiers {
                     .withLevels(List.of(
                         LevelMappingImpl.builder()
                             .withName("Line")
-                            .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                             .withColumn(SteelwheelsSupplier.PRODUCTLINE_COLUMN_IN_PRODUCTS)
                             .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
@@ -20063,7 +19992,6 @@ public class SchemaModifiers {
                             .build(),
                         LevelMappingImpl.builder()
                             .withName("Vendor")
-                            .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                             .withColumn(SteelwheelsSupplier.PRODUCTVENDOR_COLUMN_IN_PRODUCTS)
                             .withType(InternalDataType.STRING)
                             .withUniqueMembers(false)
@@ -20072,7 +20000,6 @@ public class SchemaModifiers {
                             .build(),
                         LevelMappingImpl.builder()
                             .withName("Product")
-                            .withTable(SteelwheelsSupplier.PRODUCTS_TABLE)
                             .withColumn(SteelwheelsSupplier.PRODUCTNAME_COLUMN_IN_PRODUCTS)
                             .withType(InternalDataType.STRING)
                             .withUniqueMembers(true)

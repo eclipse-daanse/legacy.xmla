@@ -204,7 +204,6 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
             HierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
 				.withQuery(JoinQueryMappingImpl.builder()
 						.withLeft(JoinedQueryElementMappingImpl.builder()
 							.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
@@ -219,19 +218,16 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
                 .withLevels(List.of(
                     LevelMappingImpl.builder()
                         .withName("Product Family")
-                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                         .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                         .withUniqueMembers(true)
                         .build(),
                     LevelMappingImpl.builder()
                         .withName("Product Department")
-                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                         .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                         .withUniqueMembers(false)
                         .build(),
                     LevelMappingImpl.builder()
                         .withName("Product Category")
-                        .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                         .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                         .withUniqueMembers(false)
                         .build()

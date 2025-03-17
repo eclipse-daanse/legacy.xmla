@@ -1655,7 +1655,6 @@ class TestAggregationManager extends BatchTestCase {
                                 HierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                    .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                     .withQuery(JoinQueryMappingImpl.builder()
                                     		.withLeft(JoinedQueryElementMappingImpl.builder()
                                     				.withKey(FoodmartMappingSupplier.PRODUCT_CLASS_ID_COLUMN_IN_PRODUCT)
@@ -1669,38 +1668,32 @@ class TestAggregationManager extends BatchTestCase {
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Product Family")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(true)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Department")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Category")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                             .withCaptionColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Subcategory")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Brand Name")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                             .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Name")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                                             .withUniqueMembers(true)
                                             .build()
@@ -2517,7 +2510,6 @@ class TestAggregationManager extends BatchTestCase {
                                         HierarchyMappingImpl.builder()
                                             .withHasAll(true)
                                             .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                            .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                             .withQuery(
                                                     JoinQueryMappingImpl.builder()
                                                     .withLeft(
@@ -2535,43 +2527,36 @@ class TestAggregationManager extends BatchTestCase {
                                             .withLevels(List.of(
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Family")
-                                                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                     .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                                                     .withUniqueMembers(true)
                                                     .build(),
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Department")
-                                                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                     .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                                                     .withUniqueMembers(false)
                                                     .build(),
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Category")
-                                                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                     .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                                     .withUniqueMembers(false)
                                                     .build(),
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Subcategory")
-                                                    .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                                     .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                                     .withUniqueMembers(false)
                                                     .build(),
                                                 LevelMappingImpl.builder()
                                                     .withName("Brand Name")
-                                                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                                     .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                                                     .withUniqueMembers(false)
                                                     .build(),
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Name")
-                                                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                                     .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                                                     .withUniqueMembers(true)
                                                     .build(),
                                                 LevelMappingImpl.builder()
                                                     .withName("Product Id")
-                                                    .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                                     .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                                     .withUniqueMembers(true)
                                                     .build()
@@ -2963,7 +2948,6 @@ class TestAggregationManager extends BatchTestCase {
                                 HierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
-                                    .withPrimaryKeyTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                     .withQuery(
                                             JoinQueryMappingImpl.builder()
                                             .withLeft(
@@ -2981,43 +2965,36 @@ class TestAggregationManager extends BatchTestCase {
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Product Family")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_FAMILY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(true)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Department")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_DEPARTMENT_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Category")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_CATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Subcategory")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_SUBCATEGORY_COLUMN_IN_PRODUCT_CLASS)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Brand Name")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                             .withColumn(FoodmartMappingSupplier.BRAND_NAME_COLUMN_IN_PRODUCT)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Name")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                                             .withUniqueMembers(true)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Product Id")
-                                            .withTable(FoodmartMappingSupplier.PRODUCT_TABLE)
                                             .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                             .withUniqueMembers(true)
                                             .build()
@@ -3034,7 +3011,6 @@ class TestAggregationManager extends BatchTestCase {
                                     HierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
-                                    .withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
                                     .withQuery(
                                             JoinQueryMappingImpl.builder()
                                             .withLeft(
@@ -3052,13 +3028,11 @@ class TestAggregationManager extends BatchTestCase {
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Store Region")
-                                            .withTable(region)
                                             .withColumn(salesCity)
                                             .withUniqueMembers(false)
                                             .build(),
                                         LevelMappingImpl.builder()
                                             .withName("Store Id")
-                                            .withTable(FoodmartMappingSupplier.STORE_TABLE)
                                             .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                                             .withUniqueMembers(true)
                                             .build()
