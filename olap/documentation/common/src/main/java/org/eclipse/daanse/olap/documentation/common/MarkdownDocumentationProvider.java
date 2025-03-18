@@ -92,6 +92,7 @@ import org.osgi.util.converter.Converters;
 @Component(service = ConntextDocumentationProvider.class, configurationPolicy = ConfigurationPolicy.REQUIRE)
 public class MarkdownDocumentationProvider extends AbstractContextDocumentationProvider {
 
+    private static final String underline = "_";
     public static final String REF_NAME_VERIFIERS = "verifyer";
     public static final String REF_NAME_CHECK_SERVICE = "checkService";
     public static final String EMPTY_STRING = "";
@@ -110,7 +111,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     @Reference
     DatabaseService databaseService;
     private MetaInfo metaInfo;
-    
+
     //@Reference
     //StatisticsProvider statisticsProvider;
 
@@ -765,7 +766,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 							String description = mm.getDescription() == null ? EMPTY_STRING : mm.getDescription();
 							String measureName = prepare(mm.getName());
 							writer.write("M ");
-							writer.write(measureName);
+							writer.write(prepare(measureName));
 							writer.write(" \"");
 							writer.write(description);
 							writer.write("\"");
@@ -824,7 +825,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                    writer.write(ENTER);
                    writer.write("---");
                    writer.write(ENTER);
-                   
+
                    writeAggregationSection(writer, catalog, cube, context);
             }
         } catch (IOException e) {
@@ -842,9 +843,9 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                 List<? extends DatabaseSchemaMapping> dbschemas = context.getCatalogMapping().getDbschemas();
                 SchemaReference schemaReference = new SchemaReferenceR(connection.getSchema());
                 List<TableDefinition> tables = databaseService.getTableDefinitions(databaseMetaData, schemaReference);
-                
+
                 writeTables(writer, context, tables, databaseMetaData, dbschemas);
-                
+
                 writer.write("\" Aggregation section:");
                 writer.write(ENTER);
                 writer.write(ENTER);
@@ -897,7 +898,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                     ```
                     ---
                     """);
-                
+
             } catch (IOException | SQLException e) {
                 e.printStackTrace();
             }
@@ -908,20 +909,20 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     	List<String> tablesConnections = new ArrayList<>();
         if (aggregationName.getAggregationForeignKeys() != null) {
             for (AggregationForeignKeyMapping aggregationForeignKey : aggregationName.getAggregationForeignKeys()) {
-                if(aggregationForeignKey.getFactColumn() != null && aggregationForeignKey.getFactColumn().getTable() != null 
+                if(aggregationForeignKey.getFactColumn() != null && aggregationForeignKey.getFactColumn().getTable() != null
                         && aggregationForeignKey.getAggregationColumn() != null && aggregationForeignKey.getAggregationColumn().getTable() != null) {
                     tablesConnections.add(
-                        connection1(aggregationForeignKey.getFactColumn().getTable().getName(), aggregationForeignKey.getAggregationColumn().getTable().getName(), 
+                        connection1(aggregationForeignKey.getFactColumn().getTable().getName(), aggregationForeignKey.getAggregationColumn().getTable().getName(),
                                 aggregationForeignKey.getFactColumn().getName(), aggregationForeignKey.getAggregationColumn().getName()));
                 }
             }
         }
         if (aggregationName.getAggregationMeasureFactCounts() != null) {
             for (AggregationMeasureFactCountMapping aggregationMeasureFactCount : aggregationName.getAggregationMeasureFactCounts()) {
-                if(aggregationMeasureFactCount.getFactColumn() != null && aggregationMeasureFactCount.getFactColumn().getTable() != null 
+                if(aggregationMeasureFactCount.getFactColumn() != null && aggregationMeasureFactCount.getFactColumn().getTable() != null
                         && aggregationMeasureFactCount.getColumn() != null && aggregationMeasureFactCount.getColumn().getTable() != null) {
                     tablesConnections.add(
-                        connection1(aggregationMeasureFactCount.getFactColumn().getTable().getName(), aggregationMeasureFactCount.getColumn().getTable().getName(), 
+                        connection1(aggregationMeasureFactCount.getFactColumn().getTable().getName(), aggregationMeasureFactCount.getColumn().getTable().getName(),
                                 aggregationMeasureFactCount.getFactColumn().getName(), aggregationMeasureFactCount.getColumn().getName()));
                 }
             }
@@ -980,7 +981,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 					String measureName = prepare(mm.getName());
 					writer.write("M ");
 					writer.write(cube);
-					writer.write("_");
+					writer.write(underline);
 					writer.write(measureName);
 					writer.write(" \"");
 					writer.write(description);
@@ -1064,15 +1065,18 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
                 .replace("ü", "ue")
                 .replace("ö", "oe")
                 .replace("ä", "ae")
-                .replace(" ", "_")
-                .replace(":", "_")
-                .replace("(", "_")
-                .replace(")", "_")
-                .replace(".", "_")
+                .replace(" ", underline)
+                .replace(":", underline)
+                .replace("(", underline)
+                .replace(")", underline)
+                .replace(".", underline)
                 .replace("[", "")
-                .replace("]", "");
+                .replace("]", "")
+                .replace("#", "x")
+                .replace(",", "_");
+
         }
-        return "_";
+        return underline;
     }
 
     private void writeDimensionPartDiagram(FileWriter writer, CatalogMapping catalog, CubeMapping cube, int cubeIndex) {
@@ -1102,7 +1106,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         int dimensionIndex
     ) {
         try {
-        	String name = pd.getOverrideDimensionName() != null ? pd.getOverrideDimensionName() : "";
+        	String name = prepare(getDimensionName(pd));
             writer.write("d");
             writer.write("" + cubeIndex);
             writer.write("" + dimensionIndex);
@@ -1150,6 +1154,12 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String getDimensionName(DimensionConnectorMapping pd) {
+        return pd.getOverrideDimensionName() != null ?
+                pd.getOverrideDimensionName() :
+                    (pd.getDimension() != null && pd.getDimension().getName() != null ? pd.getDimension().getName() : underline );
     }
 
     private void writeCubeDimensions(FileWriter writer, List<? extends DimensionConnectorMapping> dimensionUsageOrDimensions) {
@@ -1499,7 +1509,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         }
     }
 
-    private String getSize(ColumnMapping column) {    	
+    private String getSize(ColumnMapping column) {
     	if (column.getColumnSize() != null && column.getColumnSize() > 0) {
     		StringBuilder r = new StringBuilder();
     		r.append("(");
@@ -1513,13 +1523,13 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     	return "";
 	}
 
-    private String getSize(ColumnMetaData columnMetaData) {    	
-    	if (columnMetaData.columnSize().isPresent()) {    		
+    private String getSize(ColumnMetaData columnMetaData) {
+    	if (columnMetaData.columnSize().isPresent()) {
     		StringBuilder r = new StringBuilder();
     		r.append("(");
     		r.append(columnMetaData.columnSize().getAsInt());
     		if (columnMetaData.decimalDigits().isPresent()) {
-    			r.append(".").append(columnMetaData.decimalDigits().getAsInt());    			
+    			r.append(".").append(columnMetaData.decimalDigits().getAsInt());
     		}
     		r.append(") ");
     		return r.toString();
@@ -1533,7 +1543,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
 	}
 
 	private String getNullable(ColumnMapping column) {
-		
+
 		if (column.getNullable() != null) {
 			return column.getNullable() ? "is null " : "not null ";
 		} else {
