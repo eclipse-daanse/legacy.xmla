@@ -66,7 +66,7 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
     PhysicalColumnMappingImpl name1ProductCsv = PhysicalColumnMappingImpl.builder().withName("name1").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalColumnMappingImpl colorProductCsv = PhysicalColumnMappingImpl.builder().withName("color").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalTableMappingImpl productCsv = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("product_csv")
-            .withColumns(List.of(prodIdProductCsv, prodCatProductCsv))).build();
+            .withColumns(List.of(prodIdProductCsv, prodCatProductCsv, name1ProductCsv, colorProductCsv))).build();
     //## TableName: cat
     //## ColumnNames: cat,name3,ord,cap
     //## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,VARCHAR(30)
@@ -85,7 +85,7 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
     PhysicalColumnMappingImpl ordProductCat = PhysicalColumnMappingImpl.builder().withName("ord").withDataType(ColumnDataType.INTEGER).build();
     PhysicalColumnMappingImpl capProductCat = PhysicalColumnMappingImpl.builder().withName("cap").withDataType(ColumnDataType.INTEGER).build();
     PhysicalTableMappingImpl productCat = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("product_cat")
-            .withColumns(List.of(catCat, name3Cat, ordCat, capCat))).build();
+            .withColumns(List.of(prodCatProductCat, catProductCat, name2ProductCat, ordProductCat, capProductCat))).build();
 
     //## ColumnNames: category,product_category,amount,fact_count
     //## ColumnTypes: INTEGER,VARCHAR(30),INTEGER,INTEGER

@@ -54,7 +54,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
     PhysicalColumnMappingImpl lineIdLine = PhysicalColumnMappingImpl.builder().withName("line_id").withDataType(ColumnDataType.INTEGER).build();
     PhysicalColumnMappingImpl lineNameLine = PhysicalColumnMappingImpl.builder().withName("line_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalTableMappingImpl line = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("line")
-            .withColumns(List.of(lineIdLine))).build();
+            .withColumns(List.of(lineIdLine, lineNameLine))).build();
     //## TableName: line_tenant
     //## ColumnNames: line_id,tenant_id
     //## ColumnTypes: INTEGER,INTEGER
@@ -68,7 +68,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
     PhysicalColumnMappingImpl tenantIdTenant = PhysicalColumnMappingImpl.builder().withName("tenant_id").withDataType(ColumnDataType.INTEGER).build();
     PhysicalColumnMappingImpl tenantNameTenant = PhysicalColumnMappingImpl.builder().withName("tenant_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
     PhysicalTableMappingImpl tenant = ((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("tenant")
-            .withColumns(List.of(lineIdLineTenant, tenantIdLineTenant))).build();
+            .withColumns(List.of(tenantIdTenant, tenantNameTenant))).build();
     //## TableName: line_line_class
     //## ColumnNames: line_id,line_class_id
     //## ColumnTypes: INTEGER,INTEGER
