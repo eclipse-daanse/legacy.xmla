@@ -576,7 +576,7 @@ public class RolapHierarchy extends HierarchyBase {
         QueryMapping relationOrJoin)
     {
         if (relationOrJoin instanceof RelationalQueryMapping relation) {
-            if (RelationUtil.getAlias(relation).equals(tableName)) {
+            if (tableName.equals(RelationUtil.getAlias(relation)) || tableName.equals(RelationUtil.getTableName(relation))) {
                 return relation;
             } else {
                 return null;

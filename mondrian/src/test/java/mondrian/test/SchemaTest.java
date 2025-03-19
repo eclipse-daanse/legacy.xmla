@@ -3594,16 +3594,12 @@ class SchemaTest {
                         .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_INVENTORY_FACKT_1997)
                         .build();
 
+                PhysicalColumnMappingImpl WAREHOUSE_ID_COLUMN_IN_INVENTORY_FACKT_1997 = PhysicalColumnMappingImpl.builder().withName("warehouse_id").withDataType(ColumnDataType.INTEGER).build();
                 SqlSelectQueryMappingImpl v1 = SqlSelectQueryMappingImpl.builder()
                         .withAlias("FACT").withSql(
                                 ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
                                 .withColumns(List.of(
-                                        FoodmartMappingSupplier.TIME_ID_COLUMN_IN_INVENTORY_FACKT_1997,
-                                        FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_INVENTORY_FACKT_1997,
-                                        FoodmartMappingSupplier.STORE_ID_COLUMN_IN_INVENTORY_FACKT_1997,
-                                        FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997,
-                                        FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997,
-                                        FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_INVENTORY_FACKT_1997
+                                        WAREHOUSE_ID_COLUMN_IN_INVENTORY_FACKT_1997
                                  )))
                                 .withSqlStatements(
                                     List.of(
@@ -3617,7 +3613,7 @@ class SchemaTest {
                         .build();
                     LevelMappingImpl l1 = LevelMappingImpl.builder()
                         .withName("Warehouse ID")
-                        .withColumn(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_INVENTORY_FACKT_1997)
+                        .withColumn(WAREHOUSE_ID_COLUMN_IN_INVENTORY_FACKT_1997)
                         .withUniqueMembers(true)
                         .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .build();
@@ -3631,16 +3627,14 @@ class SchemaTest {
                     		.withName("Warehouse")
                     		.withHierarchies(List.of(h1)).build())
                         .build();
+                    PhysicalColumnMappingImpl WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997 = PhysicalColumnMappingImpl.builder().withName("warehouse_cost").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).build();
+                    PhysicalColumnMappingImpl WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997 = PhysicalColumnMappingImpl.builder().withName("warehouse_sales").withDataType(ColumnDataType.DECIMAL).withColumnSize(10).withDecimalDigits(4).build();
                     SqlSelectQueryMappingImpl view = SqlSelectQueryMappingImpl.builder()
                                 .withAlias("FACT").withSql(
                                         ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
                                         .withColumns(List.of(
-                                                FoodmartMappingSupplier.TIME_ID_COLUMN_IN_INVENTORY_FACKT_1997,
-                                                FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_INVENTORY_FACKT_1997,
-                                                FoodmartMappingSupplier.STORE_ID_COLUMN_IN_INVENTORY_FACKT_1997,
-                                                FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997,
-                                                FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997,
-                                                FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_INVENTORY_FACKT_1997
+                                                WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997,
+                                                WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997
                                          )))
                                         .withSqlStatements(
                                             List.of(
@@ -3663,13 +3657,13 @@ class SchemaTest {
                         MeasureMappingImpl
                             .builder()
                             .withName("Warehouse Cost")
-                            .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
+                            .withColumn(WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
                             .withAggregatorType(MeasureAggregatorType.SUM)
                             .build(),
                         MeasureMappingImpl
                             .builder()
                             .withName("Warehouse Sales")
-                            .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
+                            .withColumn(WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
                             .withAggregatorType(MeasureAggregatorType.SUM)
                             .build()
                     ))
@@ -3943,10 +3937,13 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
+                PhysicalColumnMappingImpl STORE_TYPE_COLUMN_IN_STORE = PhysicalColumnMappingImpl.builder().withName("store_type").withDataType(ColumnDataType.VARCHAR).withColumnSize(30).build();
+                PhysicalColumnMappingImpl STORE_SQFT_COLUMN_IN_STORE = PhysicalColumnMappingImpl.builder().withName("store_sqft").withDataType(ColumnDataType.INTEGER).build();
+                PhysicalColumnMappingImpl GROCERY_SQFT_COLUMN_IN_STORE = PhysicalColumnMappingImpl.builder().withName("grocery_sqft").withDataType(ColumnDataType.INTEGER).build();
 
                     LevelMappingImpl l1 = LevelMappingImpl.builder()
                         .withName("Store Type")
-                        .withColumn(FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE)
+                        .withColumn(STORE_TYPE_COLUMN_IN_STORE)
                         .withUniqueMembers(true)
                         .build();
 
@@ -3961,13 +3958,13 @@ class SchemaTest {
                     		.withName("Store Type")
                     		.withHierarchies(List.of(h1)).build())
                         .build();
-
                     SqlSelectQueryMappingImpl view = SqlSelectQueryMappingImpl.builder()
                             .withAlias("FACT").withSql(
                                     ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
                                     .withColumns(List.of(
-                                            FoodmartMappingSupplier.STORE_TYPE_COLUMN_IN_STORE,
-                                            FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE
+                                            STORE_TYPE_COLUMN_IN_STORE,
+                                            STORE_SQFT_COLUMN_IN_STORE,
+                                            GROCERY_SQFT_COLUMN_IN_STORE
                                      )))
                                     .withSqlStatements(
                                         List.of(
@@ -3989,14 +3986,14 @@ class SchemaTest {
                         MeasureMappingImpl
                             .builder()
                             .withName("Store Sqft")
-                            .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
+                            .withColumn(STORE_SQFT_COLUMN_IN_STORE)
                             .withAggregatorType(MeasureAggregatorType.SUM)
                             .withFormatString("#,###")
                             .build(),
                         MeasureMappingImpl
                             .builder()
                             .withName("Grocery Sqft")
-                            .withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE)
+                            .withColumn(GROCERY_SQFT_COLUMN_IN_STORE)
                             .withAggregatorType(MeasureAggregatorType.SUM)
                             .withFormatString("#,###")
                             .build()
@@ -5999,11 +5996,13 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
+                PhysicalColumnMappingImpl GENDER_COLUMN_IN_CUSTOMER = PhysicalColumnMappingImpl.builder().withName("gender").withDataType(ColumnDataType.VARCHAR).withColumnSize(30).build();
+                PhysicalColumnMappingImpl CUSTOMER_ID_COLUMN_IN_CUSTOMER = PhysicalColumnMappingImpl.builder().withName("customer_id").withDataType(ColumnDataType.INTEGER).build();
                 SqlSelectQueryMappingImpl v1 = SqlSelectQueryMappingImpl.builder()
                     .withAlias("customer")
                     .withSql(
                             ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
-                            .withColumns(List.of(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)))
+                            .withColumns(List.of(GENDER_COLUMN_IN_CUSTOMER, CUSTOMER_ID_COLUMN_IN_CUSTOMER)))
                             .withSqlStatements(List.of(
                                 SqlStatementMappingImpl.builder().withSql("SELECT * FROM customer").withDialects(List.of("generic")).build(),
                                 SqlStatementMappingImpl.builder().withSql("SELECT * FROM \"customer\"").withDialects(
@@ -6014,13 +6013,13 @@ class SchemaTest {
                 HierarchyMappingImpl h1 = HierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withAllMemberName("All Gender")
-                    .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
+                    .withPrimaryKey(CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                     .withQuery(v1)
                     .withLevels(List.of(
                         LevelMappingImpl.builder()
                             .withName("Gender")
                             //.withTable("gender2") //TODO use alias
-                            .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
+                            .withColumn(GENDER_COLUMN_IN_CUSTOMER)
                             .withUniqueMembers(true)
                             .build()
                     ))

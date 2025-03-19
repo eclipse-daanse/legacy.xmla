@@ -69,6 +69,7 @@ class InlineTableTest {
                 PhysicalColumnMappingImpl promoId = PhysicalColumnMappingImpl.builder().withName("promo_id").withDataType(ColumnDataType.NUMERIC).build();
                 PhysicalColumnMappingImpl promoName = PhysicalColumnMappingImpl.builder().withName("promo_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
                 InlineTableMappingImpl t = InlineTableMappingImpl.builder()
+                .withName("alt_promotion")
                 .withColumns(List.of(promoId, promoName))
                 .withRows(List.of(
                        RowMappingImpl.builder().withRowValues(List.of(
@@ -208,6 +209,7 @@ class InlineTableTest {
             private static final PhysicalColumnMappingImpl promoId = PhysicalColumnMappingImpl.builder().withName("promo_id").withDataType(ColumnDataType.INTEGER).build();
             private static final PhysicalColumnMappingImpl promoName = PhysicalColumnMappingImpl.builder().withName("promo_name").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(20).build();
             private static final InlineTableMappingImpl t = InlineTableMappingImpl.builder()
+            .withName("alt_promotion")
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
                    RowMappingImpl.builder().withRowValues(List.of(
@@ -407,7 +409,7 @@ class InlineTableTest {
                             		.withHierarchies(List.of(
                             			HierarchyMappingImpl.builder()
                             				.withHasAll(true)
-                            				.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
+                            				.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                             				.withQuery(j)
                                     .withLevels(List.of(
                                         LevelMappingImpl.builder()
@@ -557,6 +559,7 @@ class InlineTableTest {
                 PhysicalColumnMappingImpl id = PhysicalColumnMappingImpl.builder().withName("id").withDataType(ColumnDataType.NUMERIC).build();
                 PhysicalColumnMappingImpl date = PhysicalColumnMappingImpl.builder().withName("date").withDataType(ColumnDataType.DATE).build();
                 InlineTableMappingImpl tt = InlineTableMappingImpl.builder()
+                .withName("inline_promo")
                 .withColumns(List.of(id, date))
                 .withRows(List.of(
                        RowMappingImpl.builder().withRowValues(List.of(

@@ -470,7 +470,7 @@ public class HierarchyUsage {
         TableMapping tab)
     {
         final RelationalQueryMapping table;
-        if (tab == null) {
+        if (tab == null || tab.getName() == null) {
             table = hierarchy.getUniqueTable();
             if (table == null) {
                 throw new OlapRuntimeException(MessageFormat.format(

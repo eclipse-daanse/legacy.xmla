@@ -72,6 +72,15 @@ public class RelationUtil {
         }
     }
 
+    public static String getTableName(RelationalQueryMapping relation) {
+        if (relation instanceof TableQueryMapping table) {
+            return table.getTable() != null ? table.getTable().getName() : null;
+        }
+        else {
+            return relation.getAlias();
+        }
+    }
+
     public static boolean equals(RelationalQueryMapping relation, Object o) {
         if (relation instanceof SqlSelectQueryMapping view) {
             if (o instanceof SqlSelectQueryMapping that) {

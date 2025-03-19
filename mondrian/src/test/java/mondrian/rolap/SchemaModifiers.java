@@ -3857,13 +3857,15 @@ public class SchemaModifiers {
                 + "    <Level name=\"Gender\" column=\"gender\" uniqueMembers=\"true\"/>\n" + "  </Hierarchy>\n"
                 + "</Dimension>", null ));
          */
-
+        private static final PhysicalColumnMappingImpl CUSTOMER_ID_COLUMN_IN_CUSTOMER = PhysicalColumnMappingImpl.builder().withName("customer_id").withDataType(ColumnDataType.INTEGER).build();
+        public static final PhysicalColumnMappingImpl GENDER_COLUMN_IN_CUSTOMER = PhysicalColumnMappingImpl.builder().withName("gender").withDataType(ColumnDataType.VARCHAR).withColumnSize(30).build();
     	private static final  SqlSelectQueryMappingImpl v = SqlSelectQueryMappingImpl.builder()
                 .withAlias("gender2")
                 .withSql(
                         ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder()
-                            .withColumns(List.of(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER,
-                                         FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)))
+                            .withName("gender2")
+                            .withColumns(List.of(CUSTOMER_ID_COLUMN_IN_CUSTOMER,
+                                         GENDER_COLUMN_IN_CUSTOMER)))
                             .withSqlStatements(List.of(
                                 SqlStatementMappingImpl.builder().withDialects(List.of("generic")).withSql("SELECT * FROM customer").build(),
                                 SqlStatementMappingImpl.builder().withDialects(
@@ -3889,12 +3891,12 @@ public class SchemaModifiers {
                 			   HierarchyMappingImpl.builder()
                             	.withHasAll(true)
                             	.withAllMemberName("All Gender")
-                            	.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
+                            	.withPrimaryKey(CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                             	.withQuery(v)
                             	.withLevels(List.of(
                                         LevelMappingImpl.builder()
                                             .withName("Gender")
-                                            .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
+                                            .withColumn(GENDER_COLUMN_IN_CUSTOMER)
                                             .withUniqueMembers(true)
                                             .build()
                             	))
@@ -8931,6 +8933,7 @@ public class SchemaModifiers {
             PhysicalColumnMappingImpl promoId = PhysicalColumnMappingImpl.builder().withName("promo_id").withDataType(ColumnDataType.NUMERIC).build();
             PhysicalColumnMappingImpl promoName = PhysicalColumnMappingImpl.builder().withName("promo_name").withDataType(ColumnDataType.VARCHAR).build();
             InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
+            .withName("alt_promotion")
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
                    RowMappingImpl.builder().withRowValues(List.of(
@@ -9286,6 +9289,7 @@ public class SchemaModifiers {
             result.addAll(super.cubeDimensionConnectors(cube));
             PhysicalColumnMappingImpl foo = PhysicalColumnMappingImpl.builder().withName("foo").withDataType(ColumnDataType.NUMERIC).build();
             InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
+            .withName("foo")
             .withColumns(List.of(foo))
             .withRows(List.of()).build();
 
@@ -13124,6 +13128,7 @@ public class SchemaModifiers {
             PhysicalColumnMappingImpl promoId = PhysicalColumnMappingImpl.builder().withName("promo_id").withDataType(ColumnDataType.NUMERIC).build();
             PhysicalColumnMappingImpl promoName = PhysicalColumnMappingImpl.builder().withName("promo_name").withDataType(ColumnDataType.VARCHAR).build();
             InlineTableMappingImpl itt = InlineTableMappingImpl.builder()
+            .withName("alt_promotion")
             .withColumns(List.of(promoId, promoName))
             .withRows(List.of(
                     RowMappingImpl.builder().withRowValues(List.of(
