@@ -1431,7 +1431,7 @@ public TupleList readTuples(
         }
         final String propAlias = sqlQuery.addSelect(
           propSql,
-          property.getType().getInternalType() );
+          EnumConvertor.toBestFitColumnType(property.getType().getInternalType()) );
         if ( needsGroupBy && ( !sqlQuery.getDialect().allowsSelectNotInGroupBy()
             || !property.dependsOnLevelValue() )) {
             // Certain dialects allow us to eliminate properties

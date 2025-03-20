@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.DataTypeJdbc;
 
@@ -41,4 +42,7 @@ public class EnumConvertor {
         return Map.entry(Datatype.fromValue(e.getKey().name()), e.getValue());
     }
 
+    public static BestFitColumnType toBestFitColumnType(String type) {
+        return type != null ? BestFitColumnType.valueOf(type) : null;
+    }
 }

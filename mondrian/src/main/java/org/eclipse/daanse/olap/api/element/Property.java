@@ -27,7 +27,6 @@
  */
 package org.eclipse.daanse.olap.api.element;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 
 public interface Property {
@@ -64,16 +63,16 @@ public interface Property {
     String getDescription();
 
     public enum Datatype {
-        TYPE_STRING(null), TYPE_NUMERIC(null), TYPE_INTEGER(BestFitColumnType.INT), TYPE_LONG(BestFitColumnType.LONG),
+        TYPE_STRING(null), TYPE_NUMERIC(null), TYPE_INTEGER("INT"), TYPE_LONG("LONG"),
         TYPE_BOOLEAN(null), TYPE_DATE(null), TYPE_TIME(null), TYPE_TIMESTAMP(null), TYPE_OTHER(null);
 
-        private BestFitColumnType type;
+        private String type;
 
-        Datatype(BestFitColumnType type) {
+        Datatype(String type) {
             this.type = type;
         }
 
-        public BestFitColumnType getInternalType() {
+        public String getInternalType() {
             return type;
         }
 
