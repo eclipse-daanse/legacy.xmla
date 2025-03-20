@@ -47,6 +47,7 @@ import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
+import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.DrillThroughAction;
 import org.eclipse.daanse.olap.api.DrillThroughColumn;
 import org.eclipse.daanse.olap.api.Evaluator;
@@ -3679,7 +3680,8 @@ public class RolapCube extends CubeBase {
 		return kpis;
 	}
 
-    public void modifyFact(List<Map<String, Entry<Datatype, Object>>> sessionValues) {
+	@Override
+    public void modifyFact(List<Map<String, Entry<DataTypeJdbc, Object>>> sessionValues) {
             RelationalQueryMapping fact = getFact();
             restoreFact = fact;
             Optional<RolapWritebackTable> oWritebackTable = getWritebackTable();
@@ -3687,11 +3689,12 @@ public class RolapCube extends CubeBase {
             if (oWritebackTable.isPresent()) {
                 RolapWritebackTable writebackTable = oWritebackTable.get();
                 if (getWritebackTable() != null && getWritebackTable().isPresent()) {
+                    List<Map<String, Entry<Datatype, Object>>> rolapSessionValues = EnumConvertor.convertSessionValues(sessionValues);
                     if (fact instanceof TableQueryMapping mappingTable) {
                         String alias = mappingTable.getAlias() != null ? mappingTable.getAlias() : mappingTable.getTable().getName();
                         StringBuilder sql = new StringBuilder("select ").append(writebackTable.getColumns().stream().map( c -> c.getColumn().getName() )
                         .collect(Collectors.joining(", "))).append(" from ").append(mappingTable.getTable().getName());
-                        sql.append(getWriteBackSql(dialect, writebackTable, sessionValues));
+                        sql.append(getWriteBackSql(dialect, writebackTable, rolapSessionValues));
                         SqlStatementMappingImpl sqlStatement = SqlStatementMappingImpl.builder().withSql(sql.toString()).withDialects(List.of("generic", dialect.getDialectName())).build();
                         DatabaseSchemaMappingImpl schema = DatabaseSchemaMappingImpl.builder().withName(mappingTable.getTable().getSchema().getName()).build();
                         SqlViewMappingImpl sqlView = ((SqlViewMappingImpl.Builder) SqlViewMappingImpl.builder().withSqlStatements(List.of(sqlStatement)).withsSchema(schema)).build();
@@ -3700,11 +3703,11 @@ public class RolapCube extends CubeBase {
                     if (fact instanceof InlineTableQueryMapping mappingInlineTable) {
                         RelationalQueryMapping mappingRelation = RolapUtil.convertInlineTableToRelation(mappingInlineTable, getContext().getDialect());
                         if (mappingRelation instanceof SqlSelectQueryMapping mappingView) {
-                            changeFact(mappingView, dialect, writebackTable, sessionValues);
+                            changeFact(mappingView, dialect, writebackTable, rolapSessionValues);
                         }
                     }
                     if (fact instanceof SqlSelectQueryMapping mappingView) {
-                        changeFact(mappingView, dialect, writebackTable, sessionValues);
+                        changeFact(mappingView, dialect, writebackTable, rolapSessionValues);
                     }
                 }
             }
@@ -3749,11 +3752,13 @@ public class RolapCube extends CubeBase {
 
     }
 
-    public void commit(List<Map<String, Map.Entry<Datatype, Object>>> sessionValues, String userId) {
-        WritebackUtil.commit(this, schema.getInternalConnection(), sessionValues, userId);
+    @Override
+    public void commit(List<Map<String, Map.Entry<DataTypeJdbc, Object>>> sessionValues, String userId) {
+        WritebackUtil.commit(this, schema.getInternalConnection(), EnumConvertor.convertSessionValues(sessionValues), userId);
     }
 
-    public List<Map<String, Entry<Datatype, Object>>> getAllocationValues(String tupleString, Object value, AllocationPolicy allocationPolicy) {
+    @Override
+    public List<Map<String, Entry<DataTypeJdbc, Object>>> getAllocationValues(String tupleString, Object value, AllocationPolicy allocationPolicy) {
         return WritebackUtil.getAllocationValues(this,
                 tupleString,
                 value,

@@ -30,13 +30,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.mdx.model.api.select.Allocation;
 import org.eclipse.daanse.olap.action.api.ActionService;
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.Command;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -264,7 +264,7 @@ public class OlapExecuteService implements ExecuteService {
 					} else if (queryComponent instanceof SqlQuery sqlQuery){
 					    return executeSqlQuery(sqlQuery);
 					}
-					
+
 				}
 
 			}
@@ -407,7 +407,7 @@ public class OlapExecuteService implements ExecuteService {
                     String cubeName = update.getCubeName();
                     Cube cube = connection.getCatalog().lookupCube(cubeName).orElseThrow(
                             () -> createCubeNotFoundException(cubeName));
-                    List<Map<String, Map.Entry<Datatype, Object>>> values = cube.getAllocationValues(tupleString, cell.getValue(), allocationPolicy);
+                    List<Map<String, Map.Entry<DataTypeJdbc, Object>>> values = cube.getAllocationValues(tupleString, cell.getValue(), allocationPolicy);
                     scenario.getSessionValues().addAll(values);
                     connection.getCacheControl(null).flushSchemaCache();
                 }

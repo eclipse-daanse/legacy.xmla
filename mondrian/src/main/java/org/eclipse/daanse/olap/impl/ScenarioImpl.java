@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -38,14 +38,14 @@ public class ScenarioImpl implements Scenario {
 
     private final List<ScenarioImpl.WritebackCell> writebackCells =
         new ArrayList<>();
-    
+
     private String cubeName;
 
     private RolapMember member;
 
     private static int nextId;
 
-    private List<Map<String, Map.Entry<Datatype, Object>>> sessionValues = new ArrayList<>();
+    private List<Map<String, Map.Entry<DataTypeJdbc, Object>>> sessionValues = new ArrayList<>();
 
     /**
      * Creates a ScenarioImpl.
@@ -191,7 +191,7 @@ public class ScenarioImpl implements Scenario {
     }
 
     @Override
-    public List<Map<String, Map.Entry<Datatype, Object>>> getSessionValues() {
+    public List<Map<String, Map.Entry<DataTypeJdbc, Object>>> getSessionValues() {
         return sessionValues;
     }
 

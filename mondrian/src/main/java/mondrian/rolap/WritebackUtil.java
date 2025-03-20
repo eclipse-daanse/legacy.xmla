@@ -31,6 +31,7 @@ import javax.sql.DataSource;
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -82,12 +83,12 @@ public class WritebackUtil {
 
     }
 
-    public static List<Map<String, Map.Entry<Datatype, Object>>> getAllocationValues(RolapCube rolapCube,
+    public static List<Map<String, Map.Entry<DataTypeJdbc, Object>>> getAllocationValues(RolapCube rolapCube,
             String tupleString,
             Object value,
             AllocationPolicy allocationPolicy
         ) {
-            List<Map<String, Map.Entry<Datatype, Object>>> res = new ArrayList<>();
+            List<Map<String, Map.Entry<DataTypeJdbc, Object>>> res = new ArrayList<>();
             //[D1.HierarchyWithHasAll].[Level11], [Measures].[Measure1]
                 Optional<RolapWritebackTable> oWritebackTable = rolapCube.getWritebackTable();
                 if (oWritebackTable.isPresent()) {
@@ -305,7 +306,7 @@ public class WritebackUtil {
         return res;
     }
 
-    private static List<Map<String, Map.Entry<Datatype, Object>>> allocateData(
+    private static List<Map<String, Map.Entry<DataTypeJdbc, Object>>> allocateData(
             Map<Member, Object> data,
             String measureName,
             Double value,
@@ -360,48 +361,48 @@ public class WritebackUtil {
             return allocateData(res, measureName, writebackTable);
         }
 
-    private static List<Map<String, Map.Entry<Datatype, Object>>> allocateData(
+    private static List<Map<String, Map.Entry<DataTypeJdbc, Object>>> allocateData(
             List<Map<Member, Double>> l,
             String measureName,
             RolapWritebackTable writebackTable
         ) {
-            List<Map<String, Map.Entry<Datatype, Object>>> res = new ArrayList<>();
+            List<Map<String, Map.Entry<DataTypeJdbc, Object>>> res = new ArrayList<>();
             for (Map<Member, Double> d : l) {
                 for (Map.Entry<Member, Double> entry : d.entrySet()) {
                     Member m = entry.getKey();
                     Double value = entry.getValue();
                     if (m instanceof RolapCubeMember rolapCubeMember) {
-                        Map<String, Map.Entry<Datatype, Object>> mRes = new LinkedHashMap<>();
+                        Map<String, Map.Entry<DataTypeJdbc, Object>> mRes = new LinkedHashMap<>();
                         Object key = rolapCubeMember.getKey();
                         List<RolapWritebackColumn> columns = writebackTable.getColumns();
                         for (RolapWritebackColumn column : columns) {
                             if (column instanceof RolapWritebackMeasure rolapWritebackMeasure) {
                                 if (rolapWritebackMeasure.getMeasure().getUniqueName().equals(measureName)) {
-                                    mRes.put(rolapWritebackMeasure.getColumn().getName(), Map.entry(Datatype.NUMERIC, value));
+                                    mRes.put(rolapWritebackMeasure.getColumn().getName(), Map.entry(DataTypeJdbc.NUMERIC, value));
                                 } else {
-                                    mRes.put(rolapWritebackMeasure.getColumn().getName(), Map.entry(Datatype.NUMERIC,0));
+                                    mRes.put(rolapWritebackMeasure.getColumn().getName(), Map.entry(DataTypeJdbc.NUMERIC,0));
                                 }
                             }
                             if (column instanceof RolapWritebackAttribute rolapWritebackAttribute) {
-                                mRes.put(rolapWritebackAttribute.getColumn().getName(), Map.entry(Datatype.VARCHAR, key));
+                                mRes.put(rolapWritebackAttribute.getColumn().getName(), Map.entry(DataTypeJdbc.VARCHAR, key));
                             }
                         }
                         res.add(mRes);
                     }
                     if (m instanceof RolapBaseCubeMeasure rolapBaseCubeMeasure) {
-                        Map<String, Map.Entry<Datatype, Object>> mRes = new LinkedHashMap<>();
+                        Map<String, Map.Entry<DataTypeJdbc, Object>> mRes = new LinkedHashMap<>();
                         Object key = rolapBaseCubeMeasure.getKey();
                         List<? extends RolapWritebackColumn> columns = writebackTable.getColumns();
                         for (RolapWritebackColumn column : columns) {
                             if (column instanceof RolapWritebackMeasure rolapWritebackMeasure) {
                                 if (rolapWritebackMeasure.getMeasure().getUniqueName().equals(measureName)) {
-                                    mRes.put(rolapWritebackMeasure.getColumn().getName(), Map.entry(Datatype.NUMERIC, value));
+                                    mRes.put(rolapWritebackMeasure.getColumn().getName(), Map.entry(DataTypeJdbc.NUMERIC, value));
                                 } else {
-                                    mRes.put(rolapWritebackMeasure.getColumn().getName(), Map.entry(Datatype.NUMERIC,0));
+                                    mRes.put(rolapWritebackMeasure.getColumn().getName(), Map.entry(DataTypeJdbc.NUMERIC,0));
                                 }
                             }
                             if (column instanceof RolapWritebackAttribute rolapWritebackAttribute) {
-                                mRes.put(rolapWritebackAttribute.getColumn().getName(), Map.entry(Datatype.VARCHAR, key));
+                                mRes.put(rolapWritebackAttribute.getColumn().getName(), Map.entry(DataTypeJdbc.VARCHAR, key));
                             }
                         }
                         res.add(mRes);

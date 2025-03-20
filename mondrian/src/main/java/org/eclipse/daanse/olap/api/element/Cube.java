@@ -19,8 +19,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.DrillThroughAction;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.access.Role;
@@ -124,12 +124,12 @@ public interface Cube extends OlapElement, MetaElement {
      */
     List<Hierarchy> getHierarchies();
 
-    void modifyFact(List<Map<String, Entry<Datatype, Object>>> sessionValues);
+    void modifyFact(List<Map<String, Entry<DataTypeJdbc, Object>>> sessionValues);
 
     void restoreFact();
 
-    void commit(List<Map<String, Map.Entry<Datatype, Object>>> sessionValues, String userId);
+    void commit(List<Map<String, Map.Entry<DataTypeJdbc, Object>>> sessionValues, String userId);
 
-    List<Map<String, Entry<Datatype, Object>>> getAllocationValues(String tupleString, Object value,
+    List<Map<String, Entry<DataTypeJdbc, Object>>> getAllocationValues(String tupleString, Object value,
             AllocationPolicy allocationPolicy);
 }

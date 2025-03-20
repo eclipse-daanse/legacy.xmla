@@ -3,8 +3,8 @@ package org.eclipse.daanse.olap.api.result;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
 
@@ -47,7 +47,7 @@ public interface Scenario {
         AllocationPolicy allocationPolicy,
         Object[] allocationArgs);
 
-    List<Map<String, Map.Entry<Datatype, Object>>> getSessionValues();
+    List<Map<String, Map.Entry<DataTypeJdbc, Object>>> getSessionValues();
 
     void clear();
 }
