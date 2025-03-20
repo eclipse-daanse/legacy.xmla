@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.rolap.agg.Aggregator;
@@ -62,7 +62,7 @@ public abstract class RolapAggregator implements Aggregator {
     }
 
     @Override
-	public boolean supportsFastAggregates( Datatype dataType ) {
+	public boolean supportsFastAggregates( DataTypeJdbc dataType ) {
       switch ( dataType ) {
         case INTEGER:
         case NUMERIC:
@@ -73,7 +73,7 @@ public abstract class RolapAggregator implements Aggregator {
     };
 
     @Override
-	public Object aggregate( List<Object> rawData, Datatype datatype ) {
+	public Object aggregate( List<Object> rawData, DataTypeJdbc datatype ) {
       assert rawData.size() > 0;
       switch ( datatype ) {
         case INTEGER:
@@ -128,7 +128,7 @@ public abstract class RolapAggregator implements Aggregator {
     }
 
     @Override
-	public boolean supportsFastAggregates( Datatype dataType ) {
+	public boolean supportsFastAggregates( DataTypeJdbc dataType ) {
       switch ( dataType ) {
         case INTEGER:
         case NUMERIC:
@@ -139,7 +139,7 @@ public abstract class RolapAggregator implements Aggregator {
     };
 
     @Override
-	public Object aggregate( List<Object> rawData, Datatype datatype ) {
+	public Object aggregate( List<Object> rawData, DataTypeJdbc datatype ) {
       assert rawData.size() > 0;
       switch ( datatype ) {
         case INTEGER:
@@ -172,7 +172,7 @@ public abstract class RolapAggregator implements Aggregator {
     }
 
     @Override
-	public boolean supportsFastAggregates( Datatype dataType ) {
+	public boolean supportsFastAggregates( DataTypeJdbc dataType ) {
       switch ( dataType ) {
         case INTEGER:
         case NUMERIC:
@@ -183,7 +183,7 @@ public abstract class RolapAggregator implements Aggregator {
     };
 
     @Override
-	public Object aggregate( List<Object> rawData, Datatype datatype ) {
+	public Object aggregate( List<Object> rawData, DataTypeJdbc datatype ) {
       assert rawData.size() > 0;
       switch ( datatype ) {
         case INTEGER:
@@ -251,7 +251,7 @@ public abstract class RolapAggregator implements Aggregator {
     }
 
     @Override
-    public boolean supportsFastAggregates( Datatype dataType ) {
+    public boolean supportsFastAggregates( DataTypeJdbc dataType ) {
       // We can't rollup using the raw data, because this is
       // a distinct-count operation.
       return false;
@@ -466,12 +466,12 @@ public abstract class RolapAggregator implements Aggregator {
    * By default, fast rollup is not supported for all classes.
    */
   @Override
-  public boolean supportsFastAggregates( Datatype dataType ) {
+  public boolean supportsFastAggregates( DataTypeJdbc dataType ) {
     return false;
   }
 
   @Override
-  public Object aggregate( List<Object> rawData, Datatype datatype ) {
+  public Object aggregate( List<Object> rawData, DataTypeJdbc datatype ) {
     throw new UnsupportedOperationException();
   }
 }

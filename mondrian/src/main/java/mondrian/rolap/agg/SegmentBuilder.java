@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.CellKey;
+import mondrian.rolap.EnumConvertor;
 import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.StarColumnPredicate;
@@ -462,7 +463,7 @@ public class SegmentBuilder {
                     CellKey.Generator.newCellKey(entry.getKey().getOrdinals()),
                     rollupAggregator.aggregate(
                         entry.getValue(),
-                        datatype));
+                        EnumConvertor.toDataTypeJdbc(datatype)));
             }
             body =
                 new SparseSegmentBody(
@@ -484,7 +485,7 @@ public class SegmentBuilder {
                     final Object value =
                         rollupAggregator.aggregate(
                             entry.getValue(),
-                            datatype);
+                            EnumConvertor.toDataTypeJdbc(datatype));
                     if (value != null) {
                         ints[offset] = (Integer) value;
                         nullValues.clear(offset);
@@ -508,7 +509,7 @@ public class SegmentBuilder {
                     final Object value =
                         rollupAggregator.aggregate(
                             entry.getValue(),
-                            datatype);
+                            EnumConvertor.toDataTypeJdbc(datatype));
                     if (value != null) {
                         doubles[offset] = (Double) value;
                         nullValues.clear(offset);
@@ -531,7 +532,7 @@ public class SegmentBuilder {
                     objects[offset] =
                         rollupAggregator.aggregate(
                             entry.getValue(),
-                            datatype);
+                            EnumConvertor.toDataTypeJdbc(datatype));
                 }
                 body =
                     new DenseObjectSegmentBody(

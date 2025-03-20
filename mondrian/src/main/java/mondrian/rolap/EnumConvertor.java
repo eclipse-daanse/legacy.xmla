@@ -45,4 +45,8 @@ public class EnumConvertor {
     public static BestFitColumnType toBestFitColumnType(String type) {
         return type != null ? BestFitColumnType.valueOf(type) : null;
     }
+    
+    public static DataTypeJdbc toDataTypeJdbc(Datatype type) {
+        return type != null ? DataTypeJdbc.fromValue(type.getValue()) : null;
+    }
 }

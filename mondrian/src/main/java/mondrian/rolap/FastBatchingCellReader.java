@@ -27,6 +27,7 @@ import java.util.SortedSet;
 import java.util.concurrent.Future;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
@@ -746,9 +747,9 @@ class BatchLoader {
         Boolean enableInMemoryRollup = cube.getCatalog().getInternalConnection().getContext().getConfig().enableInMemoryRollup();
         if (enableInMemoryRollup
             && measure.getAggregator().supportsFastAggregates(
-                measure.getDatatype())
+                    EnumConvertor.toDataTypeJdbc(measure.getDatatype()))
             && measure.getAggregator().getRollup().supportsFastAggregates(
-                measure.getDatatype())
+                    EnumConvertor.toDataTypeJdbc(measure.getDatatype()))
             && !isRequestCoveredByRollups(request))
         {
             // Don't even bother doing a segment lookup if we can't

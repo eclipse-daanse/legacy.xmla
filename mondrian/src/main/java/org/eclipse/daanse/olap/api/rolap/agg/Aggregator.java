@@ -13,7 +13,7 @@ package org.eclipse.daanse.olap.api.rolap.agg;
 
 import java.util.List;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.calc.api.Calc;
@@ -60,7 +60,7 @@ public interface Aggregator {
      * @param datatype The datatype of the object we would like to rollup.
      * @return Whether this aggregator supports fast aggregation
      */
-    boolean supportsFastAggregates(Datatype datatype);
+    boolean supportsFastAggregates(DataTypeJdbc datatype);
 
     /**
      * Applies this aggregator over a raw list of objects for a rollup
@@ -68,7 +68,7 @@ public interface Aggregator {
      * and we are dealing with a raw {@link SegmentBody} object.
      *
      * <p>Only gets called if
-     * {@link #supportsFastAggregates(Datatype)} is true.
+     * {@link #supportsFastAggregates(DataTypeJdbc)} is true.
      *
      * <p>This is only invoked for rollup operations.
      *
@@ -76,5 +76,5 @@ public interface Aggregator {
      * @return A rolled up value of the raw data.
      * if the object type is not supported.
      */
-    Object aggregate(List<Object> rawData, Datatype datatype);
+    Object aggregate(List<Object> rawData, DataTypeJdbc datatype);
 }
