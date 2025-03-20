@@ -14,9 +14,11 @@ import java.util.function.Function;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
+import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -55,6 +57,7 @@ class HangerDimensionTest extends ClearViewBase {
             setName(name);
             diffRepos.setCurrentTestCaseName(name);
             super.runTest(context);
+            ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
         }
     }
 
