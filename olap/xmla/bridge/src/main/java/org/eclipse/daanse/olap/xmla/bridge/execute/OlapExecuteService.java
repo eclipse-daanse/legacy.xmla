@@ -48,6 +48,7 @@ import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.query.component.Refresh;
+import org.eclipse.daanse.olap.api.query.component.SqlQuery;
 import org.eclipse.daanse.olap.api.query.component.TransactionCommand;
 import org.eclipse.daanse.olap.api.query.component.Update;
 import org.eclipse.daanse.olap.api.query.component.UpdateClause;
@@ -260,13 +261,24 @@ public class OlapExecuteService implements ExecuteService {
 						return executeTransactionCommand(connection, statementRequest, transactionCommand,userPrincipal.userId());
 					} else if (queryComponent instanceof Query query){
 						return executeQuery(statementRequest, query);
+					} else if (queryComponent instanceof SqlQuery sqlQuery){
+					    return executeSqlQuery(sqlQuery);
 					}
+					
 				}
 
 			}
 		}
 		return new StatementResponseR(null, null);
 	}
+
+    private StatementResponse executeSqlQuery(SqlQuery sqlQuery) {
+        try {
+            return Convertor.toStatementResponseRowSet(sqlQuery.execute(), -1);
+        } catch (java.sql.SQLException oe) {
+            throw new RuntimeException(oe);
+        }
+    }
 
     private StatementResponse executeQuery(StatementRequest statementRequest,  Query query) {
         ScenarioSession session = ScenarioSession.getWithoutCheck(statementRequest.sessionId());

@@ -86,7 +86,18 @@ public abstract class ConnectionBase implements Connection {
             MdxStatement mdxStatement  = parser.parseMdxStatement();
             return getQueryProvider().createQuery(statement, mdxStatement, strictValidation);
         } catch (Exception e) {
-            throw new FailedToParseQueryException(query, e);
+            return createSqlQuery(query);
+            
+        }
+    }
+
+    private QueryComponent createSqlQuery(String query) {
+        try {
+            //validate query 
+            //String q = getContext().getGuar().guard(query);
+            return new SqlQueryImpl(query, getContext().getDataSource());
+        } catch (Exception e) {
+            return createSqlQuery(query);
         }
     }
 

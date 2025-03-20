@@ -40,7 +40,8 @@ public sealed interface QueryComponent permits
     Update,
     MemberExpression,
     WrapExpression,
-    UpdateClause {
+    UpdateClause,
+    SqlQuery {
 
     /**
      * Returns an array of the object's children.  Those which are not are ignored.
