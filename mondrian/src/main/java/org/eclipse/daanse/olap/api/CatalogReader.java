@@ -539,14 +539,6 @@ public interface CatalogReader {
     CatalogReader withoutAccessControl();
 
     /**
-     * Returns the default cube in which to look for dimensions etc.
-     *
-     * @return Default cube
-     */
-    @Deprecated
-    Cube getCube();
-
-    /**
      * Returns a schema reader that automatically assigns a locus to each
      * operation.
      *

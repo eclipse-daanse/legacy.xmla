@@ -411,11 +411,6 @@ public class RolapCatalogReader
     }
 
     @Override
-	public Cube getCube() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
 	public CatalogReader withoutAccessControl() {
         assert this.getClass() == RolapCatalogReader.class
             : new StringBuilder("Subclass ").append(getClass()).append(" must override").toString();

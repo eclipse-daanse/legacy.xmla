@@ -277,11 +277,6 @@ public class SpyCatalogReader implements CatalogReader {
 	public CatalogReader withoutAccessControl() {
 		return delegate.withoutAccessControl();
 	}
-    @Deprecated
-	@Override
-	public Cube getCube() {
-		return delegate.getCube();
-	}
 
 	@Override
 	public CatalogReader withLocus() {

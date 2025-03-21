@@ -3355,11 +3355,6 @@ public class RolapCube extends CubeBase {
         }
 
         @Override
-		public Cube getCube() {
-            return RolapCube.this;
-        }
-
-        @Override
 		public List<NameResolver.Namespace> getNamespaces() {
             final List<NameResolver.Namespace> list =
                 new ArrayList<>();

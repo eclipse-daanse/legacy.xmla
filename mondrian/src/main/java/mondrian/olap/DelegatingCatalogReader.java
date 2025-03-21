@@ -75,13 +75,6 @@ public abstract class DelegatingCatalogReader implements CatalogReader {
         return schemaReader.getRole();
     }
 
-    @Deprecated
-
-    @Override
-	public Cube getCube() {
-        return schemaReader.getCube();
-    }
-
     @Override
 	public List<Dimension> getCubeDimensions(Cube cube) {
         return schemaReader.getCubeDimensions(cube);
