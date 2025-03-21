@@ -274,13 +274,14 @@ public class OlapExecuteService implements ExecuteService {
 
     private StatementResponse executeSqlQuery(SqlQuery sqlQuery) {
         try {
-            return Convertor.toStatementResponseRowSet(sqlQuery.execute(), -1);
+            ResultSet execute = sqlQuery.execute();
+            return Convertor.toStatementResponseRowSet(execute, -1);
         } catch (java.sql.SQLException oe) {
             throw new RuntimeException(oe);
         }
     }
 
-    private StatementResponse executeQuery(StatementRequest statementRequest,  Query query) {
+    private StatementResponse executeQuery(StatementRequest statementRequest, Query query) {
         ScenarioSession session = ScenarioSession.getWithoutCheck(statementRequest.sessionId());
         //RelationalQueryMapping fact = null;
         Cube cube = query.getCube();

@@ -33,6 +33,7 @@ import org.eclipse.daanse.olap.core.LoggingEventBus;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
 import org.osgi.namespace.unresolvable.UnresolvableNamespace;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -55,100 +56,102 @@ import mondrian.rolap.agg.AggregationManager;
 
 @Designate(ocd = BasicContextConfig.class, factory = true)
 @Component(service = Context.class, scope = ServiceScope.SINGLETON)
-public class BasicContext extends AbstractRolapContext implements RolapContext{
+public class BasicContext extends AbstractRolapContext implements RolapContext {
 
-	public static final String PID = "org.eclipse.daanse.olap.rolap.core.BasicContext";
+    public static final String PID = "org.eclipse.daanse.olap.rolap.core.BasicContext";
 
-	public static final String REF_NAME_DIALECT_RESOLVER = "dialectResolver";
-	public static final String REF_NAME_DATA_SOURCE = "dataSource";
-	public static final String REF_NAME_DB_MAPPING_CATALOG_SUPPLIER = "databaseMappingCatalogSuppier";
+    public static final String REF_NAME_DIALECT_RESOLVER = "dialectResolver";
+    public static final String REF_NAME_DATA_SOURCE = "dataSource";
+    public static final String REF_NAME_DB_MAPPING_CATALOG_SUPPLIER = "databaseMappingCatalogSuppier";
     public static final String REF_NAME_ROLAP_CONTEXT_MAPPING_SUPPLIER = "rolapContextMappingSuppliers";
     public static final String REF_NAME_MDX_PARSER_PROVIDER = "mdxParserProvider";
-	public static final String REF_NAME_EXPRESSION_COMPILER_FACTORY = "expressionCompilerFactory";
+    public static final String REF_NAME_EXPRESSION_COMPILER_FACTORY = "expressionCompilerFactory";
 
-	private static final String ERR_MSG_DIALECT_INIT = "Could not activate context. Error on initialisation of Dialect";
+    private static final String ERR_MSG_DIALECT_INIT = "Could not activate context. Error on initialisation of Dialect";
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(BasicContext.class);
-	private static final Converter CONVERTER = Converters.standardConverter();
+    private static final Logger LOGGER = LoggerFactory.getLogger(BasicContext.class);
+    private static final Converter CONVERTER = Converters.standardConverter();
 
-	@Reference(name = REF_NAME_DATA_SOURCE, target = UnresolvableNamespace.UNRESOLVABLE_FILTER)
-	private DataSource dataSource = null;
+    @Reference(name = REF_NAME_DATA_SOURCE, target = UnresolvableNamespace.UNRESOLVABLE_FILTER)
+    private DataSource dataSource = null;
 
-	@Reference(name = REF_NAME_DIALECT_RESOLVER)
-	private DialectResolver dialectResolver = null;
+    @Reference(name = REF_NAME_DIALECT_RESOLVER)
+    private DialectResolver dialectResolver = null;
 
-	@Reference(name = REF_NAME_DB_MAPPING_CATALOG_SUPPLIER, target = UnresolvableNamespace.UNRESOLVABLE_FILTER, cardinality = ReferenceCardinality.MANDATORY)
-	private CatalogMappingSupplier catalogMappingSupplier;
+    @Reference(name = REF_NAME_DB_MAPPING_CATALOG_SUPPLIER, target = UnresolvableNamespace.UNRESOLVABLE_FILTER, cardinality = ReferenceCardinality.MANDATORY)
+    private CatalogMappingSupplier catalogMappingSupplier;
 
     @Reference(name = REF_NAME_EXPRESSION_COMPILER_FACTORY, target = UnresolvableNamespace.UNRESOLVABLE_FILTER)
-	private ExpressionCompilerFactory expressionCompilerFactory = null;
+    private ExpressionCompilerFactory expressionCompilerFactory = null;
 
-	@Reference
-	private FunctionService functionService;
+    @Reference
+    private FunctionService functionService;
 
-	private BasicContextConfig config;
+    @Reference(cardinality = ReferenceCardinality.OPTIONAL)
+    private SqlGuardFactory sqlGuardFactory;
 
-	private Dialect dialect = null;
+    private BasicContextConfig config;
 
-	private Semaphore queryLimitSemaphore;
+    private Dialect dialect = null;
+
+    private Semaphore queryLimitSemaphore;
 
     @Reference(name = REF_NAME_MDX_PARSER_PROVIDER, target = UnresolvableNamespace.UNRESOLVABLE_FILTER)
     private MdxParserProvider mdxParserProvider;
 
-	@Activate
-	public void activate(Map<String, Object> configuration) throws Exception {
-		updateConfiguration(configuration);
-		activate1(CONVERTER.convert(configuration).to(BasicContextConfig.class));
-	}
+    @Activate
+    public void activate(Map<String, Object> configuration) throws Exception {
+        updateConfiguration(configuration);
+        activate1(CONVERTER.convert(configuration).to(BasicContextConfig.class));
+    }
 
-	public void activate1(BasicContextConfig configuration) throws Exception {
+    public void activate1(BasicContextConfig configuration) throws Exception {
 
         this.config = configuration;
-		this.eventBus = new LoggingEventBus();
-	
-		schemaCache=new RolapCatalogCache(this);
-		queryLimitSemaphore = new Semaphore(config.queryLimit());
+        this.eventBus = new LoggingEventBus();
 
-		try (Connection connection = dataSource.getConnection()) {
-			Optional<Dialect> optionalDialect = dialectResolver.resolve(dataSource);
-			dialect = optionalDialect.orElseThrow(() -> new Exception(ERR_MSG_DIALECT_INIT));
-		}
+        schemaCache = new RolapCatalogCache(this);
+        queryLimitSemaphore = new Semaphore(config.queryLimit());
 
-		shepherd = new RolapResultShepherd(config.rolapConnectionShepherdThreadPollingInterval(),
-				config.rolapConnectionShepherdThreadPollingIntervalUnit(), config.rolapConnectionShepherdNbThreads());
-		aggMgr = new AggregationManager(this);
+        try (Connection connection = dataSource.getConnection()) {
+            Optional<Dialect> optionalDialect = dialectResolver.resolve(dataSource);
+            dialect = optionalDialect.orElseThrow(() -> new Exception(ERR_MSG_DIALECT_INIT));
+        }
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("new MondrianServer: id=" + getId());
-		}
-	}
+        shepherd = new RolapResultShepherd(config.rolapConnectionShepherdThreadPollingInterval(),
+                config.rolapConnectionShepherdThreadPollingIntervalUnit(), config.rolapConnectionShepherdNbThreads());
+        aggMgr = new AggregationManager(this);
 
-	@Deactivate
-	public void deactivate(Map<String, Object> configuration) throws Exception {
-		shutdown();
-		updateConfiguration(null);
-	}
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("new MondrianServer: id=" + getId());
+        }
+    }
 
-	@Override
-	public DataSource getDataSource() {
-		return dataSource;
-	}
+    @Deactivate
+    public void deactivate(Map<String, Object> configuration) throws Exception {
+        shutdown();
+        updateConfiguration(null);
+    }
 
-	@Override
-	public Dialect getDialect() {
-		return dialect;
-	}
+    @Override
+    public DataSource getDataSource() {
+        return dataSource;
+    }
 
-	@Override
-	public String getName() {
-		return getCatalogMapping().getName();
-	}
+    @Override
+    public Dialect getDialect() {
+        return dialect;
+    }
 
-	@Override
-	public Optional<String> getDescription() {
-		return Optional.ofNullable(getCatalogMapping().getDescription());
-	}
+    @Override
+    public String getName() {
+        return getCatalogMapping().getName();
+    }
 
+    @Override
+    public Optional<String> getDescription() {
+        return Optional.ofNullable(getCatalogMapping().getDescription());
+    }
 
     @Override
     public CatalogMapping getCatalogMapping() {
@@ -161,41 +164,42 @@ public class BasicContext extends AbstractRolapContext implements RolapContext{
 //		return queryProvider;
 //	}
 
-	@Override
-	public ExpressionCompilerFactory getExpressionCompilerFactory() {
-		return expressionCompilerFactory;
-	}
+    @Override
+    public ExpressionCompilerFactory getExpressionCompilerFactory() {
+        return expressionCompilerFactory;
+    }
 
-	@Override
-	public org.eclipse.daanse.olap.api.Connection getConnectionWithDefaultRole() {
-		return getConnection(new RolapConnectionPropsR());
-	}
-	@Override
-	public org.eclipse.daanse.olap.api.Connection getConnection(List<String> roles) {
-		return getConnection(new RolapConnectionPropsR(roles));
-	}
+    @Override
+    public org.eclipse.daanse.olap.api.Connection getConnectionWithDefaultRole() {
+        return getConnection(new RolapConnectionPropsR());
+    }
 
-	@Override
-	public org.eclipse.daanse.olap.api.Connection getConnection(ConnectionProps props) {
-		return new RolapConnection(this, props);
-	}
+    @Override
+    public org.eclipse.daanse.olap.api.Connection getConnection(List<String> roles) {
+        return getConnection(new RolapConnectionPropsR(roles));
+    }
 
-	@Override
-	public BasicContextConfig getConfig() {
-		return config;
-	}
+    @Override
+    public org.eclipse.daanse.olap.api.Connection getConnection(ConnectionProps props) {
+        return new RolapConnection(this, props);
+    }
 
-	@Override
-	public Semaphore getQueryLimitSemaphore() {
-		return queryLimitSemaphore;
-	}
+    @Override
+    public BasicContextConfig getConfig() {
+        return config;
+    }
 
-	@Override
-	public Optional<Map<Object, Object>> getSqlMemberSourceValuePool() {
-		return Optional.empty(); //Caffein Cache is an option
-	}
+    @Override
+    public Semaphore getQueryLimitSemaphore() {
+        return queryLimitSemaphore;
+    }
 
-	@Override
+    @Override
+    public Optional<Map<Object, Object>> getSqlMemberSourceValuePool() {
+        return Optional.empty(); // Caffein Cache is an option
+    }
+
+    @Override
     public FunctionService getFunctionService() {
         return functionService;
     }
@@ -205,9 +209,14 @@ public class BasicContext extends AbstractRolapContext implements RolapContext{
         return mdxParserProvider;
     }
 
-	@Override
-	public List<String> getAccessRoles() {
-		return List.of();// may take from mapping
-	}
+    @Override
+    public List<String> getAccessRoles() {
+        return List.of();// may take from mapping
+    }
+
+    @Override
+    public Optional<SqlGuardFactory> getSqlGuardFactory() {
+        return Optional.ofNullable(sqlGuardFactory);
+    }
 
 }

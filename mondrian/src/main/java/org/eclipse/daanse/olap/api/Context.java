@@ -28,6 +28,7 @@ import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
 import org.eclipse.daanse.olap.api.query.QueryProvider;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
+import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
 
 /**
  * The {@link Context} gives access to all resources and configurations that are needed
@@ -148,6 +149,8 @@ public interface Context {
     FunctionService getFunctionService();
 
     MdxParserProvider getMdxParserProvider();
+
+    Optional<SqlGuardFactory> getSqlGuardFactory();
 
     default List<String> getKeywordList() {
         return KEYWORD_LIST;

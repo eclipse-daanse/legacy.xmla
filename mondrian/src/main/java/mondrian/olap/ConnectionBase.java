@@ -11,8 +11,11 @@
 
 package mondrian.olap;
 
+import java.util.Optional;
+
 import org.eclipse.daanse.mdx.model.api.MdxStatement;
 import org.eclipse.daanse.mdx.parser.api.MdxParser;
+import org.eclipse.daanse.mdx.parser.api.MdxParserException;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
@@ -22,6 +25,9 @@ import org.eclipse.daanse.olap.api.query.QueryProvider;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.query.base.ExpressionProviderImpl;
 import org.eclipse.daanse.olap.query.base.QueryProviderImpl;
+import org.eclipse.daanse.sql.guard.api.SqlGuard;
+import org.eclipse.daanse.sql.guard.api.exception.GuardException;
+import org.eclipse.daanse.sql.guard.api.exception.UnparsableStatementGuardException;
 import org.slf4j.Logger;
 
 import mondrian.olap.exceptions.FailedToParseQueryException;
@@ -39,8 +45,11 @@ public abstract class ConnectionBase implements Connection {
     QueryProvider queryProvider = new QueryProviderImpl();
 
     ExpressionProvider expressionProvider = new ExpressionProviderImpl();
+    
+    private Optional<SqlGuard> oSqlGuard = Optional.empty();
 
     protected ConnectionBase() {
+//        getContext().getSqlGuardFactory();
     }
 
     protected abstract Logger getLogger();
@@ -62,7 +71,7 @@ public abstract class ConnectionBase implements Connection {
      * <p>See test case mondrian.olap.CustomizedParserTest.
      *
      * @param statement Evaluation context
-     * @param query MDX query that requires special parsing
+     * @param queryToParse MDX query that requires special parsing
      * @param funTable Customized function table to use in parsing
      * @param strictValidation If true, do not ignore invalid members
      * @return Query the corresponding Query object if parsing is successful
@@ -70,36 +79,43 @@ public abstract class ConnectionBase implements Connection {
      */
     public QueryComponent parseStatement(
         Statement statement,
-        String query,
+        String queryToParse,
         FunctionService funTable,
         boolean strictValidation)
     {
         boolean debug = false;
 
         if (getLogger().isDebugEnabled()) {
-            String s = new StringBuilder().append(Util.NL).append(query.replaceAll("[\n\r]", "_")).toString();
+            String s = new StringBuilder().append(Util.NL).append(queryToParse.replaceAll("[\n\r]", "_")).toString();
             getLogger().debug(s);
         }
 
         try {
-            MdxParser parser = getContext().getMdxParserProvider().newParser(query, funTable.getPropertyWords());
-            MdxStatement mdxStatement  = parser.parseMdxStatement();
+            MdxParser parser = getContext().getMdxParserProvider().newParser(queryToParse, funTable.getPropertyWords());
+            MdxStatement mdxStatement = parser.parseMdxStatement();
             return getQueryProvider().createQuery(statement, mdxStatement, strictValidation);
-        } catch (Exception e) {
-            return createSqlQuery(query);
-            
+        } catch (MdxParserException mdxPE) {
+
+            if (oSqlGuard.isEmpty()) {
+                throw new FailedToParseQueryException(queryToParse, mdxPE);
+            } else {
+                
+                SqlGuard guard=oSqlGuard.get();
+                try {
+                    String sanetizedSql= guard.guard(queryToParse);
+                    return new SqlQueryImpl(sanetizedSql, getContext().getDataSource());
+                } catch (UnparsableStatementGuardException uex) {
+                    // when can´t be parse then we decide to throw the exception of MDX
+                    throw new FailedToParseQueryException(queryToParse, mdxPE);
+                } catch (GuardException guasdEx) {
+                    throw new FailedToParseQueryException(queryToParse, guasdEx);
+                }
+            }
+
         }
     }
 
-    private QueryComponent createSqlQuery(String query) {
-        try {
-            //validate query 
-            //String q = getContext().getGuar().guard(query);
-            return new SqlQueryImpl(query, getContext().getDataSource());
-        } catch (Exception e) {
-            return createSqlQuery(query);
-        }
-    }
+
 
     public QueryProvider getQueryProvider() {
         return queryProvider;

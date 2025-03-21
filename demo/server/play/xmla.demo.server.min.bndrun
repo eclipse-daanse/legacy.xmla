@@ -92,6 +92,7 @@
 	org.eclipse.daanse.rolap.mapping.emf;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.pojo;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.verifyer.api;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.sql.guard.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.xmla.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.xmla.model.record;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.xmla.server.adapter.soapmessage;version='[0.0.1,0.0.2)',\

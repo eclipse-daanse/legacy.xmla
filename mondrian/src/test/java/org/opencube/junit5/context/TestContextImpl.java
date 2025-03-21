@@ -297,6 +297,7 @@ import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalsResolver;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
 
 import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.RolapConnection;
@@ -306,47 +307,46 @@ import mondrian.rolap.agg.AggregationManager;
 
 public class TestContextImpl extends AbstractBasicContext implements TestContext, RolapContext {
 
-	private Dialect dialect;
-	private DataSource dataSource;
+    private Dialect dialect;
+    private DataSource dataSource;
 
-	private ExpressionCompilerFactory expressionCompilerFactory = new BaseExpressionCompilerFactory();
-	private CatalogMappingSupplier catalogMappingSupplier;
-	private String name;
-	private Optional<String> description = Optional.empty();
+    private ExpressionCompilerFactory expressionCompilerFactory = new BaseExpressionCompilerFactory();
+    private CatalogMappingSupplier catalogMappingSupplier;
+    private String name;
+    private Optional<String> description = Optional.empty();
     private TestConfig testConfig;
     private Semaphore queryLimimitSemaphore;
-    private FunctionService functionService =new FunctionServiceImpl();
+    private FunctionService functionService = new FunctionServiceImpl();
 
-
-
-	public TestContextImpl() {
+    public TestContextImpl() {
         testConfig = new TestConfig();
         this.eventBus = new LoggingEventBus();
-	    shepherd = new RolapResultShepherd(testConfig.rolapConnectionShepherdThreadPollingInterval(),testConfig.rolapConnectionShepherdThreadPollingIntervalUnit(),
-            testConfig.rolapConnectionShepherdNbThreads());
-	    aggMgr = new AggregationManager(this);
-	    schemaCache=new RolapCatalogCache(this);
-	    queryLimimitSemaphore=new Semaphore(testConfig.queryLimit());
-	    functionService.addResolver(new NullReservedWordsResolver());
-	    functionService.addResolver(new AsAliasResolver());
-	    functionService.addResolver(new AncestorResolver());
-	    functionService.addResolver(new AvgResolver());
+        shepherd = new RolapResultShepherd(testConfig.rolapConnectionShepherdThreadPollingInterval(),
+                testConfig.rolapConnectionShepherdThreadPollingIntervalUnit(),
+                testConfig.rolapConnectionShepherdNbThreads());
+        aggMgr = new AggregationManager(this);
+        schemaCache = new RolapCatalogCache(this);
+        queryLimimitSemaphore = new Semaphore(testConfig.queryLimit());
+        functionService.addResolver(new NullReservedWordsResolver());
+        functionService.addResolver(new AsAliasResolver());
+        functionService.addResolver(new AncestorResolver());
+        functionService.addResolver(new AvgResolver());
 
-	    functionService.addResolver(new EmptyExpressionResolver());
-	    functionService.addResolver(new DimensionOfHierarchyResolver());
-	    functionService.addResolver(new DimensionOfDimensionResolver());
-	    functionService.addResolver(new DimensionOfLevelResolver());
-	    functionService.addResolver(new DimensionOfMemberResolver());
-	    functionService.addResolver(new DimensionNumericResolver());
-	    functionService.addResolver(new DimensionsStringResolver());
-	    functionService.addResolver(new MemberHierarchyResolver());
-	    functionService.addResolver(new LevelHierarchyResolver());
+        functionService.addResolver(new EmptyExpressionResolver());
+        functionService.addResolver(new DimensionOfHierarchyResolver());
+        functionService.addResolver(new DimensionOfDimensionResolver());
+        functionService.addResolver(new DimensionOfLevelResolver());
+        functionService.addResolver(new DimensionOfMemberResolver());
+        functionService.addResolver(new DimensionNumericResolver());
+        functionService.addResolver(new DimensionsStringResolver());
+        functionService.addResolver(new MemberHierarchyResolver());
+        functionService.addResolver(new LevelHierarchyResolver());
 
-	    functionService.addResolver(new YtdMultiResolver());
-	    functionService.addResolver(new QtdMultiResolver());
-	    functionService.addResolver(new MtdMultiResolver());
-	    functionService.addResolver(new WtdMultiResolver());
-	    functionService.addResolver(new AggregateChildrenResolver());
+        functionService.addResolver(new YtdMultiResolver());
+        functionService.addResolver(new QtdMultiResolver());
+        functionService.addResolver(new MtdMultiResolver());
+        functionService.addResolver(new WtdMultiResolver());
+        functionService.addResolver(new AggregateChildrenResolver());
         functionService.addResolver(new CaseMatchResolver());
         functionService.addResolver(new CaseTestResolver());
         functionService.addResolver(new CacheFunResolver());
@@ -434,7 +434,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new CalculatedChildResolver());
         functionService.addResolver(new CachedExistsResolver());
         functionService.addResolver(new CastResolver());
-        if (false) { //as in BuiltinFunTable
+        if (false) { // as in BuiltinFunTable
             functionService.addResolver(new CurrentResolver());
         }
 
@@ -536,7 +536,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new NonFunctionDefaultMemberResolver());
         functionService.addResolver(new NonFunctionMembersResolver());
 
-        //excel functions
+        // excel functions
         functionService.addResolver(new AcoshResolver());
         functionService.addResolver(new AcosResolver());
         functionService.addResolver(new AsinhResolver());
@@ -554,7 +554,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new TanhResolver());
         functionService.addResolver(new PowerResolver());
 
-        //Vba
+        // Vba
         functionService.addResolver(new CBoolResolver());
         functionService.addResolver(new CByteResolver());
         functionService.addResolver(new CDblResolver());
@@ -564,7 +564,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new FixResolver());
         functionService.addResolver(new HexResolver());
         functionService.addResolver(new IntResolver());
-        
+
         functionService.addResolver(new DateAddResolver());
         functionService.addResolver(new DateDiffResolver());
         functionService.addResolver(new DatePartResolver());
@@ -590,7 +590,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new PPmtResolver());
         functionService.addResolver(new PmtResolver());
         functionService.addResolver(new PVResolver());
-        
+
         functionService.addResolver(new RateResolver());
         functionService.addResolver(new SLNResolver());
         functionService.addResolver(new SYDResolver());
@@ -618,7 +618,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new ChrWResolver());
         functionService.addResolver(new FormatCurrencyResolver());
         functionService.addResolver(new ExpResolver());
-        
+
         functionService.addResolver(new FormatNumberResolver());
         functionService.addResolver(new FormatDateTimeResolver());
         functionService.addResolver(new FormatPercentResolver());
@@ -642,8 +642,8 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new IRRResolver());
         functionService.addResolver(new MIRRResolver());
         functionService.addResolver(new NPVResolver());
-        
-        //UDF
+
+        // UDF
         functionService.addResolver(new InResolver());
         functionService.addResolver(new MatchesResolver());
         functionService.addResolver(new LastNonEmptyResolver());
@@ -651,50 +651,48 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         functionService.addResolver(new ValResolver());
         functionService.addResolver(new CurrentDateStringResolver());
         functionService.addResolver(new CurrentDateMemberResolver());
-}
+    }
 
-	@Override
-	public void setDialect(Dialect dialect) {
-		this.dialect = dialect;
-	}
+    @Override
+    public void setDialect(Dialect dialect) {
+        this.dialect = dialect;
+    }
 
-	@Override
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
+    @Override
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
 
-	}
+    }
 
-	@Override
-	public DataSource getDataSource() {
-		return dataSource;
-	}
+    @Override
+    public DataSource getDataSource() {
+        return dataSource;
+    }
 
-	@Override
-	public Dialect getDialect() {
-		return dialect;
-	}
+    @Override
+    public Dialect getDialect() {
+        return dialect;
+    }
 
+    @Override
+    public Optional<String> getDescription() {
+        return description;
+    }
 
-	@Override
-	public Optional<String> getDescription() {
-		return description;
-	}
+    @Override
+    public CatalogMapping getCatalogMapping() {
+        return catalogMappingSupplier.get();
+    }
 
-	@Override
-	public CatalogMapping getCatalogMapping() {
-		return catalogMappingSupplier.get();
-	}
+    @Override
+    public ExpressionCompilerFactory getExpressionCompilerFactory() {
+        return expressionCompilerFactory;
+    }
 
-
-	@Override
-	public ExpressionCompilerFactory getExpressionCompilerFactory() {
-		return expressionCompilerFactory;
-	}
-
-	@Override
-	public org.eclipse.daanse.olap.api.Connection getConnectionWithDefaultRole() {
-		return getConnection(new RolapConnectionPropsR());
-	}
+    @Override
+    public org.eclipse.daanse.olap.api.Connection getConnectionWithDefaultRole() {
+        return getConnection(new RolapConnectionPropsR());
+    }
 
     @Override
     public org.eclipse.daanse.olap.api.Connection getConnection(ConnectionProps props) {
@@ -703,9 +701,8 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 
     @Override
     public org.eclipse.daanse.olap.api.Connection getConnection(List<String> roles) {
-        return getConnection(new RolapConnectionPropsR(roles,
-                true, Locale.getDefault(),
-                Duration.ofSeconds(-1), Optional.empty(), Optional.empty()));
+        return getConnection(new RolapConnectionPropsR(roles, true, Locale.getDefault(), Duration.ofSeconds(-1),
+                Optional.empty(), Optional.empty()));
     }
 
     @Override
@@ -714,41 +711,40 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
     }
 
     @Override
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public void setDescription(Optional<String> description) {
-		this.description = description;
-	}
+    @Override
+    public void setDescription(Optional<String> description) {
+        this.description = description;
+    }
 
-	@Override
-	public void setExpressionCompilerFactory(ExpressionCompilerFactory expressionCompilerFactory) {
-		this.expressionCompilerFactory = expressionCompilerFactory;
-	}
+    @Override
+    public void setExpressionCompilerFactory(ExpressionCompilerFactory expressionCompilerFactory) {
+        this.expressionCompilerFactory = expressionCompilerFactory;
+    }
 
+    @Override
+    public Semaphore getQueryLimitSemaphore() {
+        return queryLimimitSemaphore;
+    }
 
-	@Override
-	public Semaphore getQueryLimitSemaphore() {
-		return queryLimimitSemaphore;
-	}
+    @Override
+    public void setQueryLimitSemaphore(Semaphore queryLimimitSemaphore) {
+        this.queryLimimitSemaphore = queryLimimitSemaphore;
 
-	@Override
-	public void setQueryLimitSemaphore(Semaphore queryLimimitSemaphore) {
-		this.queryLimimitSemaphore = queryLimimitSemaphore;
+    }
 
-	}
-
-	@Override
-	public Optional<Map<Object, Object>> getSqlMemberSourceValuePool() {
-		return Optional.empty();
-	}
+    @Override
+    public Optional<Map<Object, Object>> getSqlMemberSourceValuePool() {
+        return Optional.empty();
+    }
 
     @Override
     public FunctionService getFunctionService() {
@@ -766,23 +762,28 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 
     @Override
     public String toString() {
-    	try {
-			return dataSource.getConnection().getMetaData().getURL();
-		} catch (SQLException e) {
-			e.printStackTrace();
+        try {
+            return dataSource.getConnection().getMetaData().getURL();
+        } catch (SQLException e) {
+            e.printStackTrace();
 
-			return dataSource.getClass().getPackageName();
-		}
+            return dataSource.getClass().getPackageName();
+        }
     }
 
-	@Override
-	public void setCatalogMappingSupplier(CatalogMappingSupplier catalogMappingSupplier) {
-		this.catalogMappingSupplier = catalogMappingSupplier;
-	}
+    @Override
+    public void setCatalogMappingSupplier(CatalogMappingSupplier catalogMappingSupplier) {
+        this.catalogMappingSupplier = catalogMappingSupplier;
+    }
 
-	@Override
-	public List<String> getAccessRoles() {
-		return List.of();
-	}
+    @Override
+    public List<String> getAccessRoles() {
+        return List.of();
+    }
+
+    @Override
+    public Optional<SqlGuardFactory> getSqlGuardFactory() {
+        return Optional.empty();
+    }
 
 }
