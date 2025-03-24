@@ -532,7 +532,7 @@ public class BasicQueryTest {
     Connection connection = context.getConnectionWithDefaultRole();
     // Comments cannot appear inside identifiers.
     assertQueryThrows(connection, "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n" + " {[Gender].MEMBERS} ON ROWS\n"
-        + "FROM [Sales]\n" + "WHERE {[/***an illegal comment****/Marital Status].[S]}", "Failed to parse query" );
+        + "FROM [Sales]\n" + "WHERE {[/***an illegal comment****/Marital Status].[S]}", "MDX object '[/***an illegal comment****/Marital Status].[S]' not found in cube 'Sales'" );
 
     // Nested comments only need to be closed once.
     assertQueryThrows(connection, "/* a simple /* nested */ comment */\n" + "SELECT {} ON ROWS, {} ON COLUMNS FROM [Sales]",

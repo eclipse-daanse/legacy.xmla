@@ -73,7 +73,7 @@ class RangeFunDefTest {
     void testTwoNullRange(Context context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "NULL : NULL",
-            "Failed to parse query 'select {NULL : NULL} on columns from Sales'" , "Sales");
+            "Cannot deduce type of call to function ':'" , "Sales");
     }
 
     /**

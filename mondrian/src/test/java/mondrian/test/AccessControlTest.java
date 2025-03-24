@@ -2664,7 +2664,7 @@ class AccessControlTest {
     	TestUtil.assertAxisThrows(
 			connection,
             "[Customers].Members",
-            "Failed to parse query 'select {[Customers].Members} on columns from Sales'", "Sales");
+            "MDX object '[Customers]' not found in cube 'Sales'", "Sales");
     	TestUtil.assertQueryReturns(
 			connection,
             "select {[Education Level].Members} on columns, {[Measures].[Unit Sales]} on rows from Sales",
@@ -2690,13 +2690,13 @@ class AccessControlTest {
     	TestUtil.assertAxisThrows(
 			connection,
             "[Customers].Members",
-            "Failed to parse query 'select {[Customers].Members} on columns from Sales'", "Sales");
+            "MDX object '[Customers]' not found in cube 'Sales'", "Sales");
         props = new RolapConnectionPropsR(List.of("Role3"), true, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty());
         connection = foodMartContext.getConnection(props);
     	TestUtil.assertQueryThrows(
 			connection,
             "select {[Education Level].Members} on columns, {[Measures].[Unit Sales]} on rows from Sales",
-            "Failed to parse query 'select {[Education Level].Members} on columns, {[Measures].[Unit Sales]} on rows from Sales'");
+            "MDX object '[Measures].[Unit Sales]' not found in cube 'Sales'");
     }
 
     // ~ Inner classes =========================================================

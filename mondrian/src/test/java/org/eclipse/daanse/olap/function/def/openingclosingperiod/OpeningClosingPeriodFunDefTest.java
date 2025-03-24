@@ -363,7 +363,7 @@ class OpeningClosingPeriodFunDefTest {
     void testOpeningPeriodNull(Context context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "OpeningPeriod([Time].[Month], NULL)",
-            "Failed to parse query 'select {OpeningPeriod([Time].[Month], NULL)} on columns from Sales'", "Sales" );
+            "Function does not support NULL member parameter", "Sales" );
     }
 
 }

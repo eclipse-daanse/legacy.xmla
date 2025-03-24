@@ -82,13 +82,9 @@ class UCaseFunDefTest {
                     + " UCase(NULL) = \"\" "
                     + "And [Store].CURRENTMEMBER.Name = \"Bellingham\") "
                     + "on 0 from sales" );
-        } catch ( OlapRuntimeException e ) {
-            Throwable mondrianEvaluationException = e.getCause();
-            assertEquals(
-                mondrianEvaluationException.getClass(),
-                ( MondrianEvaluationException.class ) );
+        } catch ( MondrianEvaluationException e ) {
             assertEquals( "No method with the signature UCase(NULL) matches known functions.",
-                mondrianEvaluationException.getMessage() );
+                e.getMessage() );
             return;
         }
         fail( "MondrianEvaluationException is expected here" );
