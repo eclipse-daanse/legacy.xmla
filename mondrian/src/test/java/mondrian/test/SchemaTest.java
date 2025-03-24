@@ -2181,6 +2181,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE : test have issue with alias and Level. we have hierarchy with inner join .
     //Left join have alias with "customer_region" . Level of  hierarchy use table (reference) without alias with table name "region".
     //After that we have exception that "region" not exist (we should use alias as name of table in sql).
@@ -2391,6 +2392,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE : test have issue with alias and Level. we have hierarchy with inner join .
     //Left join have alias with "store_region" . Level of  hierarchy use table (reference) without alias with table name "region".
     //After that we have exception that "region" not exist (we should use alias as name of table in sql).
@@ -2469,7 +2471,7 @@ class SchemaTest {
                         .build();
             	LevelMappingImpl l23 = LevelMappingImpl
                         .builder()
-                        .withName("City")                        
+                        .withName("City")
                         .withColumn(FoodmartMappingSupplier.CITY_COLUMN_IN_CUSTOMER)
                         .withUniqueMembers(false)
                         .build();

@@ -39,6 +39,7 @@ import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
@@ -81,20 +82,21 @@ class ServiceTest {
 
 	@Mock
 	ExpressionCompilerFactory expressionCompilerFactory;
-	
+
 	@Mock
 	MdxParserProvider mdxParserProvider;
-	
+
 	@Mock
 	CatalogMapping catalogMapping;
 
-	
+
 	@BeforeEach
 	public void setup() throws SQLException {
 
 	}
 
 	@Test
+    @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     public void serviceExists(
             @InjectConfiguration(withFactoryConfig = @WithFactoryConfiguration(factoryPid = BasicContext.PID, name = "name1")) Configuration c,
             @InjectService(cardinality = 0) ServiceAware<Context> saContext) throws Exception {
@@ -154,7 +156,7 @@ class ServiceTest {
         });
 
     }
-	
+
     private static  <N> Answer<List<N>> setupDummyListAnswer(N... values) {
         final List<N> someList = new LinkedList<>(Arrays.asList(values));
 

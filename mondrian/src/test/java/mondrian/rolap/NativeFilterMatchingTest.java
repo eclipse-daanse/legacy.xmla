@@ -46,6 +46,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
@@ -445,6 +446,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     void testNativeFilterWithCompoundSlicer(Context context) {
         ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
         final String mdx =

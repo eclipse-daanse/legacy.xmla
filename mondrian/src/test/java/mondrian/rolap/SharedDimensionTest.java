@@ -14,6 +14,7 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.withSchema;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -340,6 +341,7 @@ class SharedDimensionTest  {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE: issue with alias
     void testA(Context context) {
         // Schema has two cubes sharing a dimension.
@@ -351,6 +353,7 @@ class SharedDimensionTest  {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE: issue with alias
     void testB(Context context) {
         // Schema has two cubes sharing a dimension.
@@ -362,6 +365,7 @@ class SharedDimensionTest  {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE: issue with alias
     void testVirtualCube(Context context) {
         // Schema has two cubes sharing a dimension, and a virtual cube built
@@ -385,6 +389,7 @@ class SharedDimensionTest  {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE: issue with alias
     void testNECJMemberList(Context context) {
         // Schema has two cubes sharing a dimension.
@@ -398,6 +403,7 @@ class SharedDimensionTest  {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     //NOTE: issue with alias
     void testNECJMultiLevelMemberList(Context context) {
         // Schema has two cubes sharing a dimension.

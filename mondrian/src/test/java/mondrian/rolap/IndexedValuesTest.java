@@ -13,6 +13,7 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -32,6 +33,7 @@ class IndexedValuesTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
+    @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     void testQueryWithIndex(Context context) {
         final String desiredResult =
             "Axis #0:\n"

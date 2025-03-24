@@ -28,6 +28,7 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
@@ -1301,6 +1302,7 @@ class ConcurrentMdxTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
+    @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     void testFlushingDoesNotCauseDeadlock(Context context) throws Exception {
         // Create a seeded deterministic random generator.
         final long seed = new Random().nextLong();

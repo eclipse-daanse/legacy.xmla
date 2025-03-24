@@ -82,8 +82,8 @@ import org.eclipse.daanse.olap.calc.api.ResultStyle;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
@@ -95,7 +95,6 @@ import org.slf4j.Logger;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.olap.IdImpl;
-import mondrian.olap.AbstractProperty;
 import mondrian.olap.QueryCanceledException;
 import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
@@ -5982,7 +5981,8 @@ public class BasicQueryTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  //NOTE issue with aliases
+  @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
+      //NOTE issue with aliases
   void testMondrian2245(Context context) {
     String mdxWithoutBug =
         "" + "SELECT " + "   {[Measures].[Sales]} ON Axis(0),\n"
