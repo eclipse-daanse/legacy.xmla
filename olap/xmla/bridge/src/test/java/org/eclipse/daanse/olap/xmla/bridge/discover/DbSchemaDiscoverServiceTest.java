@@ -189,7 +189,7 @@ class DbSchemaDiscoverServiceTest {
         when(cub1.getMeasures()).thenAnswer(setupDummyListAnswer(member));
         when(cub2.getMeasures()).thenAnswer(setupDummyListAnswer(member));
         
-        when(catalog.getCubes()).thenAnswer(setupDummyArrayAnswer(cub1, cub2));
+        when(catalog.getCubes()).thenAnswer(setupDummyListAnswer(cub1, cub2));
         
         
         List<DbSchemaColumnsResponseRow> rows = service.dbSchemaColumns(request, requestMetaData, userPrincipal);
@@ -368,7 +368,7 @@ class DbSchemaDiscoverServiceTest {
         when(restrictions.tableCatalog()).thenReturn(Optional.of("foo"));
 
         when(catalog.getName()).thenReturn("schema2Name");
-        when(catalog.getCubes()).thenAnswer(setupDummyArrayAnswer(cub1, cub2));
+        when(catalog.getCubes()).thenAnswer(setupDummyListAnswer(cub1, cub2));
 
         when(hierar1.getLevels()).thenAnswer(setupDummyArrayAnswer(level1, level2));
         when(hierar1.getName()).thenReturn("hierarchy1Name");
@@ -414,7 +414,7 @@ class DbSchemaDiscoverServiceTest {
         when(restrictions.tableCatalog()).thenReturn(Optional.of("foo"));
 
         when(catalog.getName()).thenReturn("schema2Name");
-        when(catalog.getCubes()).thenAnswer(setupDummyArrayAnswer(cub1, cub2));
+        when(catalog.getCubes()).thenAnswer(setupDummyListAnswer(cub1, cub2));
 
         when(hierar1.getLevels()).thenAnswer(setupDummyArrayAnswer(level1, level2));
         when(hierar1.getName()).thenReturn("hierarchy1Name");
@@ -455,7 +455,7 @@ class DbSchemaDiscoverServiceTest {
         when(restrictions.tableType()).thenReturn(Optional.of("TABLE"));
 
         when(catalog.getName()).thenReturn("schema2Name");
-        when(catalog.getCubes()).thenAnswer(setupDummyArrayAnswer(cub1, cub2));
+        when(catalog.getCubes()).thenAnswer(setupDummyListAnswer(cub1, cub2));
 
         when(cub1.getName()).thenReturn("cube1Name");
 
@@ -479,7 +479,7 @@ class DbSchemaDiscoverServiceTest {
         when(restrictions.catalogName()).thenReturn(Optional.of("foo"));
 
         when(catalog.getName()).thenReturn("schema2Name");
-        when(catalog.getCubes()).thenAnswer(setupDummyArrayAnswer(cub1, cub2));
+        when(catalog.getCubes()).thenAnswer(setupDummyListAnswer(cub1, cub2));
 
         when(cub1.getName()).thenReturn("cube1Name");
 

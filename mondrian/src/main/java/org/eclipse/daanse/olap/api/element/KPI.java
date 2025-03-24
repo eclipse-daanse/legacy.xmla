@@ -28,7 +28,7 @@ public interface KPI {
 
     String getStatusGraphic();
 
-    String getParentKpiID();
+    KPI getParentKpi();
 
     String getValue();
 

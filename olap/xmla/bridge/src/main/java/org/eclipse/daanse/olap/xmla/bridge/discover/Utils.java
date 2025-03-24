@@ -905,7 +905,7 @@ public class Utils {
                 Optional.ofNullable(kpi.getTrendGraphic()),
                 Optional.ofNullable(kpi.getWeight()),
                 Optional.ofNullable(kpi.getCurrentTimeMember()),
-                Optional.ofNullable(kpi.getParentKpiID()),
+                Optional.ofNullable(kpi.getParentKpi() != null ? kpi.getParentKpi().getName() : null),
                 Optional.empty(),
                 Optional.of(ScopeEnum.GLOBAL)
             );

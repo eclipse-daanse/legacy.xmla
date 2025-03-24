@@ -383,12 +383,22 @@ public class RolapCube extends CubeBase {
                 kpi.setWeight(kpiMapping.getWeight());
                 kpi.setTrendGraphic(kpiMapping.getTrendGraphic());
                 kpi.setStatusGraphic(kpiMapping.getStatusGraphic());
-                kpi.setParentKpiID(kpiMapping.getParentKpiID());
                 kpi.setValue(kpiMapping.getValue());
                 kpi.setGoal(kpiMapping.getGoal());
                 kpi.setStatus(kpiMapping.getStatus());
                 kpi.setDescription(kpiMapping.getDescription());
                 kpis.add(kpi);
+            });
+            cube.getKpis().stream().forEach(kpiMapping -> {
+                if (kpiMapping.getParentKpi() != null) {
+                    Optional<KPI> oKpi = kpis.stream().filter(k -> k.getName().equals(kpiMapping.getName())).findFirst();
+                    if (oKpi.isPresent()) {
+                        Optional<KPI> oKpiParent = kpis.stream().filter(k -> k.getName().equals(kpiMapping.getParentKpi().getName())).findFirst();
+                        if (oKpiParent.isPresent()) {
+                            ((RolapKPI)oKpi.get()).setParentKpi(oKpiParent.get());
+                        }
+                    }
+                }
             });
         }
     }

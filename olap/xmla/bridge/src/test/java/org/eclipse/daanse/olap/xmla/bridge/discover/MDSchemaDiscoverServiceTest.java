@@ -219,7 +219,7 @@ class MDSchemaDiscoverServiceTest {
         when(cube1.isVisible()).thenReturn(true);
         when(cube2.isVisible()).thenReturn(true);
 
-        when(catalog2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
+        when(catalog2.getCubes()).thenAnswer(setupDummyListAnswer(cube1, cube2));
 
         List<MdSchemaCubesResponseRow> rows = service.mdSchemaCubes(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(2);
@@ -279,7 +279,7 @@ class MDSchemaDiscoverServiceTest {
         Member member = mock(Member.class);
         when(cube1.getLevelMembers(any(), eq(true))).thenAnswer(setupDummyListAnswer(member));
 
-        when(catalog2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
+        when(catalog2.getCubes()).thenAnswer(setupDummyListAnswer(cube1, cube2));
 
         List<MdSchemaDimensionsResponseRow> rows = service.mdSchemaDimensions(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(4);
@@ -394,7 +394,7 @@ class MDSchemaDiscoverServiceTest {
         when(cube1.getDimensions()).thenAnswer(setupDummyArrayAnswer(dimension1, dimension2));
         when(cube2.getDimensions()).thenAnswer(setupDummyArrayAnswer(dimension1, dimension2));
 
-        when(catalog2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
+        when(catalog2.getCubes()).thenAnswer(setupDummyListAnswer(cube1, cube2));
 
         when(catalog2.getName()).thenReturn("schema2Name");
 
@@ -441,7 +441,7 @@ class MDSchemaDiscoverServiceTest {
 
         when(catalog2.getName()).thenReturn("schema2Name");
 
-        when(catalog2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
+        when(catalog2.getCubes()).thenAnswer(setupDummyListAnswer(cube1, cube2));
 
         when(cube1.getName()).thenReturn("cube1Name");
         when(cube2.getName()).thenReturn("cube2Name");
@@ -463,12 +463,11 @@ class MDSchemaDiscoverServiceTest {
         when(kpi1.getTrendGraphic()).thenReturn("kpi1TrendGraphic");
         when(kpi1.getStatusGraphic()).thenReturn("kpi1StatusGraphic");
         when(kpi1.getCurrentTimeMember()).thenReturn("kpi1CurrentTimeMember");
-        when(kpi1.getParentKpiID()).thenReturn("kpi1ParentKpiID");
 
-        when(kpi2.getName()).thenReturn("kpi2name");
+        when(kpi2.getName()).thenReturn("kpi2Name");
 
         //when(mappingKpi2.getCaption()).thenReturn("kpi2caption");
-        when(kpi2.getDescription()).thenReturn("kpi2description");
+        when(kpi2.getDescription()).thenReturn("kpi2Description");
         when(kpi2.getDisplayFolder()).thenReturn("kpi2DisplayFolder");
 
         when(kpi2.getValue()).thenReturn("kpi2Value");
@@ -479,29 +478,29 @@ class MDSchemaDiscoverServiceTest {
         when(kpi2.getTrendGraphic()).thenReturn("kpi2TrendGraphic");
         when(kpi2.getStatusGraphic()).thenReturn("kpi2StatusGraphic");
         when(kpi2.getCurrentTimeMember()).thenReturn("kpi2CurrentTimeMember");
-        when(kpi2.getParentKpiID()).thenReturn("kpi2ParentKpiID");
+        when(kpi2.getParentKpi()).thenReturn(kpi1);
 
         when(catalog2.getName()).thenReturn("foo");
 
 
         List<MdSchemaKpisResponseRow> rows = service.mdSchemaKpis(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(4);
-        checkMdSchemaKpisResponseRow(rows.get(0),
+        checkMdSchemaKpisResponseRow(rows.get(1),
             "foo", "cube1Name",
             "cube1Name",
+            "kpi2Name",
+            "kpi2Name",
+            "kpi2Description",
+            "kpi2DisplayFolder",
+            "kpi2Value",
+            "kpi2Goal",
+            "kpi2Status",
+            "kpi2Trend",
+            "kpi2StatusGraphic",
+            "kpi2TrendGraphic",
+            "kpi2Weight",
+            "kpi2CurrentTimeMember",
             "kpi1Name",
-            "kpi1Name",
-            "kpi1Description",
-            "kpi1DisplayFolder",
-            "kpi1Value",
-            "kpi1Goal",
-            "kpi1Status",
-            "kpi1Trend",
-            "kpi1StatusGraphic",
-            "kpi1TrendGraphic",
-            "kpi1Weight",
-            "kpi1CurrentTimeMember",
-            "kpi1ParentKpiID",
             ScopeEnum.GLOBAL
         );
     }
@@ -549,7 +548,7 @@ class MDSchemaDiscoverServiceTest {
         when(cube1.getLevelCardinality(any(), eq(true), eq(true))).thenReturn(1);
         when(cube2.getLevelCardinality(any(), eq(true), eq(true))).thenReturn(1);
 
-        when(catalog2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
+        when(catalog2.getCubes()).thenAnswer(setupDummyListAnswer(cube1, cube2));
 
         List<MdSchemaLevelsResponseRow> rows = service.mdSchemaLevels(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(16);
@@ -600,7 +599,7 @@ class MDSchemaDiscoverServiceTest {
         when(cube1.getDimensions()).thenAnswer(setupDummyArrayAnswer(dimension1, dimension2));
         when(cube2.getDimensions()).thenAnswer(setupDummyArrayAnswer(dimension1, dimension2));
 
-        when(catalog2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
+        when(catalog2.getCubes()).thenAnswer(setupDummyListAnswer(cube1, cube2));
 
         List<MdSchemaMeasureGroupDimensionsResponseRow> rows = service.mdSchemaMeasureGroupDimensions(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(4);
@@ -631,7 +630,7 @@ class MDSchemaDiscoverServiceTest {
 
         when(catalog2.getName()).thenReturn("foo");
         
-        when(catalog2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
+        when(catalog2.getCubes()).thenAnswer(setupDummyListAnswer(cube1, cube2));
         
         List<MdSchemaMeasureGroupsResponseRow> rows = service.mdSchemaMeasureGroups(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(2);
@@ -677,7 +676,7 @@ class MDSchemaDiscoverServiceTest {
         when(cube1.getMeasures()).thenAnswer(setupDummyListAnswer(measure1, measure2));
         when(cube2.getMeasures()).thenAnswer(setupDummyListAnswer(measure1, measure2));
 
-        when(catalog2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
+        when(catalog2.getCubes()).thenAnswer(setupDummyListAnswer(cube1, cube2));
 
         List<MdSchemaMeasuresResponseRow> rows = service.mdSchemaMeasures(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(4);
@@ -749,7 +748,7 @@ class MDSchemaDiscoverServiceTest {
 
         when(level1.getHierarchy()).thenReturn(hierarchy1);
 
-        when(catalog2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
+        when(catalog2.getCubes()).thenAnswer(setupDummyListAnswer(cube1, cube2));
 
         List<MdSchemaMembersResponseRow> rows = service.mdSchemaMembers(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(16);
@@ -820,7 +819,7 @@ class MDSchemaDiscoverServiceTest {
         when(cube1.getDimensions()).thenAnswer(setupDummyArrayAnswer(dimension1, dimension2));
         when(cube2.getDimensions()).thenAnswer(setupDummyArrayAnswer(dimension1, dimension2));
 
-        when(catalog2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
+        when(catalog2.getCubes()).thenAnswer(setupDummyListAnswer(cube1, cube2));
 
         List<MdSchemaPropertiesResponseRow> rows = service.mdSchemaProperties(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(32);
@@ -863,7 +862,7 @@ class MDSchemaDiscoverServiceTest {
         when(cube1.getNamedSets()).thenAnswer(setupDummyArrayAnswer(namedSet1, namedSet2));
         when(cube2.getNamedSets()).thenAnswer(setupDummyArrayAnswer(namedSet1, namedSet2));
 
-        when(catalog2.getCubes()).thenAnswer(setupDummyArrayAnswer(cube1, cube2));
+        when(catalog2.getCubes()).thenAnswer(setupDummyListAnswer(cube1, cube2));
 
         List<MdSchemaSetsResponseRow> rows = service.mdSchemaSets(request, requestMetaData, userPrincipal);
         assertThat(rows).isNotNull().hasSize(4);

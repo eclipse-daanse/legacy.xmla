@@ -1,10 +1,6 @@
 package mondrian.rolap;
 
-import java.util.List;
-
 import org.eclipse.daanse.olap.api.element.KPI;
-import org.eclipse.daanse.rolap.mapping.pojo.TranslationMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.KpiMappingImpl.Builder;
 
 public class RolapKPI implements KPI {
 
@@ -41,7 +37,7 @@ public class RolapKPI implements KPI {
 
 	private String currentTimeMember;
 
-	private String parentKpiID;
+	private KPI parentKpi;
 
 	@Override
 	public String getDisplayFolder() {
@@ -125,7 +121,6 @@ public class RolapKPI implements KPI {
 	}
 
 	@Override
-
 	public String getCurrentTimeMember() {
 		return currentTimeMember;
 	}
@@ -134,14 +129,14 @@ public class RolapKPI implements KPI {
 	public void setCurrentTimeMember(String currentTimeMember) {
 		this.currentTimeMember = currentTimeMember;
 	}
+	
 	@Override
-
-	public String getParentKpiID() {
-		return parentKpiID;
+	public KPI getParentKpi() {
+		return parentKpi;
 	}
 
-	public void setParentKpiID(String parentKpiID) {
-		this.parentKpiID = parentKpiID;
+	public void setParentKpi(KPI parentKpi) {
+		this.parentKpi = parentKpi;
 	}
 
 	@Override
