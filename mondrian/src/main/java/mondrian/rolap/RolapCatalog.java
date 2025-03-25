@@ -66,7 +66,9 @@ import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.DatabaseColumn;
 import org.eclipse.daanse.olap.api.element.DatabaseSchema;
+import org.eclipse.daanse.olap.api.element.DatabaseTable;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -471,12 +473,12 @@ public class RolapCatalog implements Catalog {
 
 		for (DatabaseSchemaMapping dbSchemaMapping : mappingCatalog2.getDbschemas()) {
 			RolapDatabaseSchema rolapDbSchema = new RolapDatabaseSchema();
-			List<RolapDatabaseTable> rolapDbTables = new ArrayList<>();
+			List<DatabaseTable> rolapDbTables = new ArrayList<>();
 			rolapDbSchema.setName(rolapDbSchema.getName());
 
 			for (TableMapping table : dbSchemaMapping.getTables()) {
 				RolapDatabaseTable rolapDbTable = new RolapDatabaseTable();
-				List<RolapDatabaseColumn> rolapDbColumns = new ArrayList<>();
+				List<DatabaseColumn> rolapDbColumns = new ArrayList<>();
 				rolapDbTable.setName(table.getName());
 
 				for (ColumnMapping column : table.getColumns()) {
@@ -485,8 +487,10 @@ public class RolapCatalog implements Catalog {
 
 					rolapDbColumns.add(rolapDbColumn);
 				}
+				rolapDbTable.setDbColumns(rolapDbColumns);
 				rolapDbTables.add(rolapDbTable);
 			}
+            rolapDbSchema.setDbTables(rolapDbTables);
 			rolapDbSchemas.add(rolapDbSchema);
 		}
 	}

@@ -32,6 +32,7 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.DrillThroughAction;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.DatabaseColumn;
 import org.eclipse.daanse.olap.api.element.DatabaseSchema;
 import org.eclipse.daanse.olap.api.element.DatabaseTable;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -136,12 +137,13 @@ public class Utils {
         Optional<ColumnOlapTypeEnum> oColumnOlapType){
 
         return catalog.getCubes().stream().sorted(Comparator.comparing(Cube::getName)).flatMap(
-                c -> getDbSchemaColumnsResponseRow(catalog.getName(), null, c, oTableName, oColumnName, oColumnOlapType)
+                c -> getDbSchemaColumnsResponseRow(catalog.getDatabaseSchemas(), catalog.getName(), null, c, oTableName, oColumnName, oColumnOlapType)
                         .stream())
                 .toList();
     }
 
     static List<DbSchemaColumnsResponseRow> getDbSchemaColumnsResponseRow(
+        List<? extends DatabaseSchema> databaseSchemas,
         String catalogName,
         String schemaName,
         Cube cube,
@@ -149,69 +151,153 @@ public class Utils {
         Optional<String> oColumnName,
         Optional<ColumnOlapTypeEnum> oColumnOlapType
     ) {
-        int ordinalPosition = 1;
+        Integer ordinalPosition = 1;
         List<DbSchemaColumnsResponseRow> result = new ArrayList<>();
         if (!oTableName.isPresent() || (oTableName.isPresent() && oTableName.get().equals(cube.getName()))) {
             final boolean emitInvisibleMembers = true; //TODO
-            for (Dimension dimension : cube.getDimensions()) {
+            if (!oColumnOlapType.isPresent() || (oColumnOlapType.isPresent() && oColumnOlapType.get().equals(ColumnOlapTypeEnum.ATTRIBUTE))) {
+                for (Dimension dimension : cube.getDimensions()) {
                     populateDimensionForDbSchemaColumns(
                         catalogName,
                         schemaName,
                         cube, dimension,
                         ordinalPosition, result);
+                }
             }
-            for (Member measure  : cube.getMeasures()) {
-                Boolean visible = true;
-               Object o= measure.getPropertyValue("$visible");
-
-                if (o!=null) {
-                    visible = Boolean.valueOf(o.toString());
-                }
-                if (!emitInvisibleMembers && !visible) {
-                    continue;
-                }
-
-                String memberName = measure.getName();
-                final String columnName = "Measures:" + memberName;
-                if (oColumnName.isPresent() && oColumnName.get().equals(columnName)) {
-                    continue;
-                }
-                String cubeName = cube.getName();
-                result.add(new DbSchemaColumnsResponseRowR(
-                    Optional.of(cubeName),
-                    Optional.ofNullable(schemaName),
-                    Optional.of(cubeName),
-                    Optional.of(columnName),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.of(ordinalPosition++),
-                    Optional.of(false),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.of(false),
-                    Optional.of(XmlaConstants.DBType.R8.xmlaOrdinal()),
-                    Optional.empty(),
-                    Optional.of(0),
-                    Optional.of(0),
-                    Optional.of(16),
-                    Optional.of(255),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty()
-                ));
+            if (!oColumnOlapType.isPresent() || (oColumnOlapType.isPresent() && oColumnOlapType.get().equals(ColumnOlapTypeEnum.MEASURE))) {
+                populateMeasuresForDbSchemaColumns(
+                        schemaName,
+                        ordinalPosition,
+                        cube,
+                        emitInvisibleMembers,
+                        oTableName,
+                        oColumnName,
+                        result);
             }
         }
-
+        if (!oColumnOlapType.isPresent() || (oColumnOlapType.isPresent() && oColumnOlapType.get().equals(ColumnOlapTypeEnum.SCHEMA))) {
+            populateDbSchemasForDbSchemaColumns(
+                    databaseSchemas,
+                    catalogName,
+                    ordinalPosition,
+                    oTableName,
+                    oColumnName,
+                    result);
+        }
         return result;
+    }
+
+    private static void populateMeasuresForDbSchemaColumns(
+            String schemaName,
+            Integer ordinalPosition,
+            Cube cube,
+            boolean emitInvisibleMembers,
+            Optional<String> oTableName,
+            Optional<String> oColumnName,
+            List<DbSchemaColumnsResponseRow> result) {
+        for (Member measure  : cube.getMeasures()) {
+            Boolean visible = true;
+            Object o= measure.getPropertyValue("$visible");
+
+            if (o!=null) {
+                visible = Boolean.valueOf(o.toString());
+            }
+            if (!emitInvisibleMembers && !visible) {
+                continue;
+            }
+
+            String memberName = measure.getName();
+            final String columnName = "Measures:" + memberName;
+            if (oColumnName.isPresent() && !oColumnName.get().equals(columnName)) {
+                continue;
+            }
+            String cubeName = cube.getName();
+            result.add(new DbSchemaColumnsResponseRowR(
+                Optional.of(cubeName),
+                Optional.ofNullable(schemaName),
+                Optional.of(cubeName),
+                Optional.of(columnName),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.of(ordinalPosition++),
+                Optional.of(false),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.of(false),
+                Optional.of(XmlaConstants.DBType.R8.xmlaOrdinal()),
+                Optional.empty(),
+                Optional.of(0),
+                Optional.of(0),
+                Optional.of(16),
+                Optional.of(255),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty()
+                ));
+        }
+    }
+
+    private static void populateDbSchemasForDbSchemaColumns(List<? extends DatabaseSchema> databaseSchemas,
+            String catalogName,
+            Integer ordinalPosition,
+            Optional<String> oTableName,
+            Optional<String> oColumnName,
+            List<DbSchemaColumnsResponseRow> result) {
+        if (databaseSchemas != null) {
+            for (DatabaseSchema databaseSchema  : databaseSchemas) {
+                if (databaseSchema.getDbTables() != null) {
+                    for (DatabaseTable databaseTable  : databaseSchema.getDbTables()) {
+                        if (!oTableName.isPresent() || (oTableName.isPresent() && oTableName.get().equals(databaseTable.getName()))) {
+                            if (databaseTable.getDbColumns() != null) {
+                                for (DatabaseColumn databaseColumn : databaseTable.getDbColumns()) {
+                                    if (!oColumnName.isPresent() || (oColumnName.isPresent() && oColumnName.get().equals(databaseColumn.getName()))) {
+                                        result.add(new DbSchemaColumnsResponseRowR(
+                                            Optional.of(catalogName),
+                                            Optional.ofNullable(databaseSchema.getName()),
+                                            Optional.of(databaseTable.getName()),
+                                            Optional.of(databaseColumn.getName()),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.of(ordinalPosition++),
+                                            Optional.of(false),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.of(false),
+                                            Optional.of(XmlaConstants.DBType.R8.xmlaOrdinal()),
+                                            Optional.empty(),
+                                            Optional.of(0),
+                                            Optional.of(0),
+                                            Optional.of(16),
+                                            Optional.of(255),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.of(ColumnOlapTypeEnum.SCHEMA)));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static void populateDimensionForDbSchemaColumns(
@@ -219,7 +305,7 @@ public class Utils {
         String schemaName,
         Cube cube,
         Dimension dimension,
-        int ordinalPosition,
+        Integer ordinalPosition,
         List<DbSchemaColumnsResponseRow> result
     ) {
         for (Hierarchy hierarchy : dimension.getHierarchies()) {
@@ -520,7 +606,7 @@ public class Utils {
                 ));
             }
 
-        if (isTableType(oTableType, SYSTEM_TABLE)) {
+            if (isTableType(oTableType, SYSTEM_TABLE)) {
                 for (Dimension dimension : cube.getDimensions()) {
                     populateDimensionForDbSchemaTables(
                         catalogName,
@@ -531,17 +617,14 @@ public class Utils {
                     );
                 }
             }
-            if (isTableType(oTableType, SCHEMA)) {
-                populateDbSchemasForDbSchemaTables(
-                        catalogName,
-                        null,
-                        dbSchemas,
-                        result
-                    );
-            }
         }
-
-
+        if (isTableType(oTableType, SCHEMA)) {
+            populateDbSchemasForDbSchemaTables(
+                    catalogName,
+                    null,
+                    dbSchemas,
+                    result);
+        }
         return result;
 
     }
