@@ -41,7 +41,9 @@
 	bnd.identity;id='org.eclipse.daanse.rolap.mapping.emf',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.importer.csv',\
 	bnd.identity;id='org.gecko.emf.osgi.component',\
-	bnd.identity;id='org.eclipse.daanse.olap.documentation.common'
+	bnd.identity;id='org.eclipse.daanse.olap.documentation.common',\
+	bnd.identity;id='org.eclipse.daanse.rolap.mapping.verifyer.api',\
+	bnd.identity;id='org.eclipse.daanse.rolap.mapping.verifyer.basic'
 
 
 # This will help us keep -runbundles sorted
@@ -92,6 +94,7 @@
 	org.eclipse.daanse.rolap.mapping.emf;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.pojo;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.verifyer.api;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.rolap.mapping.verifyer.basic;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.sql.guard.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.xmla.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.xmla.model.record;version='[0.0.1,0.0.2)',\
