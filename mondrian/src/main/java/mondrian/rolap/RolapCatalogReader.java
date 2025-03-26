@@ -31,11 +31,17 @@ import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.Segment;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseColumn;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseSchema;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseTable;
 import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.DatabaseColumn;
+import org.eclipse.daanse.olap.api.element.DatabaseSchema;
+import org.eclipse.daanse.olap.api.element.DatabaseTable;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -732,6 +738,43 @@ public class RolapCatalogReader
     @Override
 	public List<Cube> getCubes() {
      return   catalog.getCubes().stream().filter(role::canAccess).toList();
+    }
+
+    @Override
+    public List<? extends DatabaseSchema> getDatabaseSchemas() {
+     org.eclipse.daanse.olap.api.element.Catalog catalog = this.getCatalog();
+     return catalog.getDatabaseSchemas().stream().filter(d -> role.canAccess(d, catalog)).map(d -> getDatabaseSchema(d, role.getAccess(d, catalog)) ).toList();
+    }
+
+    private DatabaseSchema getDatabaseSchema(DatabaseSchema ds, AccessDatabaseSchema access) {
+        if (AccessDatabaseSchema.ALL.equals(access)) {
+            return ds;
+        }
+        RolapDatabaseSchema rolapDbSchema = new RolapDatabaseSchema();
+        rolapDbSchema.setName(ds.getName());
+        List<DatabaseTable> rolapDbTables = new ArrayList<>();
+        for (DatabaseTable t : ds.getDbTables()) {
+            AccessDatabaseTable accessDatabaseTable  = role.getAccess(t, access);
+            if (AccessDatabaseTable.ALL.equals(accessDatabaseTable)) {
+                rolapDbTables.add(t);
+            }
+            if (AccessDatabaseTable.CUSTOM.equals(accessDatabaseTable)) {
+                RolapDatabaseTable rolapDbTable = new RolapDatabaseTable();
+                rolapDbTable.setName(t.getName());
+                rolapDbTable.setDescription(t.getDescription());
+                List<DatabaseColumn> rolapDbColumns = new ArrayList<>();
+                rolapDbTable.setDbColumns(rolapDbColumns);
+                rolapDbTables.add(rolapDbTable);
+                for (DatabaseColumn c : t.getDbColumns()) {
+                    AccessDatabaseColumn accessDatabaseColumn  = role.getAccess(c, accessDatabaseTable);
+                    if (AccessDatabaseColumn.ALL.equals(accessDatabaseColumn)) {
+                        rolapDbColumns.add(c);
+                    }
+                }
+            }
+        }
+        rolapDbSchema.setDbTables(rolapDbTables);
+        return rolapDbSchema;
     }
 
     @Override

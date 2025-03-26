@@ -14,6 +14,9 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.access.AccessCatalog;
 import org.eclipse.daanse.olap.api.access.AccessCube;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseColumn;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseSchema;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseTable;
 import org.eclipse.daanse.olap.api.access.AccessDimension;
 import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.AccessMember;
@@ -22,6 +25,9 @@ import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.DatabaseColumn;
+import org.eclipse.daanse.olap.api.element.DatabaseSchema;
+import org.eclipse.daanse.olap.api.element.DatabaseTable;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -392,5 +398,60 @@ class UnionRoleImpl implements Role {
             }
             return false;
         }
+    }
+
+    @Override
+    public boolean canAccess(DatabaseSchema databaseSchema, Catalog catalog) {
+        for (Role role : roleList) {
+            if (role.canAccess(databaseSchema, catalog)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public AccessDatabaseSchema getAccess(DatabaseSchema databaseSchema, Catalog catalog) {
+        AccessDatabaseSchema access = AccessDatabaseSchema.NONE;
+        for (Role role : roleList) {
+            access = max(access, role.getAccess(databaseSchema, catalog));
+            if (access == AccessDatabaseSchema.ALL) {
+                break;
+            }
+        }
+        LOGGER.debug(
+            "Access level {} granted to database schema {} because of a union of roles.",
+            access, databaseSchema.getName());
+        return access;
+    }
+
+    @Override
+    public AccessDatabaseTable getAccess(DatabaseTable databaseTable, AccessDatabaseSchema accessDatabaseSchemaParent) {
+        AccessDatabaseTable access = AccessDatabaseTable.NONE;
+        for (Role role : roleList) {
+            access = max(access, role.getAccess(databaseTable, accessDatabaseSchemaParent));
+            if (access == AccessDatabaseTable.ALL) {
+                break;
+            }
+        }
+        LOGGER.debug(
+            "Access level {} granted to database table {} because of a union of roles.",
+            access, databaseTable.getName());
+        return access;
+    }
+
+    @Override
+    public AccessDatabaseColumn getAccess(DatabaseColumn column, AccessDatabaseTable accessDatabaseTable) {
+        AccessDatabaseColumn access = AccessDatabaseColumn.NONE;
+        for (Role role : roleList) {
+            access = max(access, role.getAccess(column, accessDatabaseTable));
+            if (access == AccessDatabaseColumn.ALL) {
+                break;
+            }
+        }
+        LOGGER.debug(
+            "Access level {} granted to database column {} because of a union of roles.",
+            access, column.getName());
+        return access;
     }
 }
