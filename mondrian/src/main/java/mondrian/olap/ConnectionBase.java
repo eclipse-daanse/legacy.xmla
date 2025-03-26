@@ -11,6 +11,7 @@
 
 package mondrian.olap;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.daanse.mdx.model.api.MdxStatement;
@@ -18,6 +19,7 @@ import org.eclipse.daanse.mdx.parser.api.MdxParser;
 import org.eclipse.daanse.mdx.parser.api.MdxParserException;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.element.DatabaseSchema;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.query.ExpressionProvider;
@@ -95,12 +97,13 @@ public abstract class ConnectionBase implements Connection {
             MdxStatement mdxStatement = parser.parseMdxStatement();
             return getQueryProvider().createQuery(statement, mdxStatement, strictValidation);
         } catch (MdxParserException mdxPE) {
-
             if (oSqlGuard.isEmpty()) {
                 throw new FailedToParseQueryException(queryToParse, mdxPE);
             } else {
-                
                 SqlGuard guard=oSqlGuard.get();
+                //List<String> roles = getContext().getAccessRoles();
+                //List<? extends DatabaseSchema> ds = getContext().getConnection(roles).getCatalogReader().getDatabaseSchemas();
+                //TODO use DatabaseSchema list for SqlGuard 
                 try {
                     String sanetizedSql= guard.guard(queryToParse);
                     return new SqlQueryImpl(sanetizedSql, getContext().getDataSource());

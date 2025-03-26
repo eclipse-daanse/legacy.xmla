@@ -11,12 +11,18 @@ package mondrian.olap;
 
 import org.eclipse.daanse.olap.api.access.AccessCatalog;
 import org.eclipse.daanse.olap.api.access.AccessCube;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseColumn;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseSchema;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseTable;
 import org.eclipse.daanse.olap.api.access.AccessDimension;
 import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.DatabaseColumn;
+import org.eclipse.daanse.olap.api.element.DatabaseSchema;
+import org.eclipse.daanse.olap.api.element.DatabaseTable;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -100,5 +106,27 @@ public class DelegatingRole implements Role {
     @Override
 	public boolean canAccess(OlapElement olapElement) {
         return role.canAccess(olapElement);
+    }
+
+    @Override
+    public boolean canAccess(DatabaseSchema databaseSchema, Catalog catalog) {
+        return role.canAccess(databaseSchema, catalog);
+    }
+
+    @Override
+    public AccessDatabaseSchema getAccess(DatabaseSchema databaseSchema,
+            Catalog catalog) {
+        return role.getAccess(databaseSchema, catalog);
+    }
+
+    @Override
+    public AccessDatabaseTable getAccess(DatabaseTable databaseTable,
+            AccessDatabaseSchema accessDatabaseSchemaParent) {
+        return role.getAccess(databaseTable, accessDatabaseSchemaParent);
+    }
+
+    @Override
+    public AccessDatabaseColumn getAccess(DatabaseColumn column, AccessDatabaseTable accessDatabaseTable) {
+        return role.getAccess(column, accessDatabaseTable);
     }
 }
