@@ -59,6 +59,9 @@ import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.access.AccessCatalog;
 import org.eclipse.daanse.olap.api.access.AccessCube;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseColumn;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseSchema;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseTable;
 import org.eclipse.daanse.olap.api.access.AccessDimension;
 import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.AccessMember;
@@ -86,11 +89,14 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCatalogGrantMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.AccessColumnGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCubeGrantMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.AccessDatabaseSchemaGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessDimensionGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessHierarchyGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessMemberGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.AccessTableGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
@@ -143,6 +149,12 @@ public class RolapCatalog implements Catalog {
 	 * Holds cubes in this schema.
 	 */
 	private final Map<CubeMapping, RolapCube> mapMappingToRolapCube = new HashMap<>();
+	
+	private final Map<DatabaseSchemaMapping, RolapDatabaseSchema> mapMappingToRolapDatabaseSchema = new HashMap<>();
+
+	private final Map<TableMapping, RolapDatabaseTable> mapMappingToRolapDatabaseTable = new HashMap<>();
+	
+	private final Map<ColumnMapping, RolapDatabaseColumn> mapMappingToRolapDatabaseColumn = new HashMap<>();
 
 	/**
 	 * Maps {@link String shared hierarchy name} to {@link MemberReader}. Shared
@@ -448,6 +460,32 @@ public class RolapCatalog implements Catalog {
 			mapNameToSet.put(namedSetsMapping.getName(), createNamedSet(namedSetsMapping));
 		}
 
+	    for (DatabaseSchemaMapping dbSchemaMapping : mappingCatalog2.getDbschemas()) {
+	        RolapDatabaseSchema rolapDbSchema = new RolapDatabaseSchema();
+	        List<DatabaseTable> rolapDbTables = new ArrayList<>();
+	        rolapDbSchema.setName(rolapDbSchema.getName());
+
+	        for (TableMapping table : dbSchemaMapping.getTables()) {
+	            RolapDatabaseTable rolapDbTable = new RolapDatabaseTable();
+	            List<DatabaseColumn> rolapDbColumns = new ArrayList<>();
+	            rolapDbTable.setName(table.getName());
+
+	            for (ColumnMapping column : table.getColumns()) {
+	                RolapDatabaseColumn rolapDbColumn = new RolapDatabaseColumn();
+	                rolapDbColumn.setName(column.getName());
+
+	                rolapDbColumns.add(rolapDbColumn);
+	                mapMappingToRolapDatabaseColumn.put(column, rolapDbColumn);
+	            }
+	            rolapDbTable.setDbColumns(rolapDbColumns);
+	            rolapDbTables.add(rolapDbTable);
+	            mapMappingToRolapDatabaseTable.put(table, rolapDbTable);
+	        }
+	        rolapDbSchema.setDbTables(rolapDbTables);
+	        rolapDbSchemas.add(rolapDbSchema);
+	        mapMappingToRolapDatabaseSchema.put(dbSchemaMapping, rolapDbSchema);
+	    }
+
 		// Create roles.
 		for (AccessRoleMapping roleMapping : mappingCatalog2.getAccessRoles()) {
 			Role role = createRole(roleMapping);
@@ -471,28 +509,6 @@ public class RolapCatalog implements Catalog {
 			}
 		}
 
-		for (DatabaseSchemaMapping dbSchemaMapping : mappingCatalog2.getDbschemas()) {
-			RolapDatabaseSchema rolapDbSchema = new RolapDatabaseSchema();
-			List<DatabaseTable> rolapDbTables = new ArrayList<>();
-			rolapDbSchema.setName(rolapDbSchema.getName());
-
-			for (TableMapping table : dbSchemaMapping.getTables()) {
-				RolapDatabaseTable rolapDbTable = new RolapDatabaseTable();
-				List<DatabaseColumn> rolapDbColumns = new ArrayList<>();
-				rolapDbTable.setName(table.getName());
-
-				for (ColumnMapping column : table.getColumns()) {
-					RolapDatabaseColumn rolapDbColumn = new RolapDatabaseColumn();
-					rolapDbColumn.setName(column.getName());
-
-					rolapDbColumns.add(rolapDbColumn);
-				}
-				rolapDbTable.setDbColumns(rolapDbColumns);
-				rolapDbTables.add(rolapDbTable);
-			}
-            rolapDbSchema.setDbTables(rolapDbTables);
-			rolapDbSchemas.add(rolapDbSchema);
-		}
 	}
 
 	/*
@@ -555,9 +571,81 @@ public class RolapCatalog implements Catalog {
 		for (AccessCubeGrantMapping cubeGrant : schemaGrantMapings.getCubeGrants()) {
 			handleCubeGrant(role, cubeGrant);
 		}
+		for (AccessDatabaseSchemaGrantMapping databaseSchemaGrant : schemaGrantMapings.getDatabaseSchemaGrants()) {
+		    handleDatabaseSchemaGrant(role, databaseSchemaGrant);
+		}
 	}
 
-	// package-local visibility for testing purposes
+	public void handleDatabaseSchemaGrant(RoleImpl role, AccessDatabaseSchemaGrantMapping databaseSchemaGrant) {
+        RolapDatabaseSchema databaseSchema = lookupDatabaseSchema(databaseSchemaGrant.getDatabaseSchema());
+        if (databaseSchema == null) {
+            throw Util.newError(
+                    new StringBuilder("Unknown databaseSchema '").append(databaseSchemaGrant.getDatabaseSchema().getName()).append("'").toString());
+        }
+        role.grant(databaseSchema, getAccessDatabaseSchema(databaseSchemaGrant.getAccess().name(), AccessDatabaseSchema.ALLOWED_SET));
+        for (AccessTableGrantMapping tableGrant : databaseSchemaGrant.getTableGrants()) {
+            handleTableGrant(role, tableGrant);
+        }
+    }
+
+    private void handleTableGrant(RoleImpl role, AccessTableGrantMapping tableGrant) {
+        RolapDatabaseTable table = lookupTable(tableGrant.getTable());
+        if (table == null) {
+            throw Util.newError(
+                    new StringBuilder("Unknown table '").append(tableGrant.getTable().getName()).append("'").toString());
+        }
+        role.grant(table, getAccessTable(tableGrant.getAccess().name(), AccessDatabaseTable.ALLOWED_SET));
+        for (AccessColumnGrantMapping columnGrant : tableGrant.getColumnGrants()) {
+            handleColumnGrant(role, columnGrant);
+        }
+    }
+
+    private void handleColumnGrant(RoleImpl role, AccessColumnGrantMapping columnGrant) {
+        RolapDatabaseColumn column = lookupColumn(columnGrant.getColumn());
+        if (column == null) {
+            throw Util.newError(
+                    new StringBuilder("Unknown column '").append(columnGrant.getColumn().getName()).append("'").toString());
+        }
+        role.grant(column, getAccessColumn(columnGrant.getAccess().name(), AccessDatabaseColumn.ALLOWED_SET));
+    }
+
+    private AccessDatabaseColumn getAccessColumn(String accessString, Set<AccessDatabaseColumn> allowedSet) {
+        final AccessDatabaseColumn access = AccessDatabaseColumn.valueOf(accessString.toUpperCase());
+        if (allowedSet.contains(access)) {
+            return access; // value is ok
+        }
+        throw Util.newError(new StringBuilder("Bad value access='").append(accessString).append("'").toString());
+    }
+
+    private RolapDatabaseColumn lookupColumn(ColumnMapping column) {
+        return mapMappingToRolapDatabaseColumn.get(column);
+    }
+
+    private AccessDatabaseTable getAccessTable(String accessString, Set<AccessDatabaseTable> allowedSet) {
+        final AccessDatabaseTable access = AccessDatabaseTable.valueOf(accessString.toUpperCase());
+        if (allowedSet.contains(access)) {
+            return access; // value is ok
+        }
+        throw Util.newError(new StringBuilder("Bad value access='").append(accessString).append("'").toString());
+    }
+
+    private RolapDatabaseTable lookupTable(TableMapping table) {
+        return mapMappingToRolapDatabaseTable.get(table);
+    }
+
+    private AccessDatabaseSchema getAccessDatabaseSchema(String accessString, Set<AccessDatabaseSchema> allowedSet) {
+        final AccessDatabaseSchema access = AccessDatabaseSchema.valueOf(accessString.toUpperCase());
+        if (allowedSet.contains(access)) {
+            return access; // value is ok
+        }
+        throw Util.newError(new StringBuilder("Bad value access='").append(accessString).append("'").toString());
+    }
+
+    private RolapDatabaseSchema lookupDatabaseSchema(DatabaseSchemaMapping databaseSchema) {
+        return mapMappingToRolapDatabaseSchema.get(databaseSchema);
+    }
+
+    // package-local visibility for testing purposes
 	public void handleCubeGrant(RoleImpl role, AccessCubeGrantMapping cubeGrant) {
 		RolapCube cube = lookupCube(cubeGrant.getCube());
 		if (cube == null) {

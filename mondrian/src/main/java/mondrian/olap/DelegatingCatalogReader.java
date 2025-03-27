@@ -31,6 +31,7 @@ import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.DatabaseSchema;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -368,5 +369,10 @@ public abstract class DelegatingCatalogReader implements CatalogReader {
     @Override
     public Context getContext() {
         return schemaReader.getContext();
+    }
+    
+    @Override
+    public List<? extends DatabaseSchema> getDatabaseSchemas() {
+        return schemaReader.getDatabaseSchemas();
     }
 }

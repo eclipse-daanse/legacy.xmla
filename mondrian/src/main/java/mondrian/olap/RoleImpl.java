@@ -21,12 +21,18 @@ import org.eclipse.daanse.olap.api.access.AccessCatalog;
 import org.eclipse.daanse.olap.api.access.AccessCube;
 import org.eclipse.daanse.olap.api.access.AccessDimension;
 import org.eclipse.daanse.olap.api.access.AccessHierarchy;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseSchema;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseTable;
+import org.eclipse.daanse.olap.api.access.AccessDatabaseColumn;
 import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.AllHierarchyAccess;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.DatabaseColumn;
+import org.eclipse.daanse.olap.api.element.DatabaseSchema;
+import org.eclipse.daanse.olap.api.element.DatabaseTable;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -39,6 +45,9 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapCubeDimension;
+import mondrian.rolap.RolapDatabaseColumn;
+import mondrian.rolap.RolapDatabaseSchema;
+import mondrian.rolap.RolapDatabaseTable;
 
 /**
  * Default implementation of the {@link Role} interface.
@@ -56,6 +65,13 @@ public class RoleImpl implements Role {
         new HashMap<>();
     private final Map<Hierarchy, HierarchyAccessImpl> hierarchyGrants =
         new HashMap<>();
+    private final Map<DatabaseSchema, AccessDatabaseSchema> databaseSchemaGrants =
+            new HashMap<>();
+    private final Map<DatabaseTable, AccessDatabaseTable> tableGrants =
+            new HashMap<>();
+    private final Map<DatabaseColumn, AccessDatabaseColumn> columnGrants =
+            new HashMap<>();
+
     private static final Logger LOGGER =
         LoggerFactory.getLogger(RoleImpl.class);
     private final List<Object[]> hashCache = new ArrayList<>();
@@ -167,6 +183,40 @@ public class RoleImpl implements Role {
         hashCache.add(
             new Object[] {
                 catalog.getId(),
+                access.name()});
+        hash = 0;
+    }
+
+    public void grant(RolapDatabaseSchema databaseSchema, AccessDatabaseSchema access) {
+        checkDatabaseSchema(databaseSchema);
+        assert isMutable();
+        databaseSchemaGrants.put(databaseSchema, access);
+        hashCache.add(
+            new Object[] {
+                databaseSchema.getName(),
+                access.name()});
+        hash = 0;
+    }
+
+
+    public void grant(RolapDatabaseTable table, AccessDatabaseTable access) {
+        checkTable(table);
+        assert isMutable();
+        tableGrants.put(table, access);
+        hashCache.add(
+            new Object[] {
+                table.getName(),
+                access.name()});
+        hash = 0;
+    }
+
+    public void grant(RolapDatabaseColumn column, AccessDatabaseColumn access) {
+        checkColumn(column);
+        assert isMutable();
+        columnGrants.put(column, access);
+        hashCache.add(
+            new Object[] {
+                    column.getName(),
                 access.name()});
         hash = 0;
     }
@@ -511,6 +561,86 @@ public class RoleImpl implements Role {
     }
 
     @Override
+    public AccessDatabaseSchema getAccess(DatabaseSchema databaseSchema, Catalog catalog) {
+        checkDatabaseSchema(databaseSchema);
+        AccessDatabaseSchema access = databaseSchemaGrants.get(databaseSchema);
+        if (access != null) {
+            LOGGER.trace(
+                "Access level {} granted to database schema {}", access, databaseSchema.getName());
+            return access;
+        }
+        AccessCatalog accessCatalog = schemaGrants.get(catalog);
+        if (accessCatalog == AccessCatalog.ALL) {
+            LOGGER.trace(
+                "Access level {} granted to database schema {} because of the grant to catalog {}",
+                access,
+                databaseSchema.getName(),
+                catalog.getName());
+            return AccessDatabaseSchema.ALL;
+        }
+        // Deny access
+        LOGGER.trace(
+            "Access denided to database schema {}", databaseSchema.getName());
+        return AccessDatabaseSchema.NONE;
+    }
+
+    @Override
+    public AccessDatabaseTable getAccess(DatabaseTable databaseTable, AccessDatabaseSchema accessDatabaseSchema) {
+        checkDatabaseTable(databaseTable);
+        AccessDatabaseTable access = tableGrants.get(databaseTable);
+        if (access != null) {
+            LOGGER.trace(
+                "Access level {} granted to database table {}", access, databaseTable.getName());
+            return access;
+        }
+        if (accessDatabaseSchema == AccessDatabaseSchema.ALL) {
+            LOGGER.trace(
+                "Access level {} granted to database table {} because of the grant to database schema",
+                access,
+                databaseTable.getName());
+            return AccessDatabaseTable.ALL;
+        }
+        // Deny access
+        LOGGER.trace(
+            "Access denided to database table {}", databaseTable.getName());
+        return AccessDatabaseTable.NONE;
+    }
+
+    @Override
+    public AccessDatabaseColumn getAccess(DatabaseColumn databaseColumn, AccessDatabaseTable accessDatabaseTable) {
+        checkDatabaseTable(databaseColumn);
+        AccessDatabaseColumn access = columnGrants.get(databaseColumn);
+        if (access != null) {
+            LOGGER.trace(
+                "Access level {} granted to database table {}", access, databaseColumn.getName());
+            return access;
+        }
+        if (accessDatabaseTable == AccessDatabaseTable.ALL) {
+            LOGGER.trace(
+                "Access level {} granted to database column {} because of the grant to database table",
+                access,
+                databaseColumn.getName());
+            return AccessDatabaseColumn.ALL;
+        }
+        // Deny access
+        LOGGER.trace(
+            "Access denided to database column {}", databaseColumn.getName());
+        return AccessDatabaseColumn.NONE;
+    }
+
+    private void checkDatabaseTable(DatabaseColumn databaseColumn) {
+        if (databaseColumn == null) {
+            throw new IllegalArgumentException("database column should be not null");
+        }        
+    }
+
+    private void checkDatabaseTable(DatabaseTable databaseTable) {
+        if (databaseTable == null) {
+            throw new IllegalArgumentException("database table should be not null");
+        }
+    }
+
+    @Override
 	public HierarchyAccess getAccessDetails(Hierarchy hierarchy) {
         Util.assertPrecondition(hierarchy != null, "hierarchy != null");
         if (hierarchyGrants.containsKey(hierarchy)) {
@@ -672,6 +802,11 @@ public class RoleImpl implements Role {
         }
     }
 
+    @Override
+    public boolean canAccess(DatabaseSchema databaseSchema, Catalog catalog) {
+        return getAccess(databaseSchema, catalog) != AccessDatabaseSchema.NONE;
+    }
+
     /**
      * Creates an element which represents all access to a hierarchy.
      *
@@ -716,6 +851,24 @@ public class RoleImpl implements Role {
     private void checkCatalog(Catalog schema) {
         if (schema == null) {
             throw new IllegalArgumentException("schema should be not null");
+        }
+    }
+
+    private void checkDatabaseSchema(DatabaseSchema schema) {
+        if (schema == null) {
+            throw new IllegalArgumentException("database schema should be not null");
+        }
+    }
+
+    private void checkTable(RolapDatabaseTable table) {
+        if (table == null) {
+            throw new IllegalArgumentException("database table should be not null");
+        }
+    }
+
+    private void checkColumn(RolapDatabaseColumn column) {
+        if (column == null) {
+            throw new IllegalArgumentException("database column should be not null");
         }
     }
 

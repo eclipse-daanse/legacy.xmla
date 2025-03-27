@@ -16,6 +16,9 @@
 package org.eclipse.daanse.olap.api.access;
 
 import org.eclipse.daanse.olap.api.element.Cube;
+import org.eclipse.daanse.olap.api.element.DatabaseColumn;
+import org.eclipse.daanse.olap.api.element.DatabaseSchema;
+import org.eclipse.daanse.olap.api.element.DatabaseTable;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -121,6 +124,12 @@ public interface Role {
      */
     boolean canAccess(OlapElement olapElement);
 
+    boolean canAccess(DatabaseSchema databaseSchema, Catalog catalog);
+    
+    AccessDatabaseSchema getAccess(DatabaseSchema databaseSchema, Catalog catalog);
+    
+    AccessDatabaseTable getAccess(DatabaseTable databaseTable, AccessDatabaseSchema accessDatabaseSchemaParent);
 
+    AccessDatabaseColumn getAccess(DatabaseColumn column, AccessDatabaseTable accessDatabaseTable);
 }
 
