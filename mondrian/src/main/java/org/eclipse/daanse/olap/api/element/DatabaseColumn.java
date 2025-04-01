@@ -13,8 +13,17 @@
 */
 package org.eclipse.daanse.olap.api.element;
 
+import org.eclipse.daanse.olap.api.DataTypeJdbc;
+
 public interface DatabaseColumn {
 
     String getName();
 
+    DataTypeJdbc getType();
+
+    Boolean getNullable();
+
+    Integer getColumnSize();
+
+    Integer getDecimalDigits();
 }

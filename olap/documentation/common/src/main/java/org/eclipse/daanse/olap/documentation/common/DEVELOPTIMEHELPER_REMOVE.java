@@ -39,7 +39,7 @@ public class DEVELOPTIMEHELPER_REMOVE {
 		String catPath = props.get("catalog.path").toString();
 
 		System.out.println("---" + catPath);
-		Path path = Paths.get(catPath).resolve("DOCUMENTATION.MD");
+		Path path = Paths.get(catPath);
 		System.out.println("---" + path);
 
 		cdp.createDocumentation(context, path);

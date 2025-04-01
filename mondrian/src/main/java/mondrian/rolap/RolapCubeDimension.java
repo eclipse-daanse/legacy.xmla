@@ -95,10 +95,10 @@ public class RolapCubeDimension extends RolapDimension {
     RolapCube lookupFactCube(
         DimensionConnectorMapping cubeDim, RolapCatalog schema)
     {
-      	
+
       if (cubeDim.getPhysicalCube() != null && cubeDim.getPhysicalCube().getName() != null) {
           return schema.lookupCube(cubeDim.getPhysicalCube());
-      }      
+      }
       return null;
     }
 
@@ -162,6 +162,10 @@ public class RolapCubeDimension extends RolapDimension {
     @Override
 	public DimensionType getDimensionType() {
         return rolapDimension.getDimensionType();
+    }
+
+    public DimensionConnectorMapping getDimensionConnector() {
+        return xmlDimension;
     }
 
 }

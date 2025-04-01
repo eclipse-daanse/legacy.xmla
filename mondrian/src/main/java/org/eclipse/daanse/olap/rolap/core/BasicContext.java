@@ -32,6 +32,7 @@ import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.core.LoggingEventBus;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
+import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
 import org.osgi.namespace.unresolvable.UnresolvableNamespace;
@@ -211,6 +212,10 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
 
     @Override
     public List<String> getAccessRoles() {
+        CatalogMapping catalogMapping = getCatalogMapping();
+        if (catalogMapping != null && catalogMapping.getAccessRoles() != null) {
+            return catalogMapping.getAccessRoles().stream().map(AccessRoleMapping::getName).toList();
+        }
         return List.of();// may take from mapping
     }
 

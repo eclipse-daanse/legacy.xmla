@@ -53,6 +53,7 @@ import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
+import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.Quoting;
@@ -149,11 +150,11 @@ public class RolapCatalog implements Catalog {
 	 * Holds cubes in this schema.
 	 */
 	private final Map<CubeMapping, RolapCube> mapMappingToRolapCube = new HashMap<>();
-	
+
 	private final Map<DatabaseSchemaMapping, RolapDatabaseSchema> mapMappingToRolapDatabaseSchema = new HashMap<>();
 
 	private final Map<TableMapping, RolapDatabaseTable> mapMappingToRolapDatabaseTable = new HashMap<>();
-	
+
 	private final Map<ColumnMapping, RolapDatabaseColumn> mapMappingToRolapDatabaseColumn = new HashMap<>();
 
 	/**
@@ -473,7 +474,10 @@ public class RolapCatalog implements Catalog {
 	            for (ColumnMapping column : table.getColumns()) {
 	                RolapDatabaseColumn rolapDbColumn = new RolapDatabaseColumn();
 	                rolapDbColumn.setName(column.getName());
-
+	                rolapDbColumn.setType(column.getDataType()!= null ? DataTypeJdbc.fromValue(column.getDataType().getValue()) : null );
+	                rolapDbColumn.setColumnSize(column.getColumnSize());
+	                rolapDbColumn.setNullable(column.getNullable());
+	                rolapDbColumn.setDecimalDigits(column.getDecimalDigits());
 	                rolapDbColumns.add(rolapDbColumn);
 	                mapMappingToRolapDatabaseColumn.put(column, rolapDbColumn);
 	            }
