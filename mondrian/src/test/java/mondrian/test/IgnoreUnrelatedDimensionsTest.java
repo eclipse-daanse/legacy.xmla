@@ -18,7 +18,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -217,7 +217,7 @@ class IgnoreUnrelatedDimensionsTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testIgnoreUnrelatedDimsOnSlicer(Context context) {
-        ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
+        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -241,7 +241,7 @@ class IgnoreUnrelatedDimensionsTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testIgnoreUnrelatedDimsOnCompoundSlicer(Context context) {
         // MONDRIAN-2072
-        ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
+        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -267,7 +267,7 @@ class IgnoreUnrelatedDimensionsTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testRelatedAndUnrelatedDimsOnCompoundSlicer(Context context) {
         // MONDRIAN-2072
-        ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
+        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -296,7 +296,7 @@ class IgnoreUnrelatedDimensionsTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testPartiallyRelatedMeasureWithCompoundSlicer(Context context) {
         // MONDRIAN-2072
-        ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
+        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -347,7 +347,7 @@ class IgnoreUnrelatedDimensionsTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testNonJoiningDimWithMeasureInCompoundSlicer(Context context) {
         // MONDRIAN-2072
-        ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
+        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
         prepareContext(context);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             " SELECT "
@@ -525,7 +525,7 @@ class IgnoreUnrelatedDimensionsTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testUnrelatedDimPropOverridesIgnoreMeasure(Context context) {
-        ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
+        ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
 
         prepareContext(context);
         assertQueryReturns(context.getConnectionWithDefaultRole(),

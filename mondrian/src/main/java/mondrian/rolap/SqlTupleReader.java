@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
@@ -49,6 +50,7 @@ import mondrian.calc.impl.ArrayTupleList;
 import mondrian.calc.impl.ListTupleList;
 import mondrian.calc.impl.TupleCollections;
 import mondrian.calc.impl.UnaryTupleList;
+import mondrian.olap.ExecuteDurationUtil;
 import mondrian.olap.ResourceLimitExceededException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
@@ -581,7 +583,7 @@ public Object getCacheKey() {
         if (LocusImpl.isEmpty()) {
             //need for virtual cubes need investigate
             final Statement statement = context.getConnectionWithDefaultRole().getInternalStatement();
-            return new ExecutionImpl(statement, context.getConfig().executeDurationValue());
+            return new ExecutionImpl(statement, ExecuteDurationUtil.executeDurationValue(context));
         } else {
             return LocusImpl.peek().getExecution();
         }
@@ -1047,7 +1049,7 @@ public TupleList readTuples(
           selectString.append( pair.left );
           types = pair.right;
           prependString =
-            context.getConfig().generateFormattedSql()
+            context.getConfigValue(ConfigConstants.GENERATE_FORMATTED_SQL, ConfigConstants.GENERATE_FORMATTED_SQL_DEFAULT_VALUE, Boolean.class)
               ? new StringBuilder(Util.NL).append(UNION).append(Util.NL).toString()
               : new StringBuilder(" ").append(UNION).append(" ").toString();
         }
@@ -1211,7 +1213,7 @@ public TupleList readTuples(
 
 
     Evaluator evaluator = getEvaluator( constraint );
-    AggStar aggStar = chooseAggStar( constraint, evaluator, baseCube, context.getConfig().useAggregates() );
+    AggStar aggStar = chooseAggStar( constraint, evaluator, baseCube, context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) );
 
     // add the selects for all levels to fetch
     for ( TargetBase target : targetGroup ) {
@@ -1402,7 +1404,7 @@ public TupleList readTuples(
           new RolapStar.Condition(
             currLevel.getKeyExp(),
             aggColumn.getExpression() );
-        sqlQuery.addWhere( condition.toString( sqlQuery ) );       
+        sqlQuery.addWhere( condition.toString( sqlQuery ) );
         aggColumn.getTable().addToFrom( sqlQuery, false, true );
       } else if ( levelCollapsed ) {
         RolapStar.Column starColumn =

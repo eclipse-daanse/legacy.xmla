@@ -11,6 +11,7 @@ package mondrian.rolap;
 
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
@@ -75,7 +76,8 @@ public TupleIterable evaluateTupleIterable( Evaluator evaluator ) {
     if ( list != null ) {
       if ( list == DUMMY_LIST ) {
         recursionCount++;
-        Integer iterationLimit = evaluator.getQuery().getConnection().getContext().getConfig().iterationLimit();
+        Integer iterationLimit = evaluator.getQuery().getConnection().getContext()
+                .getConfigValue(ConfigConstants.ITERATION_LIMIT, ConfigConstants.ITERATION_LIMIT_DEFAULT_VALUE, Integer.class);
         if ( iterationLimit > 0 && recursionCount > iterationLimit ) {
           throw rrer.result.slicerEvaluator.newEvalException( null,
               new StringBuilder("Illegal attempt to reference value of named set '")

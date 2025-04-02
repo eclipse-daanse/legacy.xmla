@@ -20,6 +20,7 @@ import static org.opencube.junit5.TestUtil.withSchema;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.access.Role;
@@ -31,7 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.SteelWheelsDataLoader;
 import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
@@ -1217,8 +1218,8 @@ class SteelWheelsSchemaTest {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
-        ((TestConfig)context.getConfig()).setIgnoreInvalidMembers(true);
-        ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
+        ((TestContextImpl)context).setIgnoreInvalidMembers(true);
+        ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(true);
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH \n"
             + "SET [*NATIVE_CJ_SET] AS '[*BASE_MEMBERS_Time]' \n"
@@ -1847,7 +1848,7 @@ class SteelWheelsSchemaTest {
     void testMondrian2411_3(Context context) throws Exception {
         // Tests an admin query followed by a user query, but both are wrapped
         // with a no-op role in a union.
-        if ((context.getConfig().useAggregates()
+        if ((context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
                     && !Bug.BugMondrian2440Fixed))
         {
             return;

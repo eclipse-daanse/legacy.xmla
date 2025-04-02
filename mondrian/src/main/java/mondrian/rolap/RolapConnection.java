@@ -48,6 +48,7 @@ import org.eclipse.daanse.mdx.parser.api.MdxParser;
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Command;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
@@ -75,6 +76,7 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.ConnectionBase;
+import mondrian.olap.ExecuteDurationUtil;
 import mondrian.olap.QueryCanceledException;
 import mondrian.olap.QueryImpl;
 import mondrian.olap.QueryTimeoutException;
@@ -151,7 +153,7 @@ public class RolapConnection extends ConnectionBase {
       Statement bootstrapStatement = createInternalStatement( false, this);
       final Locus locus =
         new LocusImpl(
-          new ExecutionImpl( bootstrapStatement, context.getConfig().executeDurationValue() ),
+          new ExecutionImpl( bootstrapStatement, ExecuteDurationUtil.executeDurationValue(context) ),
           null,
           "Initializing connection" );
       LocusImpl.push( locus );
@@ -342,11 +344,11 @@ public Result execute( Query query ) {
       }
     };
 
-	MemoryMonitor mm = context.getConfig().memoryMonitor() ? new NotificationMemoryMonitor() : new FauxMemoryMonitor();
+	MemoryMonitor mm = context.getConfigValue(ConfigConstants.MEMORY_MONITOR, ConfigConstants.MEMORY_MONITOR_DEFAULT_VALUE, Boolean.class) ? new NotificationMemoryMonitor() : new FauxMemoryMonitor();
 
     final long currId = execution.getId();
     try {
-      mm.addListener( listener, context.getConfig().memoryMonitorThreshold() );
+      mm.addListener( listener, context.getConfigValue(ConfigConstants.MEMORY_MONITOR_THRESHOLD, ConfigConstants.MEMORY_MONITOR_THRESHOLD_DEFAULT_VALUE, Integer.class) );
       // Check to see if we must punt
       execution.checkCancelOrTimeout();
 
@@ -444,7 +446,7 @@ public QueryComponent parseStatement(String query ) {
     Statement statement = createInternalStatement( false ,this);
     final Locus locus =
       new LocusImpl(
-        new ExecutionImpl( statement, statement.getConnection().getContext().getConfig().executeDurationValue() ),
+        new ExecutionImpl( statement, ExecuteDurationUtil.executeDurationValue(statement.getConnection().getContext()) ),
         "Parse/validate MDX statement",
         null );
     LocusImpl.push( locus );

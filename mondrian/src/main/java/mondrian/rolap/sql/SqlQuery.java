@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
@@ -724,7 +725,7 @@ public class SqlQuery {
 
     public static SqlQuery newQuery(Context context, String err) {
 
-        return new SqlQuery(context.getDialect(), context.getConfig().generateFormattedSql());
+        return new SqlQuery(context.getDialect(), context.getConfigValue(ConfigConstants.GENERATE_FORMATTED_SQL, ConfigConstants.GENERATE_FORMATTED_SQL_DEFAULT_VALUE, Boolean.class));
     }
 
     public void addGroupingSet(List<String> groupingColumnsExpr) {

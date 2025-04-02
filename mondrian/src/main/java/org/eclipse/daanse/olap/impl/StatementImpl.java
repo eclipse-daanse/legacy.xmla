@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DrillThroughAction;
@@ -43,7 +44,7 @@ public class StatementImpl extends mondrian.server.StatementImpl implements Stat
     CellSetImpl openCellSet;
 
     public StatementImpl(Connection connection) {
-        super(connection.getContext().getConfig().queryTimeout());
+        super(connection.getContext().getConfigValue(ConfigConstants.QUERY_TIMEOUT, ConfigConstants.QUERY_TIMEOUT_DEFAULT_VALUE, Integer.class));
         assert connection != null;
         this.connection = connection;
         this.context = connection.getContext();

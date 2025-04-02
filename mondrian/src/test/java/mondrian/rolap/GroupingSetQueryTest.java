@@ -21,13 +21,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -69,15 +70,17 @@ class GroupingSetQueryTest extends BatchTestCase{
         // ACCESS
         // ORACLE
         final Dialect dialect = getDialect(context.getConnectionWithDefaultRole());
-        if (context.getConfig().warnIfNoPatternForDialect().equals("ANY")
+        if (context
+                .getConfigValue(ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT, ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT_DEFAULT_VALUE, String.class)
+                .equals("ANY")
                 || getDatabaseProduct(dialect.getDialectName()) == DatabaseProduct.ACCESS
                 || getDatabaseProduct(dialect.getDialectName()) == DatabaseProduct.ORACLE)
         {
-            ((TestConfig)context.getConfig()).setWarnIfNoPatternForDialect(getDatabaseProduct(dialect.getDialectName()).toString());
+            ((TestContextImpl)context).setWarnIfNoPatternForDialect(getDatabaseProduct(dialect.getDialectName()).toString());
         } else {
             // Do not warn unless the dialect is "ACCESS" or "ORACLE", or
             // if the test chooses to warn regardless of the dialect.
-            ((TestConfig)context.getConfig()).setWarnIfNoPatternForDialect("NONE");
+            ((TestContextImpl)context).setWarnIfNoPatternForDialect("NONE");
         }
 
     }
@@ -89,7 +92,7 @@ class GroupingSetQueryTest extends BatchTestCase{
         // testcase for MONDRIAN-705
         Connection connection = context.getConnectionWithDefaultRole();
         if (getDialect(connection).supportsGroupingSets()) {
-            ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
+            ((TestContextImpl)context).setEnableGroupingSets(true);
         }
         assertQueryReturns(connection,
             "with member [Gender].[Gender].[agg] as ' "
@@ -115,7 +118,7 @@ class GroupingSetQueryTest extends BatchTestCase{
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGroupingSetForSingleColumnConstraint(Context context) {
         pripareContext(context);
-        ((TestConfig)context.getConfig()).setDisableCaching(false);
+        ((TestContextImpl)context).setDisableCaching(false);
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales2, measureUnitSales, tableCustomer, fieldGender, "M");
@@ -171,10 +174,10 @@ class GroupingSetQueryTest extends BatchTestCase{
                 26)
         };
 
-        ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
+        ((TestContextImpl)context).setEnableGroupingSets(true);
         connection = context.getConnectionWithDefaultRole();
 
-        if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             assertRequestSql(connection,
                 new CellRequest[] {request3, request1, request2},
                 patternsWithAggs);
@@ -184,9 +187,9 @@ class GroupingSetQueryTest extends BatchTestCase{
                 patternsWithGsets);
         }
 
-        ((TestConfig)context.getConfig()).setEnableGroupingSets(false);
+        ((TestContextImpl)context).setEnableGroupingSets(false);
 
-        if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             assertRequestSql(connection,
                 new CellRequest[] {request3, request1, request2},
                 patternsWithAggs);
@@ -200,8 +203,8 @@ class GroupingSetQueryTest extends BatchTestCase{
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNotUsingGroupingSetWhenGroupUsesDifferentAggregateTable(Context context) {
         pripareContext(context);
-        if (!(context.getConfig().useAggregates()
-              && context.getConfig().readAggregates()))
+        if (!(context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+              && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)))
         {
             return;
         }
@@ -219,7 +222,7 @@ class GroupingSetQueryTest extends BatchTestCase{
             cubeNameSales,
             measureUnitSales, null, "", "");
 
-        ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
+        ((TestContextImpl)context).setEnableGroupingSets(true);
 
         SqlPattern[] patternsWithoutGsets = {
             new SqlPattern(
@@ -246,11 +249,11 @@ class GroupingSetQueryTest extends BatchTestCase{
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNotUsingGroupingSet(Context context) {
         pripareContext(context);
-        if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
-        ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
+        ((TestContextImpl)context).setEnableGroupingSets(true);
         CellRequest request1 = createRequest(connection,
             cubeNameSales2,
             measureUnitSales, tableCustomer, fieldGender, "M");
@@ -271,7 +274,7 @@ class GroupingSetQueryTest extends BatchTestCase{
             new CellRequest[] {request1, request2},
             patternsWithGsets);
 
-        ((TestConfig)context.getConfig()).setEnableGroupingSets(false);
+        ((TestContextImpl)context).setEnableGroupingSets(false);
 
         SqlPattern[] patternsWithoutGsets = {
             new SqlPattern(
@@ -296,10 +299,10 @@ class GroupingSetQueryTest extends BatchTestCase{
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGroupingSetForMultipleMeasureAndSingleConstraint(Context context) {
         pripareContext(context);
-        if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             return;
         }
-        ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
+        ((TestContextImpl)context).setEnableGroupingSets(true);
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales2,
@@ -335,7 +338,7 @@ class GroupingSetQueryTest extends BatchTestCase{
                 request1, request2, request3, request4, request5, request6},
             patternsWithGsets);
 
-        ((TestConfig)context.getConfig()).setEnableGroupingSets(false);
+        ((TestContextImpl)context).setEnableGroupingSets(false);
 
         SqlPattern[] patternsWithoutGsets = {
             new SqlPattern(
@@ -364,10 +367,10 @@ class GroupingSetQueryTest extends BatchTestCase{
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGroupingSetForASummaryCanBeGroupedWith2DetailBatch(Context context) {
         pripareContext(context);
-        if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             return;
         }
-        ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
+        ((TestContextImpl)context).setEnableGroupingSets(true);
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales2,
@@ -412,7 +415,7 @@ class GroupingSetQueryTest extends BatchTestCase{
                 request1, request2, request3, request4, request5, request6},
             patternWithGsets);
 
-        ((TestConfig)context.getConfig()).setEnableGroupingSets(false);
+        ((TestContextImpl)context).setEnableGroupingSets(false);
 
         SqlPattern[] patternWithoutGsets = {
             new SqlPattern(
@@ -437,10 +440,10 @@ class GroupingSetQueryTest extends BatchTestCase{
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGroupingSetForMultipleColumnConstraint(Context context) {
         pripareContext(context);
-        if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             return;
         }
-        ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
+        ((TestContextImpl)context).setEnableGroupingSets(true);
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request1 = createRequest(connection,
             cubeNameSales2,
@@ -483,7 +486,7 @@ class GroupingSetQueryTest extends BatchTestCase{
             new CellRequest[] {request3, request1, request2},
             patternsWithGsets);
 
-        ((TestConfig)context.getConfig()).setEnableGroupingSets(false);
+        ((TestContextImpl)context).setEnableGroupingSets(false);
 
         SqlPattern[] patternsWithoutGsets = {
             new SqlPattern(
@@ -521,7 +524,7 @@ class GroupingSetQueryTest extends BatchTestCase{
         testGroupingSetForMultipleColumnConstraintAndCompoundConstraint(Context context)
     {
         pripareContext(context);
-        if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             return;
         }
         List<String[]> compoundMembers = new ArrayList<>();
@@ -565,13 +568,13 @@ class GroupingSetQueryTest extends BatchTestCase{
         // related to it (2207515)
         SqlPattern[] patternsGSEnabled = patternsGSDisabled;
 
-        ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
+        ((TestContextImpl)context).setEnableGroupingSets(true);
 
         assertRequestSql(connection,
             new CellRequest[] {request3, request1, request2},
             patternsGSEnabled);
 
-        ((TestConfig)context.getConfig()).setEnableGroupingSets(false);
+        ((TestContextImpl)context).setEnableGroupingSets(false);
 
         assertRequestSql(connection,
             new CellRequest[]{request3, request1, request2},

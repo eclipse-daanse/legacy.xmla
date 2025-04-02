@@ -19,7 +19,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -160,7 +160,7 @@ class SelectNotInGroupByTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDependentPropertySkipped(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         // Property group by should be skipped only if dialect supports it
         String sqlpat;
         if (dialectAllowsSelectNotInGroupBy(context.getConnectionWithDefaultRole())) {
@@ -191,7 +191,7 @@ class SelectNotInGroupByTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testIndependentPropertyNotSkipped(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         SqlPattern[] sqlPatterns = {
             new SqlPattern(
                 DatabaseProduct.MYSQL,
@@ -218,7 +218,7 @@ class SelectNotInGroupByTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGroupBySkippedIfUniqueLevel(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         // If unique level is included and all properties are level
         // dependent, then group by can be skipped regardless of dialect
         SqlPattern[] sqlPatterns = {
@@ -247,7 +247,7 @@ class SelectNotInGroupByTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGroupByNotSkippedIfIndependentProperty(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         SqlPattern[] sqlPatterns = {
             new SqlPattern(
                 DatabaseProduct.MYSQL,

@@ -29,7 +29,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
@@ -66,10 +66,10 @@ class AggGenTest {
         //Util.addAppender(appender, logger, org.apache.logging.log4j.Level.DEBUG);
 
         // If run in Ant and with mondrian.jar, please comment out this line:
-//        ((TestConfig)context.getConfig()).setAggregateRules("/DefaultRules.xml");
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setGenerateAggregateSql(true);
+//        ((TestContextImpl)context).setAggregateRules("/DefaultRules.xml");
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setGenerateAggregateSql(true);
 
         final RolapConnection rolapConn = (RolapConnection) context.getConnectionWithDefaultRole();
         QueryImpl query =
@@ -87,7 +87,7 @@ class AggGenTest {
             CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
             List<? extends DatabaseSchemaMapping> schemas = catalogMapping.getDbschemas();
             DatabaseSchemaMapping databaseSchema = schemas.getFirst();
-            
+
 
             String log = writer.toString();
             Pattern p = Pattern.compile(

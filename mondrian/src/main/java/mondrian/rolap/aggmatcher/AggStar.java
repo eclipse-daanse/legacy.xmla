@@ -40,6 +40,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import mondrian.olap.ExecuteDurationUtil;
 import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.RolapAggregator;
@@ -1556,7 +1557,7 @@ public class AggStar {
                         new ExecutionImpl(
                             star.getCatalog().getInternalConnection()
                                 .getInternalStatement(),
-                            star.getCatalog().getInternalConnection().getContext().getConfig().executeDurationValue()),
+                            ExecuteDurationUtil.executeDurationValue(star.getCatalog().getInternalConnection().getContext())),
                         "AggStar.FactTable.makeNumberOfRows",
                         "Counting rows in aggregate table"));
             try {

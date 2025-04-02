@@ -17,8 +17,8 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.olap.api.BasicContextConfig;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -71,10 +71,8 @@ class RolapCubeHierarchyTest {
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
     CatalogReader schemaReader = mock(CatalogReader.class);
-    BasicContextConfig config = mock(BasicContextConfig.class);
-    doReturn(false).when(config).memoryMonitor();
     Context context = mock(Context.class);
-    doReturn(config).when(context).getConfig();
+    doReturn(false).when(context).getConfigValue(ConfigConstants.MEMORY_MONITOR, ConfigConstants.MEMORY_MONITOR_DEFAULT_VALUE, Boolean.class);
     doReturn(context).when(schemaReader).getContext();
 
 
@@ -127,10 +125,8 @@ class RolapCubeHierarchyTest {
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
     CatalogReader schemaReader = mock(CatalogReader.class);
-    BasicContextConfig config = mock(BasicContextConfig.class);
-    doReturn(false).when(config).memoryMonitor();
     Context context = mock(Context.class);
-    doReturn(config).when(context).getConfig();
+    doReturn(false).when(context).getConfigValue(ConfigConstants.MEMORY_MONITOR, ConfigConstants.MEMORY_MONITOR_DEFAULT_VALUE, Boolean.class);
     doReturn(context).when(schemaReader).getContext();
 
 
@@ -189,10 +185,8 @@ class RolapCubeHierarchyTest {
     Level[] rolapHierarchy_levels = new Level[]{};
     QueryMapping rolapHierarchy_relation = mock(TableQueryMapping.class);
     CatalogReader schemaReader = mock(CatalogReader.class);
-    BasicContextConfig config = mock(BasicContextConfig.class);
-    doReturn(false).when(config).memoryMonitor();
     Context context = mock(Context.class);
-    doReturn(config).when(context).getConfig();
+    doReturn(false).when(context).getConfigValue(ConfigConstants.MEMORY_MONITOR, ConfigConstants.MEMORY_MONITOR_DEFAULT_VALUE, Boolean.class);
     doReturn(context).when(schemaReader).getContext();
 
     String subName = null;
@@ -243,10 +237,8 @@ class RolapCubeHierarchyTest {
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
     CatalogReader schemaReader = mock(CatalogReader.class);
-    BasicContextConfig config = mock(BasicContextConfig.class);
-    doReturn(false).when(config).memoryMonitor();
     Context context = mock(Context.class);
-    doReturn(config).when(context).getConfig();
+    doReturn(false).when(context).getConfigValue(ConfigConstants.MEMORY_MONITOR, ConfigConstants.MEMORY_MONITOR_DEFAULT_VALUE, Boolean.class);
     doReturn(context).when(schemaReader).getContext();
 
     DimensionConnectorMapping cubeDim = null;

@@ -19,7 +19,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -38,22 +38,22 @@ public class BUG_1541077 extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     public void testStoreCount(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
         // get value without aggregates
-        ((TestConfig)context.getConfig()).setUseAggregates(false);
+        ((TestContextImpl)context).setUseAggregates(false);
 
         String mdx =
             "select {[Measures].[Store Count]} on columns from Cheques";
         Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v = result.getCell(new int[]{0}).getValue();
 
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
 
         Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v1 = result1.getCell(new int[]{0}).getValue();
@@ -64,22 +64,22 @@ public class BUG_1541077 extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     public void testSalesCount(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
         // get value without aggregates
-        ((TestConfig)context.getConfig()).setUseAggregates(false);
+        ((TestContextImpl)context).setUseAggregates(false);
 
         String mdx =
             "select {[Measures].[Sales Count]} on columns from Cheques";
         Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v = result.getCell(new int[]{0}).getValue();
 
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
 
         Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v1 = result1.getCell(new int[]{0}).getValue();
@@ -90,22 +90,22 @@ public class BUG_1541077 extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     public void testTotalAmount(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
         // get value without aggregates
-        ((TestConfig)context.getConfig()).setUseAggregates(false);
+        ((TestContextImpl)context).setUseAggregates(false);
 
         String mdx =
             "select {[Measures].[Total Amount]} on columns from Cheques";
         Result result = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v = result.getCell(new int[]{0}).getValue();
 
-        ((TestConfig)context.getConfig()).setUseAggregates(false);
+        ((TestContextImpl)context).setUseAggregates(false);
 
         Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v1 = result1.getCell(new int[]{0}).getValue();
@@ -116,15 +116,15 @@ public class BUG_1541077 extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     public void testBug1541077(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
         // get value without aggregates
-        ((TestConfig)context.getConfig()).setUseAggregates(false);
+        ((TestContextImpl)context).setUseAggregates(false);
 
         String mdx = "select {[Measures].[Avg Amount]} on columns from Cheques";
 
@@ -132,7 +132,7 @@ public class BUG_1541077 extends AggTableTestCase {
         Object v = result.getCell(new int[]{0}).getFormattedValue();
 
         // get value with aggregates
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
 
         Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v1 = result1.getCell(new int[]{0}).getFormattedValue();

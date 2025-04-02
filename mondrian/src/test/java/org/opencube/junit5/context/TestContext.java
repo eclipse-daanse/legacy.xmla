@@ -7,7 +7,6 @@ import java.util.concurrent.Semaphore;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.olap.api.BasicContextConfig;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
@@ -22,7 +21,6 @@ public interface TestContext extends Context{
 	void setDescription(Optional<String> description);
 	void setExpressionCompilerFactory(ExpressionCompilerFactory expressionCompilerFactory);
     Connection getConnection(List<String> roles);
-    BasicContextConfig getConfig();
 	void setQueryLimitSemaphore(Semaphore semaphore);
 	void setCatalogMappingSupplier(CatalogMappingSupplier catalogMappingSupplier);
 }

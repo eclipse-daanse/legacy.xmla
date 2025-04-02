@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
@@ -254,7 +255,7 @@ public class AggTableManager {
                         }
                         // Is it handled by the DefaultRules
                         if (! makeAggStar
-                            && context.getConfig().readAggregates()
+                            && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
                             && rules.matchesTableName(factTableName, name)) {
                             makeAggStar = rules.columnsOK(
                                 star,
@@ -271,7 +272,7 @@ public class AggTableManager {
                                 star,
                                 dbTable,
                                 approxRowCount);
-                            if (aggStar.getSize(context.getConfig().chooseAggregateByVolume()) > 0) {
+                            if (aggStar.getSize(context.getConfigValue(ConfigConstants.CHOOSE_AGGREGATE_BY_VOLUME, ConfigConstants.CHOOSE_AGGREGATE_BY_VOLUME_DEFAULT_VALUE ,Boolean.class)) > 0) {
                                 star.addAggStar(aggStar);
                             } else {
                                 String msg = MessageFormat.format(aggTableZeroSize,

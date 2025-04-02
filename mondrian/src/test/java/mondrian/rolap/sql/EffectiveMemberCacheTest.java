@@ -20,7 +20,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -39,7 +39,7 @@ class EffectiveMemberCacheTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCachedLevelMembers(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         Connection connection = context.getConnectionWithDefaultRole();
         clearCache(connection);
         // verify query for specific members can be fulfilled by members cached
@@ -79,7 +79,7 @@ class EffectiveMemberCacheTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCachedChildMembers(Context context) {
     	context.getCatalogCache().clear();
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         Connection connection = context.getConnectionWithDefaultRole();
         clearCache(connection);
         // verify query for specific members can be fulfilled by members cached
@@ -119,13 +119,13 @@ class EffectiveMemberCacheTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelPreCacheThreshold(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         Connection connection = context.getConnectionWithDefaultRole();
         clearCache(connection);
         // [Store Type] members cardinality falls well below
         // LevelPreCacheThreshold.  All members should be loaded, not
         // just the 2 referenced.
-        ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(300);
+        ((TestContextImpl)context).setLevelPreCacheThreshold(300);
         String sql = "select\n"
                 + "    `store`.`store_type` as `c0`\n"
                 + "from\n"
@@ -149,13 +149,13 @@ class EffectiveMemberCacheTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelPreCacheThresholdDisabled(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         // with LevelPreCacheThreshold set to 0, we should not load
         // all [store type] members, we should only retrieve the 2
         // specified.
         Connection connection = context.getConnectionWithDefaultRole();
         clearCache(connection);
-        ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
+        ((TestContextImpl)context).setLevelPreCacheThreshold(0);
         String sql = "select\n"
                 + "    `store`.`store_type` as `c0`\n"
                 + "from\n"
@@ -183,13 +183,13 @@ class EffectiveMemberCacheTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testLevelPreCacheThresholdParentDegenerate(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         // we should avoid pulling all deg members, regardless of cardinality.
         // The cost of doing full scans of the fact table is assumed
         // to be too high.
         Connection connection = context.getConnectionWithDefaultRole();
         clearCache(connection);
-        ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(1000);
+        ((TestContextImpl)context).setLevelPreCacheThreshold(1000);
         String sql = "select\n"
                 + "    `store`.`coffee_bar` as `c0`\n"
                 + "from\n"

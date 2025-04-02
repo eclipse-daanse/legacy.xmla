@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -52,7 +53,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -1487,7 +1488,7 @@ class VirtualCubeTest extends BatchTestCase {
             return;
         }
 
-        if (!context.getConfig().enableNativeCrossJoin()
+        if (!context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)
             && !SystemWideProperties.instance().EnableNativeNonEmpty)
         {
             // Only run the tests if either native CrossJoin or native NonEmpty
@@ -1513,7 +1514,7 @@ class VirtualCubeTest extends BatchTestCase {
 
         String derbyNecjSql1, derbyNecjSql2;
 
-        if (context.getConfig().enableNativeCrossJoin()) {
+        if (context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)) {
             derbyNecjSql1 =
                 "select "
                 + "\"product_class\".\"product_family\", "
@@ -1918,12 +1919,12 @@ class VirtualCubeTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNonEmptyCJConstraintOnVirtualCube(Context context) {
-        if (!context.getConfig().enableNativeCrossJoin()) {
+        if (!context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)) {
             // Generated SQL is different if NonEmptyCrossJoin is evaluated in
             // memory.
             return;
         }
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         String query =
             "with "
             + "set [foo] as [Time].[Month].members "
@@ -1941,7 +1942,7 @@ class VirtualCubeTest extends BatchTestCase {
         // but ISNULL(1) isn't valid SQL, so we forego correct ordering of NULL
         // values.
         String mysqlSQL =
-            context.getConfig().useAggregates()
+            context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
             ? "select\n"
             + "    *\n"
             + "from\n"
@@ -2137,9 +2138,9 @@ class VirtualCubeTest extends BatchTestCase {
         // we want to make sure a SqlConstraint is used for retrieving
         // [Product Family].members
         context.getCatalogCache().clear();
-        ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
+        ((TestContextImpl)context).setLevelPreCacheThreshold(0);
 
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         String query =
             "with "
             + "set [bar] as {[Store].[USA]} "
@@ -2154,7 +2155,7 @@ class VirtualCubeTest extends BatchTestCase {
         // clause should be "order by ISNULL(1), 1 ASC" but we will settle for
         // "order by 1 ASC" and forego correct sorting of NULL values.
         String mysqlSQL =
-            context.getConfig().useAggregates()
+            context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
                 ? "select\n"
                 + "    *\n"
                 + "from\n"

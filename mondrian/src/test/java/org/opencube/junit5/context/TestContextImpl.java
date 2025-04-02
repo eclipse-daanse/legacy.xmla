@@ -2,18 +2,20 @@ package org.opencube.junit5.context;
 
 import java.sql.SQLException;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.mdx.parser.ccc.MdxParserProviderImpl;
-import org.eclipse.daanse.olap.api.BasicContextConfig;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
@@ -314,19 +316,17 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
     private CatalogMappingSupplier catalogMappingSupplier;
     private String name;
     private Optional<String> description = Optional.empty();
-    private TestConfig testConfig;
     private Semaphore queryLimimitSemaphore;
     private FunctionService functionService = new FunctionServiceImpl();
 
     public TestContextImpl() {
-        testConfig = new TestConfig();
         this.eventBus = new LoggingEventBus();
-        shepherd = new RolapResultShepherd(testConfig.rolapConnectionShepherdThreadPollingInterval(),
-                testConfig.rolapConnectionShepherdThreadPollingIntervalUnit(),
-                testConfig.rolapConnectionShepherdNbThreads());
+        shepherd = new RolapResultShepherd(getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_DEFAULT_VALUE, Long.class),
+                getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_UNIT, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_UNIT_DEFAULT_VALUE, TimeUnit.class),
+                getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_NB_THREADS, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_NB_THREADS_DEFAULT_VALUE, Integer.class));
         aggMgr = new AggregationManager(this);
         schemaCache = new RolapCatalogCache(this);
-        queryLimimitSemaphore = new Semaphore(testConfig.queryLimit());
+        queryLimimitSemaphore = new Semaphore(getConfigValue(ConfigConstants.QUERY_LIMIT, ConfigConstants.QUERY_LIMIT_DEFAULT_VALUE ,Integer.class));
         functionService.addResolver(new NullReservedWordsResolver());
         functionService.addResolver(new AsAliasResolver());
         functionService.addResolver(new AncestorResolver());
@@ -704,12 +704,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         return getConnection(new RolapConnectionPropsR(roles, true, Locale.getDefault(), Duration.ofSeconds(-1),
                 Optional.empty(), Optional.empty()));
     }
-
-    @Override
-    public BasicContextConfig getConfig() {
-        return testConfig;
-    }
-
+    
     @Override
     public String getName() {
         return name;
@@ -784,6 +779,142 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
     @Override
     public Optional<SqlGuardFactory> getSqlGuardFactory() {
         return Optional.empty();
+    }
+
+    public void setConfigValue(String key, Object value) {
+        if (configuration == null) {
+            configuration = new HashMap<String, Object>();
+        }
+        configuration.put(key, value);
+    }
+    
+    public void setCellBatchSize(Integer cellBatchSize) {
+        setConfigValue(ConfigConstants.CELL_BATCH_SIZE, cellBatchSize);
+    }
+
+    public void setSegmentCacheManagerNumberSqlThreads(Integer segmentCacheManagerNumberSqlThreads) {
+        setConfigValue(ConfigConstants.SEGMENT_CACHE_MANAGER_NUMBER_SQL_THREADS, segmentCacheManagerNumberSqlThreads);
+    }
+
+    public void setSolveOrderMode(String solveOrderMode) {
+        setConfigValue(ConfigConstants.SOLVE_ORDER_MODE, solveOrderMode);
+    }
+
+    public void setDisableCaching(boolean disableCaching) {
+        setConfigValue(ConfigConstants.DISABLE_CACHING, disableCaching);
+    }
+
+    public void setEnableGroupingSets(boolean enableGroupingSets) {
+        setConfigValue(ConfigConstants.ENABLE_GROUPING_SETS, enableGroupingSets);
+    }
+
+    public void setCompoundSlicerMemberSolveOrder(int compoundSlicerMemberSolveOrder) {
+        setConfigValue(ConfigConstants.COMPOUND_SLICER_MEMBER_SOLVE_ORDER, compoundSlicerMemberSolveOrder);
+    }
+
+    public void setEnableDrillThrough(boolean enableDrillThrough) {
+        setConfigValue(ConfigConstants.ENABLE_DRILL_THROUGH, enableDrillThrough);
+    }
+
+    public void setEnableNativeFilter(boolean enableNativeFilter) {
+        setConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, enableNativeFilter);
+    }
+
+    public void setEnableNativeCrossJoin(boolean enableNativeCrossJoin) {
+        setConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, enableNativeCrossJoin);
+    }
+
+    public void setEnableNativeTopCount(boolean enableNativeTopCount) {
+        setConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, enableNativeTopCount);
+    }
+
+    public void setEnableInMemoryRollup(boolean enableInMemoryRollup) {
+        setConfigValue(ConfigConstants.ENABLE_IN_MEMORY_ROLLUP, enableInMemoryRollup);
+    }
+
+    public void setExpandNonNative(boolean expandNonNative) {
+        setConfigValue(ConfigConstants.EXPAND_NON_NATIVE, expandNonNative);
+    }
+
+    public void setGenerateAggregateSql(boolean generateAggregateSql) {
+        setConfigValue(ConfigConstants.GENERATE_AGGREGATE_SQL, generateAggregateSql);
+    }
+
+    public void setIgnoreInvalidMembersDuringQuery(boolean ignoreInvalidMembersDuringQuery) {
+        setConfigValue(ConfigConstants.IGNORE_INVALID_MEMBERS_DURING_QUERY, ignoreInvalidMembersDuringQuery);
+    }
+
+    public void setIgnoreMeasureForNonJoiningDimension(boolean ignoreMeasureForNonJoiningDimension) {
+        setConfigValue(ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, ignoreMeasureForNonJoiningDimension);
+    }
+
+    public void setIterationLimit(int iterationLimit) {
+        setConfigValue(ConfigConstants.ITERATION_LIMIT, iterationLimit);
+    }
+
+    public void setLevelPreCacheThreshold(int levelPreCacheThreshold) {
+        setConfigValue(ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, levelPreCacheThreshold);
+    }
+
+    public void setReadAggregates(boolean readAggregates) {
+        setConfigValue(ConfigConstants.READ_AGGREGATES, readAggregates);
+    }
+
+    public void setAlertNativeEvaluationUnsupported(String alertNativeEvaluationUnsupported) {
+        setConfigValue(ConfigConstants.ALERT_NATIVE_EVALUATION_UNSUPPORTED, alertNativeEvaluationUnsupported);
+    }
+
+    public void setCrossJoinOptimizerSize(int crossJoinOptimizerSize) {
+        setConfigValue(ConfigConstants.CROSS_JOIN_OPTIMIZER_SIZE, crossJoinOptimizerSize);
+    }
+
+    public void setCurrentMemberWithCompoundSlicerAlert(String currentMemberWithCompoundSlicerAlert) {
+        setConfigValue(ConfigConstants.CURRENT_MEMBER_WITH_COMPOUND_SLICER_ALERT, currentMemberWithCompoundSlicerAlert);
+    }
+
+    public void setIgnoreInvalidMembers(boolean ignoreInvalidMembers) {
+        setConfigValue(ConfigConstants.IGNORE_INVALID_MEMBERS, ignoreInvalidMembers);
+    }
+
+    public void setMaxEvalDepth(int maxEvalDepth) {
+        setConfigValue(ConfigConstants.MAX_EVAL_DEPTH, maxEvalDepth);
+    }
+
+    public void setCheckCancelOrTimeoutInterval(int checkCancelOrTimeoutInterval) {
+        setConfigValue(ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL, checkCancelOrTimeoutInterval);
+    }
+
+    public void setWarnIfNoPatternForDialect(String warnIfNoPatternForDialect) {
+        setConfigValue(ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT, warnIfNoPatternForDialect);
+    }
+
+    public void setUseAggregates(boolean useAggregates) {
+        setConfigValue(ConfigConstants.USE_AGGREGATES, useAggregates);
+    }
+
+    public void setQueryTimeout(int queryTimeout) {
+        setConfigValue(ConfigConstants.QUERY_TIMEOUT, queryTimeout);
+    }
+
+    public void setOptimizePredicates(boolean optimizePredicates) {
+        setConfigValue(ConfigConstants.OPTIMIZE_PREDICATES, optimizePredicates);
+    }
+
+    public void setNullDenominatorProducesNull(boolean nullDenominatorProducesNull) {
+        setConfigValue(ConfigConstants.NULL_DENOMINATOR_PRODUCES_NULL, nullDenominatorProducesNull);
+    }
+
+
+    public void setNativizeMinThreshold(int nativizeMinThreshold) {
+        setConfigValue(ConfigConstants.NATIVIZE_MIN_THRESHOLD, nativizeMinThreshold);
+    }
+
+    public void setNativizeMaxResults(int nativizeMaxResults) {
+        setConfigValue(ConfigConstants.NATIVIZE_MAX_RESULTS, nativizeMaxResults);
+    }
+
+    public void setGenerateFormattedSql(boolean generateFormattedSql) {
+        setConfigValue(ConfigConstants.GENERATE_FORMATTED_SQL, generateFormattedSql);
     }
 
 }

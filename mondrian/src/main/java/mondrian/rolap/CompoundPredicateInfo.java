@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import mondrian.olap.exceptions.UnsupportedCalculatedMemberException;
+
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -84,7 +86,7 @@ public class CompoundPredicateInfo {
       return null;
     }
     final StringBuilder buf = new StringBuilder();
-    SqlQuery query = new SqlQuery( star.getSqlQueryDialect(), star.getContext().getConfig().generateFormattedSql() );
+    SqlQuery query = new SqlQuery( star.getSqlQueryDialect(), star.getContext().getConfigValue(ConfigConstants.GENERATE_FORMATTED_SQL, ConfigConstants.GENERATE_FORMATTED_SQL_DEFAULT_VALUE, Boolean.class) );
     buf.setLength( 0 );
     predicate.toSql( query, buf );
     return buf.toString();

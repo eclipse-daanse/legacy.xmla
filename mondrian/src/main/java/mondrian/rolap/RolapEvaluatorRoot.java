@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
@@ -98,7 +99,9 @@ public RolapEvaluatorRoot( Statement statement ) {
     this.cube = (RolapCube) query.getCube();
     this.connection = statement.getMondrianConnection();
     this.solveOrderMode =
-        Util.lookup( SolveOrderMode.class, connection.getContext().getConfig().solveOrderMode().toUpperCase(),
+        Util.lookup( SolveOrderMode.class, connection.getContext()
+                .getConfigValue(ConfigConstants.SOLVE_ORDER_MODE, ConfigConstants.SOLVE_ORDER_MODE_DEFAULT_VALUE, String.class)
+                .toUpperCase(),
             SolveOrderMode.ABSOLUTE );
     this.schemaReader = query.getCatalogReader( true );
     this.queryStartTime = new Date();

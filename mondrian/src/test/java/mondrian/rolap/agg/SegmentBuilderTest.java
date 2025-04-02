@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -588,12 +588,12 @@ class SegmentBuilderTest {
         flushSchemaCache(connection);
         //TestContext context = getTestContext().withFreshConnection();
         final String query = "select customers.[name].members on 0 from sales";
-        ((TestConfig)context.getConfig()).setEnableInMemoryRollup(false);
+        ((TestContextImpl)context).setEnableInMemoryRollup(false);
         Result result = executeQuery(connection, query);
 
         flushSchemaCache(connection);
         //context = getTestContext().withFreshConnection();
-        ((TestConfig)context.getConfig()).setEnableInMemoryRollup(true);
+        ((TestContextImpl)context).setEnableInMemoryRollup(true);
         executeQuery(connection,
             "select "
             + "{[customers].[name].members} on 0 from sales where gender.f");
@@ -896,7 +896,7 @@ class SegmentBuilderTest {
         String[] keepColumns,
         String expectedHeader)
     {
-        ((TestConfig)connection.getContext().getConfig()).setOptimizePredicates(false);
+        ((TestContextImpl)(connection.getContext())).setOptimizePredicates(false);
         loadCacheWithQueries(connection, cachePopulatingQueries);
         Map<SegmentHeader, SegmentBody> map = getReversibleTestMap(connection, Order.FORWARD);
         Set<String> keepColumnsSet = new HashSet<>(Arrays.asList(keepColumns));

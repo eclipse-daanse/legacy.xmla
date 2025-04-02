@@ -138,8 +138,6 @@ public interface Context {
 
 	List<Statement> getStatements(Connection connection);
 
-    BasicContextConfig getConfig();
-
     <T> T getConfigValue(String key, T dflt ,Class<T> clazz); 
 
     Semaphore getQueryLimitSemaphore();
@@ -155,4 +153,5 @@ public interface Context {
     default List<String> getKeywordList() {
         return KEYWORD_LIST;
     }
+
 }

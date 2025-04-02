@@ -33,7 +33,7 @@ import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -90,7 +90,7 @@ class FilterFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testFilterWillTimeout(Context context) {
-        ((TestConfig)context.getConfig()).setQueryTimeout(3);
+        ((TestContextImpl)context).setQueryTimeout(3);
         SystemWideProperties.instance().EnableNativeNonEmpty = false;
         try {
             class TestFilterWillTimeoutModifier extends PojoMappingModifier {

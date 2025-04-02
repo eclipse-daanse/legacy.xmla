@@ -37,6 +37,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 
+import mondrian.olap.ExecuteDurationUtil;
 import mondrian.olap.IdImpl;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
@@ -837,7 +838,7 @@ public class CacheControlImpl implements CacheControl {
                 if (connection == null) {
                     throw new IllegalArgumentException("Connection required");
                 }
-                execution = new ExecutionImpl(connection.getInternalStatement(), connection.getContext().getConfig().executeDurationValue());
+                execution = new ExecutionImpl(connection.getInternalStatement(), ExecuteDurationUtil.executeDurationValue(connection.getContext()));
             }
             final Locus locus = new LocusImpl(
                 execution,

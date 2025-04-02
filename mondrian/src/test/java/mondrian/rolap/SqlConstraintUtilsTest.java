@@ -34,6 +34,7 @@ import java.util.Set;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
@@ -831,7 +832,7 @@ class SqlConstraintUtilsTest {
 
         final AggStar aggStar = null;
         final Dialect dialect =  context.getDialect();
-        final SqlQuery query = new SqlQuery(dialect, context.getConfig().generateFormattedSql());
+        final SqlQuery query = new SqlQuery(dialect, context.getConfigValue(ConfigConstants.GENERATE_FORMATTED_SQL, ConfigConstants.GENERATE_FORMATTED_SQL_DEFAULT_VALUE, Boolean.class));
 
         when(level.getBaseStarKeyColumn(baseCube)).thenReturn(column);
         when(column.getNameColumn()).thenReturn(column);

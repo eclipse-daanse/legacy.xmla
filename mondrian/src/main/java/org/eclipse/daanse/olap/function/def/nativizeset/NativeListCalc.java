@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -107,7 +108,7 @@ public class NativeListCalc  extends AbstractListCalc {
     {
         CrossJoinAnalyzer analyzer =
             new CrossJoinAnalyzer(simplifiedList, substitutionMap,
-                evaluator.getQuery().getConnection().getContext().getConfig().nativizeMaxResults());
+                evaluator.getQuery().getConnection().getContext().getConfigValue(ConfigConstants.NATIVIZE_MAX_RESULTS, ConfigConstants.NATIVIZE_MAX_RESULTS_DEFAULT_VALUE, Integer.class));
         String crossJoin = analyzer.getCrossJoinExpression();
 
         // If the crossjoin expression is empty, then the simplified list
@@ -156,7 +157,8 @@ public class NativeListCalc  extends AbstractListCalc {
         CatalogReader schema = evaluator.getCatalogReader();
         List<Member> tuple = simplifiedList.get(0);
         long nativizeMinThreshold =
-            evaluator.getQuery().getConnection().getContext().getConfig().nativizeMinThreshold();
+            evaluator.getQuery().getConnection().getContext()
+            .getConfigValue(ConfigConstants.NATIVIZE_MIN_THRESHOLD, ConfigConstants.NATIVIZE_MIN_THRESHOLD_DEFAULT_VALUE, Integer.class);
         long estimatedCardinality = simplifiedList.size();
 
         for (Member member : tuple) {

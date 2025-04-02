@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Comparator;
 
-import org.eclipse.daanse.olap.api.BasicContextConfig;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
@@ -68,7 +68,6 @@ class SorterTest{
   @Mock Comparator comparatorChain;
   @Mock Connection connection;
   @Mock Context context;
-  @Mock BasicContextConfig config;
   @Mock RolapConnection rolapConnection;
   @Captor ArgumentCaptor<Comparator<?>> comparatorCaptor;
 
@@ -90,8 +89,7 @@ class SorterTest{
     when(execution.getMondrianStatement()).thenReturn( statement );
     when( statement.getMondrianConnection() ).thenReturn( rolapConnection );
     when( rolapConnection.getContext()).thenReturn( context );
-    when( context.getConfig()).thenReturn( config );
-    when( config.checkCancelOrTimeoutInterval()).thenReturn( 1000 );
+    when( context.getConfigValue(ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL, ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL_DEFAULT_VALUE, Integer.class)).thenReturn( 1000 );
 
   }
 

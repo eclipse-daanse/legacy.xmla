@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -320,7 +321,7 @@ public class RolapNativeCrossJoin extends RolapNativeSet {
         }
         RolapUtil.alertNonNative("NonEmptyCrossJoin", reason,
             evaluator.getCube().getCatalog().getInternalConnection().getContext()
-                .getConfig().alertNativeEvaluationUnsupported());
+                .getConfigValue(ConfigConstants.ALERT_NATIVE_EVALUATION_UNSUPPORTED, ConfigConstants.ALERT_NATIVE_EVALUATION_UNSUPPORTED_DEFAULT_VALUE, String.class));
     }
 }
 

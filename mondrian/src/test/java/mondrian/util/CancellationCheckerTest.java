@@ -12,8 +12,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import org.eclipse.daanse.olap.api.BasicContextConfig;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Statement;
 import org.junit.jupiter.api.AfterEach;
@@ -85,9 +84,7 @@ class CancellationCheckerTest {
         Statement statement = mock(Statement.class);
         RolapConnection rolapConnection = mock(RolapConnection.class);
         Context context = mock(Context.class);
-        BasicContextConfig config = mock(BasicContextConfig.class);
-        when(config.checkCancelOrTimeoutInterval()).thenReturn(i);
-        when(context.getConfig()).thenReturn(config);
+        when(context.getConfigValue(ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL, ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL_DEFAULT_VALUE, Integer.class)).thenReturn(i);
         when(rolapConnection.getContext()).thenReturn(context);
         when(statement.getMondrianConnection()).thenReturn(rolapConnection);
         when(excMock.getMondrianStatement()).thenReturn(statement);

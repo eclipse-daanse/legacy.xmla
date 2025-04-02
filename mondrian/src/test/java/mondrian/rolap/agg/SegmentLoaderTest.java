@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -126,8 +126,8 @@ class SegmentLoaderTest extends BatchTestCase {
             PrintWriter pw = new PrintWriter(System.out);
             context.getConnectionWithDefaultRole().getCacheControl(pw).flushSchemaCache();
             pw.flush();
-            ((TestConfig)context.getConfig()).setDisableCaching(false);
-            ((TestConfig)context.getConfig()).setEnableInMemoryRollup(rollup);
+            ((TestContextImpl)context).setDisableCaching(false);
+            ((TestContextImpl)context).setEnableInMemoryRollup(rollup);
             final String queryOracle =
                 "select \"time_by_day\".\"the_year\" as \"c0\", sum(\"sales_fact_1997\".\"unit_sales\") as \"m0\" from \"sales_fact_1997\" \"sales_fact_1997\", \"time_by_day\" \"time_by_day\" where \"sales_fact_1997\".\"time_id\" = \"time_by_day\".\"time_id\" group by \"time_by_day\".\"the_year\"";
             final String queryMySQL =

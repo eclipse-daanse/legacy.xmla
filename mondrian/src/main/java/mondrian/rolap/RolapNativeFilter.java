@@ -20,6 +20,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
@@ -112,7 +113,7 @@ public class RolapNativeFilter extends RolapNativeSet {
 
       RolapCube cube = (RolapCube) evaluator.getCube();
       this.addConstraint( testQuery, cube, sqlTupleReader.chooseAggStar( this, evaluator, cube,
-          context.getConfig().useAggregates() ) );
+          context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) );
       return testQuery.isSupported();
     }
 

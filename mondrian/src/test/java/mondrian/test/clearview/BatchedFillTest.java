@@ -9,6 +9,7 @@
 
 package mondrian.test.clearview;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -48,8 +49,8 @@ class BatchedFillTest extends ClearViewBase {
             diffRepos.setCurrentTestCaseName(name);
 
             if (getName().equals("testBatchedFill2")
-                    && context.getConfig().readAggregates()
-                    && context.getConfig().useAggregates()) {
+                    && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+                    && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
                 // If agg tables are enabled, the SQL generated is 'better' than
                 // expected.
             } else {

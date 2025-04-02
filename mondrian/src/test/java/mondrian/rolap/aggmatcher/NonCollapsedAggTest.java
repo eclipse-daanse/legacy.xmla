@@ -44,7 +44,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -292,8 +292,8 @@ class NonCollapsedAggTest extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testSingleJoin(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
     	super.prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
@@ -321,8 +321,8 @@ class NonCollapsedAggTest extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testComplexJoin(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
@@ -366,8 +366,8 @@ class NonCollapsedAggTest extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testComplexJoinDefaultRecognizer(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
@@ -407,8 +407,8 @@ class NonCollapsedAggTest extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testSsasCompatNamingInAgg(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
         // MONDRIAN-1085
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
@@ -806,8 +806,8 @@ class NonCollapsedAggTest extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testMondrian1325(Context context) {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
         final String query1 =
             "SELECT\n"

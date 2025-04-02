@@ -24,6 +24,7 @@ import java.util.concurrent.Future;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.olap.api.CacheControl;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.OlapElement;
@@ -570,7 +571,8 @@ System.out.println(buf.toString());
 	private Map<Connection, SegmentCacheManager> segCachStore = new HashMap<>();
 
 	public SegmentCacheManager getCacheMgr(Connection connection) {
-		if (connection == null || !connection.getContext().getConfig().enableSessionCaching()) {
+		if (connection == null || !connection.getContext()
+		        .getConfigValue(ConfigConstants.ENABLE_SESSION_CACHING, ConfigConstants.ENABLE_SESSION_CACHING_DEFAULT_VALUE, Boolean.class)) {
 			return cacheMgr;
 		} else {
 			if (!segCachStore.containsKey(connection)) {

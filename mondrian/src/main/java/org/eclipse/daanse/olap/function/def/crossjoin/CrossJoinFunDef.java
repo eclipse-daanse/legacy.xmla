@@ -24,6 +24,7 @@ import java.util.Set;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -314,7 +315,8 @@ public class CrossJoinFunDef extends AbstractFunctionDefinition {
     }
 
     public static TupleList nonEmptyOptimizeList(Evaluator evaluator, TupleList list, ResolvedFunCall call, int ctag) {
-        int opSize = evaluator.getCatalogReader().getContext().getConfig().crossJoinOptimizerSize();
+        int opSize = evaluator.getCatalogReader().getContext()
+                .getConfigValue(ConfigConstants.CROSS_JOIN_OPTIMIZER_SIZE, ConfigConstants.CROSS_JOIN_OPTIMIZER_SIZE_DEFAULT_VALUE, Integer.class);
         if (list.isEmpty()) {
             return list;
         }

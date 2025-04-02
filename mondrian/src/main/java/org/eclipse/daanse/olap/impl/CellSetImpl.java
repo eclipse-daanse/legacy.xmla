@@ -2,7 +2,6 @@ package org.eclipse.daanse.olap.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.SubtotalVisibility;
@@ -17,6 +16,7 @@ import org.eclipse.daanse.olap.api.result.CellSetAxis;
 import org.eclipse.daanse.olap.api.result.CellSetMetaData;
 import org.eclipse.daanse.olap.api.result.Result;
 
+import mondrian.olap.ExecuteDurationUtil;
 import mondrian.olap.QueryAxisImpl;
 import mondrian.rolap.RolapCell;
 import mondrian.rolap.RolapConnection;
@@ -33,7 +33,7 @@ public class CellSetImpl extends ExecutionImpl implements CellSet {
     private final Query query;
 
     public CellSetImpl(StatementImpl statement) {
-        super(statement, statement.context.getConfig().executeDurationValue());
+        super(statement, ExecuteDurationUtil.executeDurationValue(statement.context));
         this.statement = statement;
         query = statement.getQuery();
         this.closed = false;

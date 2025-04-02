@@ -30,6 +30,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -64,7 +65,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 
 import mondrian.olap.RoleImpl;
 import mondrian.olap.SystemWideProperties;
@@ -105,7 +106,10 @@ class RolapCatalogTest {
         SegmentCacheManager scManagerMock = mock(SegmentCacheManager.class);
         when(rolapConnectionMock.getContext()).thenReturn(contextMock);
         when(contextMock.getAggregationManager()).thenReturn(aggManagerMock);
-        when(contextMock.getConfig()).thenReturn(new TestConfig());
+        //when(contextMock.getConfig()).thenReturn(new TestConfig());
+        when(contextMock.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)).thenReturn(true);
+        when(contextMock.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class)).thenReturn(true);
+        when(contextMock.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)).thenReturn(true);
         when(aggManagerMock.getCacheMgr(rolapConnectionMock)).thenReturn(scManagerMock);
         return new RolapCatalog(key,  rolapConnectionMock, contextMock);
     }
@@ -423,9 +427,10 @@ class RolapCatalogTest {
 
         CatalogReader reader = mockCatalogReader(DataType.HIERARCHY, hierarchy);
         Context context = mock(Context.class);
-        TestConfig config = new TestConfig();
-        config.setIgnoreInvalidMembers(true);
-        when(context.getConfig()).thenReturn(config);
+        //TestConfig config = new TestConfig();
+        //config.setIgnoreInvalidMembers(true);
+        when(context.getConfigValue(ConfigConstants.IGNORE_INVALID_MEMBERS, ConfigConstants.IGNORE_INVALID_MEMBERS_DEFAULT_VALUE, Boolean.class)).thenReturn(true);
+        //when(context.getConfig()).thenReturn(config);
         when(reader.getContext()).thenReturn(context);
 
 

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
@@ -59,6 +60,7 @@ import org.slf4j.Logger;
 
 import mondrian.mdx.MdxVisitorImpl;
 import mondrian.mdx.ResolvedFunCallImpl;
+import mondrian.olap.ExecuteDurationUtil;
 import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
@@ -162,8 +164,8 @@ public class RolapCell implements Cell {
         boolean extendedContext,
         int maxRowCount)
     {
-        if (!result.getExecution().getMondrianStatement().getMondrianConnection().getContext().getConfig()
-            .enableDrillThrough())
+        if (!result.getExecution().getMondrianStatement().getMondrianConnection().getContext()
+                .getConfigValue(ConfigConstants.ENABLE_DRILL_THROUGH, ConfigConstants.ENABLE_DRILL_THROUGH_DEFAULT_VALUE, Boolean.class))
         {
             throw new OlapRuntimeException(MessageFormat.format(
                 drillthroughDisabled,
@@ -237,7 +239,7 @@ public class RolapCell implements Cell {
                 connection.getContext(),
                 sql,
                 new LocusImpl(
-                    new ExecutionImpl(connection.getInternalStatement(), connection.getContext().getConfig().executeDurationValue()),
+                    new ExecutionImpl(connection.getInternalStatement(), ExecuteDurationUtil.executeDurationValue(connection.getContext())),
                     "RolapCell.getDrillThroughCount",
                     "Error while counting drill-through"));
         try {
@@ -395,8 +397,8 @@ public class RolapCell implements Cell {
      */
     @Override
 	public boolean canDrillThrough() {
-        if (!result.getExecution().getMondrianStatement().getMondrianConnection().getContext().getConfig()
-            .enableDrillThrough())
+        if (!result.getExecution().getMondrianStatement().getMondrianConnection().getContext()
+                .getConfigValue(ConfigConstants.ENABLE_DRILL_THROUGH, ConfigConstants.ENABLE_DRILL_THROUGH_DEFAULT_VALUE, Boolean.class))
         {
             return false;
         }
@@ -547,7 +549,7 @@ public class RolapCell implements Cell {
         // essential.
         final Statement statement =
             result.getExecution().getMondrianStatement();
-        final ExecutionImpl execution = new ExecutionImpl(statement, statement.getConnection().getContext().getConfig().executeDurationValue());
+        final ExecutionImpl execution = new ExecutionImpl(statement, ExecuteDurationUtil.executeDurationValue(statement.getConnection().getContext()));
 
         final Connection connection = statement.getMondrianConnection();
         int resultSetType = ResultSet.TYPE_SCROLL_INSENSITIVE;
@@ -590,7 +592,7 @@ public class RolapCell implements Cell {
         if (property != null) {
             if(property == StandardProperty.CELL_ORDINAL) {
             	                return result.getCellOrdinal(pos);
-            	
+
             }else if(property == StandardProperty.VALUE) {
                 return getValue();
             }else if(property == StandardProperty.FORMAT_STRING) {
@@ -660,7 +662,7 @@ public class RolapCell implements Cell {
                 else {
                 	// fall through
                 }
-                	
+
         }
         final Evaluator evaluator = result.getRootEvaluator();
         final int savepoint = evaluator.savepoint();

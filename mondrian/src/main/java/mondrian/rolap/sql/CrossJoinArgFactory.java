@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.BracesOperationAtom;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
@@ -398,7 +399,7 @@ public class CrossJoinArgFactory {
             new CrossJoinArg[2][];
 
         for (int i = 0; i < 2; i++) {
-            allArgsOneInput = checkCrossJoinArg(evaluator, args[i], returnAny, evaluator.getQuery().getConnection().getContext().getConfig().enableNativeFilter());
+            allArgsOneInput = checkCrossJoinArg(evaluator, args[i], returnAny, evaluator.getQuery().getConnection().getContext().getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class));
 
             if (allArgsOneInput == null
                 || allArgsOneInput.isEmpty()
@@ -957,7 +958,7 @@ public class CrossJoinArgFactory {
         ExpressionCompiler compiler = evaluator.getQuery().createCompiler();
         CrossJoinArg[] arg0 = null;
         if (shouldExpandNonEmpty(exp,
-            evaluator.getCube().getCatalog().getInternalConnection().getContext().getConfig().expandNonNative())
+            evaluator.getCube().getCatalog().getInternalConnection().getContext().getConfigValue(ConfigConstants.EXPAND_NON_NATIVE, ConfigConstants.EXPAND_NON_NATIVE_DEFAULT_VALUE, Boolean.class))
             && evaluator.getActiveNativeExpansions().add(exp))
         {
             TupleListCalc listCalc0 = compiler.compileList(exp);

@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
@@ -122,7 +123,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
@@ -1432,8 +1433,8 @@ class SchemaTest {
     void testSnowflakeHierarchyValidationNotNeeded(Context context) {
         // this test breaks when using aggregates at the moment
         // due to a known limitation
-        if ((context.getConfig().readAggregates()
-             || context.getConfig().useAggregates())
+        if ((context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+             || context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class))
             && !Bug.BugMondrian361Fixed)
         {
             return;
@@ -4352,7 +4353,7 @@ class SchemaTest {
             }
         }
 
-        if (!context.getConfig().readAggregates()) {
+        if (!context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             return;
         }
 
@@ -4590,7 +4591,7 @@ class SchemaTest {
 
         }
 
-        if (!context.getConfig().readAggregates()) {
+        if (!context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             return;
         }
         final Logger logger = LoggerFactory.getLogger(AggTableManager.class);
@@ -5972,12 +5973,12 @@ class SchemaTest {
             SystemWideProperties props = SystemWideProperties.instance();
 
             // turn off caching
-            ((TestConfig)context.getConfig()).setDisableCaching(true);
+            ((TestContextImpl)context).setDisableCaching(true);
 
             // re-read aggregates
-            ((TestConfig)context.getConfig()).setUseAggregates(true);
-            ((TestConfig)context.getConfig()).setReadAggregates(false);
-            ((TestConfig)context.getConfig()).setReadAggregates(true);
+            ((TestContextImpl)context).setUseAggregates(true);
+            ((TestContextImpl)context).setReadAggregates(false);
+            ((TestContextImpl)context).setReadAggregates(true);
 
             // force reloading of aggregates, which currently throws an
             // exception
@@ -7201,7 +7202,7 @@ class SchemaTest {
 
         // skip this test if using aggregates, the agg tables do not
         // enforce the SQL element in the fact table
-        if (context.getConfig().useAggregates()) {
+        if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             return;
         }
         class TestBugMondrian482Modifier extends PojoMappingModifier {
@@ -8513,7 +8514,7 @@ class SchemaTest {
         */
 
         if (!Bug.BugMondrian747Fixed
-            && context.getConfig().enableGroupingSets())
+            && context.getConfigValue(ConfigConstants.ENABLE_GROUPING_SETS, ConfigConstants.ENABLE_GROUPING_SETS_DEFAULT_VALUE, Boolean.class))
         {
             // With grouping sets enabled, MONDRIAN-747 behavior is even worse.
             return;
@@ -8788,8 +8789,8 @@ class SchemaTest {
         withSchema(context, TestBugMondrian463Modifier1::new);
         checkBugMondrian463(context);
         // As above, but using shared dimension.
-        if (context.getConfig().readAggregates()
-            && context.getConfig().useAggregates())
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+            && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class))
         {
             // With aggregates enabled, query gives different answer. This is
             // expected because some of the foreign keys have referential
@@ -9887,8 +9888,8 @@ class SchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNonCollapsedAggregate(Context context) throws Exception {
-        if (context.getConfig().useAggregates() == false
-            && context.getConfig().readAggregates() == false)
+        if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false
+            && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false)
         {
             return;
         }
@@ -10085,8 +10086,8 @@ class SchemaTest {
     void testNonCollapsedAggregateOnNonUniqueLevelFails(Context context)
         throws Exception
     {
-        if (context.getConfig().useAggregates() == false
-            && context.getConfig().readAggregates() == false)
+        if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false
+            && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false)
         {
             return;
         }
@@ -10272,8 +10273,8 @@ class SchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testTwoNonCollapsedAggregate(Context context) throws Exception {
-        if (context.getConfig().useAggregates() == false
-            && context.getConfig().readAggregates() == false)
+        if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false
+            && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false)
         {
             return;
         }
@@ -10673,8 +10674,8 @@ class SchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCollapsedError(Context context) throws Exception {
-        if (context.getConfig().useAggregates() == false
-            && context.getConfig().readAggregates() == false)
+        if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false
+            && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false)
         {
             return;
         }
@@ -11158,8 +11159,8 @@ class SchemaTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testMondrian1499(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(false);
-        ((TestConfig)context.getConfig()).setReadAggregates(false);
+        ((TestContextImpl)context).setUseAggregates(false);
+        ((TestContextImpl)context).setReadAggregates(false);
         class TestMondrian1499Modifier extends PojoMappingModifier {
 
             public TestMondrian1499Modifier(CatalogMapping catalog) {

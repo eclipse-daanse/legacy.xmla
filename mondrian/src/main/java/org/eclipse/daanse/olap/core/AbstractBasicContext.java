@@ -13,7 +13,6 @@
  */
 package org.eclipse.daanse.olap.core;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,7 +69,7 @@ public abstract class AbstractBasicContext implements Context {
 
 	private static final AtomicLong ID_GENERATOR = new AtomicLong();
 	
-	private Map<String, Object> configuration = null;
+	protected Map<String, Object> configuration = null;
 
 
 	protected void updateConfiguration(Map<String, Object> configuration) {

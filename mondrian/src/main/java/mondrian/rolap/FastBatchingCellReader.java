@@ -27,6 +27,7 @@ import java.util.SortedSet;
 import java.util.concurrent.Future;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
@@ -132,8 +133,9 @@ public class FastBatchingCellReader implements CellReader {
         this.aggMgr = aggMgr;
         cacheMgr = aggMgr.getCacheMgr(execution.getMondrianStatement().getMondrianConnection());
         pinnedSegments = this.aggMgr.createPinSet();
-        cacheEnabled = !cube.getCatalog().getInternalConnection().getContext().getConfig().disableCaching();
-        Integer cellBatchSize = cube.getCatalog().getInternalConnection().getContext().getConfig().cellBatchSize();
+        cacheEnabled = !cube.getCatalog().getInternalConnection().getContext().getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class);
+        Integer cellBatchSize = cube.getCatalog().getInternalConnection().getContext()
+                .getConfigValue(ConfigConstants.CELL_BATCH_SIZE, ConfigConstants.CELL_BATCH_SIZE_DEFAULT_VALUE ,Integer.class);
         cellRequestLimit =
             cellBatchSize <= 0
                 ? 100000 // TODO Make this logic into a pluggable algorithm.
@@ -343,8 +345,8 @@ public class FastBatchingCellReader implements CellReader {
                         rollup.constrainedColumnsBitKey,
                         rollup.measure.getAggregator().getRollup(),
                         rollup.measure.getDatatype(),
-                        cacheMgr.getContext().getConfig().sparseSegmentCountThreshold(),
-                        cacheMgr.getContext().getConfig().sparseSegmentDensityThreshold());
+                        cacheMgr.getContext().getConfigValue(ConfigConstants.SPARSE_SEGMENT_COUNT_THRESHOLD, ConfigConstants.SPARSE_SEGMENT_COUNT_THRESHOLD_DEFAULT_VALUE ,Integer.class),
+                        cacheMgr.getContext().getConfigValue(ConfigConstants.SPARSE_SEGMENT_DENSITY_THRESHOLD, ConfigConstants.SPARSE_SEGMENT_DENSITY_THRESHOLD_DEFAULT_VALUE ,Double.class));
 
                 final SegmentHeader header = rollupHeaderBody.left;
                 final SegmentBody body = rollupHeaderBody.right;
@@ -368,7 +370,7 @@ public class FastBatchingCellReader implements CellReader {
                 // Then we insert the segment body into the SlotFuture.
                 // This has to be done on the SegmentCacheManager's
                 // Actor thread to ensure thread safety.
-                if (!cacheMgr.getContext().getConfig().disableCaching()) {
+                if (!cacheMgr.getContext().getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
                     final Locus locus = LocusImpl.peek();
                     cacheMgr.execute(
                         new SegmentCacheManager.Command<Void>() {
@@ -624,7 +626,8 @@ class BatchLoader {
     }
 
     final boolean shouldUseGroupingFunction() {
-        return cube.getCatalog().getInternalConnection().getContext().getConfig().enableGroupingSets()
+        return cube.getCatalog().getInternalConnection().getContext()
+                .getConfigValue(ConfigConstants.ENABLE_GROUPING_SETS, ConfigConstants.ENABLE_GROUPING_SETS_DEFAULT_VALUE, Boolean.class)
             && dialect.supportsGroupingSets();
     }
 
@@ -658,7 +661,7 @@ class BatchLoader {
         final AggregationKey key,
         final SegmentBuilder.SegmentConverterImpl converter)
     {
-        if (cacheMgr.getContext().getConfig().disableCaching()) {
+        if (cacheMgr.getContext().getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
             // Caching is disabled. Return always false.
             return false;
         }
@@ -744,7 +747,8 @@ class BatchLoader {
         // for example. Both the measure's aggregator and its rollup
         // aggregator must support raw data aggregation. We call
         // Aggregator.supportsFastAggregates() to verify.
-        Boolean enableInMemoryRollup = cube.getCatalog().getInternalConnection().getContext().getConfig().enableInMemoryRollup();
+        Boolean enableInMemoryRollup = cube.getCatalog().getInternalConnection().getContext()
+                .getConfigValue(ConfigConstants.ENABLE_IN_MEMORY_ROLLUP, ConfigConstants.ENABLE_IN_MEMORY_ROLLUP_DEFAULT_VALUE ,Boolean.class);
         if (enableInMemoryRollup
             && measure.getAggregator().supportsFastAggregates(
                     EnumConvertor.toDataTypeJdbc(measure.getDatatype()))
@@ -1287,11 +1291,11 @@ class BatchLoader {
             GroupingSetsCollector groupingSetsCollector,
             List<Future<Map<Segment, SegmentWithData>>> segmentFutures)
         {
-            if (cube.getCatalog().getInternalConnection().getContext().getConfig().generateAggregateSql()) {
+            if (cube.getCatalog().getInternalConnection().getContext().getConfigValue(ConfigConstants.GENERATE_AGGREGATE_SQL, ConfigConstants.GENERATE_AGGREGATE_SQL_DEFAULT_VALUE, Boolean.class)) {
                 generateAggregateSql();
             }
             boolean optimizePredicates =
-                cube.getCatalog().getInternalConnection().getContext().getConfig().optimizePredicates();
+                cube.getCatalog().getInternalConnection().getContext().getConfigValue(ConfigConstants.OPTIMIZE_PREDICATES, ConfigConstants.OPTIMIZE_PREDICATES_DEFAULT_VALUE, Boolean.class);
             final StarColumnPredicate[] predicates = initPredicates();
             final long t1 = System.currentTimeMillis();
 

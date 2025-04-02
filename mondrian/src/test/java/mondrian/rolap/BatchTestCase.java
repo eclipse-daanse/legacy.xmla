@@ -30,6 +30,7 @@ import java.util.function.Function;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.CacheControl;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Locus;
@@ -373,7 +374,7 @@ public class BatchTestCase{
         // dialect.
         if (!patternFound) {
             String warnDialect =
-                connection.getContext().getConfig().warnIfNoPatternForDialect();
+                connection.getContext().getConfigValue(ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT, ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT_DEFAULT_VALUE, String.class);
 
             if (warnDialect.equals(d.toString())) {
                 System.out.println(
@@ -545,7 +546,7 @@ public class BatchTestCase{
         // dialect.
         if (!patternFound) {
             String warnDialect =
-                connection.getContext().getConfig().warnIfNoPatternForDialect();
+                connection.getContext().getConfigValue(ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT, ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT_DEFAULT_VALUE, String.class);
 
             if (warnDialect.equals(d.toString())) {
                 System.out.println(
@@ -922,7 +923,7 @@ public class BatchTestCase{
         // Don't run the test if we're testing expression dependencies.
         // Expression dependencies cause spurious interval calls to
         // 'level.getMembers()' which create false negatives in this test.
-        if (context.getConfig().testExpDependencies() > 0) {
+        if (context.getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class) > 0) {
             return;
         }
 

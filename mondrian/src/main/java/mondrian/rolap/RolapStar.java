@@ -44,6 +44,7 @@ import javax.sql.DataSource;
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
@@ -511,7 +512,7 @@ public class RolapStar {
      */
     public void addAggStar(AggStar aggStar) {
         // Add it before the first AggStar which is larger, if there is one.
-        boolean chooseAggregateByVolume = catalog.getInternalConnection().getContext().getConfig().chooseAggregateByVolume();
+        boolean chooseAggregateByVolume = catalog.getInternalConnection().getContext().getConfigValue(ConfigConstants.CHOOSE_AGGREGATE_BY_VOLUME, ConfigConstants.CHOOSE_AGGREGATE_BY_VOLUME_DEFAULT_VALUE ,Boolean.class);
         long size = aggStar.getSize(chooseAggregateByVolume);
         ListIterator<AggStar> lit = aggStars.listIterator();
         while (lit.hasNext()) {
@@ -568,7 +569,7 @@ public class RolapStar {
      * with an empty sql query).
      */
     public SqlQuery getSqlQuery() {
-        return new SqlQuery(getSqlQueryDialect(), context.getConfig().generateFormattedSql());
+        return new SqlQuery(getSqlQueryDialect(), context.getConfigValue(ConfigConstants.GENERATE_FORMATTED_SQL, ConfigConstants.GENERATE_FORMATTED_SQL_DEFAULT_VALUE, Boolean.class));
     }
 
     /**
@@ -605,7 +606,7 @@ public class RolapStar {
     }
 
     boolean isCacheDisabled() {
-        return context.getConfig().disableCaching();
+        return context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class);
     }
 
     /**

@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -385,8 +385,8 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testAggBelowSlicerSolveOrder(Context context) throws SQLException {
-    ((TestConfig)context.getConfig()).setDisableCaching(true);
-      ((TestConfig)context.getConfig()).setCompoundSlicerMemberSolveOrder(0);
+    ((TestContextImpl)context).setDisableCaching(true);
+      ((TestContextImpl)context).setCompoundSlicerMemberSolveOrder(0);
 
 
     final String mdx =

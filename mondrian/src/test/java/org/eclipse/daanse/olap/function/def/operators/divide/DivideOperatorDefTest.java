@@ -16,10 +16,11 @@ package org.eclipse.daanse.olap.function.def.operators.divide;
 import static mondrian.olap.fun.FunctionTest.NullNumericExpr;
 import static mondrian.olap.fun.FunctionTest.assertExprReturns;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -34,10 +35,10 @@ class DivideOperatorDefTest {
         assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " / " + NullNumericExpr, "" );
 
         boolean origNullDenominatorProducesNull =
-            context.getConfig().nullDenominatorProducesNull();
+            context.getConfigValue(ConfigConstants.NULL_DENOMINATOR_PRODUCES_NULL, ConfigConstants.NULL_DENOMINATOR_PRODUCES_NULL_DEFAULT_VALUE, Boolean.class);
         try {
             // default behavior
-            ((TestConfig)context.getConfig()).setNullDenominatorProducesNull(false);
+            ((TestContextImpl)context).setNullDenominatorProducesNull(false);
 
             assertExprReturns(context.getConnectionWithDefaultRole(), "-2 / " + NullNumericExpr, "Infinity" );
             assertExprReturns(context.getConnectionWithDefaultRole(), "0 / 0", "NaN" );
@@ -48,7 +49,7 @@ class DivideOperatorDefTest {
             assertExprReturns(context.getConnectionWithDefaultRole(), "1/NULL", "Infinity" );
 
             // when NullOrZeroDenominatorProducesNull is set to true
-            ((TestConfig)context.getConfig()).setNullDenominatorProducesNull( true );
+            ((TestContextImpl)context).setNullDenominatorProducesNull( true );
 
             assertExprReturns(context.getConnectionWithDefaultRole(), "-2 / " + NullNumericExpr, "" );
             assertExprReturns(context.getConnectionWithDefaultRole(), "0 / 0", "NaN" );
@@ -58,7 +59,7 @@ class DivideOperatorDefTest {
             assertExprReturns(context.getConnectionWithDefaultRole(), "NULL/NULL", "" );
             assertExprReturns(context.getConnectionWithDefaultRole(), "1/NULL", "" );
         } finally {
-            ((TestConfig)context.getConfig()).setNullDenominatorProducesNull( origNullDenominatorProducesNull );
+            ((TestContextImpl)context).setNullDenominatorProducesNull( origNullDenominatorProducesNull );
         }
     }
 

@@ -19,7 +19,7 @@ import static org.opencube.junit5.TestUtil.assertAxisThrows;
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -107,7 +107,7 @@ class StrToSetFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStrToSetIgnoreInvalidMembers(Context context) {
         context.getCatalogCache().clear();
-        ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
+        ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(true);
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToSet("
                 + "\""

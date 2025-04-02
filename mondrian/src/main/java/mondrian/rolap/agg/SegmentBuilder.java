@@ -28,6 +28,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.rolap.agg.Aggregator;
 import org.eclipse.daanse.olap.impl.UnmodifiableArrayList;
 import org.slf4j.Logger;
@@ -792,7 +793,7 @@ public class SegmentBuilder {
             buf.setLength(0);
             SqlQuery query =
                 new SqlQuery(
-                    segment.star.getSqlQueryDialect(), segment.star.getContext().getConfig().generateFormattedSql());
+                    segment.star.getSqlQueryDialect(), segment.star.getContext().getConfigValue(ConfigConstants.GENERATE_FORMATTED_SQL, ConfigConstants.GENERATE_FORMATTED_SQL_DEFAULT_VALUE, Boolean.class));
             compoundPredicate.toSql(query, buf);
             cp.add(buf.toString());
         }

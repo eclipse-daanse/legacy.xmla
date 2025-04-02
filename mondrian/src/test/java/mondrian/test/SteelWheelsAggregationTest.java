@@ -48,7 +48,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.SteelWheelsDataLoader;
 import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
@@ -184,8 +184,8 @@ class SteelWheelsAggregationTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class)
     void testWithAggregation(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
 
         final CatalogMapping schema = getSchemaWith(
                 List.of(AccessRoleMappingImpl.builder()
@@ -236,8 +236,8 @@ class SteelWheelsAggregationTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class)
     void testWithAggregationNoRestrictionsOnTopLevel(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         final CatalogMapping schema = getSchemaWith(
                 List.of(AccessRoleMappingImpl.builder()
                         .withName("Power User")
@@ -283,8 +283,8 @@ class SteelWheelsAggregationTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class)
     void testUnionWithAggregation(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         AccessRoleMappingImpl powerUserRole;
         AccessRoleMappingImpl fooRole;
         final CatalogMapping schema = getSchemaWith
@@ -348,8 +348,8 @@ class SteelWheelsAggregationTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class)
     void testWithAggregationUnionRolesWithSameGrants(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         AccessRoleMappingImpl powerUserRole;
         AccessRoleMappingImpl fooRole;
         final CatalogMapping schema = getSchemaWith

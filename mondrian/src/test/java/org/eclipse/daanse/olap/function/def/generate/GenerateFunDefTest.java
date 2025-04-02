@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -163,7 +163,7 @@ class GenerateFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testGenerateWillTimeout(Context context) {
-        ((TestConfig)context.getConfig()).setQueryTimeout(5);
+        ((TestContextImpl)context).setQueryTimeout(5);
         SystemWideProperties.instance().EnableNativeNonEmpty = false;
         try {
             executeAxis(context.getConnectionWithDefaultRole(), "Sales",

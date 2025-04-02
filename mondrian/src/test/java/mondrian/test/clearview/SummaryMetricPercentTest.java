@@ -8,6 +8,7 @@
 */
 package mondrian.test.clearview;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -51,7 +52,7 @@ public class SummaryMetricPercentTest extends ClearViewBase {
 
             if (!Bug.BugMondrian2452Fixed
                     && (getName().equals("testSpecialMetricPctOfCol"))
-                    && !context.getConfig().enableNativeCrossJoin()) {
+                    && !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)) {
                 // Tests give wrong results if native crossjoin is disabled.
                 return;
             }

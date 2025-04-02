@@ -33,6 +33,7 @@ import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
@@ -124,7 +125,7 @@ public class SegmentLoader {
    */
   public void load( int cellRequestCount, List<GroupingSet> groupingSets, List<StarPredicate> compoundPredicateList,
       List<Future<Map<Segment, SegmentWithData>>> segmentFutures ) {
-    if ( !cacheMgr.getContext().getConfig().disableCaching() ) {
+    if ( !cacheMgr.getContext().getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class) ) {
       for ( GroupingSet groupingSet : groupingSets ) {
         for ( Segment segment : groupingSet.getSegments() ) {
           final SegmentCacheIndex index = cacheMgr.getIndexRegistry().getIndex( segment.star );
@@ -164,10 +165,10 @@ public class SegmentLoader {
 	public Map<Segment, SegmentWithData> call() throws Exception {
       LocusImpl.push( locus );
       try {
-          boolean useAggregates = locus.getExecution().getMondrianStatement().getMondrianConnection().getContext().getConfig().useAggregates();
+          boolean useAggregates = locus.getExecution().getMondrianStatement().getMondrianConnection().getContext().getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class);
         return segmentLoader.loadImpl( cellRequestCount, groupingSets, compoundPredicateList, useAggregates,
-            locus.getExecution().getMondrianStatement().getMondrianConnection().getContext().getConfig().sparseSegmentCountThreshold(),
-            locus.getExecution().getMondrianStatement().getMondrianConnection().getContext().getConfig().sparseSegmentDensityThreshold());
+            locus.getExecution().getMondrianStatement().getMondrianConnection().getContext().getConfigValue(ConfigConstants.SPARSE_SEGMENT_COUNT_THRESHOLD, ConfigConstants.SPARSE_SEGMENT_COUNT_THRESHOLD_DEFAULT_VALUE ,Integer.class),
+            locus.getExecution().getMondrianStatement().getMondrianConnection().getContext().getConfigValue(ConfigConstants.SPARSE_SEGMENT_DENSITY_THRESHOLD, ConfigConstants.SPARSE_SEGMENT_DENSITY_THRESHOLD_DEFAULT_VALUE ,Double.class));
       } finally {
         LocusImpl.pop( locus );
       }
@@ -242,7 +243,7 @@ public class SegmentLoader {
     // Also note that we push the segments to external cache after we have
     // called cacheMgr.loadSucceeded. That call will allow the current
     // query to proceed.
-    if ( !cacheMgr.getContext().getConfig().disableCaching() ) {
+    if ( !cacheMgr.getContext().getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class) ) {
       cacheMgr.compositeCache.put( header, body );
       cacheMgr.loadSucceeded( star, header, body );
     }
@@ -521,7 +522,7 @@ public class SegmentLoader {
       return RolapUtil.executeQuery( star.getContext(), pair.left, pair.right, 0, 0, locus, -1, -1,
           // Only one of the two callbacks are required, depending if we
           // cache the segments or not.
-          cacheMgr.getContext().getConfig().disableCaching() ? callbackNoCaching : callbackWithCaching );
+          cacheMgr.getContext().getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class) ? callbackNoCaching : callbackWithCaching );
     } catch ( Throwable t ) {
       if ( Util.getMatchingCause( t, AbortException.class ) != null ) {
         return null;
@@ -680,7 +681,7 @@ public class SegmentLoader {
                 // out as byte arrays. Don't know why. Bug 1594119.
                 o = Double.parseDouble( new String( (byte[]) o ) );
               } else {
-                  try {  
+                  try {
                       o = Double.parseDouble( o.toString() );
                   }
                   catch (NumberFormatException e) {

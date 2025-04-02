@@ -17,6 +17,7 @@ import static org.opencube.junit5.TestUtil.withSchema;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
@@ -691,7 +692,7 @@ class InlineTableTest {
         // (zero, in fact). It causes a test exception, but is valid mondrian
         // behavior. (Behavior is unspecified if schema does not have
         // referential integrity.)
-        if (context.getConfig().enableGroupingSets()) {
+        if (context.getConfigValue(ConfigConstants.ENABLE_GROUPING_SETS, ConfigConstants.ENABLE_GROUPING_SETS_DEFAULT_VALUE, Boolean.class)) {
             return;
         }
         withSchema(context, TestInlineTableDateModifier::new);

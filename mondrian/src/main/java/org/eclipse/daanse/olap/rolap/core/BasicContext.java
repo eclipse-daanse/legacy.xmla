@@ -18,13 +18,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.jdbc.db.dialect.api.DialectResolver;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
-import org.eclipse.daanse.olap.api.BasicContextConfig;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.function.FunctionService;
@@ -47,7 +48,6 @@ import org.osgi.util.converter.Converters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import aQute.bnd.metatype.annotations.Designate;
 import mondrian.rolap.AbstractRolapContext;
 import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.RolapConnection;
@@ -55,7 +55,6 @@ import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapResultShepherd;
 import mondrian.rolap.agg.AggregationManager;
 
-@Designate(ocd = BasicContextConfig.class, factory = true)
 @Component(service = Context.class, scope = ServiceScope.SINGLETON)
 public class BasicContext extends AbstractRolapContext implements RolapContext {
 
@@ -91,8 +90,6 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
     @Reference(cardinality = ReferenceCardinality.OPTIONAL)
     private SqlGuardFactory sqlGuardFactory;
 
-    private BasicContextConfig config;
-
     private Dialect dialect = null;
 
     private Semaphore queryLimitSemaphore;
@@ -103,24 +100,24 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
     @Activate
     public void activate(Map<String, Object> configuration) throws Exception {
         updateConfiguration(configuration);
-        activate1(CONVERTER.convert(configuration).to(BasicContextConfig.class));
+        activate1();
     }
 
-    public void activate1(BasicContextConfig configuration) throws Exception {
+    public void activate1() throws Exception {
 
-        this.config = configuration;
         this.eventBus = new LoggingEventBus();
 
         schemaCache = new RolapCatalogCache(this);
-        queryLimitSemaphore = new Semaphore(config.queryLimit());
+        queryLimitSemaphore = new Semaphore(getConfigValue(ConfigConstants.QUERY_LIMIT, ConfigConstants.QUERY_LIMIT_DEFAULT_VALUE ,Integer.class));
 
         try (Connection connection = dataSource.getConnection()) {
             Optional<Dialect> optionalDialect = dialectResolver.resolve(dataSource);
             dialect = optionalDialect.orElseThrow(() -> new Exception(ERR_MSG_DIALECT_INIT));
         }
 
-        shepherd = new RolapResultShepherd(config.rolapConnectionShepherdThreadPollingInterval(),
-                config.rolapConnectionShepherdThreadPollingIntervalUnit(), config.rolapConnectionShepherdNbThreads());
+        shepherd = new RolapResultShepherd(getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_DEFAULT_VALUE, Long.class),
+                getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_UNIT, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_UNIT_DEFAULT_VALUE, TimeUnit.class),
+                getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_NB_THREADS, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_NB_THREADS_DEFAULT_VALUE, Integer.class));
         aggMgr = new AggregationManager(this);
 
         if (LOGGER.isDebugEnabled()) {
@@ -183,11 +180,6 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
     @Override
     public org.eclipse.daanse.olap.api.Connection getConnection(ConnectionProps props) {
         return new RolapConnection(this, props);
-    }
-
-    @Override
-    public BasicContextConfig getConfig() {
-        return config;
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.util.List;
 import mondrian.olap.exceptions.MdxChildObjectNotFoundException;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -62,8 +63,10 @@ public class IdentifierParser extends org.eclipse.daanse.olap.impl.IdentifierPar
             final boolean load = ((RolapCube) cube).isLoadInProgress();
             this.ignoreInvalid =
                 (load
-                    ? ((RolapCube) cube).getCatalog().getInternalConnection().getContext().getConfig().ignoreInvalidMembers()
-                    : ((RolapCube) cube).getCatalog().getInternalConnection().getContext().getConfig().ignoreInvalidMembersDuringQuery());
+                    ? ((RolapCube) cube).getCatalog().getInternalConnection().getContext()
+                            .getConfigValue(ConfigConstants.IGNORE_INVALID_MEMBERS, ConfigConstants.IGNORE_INVALID_MEMBERS_DEFAULT_VALUE, Boolean.class)
+                    : ((RolapCube) cube).getCatalog().getInternalConnection().getContext()
+                    .getConfigValue(ConfigConstants.IGNORE_INVALID_MEMBERS_DURING_QUERY, ConfigConstants.IGNORE_INVALID_MEMBERS_DURING_QUERY_DEFAULT_VALUE, Boolean.class));
         }
 
         protected Member resolveMember(Hierarchy expectedHierarchy) {

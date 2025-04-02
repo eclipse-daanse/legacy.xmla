@@ -9,6 +9,7 @@
 */
 package mondrian.util;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Execution;
 
 /**
@@ -33,8 +34,8 @@ public class CancellationChecker {
       long currentIteration, Execution execution)
   {
     if (execution != null && execution.getMondrianStatement() != null) {
-      int checkCancelOrTimeoutInterval = execution.getMondrianStatement().getMondrianConnection().getContext().getConfig()
-                .checkCancelOrTimeoutInterval();
+      int checkCancelOrTimeoutInterval = execution.getMondrianStatement().getMondrianConnection().getContext()
+              .getConfigValue(ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL, ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL_DEFAULT_VALUE, Integer.class);
       synchronized (execution) {
         if (checkCancelOrTimeoutInterval > 0
             && currentIteration % checkCancelOrTimeoutInterval == 0)

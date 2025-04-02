@@ -17,7 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -91,7 +91,7 @@ class SpeciesNonCollapsedAggTest extends AggTableTestCase {
 
     @Override
 	protected void prepareContext(Context context) {
-        //((TestConfig)context.getConfig()).setDisableCaching(true);
+        //((TestContextImpl)context).setDisableCaching(true);
         super.prepareContext(context);
         //TODO
         TestUtil.withSchema(context, SpeciesNonCollapsedAggTestModifier::new);
@@ -106,8 +106,8 @@ class SpeciesNonCollapsedAggTest extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testBugMondrian1105(Context context) {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;

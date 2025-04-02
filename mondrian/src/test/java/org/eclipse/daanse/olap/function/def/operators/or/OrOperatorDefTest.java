@@ -17,12 +17,13 @@ import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -70,8 +71,8 @@ class OrOperatorDefTest {
         // make sure all aggregates referenced in the OR expression are
         // processed in a single load request by setting the eval depth to
         // a value smaller than the number of measures
-        int origDepth = context.getConfig().maxEvalDepth();
-        ((TestConfig)context.getConfig()).setMaxEvalDepth( 3 );
+        int origDepth = context.getConfigValue(ConfigConstants.MAX_EVAL_DEPTH, ConfigConstants.MAX_EVAL_DEPTH_DEFAULT_VALUE, Integer.class);
+        ((TestContextImpl)context).setMaxEvalDepth( 3 );
         assertQueryReturns(connection,
             "with set [*NATIVE_CJ_SET] as '[Store].[Store Country].members' "
                 + "set [*GENERATED_MEMBERS_Measures] as "
@@ -109,7 +110,7 @@ class OrOperatorDefTest {
                 + "Row #0: 86,837\n"
                 + "Row #0: 5,581\n"
                 + "Row #0: 151,211.21\n" );
-        ((TestConfig)context.getConfig()).setMaxEvalDepth( origDepth );
+        ((TestContextImpl)context).setMaxEvalDepth( origDepth );
     }
 
 }

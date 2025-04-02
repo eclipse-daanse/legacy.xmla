@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
@@ -131,7 +132,7 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
 
     public static void crossProd(Evaluator evaluator, int currLen) {
         long iterationLimit =
-            evaluator.getQuery().getConnection().getContext().getConfig().iterationLimit();
+            evaluator.getQuery().getConnection().getContext().getConfigValue(ConfigConstants.ITERATION_LIMIT, ConfigConstants.ITERATION_LIMIT_DEFAULT_VALUE, Integer.class);
         final int productLen = currLen * evaluator.getIterationLength();
         if (iterationLimit > 0 && productLen > iterationLimit) {
                 throw new ResourceLimitExceededException(MessageFormat.format(
@@ -181,7 +182,8 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
             {
                 return AbstractAggregateFunDef.ignoreUnrelatedDimensions(
                     tuplesForAggregation, baseCube);
-            } else if (evaluator.getQuery().getConnection().getContext().getConfig().ignoreMeasureForNonJoiningDimension())
+            } else if (evaluator.getQuery().getConnection().getContext()
+                    .getConfigValue(ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION, ConfigConstants.IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION_DEFAULT_VALUE, Boolean.class))
             {
                 return AbstractAggregateFunDef.ignoreMeasureForNonJoiningDimension(
                     tuplesForAggregation, baseCube);

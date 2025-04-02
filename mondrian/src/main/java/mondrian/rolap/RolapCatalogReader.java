@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
@@ -548,7 +549,7 @@ public class RolapCatalogReader
             {
                 constraint = sqlConstraintFactory.getChildByNameConstraint(
                     (RolapMember) parent, (NameSegment) childName,
-                    context.getConfig().levelPreCacheThreshold());
+                    context.getConfigValue(ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD_DEFAULT_VALUE, Integer.class));
             } else {
                 constraint =
                     sqlConstraintFactory.getMemberChildrenConstraint(null);
@@ -588,7 +589,8 @@ public class RolapCatalogReader
         MemberChildrenConstraint constraint = sqlConstraintFactory
             .getChildrenByNamesConstraint(
                 (RolapMember) parent, childNames,
-                context.getConfig().levelPreCacheThreshold());
+                context
+                .getConfigValue(ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD_DEFAULT_VALUE, Integer.class));
         List<RolapMember> children =
             internalGetMemberChildren(parent, constraint);
         List<Member> childMembers = new ArrayList<>();
@@ -800,7 +802,7 @@ public class RolapCatalogReader
 ElevatorSimplifyer.simplifyEvaluator(calc, evaluator);
         if (evaluator.nativeEnabled()) {
             return catalog.getNativeRegistry().createEvaluator(
-                revaluator, fun, args, context.getConfig().enableNativeFilter());
+                revaluator, fun, args, context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class));
         }
         return null;
     }

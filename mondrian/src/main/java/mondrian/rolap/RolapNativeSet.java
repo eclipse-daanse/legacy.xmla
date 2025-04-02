@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.Role;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -301,7 +302,7 @@ public abstract class RolapNativeSet extends RolapNative {
             context, null, new ArrayList<>() ) );
       }
 
-      if ( !schemaReader.getContext().getConfig().disableCaching() ) {
+      if ( !schemaReader.getContext().getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class) ) {
         if ( hasEnumTargets ) {
           if ( newPartialResult != null ) {
             cache.put(

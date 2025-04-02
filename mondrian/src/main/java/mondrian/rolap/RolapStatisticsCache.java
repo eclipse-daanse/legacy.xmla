@@ -23,6 +23,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 
+import mondrian.olap.ExecuteDurationUtil;
 import mondrian.rolap.sql.SqlQuery;
 import mondrian.server.ExecutionImpl;
 import mondrian.spi.impl.SqlStatisticsProviderNew;
@@ -81,7 +82,7 @@ public class RolapStatisticsCache {
                 new ExecutionImpl(
                     star.getCatalog().getInternalConnection()
                         .getInternalStatement(),
-                    star.getCatalog().getInternalConnection().getContext().getConfig().executeDurationValue());
+                    ExecuteDurationUtil.executeDurationValue(star.getCatalog().getInternalConnection().getContext()));
             for (SqlStatisticsProviderNew statisticsProvider : statisticsProviders) {
                 rowCount = statisticsProvider.getTableCardinality(
                     star.getContext(),
@@ -114,7 +115,7 @@ public class RolapStatisticsCache {
                 new ExecutionImpl(
                     star.getCatalog().getInternalConnection()
                         .getInternalStatement(),
-                    star.getCatalog().getInternalConnection().getContext().getConfig().executeDurationValue());
+                        ExecuteDurationUtil.executeDurationValue(star.getCatalog().getInternalConnection().getContext()));
             for (SqlStatisticsProviderNew statisticsProvider : statisticsProviders) {
                 rowCount = statisticsProvider.getQueryCardinality( star.getContext(), sql, execution);
                 if (rowCount >= 0) {
@@ -172,7 +173,7 @@ public class RolapStatisticsCache {
                 new ExecutionImpl(
                     star.getCatalog().getInternalConnection()
                         .getInternalStatement(),
-                    star.getCatalog().getInternalConnection().getContext().getConfig().executeDurationValue());
+                        ExecuteDurationUtil.executeDurationValue(star.getCatalog().getInternalConnection().getContext()));
             for (SqlStatisticsProviderNew statisticsProvider : statisticsProviders) {
                 rowCount = statisticsProvider.getColumnCardinality(
                     star.getContext(),

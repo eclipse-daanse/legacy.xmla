@@ -31,6 +31,7 @@ import java.util.concurrent.Future;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataTypeJdbc;
@@ -54,7 +55,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -175,7 +176,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   void testShouldUseGroupingFunctionOnPropertyTrueAndOnSupportedDB(Context context) {
     context.getCatalogCache().clear();
     prepareContext(context);
-    ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
+    ((TestContextImpl)context).setEnableGroupingSets(true);
     BatchLoader fbcr = createFbcr( true, salesCube );
     assertTrue(fbcr.shouldUseGroupingFunction());
   }
@@ -184,7 +185,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testShouldUseGroupingFunctionOnPropertyTrueAndOnNonSupportedDB(Context context) {
     prepareContext(context);
-      ((TestConfig)context.getConfig()).setEnableGroupingSets(true);
+      ((TestContextImpl)context).setEnableGroupingSets(true);
     BatchLoader fbcr = createFbcr( false, salesCube );
     assertFalse( fbcr.shouldUseGroupingFunction() );
   }
@@ -193,7 +194,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testShouldUseGroupingFunctionOnPropertyFalseOnSupportedDB(Context context) {
     prepareContext(context);
-      ((TestConfig)context.getConfig()).setEnableGroupingSets(false);
+      ((TestContextImpl)context).setEnableGroupingSets(false);
     BatchLoader fbcr = createFbcr( true, salesCube );
     assertFalse( fbcr.shouldUseGroupingFunction() );
   }
@@ -202,7 +203,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testShouldUseGroupingFunctionOnPropertyFalseOnNonSupportedDB(Context context) {
     prepareContext(context);
-      ((TestConfig)context.getConfig()).setEnableGroupingSets(false);
+      ((TestContextImpl)context).setEnableGroupingSets(false);
     BatchLoader fbcr = createFbcr( false, salesCube );
     assertFalse( fbcr.shouldUseGroupingFunction() );
   }
@@ -437,7 +438,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     // Until MONDRIAN-1001 is fixed, behavior is flaky due to interaction
     // with previous tests.
     if ( Bug.BugMondrian1001Fixed ) {
-      if ( context.getConfig().useAggregates() && context.getConfig().readAggregates() ) {
+      if ( context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
         assertEquals( 4, groupedBatchCount );
       } else {
         assertEquals( 2, groupedBatchCount );
@@ -646,7 +647,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCanBatchForBatchWithDistinctCountInDetailedBatch(Context context) {
     prepareContext(context);
-    if ( !context.getConfig().useAggregates() || !context.getConfig().readAggregates() ) {
+    if ( !context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) || !context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
       return;
     }
     final BatchLoader fbcr = createFbcr( null, salesCube );
@@ -669,7 +670,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCanBatchForBatchWithDistinctCountInAggregateBatch(Context context) {
     prepareContext(context);
-    if ( !context.getConfig().useAggregates() || !context.getConfig().readAggregates() ) {
+    if ( !context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) || !context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
       return;
     }
     final BatchLoader fbcr = createFbcr( null, salesCube );
@@ -692,7 +693,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCanBatchSummaryBatchWithDetailedBatchWithDistinctCount(Context context) {
     prepareContext(context);
-    if ( context.getConfig().useAggregates() || context.getConfig().readAggregates() ) {
+    if ( context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) || context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
       return;
     }
     final BatchLoader fbcr = createFbcr( null, salesCube );
@@ -779,7 +780,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     final boolean batch2CanBatch1 = batch2.canBatch( batch1 );
     final boolean batch1CanBatch2 = batch1.canBatch( batch2 );
     if ( Bug.BugMondrian1001Fixed ) {
-      if ( context.getConfig().useAggregates() && context.getConfig().readAggregates() ) {
+      if ( context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
         assertFalse( batch2CanBatch1 );
         assertFalse( batch1CanBatch2 );
       } else {
@@ -838,7 +839,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
         createBatch(connection, fbcr, new String[] { tableTime, tableCustomer }, new String[] { fieldYear, fieldGender },
             new String[][] { fieldValuesYear, fieldValuesGender }, cubeNameSales, measureUnitSales );
 
-    if ( context.getConfig().useAggregates() && context.getConfig().readAggregates() ) {
+    if ( context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
       assertFalse( detailedBatch.canBatch( summaryBatch ) );
       assertFalse( summaryBatch.canBatch( detailedBatch ) );
     } else {
@@ -1861,7 +1862,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCellBatchSizeWithUdf(Context context) {
     prepareContext(context);
-    ((TestConfig)(context.getConfig())).setCellBatchSize(1);
+    ((TestContextImpl)context).setCellBatchSize(1);
     //propSaver.set( MondrianProperties.instance().CellBatchSize, 1 );
     assertQueryReturns(connection, "select lastnonempty([education level].members, measures.[unit sales]) on 0 from sales",
         "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Education Level].[Education Level].[Partial High School]}\n" + "Row #0: 79,155\n" );

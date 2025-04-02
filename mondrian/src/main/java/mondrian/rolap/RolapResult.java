@@ -28,6 +28,7 @@ import java.util.Set;
 import org.eclipse.daanse.mdx.model.api.expression.operation.InternalOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
@@ -137,15 +138,15 @@ public class RolapResult extends ResultBase {
    */
   RolapResult( final Execution execution, boolean execute ) {
     super( execution, null );
-    this.maxEvalDepth = query.getConnection().getContext().getConfig().maxEvalDepth();
+    this.maxEvalDepth = query.getConnection().getContext().getConfigValue(ConfigConstants.MAX_EVAL_DEPTH, ConfigConstants.MAX_EVAL_DEPTH_DEFAULT_VALUE, Integer.class);
     this.solveOrder = execution
         .getMondrianStatement().getMondrianConnection()
-        .getContext().getConfig().compoundSlicerMemberSolveOrder();
+        .getContext().getConfigValue(ConfigConstants.COMPOUND_SLICER_MEMBER_SOLVE_ORDER, ConfigConstants.COMPOUND_SLICER_MEMBER_SOLVE_ORDER_DEFAULT_VALUE, Integer.class);
     this.point = CellKey.Generator.newCellKey( axes.length );
     AbstractBasicContext abc = (AbstractBasicContext) execution.getMondrianStatement().getMondrianConnection().getContext();
     final AggregationManager aggMgr = abc.getAggregationManager();
     this.aggregatingReader = aggMgr.getCacheCellReader();
-    final int expDeps = execution.getMondrianStatement().getMondrianConnection().getContext().getConfig().testExpDependencies();
+    final int expDeps = execution.getMondrianStatement().getMondrianConnection().getContext().getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class);
     if ( expDeps > 0 ) {
       this.evaluator = new RolapDependencyTestingEvaluator( this, expDeps );
     } else {
@@ -331,7 +332,7 @@ public class RolapResult extends ResultBase {
         final org.eclipse.daanse.olap.api.type.NumericType returnType =NumericType.INSTANCE;
         final Calc partialCalc =
                 new RolapHierarchy.LimitedRollupAggregateCalc(returnType, tupleListCalc);
-        
+
         OperationAtom internalOperationAtom = new InternalOperationAtom("$x");
 
         FunctionMetaData functionMetaData = new FunctionMetaDataR(internalOperationAtom, "x",

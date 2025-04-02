@@ -14,6 +14,7 @@ import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.Statement;
 
+import mondrian.olap.ExecuteDurationUtil;
 import mondrian.rolap.RolapConnection;
 import mondrian.util.ArrayStack;
 
@@ -81,7 +82,7 @@ public class LocusImpl implements Locus {
     {
         final Statement statement = connection.getInternalStatement();
         final ExecutionImpl execution = new ExecutionImpl(statement,
-            connection.getContext().getConfig().executeDurationValue());
+                ExecuteDurationUtil.executeDurationValue(connection.getContext()));
         return execute(execution, component, action);
     }
 

@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Execution;
@@ -84,7 +85,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
@@ -386,7 +387,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testDistinctCountOnTuplesWithSomeNonJoiningDimensions(Context context) {
       prepareContext(context);
-      ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(false);
+      ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(false);
         String mdx =
             "WITH MEMBER WAREHOUSE.X as 'Aggregate({WAREHOUSE.[STATE PROVINCE].MEMBERS}*"
             + "{[Gender].Members})'"
@@ -402,7 +403,7 @@ class AggregationOnDistinctCountMeasuresTest {
             + "{[Warehouse].[Warehouse].[X]}\n"
             + "Row #0: \n";
       assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, expectedResult);
-      ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
+      ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
       assertQueryReturns(context.getConnectionWithDefaultRole() ,mdx, expectedResult);
     }
 
@@ -1067,7 +1068,7 @@ class AggregationOnDistinctCountMeasuresTest {
         // Mondrian does not use GROUPING SETS for distinct-count measures.
         // So, this test should not use GROUPING SETS, even if they are enabled.
         // See change 12310, bug MONDRIAN-470 (aka SF.net 2207515).
-      context.getConfig().enableGroupingSets();
+      context.getConfigValue(ConfigConstants.ENABLE_GROUPING_SETS, ConfigConstants.ENABLE_GROUPING_SETS_DEFAULT_VALUE, Boolean.class);
 //        discard(context.getConfig().enableGroupingSets());
 
         String oraTeraSql =
@@ -1115,7 +1116,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testCanNotBatchForDifferentCompoundPredicate(Context context) {
       prepareContext(context);
-      ((TestConfig) context.getConfig()).setEnableGroupingSets(true);
+      ((TestContextImpl)context).setEnableGroupingSets(true);
         String mdxQueryWithFewMembers =
             "WITH "
             + "MEMBER [Store].[COG_OQP_USR_Aggregate(Store)] AS "
@@ -1194,7 +1195,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testDistinctCountInNonGroupingSetsQuery(Context context) {
       prepareContext(context);
-      ((TestConfig) context.getConfig()).setEnableGroupingSets(true);
+      ((TestContextImpl)context).setEnableGroupingSets(true);
 
         String mdxQueryWithFewMembers =
             "WITH "
@@ -1273,7 +1274,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAggregationOfMembersAndDefaultMemberWithoutGroupingSets(Context context) {
       prepareContext(context);
-      ((TestConfig) context.getConfig()).setEnableGroupingSets(false);
+      ((TestContextImpl)context).setEnableGroupingSets(false);
 
         String mdxQueryWithMembers =
             "WITH "
@@ -1731,7 +1732,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAggregatesAtTheSameLevelForNormalAndDistinctCountMeasure(Context context) {
       prepareContext(context);
-      ((TestConfig) context.getConfig()).setEnableGroupingSets(true);
+      ((TestContextImpl)context).setEnableGroupingSets(true);
 
       assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH "
@@ -1759,7 +1760,7 @@ class AggregationOnDistinctCountMeasuresTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testDistinctCountForAggregatesAtTheSameLevel(Context context) {
       prepareContext(context);
-      ((TestConfig) context.getConfig()).setEnableGroupingSets(true);
+      ((TestContextImpl)context).setEnableGroupingSets(true);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH "
             + "MEMBER GENDER.AGG AS 'AGGREGATE({ GENDER.[F], GENDER.[M] })' "
@@ -2112,8 +2113,8 @@ class AggregationOnDistinctCountMeasuresTest {
         //String simpleSchema = "<Schema name=\"FoodMart\">" + dimension + cube
         //    + "</Schema>";
         // should skip aggregate table, cannot aggregate
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-      ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+      ((TestContextImpl)context).setReadAggregates(true);
       class TestDistinctCountAggMeasureModifier extends PojoMappingModifier {
 
           public TestDistinctCountAggMeasureModifier(CatalogMapping c) {
@@ -2275,9 +2276,9 @@ class AggregationOnDistinctCountMeasuresTest {
             + "{[Time].[Time].[1997]}\n"
             + "Row #0: 5,581\n");
         // aggregate table has count for months, make sure it is used
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-      ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+      ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         final String expectedSql =
             "select\n"
             + "    `agg_c_10_sales_fact_1997`.`the_year` as `c0`,\n"

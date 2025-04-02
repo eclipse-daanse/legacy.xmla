@@ -21,7 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
@@ -60,7 +60,7 @@ class OrderByAliasTest extends BatchTestCase {
   @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInKeyExpression(Context context) {
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
@@ -108,7 +108,7 @@ class OrderByAliasTest extends BatchTestCase {
      @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInNameExpression(Context context) {
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
@@ -130,7 +130,7 @@ class OrderByAliasTest extends BatchTestCase {
         + "  </Hierarchy>\n"
         + "</Dimension>"));
      */
-         context.getCatalogCache().clear();       
+         context.getCatalogCache().clear();
          CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
          ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1NE(catalog, colName));
          assertQuerySql(
@@ -158,7 +158,7 @@ class OrderByAliasTest extends BatchTestCase {
      @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInCaptionExpression(Context context) {
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
@@ -208,7 +208,7 @@ class OrderByAliasTest extends BatchTestCase {
      @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInOrdinalExpression(Context context) {
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
@@ -232,7 +232,7 @@ class OrderByAliasTest extends BatchTestCase {
      */
          context.getCatalogCache().clear();
          CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1OE(catalog, colName));         
+         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier1OE(catalog, colName));
          assertQuerySql(
         context.getConnectionWithDefaultRole(),
         "select non empty{[Promotions].[All Promotions].Children} ON rows, "
@@ -258,7 +258,7 @@ class OrderByAliasTest extends BatchTestCase {
      @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInParentExpression(Context context) {
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
@@ -294,7 +294,7 @@ class OrderByAliasTest extends BatchTestCase {
      */
          context.getCatalogCache().clear();
          CatalogMapping catalog = ((RolapContext) context).getCatalogMapping();
-         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier2(catalog, colName));         
+         ((TestContext)context).setCatalogMappingSupplier(new SchemaModifiers.OrderByAliasTestModifier2(catalog, colName));
          assertQuerySql(
         context.getConnectionWithDefaultRole(),
         "select non empty{[Employees].[All Employees].Children} ON rows, "
@@ -332,7 +332,7 @@ class OrderByAliasTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInPropertyExpression(Context context) {
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
@@ -380,7 +380,7 @@ class OrderByAliasTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testSqlInMeasureExpression(Context context) {
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
@@ -430,7 +430,7 @@ class OrderByAliasTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNonEmptyCrossJoin(Context context) {
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())
@@ -513,7 +513,7 @@ class OrderByAliasTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testVirtualCube(Context context) {
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
         != DatabaseProduct.MYSQL
         || !getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias())

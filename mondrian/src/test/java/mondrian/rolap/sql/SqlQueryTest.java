@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.jdbc.db.dialect.db.common.JdbcDialectImpl;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
@@ -63,7 +64,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
@@ -92,15 +93,17 @@ class SqlQueryTest  extends BatchTestCase {
     private void prepareContext(Connection connection) {
         // This test warns of missing sql patterns for MYSQL.
         final Dialect dialect = getDialect(connection);
-        if (connection.getContext().getConfig().warnIfNoPatternForDialect().equals("ANY")
+        if (connection.getContext()
+                .getConfigValue(ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT, ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT_DEFAULT_VALUE, String.class)
+                .equals("ANY")
                 || getDatabaseProduct(dialect.getDialectName()) == MYSQL)
         {
-            ((TestConfig)connection.getContext().getConfig()).setWarnIfNoPatternForDialect(
+            ((TestContextImpl)(connection.getContext())).setWarnIfNoPatternForDialect(
                     getDatabaseProduct(dialect.getDialectName()).toString());
         } else {
             // Do not warn unless the dialect is "MYSQL", or
             // if the test chooses to warn regardless of the dialect.
-            ((TestConfig)connection.getContext().getConfig()).setWarnIfNoPatternForDialect("NONE");
+            ((TestContextImpl)(connection.getContext())).setWarnIfNoPatternForDialect("NONE");
         }
 
     }
@@ -298,7 +301,7 @@ class SqlQueryTest  extends BatchTestCase {
         // dialect.
         if (!patternFound) {
             String warnDialect =
-                connection.getContext().getConfig().warnIfNoPatternForDialect();
+                connection.getContext().getConfigValue(ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT, ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT_DEFAULT_VALUE, String.class);
 
             if (warnDialect.equals(d.toString())) {
                 System.out.println(
@@ -314,7 +317,7 @@ class SqlQueryTest  extends BatchTestCase {
     void testPredicatesAreOptimizedWhenPropertyIsTrue(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
-        if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             // Sql pattner will be different if using aggregate tables.
             // This test cover predicate generation so it's sufficient to
             // only check sql pattern when aggregate tables are not used.
@@ -401,7 +404,7 @@ class SqlQueryTest  extends BatchTestCase {
     void testPredicatesAreNotOptimizedWhenPropertyIsFalse(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
-        if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             // Sql pattner will be different if using aggregate tables.
             // This test cover predicate generation so it's sufficient to
             // only check sql pattern when aggregate tables are not used.
@@ -448,7 +451,7 @@ class SqlQueryTest  extends BatchTestCase {
     void testPredicatesAreOptimizedWhenAllTheMembersAreIncluded(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
-        if (context.getConfig().readAggregates() && context.getConfig().useAggregates()) {
+        if (context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)) {
             // Sql pattner will be different if using aggregate tables.
             // This test cover predicate generation so it's sufficient to
             // only check sql pattern when aggregate tables are not used.
@@ -495,13 +498,13 @@ class SqlQueryTest  extends BatchTestCase {
         SqlPattern[] sqlPatterns)
     {
         boolean intialValueOptimize =
-            context.getConfig().optimizePredicates();
+            context.getConfigValue(ConfigConstants.OPTIMIZE_PREDICATES, ConfigConstants.OPTIMIZE_PREDICATES_DEFAULT_VALUE, Boolean.class);
 
         try {
-            ((TestConfig)context.getConfig()).setOptimizePredicates(optimizePredicatesValue);
+            ((TestContextImpl)context).setOptimizePredicates(optimizePredicatesValue);
             assertQuerySql(context.getConnectionWithDefaultRole(), inputMdx, sqlPatterns);
         } finally {
-            ((TestConfig)context.getConfig()).setOptimizePredicates(intialValueOptimize);
+            ((TestContextImpl)context).setOptimizePredicates(intialValueOptimize);
         }
     }
 
@@ -636,8 +639,8 @@ class SqlQueryTest  extends BatchTestCase {
             return;
         }
 
-        ((TestConfig)context.getConfig()).setIgnoreInvalidMembers(true);
-        ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
+        ((TestContextImpl)context).setIgnoreInvalidMembers(true);
+        ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(true);
 
         // assertQuerySql(testContext, query, patterns);
 
@@ -1026,7 +1029,7 @@ class SqlQueryTest  extends BatchTestCase {
     void testAvgAggregator(Context context) {
         Connection connection = context.getConnectionWithDefaultRole();
         prepareContext(connection);
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
             "Sales",
@@ -1065,7 +1068,7 @@ class SqlQueryTest  extends BatchTestCase {
     }
 
     private boolean isGroupingSetsSupported(Connection connection) {
-        return connection.getContext().getConfig().enableGroupingSets()
+        return connection.getContext().getConfigValue(ConfigConstants.ENABLE_GROUPING_SETS, ConfigConstants.ENABLE_GROUPING_SETS_DEFAULT_VALUE, Boolean.class)
                 && getDialect(connection).supportsGroupingSets();
     }
 

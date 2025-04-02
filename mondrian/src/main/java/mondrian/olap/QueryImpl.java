@@ -31,6 +31,7 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAt
 import org.eclipse.daanse.mdx.model.api.expression.operation.InfixOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperationAtom;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
@@ -561,8 +562,10 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         return
             !strictValidation
             && (load
-                ? ((RolapCube) getCube()).getContext().getConfig().ignoreInvalidMembers()
-                : ((RolapCube) getCube()).getContext().getConfig().ignoreInvalidMembersDuringQuery());
+                ? ((RolapCube) getCube()).getContext()
+                        .getConfigValue(ConfigConstants.IGNORE_INVALID_MEMBERS, ConfigConstants.IGNORE_INVALID_MEMBERS_DEFAULT_VALUE, Boolean.class)
+                : ((RolapCube) getCube()).getContext()
+                .getConfigValue(ConfigConstants.IGNORE_INVALID_MEMBERS_DURING_QUERY, ConfigConstants.IGNORE_INVALID_MEMBERS_DURING_QUERY_DEFAULT_VALUE, Boolean.class));
     }
 
     /**
@@ -957,7 +960,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         }
         final Object value2 =
         LocusImpl.execute(
-            new ExecutionImpl(statement, getConnection().getContext().getConfig().executeDurationValue()),
+            new ExecutionImpl(statement, ExecuteDurationUtil.executeDurationValue(getConnection().getContext())),
             "Query.quickParse",
             new LocusImpl.Action<Object>() {
                 @Override
@@ -1485,7 +1488,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
 		ExpressionCompiler compiler = factory.createExpressionCompiler(evaluator, validator, resultStyleList);
 
         final int expDeps =
-            statement.getQuery().getConnection().getContext().getConfig().testExpDependencies();
+            statement.getQuery().getConnection().getContext().getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class);
         final ProfileHandler profileHandler = statement.getProfileHandler();
         if (profileHandler != null) {
             // Cannot test dependencies and profile at the same time. Profiling

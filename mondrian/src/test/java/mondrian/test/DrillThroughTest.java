@@ -53,7 +53,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -311,7 +311,7 @@ class DrillThroughTest {
         // hsqldb was failing with SQL that included redundant parentheses
         // around IN list items.
     	context.getCatalogCache().clear();
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select from sales where "
             + "{[Promotion Media].[Bulk Mail],[Promotion Media].[Cash Register Handout]}");
@@ -418,14 +418,14 @@ class DrillThroughTest {
             + "from Sales");
         String sql = result.getCell(new int[]{0, 0}).getDrillThroughSQL(true);
 
-        String nameExpStr = getNameExp(result, "Customers", "Name");         
+        String nameExpStr = getNameExp(result, "Customers", "Name");
         String expectedSql =
             "select `store`.`store_country` as `Store Country`,"
             + " `store`.`store_state` as `Store State`,"
             + " `store`.`store_city` as `Store City`,"
             + " `store`.`store_name` as `Store Name`,"
             + " `store`.`store_type` as `Store Type`,"
-            + " `store`.`store_sqft` as `Store Sqft`,"           
+            + " `store`.`store_sqft` as `Store Sqft`,"
             + " `time_by_day`.`the_year` as `Year`,"
             + " `time_by_day`.`quarter` as `Quarter`,"
             + " `time_by_day`.`month_of_year` as `Month`,"
@@ -444,10 +444,10 @@ class DrillThroughTest {
             + " `customer`.`city` as `City`, "
             + nameExpStr
             + " as `Name`,"
-            + " `customer`.`customer_id` as `Name (Key)`,"          
+            + " `customer`.`customer_id` as `Name (Key)`,"
             + " `customer`.`gender` as `Gender`,"
             + " `customer`.`marital_status` as `Marital Status`,"
-            + " `customer`.`education` as `Education`,"            
+            + " `customer`.`education` as `Education`,"
             + " `customer`.`yearly_income` as `Yearly Income`,"
             + " `sales_fact_1997`.`unit_sales` as `Unit Sales` "
             + "from `sales_fact_1997` =as= `sales_fact_1997`,"
@@ -472,7 +472,7 @@ class DrillThroughTest {
                 + " `Store City` ASC,"
                 + " `Store Name` ASC,"
                 + " `Store Type` ASC,"
-                + " `Store Sqft` ASC,"                
+                + " `Store Sqft` ASC,"
                 + " `Year` ASC,"
                 + " `Quarter` ASC,"
                 + " `Month` ASC,"
@@ -490,7 +490,7 @@ class DrillThroughTest {
                 + " `State Province` ASC,"
                 + " `City` ASC,"
                 + " `Name` ASC,"
-                + " `Name (Key)` ASC,"                
+                + " `Name (Key)` ASC,"
                 + " `Gender` ASC,"
                 + " `Marital Status` ASC,"
                 + " `Education` ASC,"
@@ -500,7 +500,7 @@ class DrillThroughTest {
                 + " `store`.`store_city` ASC,"
                 + " `store`.`store_name` ASC,"
                 + " `store`.`store_type` ASC,"
-                + " `store`.`store_sqft` ASC,"               
+                + " `store`.`store_sqft` ASC,"
                 + " `time_by_day`.`the_year` ASC,"
                 + " `time_by_day`.`quarter` ASC,"
                 + " `time_by_day`.`month_of_year` ASC,"
@@ -556,7 +556,7 @@ class DrillThroughTest {
             + " `store`.`store_city` as `Store City`,"
             + " `store`.`store_name` as `Store Name`,"
             + " `store`.`store_type` as `Store Type`,"
-            + " `store`.`store_sqft` as `Store Sqft`,"           
+            + " `store`.`store_sqft` as `Store Sqft`,"
             + " `time_by_day`.`the_year` as `Year`,"
             + " `time_by_day`.`quarter` as `Quarter`,"
             + " `time_by_day`.`month_of_year` as `Month`,"
@@ -603,7 +603,7 @@ class DrillThroughTest {
                 ? " `Store Country` ASC,"
                 + " `Store State` ASC,"
                 + " `Store City` ASC,"
-                + " `Store Name` ASC,"                
+                + " `Store Name` ASC,"
                 + " `Store Type` ASC,"
                 + " `Store Sqft` ASC,"
                 + " `Year` ASC,"
@@ -651,7 +651,7 @@ class DrillThroughTest {
                 + " `customer`.`state_province` ASC,"
                 + " `customer`.`city` ASC,"
                 + " " + nameExpStr + " ASC,"
-                + " `customer`.`customer_id` ASC,"               
+                + " `customer`.`customer_id` ASC,"
                 + " `customer`.gender` ASC,"
                 + " `customer`.`marital_status` ASC,"
                 + " `customer`.`education` ASC,"
@@ -695,7 +695,7 @@ class DrillThroughTest {
             "select"
             + " `store`.`store_state` as `Store State`,"
             + " `store`.`store_city` as `Store City`,"
-            + " `store`.`store_name` as `Store Name`,"           
+            + " `store`.`store_name` as `Store Name`,"
             + " `store`.`store_type` as `Store Type`,"
             + " `store`.`store_sqft` as `Store Sqft`,"
             + " `time_by_day`.`the_year` as `Year`,"
@@ -716,7 +716,7 @@ class DrillThroughTest {
             + " `customer`.`city` as `City`, "
             + nameExpStr
             + " as `Name`,"
-            + " `customer`.`customer_id` as `Name (Key)`,"          
+            + " `customer`.`customer_id` as `Name (Key)`,"
             + " `customer`.`gender` as `Gender`,"
             + " `customer`.`marital_status` as `Marital Status`,"
             + " `customer`.`education` as `Education`,"
@@ -743,7 +743,7 @@ class DrillThroughTest {
                 + " `Store City` ASC,"
                 + " `Store Name` ASC,"
                 + " `Store Type` ASC,"
-                + " `Store Sqft` ASC,"                
+                + " `Store Sqft` ASC,"
                 + " `Year` ASC,"
                 + " `Quarter` ASC,"
                 + " `Month` ASC,"
@@ -761,7 +761,7 @@ class DrillThroughTest {
                 + " `State Province` ASC,"
                 + " `City` ASC,"
                 + " `Name` ASC,"
-                + " `Name (Key)` ASC,"               
+                + " `Name (Key)` ASC,"
                 + " `Gender` ASC,"
                 + " `Marital Status` ASC,"
                 + " `Education` ASC,"
@@ -770,7 +770,7 @@ class DrillThroughTest {
                 + " `store`.`store_city` ASC,"
                 + " `store`.`store_name` ASC,"
                 + " `store`.`store_sqft` ASC,"
-                + " `store`.`store_type` ASC,"                
+                + " `store`.`store_type` ASC,"
                 + " `time_by_day`.`the_year` ASC,"
                 + " `time_by_day`.`quarter` ASC,"
                 + " `time_by_day`.`month_of_year` ASC,"
@@ -789,7 +789,7 @@ class DrillThroughTest {
                 + " `customer`.`city` ASC, "
                 + nameExpStr
                 + " ASC,"
-                + " `customer`.`customer_id` ASC,"               
+                + " `customer`.`customer_id` ASC,"
                 + " `customer`.`gender` ASC,"
                 + " `customer`.`marital_status` ASC,"
                 + " `customer`.`education` ASC,"
@@ -1085,7 +1085,7 @@ class DrillThroughTest {
             + " `store`.`store_city` as `Store City`,"
             + " `store`.`store_name` as `Store Name`,"
             + " `store`.`store_type` as `Store Type`,"
-            + " `store`.`store_sqft` as `Store Sqft`,"           
+            + " `store`.`store_sqft` as `Store Sqft`,"
             + " `time_by_day`.`the_year` as `Year`,"
             + " `time_by_day`.`quarter` as `Quarter`,"
             + " `time_by_day`.`month_of_year` as `Month`,"
@@ -1104,7 +1104,7 @@ class DrillThroughTest {
             + " `customer`.`state_province` as `State Province`,"
             + " `customer`.`city` as `City`,"
             + " " + nameExpStr + " as `Name`,"
-            + " `customer`.`customer_id` as `Name (Key)`,"            
+            + " `customer`.`customer_id` as `Name (Key)`,"
             + " `customer`.`gender` as `Gender`,"
             + " `customer`.`marital_status` as `Marital Status`,"
             + " `customer`.`education` as `Education`,"
@@ -1133,7 +1133,7 @@ class DrillThroughTest {
                 + " `Store City` ASC,"
                 + " `Store Name` ASC,"
                 + " `Store Type` ASC,"
-                + " `Store Sqft` ASC,"                
+                + " `Store Sqft` ASC,"
                 + " `Year` ASC,"
                 + " `Quarter` ASC,"
                 + " `Month` ASC,"
@@ -1152,7 +1152,7 @@ class DrillThroughTest {
                 + " `State Province` ASC,"
                 + " `City` ASC,"
                 + " `Name` ASC,"
-                + " `Name (Key)` ASC,"                
+                + " `Name (Key)` ASC,"
                 + " `Gender` ASC,"
                 + " `Marital Status` ASC,"
                 + " `Education` ASC,"
@@ -1160,7 +1160,7 @@ class DrillThroughTest {
                 : " `store`.`store_country` ASC,"
                 + " `store`.`store_state` ASC,"
                 + " `store`.`store_city` ASC,"
-                + " `store`.`store_name` ASC,"                
+                + " `store`.`store_name` ASC,"
                 + " `store`.`store_sqft` ASC,"
                 + " `store`.`store_type` ASC,"
                 + " `time_by_day`.`the_year` ASC,"
@@ -1180,8 +1180,8 @@ class DrillThroughTest {
                 + " `customer`.`country` ASC,"
                 + " `customer`.`state_province` ASC,"
                 + " `customer`.`city` ASC,"
-                + " " + nameExpStr + " ASC,"                
-                + " `customer`.`customer_id` ASC,"               
+                + " " + nameExpStr + " ASC,"
+                + " `customer`.`customer_id` ASC,"
                 + " `customer`.`gender` ASC,"
                 + " `customer`.`marital_status` ASC,"
                 + " `customer`.`education` ASC,"
@@ -1481,7 +1481,7 @@ class DrillThroughTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void  testDrillThroughMultiPositionCompoundSlicer(Context context) {
     	context.getCatalogCache().clear();
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         // A query with a simple multi-position compound slicer
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
@@ -1765,7 +1765,7 @@ class DrillThroughTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void  testDrillthroughDisable(Context context) {
-        ((TestConfig)context.getConfig()).setEnableDrillThrough(true);
+        ((TestContextImpl)context).setEnableDrillThrough(true);
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
                 "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
@@ -1774,7 +1774,7 @@ class DrillThroughTest {
                 + "WHERE {[Time].[1997].[Q1], [Time].[1997].[Q2]}");
         Cell cell = result.getCell(new int[]{0, 0});
         assertTrue(cell.canDrillThrough());
-        ((TestConfig)context.getConfig()).setEnableDrillThrough(false);
+        ((TestContextImpl)context).setEnableDrillThrough(false);
         result =
             executeQuery(context.getConnectionWithDefaultRole(),
                 "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"

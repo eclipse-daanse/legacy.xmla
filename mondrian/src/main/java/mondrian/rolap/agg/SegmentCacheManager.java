@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.CacheControl.CellRegion;
@@ -298,15 +299,16 @@ public class SegmentCacheManager {
     this.indexRegistry = new SegmentCacheIndexRegistry();
 
     // Add a local cache, if needed.
-    if ( !context.getConfig().disableLocalSegmentCache()
-      && !context.getConfig().disableCaching() ) {
+    if ( !context.getConfigValue(ConfigConstants.DISABLE_LOCAL_SEGMENT_CACHE, ConfigConstants.DISABLE_LOCAL_SEGMENT_CACHE_DEFAULT_VALUE, Boolean.class)
+      && !context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class) ) {
       final MemorySegmentCache cache = new MemorySegmentCache();
       segmentCacheWorkers.add(
         new SegmentCacheWorker( cache, thread ) );
     }
 
     // Add an external cache, if configured.
-    final List<SegmentCache> externalCache = SegmentCacheWorker.initCache(context.getConfig().segmentCache());
+    final List<SegmentCache> externalCache = SegmentCacheWorker.initCache(context
+            .getConfigValue(ConfigConstants.SEGMENT_CACHE, ConfigConstants.SEGMENT_CACHE_DEFAULT_VALUE ,String.class));
     for ( SegmentCache cache : externalCache ) {
       // Create a worker for this external cache
       segmentCacheWorkers.add(
@@ -317,7 +319,7 @@ public class SegmentCacheManager {
         new AsyncCacheListener( this, context ) );
     }
 
-    compositeCache = new CompositeSegmentCache( segmentCacheWorkers, context.getConfig().disableCaching() );
+    compositeCache = new CompositeSegmentCache( segmentCacheWorkers, context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class) );
     // sync elements already in external cache:
     // we're not able to have indexes at this point,
     // have to wait until the schema has been loaded
@@ -333,10 +335,8 @@ public class SegmentCacheManager {
             // We use the same value for coreSize and maxSize
             // because that's the behavior we want. All extra
             // tasks will be put on an unbounded queue.
-            context.getConfig()
-                .segmentCacheManagerNumberCacheThreads(),
-            context.getConfig()
-                .segmentCacheManagerNumberCacheThreads(),
+            context.getConfigValue(ConfigConstants.SEGMENT_CACHE_MANAGER_NUMBER_CACHE_THREADS, ConfigConstants.SEGMENT_CACHE_MANAGER_NUMBER_CACHE_THREADS_DEFAULT_VALUE, Integer.class),
+            context.getConfigValue(ConfigConstants.SEGMENT_CACHE_MANAGER_NUMBER_CACHE_THREADS, ConfigConstants.SEGMENT_CACHE_MANAGER_NUMBER_CACHE_THREADS_DEFAULT_VALUE, Integer.class),
             1,
             "mondrian.rolap.agg.SegmentCacheManager$cacheExecutor",
             ( r, executor ) -> {
@@ -349,10 +349,12 @@ public class SegmentCacheManager {
             // We use the same value for coreSize and maxSize
             // because that's the behavior we want. All extra
             // tasks will be put on an unbounded queue.
-            context.getConfig()
-                .segmentCacheManagerNumberSqlThreads(),
-            context.getConfig()
-                .segmentCacheManagerNumberSqlThreads(),
+            context.
+            getConfigValue(ConfigConstants.SEGMENT_CACHE_MANAGER_NUMBER_SQL_THREADS,
+                    ConfigConstants.SEGMENT_CACHE_MANAGER_NUMBER_SQL_THREADS_DEFAULT_VALUE, Integer.class),
+            context.
+            getConfigValue(ConfigConstants.SEGMENT_CACHE_MANAGER_NUMBER_SQL_THREADS,
+                    ConfigConstants.SEGMENT_CACHE_MANAGER_NUMBER_SQL_THREADS_DEFAULT_VALUE, Integer.class),
             1,
             "mondrian.rolap.agg.SegmentCacheManager$sqlExecutor",
             ( r, executor ) -> {
@@ -501,7 +503,7 @@ public class SegmentCacheManager {
   public void externalSegmentCreated(
     SegmentHeader header,
     Context context ) {
-    if ( context.getConfig().disableCaching() ) {
+    if ( context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class) ) {
       // Ignore cache requests.
       return;
     }
@@ -524,7 +526,7 @@ public class SegmentCacheManager {
   public void externalSegmentDeleted(
     SegmentHeader header,
     Context context ) {
-    if ( context.getConfig().disableCaching() ) {
+    if ( context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class) ) {
       // Ignore cache requests.
       return;
     }

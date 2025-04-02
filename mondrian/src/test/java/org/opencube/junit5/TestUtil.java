@@ -47,6 +47,7 @@ import java.util.regex.Pattern;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
@@ -76,8 +77,9 @@ import org.eclipse.daanse.olap.impl.CoordinateIterator;
 import org.eclipse.daanse.olap.impl.TraditionalCellSetFormatter;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
+import org.opencube.junit5.context.TestContextImpl;
 
 import mondrian.calc.impl.UnaryTupleList;
 import mondrian.enums.DatabaseProduct;
@@ -1040,7 +1042,7 @@ public class TestUtil {
 	    // value when cells are null. TestExpDependencies isn't the perfect
 	    // switch to enable this, but it will do for now.
 	    //TODO: activate this for all tests
-	    if ( connection.getContext().getConfig().testExpDependencies() == 1 ) {
+	    if ( connection.getContext().getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class) == 1 ) {
 	      assertCellSetValid( cellSet );
 	    }
 	    return cellSet;
@@ -1063,7 +1065,7 @@ public class TestUtil {
         // value when cells are null. TestExpDependencies isn't the perfect
         // switch to enable this, but it will do for now.
         //TODO: activate this for all tests
-        if ( connection.getContext().getConfig().testExpDependencies() == 1 ) {
+        if ( connection.getContext().getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class) == 1 ) {
             assertCellSetValid( cellSet );
         }
         return cellSet;
@@ -1585,7 +1587,7 @@ public class TestUtil {
 		// dialect.
 		if (!patternFound) {
 			String warnDialect =
-					connection.getContext().getConfig().warnIfNoPatternForDialect();
+					connection.getContext().getConfigValue(ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT, ConfigConstants.WARN_IF_NO_PATTERN_FOR_DIALECT_DEFAULT_VALUE, String.class);
 
 			if (warnDialect.equals(d.toString())) {
 				System.out.println(
@@ -1806,17 +1808,17 @@ public class TestUtil {
 			String query, String message)
 	{
 	    SystemWideProperties properties = SystemWideProperties.instance();
-        ((TestConfig)connection.getContext().getConfig()).setEnableNativeCrossJoin(true);
-        ((TestConfig)connection.getContext().getConfig()).setEnableNativeFilter(true);
+        ((TestContextImpl)(connection.getContext())).setEnableNativeCrossJoin(true);
+        ((TestContextImpl)(connection.getContext())).setEnableNativeFilter(true);
         properties.EnableNativeNonEmpty= true;
-        ((TestConfig)connection.getContext().getConfig()).setEnableNativeTopCount(true);
+        ((TestContextImpl)(connection.getContext())).setEnableNativeTopCount(true);
 
 		Result resultNative = executeQuery(connection, query);
 
-        ((TestConfig)connection.getContext().getConfig()).setEnableNativeCrossJoin(false);
-        ((TestConfig)connection.getContext().getConfig()).setEnableNativeFilter(false);
+        ((TestContextImpl)(connection.getContext())).setEnableNativeCrossJoin(false);
+        ((TestContextImpl)(connection.getContext())).setEnableNativeFilter(false);
         properties.EnableNativeNonEmpty = false;
-        ((TestConfig)connection.getContext().getConfig()).setEnableNativeTopCount(false);
+        ((TestContextImpl)(connection.getContext())).setEnableNativeTopCount(false);
 
 		Result resultNonNative = executeQuery(connection, query);
 

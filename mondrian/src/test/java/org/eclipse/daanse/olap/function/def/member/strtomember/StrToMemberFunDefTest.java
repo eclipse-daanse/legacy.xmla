@@ -23,7 +23,7 @@ import static org.opencube.junit5.TestUtil.hierarchyName;
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -80,7 +80,7 @@ class StrToMemberFunDefTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testStrToMemberIgnoreInvalidMembers(Context context) {
         context.getCatalogCache().clear();
-        ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
+        ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(true);
 
         // [Product].[Drugs] is invalid, becomes null member, and is dropped
         // from list
@@ -132,7 +132,7 @@ class StrToMemberFunDefTest {
             "StrToMember(\"\")",
             "MDX object '' not found in cube 'Sales'", "Sales" );
 
-        ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(false);
+        ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(false);
         assertQueryThrows(context,
             "select \n"
                 + "  {[Product].[Food],\n"

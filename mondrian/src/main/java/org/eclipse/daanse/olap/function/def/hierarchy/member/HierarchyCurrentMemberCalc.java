@@ -16,6 +16,7 @@ package org.eclipse.daanse.olap.function.def.hierarchy.member;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -53,8 +54,8 @@ public class HierarchyCurrentMemberCalc extends AbstractProfilingNestedMemberCal
     public static void validateSlicerMembers(Hierarchy hierarchy, Evaluator evaluator) {
         if (evaluator instanceof RolapEvaluator rev) {
 
-            String alertValue = evaluator.getCatalogReader().getContext().getConfig()
-                    .currentMemberWithCompoundSlicerAlert();
+            String alertValue = evaluator.getCatalogReader().getContext()
+                    .getConfigValue(ConfigConstants.CURRENT_MEMBER_WITH_COMPOUND_SLICER_ALERT, ConfigConstants.CURRENT_MEMBER_WITH_COMPOUND_SLICER_ALERT_DEFAULT_VALUE, String.class);
 
             if (alertValue.equalsIgnoreCase("OFF")) {
                 return; // No validation

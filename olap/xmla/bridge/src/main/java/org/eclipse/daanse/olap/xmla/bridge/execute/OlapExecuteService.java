@@ -34,6 +34,7 @@ import org.eclipse.daanse.mdx.model.api.select.Allocation;
 import org.eclipse.daanse.olap.action.api.ActionService;
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.Command;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataTypeJdbc;
@@ -728,7 +729,7 @@ public class OlapExecuteService implements ExecuteService {
         Optional<String> tabFields = statementRequest.properties().tableFields();
 //        Optional<Boolean> advanced = statementRequest.properties().advancedFlag();
         Connection connection = drillThrough.getQuery().getConnection();
-        final boolean enableRowCount = connection.getContext().getConfig().enableTotalCount();
+        final boolean enableRowCount = connection.getContext().getConfigValue(ConfigConstants.ENABLE_TOTAL_COUNT, ConfigConstants.ENABLE_TOTAL_COUNT_DEFAULT_VALUE, Boolean.class);
         final int[] rowCountSlot = enableRowCount ? new int[]{0} : null;
         Statement statement;
         ResultSet resultSet = null;

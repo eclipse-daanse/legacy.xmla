@@ -8,6 +8,7 @@
 */
 package mondrian.test.clearview;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -53,13 +54,13 @@ public class SummaryTest extends ClearViewBase {
                     && (getName().equals("testRankExpandNonNative")
                     || getName().equals("testCountExpandNonNative")
                     || getName().equals("testCountOverTimeExpandNonNative"))
-                    && context.getConfig().enableNativeCrossJoin()) {
+                    && context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)) {
                 // Tests give wrong results if native crossjoin is disabled.
                 return;
             }
             if (!Bug.BugMondrian2452Fixed
                     && (getName().equals("testRankExpandNonNative"))
-                    && !context.getConfig().enableNativeCrossJoin()) {
+                    && !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)) {
                 // Tests give wrong results if native crossjoin is disabled.
                 return;
             }

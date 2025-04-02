@@ -21,7 +21,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -46,9 +46,9 @@ class DefaultRecognizerTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testDefaultRecognizerWithFactAlias(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
         /*
@@ -114,9 +114,9 @@ class DefaultRecognizerTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testTupleReaderWithDistinctCountMeasureInContext(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
         // Validates that if a distinct count measure is in context

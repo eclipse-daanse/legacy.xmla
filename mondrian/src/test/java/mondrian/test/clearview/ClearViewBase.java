@@ -22,7 +22,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.olap.SystemWideProperties;
@@ -109,7 +109,7 @@ import mondrian.test.SqlPattern;
 
             // Set some properties to match the way we configure them
             // for ClearView.
-            ((TestConfig)context.getConfig()).setExpandNonNative(true);
+            ((TestContextImpl)context).setExpandNonNative(true);
 
             String mdx = diffRepos.expand(null, "${mdx}");
             String result = Util.NL + TestUtil.toString(

@@ -27,6 +27,7 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -394,7 +395,7 @@ class CacheControlTest {
             + "Row #2: 16,284\n"
             + "Row #2: 27,038\n"
             + "Row #2: 4,294\n");
-        if (context.getConfig().disableCaching()) {
+        if (context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
             return;
         }
 
@@ -441,7 +442,7 @@ class CacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPartialFlush(Context context) {
-        if (context.getConfig().disableCaching()) {
+        if (context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
             return;
         }
         Connection connection = context.getConnectionWithDefaultRole();
@@ -509,7 +510,7 @@ class CacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPartialFlush_2(Context context) throws Exception {
-        if (context.getConfig().disableCaching()) {
+        if (context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
             return;
         }
 
@@ -547,7 +548,7 @@ class CacheControlTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPartialFlushRange(Context context) {
-        if (context.getConfig().disableCaching()) {
+        if (context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
             return;
         }
 
@@ -1230,7 +1231,7 @@ class CacheControlTest {
             + "{[Store].[Store].[USA]}\n"
             + "Row #0: 266,773\n");
 
-        if (context.getConfig().disableCaching()) {
+        if (context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
             return;
         }
 

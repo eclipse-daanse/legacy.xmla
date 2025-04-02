@@ -17,6 +17,7 @@ import static org.opencube.junit5.TestUtil.withSchema;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
@@ -50,7 +51,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
@@ -79,7 +80,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testPositiveMatching(Context context) throws Exception {
     	context.getCatalogCache().clear();
-        if (!context.getConfig().enableNativeFilter()) {
+        if (!context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)) {
             // No point testing these if the native filters
             // are turned off.
             return;
@@ -164,7 +165,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNegativeMatching(Context context) throws Exception {
     	context.getCatalogCache().clear();
-        if (!context.getConfig().enableNativeFilter()) {
+        if (!context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)) {
              // No point testing these if the native filters
              // are turned off.
             return;
@@ -448,18 +449,18 @@ class NativeFilterMatchingTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
     void testNativeFilterWithCompoundSlicer(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         final String mdx =
             "with member measures.avgQtrs as 'avg( filter( time.time.quarter.members, measures.[unit sales] > 80))' "
             + "select measures.avgQtrs * gender.gender.members on 0 from sales where head( product.product.[product name].members, 3)";
 
-        if (context.getConfig().enableNativeFilter()
+        if (context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)
             && SystemWideProperties.instance().EnableNativeNonEmpty)
         {
             boolean requiresOrderByAlias =
                     getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias();
             final String sqlMysql =
-                context.getConfig().useAggregates() == false
+                context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false
                     ? "select\n"
                     + "    `time_by_day`.`the_year` as `c0`,\n"
                     + "    `time_by_day`.`quarter` as `c1`\n"
@@ -546,13 +547,13 @@ class NativeFilterMatchingTest extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNativeFilterWithCompoundSlicerWithAggs(Context context) {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         final String mdx =
             "with member measures.avgQtrs as 'avg( filter( time.quarter.members, measures.[unit sales] > 80))' "
             + "select measures.avgQtrs * gender.members on 0 from sales where head( product.[product name].members, 3)";
-        if (context.getConfig().enableNativeFilter()
+        if (context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)
             && SystemWideProperties.instance().EnableNativeNonEmpty)
         {
             final String sqlMysql =
@@ -615,17 +616,17 @@ class NativeFilterMatchingTest extends BatchTestCase {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testNativeFilterWithCompoundSlicer_1(Context context) {
     	context.getCatalogCache().clear();
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
         final String mdx =
             "with member [measures].[avgQtrs] as 'count(filter([Customers].[Name].Members, [Measures].[Unit Sales] > 0))' "
             + "select [measures].[avgQtrs] on 0 from sales where ( {[Product].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer], [Product].[Food].[Baked Goods].[Bread].[Muffins]} )";
-        if (context.getConfig().enableNativeFilter()
+        if (context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)
             && SystemWideProperties.instance().EnableNativeNonEmpty)
         {
             boolean requiresOrderByAlias =
                     getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias();
             final String sqlMysql =
-                context.getConfig().useAggregates() == false
+                context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false
                     ? "select\n"
                     + "    `customer`.`country` as `c0`,\n"
                     + "    `customer`.`state_province` as `c1`,\n"

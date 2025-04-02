@@ -16,6 +16,7 @@ import static org.opencube.junit5.TestUtil.getDialect;
 
 import java.util.function.Function;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Result;
@@ -27,7 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextArgumentsProvider;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -71,18 +72,18 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testTotal(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
         // get value without aggregates
-        ((TestConfig)context.getConfig()).setUseAggregates(false);
-        ((TestConfig)context.getConfig()).setReadAggregates(false);
+        ((TestContextImpl)context).setUseAggregates(false);
+        ((TestContextImpl)context).setReadAggregates(false);
 
         String mdx =
             "select {[Measures].[Total]} on columns from [Fact]";
@@ -97,8 +98,8 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
 
         // unless there is a way to flush the cache,
         // I'm skeptical about these results
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(false);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(false);
 
         Result result1 = executeQuery(mdx, context.getConnectionWithDefaultRole());
         Object v1 = result1.getCell(new int[]{0}).getValue();
@@ -114,10 +115,10 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testTupleSelection(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
@@ -145,10 +146,10 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testNativeFilterWithoutMeasures(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
@@ -203,10 +204,10 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
     void testNativeFilterWithoutMeasuresAndLevelWithProps(Context context)
         throws Exception
     {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
@@ -229,7 +230,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
             + "Row #0: 6\n");
 
         // check generated sql only for native evaluation
-        if (context.getConfig().enableNativeFilter()) {
+        if (context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)) {
           assertQuerySql(context.getConnectionWithDefaultRole(),
               query,
               new SqlPattern[] {
@@ -290,10 +291,10 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testChildSelection(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;

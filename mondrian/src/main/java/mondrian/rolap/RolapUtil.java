@@ -57,6 +57,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import mondrian.olap.ExecuteDurationUtil;
 import mondrian.olap.NativeEvaluationUnsupportedException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
@@ -126,7 +127,7 @@ public class RolapUtil {
     {
         final Statement statement = connection.getInternalStatement();
         final ExecutionImpl execution = new ExecutionImpl(statement,
-            connection.getContext().getConfig().executeDurationValue());
+            ExecuteDurationUtil.executeDurationValue(connection.getContext()));
         final Locus locus =
             new LocusImpl(
                 execution,
@@ -591,7 +592,7 @@ public class RolapUtil {
         Statement statement)
     {
         ExecutionImpl dummyExecution = new ExecutionImpl(statement,
-            statement.getConnection().getContext().getConfig().executeDurationValue());
+                ExecuteDurationUtil.executeDurationValue(statement.getConnection().getContext()));
         final RolapResult result = new RolapResult(dummyExecution, false);
         return result.getRootEvaluator();
     }

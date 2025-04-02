@@ -42,7 +42,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -80,10 +80,10 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testDefaultRecognition(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         String sqlMysql = ""
                 + "select\n"
@@ -106,10 +106,10 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testAggName(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
     	prepareContext(context);
         List<AggregationTableMappingImpl> aggTables = List.of(
             AggregationNameMappingImpl.builder()
@@ -191,10 +191,10 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testFactColumnNotExists(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         List<AggregationTableMappingImpl> aggTables = List.of(
         	AggregationNameMappingImpl.builder()
@@ -264,10 +264,10 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testMeasureFactColumnUpperCase(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         List<AggregationTableMappingImpl> aggTables = List.of(
             AggregationNameMappingImpl.builder()
@@ -351,10 +351,10 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testMeasureFactColumnNotExist(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         PhysicalColumnMappingImpl notExist = PhysicalColumnMappingImpl.builder().withName("not_exist").withDataType(ColumnDataType.INTEGER).build();
         List<AggregationTableMappingImpl> aggTables = List.of(
@@ -436,10 +436,10 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testWithoutMeasureFactColumnElement(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         List<AggregationTableMappingImpl> aggTables = List.of(
             AggregationNameMappingImpl.builder()
@@ -504,10 +504,10 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testMeasureFactColumnAndAggFactCountNotExist(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         PhysicalColumnMappingImpl notExist = PhysicalColumnMappingImpl.builder().withName("not_exist").withDataType(ColumnDataType.INTEGER).build();
         List<AggregationTableMappingImpl> aggTables = List.of(
@@ -581,10 +581,10 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testAggNameDifferentColumnNames(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         List<AggregationExcludeMappingImpl> aggExcludes = List.of(
             AggregationExcludeMappingImpl.builder()
@@ -670,10 +670,10 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testAggDivideByZero(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         List<AggregationExcludeMappingImpl> aggExcludes = List.of(
             AggregationExcludeMappingImpl.builder()
@@ -754,10 +754,10 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testAggPattern(Context context) {
-        ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setGenerateFormattedSql(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
+        ((TestContextImpl)context).setDisableCaching(true);
         prepareContext(context);
         List<AggregationTableMappingImpl> aggTables = List.of(AggregationPatternMappingImpl.builder()
             .withPattern("agg_c_6_fact_csv_2016")
@@ -850,8 +850,8 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         withSchema(context, mf);
         Result resultWithAgg =
                 executeQuery(query, context.getConnectionWithDefaultRole());
-        ((TestConfig)context.getConfig()).setUseAggregates(false);
-        ((TestConfig)context.getConfig()).setReadAggregates(false);
+        ((TestContextImpl)context).setUseAggregates(false);
+        ((TestContextImpl)context).setReadAggregates(false);
         Result result = executeQuery(query, context.getConnectionWithDefaultRole());
 
         String resultStr = TestUtil.toString(result);
@@ -864,8 +864,8 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
 
     private void verifySameAggAndNot
             (Context context, String query, Function<CatalogMapping, PojoMappingModifier> mf, String aggSql) {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         // check that agg tables are used
         assertQuerySql(context, QUERY, mf, aggSql);
 

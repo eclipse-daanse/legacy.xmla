@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
@@ -45,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.IdImpl;
-import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 
 public class NativizeSetFunDef extends AbstractFunctionDefinition {
@@ -103,8 +103,8 @@ public class NativizeSetFunDef extends AbstractFunctionDefinition {
         NativizeSetFunDef.LOGGER.debug("NativizeSetFunDef compileCall");
         Expression funArg = call.getArg(0);
 
-        if (compiler.getEvaluator().getQuery().getConnection().getContext().getConfig().useAggregates()
-            || compiler.getEvaluator().getQuery().getConnection().getContext().getConfig().readAggregates())
+        if (compiler.getEvaluator().getQuery().getConnection().getContext().getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+            || compiler.getEvaluator().getQuery().getConnection().getContext().getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class))
         {
             return funArg.accept(compiler);
         }
@@ -148,7 +148,7 @@ public class NativizeSetFunDef extends AbstractFunctionDefinition {
                 evaluator.getCatalogReader()
                     .getLevelCardinality(level, false, true);
             final int minThreshold = evaluator.getQuery().getConnection().getContext()
-                .getConfig().nativizeMinThreshold();
+                .getConfigValue(ConfigConstants.NATIVIZE_MIN_THRESHOLD, ConfigConstants.NATIVIZE_MIN_THRESHOLD_DEFAULT_VALUE, Integer.class);
             final boolean isHighCard = cardinality > minThreshold;
             NativizeSetFunDef.logHighCardinality(
                 NativizeSetFunDef.ESTIMATE_MESSAGE, minThreshold, cardinality, isHighCard);

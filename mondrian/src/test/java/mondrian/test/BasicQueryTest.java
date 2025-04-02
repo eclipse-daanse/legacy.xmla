@@ -62,6 +62,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
@@ -87,7 +88,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
@@ -1704,7 +1705,7 @@ public class BasicQueryTest {
    * was validated twice, hence the validation time was <code>O(2 ^ depth)</code>.)
    */
   public void _testBug793616(Context context) {
-    if ( context.getConfig().testExpDependencies() > 0 ) {
+    if ( context.getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class) > 0 ) {
       // Don't run this test if dependency-checking is enabled.
       // Dependency checking will hugely slow down evaluation, and give
       // the false impression that the validation performance bug has
@@ -1785,7 +1786,7 @@ public class BasicQueryTest {
   void testCatalogHierarchyBasedOnView(Context context) {
     // Don't run this test if aggregates are enabled: two levels mapped to
     // the "gender" column confuse the agg engine.
-    if ( context.getConfig().readAggregates() ) {
+    if ( context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
       return;
     }
     /*
@@ -1863,7 +1864,7 @@ public class BasicQueryTest {
   void testCatalogHierarchyBasedOnView2(Context context) {
     // Don't run this test if aggregates are enabled: two levels mapped to
     // the "gender" column confuse the agg engine.
-    if ( context.getConfig().readAggregates() ) {
+    if ( context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
       return;
     }
     if ( TestUtil.getDialect(context.getConnectionWithDefaultRole()).allowsFromQuery() ) {
@@ -1941,10 +1942,10 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCountDistinctAgg(Context context) {
-    boolean use_agg_orig = context.getConfig().useAggregates();
+    boolean use_agg_orig = context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class);
 
     // turn off caching
-        ((TestConfig)context.getConfig()).setDisableCaching(true);
+        ((TestContextImpl)context).setDisableCaching(true);
 
     assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales], [Measures].[Customer Count]} on rows,\n"
         + "NON EMPTY {[Time].[1997].[Q1].[1]} ON COLUMNS\n" + "from Sales", "Axis #0:\n" + "{}\n" + "Axis #1:\n"
@@ -1952,9 +1953,9 @@ public class BasicQueryTest {
             + "{[Measures].[Customer Count]}\n" + "Row #0: 21,628\n" + "Row #1: 1,396\n" );
 
     if ( use_agg_orig ) {
-      ((TestConfig)context.getConfig()).setUseAggregates(false);
+      ((TestContextImpl)context).setUseAggregates(false);
     } else {
-      ((TestConfig)context.getConfig()).setUseAggregates(true);
+      ((TestContextImpl)context).setUseAggregates(true);
     }
 
     assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales], [Measures].[Customer Count]} on rows,\n"
@@ -1996,8 +1997,8 @@ public class BasicQueryTest {
             + "      formatString=\"Standard\"/>\n" + "</Cube>\n" + "</Schema>";
     */
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier14::new);
-    ((TestConfig)context.getConfig()).setUseAggregates(true);
-    ((TestConfig)context.getConfig()).setReadAggregates(true);
+    ((TestContextImpl)context).setUseAggregates(true);
+    ((TestContextImpl)context).setReadAggregates(true);
     executeQuery(context.getConnectionWithDefaultRole(), mdx);
   }
 
@@ -2032,8 +2033,8 @@ public class BasicQueryTest {
     */
     //TestContext testContext = TestContext.instance().withFreshConnection().withSchema( schema );
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier15::new);
-    ((TestConfig)context.getConfig()).setUseAggregates(true);
-    ((TestConfig)context.getConfig()).setReadAggregates(true);
+    ((TestContextImpl)context).setUseAggregates(true);
+    ((TestContextImpl)context).setReadAggregates(true);
 
     // no exception is thrown
     executeQuery(context.getConnectionWithDefaultRole(), mdx);
@@ -2135,8 +2136,8 @@ public class BasicQueryTest {
     */
     //TestContext testContext = TestContext.instance().withFreshConnection().withSchema( schema );
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier17::new);
-    ((TestConfig)context.getConfig()).setUseAggregates(true);
-    ((TestConfig)context.getConfig()).setReadAggregates(true);
+    ((TestContextImpl)context).setUseAggregates(true);
+    ((TestContextImpl)context).setReadAggregates(true);
 
     String desiredResult =
         "" + "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
@@ -2151,8 +2152,8 @@ public class BasicQueryTest {
     assertQueryReturns( context.getConnectionWithDefaultRole(),mdx, desiredResult );
 
     // check that consistent with fact table
-    ((TestConfig)context.getConfig()).setUseAggregates(false);
-    ((TestConfig)context.getConfig()).setReadAggregates(false);
+    ((TestContextImpl)context).setUseAggregates(false);
+    ((TestContextImpl)context).setReadAggregates(false);
     context.getCatalogCache().clear();
 
     assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, desiredResultWithoutAgg );
@@ -2193,8 +2194,8 @@ public class BasicQueryTest {
     */
     //TestContext testContext = TestContext.instance().withFreshConnection().withSchema( schema );
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier18::new);
-    ((TestConfig)context.getConfig()).setUseAggregates(true);
-    ((TestConfig)context.getConfig()).setReadAggregates(true);
+    ((TestContextImpl)context).setUseAggregates(true);
+    ((TestContextImpl)context).setReadAggregates(true);
 
     String desiredResult =
         "" + "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
@@ -2238,8 +2239,8 @@ public class BasicQueryTest {
             + "</Schema>";
     */
     TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier19::new);
-    ((TestConfig)context.getConfig()).setUseAggregates(true);
-    ((TestConfig)context.getConfig()).setReadAggregates(true);
+    ((TestContextImpl)context).setUseAggregates(true);
+    ((TestContextImpl)context).setReadAggregates(true);
 
     String desiredResult =
         "" + "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
@@ -2337,8 +2338,8 @@ public class BasicQueryTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCrossjoinWithDescendantsAndUnknownMember(Context context) {
-    ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
-    ((TestConfig)context.getConfig()).setIgnoreInvalidMembers(true);
+    ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(true);
+    ((TestContextImpl)context).setIgnoreInvalidMembers(true);
     assertQueryReturns( context.getConnectionWithDefaultRole(),"select {[Measures].[Unit Sales]} on columns,\n" + "NON EMPTY CrossJoin(\n"
         + " Descendants([Product].[All Products], [Product].[Product Family]),\n"
         + " Descendants([Store].[All Stores].[Foo], [Store].[Store State])) on rows\n" + "from [Sales]", "Axis #0:\n"
@@ -2368,7 +2369,7 @@ public class BasicQueryTest {
   void testMembersOfLargeDimensionTheHardWay(Context context) {
     final Connection connection = context.getConnectionWithDefaultRole();
     // Avoid this test if memory is scarce.
-    if ( Bug.avoidMemoryOverflow( getDialect(connection), context.getConfig().memoryMonitor() ) ) {
+    if ( Bug.avoidMemoryOverflow( getDialect(connection), context.getConfigValue(ConfigConstants.MEMORY_MONITOR, ConfigConstants.MEMORY_MONITOR_DEFAULT_VALUE, Boolean.class) ) ) {
       return;
     }
 
@@ -3454,7 +3455,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void dont_testParallelMutliple(Context context) {
 	  context.getCatalogCache().clear();
-      ((TestConfig)context.getConfig()).setMaxEvalDepth(MAX_EVAL_DEPTH_VALUE);
+      ((TestContextImpl)context).setMaxEvalDepth(MAX_EVAL_DEPTH_VALUE);
     Connection connection = context.getConnectionWithDefaultRole();
     for ( int i = 0; i < 5; i++ ) {
       runParallelQueries(connection, 1, 1, false );
@@ -3480,14 +3481,14 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void dont_testParallelFlushCache(Context context) {
 	context.getCatalogCache().clear();
-    ((TestConfig)context.getConfig()).setMaxEvalDepth(MAX_EVAL_DEPTH_VALUE);
+    ((TestContextImpl)context).setMaxEvalDepth(MAX_EVAL_DEPTH_VALUE);
     runParallelQueries(context.getConnectionWithDefaultRole(), 4, 6, true );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   public void dont_testParallelVery(Context context) {
-      ((TestConfig)context.getConfig()).setMaxEvalDepth( MAX_EVAL_DEPTH_VALUE);
+      ((TestContextImpl)context).setMaxEvalDepth( MAX_EVAL_DEPTH_VALUE);
     runParallelQueries(context.getConnectionWithDefaultRole(), 6, 10, false );
   }
 
@@ -3625,7 +3626,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testNonEmptyCrossJoin(Context context) {
     Connection connection = context.getConnectionWithDefaultRole();
-    if ( !context.getConfig().enableNativeCrossJoin() ) {
+    if ( !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class) ) {
       // If we try to evaluate the crossjoin in memory we run out of
       // memory.
       return;
@@ -4199,7 +4200,7 @@ public class BasicQueryTest {
 
     // Now set property
 
-    ((TestConfig)context.getConfig()).setIgnoreInvalidMembersDuringQuery(true);
+    ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(true);
 
     assertQueryReturns( context.getConnectionWithDefaultRole(),mdx, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
         + "{[Time].[Time].[1997].[Q1]}\n" + "Row #0: 66,291\n" );
@@ -4210,7 +4211,7 @@ public class BasicQueryTest {
     // Verify that invalid members in query do NOT prevent
     // usage of native NECJ (LER-5165).
 
-        ((TestConfig)context.getConfig())
+        ((TestContextImpl)context)
             .setAlertNativeEvaluationUnsupported("ERROR");
 
         assertQueryReturns( context.getConnectionWithDefaultRole(),mdx2, "Axis #0:\n" + "{}\n" + "Axis #1:\n" + "{[Measures].[Unit Sales]}\n" + "Axis #2:\n"
@@ -4229,7 +4230,7 @@ public class BasicQueryTest {
     // this issue takes place only for the case when ordinalColumn is defined
     // and CompareSiblingsByOrderKey=false and ExpandNonNative=true
     SystemWideProperties.instance().CompareSiblingsByOrderKey = false;
-    ((TestConfig)context.getConfig()).setExpandNonNative(true);
+    ((TestContextImpl)context).setExpandNonNative(true);
     if ( !props.EnableRolapCubeMemberCache ) {
       SystemWideProperties.instance().EnableRolapCubeMemberCache = true;
     }
@@ -4446,7 +4447,7 @@ public class BasicQueryTest {
     final int cancelInterval = 50;
     final String query =
         "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n" + "  {[Product].members} ON ROWS\n" + "FROM [Sales]";
-    ((TestConfig)context.getConfig()).setCheckCancelOrTimeoutInterval(cancelInterval);
+    ((TestContextImpl)context).setCheckCancelOrTimeoutInterval(cancelInterval);
     final String triggerSql = "product_name";
 
     Long rows =
@@ -4464,10 +4465,10 @@ public class BasicQueryTest {
   void testCancelSqlFetchSegmentLoad(Context context) throws Exception {
     // 512 rows
     final int cancelInterval = 101;
-    ((TestConfig)context.getConfig()).setCheckCancelOrTimeoutInterval(cancelInterval);
+    ((TestContextImpl)context).setCheckCancelOrTimeoutInterval(cancelInterval);
     // this will avoid spamming output with cache failures, but should
     // also work without side effects with cache enabled
-      ((TestConfig)context.getConfig()).setDisableCaching(true);
+      ((TestContextImpl)context).setDisableCaching(true);
     final String query =
         "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n" + "  {[Product].members} ON ROWS\n" + "FROM [Sales]";
     final String triggerSql = "product_name";
@@ -4489,7 +4490,7 @@ public class BasicQueryTest {
     final String query =
         "SELECT {[Measures].[Unit Sales]} ON COLUMNS,\n"
             + "  {[Customers].[Mexico].[Guerrero].[Acapulco].Children} ON ROWS\n" + "FROM [Sales]";
-    ((TestConfig)context.getConfig()).setCheckCancelOrTimeoutInterval(cancelInterval);
+    ((TestContextImpl)context).setCheckCancelOrTimeoutInterval(cancelInterval);
 
     Long rows = executeAndCancelAtSqlFetch(context, query, "customer_id", "SqlMemberSource.getMemberChildren" );
     assertEquals(new Long( cancelInterval ), rows, "Query not aborted at first interval");
@@ -4603,7 +4604,7 @@ public class BasicQueryTest {
         "WITH\n" + "  MEMBER [Measures].[Sleepy]\n" + "    AS 'SleepUdf([Measures].[Unit Sales])'\n"
             + "SELECT {[Measures].[Sleepy]} ON COLUMNS,\n" + "  {[Product].members} ON ROWS\n" + "FROM [Sales]";
     Throwable throwable = null;
-    ((TestConfig)context.getConfig()).setQueryTimeout(2);
+    ((TestContextImpl)context).setQueryTimeout(2);
     try {
     	executeQueryTimeoutTest(context.getConnectionWithDefaultRole(), query);
     } catch ( Throwable ex ) {
@@ -4732,7 +4733,7 @@ public class BasicQueryTest {
             + "select crossjoin({[Time].[*SUBTOTAL_MEMBER_SEL~SUM]}, {[Store].[*SUBTOTAL_MEMBER_SEL~SUM]}) "
             + "on columns from [Sales]";
 
-    ((TestConfig)context.getConfig()).setIterationLimit(11);
+    ((TestContextImpl)context).setIterationLimit(11);
 
     Throwable throwable = null;
     Connection connection = context.getConnectionWithDefaultRole();
@@ -4747,7 +4748,7 @@ public class BasicQueryTest {
     checkThrowable( throwable, "Number of iterations exceeded limit of 11" );
 
     // make sure the query runs without the limit set
-    ((TestConfig)context.getConfig()).setIterationLimit(0);
+    ((TestContextImpl)context).setIterationLimit(0);
     executeQuery(connection, queryString );
   }
 
@@ -5096,7 +5097,7 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testEmptyAggregationListDueToFilterDoesNotThrowException(Context context) {
-    ((TestConfig)context.getConfig()).setIgnoreMeasureForNonJoiningDimension(true);
+    ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(true);
     assertQueryReturns( context.getConnectionWithDefaultRole(),"WITH \n" + "MEMBER [GENDER].[AGG] "
         + "AS 'AGGREGATE(FILTER([S1], (NOT ISEMPTY([MEASURES].[STORE SALES]))))' " + "SET [S1] "
         + "AS 'CROSSJOIN({[GENDER].[GENDER].MEMBERS},{[STORE].[CANADA].CHILDREN})' " + "SELECT\n"
@@ -5857,7 +5858,7 @@ public class BasicQueryTest {
   public void _testSqlPoolAndQueue(Context context) throws Exception {
     // We use 10 SQL threads and the query needs about 30-ish.
     // If the bug exists, it'll fail.
-    ((TestConfig)context.getConfig()).setSegmentCacheManagerNumberSqlThreads(10);
+    ((TestContextImpl)context).setSegmentCacheManagerNumberSqlThreads(10);
 
     final String mdx =
         "with set [*NATIVE_CJ_SET] as 'NonEmptyCrossJoin([*BASE_MEMBERS__Promotion Media_], NonEmptyCrossJoin"
@@ -6051,7 +6052,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCurrentMemberWithCompoundSlicerIgnoreException(Context context) {
     	context.getCatalogCache().clear();
-        ((TestConfig)context.getConfig()).setCurrentMemberWithCompoundSlicerAlert("OFF" );
+        ((TestContextImpl)context).setCurrentMemberWithCompoundSlicerAlert("OFF" );
 
     //final TestContext context = getTestContext().withFreshConnection();
     String mdx =
@@ -6093,7 +6094,7 @@ public class BasicQueryTest {
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCurrentMemberWithCompoundSlicer2IgnoreException(Context context) {
     	context.getCatalogCache().clear();
-        ((TestConfig)context.getConfig()).setCurrentMemberWithCompoundSlicerAlert("OFF");
+        ((TestContextImpl)context).setCurrentMemberWithCompoundSlicerAlert("OFF");
 
     //final TestContext context = getTestContext().withFreshConnection();
     String mdx =

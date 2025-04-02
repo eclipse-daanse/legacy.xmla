@@ -30,7 +30,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -62,7 +62,7 @@ class CancellationTest {
     void testNonEmptyListCancellation(Context context) throws OlapRuntimeException {
         // tests that cancellation/timeout is checked in
         // CrossJoinFunDef.nonEmptyList
-        ((TestConfig)context.getConfig()).setCheckCancelOrTimeoutInterval(1);
+        ((TestContextImpl)context).setCheckCancelOrTimeoutInterval(1);
         CrossJoinFunDefTester crossJoinFunDef =
                 new CrossJoinFunDefTester(new CrossJoinTest.NullFunDef().getFunctionMetaData());
         Result result =
@@ -85,7 +85,7 @@ class CancellationTest {
     void testMutableCrossJoinCancellation(Context context) throws OlapRuntimeException {
         // tests that cancellation/timeout is checked in
         // CrossJoinFunDef.mutableCrossJoin
-        ((TestConfig)context.getConfig()).setCheckCancelOrTimeoutInterval(1);
+        ((TestContextImpl)context).setCheckCancelOrTimeoutInterval(1);
         Connection connection = context.getConnectionWithDefaultRole();
         RolapCube salesCube = (RolapCube) cubeByName(
              connection,

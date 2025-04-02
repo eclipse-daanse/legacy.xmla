@@ -16,7 +16,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -38,8 +38,8 @@ class UsagePrefixTest extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testUsagePrefix(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
@@ -47,8 +47,8 @@ class UsagePrefixTest extends AggTableTestCase {
         SystemWideProperties props = SystemWideProperties.instance();
 
         // get value without aggregates
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
 
         String mdx =
             "select {[StoreX].[Store Value].members} on columns, "
@@ -75,16 +75,16 @@ class UsagePrefixTest extends AggTableTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     void testUsagePrefixTwoDims(Context context) throws Exception {
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
         if (!isApplicable(context.getConnectionWithDefaultRole())) {
             return;
         }
 
         // get value without aggregates
-        ((TestConfig)context.getConfig()).setUseAggregates(true);
-        ((TestConfig)context.getConfig()).setReadAggregates(true);
+        ((TestContextImpl)context).setUseAggregates(true);
+        ((TestContextImpl)context).setReadAggregates(true);
 
         String mdx =
             "select Crossjoin([StoreX].[Store Value].members, "

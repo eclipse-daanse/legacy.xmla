@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.CacheControl;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -59,7 +60,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextArgumentsProvider;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
@@ -244,8 +245,8 @@ protected void assertQuerySql(Connection connection,
     // Formerly the aggregate set and measures used a conflicting hierarchy,
     // which is not a safe scenario for nativization.
     final boolean useAgg =
-      context.getConfig().useAggregates()
-        && context.getConfig().readAggregates();
+      context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+        && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class);
 
     final String mdx =
       "with\n"
@@ -260,7 +261,7 @@ protected void assertQuerySql(Connection connection,
         + "FROM [Sales] where [Time].[Weekly].x";
 
     Connection connection = context.getConnectionWithDefaultRole();
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     SqlPattern mysqlPattern = useAgg
       ? new SqlPattern(
       DatabaseProduct.MYSQL,
@@ -270,7 +271,7 @@ protected void assertQuerySql(Connection connection,
       DatabaseProduct.MYSQL,
       NativeTopCountWithAgg.getMysql(connection),
       NativeTopCountWithAgg.getMysql(connection));
-    if ( context.getConfig().enableNativeTopCount() ) {
+    if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
     assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, NativeTopCountWithAgg.result );
@@ -284,8 +285,8 @@ protected void assertQuerySql(Connection connection,
   void testNativeTopCountWithAggMemberNamedSet(Context context) {
 	context.getCatalogCache().clear();
     final boolean useAgg =
-      context.getConfig().useAggregates()
-        && context.getConfig().readAggregates();
+      context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+        && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class);
     final String mdx =
       "with set TO_AGGREGATE as '{[Time].[Weekly].[1997].[1] : [Time].[Weekly].[1997].[39]}'\n"
         + "member [Time].[Weekly].x as Aggregate(TO_AGGREGATE, [Measures].[Store Sales])\n"
@@ -297,7 +298,7 @@ protected void assertQuerySql(Connection connection,
         + "NON EMPTY {[Measures].[Store Sales], Measures.x1, Measures.x2, Measures.x3} ON 0\n"
         + "FROM [Sales] where [Time].[Weekly].x";
     Connection connection = context.getConnectionWithDefaultRole();
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     SqlPattern mysqlPattern = useAgg ? new SqlPattern(
       DatabaseProduct.MYSQL,
       NativeTopCountWithAgg.getMysqlAgg(connection),
@@ -306,7 +307,7 @@ protected void assertQuerySql(Connection connection,
       DatabaseProduct.MYSQL,
       NativeTopCountWithAgg.getMysql(connection),
       NativeTopCountWithAgg.getMysql(connection));
-    if ( context.getConfig().enableNativeTopCount()
+    if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class)
       && SystemWideProperties.instance().EnableNativeNonEmpty ) {
       assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
@@ -319,8 +320,8 @@ protected void assertQuerySql(Connection connection,
 	  context.getCatalogCache().clear();
 	  context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
     final boolean useAgg =
-      context.getConfig().useAggregates()
-        && context.getConfig().readAggregates();
+      context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+        && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class);
     final String mdx =
       "with\n"
         + "  set QUARTERS as Descendants([Time].[Time].[1997], [Time].[Time].[Quarter])\n"
@@ -392,13 +393,13 @@ protected void assertQuerySql(Connection connection,
         + "    ISNULL(`product`.`brand_name`) ASC, `product`.`brand_name` ASC,\n"
         + "    ISNULL(`product`.`product_name`) ASC, `product`.`product_name` ASC" );
 
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     SqlPattern mysqlPattern =
       new SqlPattern(
         DatabaseProduct.MYSQL,
         mysqlQuery,
         mysqlQuery );
-    if ( context.getConfig().enableNativeFilter()
+    if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class)
       && SystemWideProperties.instance().EnableNativeNonEmpty ) {
       assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
@@ -428,10 +429,10 @@ protected void assertQuerySql(Connection connection,
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeTopCountWithMemberOnlySlicer(Context context) {
 	context.getCatalogCache().clear();
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     final boolean useAggregates =
-      context.getConfig().useAggregates()
-        && context.getConfig().readAggregates();
+      context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+        && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class);
     final String mdx =
       "WITH\n"
         + "  SET TC AS 'TopCount([Product].[Product].[Drink].[Alcoholic Beverages].Children, 3, [Measures].[Unit Sales] )'\n"
@@ -510,7 +511,7 @@ protected void assertQuerySql(Connection connection,
         DatabaseProduct.MYSQL,
         mysqlQuery,
         mysqlQuery.indexOf( "(" ) );
-    if ( context.getConfig().enableNativeTopCount() ) {
+    if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
     assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -532,11 +533,11 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeTopCountWithParenthesesMemberSlicer(Context context) {
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
 
     final boolean useAggregates =
-      context.getConfig().useAggregates()
-        && context.getConfig().readAggregates();
+      context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+        && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class);
     final String mdx =
       "WITH\n"
         + "  SET TC AS 'TopCount([Product].[Drink].[Alcoholic Beverages].Children, 3, [Measures].[Unit Sales] )'\n"
@@ -615,7 +616,7 @@ protected void assertQuerySql(Connection connection,
         DatabaseProduct.MYSQL,
         mysqlQuery,
         mysqlQuery.indexOf( "(" ) );
-    if ( context.getConfig().enableNativeTopCount() ) {
+    if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
       assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
@@ -638,10 +639,10 @@ protected void assertQuerySql(Connection connection,
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeTopCountWithMemberSumSlicer(Context context) {
 	context.getCatalogCache().clear();
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     final boolean useAggregates =
-      context.getConfig().useAggregates()
-        && context.getConfig().readAggregates();
+      context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+        && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class);
     final String mdx =
       "WITH\n"
         + "  SET TC AS 'TopCount([Product].[Product].[Drink].[Alcoholic Beverages].Children, 3, [Measures].[Unit Sales] )'\n"
@@ -716,7 +717,7 @@ protected void assertQuerySql(Connection connection,
         + "    ISNULL(`product_class`.`product_department`) ASC, `product_class`.`product_department` ASC,\n"
         + "    ISNULL(`product_class`.`product_category`) ASC, `product_class`.`product_category` ASC" );
 
-    if ( context.getConfig().enableNativeTopCount() ) {
+    if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       SqlPattern mysqlPattern =
         new SqlPattern(
           DatabaseProduct.MYSQL,
@@ -741,7 +742,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAggTCNoExplicitMeasure(Context context) {
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     final String mdx =
       "WITH\n"
         + "  SET TC AS 'TopCount([Product].[Drink].[Alcoholic Beverages].Children, 3)'\n"
@@ -765,7 +766,7 @@ protected void assertQuerySql(Connection connection,
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAggTCTwoArg(Context context) {
     // will throw an error if native eval is not used
-      ((TestConfig)context.getConfig())
+      ((TestContextImpl)context)
           .setAlertNativeEvaluationUnsupported("ERROR");
 
       // native should be used and Canada/Mexico should be returned
@@ -797,10 +798,10 @@ protected void assertQuerySql(Connection connection,
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAggTCTwoArgWithCrossjoinedSet(Context context) {
 	context.getCatalogCache().clear();
-    if ( !context.getConfig().enableNativeTopCount() ) {
+    if ( !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       return;
     }
-      ((TestConfig)context.getConfig())
+      ((TestContextImpl)context)
           .setAlertNativeEvaluationUnsupported("ERROR");
 
       Connection connection = context.getConnectionWithDefaultRole();
@@ -819,10 +820,10 @@ protected void assertQuerySql(Connection connection,
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testAggTCTwoArgWithCalcMemPresent(Context context) {
 	context.getCatalogCache().clear();
-    if ( !context.getConfig().enableNativeTopCount() ) {
+    if ( !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       return;
     }
-      ((TestConfig)context.getConfig())
+      ((TestContextImpl)context)
           .setAlertNativeEvaluationUnsupported("ERROR");
 
       Connection connection = context.getConnectionWithDefaultRole();
@@ -876,8 +877,8 @@ protected void assertQuerySql(Connection connection,
     // non-natively, or if the level.members expressions are replaced
     // with enumerated sets.
     // See http://jira.pentaho.com/browse/MONDRIAN-2337
-      ((TestConfig)context.getConfig()).setLevelPreCacheThreshold(0);
-    if ( !context.getConfig().enableNativeTopCount() ) {
+      ((TestContextImpl)context).setLevelPreCacheThreshold(0);
+    if ( !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       return;
     }
     final String mdx =
@@ -933,7 +934,7 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testSlicerTuplesFullCrossJoin(Context context) {
-    if ( !context.getConfig().enableNativeCrossJoin()
+    if ( !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)
       && !Bug.BugMondrian2452Fixed ) {
       // The NonEmptyCrossJoin in the TSET named set below returns
       // extra tuples due to MONDRIAN-2452.
@@ -976,9 +977,9 @@ protected void assertQuerySql(Connection connection,
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testTopCountWithAggregatedMemberAggStar(Context context) {
 	context.getCatalogCache().clear();
-    ((TestConfig)context.getConfig()).setUseAggregates(true );
-    ((TestConfig)context.getConfig()).setReadAggregates(true);
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setUseAggregates(true );
+    ((TestContextImpl)context).setReadAggregates(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
 
     final String mdx =
       "with member [Time].[Weekly].x as Aggregate([Time].[Weekly].[1997].Children) "
@@ -1029,7 +1030,7 @@ protected void assertQuerySql(Connection connection,
         mysql,
         mysql );
 
-    if ( context.getConfig().enableNativeTopCount() ) {
+    if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
       assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
@@ -1231,8 +1232,8 @@ protected void assertQuerySql(Connection connection,
   void testCompoundSlicerNativeEval(Context context) {
 	context.getCatalogCache().clear();
     // MONDRIAN-1404
-      ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-      ((TestConfig)context.getConfig()).setUseAggregates(false);
+      ((TestContextImpl)context).setGenerateFormattedSql(true);
+      ((TestContextImpl)context).setUseAggregates(false);
     final String mdx =
       "select NON EMPTY [Customers].[USA].[CA].[San Francisco].Children ON COLUMNS \n"
         + "from [Sales] \n"
@@ -1316,8 +1317,8 @@ protected void assertQuerySql(Connection connection,
   void testSnowflakeDimInSlicerBug1407(Context context) {
 	context.getCatalogCache().clear();
     // MONDRIAN-1407
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-    ((TestConfig)context.getConfig()).setUseAggregates(false);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setUseAggregates(false);
     final String mdx =
       "select TopCount([Customers].[Name].members, 5, measures.[unit sales]) ON COLUMNS \n"
         + "  from sales where \n"
@@ -1383,7 +1384,7 @@ protected void assertQuerySql(Connection connection,
         mysql,
         mysql );
 
-    if ( context.getConfig().enableNativeTopCount() ) {
+    if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
 
@@ -1410,8 +1411,8 @@ protected void assertQuerySql(Connection connection,
   void testCompoundSlicerNonUniqueMemberNames1413(Context context) {
 	context.getCatalogCache().clear();
     // MONDRIAN-1413
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
-    ((TestConfig)context.getConfig()).setUseAggregates(false);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setUseAggregates(false);
     final String mdx =
       "select TopCount([Customers].[Customers].[Name].members, 5, "
         + "measures.[unit sales]) ON COLUMNS \n"
@@ -1474,7 +1475,7 @@ protected void assertQuerySql(Connection connection,
         mysql,
         mysql );
 
-    if ( context.getConfig().enableNativeTopCount() ) {
+    if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       assertQuerySql(context.getConnectionWithDefaultRole(), mdx, new SqlPattern[] { mysqlPattern } );
     }
 
@@ -1796,8 +1797,8 @@ protected void assertQuerySql(Connection connection,
 
   private static boolean isUseAgg(Context context) {
     return
-      context.getConfig().useAggregates()
-        && context.getConfig().readAggregates();
+      context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+        && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class);
   }
 
   @ParameterizedTest
@@ -1824,10 +1825,10 @@ protected void assertQuerySql(Connection connection,
         + "Row #1: 90,413\n"
         + "Row #2: 23,813\n" );
     context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
-    if ( !context.getConfig().enableNativeFilter() ) {
+    if ( !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class) ) {
       return;
     }
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     final String mysql = !isUseAgg(context)
       ? "select\n"
       + "    `store`.`store_country` as `c0`,\n"
@@ -2058,8 +2059,8 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testNativeSetsCacheClearing(Context context) {
-    if ( context.getConfig().readAggregates()
-      && context.getConfig().useAggregates() ) {
+    if ( context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
+      && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
       return;
     }
     final String mdx =
@@ -2086,7 +2087,7 @@ protected void assertQuerySql(Connection connection,
       ? "    ISNULL(`c0`) ASC, `c0` ASC"
       : "    ISNULL(`customer`.`gender`) ASC, `customer`.`gender` ASC" );
 
-    ((TestConfig)context.getConfig()).setGenerateFormattedSql(true);
+    ((TestContextImpl)context).setGenerateFormattedSql(true);
     SqlPattern mysqlPattern =
       new SqlPattern(
         DatabaseProduct.MYSQL,
@@ -2104,7 +2105,7 @@ protected void assertQuerySql(Connection connection,
       }
     }
     SqlPattern[] patterns = new SqlPattern[] { mysqlPattern };
-    if ( context.getConfig().enableNativeFilter() ) {
+    if ( context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class) ) {
       assertQuerySqlOrNot(context.getConnectionWithDefaultRole(),
         mdx, patterns, false, false, false );
     }

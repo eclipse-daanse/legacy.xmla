@@ -50,6 +50,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
@@ -250,8 +251,8 @@ public class RolapCatalog implements Catalog {
 		context.removeStatement(internalConnection.getInternalStatement());
 
 		this.aggTableManager = new AggTableManager(this, context);
-		this.nativeRegistry = new RolapNativeRegistry(context.getConfig().enableNativeFilter(),
-				context.getConfig().enableNativeCrossJoin(), context.getConfig().enableNativeTopCount());
+		this.nativeRegistry = new RolapNativeRegistry(context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class),
+				context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class), context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class));
 
 		load(context, rolapConnectionProps);
 	}
@@ -266,8 +267,8 @@ public class RolapCatalog implements Catalog {
 		this.defaultRole = RoleImpl.createRootRole(this);
 		this.internalConnection = internalConnection;
 		rolapStarRegistry = new RolapStarRegistry(this, context);
-		this.nativeRegistry = new RolapNativeRegistry(context.getConfig().enableNativeFilter(),
-				context.getConfig().enableNativeCrossJoin(), context.getConfig().enableNativeTopCount());
+		this.nativeRegistry = new RolapNativeRegistry(context.getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class),
+				context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class), context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class));
 
 	}
 
@@ -329,7 +330,7 @@ public class RolapCatalog implements Catalog {
 
 		load(mappingCatalog);
 
-		aggTableManager.initialize(connectionProps, context.getConfig().useAggregates());
+		aggTableManager.initialize(connectionProps, context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class));
 		setSchemaLoadDate();
 	}
 
@@ -711,7 +712,8 @@ public class RolapCatalog implements Catalog {
 		}
 		role.grant(hierarchy, hierarchyAccess, topLevel, bottomLevel, rollupPolicy);
 
-		final boolean ignoreInvalidMembers = reader.getContext().getConfig().ignoreInvalidMembers();
+		final boolean ignoreInvalidMembers = reader.getContext()
+		        .getConfigValue(ConfigConstants.IGNORE_INVALID_MEMBERS, ConfigConstants.IGNORE_INVALID_MEMBERS_DEFAULT_VALUE, Boolean.class);
 
 		int membersRejected = 0;
 		if (!hierarchyGrant.getMemberGrants().isEmpty()) {
@@ -1024,7 +1026,7 @@ public class RolapCatalog implements Catalog {
 			SqlMemberSource source = new SqlMemberSource(hierarchy);
 
 			LOGGER.debug("Normal cardinality for {}", hierarchy.getDimension());
-			if (internalConnection.getContext().getConfig().disableCaching()) {
+			if (internalConnection.getContext().getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
 				// If the cell cache is disabled, we can't cache
 				// the members or else we get undefined results,
 				// depending on the functions used and all.

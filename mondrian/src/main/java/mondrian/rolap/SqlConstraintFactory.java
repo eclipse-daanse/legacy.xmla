@@ -16,6 +16,7 @@ import java.util.Set;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.element.Level;
 
 import mondrian.olap.SystemWideProperties;
@@ -96,7 +97,7 @@ public class SqlConstraintFactory {
         if (context.isNonEmpty()) {
             Set<CrossJoinArg> joinArgs =
                 new CrossJoinArgFactory(false).buildConstraintFromAllAxes(
-                    (RolapEvaluator) context, context.getQuery().getConnection().getContext().getConfig().enableNativeFilter());
+                    (RolapEvaluator) context, context.getQuery().getConnection().getContext().getConfigValue(ConfigConstants.ENABLE_NATIVE_FILTER, ConfigConstants.ENABLE_NATIVE_FILTER_DEFAULT_VALUE, Boolean.class));
             if (joinArgs.size() > 0) {
                 return new RolapNativeCrossJoin.NonEmptyCrossJoinConstraint(
                     joinArgs.toArray(
@@ -121,8 +122,8 @@ public class SqlConstraintFactory {
         {
             return true;
         }
-        final int threshold = context.getQuery().getConnection().getContext().getConfig()
-            .levelPreCacheThreshold();
+        final int threshold = context.getQuery().getConnection().getContext()
+                .getConfigValue(ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD, ConfigConstants.LEVEL_PRE_CACHE_THRESHOLD_DEFAULT_VALUE, Integer.class);
         if (threshold <= 0) {
             return false;
         }

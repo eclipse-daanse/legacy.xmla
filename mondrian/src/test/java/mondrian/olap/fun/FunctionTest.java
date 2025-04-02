@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
@@ -553,7 +554,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
       "{[Time].[Weekly].[All Weeklys], [Measures].[Store Sales], [Marital Status].[Marital Status].[M], [Time].[Time].[1997]}" );
 
     // two usages of the [Time].[Weekly] hierarchy
-    
+
     assertAxisThrows(context.getConnectionWithDefaultRole(),
       "{([Time].[Weekly], [Measures].[Store Sales], [Marital Status].[M], [Time].[Weekly])}",
       "Tuple contains more than one member of hierarchy '[Time].[Weekly]'." , "Sales");
@@ -1046,7 +1047,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
     final String actualCalc =
       compileExpression(connection, expr, true, "Sales");
     final int expDeps =
-      connection.getContext().getConfig().testExpDependencies();
+      connection.getContext().getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class);
     if ( expDeps > 0 ) {
       // Don't bother checking the compiled output if we are also
       // testing dependencies. The compiled code will have extra
@@ -1065,7 +1066,7 @@ mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCoun
     final String actualCalc =
       compileExpression(connection, expr, false, "Sales");
     final int expDeps =
-      connection.getContext().getConfig().testExpDependencies();
+      connection.getContext().getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class);
     if ( expDeps > 0 ) {
       // Don't bother checking the compiled output if we are also
       // testing dependencies. The compiled code will have extra

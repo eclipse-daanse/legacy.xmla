@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
@@ -617,7 +618,7 @@ RME is this right
         // If this is a non-empty constraint, it is more efficient to join to
         // an aggregate table than to the fact table. See whether a suitable
         // aggregate table exists.
-        AggStar aggStar = chooseAggStar(constraint, member, context.getConfig().useAggregates());
+        AggStar aggStar = chooseAggStar(constraint, member, context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class));
 
         // Create the condition, which is either the parent member or
         // the full context (non empty).
@@ -1148,7 +1149,7 @@ RME is this right
         }
         for (int j = 0; j < properties.length; j++) {
             Property property = properties[j];
-            if (accessors.size() > (columnOffset + j)) { 
+            if (accessors.size() > (columnOffset + j)) {
             	member.setProperty(
             			property.getName(),
             			getPooledValue(accessors.get(columnOffset + j).get()));

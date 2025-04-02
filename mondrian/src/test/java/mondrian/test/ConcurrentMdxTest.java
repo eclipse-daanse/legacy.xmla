@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.daanse.olap.api.CacheControl;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Statement;
@@ -1312,7 +1313,7 @@ class ConcurrentMdxTest {
         final List<Statement> statements = new ArrayList<>();
         ExecutorService executorService =
             Executors.newFixedThreadPool(
-                context.getConfig().rolapConnectionShepherdNbThreads() - 2);
+                context.getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_NB_THREADS, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_NB_THREADS_DEFAULT_VALUE, Integer.class) - 2);
 
         for (int i = 0; i < 700; i++) {
             for (final QueryAndResult mdxQuery : mdxQueries) {

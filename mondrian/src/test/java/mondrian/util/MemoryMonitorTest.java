@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.query.component.Query;
@@ -300,7 +301,7 @@ Does not work without the notify on add feature.
 
             byte[] bytes = new byte[(int) ((buf > 0) ? buf : 0)];
 
-            mm.addListener(listener, context.getConfig().memoryMonitorThreshold());
+            mm.addListener(listener, context.getConfigValue(ConfigConstants.MEMORY_MONITOR_THRESHOLD, ConfigConstants.MEMORY_MONITOR_THRESHOLD_DEFAULT_VALUE, Integer.class));
             // Check to see if we have been notified.
             // We might be notified if memory usage is already above 90%!!
             if (listener.wasNotified) {

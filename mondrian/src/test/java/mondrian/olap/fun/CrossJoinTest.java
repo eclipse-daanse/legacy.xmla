@@ -24,11 +24,11 @@ import java.util.Optional;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.mdx.model.api.expression.operation.OperationAtom;
-import org.eclipse.daanse.olap.api.BasicContextConfig;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -60,7 +60,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestConfig;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -138,9 +138,7 @@ public class CrossJoinTest {
         Statement statement = mock(Statement.class);
         RolapConnection rolapConnection = mock(RolapConnection.class);
         Context context = mock(Context.class);
-        BasicContextConfig config = mock(BasicContextConfig.class);
-        when(config.checkCancelOrTimeoutInterval()).thenReturn(0);
-        when(context.getConfig()).thenReturn(config);
+        when(context.getConfigValue(ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL, ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL_DEFAULT_VALUE, Integer.class)).thenReturn(0);
         when(rolapConnection.getContext()).thenReturn(context);
         when(statement.getMondrianConnection()).thenReturn(rolapConnection);
         when(excMock.getMondrianStatement()).thenReturn(statement);
@@ -181,7 +179,7 @@ public class CrossJoinTest {
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testCrossJoinIterCalc_IterationCancellationOnForward(Context foodMartContext) {
-   ((TestConfig)foodMartContext.getConfig()).setCheckCancelOrTimeoutInterval(1);
+   ((TestContextImpl)foodMartContext).setCheckCancelOrTimeoutInterval(1);
     // Get product members as TupleList
    Connection con= foodMartContext.getConnectionWithDefaultRole();
     RolapCube salesCube =
