@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Future;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
@@ -38,6 +37,9 @@ import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import org.eclipse.daanse.rolap.aggregator.MaxAggregator;
+import org.eclipse.daanse.rolap.aggregator.MinAggregator;
+import org.eclipse.daanse.rolap.aggregator.SumAggregator;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
@@ -1738,30 +1740,30 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     final Object[] intSet4 = new Integer[] { 3, 7 };
 
     // Test with double
-    assertEquals( 3.5, RolapAggregator.Sum.aggregate( Arrays.asList( dblSet1 ), DataTypeJdbc.NUMERIC) );
-    assertEquals( null, RolapAggregator.Sum.aggregate( Arrays.asList( dblSet2 ), DataTypeJdbc.NUMERIC) );
+    assertEquals( 3.5, SumAggregator.INSTANCE.aggregate( Arrays.asList( dblSet1 ), DataTypeJdbc.NUMERIC) );
+    assertEquals( null, SumAggregator.INSTANCE.aggregate( Arrays.asList( dblSet2 ), DataTypeJdbc.NUMERIC) );
     List list  = Arrays.asList( dblSet3 );
     try {
-      RolapAggregator.Sum.aggregate( list, DataTypeJdbc.NUMERIC);
+      SumAggregator.INSTANCE.aggregate( list, DataTypeJdbc.NUMERIC);
       fail("Expected an AssertionError!");
     } catch ( AssertionError e ) {
       assertNotNull(e);
       assertInstanceOf(AssertionError.class, e);
     }
-    assertEquals( 4.6, RolapAggregator.Sum.aggregate( Arrays.asList( dblSet4 ), DataTypeJdbc.NUMERIC) );
+    assertEquals( 4.6, SumAggregator.INSTANCE.aggregate( Arrays.asList( dblSet4 ), DataTypeJdbc.NUMERIC) );
 
     // test with int
-    assertEquals( 5, RolapAggregator.Sum.aggregate( Arrays.asList( intSet1 ), DataTypeJdbc.INTEGER) );
-    assertEquals( null, RolapAggregator.Sum.aggregate( Arrays.asList( intSet2 ), DataTypeJdbc.INTEGER) );
+    assertEquals( 5, SumAggregator.INSTANCE.aggregate( Arrays.asList( intSet1 ), DataTypeJdbc.INTEGER) );
+    assertEquals( null, SumAggregator.INSTANCE.aggregate( Arrays.asList( intSet2 ), DataTypeJdbc.INTEGER) );
     List list1 = Arrays.asList( intSet3 );
     try {
-      RolapAggregator.Sum.aggregate( list1, DataTypeJdbc.INTEGER);
+      SumAggregator.INSTANCE.aggregate( list1, DataTypeJdbc.INTEGER);
       fail();
     } catch ( AssertionError e ) {
         assertNotNull(e);
         assertInstanceOf(AssertionError.class, e);
     }
-    assertEquals( 10, RolapAggregator.Sum.aggregate( Arrays.asList( intSet4 ), DataTypeJdbc.INTEGER) );
+    assertEquals( 10, SumAggregator.INSTANCE.aggregate( Arrays.asList( intSet4 ), DataTypeJdbc.INTEGER) );
   }
 
   @ParameterizedTest
@@ -1781,30 +1783,30 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     final Object[] intSet4 = new Integer[] { 3, 7 };
 
     // Test with double
-    assertEquals( 0.0, RolapAggregator.Min.aggregate( Arrays.asList( dblSet1 ), DataTypeJdbc.NUMERIC) );
-    assertEquals( null, RolapAggregator.Min.aggregate( Arrays.asList( dblSet2 ), DataTypeJdbc.NUMERIC) );
+    assertEquals( 0.0, MinAggregator.INSTANCE.aggregate( Arrays.asList( dblSet1 ), DataTypeJdbc.NUMERIC) );
+    assertEquals( null, MinAggregator.INSTANCE.aggregate( Arrays.asList( dblSet2 ), DataTypeJdbc.NUMERIC) );
     List list = Arrays.asList( dblSet3 );
     try {
-      RolapAggregator.Min.aggregate( list, DataTypeJdbc.NUMERIC);
+      MinAggregator.INSTANCE.aggregate( list, DataTypeJdbc.NUMERIC);
       fail();
     } catch ( AssertionError e ) {
         assertNotNull(e);
         assertInstanceOf(AssertionError.class, e);
     }
-    assertEquals( 1.9, RolapAggregator.Min.aggregate( Arrays.asList( dblSet4 ), DataTypeJdbc.NUMERIC) );
+    assertEquals( 1.9, MinAggregator.INSTANCE.aggregate( Arrays.asList( dblSet4 ), DataTypeJdbc.NUMERIC) );
 
     // test with int
-    assertEquals( 0, RolapAggregator.Min.aggregate( Arrays.asList( intSet1 ), DataTypeJdbc.INTEGER) );
-    assertEquals( null, RolapAggregator.Min.aggregate( Arrays.asList( intSet2 ), DataTypeJdbc.INTEGER) );
+    assertEquals( 0, MinAggregator.INSTANCE.aggregate( Arrays.asList( intSet1 ), DataTypeJdbc.INTEGER) );
+    assertEquals( null, MinAggregator.INSTANCE.aggregate( Arrays.asList( intSet2 ), DataTypeJdbc.INTEGER) );
     List list1 = Arrays.asList( intSet3 );
     try {
-      RolapAggregator.Min.aggregate( list1, DataTypeJdbc.INTEGER);
+      MinAggregator.INSTANCE.aggregate( list1, DataTypeJdbc.INTEGER);
       fail();
     } catch ( AssertionError e ) {
         assertNotNull(e);
         assertInstanceOf(AssertionError.class, e);
     }
-    assertEquals( 3, RolapAggregator.Min.aggregate( Arrays.asList( intSet4 ), DataTypeJdbc.INTEGER) );
+    assertEquals( 3, MinAggregator.INSTANCE.aggregate( Arrays.asList( intSet4 ), DataTypeJdbc.INTEGER) );
   }
 
   @ParameterizedTest
@@ -1825,31 +1827,31 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     final Object[] intSet4 = new Integer[] { 3, 7 };
 
     // Test with double
-    assertEquals( 2.4, RolapAggregator.Max.aggregate( Arrays.asList( dblSet1 ), DataTypeJdbc.NUMERIC) );
-    assertEquals( null, RolapAggregator.Max.aggregate( Arrays.asList( dblSet2 ), DataTypeJdbc.NUMERIC) );
-    assertEquals( -1.2, RolapAggregator.Max.aggregate( Arrays.asList( dblSet5 ), DataTypeJdbc.NUMERIC) );
+    assertEquals( 2.4, MaxAggregator.INSTANCE.aggregate( Arrays.asList( dblSet1 ), DataTypeJdbc.NUMERIC) );
+    assertEquals( null, MaxAggregator.INSTANCE.aggregate( Arrays.asList( dblSet2 ), DataTypeJdbc.NUMERIC) );
+    assertEquals( -1.2, MaxAggregator.INSTANCE.aggregate( Arrays.asList( dblSet5 ), DataTypeJdbc.NUMERIC) );
     List list = Arrays.asList( dblSet3 );
     try {
-      RolapAggregator.Max.aggregate( list, DataTypeJdbc.NUMERIC);
+      MaxAggregator.INSTANCE.aggregate( list, DataTypeJdbc.NUMERIC);
       fail();
     } catch ( AssertionError e ) {
         assertNotNull(e);
         assertInstanceOf(AssertionError.class, e);
     }
-    assertEquals( 2.7, RolapAggregator.Max.aggregate( Arrays.asList( dblSet4 ), DataTypeJdbc.NUMERIC) );
+    assertEquals( 2.7, MaxAggregator.INSTANCE.aggregate( Arrays.asList( dblSet4 ), DataTypeJdbc.NUMERIC) );
 
     // test with int
-    assertEquals( 4, RolapAggregator.Max.aggregate( Arrays.asList( intSet1 ), DataTypeJdbc.INTEGER) );
-    assertEquals( null, RolapAggregator.Max.aggregate( Arrays.asList( intSet2 ), DataTypeJdbc.INTEGER) );
+    assertEquals( 4, MaxAggregator.INSTANCE.aggregate( Arrays.asList( intSet1 ), DataTypeJdbc.INTEGER) );
+    assertEquals( null, MaxAggregator.INSTANCE.aggregate( Arrays.asList( intSet2 ), DataTypeJdbc.INTEGER) );
     List list1 = Arrays.asList( intSet3 );
     try {
-      RolapAggregator.Max.aggregate( list1, DataTypeJdbc.INTEGER);
+      MaxAggregator.INSTANCE.aggregate( list1, DataTypeJdbc.INTEGER);
       fail();
     } catch ( AssertionError e ) {
         assertNotNull(e);
         assertInstanceOf(AssertionError.class, e);
     }
-    assertEquals( 7, RolapAggregator.Max.aggregate( Arrays.asList( intSet4 ), DataTypeJdbc.INTEGER) );
+    assertEquals( 7, MaxAggregator.INSTANCE.aggregate( Arrays.asList( intSet4 ), DataTypeJdbc.INTEGER) );
   }
 
   /**

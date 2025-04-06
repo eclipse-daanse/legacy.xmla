@@ -93,6 +93,9 @@ import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.impl.IdentifierNode;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
+import org.eclipse.daanse.rolap.aggregator.AbstractAggregator;
+import org.eclipse.daanse.rolap.aggregator.CountAggregator;
+import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.ActionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
@@ -459,7 +462,7 @@ public class RolapCube extends CubeBase {
                 defaultMeasure = measure;
             }
 
-            if (measure.getAggregator() == RolapAggregator.Count) {
+            if (measure.getAggregator() == CountAggregator.INSTANCE) {
                 factCountMeasure = measure;
             }
         }
@@ -712,7 +715,7 @@ public class RolapCube extends CubeBase {
         // with modern "distinct-count".
         String aggregator = measureMapping.getAggregatorType().getValue();
         if (aggregator.equals("distinct count")) {
-            aggregator = RolapAggregator.DistinctCount.getName();
+            aggregator = DistinctCountAggregator.INSTANCE.getName();
         }
         final RolapBaseCubeMeasure measure =
             new RolapBaseCubeMeasure(

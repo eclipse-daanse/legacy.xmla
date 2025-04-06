@@ -29,6 +29,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
@@ -42,7 +43,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.rolap.RolapAggregator;
 import mondrian.rolap.RolapLevel;
 import mondrian.rolap.RolapSqlExpression;
 import mondrian.rolap.RolapStar;
@@ -199,7 +199,7 @@ public class JdbcSchema {
             public class Usage {
                 private final UsageType usageType;
                 private String symbolicName;
-                private RolapAggregator aggregator;
+                private Aggregator aggregator;
 
                 ////////////////////////////////////////////////////
                 //
@@ -327,7 +327,7 @@ public class JdbcSchema {
                  *
                  * @param aggregator Aggregator
                  */
-                public void setAggregator(final RolapAggregator aggregator) {
+                public void setAggregator(final Aggregator aggregator) {
                     this.aggregator = aggregator;
                 }
 
@@ -335,7 +335,7 @@ public class JdbcSchema {
                  * Returns the aggregator associated with this usage (if its a
                  * measure usage, otherwise null).
                  */
-                public RolapAggregator getAggregator() {
+                public Aggregator getAggregator() {
                     return aggregator;
                 }
 

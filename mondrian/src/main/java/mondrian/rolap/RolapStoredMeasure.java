@@ -13,6 +13,7 @@
 
 package mondrian.rolap;
 
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.StoredMeasure;
 
 /**
@@ -40,7 +41,7 @@ public interface RolapStoredMeasure extends RolapMeasure, StoredMeasure {
      * Returns the aggregation function which rolls up this measure: "SUM",
      * "COUNT", etc.
      */
-    RolapAggregator getAggregator();
+    Aggregator getAggregator();
 
     /**
      * Returns the {@link mondrian.rolap.RolapStar.Measure} from which this

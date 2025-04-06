@@ -21,13 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.olap.Util;
-import mondrian.rolap.RolapAggregator;
 import mondrian.rolap.RolapColumn;
 import mondrian.rolap.RolapSqlExpression;
 import mondrian.rolap.RolapStar;
@@ -297,7 +297,7 @@ public class AggGen {
             if (!rMeasure.getCubeName().equals(cubeName)) {
                 continue;
             }
-            final RolapAggregator aggregator = rMeasure.getAggregator();
+            final Aggregator aggregator = rMeasure.getAggregator();
             JdbcSchema.Table.Column c = getColumn(factTable, name);
             if (c == null) {
                 String msg = new StringBuilder("For RolapStar: \"")
@@ -601,7 +601,7 @@ public class AggGen {
         }
         for (JdbcSchema.Table.Column.Usage usage : measures) {
             JdbcSchema.Table.Column c = usage.getColumn();
-            RolapAggregator agg = usage.getAggregator();
+            Aggregator agg = usage.getAggregator();
 
             pw.print(prefix);
             pw.print(
@@ -745,7 +745,7 @@ public class AggGen {
         for (JdbcSchema.Table.Column.Usage usage : measures) {
             JdbcSchema.Table.Column c = usage.getColumn();
             JdbcSchema.Table t = c.getTable();
-            RolapAggregator agg = usage.getAggregator();
+            Aggregator agg = usage.getAggregator();
 
             pw.print(prefix);
             pw.print(

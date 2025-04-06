@@ -12,9 +12,13 @@ package mondrian.rolap;
 import java.text.MessageFormat;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.formatter.CellFormatter;
+import org.eclipse.daanse.rolap.aggregator.CountAggregator;
+import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 
 import mondrian.olap.StandardProperty;
@@ -35,7 +39,7 @@ public class RolapBaseCubeMeasure
     implements RolapStoredMeasure
 {
 
-    private final static String unknownAggregator = "Unknown aggregator ''{0}''; valid aggregators are: {1}";
+    private final static String unknownAggregator = "Unknown aggregator ''{0}''";
 
     static enum DataType {
         Integer,
@@ -51,7 +55,7 @@ public class RolapBaseCubeMeasure
     /**
      * For SQL generator. Has values "SUM", "COUNT", etc.
      */
-    private final RolapAggregator aggregator;
+    private final Aggregator aggregator;
 
     private final RolapCube cube;
     private final MetaData metadata;
@@ -118,28 +122,19 @@ public class RolapBaseCubeMeasure
             StandardProperty.FORMAT_EXP.getName(),
             formatString);
 
+        Context context=getCube().getContext();
+        
         // Validate aggregator.
-        this.aggregator =
-            RolapAggregator.aggregatorsMap.get(aggregatorName);
-        if (this.aggregator == null) {
-            StringBuilder buf = new StringBuilder();
-            for (String aggName : RolapAggregator.aggregatorsMap.keySet()) {
-                if (buf.length() > 0) {
-                    buf.append(", ");
-                }
-                buf.append('\'');
-                buf.append(aggName);
-                buf.append('\'');
-            }
+        this.aggregator = context.getAggregator(aggregatorName).orElseThrow(()->{
+            
             throw new OlapRuntimeException(MessageFormat.format(unknownAggregator,
-                aggregatorName,
-                buf.toString()));
-        }
+                    aggregatorName));
+        });
 
         setProperty(StandardProperty.AGGREGATION_TYPE.getName(), aggregator);
         if (datatype == null) {
-            if (aggregator == RolapAggregator.Count
-                || aggregator == RolapAggregator.DistinctCount)
+            if (aggregator == CountAggregator.INSTANCE
+                || aggregator == DistinctCountAggregator.INSTANCE)
             {
                 datatype = InternalDataType.INTEGER;
             } else {
@@ -158,7 +153,7 @@ public class RolapBaseCubeMeasure
     }
 
     @Override
-	public RolapAggregator getAggregator() {
+	public Aggregator getAggregator() {
         return aggregator;
     }
 

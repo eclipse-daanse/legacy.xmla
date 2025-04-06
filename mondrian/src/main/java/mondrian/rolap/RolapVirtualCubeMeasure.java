@@ -9,6 +9,7 @@
 
 package mondrian.rolap;
 
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.MetaData;
 
 /**
@@ -68,7 +69,7 @@ public class RolapVirtualCubeMeasure
     }
 
     @Override
-	public RolapAggregator getAggregator() {
+	public Aggregator getAggregator() {
         return cubeMeasure.getAggregator();
     }
 

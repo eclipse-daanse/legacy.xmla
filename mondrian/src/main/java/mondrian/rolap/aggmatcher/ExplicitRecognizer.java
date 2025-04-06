@@ -22,6 +22,7 @@ import java.util.TreeMap;
 
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Segment;
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
@@ -29,7 +30,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import mondrian.olap.Util;
 import mondrian.recorder.MessageRecorder;
 import mondrian.rolap.HierarchyUsage;
-import mondrian.rolap.RolapAggregator;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapLevel;
 import mondrian.rolap.RolapStar;
@@ -141,7 +141,7 @@ class ExplicitRecognizer extends Recognizer {
                                 cube.getName(),
                                 nameSegment.getName());
                         }
-                        RolapAggregator agg = null;
+                        Aggregator agg = null;
                         if (m != null) {
                             agg = m.getAggregator();
                         }
@@ -198,7 +198,7 @@ class ExplicitRecognizer extends Recognizer {
      */
     protected void makeMeasure(
         final ExplicitRules.TableDef.Measure measure,
-        RolapAggregator factAgg,
+        Aggregator factAgg,
         final JdbcSchema.Table.Column aggColumn)
     {
         RolapStar.Measure rm = measure.getRolapStarMeasure();
@@ -210,7 +210,7 @@ class ExplicitRecognizer extends Recognizer {
 
         ExplicitRules.TableDef.RollupType explicitRollupType = measure
                 .getExplicitRollupType();
-        RolapAggregator ra = null;
+        Aggregator ra = null;
 
         // precedence to the explicitly defined rollup type
         if (explicitRollupType != null) {

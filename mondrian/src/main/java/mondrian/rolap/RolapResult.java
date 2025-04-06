@@ -75,6 +75,8 @@ import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateCalc;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
 import org.eclipse.daanse.olap.util.type.TypeWrapperExp;
+import org.eclipse.daanse.rolap.aggregator.AbstractAggregator;
+import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1294,7 +1296,7 @@ public Cell getCell( int[] pos ) {
           List<Member> measures = new ArrayList<>( statement.getQuery().getMeasuresMembers() );
           for ( Member measure : measures ) {
             if ( measure instanceof RolapBaseCubeMeasure baseCubeMeasure
-                && baseCubeMeasure.getAggregator() == RolapAggregator.DistinctCount) {
+                && baseCubeMeasure.getAggregator() == DistinctCountAggregator.INSTANCE) {
                 processDistinctMeasureExpr( tuple, baseCubeMeasure );
             }
           }

@@ -46,6 +46,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
@@ -58,10 +59,10 @@ import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryOptimizationHintMapping;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
@@ -1213,12 +1214,12 @@ public class RolapStar {
      */
     public static class Measure extends Column {
         private final String cubeName;
-        private final RolapAggregator aggregator;
+        private final Aggregator aggregator;
 
         public Measure(
             String name,
             String cubeName,
-            RolapAggregator aggregator,
+            Aggregator aggregator,
             Table table,
             RolapSqlExpression expression,
             Datatype datatype)
@@ -1228,7 +1229,7 @@ public class RolapStar {
             this.aggregator = aggregator;
         }
 
-        public RolapAggregator getAggregator() {
+        public Aggregator getAggregator() {
             return aggregator;
         }
 

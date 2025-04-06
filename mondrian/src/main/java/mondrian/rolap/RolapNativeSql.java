@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.DimensionExpression;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -198,7 +199,7 @@ public class RolapNativeSql {
                 return null;
             }
 
-            RolapAggregator aggregator = measure.getAggregator();
+            Aggregator aggregator = measure.getAggregator();
             String exprInner;
             // Use aggregate table to create condition if available
             if (aggStar != null
@@ -210,14 +211,14 @@ public class RolapNativeSql {
                 AggStar.Table.Column aggColumn = aggStar.lookupColumn(bitPos);
                 exprInner = aggColumn.generateExprString(sqlQuery);
                 if (aggColumn instanceof AggStar.FactTable.Measure) {
-                    RolapAggregator aggTableAggregator =
+                    Aggregator aggTableAggregator =
                         ((AggStar.FactTable.Measure) aggColumn)
                             .getAggregator();
                     // aggregating data that has already been aggregated
                     // should be done with another aggregators
                     // e.g., counting facts should be proceeded via computing
                     // sum, as a row can aggregate several facts
-                    aggregator = (RolapAggregator) aggTableAggregator
+                    aggregator = (Aggregator) aggTableAggregator
                         .getRollup();
                 }
             } else {

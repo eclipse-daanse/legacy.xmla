@@ -12,7 +12,6 @@
 package mondrian.rolap.aggmatcher;
 
 import static java.util.Collections.EMPTY_LIST;
-
 import static mondrian.rolap.util.ExpressionUtil.getExpression;
 import static mondrian.rolap.util.ExpressionUtil.getTableAlias;
 
@@ -34,8 +33,9 @@ import java.util.Set;
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-import org.eclipse.daanse.olap.api.rolap.agg.Aggregator;
+import org.eclipse.daanse.rolap.aggregator.countbased.AbstractFactCountBasedAggregator;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +43,6 @@ import org.slf4j.LoggerFactory;
 import mondrian.olap.ExecuteDurationUtil;
 import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
-import mondrian.rolap.RolapAggregator;
-import mondrian.rolap.RolapAggregator.BaseAggor;
 import mondrian.rolap.RolapColumn;
 import mondrian.rolap.RolapLevel;
 import mondrian.rolap.RolapSqlExpression;
@@ -1076,7 +1074,7 @@ public class AggStar {
          * This is a Column that is a Measure (contains an aggregator).
          */
         public class Measure extends Table.Column {
-            private final RolapAggregator aggregator;
+            private final Aggregator aggregator;
             /**
              * The fact table column which is being aggregated.
              */
@@ -1093,7 +1091,7 @@ public class AggStar {
                 final RolapSqlExpression expression,
                 final Datatype datatype,
                 final int bitPosition,
-                final RolapAggregator aggregator,
+                final Aggregator aggregator,
                 final RolapSqlExpression argument)
             {
                 super(name, expression, datatype, bitPosition);
@@ -1113,7 +1111,7 @@ public class AggStar {
             /**
              * Get this Measure's RolapAggregator.
              */
-            public RolapAggregator getAggregator() {
+            public Aggregator getAggregator() {
                 return aggregator;
             }
 
@@ -1127,12 +1125,12 @@ public class AggStar {
 
             public String generateRollupString(SqlQuery query) {
                 String expr = super.generateExprString(query);
-                RolapAggregator rollup = getRollupAggregator();
+                Aggregator rollup = getRollupAggregator();
 
                 return rollup.getExpression(expr).toString();
             }
 
-            private RolapAggregator getRollupAggregator() {
+            private Aggregator getRollupAggregator() {
                 Aggregator rollup;
 
                 BitKey fkbk = AggStar.this.getForeignKeyBitKey();
@@ -1146,7 +1144,7 @@ public class AggStar {
                 } else {
                     rollup = getAggregator().getRollup();
                 }
-                return (RolapAggregator) rollup;
+                return (Aggregator) rollup;
             }
 
             @Override
@@ -1163,8 +1161,8 @@ public class AggStar {
             @Override
             public String generateExprString(SqlQuery query) {
                 String exprString = super.generateExprString(query);
-                RolapAggregator rollupAggregator = getRollupAggregator();
-                if (rollupAggregator instanceof BaseAggor agg && agg.alwaysRequiresFactColumn()) {
+                Aggregator rollupAggregator = getRollupAggregator();
+                if (rollupAggregator instanceof AbstractFactCountBasedAggregator agg && agg.alwaysRequiresFactColumn()) {
                     return agg.getScalarExpression(exprString);
                 }
                 return exprString;
@@ -1325,7 +1323,7 @@ public class AggStar {
                 symbolicName = name;
             }
             Datatype datatype = column.getDatatype();
-            RolapAggregator aggregator = usage.getAggregator();
+            Aggregator aggregator = usage.getAggregator();
 
             RolapSqlExpression expression;
             if (column.hasUsage(JdbcSchema.UsageType.FOREIGN_KEY)

@@ -25,6 +25,7 @@ import java.util.Set;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.access.RollupPolicy;
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleCursor;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIterator;
@@ -34,18 +35,19 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.rolap.agg.Aggregator;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
+import org.eclipse.daanse.rolap.aggregator.AbstractAggregator;
+import org.eclipse.daanse.rolap.aggregator.AvgAggregator;
+import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 
 import mondrian.calc.impl.UnaryTupleList;
 import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
-import mondrian.rolap.RolapAggregator;
 
 public class AggregateCalc  extends AbstractProfilingNestedUnknownCalc {
     private static final String TIMING_NAME =
@@ -115,8 +117,8 @@ public class AggregateCalc  extends AbstractProfilingNestedUnknownCalc {
                     .append("'")
                     .toString());
         }
-        if (aggregator != RolapAggregator.DistinctCount
-            && aggregator != RolapAggregator.Avg)
+        if (aggregator != DistinctCountAggregator.INSTANCE
+            && aggregator != AvgAggregator.INSTANCE)
         {
             final int savepoint = evaluator.savepoint();
             try {

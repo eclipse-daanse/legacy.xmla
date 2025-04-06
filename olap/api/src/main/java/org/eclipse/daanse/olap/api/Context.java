@@ -24,6 +24,7 @@ import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
@@ -153,5 +154,6 @@ public interface Context {
     default List<String> getKeywordList() {
         return KEYWORD_LIST;
     }
+    Optional<Aggregator> getAggregator(String aggregatorName);
 
 }

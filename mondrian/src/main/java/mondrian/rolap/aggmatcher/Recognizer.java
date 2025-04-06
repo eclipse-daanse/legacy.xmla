@@ -25,9 +25,17 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.rolap.aggregator.AbstractAggregator;
+import org.eclipse.daanse.rolap.aggregator.AvgAggregator;
+import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
+import org.eclipse.daanse.rolap.aggregator.SumAggregator;
+import org.eclipse.daanse.rolap.aggregator.countbased.AvgFromAvgAggregator;
+import org.eclipse.daanse.rolap.aggregator.countbased.AvgFromSumAggregator;
+import org.eclipse.daanse.rolap.aggregator.countbased.SumFromAvgAggregator;
 import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.slf4j.Logger;
@@ -35,7 +43,6 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.recorder.MessageRecorder;
 import mondrian.rolap.HierarchyUsage;
-import mondrian.rolap.RolapAggregator;
 import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapColumn;
 import mondrian.rolap.RolapCube;
@@ -341,9 +348,9 @@ public abstract class Recognizer {
                  factColumn.getUsages(JdbcSchema.UsageType.MEASURE);
                  mit.hasNext(); ) {
                 JdbcSchema.Table.Column.Usage factUsage = mit.next();
-                if (factUsage.getAggregator() == RolapAggregator.Avg) {
+                if (factUsage.getAggregator() == AvgAggregator.INSTANCE) {
                     avgFactUsage = factUsage;
-                } else if (factUsage.getAggregator() == RolapAggregator.Sum) {
+                } else if (factUsage.getAggregator() == SumAggregator.INSTANCE) {
                     sumFactUsage = factUsage;
                 }
             }
@@ -394,7 +401,7 @@ public abstract class Recognizer {
             aggColumn.newUsage(JdbcSchema.UsageType.MEASURE);
 
         aggUsage.setSymbolicName(factUsage.getSymbolicName());
-        RolapAggregator ra = convertAggregator(
+        Aggregator ra = convertAggregator(
             aggUsage,
             factUsage.getAggregator(),
             aggSiblingUsage.getAggregator());
@@ -414,7 +421,7 @@ public abstract class Recognizer {
             aggColumn.newUsage(JdbcSchema.UsageType.MEASURE);
 
         aggUsage.setSymbolicName(factUsage.getSymbolicName());
-        RolapAggregator ra =
+        Aggregator ra =
             convertAggregator(aggUsage, factUsage.getAggregator());
         aggUsage.setAggregator(ra);
         aggUsage.rMeasure = factUsage.rMeasure;
@@ -874,15 +881,15 @@ public abstract class Recognizer {
      * Note: this code assumes that the aggregate table does not have an
      * explicit average aggregation column.
      */
-    protected RolapAggregator convertAggregator(
+    protected Aggregator convertAggregator(
         final JdbcSchema.Table.Column.Usage aggUsage,
-        final RolapAggregator factAgg
+        final Aggregator factAgg
     ) {
         // NOTE: This assumes that the aggregate table does not have an explicit
         // average column.
-        if (factAgg == RolapAggregator.Avg) {
+        if (factAgg == AvgAggregator.INSTANCE) {
             String columnExpr = getFactCountExpr(aggUsage);
-            return new RolapAggregator.AvgFromSum(columnExpr);
+            return new AvgFromSumAggregator(columnExpr);
         } else {
             return factAgg;
         }
@@ -907,31 +914,31 @@ public abstract class Recognizer {
      * if no new aggregator was selected, then the fact table's aggregator
      * rollup aggregator is used.
      */
-    protected RolapAggregator convertAggregator(
+    protected Aggregator convertAggregator(
         final JdbcSchema.Table.Column.Usage aggUsage,
-        final RolapAggregator factAgg,
-        final RolapAggregator siblingAgg
+        final Aggregator factAgg,
+        final Aggregator siblingAgg
     ) {
         msgRecorder.pushContextName("Recognizer.convertAggregator");
-        RolapAggregator rollupAgg = null;
+        Aggregator rollupAgg = null;
 
         String columnExpr = getFactCountExpr(aggUsage);
-        if (factAgg == RolapAggregator.Avg) {
-            if (siblingAgg == RolapAggregator.Avg) {
-                rollupAgg = new RolapAggregator.AvgFromAvg(columnExpr);
-            } else if (siblingAgg == RolapAggregator.Sum) {
-                rollupAgg = new RolapAggregator.AvgFromSum(columnExpr);
+        if (factAgg == AvgAggregator.INSTANCE) {
+            if (siblingAgg == AvgAggregator.INSTANCE) {
+                rollupAgg = new AvgFromAvgAggregator(columnExpr);
+            } else if (siblingAgg == SumAggregator.INSTANCE) {
+                rollupAgg = new AvgFromSumAggregator(columnExpr);
             }
-        } else if (factAgg == RolapAggregator.Sum) {
-            if (siblingAgg == RolapAggregator.Avg || siblingAgg instanceof RolapAggregator.AvgFromAvg) {
-                rollupAgg = new RolapAggregator.SumFromAvg(columnExpr);
+        } else if (factAgg == SumAggregator.INSTANCE) {
+            if (siblingAgg == AvgAggregator.INSTANCE|| siblingAgg instanceof AvgFromAvgAggregator) {
+                rollupAgg = new SumFromAvgAggregator(columnExpr);
             }
-        } else if (factAgg == RolapAggregator.DistinctCount) {
+        } else if (factAgg == DistinctCountAggregator.INSTANCE) {
             rollupAgg = factAgg;
         }
 
         if (rollupAgg == null && factAgg != null) {
-            rollupAgg = (RolapAggregator) factAgg.getRollup();
+            rollupAgg = (AbstractAggregator) factAgg.getRollup();
         }
 
         if (rollupAgg == null && factAgg != null) {

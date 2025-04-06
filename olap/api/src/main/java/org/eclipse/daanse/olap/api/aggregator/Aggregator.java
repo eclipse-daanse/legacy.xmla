@@ -9,7 +9,7 @@
 // All Rights Reserved.
 */
 
-package org.eclipse.daanse.olap.api.rolap.agg;
+package org.eclipse.daanse.olap.api.aggregator;
 
 import java.util.List;
 
@@ -30,6 +30,13 @@ import org.eclipse.daanse.olap.api.function.FunctionDefinition;
  * @since Jul 9, 2003$
  */
 public interface Aggregator {
+
+    /**
+     * Returns the name of the Aggregator.
+     * @return name of the Aggregator
+     */
+    String getName();
+
     /**
      * Returns the aggregator used to combine sub-totals into a grand-total.
      *
@@ -47,7 +54,7 @@ public interface Aggregator {
      *
      * @return result of applying this aggregator to a set of members/tuples
      */
-    Object aggregate(Evaluator evaluator, TupleList members, Calc calc);
+    Object aggregate(Evaluator evaluator, TupleList members, Calc<?> calc);
 
     /**
      * Tells Mondrian if this aggregator can perform fast aggregation
@@ -77,4 +84,10 @@ public interface Aggregator {
      * if the object type is not supported.
      */
     Object aggregate(List<Object> rawData, DataTypeJdbc datatype);
+
+    StringBuilder getExpression(CharSequence inner);
+
+    boolean isDistinct();
+
+    Aggregator getNonDistinctAggregator();
 }

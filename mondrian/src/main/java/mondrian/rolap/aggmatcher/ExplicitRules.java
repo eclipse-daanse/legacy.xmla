@@ -34,6 +34,11 @@ import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.rolap.aggregator.AbstractAggregator;
+import org.eclipse.daanse.rolap.aggregator.countbased.AvgFromAvgAggregator;
+import org.eclipse.daanse.rolap.aggregator.countbased.AvgFromSumAggregator;
+import org.eclipse.daanse.rolap.aggregator.countbased.AbstractFactCountBasedAggregator;
+import org.eclipse.daanse.rolap.aggregator.countbased.SumFromAvgAggregator;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationColumnNameMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationExcludeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationForeignKeyMapping;
@@ -58,7 +63,6 @@ import org.slf4j.LoggerFactory;
 import mondrian.olap.StandardProperty;
 import mondrian.olap.Util;
 import mondrian.recorder.MessageRecorder;
-import mondrian.rolap.RolapAggregator;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapLevel;
 import mondrian.rolap.RolapSqlExpression;
@@ -864,26 +868,26 @@ public class ExplicitRules {
         enum RollupType {
             AVG_FROM_SUM("AvgFromSum") {
                 @Override
-                public RolapAggregator.BaseAggor getAggregator(
+                public AvgFromSumAggregator getAggregator(
                     String factCountColumnExpr)
                 {
-                    return new RolapAggregator.AvgFromSum(factCountColumnExpr);
+                    return new AvgFromSumAggregator(factCountColumnExpr);
                 }
             },
             AVG_FROM_AVG("AvgFromAvg") {
                 @Override
-                public RolapAggregator.BaseAggor getAggregator(
+                public AvgFromAvgAggregator getAggregator(
                     String factCountColumnExpr)
                 {
-                    return new RolapAggregator.AvgFromAvg(factCountColumnExpr);
+                    return new AvgFromAvgAggregator(factCountColumnExpr);
                 }
             },
             SUM_FROM_AVG("SumFromAvg") {
                 @Override
-                public RolapAggregator.BaseAggor getAggregator(
+                public SumFromAvgAggregator getAggregator(
                     String factCountColumnExpr)
                 {
-                    return new RolapAggregator.SumFromAvg(factCountColumnExpr);
+                    return new SumFromAvgAggregator(factCountColumnExpr);
                 }
             };
 
@@ -893,7 +897,7 @@ public class ExplicitRules {
                 this.friendlyName = friendlyName;
             }
 
-            public abstract RolapAggregator.BaseAggor getAggregator(
+            public abstract AbstractFactCountBasedAggregator getAggregator(
                 String factCountColumnExpr);
 
             public String getFriendlyName() {

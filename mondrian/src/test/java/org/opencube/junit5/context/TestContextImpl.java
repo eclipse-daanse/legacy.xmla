@@ -17,6 +17,7 @@ import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.mdx.parser.ccc.MdxParserProviderImpl;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.ConnectionProps;
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory;
@@ -297,6 +298,12 @@ import org.eclipse.daanse.olap.function.def.vba.weekdayname.WeekdayNameResolver;
 import org.eclipse.daanse.olap.function.def.vba.year.YearResolver;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalsResolver;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.aggregator.AvgAggregator;
+import org.eclipse.daanse.rolap.aggregator.CountAggregator;
+import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
+import org.eclipse.daanse.rolap.aggregator.MaxAggregator;
+import org.eclipse.daanse.rolap.aggregator.MinAggregator;
+import org.eclipse.daanse.rolap.aggregator.SumAggregator;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
@@ -318,7 +325,9 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
     private Optional<String> description = Optional.empty();
     private Semaphore queryLimimitSemaphore;
     private FunctionService functionService = new FunctionServiceImpl();
-
+    private List<Aggregator> primaryAggregators = List.of(SumAggregator.INSTANCE, CountAggregator.INSTANCE,
+            DistinctCountAggregator.INSTANCE, MinAggregator.INSTANCE, MaxAggregator.INSTANCE, AvgAggregator.INSTANCE);
+    
     public TestContextImpl() {
         this.eventBus = new LoggingEventBus();
         shepherd = new RolapResultShepherd(getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_DEFAULT_VALUE, Long.class),
@@ -917,4 +926,8 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         setConfigValue(ConfigConstants.GENERATE_FORMATTED_SQL, generateFormattedSql);
     }
 
+    @Override
+    public Optional<Aggregator> getAggregator(String aggregatorName) {
+        return primaryAggregators.stream().filter(a->aggregatorName.equals(a.getName())).findAny();
+    }
 }

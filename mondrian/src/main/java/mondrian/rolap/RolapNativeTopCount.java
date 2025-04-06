@@ -14,14 +14,15 @@ package mondrian.rolap;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.ConfigConstants;
+import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.NativeEvaluator;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.NumericLiteral;
+import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 
 import mondrian.olap.Util;
 import mondrian.rolap.aggmatcher.AggStar;
@@ -137,7 +138,7 @@ public class RolapNativeTopCount extends RolapNativeSet {
             }
             final RolapStoredMeasure measure =
                 (RolapStoredMeasure) memberExpr.getMember();
-            return measure.getAggregator() != RolapAggregator.DistinctCount;
+            return measure.getAggregator() != DistinctCountAggregator.INSTANCE;
         }
 
         @Override
