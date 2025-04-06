@@ -14,10 +14,10 @@
 package org.eclipse.daanse.olap.function.def.set.range;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.MemberCalc;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.MemberCalc;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 
 import mondrian.calc.impl.AbstractListCalc;
 import mondrian.calc.impl.TupleCollections;

@@ -19,14 +19,14 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.MemberCalc;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.MemberCalc;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 import org.eclipse.daanse.olap.function.def.member.memberorderkey.MemberOrderKeyCalc;
 import org.eclipse.daanse.olap.function.def.order.OrderFunDef.CalcWithDual;
@@ -184,7 +184,7 @@ public class OrderCurrentMemberCalc  extends AbstractListCalc implements CalcWit
         if ( expCalc instanceof MemberOrderKeyCalc calc) {
           Calc<?>[] calcs = calc.getChildCalcs();
           MemberCalc memberCalc = (MemberCalc) calcs[0];
-          if ( memberCalc instanceof org.eclipse.daanse.olap.calc.api.ConstantCalc || !listHierarchies.contains( memberCalc.getType()
+          if ( memberCalc instanceof org.eclipse.daanse.olap.api.calc.ConstantCalc || !listHierarchies.contains( memberCalc.getType()
               .getHierarchy() ) ) {
             iter.remove();
           }

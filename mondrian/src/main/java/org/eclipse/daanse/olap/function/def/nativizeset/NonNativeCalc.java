@@ -14,10 +14,10 @@
 package org.eclipse.daanse.olap.function.def.nativizeset;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.ResultStyle;
+import org.eclipse.daanse.olap.api.calc.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.ResultStyle;
-import org.eclipse.daanse.olap.calc.api.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingCalc;
 
 public class NonNativeCalc  extends AbstractProfilingCalc<Object> implements ProfilingCalc<Object> {

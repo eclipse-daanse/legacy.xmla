@@ -19,9 +19,9 @@ import java.util.Map;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
-import org.eclipse.daanse.olap.calc.api.ResultStyle;
-import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
-import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
+import org.eclipse.daanse.olap.api.calc.ResultStyle;
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ServiceScope;

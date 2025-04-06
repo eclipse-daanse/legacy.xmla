@@ -14,10 +14,10 @@
 package org.eclipse.daanse.olap.function.def.leadlag;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.IntegerCalc;
+import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.IntegerCalc;
-import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
 
 public class LeadLagCalc extends AbstractProfilingNestedMemberCalc {

@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.todo.TupleCursor;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIterator;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIterator;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 
 /**
  * Implementation of {@link TupleList} where the tuples are unary (each tuple
@@ -208,7 +208,7 @@ implements TupleList
     }
 
     /**
-     * Implementation of {@link org.eclipse.daanse.olap.calc.api.todo.TupleIterator} for {@link UnaryTupleList}.
+     * Implementation of {@link org.eclipse.daanse.olap.api.calc.todo.TupleIterator} for {@link UnaryTupleList}.
      * Based upon AbstractList.Itr, but with concurrent modification checking
      * removed.
      */

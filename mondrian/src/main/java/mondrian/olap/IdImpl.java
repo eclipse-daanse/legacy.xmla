@@ -21,13 +21,12 @@ import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Id;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
-import org.eclipse.daanse.olap.impl.UnmodifiableArrayList;
 import org.eclipse.daanse.olap.query.component.expression.AbstractExpression;
 
 /**
@@ -307,7 +306,7 @@ public class IdImpl
             if (subSegments.length < 1) {
                 throw new IllegalArgumentException();
             }
-            this.subSegmentList = UnmodifiableArrayList.asCopyOf(subSegments);
+            this.subSegmentList = List.of(subSegments);
         }
 
         /**
@@ -320,10 +319,7 @@ public class IdImpl
             if (subSegmentList.isEmpty()) {
                 throw new IllegalArgumentException();
             }
-            this.subSegmentList =
-                new UnmodifiableArrayList<>(
-                    subSegmentList.toArray(
-                        new NameSegmentImpl[subSegmentList.size()]));
+            this.subSegmentList = List.copyOf(subSegmentList);
         }
 
         @Override

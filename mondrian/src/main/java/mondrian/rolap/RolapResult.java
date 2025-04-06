@@ -36,6 +36,13 @@ import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.access.HierarchyAccess;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.compiler.ParameterSlot;
+import org.eclipse.daanse.olap.api.calc.todo.TupleCursor;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIterator;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -58,13 +65,6 @@ import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.api.type.SetType;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.compiler.ParameterSlot;
-import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIterator;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.eclipse.daanse.olap.calc.base.cache.CacheCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
@@ -300,7 +300,7 @@ public class RolapResult extends ResultBase {
                         null,
                         null);
         SetType setType = new SetType(memberType1);
-        org.eclipse.daanse.olap.calc.api.todo.TupleListCalc tupleListCalc =
+        org.eclipse.daanse.olap.api.calc.todo.TupleListCalc tupleListCalc =
                 new mondrian.calc.impl.AbstractListCalc(
                         setType, new Calc[0])
                 {
@@ -342,7 +342,7 @@ public class RolapResult extends ResultBase {
                         new org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition(functionMetaData) {
                           @Override
 						public Calc compileCall(
-                                  ResolvedFunCall call, org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler compiler)
+                                  ResolvedFunCall call, org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler compiler)
                           {
                             return partialCalc;
                           }

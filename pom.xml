@@ -78,7 +78,7 @@
     <slf4j.version>2.0.9</slf4j.version>
     <logback.classic.version>1.5.12</logback.classic.version>
     <aries.spifly.version>1.3.7</aries.spifly.version>
-    <bnd.version>7.0.0</bnd.version>
+    <bnd.version>7.1.0</bnd.version>
     <junit-jupiter.version>5.9.2</junit-jupiter.version>
     <junit-platform.version>1.9.2</junit-platform.version>
     <assertj.version>3.24.2</assertj.version>

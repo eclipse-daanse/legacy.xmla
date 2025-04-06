@@ -17,11 +17,11 @@ import java.util.Objects;
 
 import mondrian.olap.ResourceLimitExceededException;
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.todo.TupleCursor;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIterator;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIterator;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;

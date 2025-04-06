@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 
 public class RankedTupleList {
     final Map<List<Member>, Integer> map = new HashMap<>();

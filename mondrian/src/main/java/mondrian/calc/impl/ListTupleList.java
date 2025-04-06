@@ -14,14 +14,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.calc.todo.TupleIterator;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIterator;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 
 import mondrian.olap.Util;
 
 /**
- * Implementation of {@link org.eclipse.daanse.olap.calc.api.todo.TupleList} that stores tuples
+ * Implementation of {@link org.eclipse.daanse.olap.api.calc.todo.TupleList} that stores tuples
  * end-to-end in a backing list.
  *
  * <pre>

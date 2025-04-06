@@ -14,9 +14,9 @@
 package org.eclipse.daanse.olap.function.def.iif;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.BooleanCalc;
+import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.BooleanCalc;
-import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 
 public class IifNumericCalc extends AbstractProfilingNestedUnknownCalc {

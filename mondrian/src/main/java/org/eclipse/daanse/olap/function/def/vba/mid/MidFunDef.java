@@ -13,12 +13,12 @@
  */
 package org.eclipse.daanse.olap.function.def.vba.mid;
 
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.IntegerCalc;
+import org.eclipse.daanse.olap.api.calc.StringCalc;
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.IntegerCalc;
-import org.eclipse.daanse.olap.calc.api.StringCalc;
-import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 public class MidFunDef  extends AbstractFunctionDefinition {

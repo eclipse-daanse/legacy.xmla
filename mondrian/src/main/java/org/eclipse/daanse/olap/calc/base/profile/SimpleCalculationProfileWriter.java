@@ -18,8 +18,8 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.daanse.olap.calc.api.profile.CalcEvaluationProfile;
-import org.eclipse.daanse.olap.calc.api.profile.CalculationProfile;
+import org.eclipse.daanse.olap.api.calc.profile.CalcEvaluationProfile;
+import org.eclipse.daanse.olap.api.calc.profile.CalculationProfile;
 
 public class SimpleCalculationProfileWriter {
 	private static final String SPACE = " ";

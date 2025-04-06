@@ -13,8 +13,8 @@ package mondrian.olap;
 
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.calc.ResultStyle;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-import org.eclipse.daanse.olap.calc.api.ResultStyle;
 
 /**
  * Exception that indicates a compiler could not implement an expression in any

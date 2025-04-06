@@ -22,7 +22,8 @@
 	bnd.identity;id='${project.artifactId}-tests',\
 	bnd.identity;id=junit-jupiter-engine,\
 	bnd.identity;id=junit-platform-launcher,\
-	bnd.identity;id='org.eclipse.daanse.repackage.dockerjava'
+	bnd.identity;id='org.eclipse.daanse.repackage.dockerjava',\
+	bnd.identity;id='org.apache.aries.spifly.dynamic.framework.extension'
 
 # -runbundles is calculated by the bnd-resolver-maven-plugin
 

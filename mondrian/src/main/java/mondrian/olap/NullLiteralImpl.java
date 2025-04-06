@@ -16,12 +16,12 @@ package mondrian.olap;
 import java.io.PrintWriter;
 
 import org.eclipse.daanse.olap.api.DataType;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.query.component.NullLiteral;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
 import org.eclipse.daanse.olap.api.type.NullType;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
 
 public class NullLiteralImpl extends AbstractLiteralImpl<Object> implements NullLiteral {

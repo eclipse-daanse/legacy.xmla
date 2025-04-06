@@ -15,13 +15,13 @@ package org.eclipse.daanse.olap.function.def.set.filter;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
+import org.eclipse.daanse.olap.api.calc.BooleanCalc;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.todo.TupleCursor;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
+import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
-import org.eclipse.daanse.olap.calc.api.BooleanCalc;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
-import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 
 import mondrian.calc.impl.TupleCollections;
 import mondrian.util.CancellationChecker;

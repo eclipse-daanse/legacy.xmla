@@ -33,7 +33,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.jdbc.db.dialect.api.DialectResolver;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompilerFactory;
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;

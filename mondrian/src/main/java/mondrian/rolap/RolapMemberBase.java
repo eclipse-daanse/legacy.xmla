@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.NameSegment;
+import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.DimensionType;
@@ -29,7 +30,6 @@ import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.eclipse.daanse.olap.api.query.component.Expression;
-import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;

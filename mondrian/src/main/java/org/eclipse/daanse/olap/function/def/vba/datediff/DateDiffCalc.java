@@ -17,10 +17,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.DateTimeCalc;
+import org.eclipse.daanse.olap.api.calc.IntegerCalc;
+import org.eclipse.daanse.olap.api.calc.StringCalc;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.DateTimeCalc;
-import org.eclipse.daanse.olap.calc.api.IntegerCalc;
-import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedLongCalc;
 import org.eclipse.daanse.olap.function.def.vba.dateadd.Interval;
 

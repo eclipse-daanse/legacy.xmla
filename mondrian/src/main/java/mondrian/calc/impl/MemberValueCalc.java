@@ -10,12 +10,12 @@
 package mondrian.calc.impl;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.MemberCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 
@@ -42,7 +42,7 @@ public class MemberValueCalc extends AbstractProfilingNestedUnknownCalc {
      *
      * <p>Clients outside this package should use the
      * {@link MemberValueCalc#create(mondrian.olap.Exp,
-     * org.eclipse.daanse.olap.calc.api.MemberCalc[], boolean)}
+     * org.eclipse.daanse.olap.api.calc.MemberCalc[], boolean)}
      * factory method.
      *
      * @param exp Expression

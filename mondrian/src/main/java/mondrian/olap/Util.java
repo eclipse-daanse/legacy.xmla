@@ -76,7 +76,9 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.PlainPropertyOperat
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.IdentifierSegment;
+import org.eclipse.daanse.olap.api.KeyIdentifierSegment;
 import org.eclipse.daanse.olap.api.MatchType;
+import org.eclipse.daanse.olap.api.NameIdentifierSegment;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.ProfileHandler;
 import org.eclipse.daanse.olap.api.QueryTiming;
@@ -84,6 +86,10 @@ import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.access.Role;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.DoubleCalc;
+import org.eclipse.daanse.olap.api.calc.profile.CalculationProfile;
+import org.eclipse.daanse.olap.api.calc.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -107,15 +113,11 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
 import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.DoubleCalc;
-import org.eclipse.daanse.olap.calc.api.profile.CalculationProfile;
-import org.eclipse.daanse.olap.calc.api.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
 import org.eclipse.daanse.olap.impl.IdentifierNode;
 import org.eclipse.daanse.olap.impl.IdentifierParser;
-import org.eclipse.daanse.olap.impl.KeySegment;
-import org.eclipse.daanse.olap.impl.NameSegment;
+import org.eclipse.daanse.olap.impl.KeySegmentImpl;
+import org.eclipse.daanse.olap.impl.NameSegmentImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1332,19 +1334,19 @@ public class Util {
      * @return mondrian segment
      */
     public static Segment convert(IdentifierSegment olap4jSegment) {
-        if (olap4jSegment instanceof NameSegment nameSegment) {
-            return convert(nameSegment);
+        if (olap4jSegment instanceof NameIdentifierSegment nameSegment) {
+            return convertNS(nameSegment);
         } else {
-            return convert((KeySegment) olap4jSegment);
+            return convertKs((KeySegmentImpl) olap4jSegment);
         }
     }
 
-    private static IdImpl.KeySegment convert(final KeySegment keySegment) {
+    private static IdImpl.KeySegment convertKs(final KeyIdentifierSegment keySegment) {
         return new IdImpl.KeySegment(
             new AbstractList<org.eclipse.daanse.olap.api.NameSegment>() {
                 @Override
 				public org.eclipse.daanse.olap.api.NameSegment get(int index) {
-                    return convert(keySegment.getKeyParts().get(index));
+                    return convertNS(keySegment.getKeyParts().get(index));
                 }
 
                 @Override
@@ -1354,24 +1356,12 @@ public class Util {
             });
     }
 
-    private static org.eclipse.daanse.olap.api.NameSegment convert(NameSegment nameSegment) {
+    private static org.eclipse.daanse.olap.api.NameSegment convertNS(NameIdentifierSegment nameSegment) {
         return new IdImpl.NameSegmentImpl(
             nameSegment.getName(),
-            convert(nameSegment.getQuoting()));
+            nameSegment.getQuoting());
     }
 
-    private static org.eclipse.daanse.olap.api.Quoting convert(Quoting quoting) {
-        switch (quoting) {
-        case QUOTED:
-            return org.eclipse.daanse.olap.api.Quoting.QUOTED;
-        case UNQUOTED:
-            return org.eclipse.daanse.olap.api.Quoting.UNQUOTED;
-        case KEY:
-            return org.eclipse.daanse.olap.api.Quoting.KEY;
-        default:
-            throw Util.unexpected(quoting);
-        }
-    }
 
     public static List<IdentifierSegment> toOlap4j(
         final List<Segment> segments)
@@ -1397,11 +1387,11 @@ public class Util {
         }
     }
 
-    private static KeySegment toOlap4j(final IdImpl.KeySegment keySegment) {
-        return new KeySegment(
-            new AbstractList<NameSegment>() {
+    private static KeySegmentImpl toOlap4j(final IdImpl.KeySegment keySegment) {
+        return new KeySegmentImpl(
+            new AbstractList<NameSegmentImpl>() {
                 @Override
-				public NameSegment get(int index) {
+				public NameSegmentImpl get(int index) {
                     return toOlap4j(keySegment.subSegmentList.get(index));
                 }
 
@@ -1412,8 +1402,8 @@ public class Util {
             });
     }
 
-    private static NameSegment toOlap4j(org.eclipse.daanse.olap.api.NameSegment nameSegment) {
-        return new NameSegment(
+    private static NameSegmentImpl toOlap4j(org.eclipse.daanse.olap.api.NameSegment nameSegment) {
+        return new NameSegmentImpl(
             null,
             nameSegment.getName(),
             toOlap4j(nameSegment.getQuoting()));

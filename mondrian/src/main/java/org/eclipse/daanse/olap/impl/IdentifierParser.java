@@ -426,12 +426,12 @@ public class IdentifierParser {
      * It cannot handle tuples or lists of members.
      */
     public static class MemberBuilder implements IdentifierParser.Builder {
-        protected final List<NameSegment> subSegments;
+        protected final List<NameSegmentImpl> subSegments;
         protected final List<IdentifierSegment> segmentList;
 
         public MemberBuilder() {
             segmentList = new ArrayList<IdentifierSegment>();
-            subSegments = new ArrayList<NameSegment>();
+            subSegments = new ArrayList<NameSegmentImpl>();
         }
 
         public void tupleComplete() {
@@ -444,7 +444,7 @@ public class IdentifierParser {
 
         private void flushSubSegments() {
             if (!subSegments.isEmpty()) {
-                segmentList.add(new KeySegment(subSegments));
+                segmentList.add(new KeySegmentImpl(subSegments));
                 subSegments.clear();
             }
         }
@@ -455,8 +455,8 @@ public class IdentifierParser {
             Quoting quoting,
             Syntax syntax)
         {
-            final NameSegment segment =
-                new NameSegment(
+            final NameSegmentImpl segment =
+                new NameSegmentImpl(
                     region, name, quoting);
             if (syntax != Syntax.NEXT_KEY) {
                 // If we were building a previous key, write it out.

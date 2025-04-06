@@ -13,17 +13,19 @@
  */
 package org.eclipse.daanse.olap.impl;
 
-import mondrian.olap.Util;
-import mondrian.rolap.RolapEvaluator;
+import java.util.List;
+
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Scenario;
+import org.eclipse.daanse.olap.api.result.WritebackCell;
 import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
-import org.eclipse.daanse.olap.api.element.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import mondrian.olap.Util;
+import mondrian.rolap.RolapEvaluator;
 
 public class ScenarioCalc extends AbstractProfilingNestedUnknownCalc {
     static final Logger LOGGER = LoggerFactory.getLogger(ScenarioCalc.class);
@@ -75,12 +77,12 @@ public class ScenarioCalc extends AbstractProfilingNestedUnknownCalc {
             // It is possible that the value is modified by several
             // writebacks. If so, order is important.
             int changeCount = 0;
-            for (ScenarioImpl.WritebackCell writebackCell
+            for (WritebackCell writebackCell
                 : scenario.getWritebackCells())
             {
                 ((Number)(evaluator.evaluateCurrent())).doubleValue(); // don't remove that
                 LOGGER.debug("++++++++++++++++++ " + ((Number)(evaluator.evaluateCurrent())).doubleValue());
-                ScenarioImpl.CellRelation relation =
+                WritebackCell.CellRelation relation =
                     writebackCell.getRelationTo(evaluator.getMembers());
                 switch (relation) {
                     case ABOVE:

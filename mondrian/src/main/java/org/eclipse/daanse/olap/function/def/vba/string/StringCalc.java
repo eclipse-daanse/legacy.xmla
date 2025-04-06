@@ -16,20 +16,20 @@ package org.eclipse.daanse.olap.function.def.vba.string;
 import java.util.Arrays;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.IntegerCalc;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.IntegerCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
 
 public class StringCalc extends AbstractProfilingNestedStringCalc {
 
-    protected StringCalc(Type type, final IntegerCalc numberCalc, final org.eclipse.daanse.olap.calc.api.StringCalc characterCalc) {
+    protected StringCalc(Type type, final IntegerCalc numberCalc, final org.eclipse.daanse.olap.api.calc.StringCalc characterCalc) {
         super(type, numberCalc, characterCalc);
     }
 
     @Override
     public String evaluate(Evaluator evaluator) {
         Integer number = getChildCalc(0, IntegerCalc.class).evaluate(evaluator);
-        String character = getChildCalc(1, org.eclipse.daanse.olap.calc.api.StringCalc.class).evaluate(evaluator);
+        String character = getChildCalc(1, org.eclipse.daanse.olap.api.calc.StringCalc.class).evaluate(evaluator);
         return string(number, character.charAt(0));
     }
 

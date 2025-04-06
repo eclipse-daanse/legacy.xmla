@@ -20,6 +20,7 @@
   <artifactId>org.eclipse.daanse.olap</artifactId>
   <packaging>pom</packaging>
   <modules>
+    <module>api</module>
     <module>rolap</module>
     <module>xmla</module>
     <module>documentation</module>

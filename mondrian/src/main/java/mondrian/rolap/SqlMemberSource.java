@@ -33,11 +33,11 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.access.AccessMember;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEvent;
 import org.eclipse.daanse.olap.api.query.component.Expression;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

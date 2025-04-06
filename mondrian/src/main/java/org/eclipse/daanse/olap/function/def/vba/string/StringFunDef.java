@@ -15,11 +15,11 @@ package org.eclipse.daanse.olap.function.def.vba.string;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.FunctionOperationAtom;
 import org.eclipse.daanse.olap.api.DataType;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.IntegerCalc;
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.IntegerCalc;
-import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
@@ -38,7 +38,7 @@ public class StringFunDef  extends AbstractFunctionDefinition {
     @Override
     public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
         final IntegerCalc numberCalc = compiler.compileInteger(call.getArg(0));
-        final org.eclipse.daanse.olap.calc.api.StringCalc characterCalc = compiler.compileString(call.getArg(1));
+        final org.eclipse.daanse.olap.api.calc.StringCalc characterCalc = compiler.compileString(call.getArg(1));
         return new StringCalc(call.getType(), numberCalc, characterCalc);
     }
 

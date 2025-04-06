@@ -12,6 +12,7 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DrillThroughAction;
 import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.calc.ResultStyle;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.DrillThrough;
@@ -21,7 +22,6 @@ import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.calc.api.ResultStyle;
 
 import mondrian.olap.ConnectionBase;
 import mondrian.olap.QueryCanceledException;

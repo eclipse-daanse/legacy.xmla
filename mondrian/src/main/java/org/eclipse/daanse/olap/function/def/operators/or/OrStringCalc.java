@@ -15,8 +15,8 @@
 package org.eclipse.daanse.olap.function.def.operators.or;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.StringCalc;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
 
 public class OrStringCalc extends AbstractProfilingNestedStringCalc {

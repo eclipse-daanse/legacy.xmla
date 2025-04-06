@@ -16,10 +16,10 @@ package org.eclipse.daanse.olap.function.def.crossjoin;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 
 import mondrian.calc.impl.ListTupleList;
 

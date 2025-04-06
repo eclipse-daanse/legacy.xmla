@@ -16,32 +16,32 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.Validator;
+import org.eclipse.daanse.olap.api.calc.BooleanCalc;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.DateTimeCalc;
+import org.eclipse.daanse.olap.api.calc.DimensionCalc;
+import org.eclipse.daanse.olap.api.calc.DoubleCalc;
+import org.eclipse.daanse.olap.api.calc.HierarchyCalc;
+import org.eclipse.daanse.olap.api.calc.IntegerCalc;
+import org.eclipse.daanse.olap.api.calc.LevelCalc;
+import org.eclipse.daanse.olap.api.calc.MemberCalc;
+import org.eclipse.daanse.olap.api.calc.ResultStyle;
+import org.eclipse.daanse.olap.api.calc.StringCalc;
+import org.eclipse.daanse.olap.api.calc.TupleCalc;
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.api.calc.compiler.ParameterSlot;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc;
+import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.query.component.WrapExpression;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.BooleanCalc;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.DateTimeCalc;
-import org.eclipse.daanse.olap.calc.api.DimensionCalc;
-import org.eclipse.daanse.olap.calc.api.DoubleCalc;
-import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
-import org.eclipse.daanse.olap.calc.api.IntegerCalc;
-import org.eclipse.daanse.olap.calc.api.LevelCalc;
-import org.eclipse.daanse.olap.calc.api.MemberCalc;
-import org.eclipse.daanse.olap.calc.api.ResultStyle;
-import org.eclipse.daanse.olap.calc.api.StringCalc;
-import org.eclipse.daanse.olap.calc.api.TupleCalc;
-import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
-import org.eclipse.daanse.olap.calc.api.compiler.ParameterSlot;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
-import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 
 import mondrian.olap.AbstractQueryPart;
 
 /**
- * Abstract implementation of {@link org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler}
+ * Abstract implementation of {@link org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler}
  *
  * @author jhyde
  * @since Jan 2, 2006

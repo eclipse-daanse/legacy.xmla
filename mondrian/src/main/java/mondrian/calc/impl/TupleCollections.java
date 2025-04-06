@@ -20,11 +20,11 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.todo.TupleCursor;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIterator;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIterator;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 
 import mondrian.olap.Util;
 
@@ -131,7 +131,7 @@ public final class TupleCollections {
      * has some extra state.
      *
      * <p>This method may be used to implement
-     * {@link org.eclipse.daanse.olap.calc.api.todo.TupleIterable#tupleIterator()} for a
+     * {@link org.eclipse.daanse.olap.api.calc.todo.TupleIterable#tupleIterator()} for a
      * {@link TupleIterable} or {@link TupleList} that only has a
      * {@code TupleCursor} implementation.
      *
@@ -227,7 +227,7 @@ public final class TupleCollections {
      * Creates a slice of a {@link TupleIterable}.
      *
      * <p>Can be used as an implementation for
-     * {@link org.eclipse.daanse.olap.calc.api.todo.TupleList#slice(int)}.
+     * {@link org.eclipse.daanse.olap.api.calc.todo.TupleList#slice(int)}.
      *
      * @param tupleIterable Iterable
      * @param column Which member of each tuple of project.
@@ -266,7 +266,7 @@ public final class TupleCollections {
     }
 
     /**
-     * Converts a {@link org.eclipse.daanse.olap.calc.api.todo.TupleIterable} to an old-style iterable that
+     * Converts a {@link org.eclipse.daanse.olap.api.calc.todo.TupleIterable} to an old-style iterable that
      * creates an iterator over member arrays.
      *
      * @param tupleIterable Tuple iterable
@@ -298,7 +298,7 @@ public final class TupleCollections {
     }
 
     /**
-     * Converts a {@link org.eclipse.daanse.olap.calc.api.todo.TupleList} to an old-style list of member
+     * Converts a {@link org.eclipse.daanse.olap.api.calc.todo.TupleList} to an old-style list of member
      * arrays.
      *
      * @param tupleList Tuple list
@@ -323,7 +323,7 @@ public final class TupleCollections {
 
     /**
      * Converts an old-style list (members or member arrays) to a
-     * {@link org.eclipse.daanse.olap.calc.api.todo.TupleList}.
+     * {@link org.eclipse.daanse.olap.api.calc.todo.TupleList}.
      *
      * <p>Deduces the arity of the list from the first element, if the list
      * is not empty. Otherwise assumes arity 1.

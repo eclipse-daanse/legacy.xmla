@@ -13,14 +13,14 @@
  */
 package org.eclipse.daanse.olap.function.def.vba.rate;
 
+import org.eclipse.daanse.olap.api.calc.BooleanCalc;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.DoubleCalc;
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.BooleanType;
 import org.eclipse.daanse.olap.api.type.NumericType;
-import org.eclipse.daanse.olap.calc.api.BooleanCalc;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.DoubleCalc;
-import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantBooleanCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantDoubleCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;

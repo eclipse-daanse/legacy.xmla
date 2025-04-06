@@ -49,6 +49,12 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.olap.api</artifactId>
+			<version>${revision}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.service.cm</artifactId>
 			<scope>compile</scope>
@@ -159,8 +165,8 @@
 			<scope>compile</scope>
 			<version>${revision}</version>
 		</dependency>
-		
-				<dependency>
+
+		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
 			<artifactId>org.eclipse.daanse.olap.documentation.common</artifactId>
 			<scope>compile</scope>
@@ -182,13 +188,13 @@
 			<artifactId>org.osgi.util.converter</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.apache.felix</groupId>-->
-<!--			<artifactId>org.apache.felix.http.jetty12</artifactId>-->
-<!--			<version>1.0.20-SNAPSHOT</version>-->
-<!--	        <classifier>light</classifier>-->
-<!--			<scope>runtime</scope>-->
-<!--		</dependency>-->
+		<!--		<dependency>-->
+		<!--			<groupId>org.apache.felix</groupId>-->
+		<!--			<artifactId>org.apache.felix.http.jetty12</artifactId>-->
+		<!--			<version>1.0.20-SNAPSHOT</version>-->
+		<!--	        <classifier>light</classifier>-->
+		<!--			<scope>runtime</scope>-->
+		<!--		</dependency>-->
 
 	</dependencies>
 </project>

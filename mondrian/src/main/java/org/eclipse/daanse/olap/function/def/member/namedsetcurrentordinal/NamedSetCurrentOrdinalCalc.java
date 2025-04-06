@@ -14,9 +14,9 @@
 package org.eclipse.daanse.olap.function.def.member.namedsetcurrentordinal;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.query.component.NamedSetExpression;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedIntegerCalc;
 
 public class NamedSetCurrentOrdinalCalc extends AbstractProfilingNestedIntegerCalc {

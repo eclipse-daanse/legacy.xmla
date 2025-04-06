@@ -7,14 +7,15 @@ import java.util.Map;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.result.AllocationPolicy;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.api.result.Scenario;
+import org.eclipse.daanse.olap.api.result.WritebackCell;
 import org.eclipse.daanse.olap.api.type.ScalarType;
-import org.eclipse.daanse.olap.calc.api.Calc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 
 import mondrian.mdx.ResolvedFunCallImpl;
@@ -36,7 +37,7 @@ public class ScenarioImpl implements Scenario {
 
     private final int id;
 
-    private final List<ScenarioImpl.WritebackCell> writebackCells =
+    private final List<WritebackCell> writebackCells =
         new ArrayList<>();
 
     private String cubeName;
@@ -168,8 +169,8 @@ public class ScenarioImpl implements Scenario {
         // TODO: add a mechanism for persisting the overrides to a file.
         //
         // FIXME: make thread-safe
-        WritebackCell writebackCell =
-            new WritebackCell(
+        WritebackCellImpl writebackCell =
+            new WritebackCellImpl(
                 baseCube,
                 new ArrayList<Member>(members),
                 constrainedColumnsBitKey,
@@ -354,7 +355,7 @@ public class ScenarioImpl implements Scenario {
      * <p>In future, a {@link ScenarioImpl} could be persisted by
      * serializing all {@code WritebackCell}s to a file.
      */
-    public static class WritebackCell {
+    public static class WritebackCellImpl implements WritebackCell {
 
 
         private final double newValue;
@@ -374,7 +375,7 @@ public class ScenarioImpl implements Scenario {
          * @param currentValue Current value
          * @param allocationPolicy Allocation policy
          */
-        WritebackCell(
+        WritebackCellImpl(
             RolapCube cube,
             List<Member> members,
             BitKey constrainedColumnsBitKey,
@@ -413,22 +414,27 @@ public class ScenarioImpl implements Scenario {
             }
         }
 
+        @Override
         public double getNewValue() {
             return newValue;
         }
 
+        @Override
         public double getCurrentValue() {
             return currentValue;
         }
 
+        @Override
         public AllocationPolicy getAllocationPolicy() {
             return allocationPolicy;
         }
 
+        @Override
         public Member[] getMembersByOrdinal() {
             return membersByOrdinal;
         }
 
+        @Override
         public double getAtomicCellCount() {
             return atomicCellCount;
         }
@@ -439,6 +445,7 @@ public class ScenarioImpl implements Scenario {
          *
          * @return Amount by which value has increased
          */
+        @Override
         public double getOffset() {
             return newValue - currentValue;
         }
@@ -454,7 +461,8 @@ public class ScenarioImpl implements Scenario {
          * @return Relation of this writeback cell to other co-ordinate, never
          * null
          */
-        ScenarioImpl.CellRelation getRelationTo(Member[] members) {
+        @Override
+        public WritebackCell.CellRelation getRelationTo(Member[] members) {
             int aboveCount = 0;
             int belowCount = 0;
             for (int i = 0; i < members.length; i++) {
@@ -469,39 +477,31 @@ public class ScenarioImpl implements Scenario {
                         // thisMember is ancestor of member
                         ++aboveCount;
                         if (belowCount > 0) {
-                            return ScenarioImpl.CellRelation.NONE;
+                            return WritebackCell.CellRelation.NONE;
                         }
                     }
                 } else if (thisMember.isChildOrEqualTo(thatMember)) {
                     // thisMember is descendant of member
                     ++belowCount;
                     if (aboveCount > 0) {
-                        return ScenarioImpl.CellRelation.NONE;
+                        return WritebackCell.CellRelation.NONE;
                     }
                 } else {
-                    return ScenarioImpl.CellRelation.NONE;
+                    return WritebackCell.CellRelation.NONE;
                 }
             }
             assert aboveCount == 0 || belowCount == 0;
             if (aboveCount > 0) {
-                return ScenarioImpl.CellRelation.ABOVE;
+                return WritebackCell.CellRelation.ABOVE;
             } else if (belowCount > 0) {
-                return ScenarioImpl.CellRelation.BELOW;
+                return WritebackCell.CellRelation.BELOW;
             } else {
-                return ScenarioImpl.CellRelation.EQUAL;
+                return WritebackCell.CellRelation.EQUAL;
             }
         }
     }
 
-    /**
-     * Decribes the relationship between two cells.
-     */
-    enum CellRelation {
-        ABOVE,
-        EQUAL,
-        BELOW,
-        NONE
-    }
+
 
     /**
      * Compiled expression to implement a [Scenario].[{name}] calculated member.
@@ -559,10 +559,10 @@ public class ScenarioImpl implements Scenario {
                 // It is possible that the value is modified by several
                 // writebacks. If so, order is important.
                 int changeCount = 0;
-                for (ScenarioImpl.WritebackCell writebackCell
-                    : scenario.writebackCells)
+                for (WritebackCell writebackCell
+                    : scenario.getWritebackCells())
                 {
-                    ScenarioImpl.CellRelation relation =
+                    WritebackCell.CellRelation relation =
                         writebackCell.getRelationTo(evaluator.getMembers());
                     switch (relation) {
                         case ABOVE:
@@ -578,27 +578,27 @@ public class ScenarioImpl implements Scenario {
                                 // populated.
                                 atomicCellCount = 1d;
                             }
-                            switch (writebackCell.allocationPolicy) {
+                            switch (writebackCell.getAllocationPolicy()) {
                                 case EQUAL_ALLOCATION:
-                                    d = writebackCell.newValue
+                                    d = writebackCell.getNewValue()
                                         * atomicCellCount
-                                        / writebackCell.atomicCellCount;
+                                        / writebackCell.getAtomicCellCount();
                                     break;
                                 case EQUAL_INCREMENT:
                                     d += writebackCell.getOffset()
                                         * atomicCellCount
-                                        / writebackCell.atomicCellCount;
+                                        / writebackCell.getAtomicCellCount();
                                     break;
                                 default:
                                     throw Util.unexpected(
-                                        writebackCell.allocationPolicy);
+                                        writebackCell.getAllocationPolicy());
                             }
                             ++changeCount;
                             break;
                         case EQUAL:
                             // This cell is the writeback cell. Value is the value
                             // written back.
-                            d = writebackCell.newValue;
+                            d = writebackCell.getNewValue();
                             ++changeCount;
                             break;
                         case BELOW:

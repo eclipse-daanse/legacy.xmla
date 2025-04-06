@@ -13,8 +13,8 @@
 */
 package org.eclipse.daanse.olap.calc.base.constant;
 
+import org.eclipse.daanse.olap.api.calc.BooleanCalc;
 import org.eclipse.daanse.olap.api.type.BooleanType;
-import org.eclipse.daanse.olap.calc.api.BooleanCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingConstantCalc;
 
 public class ConstantBooleanCalc extends AbstractProfilingConstantCalc<Boolean> implements BooleanCalc {

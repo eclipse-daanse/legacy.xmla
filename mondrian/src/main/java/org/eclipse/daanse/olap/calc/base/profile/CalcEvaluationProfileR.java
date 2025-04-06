@@ -17,7 +17,7 @@ package org.eclipse.daanse.olap.calc.base.profile;
 import java.time.Instant;
 import java.util.Map;
 
-import org.eclipse.daanse.olap.calc.api.profile.CalcEvaluationProfile;
+import org.eclipse.daanse.olap.api.calc.profile.CalcEvaluationProfile;
 
 public record CalcEvaluationProfileR(Instant start, Instant end, Object evaluationResult,
 		Map<String, Object> additionalValues) implements CalcEvaluationProfile {

@@ -15,17 +15,17 @@
 package org.eclipse.daanse.olap.calc.base.nested;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.DoubleCalc;
 import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.DoubleCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 
 import mondrian.olap.fun.FunUtil;
 
 /**
  * Abstract implementation of the
- * {@link org.eclipse.daanse.olap.calc.api.IntegerCalc} interface.
+ * {@link org.eclipse.daanse.olap.api.calc.IntegerCalc} interface.
  * 
  * Handles nested child and profiling
  *

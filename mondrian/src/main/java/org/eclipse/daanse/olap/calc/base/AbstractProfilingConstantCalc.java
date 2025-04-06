@@ -16,11 +16,11 @@ package org.eclipse.daanse.olap.calc.base;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.ConstantCalc;
+import org.eclipse.daanse.olap.api.calc.ResultStyle;
+import org.eclipse.daanse.olap.api.calc.profile.CalculationProfile;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.ConstantCalc;
-import org.eclipse.daanse.olap.calc.api.ResultStyle;
-import org.eclipse.daanse.olap.calc.api.profile.CalculationProfile;
 
 public abstract class AbstractProfilingConstantCalc<T> extends AbstractProfilingCalc<T> implements ConstantCalc<T> {
 

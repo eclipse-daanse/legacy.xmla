@@ -16,12 +16,12 @@ package org.eclipse.daanse.olap.calc.base;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.ResultStyle;
+import org.eclipse.daanse.olap.api.calc.profile.CalculationProfile;
+import org.eclipse.daanse.olap.api.calc.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.ResultStyle;
-import org.eclipse.daanse.olap.calc.api.profile.CalculationProfile;
-import org.eclipse.daanse.olap.calc.api.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 
 public abstract class AbstractProfilingNestedCalc<E> extends AbstractProfilingCalc<E>

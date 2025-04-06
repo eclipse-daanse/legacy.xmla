@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Position;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
 import org.junit.jupiter.api.Test;
 
 import mondrian.calc.impl.TupleCollections;

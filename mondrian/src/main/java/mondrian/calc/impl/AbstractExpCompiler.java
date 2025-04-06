@@ -20,6 +20,24 @@ import org.eclipse.daanse.mdx.model.api.expression.operation.CastOperationAtom;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Parameter;
 import org.eclipse.daanse.olap.api.Validator;
+import org.eclipse.daanse.olap.api.calc.BooleanCalc;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.ConstantCalc;
+import org.eclipse.daanse.olap.api.calc.DateTimeCalc;
+import org.eclipse.daanse.olap.api.calc.DimensionCalc;
+import org.eclipse.daanse.olap.api.calc.DoubleCalc;
+import org.eclipse.daanse.olap.api.calc.HierarchyCalc;
+import org.eclipse.daanse.olap.api.calc.IntegerCalc;
+import org.eclipse.daanse.olap.api.calc.LevelCalc;
+import org.eclipse.daanse.olap.api.calc.MemberCalc;
+import org.eclipse.daanse.olap.api.calc.ResultStyle;
+import org.eclipse.daanse.olap.api.calc.StringCalc;
+import org.eclipse.daanse.olap.api.calc.TupleCalc;
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.api.calc.compiler.ParameterSlot;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
+import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
@@ -39,24 +57,6 @@ import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.BooleanCalc;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.ConstantCalc;
-import org.eclipse.daanse.olap.calc.api.DateTimeCalc;
-import org.eclipse.daanse.olap.calc.api.DimensionCalc;
-import org.eclipse.daanse.olap.calc.api.DoubleCalc;
-import org.eclipse.daanse.olap.calc.api.HierarchyCalc;
-import org.eclipse.daanse.olap.calc.api.IntegerCalc;
-import org.eclipse.daanse.olap.calc.api.LevelCalc;
-import org.eclipse.daanse.olap.calc.api.MemberCalc;
-import org.eclipse.daanse.olap.calc.api.ResultStyle;
-import org.eclipse.daanse.olap.calc.api.StringCalc;
-import org.eclipse.daanse.olap.calc.api.TupleCalc;
-import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
-import org.eclipse.daanse.olap.calc.api.compiler.ParameterSlot;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
-import org.eclipse.daanse.olap.calc.api.todo.TupleListCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantBooleanCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantDoubleCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantHierarchyCalc;
@@ -90,7 +90,7 @@ import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
 
 /**
- * Abstract implementation of the {@link org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler} interface.
+ * Abstract implementation of the {@link org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler} interface.
  *
  * @author jhyde
  * @since Sep 29, 2005
@@ -323,14 +323,14 @@ public class AbstractExpCompiler implements ExpressionCompiler {
             return (IntegerCalc) calc;
         }
 		if (type instanceof NullType) {
-			if (calc instanceof org.eclipse.daanse.olap.calc.api.ConstantCalc<?> constantCalc) {
+			if (calc instanceof org.eclipse.daanse.olap.api.calc.ConstantCalc<?> constantCalc) {
 				//no evaluate on constantCalc  result is null and constant - nothing expected while evaluate
 				return new ConstantIntegerCalc(new DecimalType(Integer.MAX_VALUE, 0), null);
 			}
 
 		}
 		if (type instanceof NumericType) {
-			if (calc instanceof org.eclipse.daanse.olap.calc.api.ConstantCalc<?> constantCalc) {
+			if (calc instanceof org.eclipse.daanse.olap.api.calc.ConstantCalc<?> constantCalc) {
 
 				Object o = constantCalc.evaluate(evaluator);
 				Integer i = null;
@@ -359,7 +359,7 @@ public class AbstractExpCompiler implements ExpressionCompiler {
 
 		if (calc instanceof StringCalc stringCalc) {
 			return stringCalc;
-		}else if (calc instanceof org.eclipse.daanse.olap.calc.api.ConstantCalc cc) {
+		}else if (calc instanceof org.eclipse.daanse.olap.api.calc.ConstantCalc cc) {
 			Object o = cc.evaluate(null);
 			String s = null;
 			if (o != null) {

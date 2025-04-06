@@ -74,6 +74,7 @@
 	org.eclipse.daanse.mdx.model.record;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.mdx.parser.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.mdx.parser.ccc;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.olap.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.repackage.dockerjava;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.instance.rec.complex.expressivenames;version='[0.0.1,0.0.2)',\

@@ -10,15 +10,15 @@
 package mondrian.calc.impl;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.todo.TupleCursor;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIterable;
-import org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc;
-import org.eclipse.daanse.olap.calc.api.todo.TupleList;
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.todo.TupleCursor;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 
 /**
- * Adapter that converts a {@link org.eclipse.daanse.olap.calc.api.todo.TupleIteratorCalc} to a
- * {@link org.eclipse.daanse.olap.calc.api.todo.TupleListCalc}.
+ * Adapter that converts a {@link org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc} to a
+ * {@link org.eclipse.daanse.olap.api.calc.todo.TupleListCalc}.
  *
  * @author jhyde
  * @since Oct 23, 2008

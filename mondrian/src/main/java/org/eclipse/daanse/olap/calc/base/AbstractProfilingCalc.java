@@ -21,10 +21,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.calc.profile.CalcEvaluationProfile;
+import org.eclipse.daanse.olap.api.calc.profile.CalculationProfile;
+import org.eclipse.daanse.olap.api.calc.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.profile.CalcEvaluationProfile;
-import org.eclipse.daanse.olap.calc.api.profile.CalculationProfile;
-import org.eclipse.daanse.olap.calc.api.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.calc.base.profile.CalcEvaluationProfileR;
 import org.eclipse.daanse.olap.calc.base.profile.CalcProfileR;
 

@@ -14,14 +14,14 @@
 
 package org.eclipse.daanse.olap.calc.base.nested;
 
+import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.StringCalc;
 import org.eclipse.daanse.olap.api.type.Type;
-import org.eclipse.daanse.olap.calc.api.Calc;
-import org.eclipse.daanse.olap.calc.api.StringCalc;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 
 /**
  * Abstract implementation of the
- * {@link org.eclipse.daanse.olap.calc.api.StringCalc} interface.
+ * {@link org.eclipse.daanse.olap.api.calc.StringCalc} interface.
  * 
  * Handles nested child and profiling
  *

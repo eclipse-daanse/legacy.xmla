@@ -13,11 +13,11 @@
  */
 package org.eclipse.daanse.olap.function.def.nativizeset;
 
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.NamedSetExpression;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
-import org.eclipse.daanse.olap.calc.api.compiler.ExpressionCompiler;
 
 import mondrian.mdx.MdxVisitorImpl;
 
