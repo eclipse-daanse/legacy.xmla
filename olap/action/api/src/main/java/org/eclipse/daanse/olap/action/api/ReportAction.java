@@ -13,6 +13,6 @@
  */
 package org.eclipse.daanse.olap.action.api;
 
-public interface ReportAction extends XmlaAction {
+public non-sealed interface ReportAction extends XmlaAction {
 
 }

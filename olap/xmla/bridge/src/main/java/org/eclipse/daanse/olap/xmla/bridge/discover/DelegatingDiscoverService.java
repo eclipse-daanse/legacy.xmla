@@ -15,7 +15,7 @@ package org.eclipse.daanse.olap.xmla.bridge.discover;
 
 import java.util.List;
 
-import org.eclipse.daanse.olap.action.api.ActionService;
+import org.eclipse.daanse.olap.xmla.bridge.ActionService;
 import org.eclipse.daanse.olap.xmla.bridge.ContextGroupXmlaServiceConfig;
 import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
 import org.eclipse.daanse.xmla.api.RequestMetaData;

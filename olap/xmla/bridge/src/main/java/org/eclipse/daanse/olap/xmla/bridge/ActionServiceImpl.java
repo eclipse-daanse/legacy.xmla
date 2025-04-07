@@ -11,10 +11,10 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.action.impl;
+package org.eclipse.daanse.olap.xmla.bridge;
 
-import static org.eclipse.daanse.olap.action.impl.DrillThroughUtils.getCoordinateElements;
-import static org.eclipse.daanse.olap.action.impl.DrillThroughUtils.getDrillThroughQuery;
+import static org.eclipse.daanse.olap.xmla.bridge.DrillThroughUtils.getCoordinateElements;
+import static org.eclipse.daanse.olap.xmla.bridge.DrillThroughUtils.getDrillThroughQuery;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.eclipse.daanse.olap.action.api.ActionService;
 import org.eclipse.daanse.olap.action.api.ReportAction;
 import org.eclipse.daanse.olap.action.api.UrlAction;
 import org.eclipse.daanse.olap.action.api.XmlaAction;
@@ -142,7 +141,7 @@ public class ActionServiceImpl implements ActionService {
                 xmlaAcriton.schemaName(),
                 xmlaAcriton.cubeName(),
                 xmlaAcriton.actionName(),
-                Optional.of(xmlaAcriton.actionType()),
+                Optional.ofNullable(getActionType(xmlaAcriton)),
                 coordinate.orElse(null),
                 xmlaAcriton.coordinateType(),
                 xmlaAcriton.actionCaption(),
@@ -153,6 +152,19 @@ public class ActionServiceImpl implements ActionService {
             ));
         }
         return result;
+    }
+
+    private ActionTypeEnum getActionType(XmlaAction xmlaAcriton) {
+        if (xmlaAcriton instanceof DrillThroughAction) {
+            return ActionTypeEnum.DRILL_THROUGH;
+        }
+        if (xmlaAcriton instanceof ReportAction) {
+            return ActionTypeEnum.REPORT;
+        }
+        if (xmlaAcriton instanceof UrlAction) {
+            return ActionTypeEnum.URL;
+        }
+        return null;
     }
 
     private List<MdSchemaActionsResponseRow> getMdSchemaActionsResponseRow(
@@ -283,7 +295,7 @@ public class ActionServiceImpl implements ActionService {
     private List<XmlaAction> getXmlaActionWithFilterByActionType(List<XmlaAction> actions, Optional<ActionTypeEnum> param) {
         if (actions != null && !actions.isEmpty()) {
             if (param.isPresent()) {
-                return actions.stream().filter(a -> a.actionType() == null || param.get().equals(a.actionType())).toList();
+                return actions.stream().filter(a -> param.get().equals(getActionType(a))).toList();
             } else {
                 return actions;
             }

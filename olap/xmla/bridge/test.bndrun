@@ -22,8 +22,7 @@
 	bnd.identity;id='${project.artifactId}-tests',\
 	bnd.identity;id=junit-jupiter-engine,\
 	bnd.identity;id=junit-platform-launcher,\
-	bnd.identity;id='org.eclipse.daanse.olap.action.api',\
-	bnd.identity;id='org.eclipse.daanse.olap.action.impl'
+	bnd.identity;id='org.eclipse.daanse.olap.action.api'
 
 # -runbundles is calculated by the bnd-resolver-maven-plugin
 
@@ -52,7 +51,7 @@
 	org.eclipse.daanse.mdx.model.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.mdx.parser.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.olap.action.api;version='[0.0.1,0.0.2)',\
-	org.eclipse.daanse.olap.action.impl;version='[0.0.1,0.0.2)',\
+	org.eclipse.daanse.olap.api;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.olap.xmla.bridge;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.olap.xmla.bridge-tests;version='[0.0.1,0.0.2)',\
 	org.eclipse.daanse.rolap.mapping.api;version='[0.0.1,0.0.2)',\

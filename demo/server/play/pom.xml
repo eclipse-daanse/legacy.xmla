@@ -155,12 +155,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.olap.action.impl</artifactId>
-			<scope>compile</scope>
-			<version>${revision}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.daanse</groupId>
 			<artifactId>org.eclipse.daanse.olap.action.api</artifactId>
 			<scope>compile</scope>
 			<version>${revision}</version>

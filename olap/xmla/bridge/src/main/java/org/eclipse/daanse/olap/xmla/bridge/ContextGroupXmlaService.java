@@ -15,7 +15,6 @@ package org.eclipse.daanse.olap.xmla.bridge;
 
 import java.util.Map;
 
-import org.eclipse.daanse.olap.action.api.ActionService;
 import org.eclipse.daanse.olap.api.ContextGroup;
 import org.eclipse.daanse.olap.xmla.bridge.discover.DelegatingDiscoverService;
 import org.eclipse.daanse.olap.xmla.bridge.execute.OlapExecuteService;

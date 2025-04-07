@@ -13,12 +13,11 @@
  */
 package org.eclipse.daanse.olap.action.api;
 
-import org.eclipse.daanse.xmla.api.common.enums.ActionTypeEnum;
 import org.eclipse.daanse.xmla.api.common.enums.CoordinateTypeEnum;
 
 import java.util.Optional;
 
-public interface XmlaAction {
+public sealed interface XmlaAction permits DrillThroughAction, ReportAction, UrlAction {
     String content( String coordinate, String cubeName );
     Optional<String> catalogName();
     Optional<String> schemaName();
@@ -28,5 +27,4 @@ public interface XmlaAction {
     Optional<String> description();
     String coordinate();
     CoordinateTypeEnum coordinateType();
-    ActionTypeEnum actionType();
 }

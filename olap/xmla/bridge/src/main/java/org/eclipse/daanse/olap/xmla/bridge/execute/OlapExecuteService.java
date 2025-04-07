@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.daanse.mdx.model.api.select.Allocation;
-import org.eclipse.daanse.olap.action.api.ActionService;
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.Command;
 import org.eclipse.daanse.olap.api.ConfigConstants;
@@ -58,6 +57,7 @@ import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.result.CellSetAxis;
 import org.eclipse.daanse.olap.api.result.Scenario;
+import org.eclipse.daanse.olap.xmla.bridge.ActionService;
 import org.eclipse.daanse.olap.xmla.bridge.ContextGroupXmlaServiceConfig;
 import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
 import org.eclipse.daanse.olap.xmla.bridge.discover.DBSchemaDiscoverService;

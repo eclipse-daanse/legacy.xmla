@@ -31,8 +31,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.eclipse.daanse.olap.action.api.ActionService;
 import org.eclipse.daanse.olap.api.element.Catalog;
+import org.eclipse.daanse.olap.xmla.bridge.ActionService;
 import org.eclipse.daanse.olap.xmla.bridge.ContextListSupplyer;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;

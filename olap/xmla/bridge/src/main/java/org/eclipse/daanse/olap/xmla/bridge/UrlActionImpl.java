@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.action.impl;
+package org.eclipse.daanse.olap.xmla.bridge;
 
 import org.eclipse.daanse.olap.action.api.UrlAction;
 import org.eclipse.daanse.xmla.api.common.enums.ActionTypeEnum;
@@ -38,11 +38,6 @@ public class UrlActionImpl extends AbstractAction implements UrlAction {
     @Override
     public String content(String coordinate, String cubeName) {
         return config.actionUrl();
-    }
-
-    @Override
-    public ActionTypeEnum actionType() {
-        return ActionTypeEnum.URL;
     }
 
     @Override

@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.action.impl;
+package org.eclipse.daanse.olap.xmla.bridge;
 
 import mondrian.rolap.RolapBaseCubeMeasure;
 import mondrian.rolap.RolapCubeLevel;

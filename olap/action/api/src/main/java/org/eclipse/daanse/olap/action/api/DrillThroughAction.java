@@ -16,7 +16,7 @@ package org.eclipse.daanse.olap.action.api;
 import java.util.List;
 import java.util.Optional;
 
-public interface DrillThroughAction extends XmlaAction {
+public non-sealed interface DrillThroughAction extends XmlaAction {
 
 
     Optional<List<String>> catalogs();

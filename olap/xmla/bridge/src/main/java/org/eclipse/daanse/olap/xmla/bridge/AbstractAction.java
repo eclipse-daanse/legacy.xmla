@@ -11,15 +11,14 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.action.impl;
+package org.eclipse.daanse.olap.xmla.bridge;
 
-import org.eclipse.daanse.olap.action.api.XmlaAction;
 import org.eclipse.daanse.xmla.api.common.enums.ActionTypeEnum;
 import org.eclipse.daanse.xmla.api.common.enums.CoordinateTypeEnum;
 
 import java.util.Optional;
 
-public abstract class AbstractAction implements XmlaAction {
+public abstract class AbstractAction {
 
 	private static String emptyIsNull(String value) {
 		if (value != null && value.isEmpty()) {
@@ -28,50 +27,40 @@ public abstract class AbstractAction implements XmlaAction {
 		return value;
 	}
 
-	@Override
 	public Optional<String> catalogName() {
 		return Optional.ofNullable(emptyIsNull(getConfig().catalogName()));
 	}
 
-	@Override
 	public Optional<String> schemaName() {
 		return Optional.ofNullable(emptyIsNull(getConfig().schemaName()));
 	}
 
-	@Override
+
 	public String cubeName() {
 		return getConfig().cubeName();
 	}
 
-	@Override
 	public Optional<String> actionName() {
 		return Optional.ofNullable(emptyIsNull(getConfig().actionName()));
 	}
 
-	@Override
 	public Optional<String> actionCaption() {
 		return Optional.ofNullable(emptyIsNull(getConfig().actionCaption()));
 	}
 
-	@Override
 	public Optional<String> description() {
 		return Optional.ofNullable(emptyIsNull(getConfig().actionDescription()));
 	}
 
-	@Override
 	public String coordinate() {
 		return getConfig().actionCoordinate();
 	}
 
-	@Override
 	public CoordinateTypeEnum coordinateType() {
 		return CoordinateTypeEnum.valueOf(emptyIsNull(getConfig().actionCoordinateType()));
 	}
 
-	@Override
 	public abstract String content(String coordinate, String cubeName);
-
-	public abstract ActionTypeEnum actionType();
 
 	protected abstract AbstractActionConfig getConfig();
 

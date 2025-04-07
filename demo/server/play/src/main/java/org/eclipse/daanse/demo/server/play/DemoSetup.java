@@ -29,12 +29,6 @@ public class DemoSetup {
 
 	public static final String PID_DESCRIPTION_DOC = "org.eclipse.daanse.olap.documentation.common.MarkdownDocumentationProvider";
 
-	public static final String PID_URL_ACTION = "org.eclipse.daanse.olap.action.impl.UrlActionImpl";
-
-	public static final String PID_REPORT_ACTION = "org.eclipse.daanse.olap.action.impl.ReportActionImpl";
-
-	public static final String PID_DRILL_THROUGH_ACTION = "org.eclipse.daanse.olap.action.impl.DrillThroughActionImpl";
-
 	public static final String PID_MS_SOAP = "org.eclipse.daanse.xmla.server.jakarta.jws.MsXmlAnalysisSoap";
 
 	public static final String PID_MS_SOAP_MSG_WS = "org.eclipse.daanse.xmla.server.jakarta.xml.ws.provider.soapmessage.XmlaWebserviceProvider";
@@ -80,7 +74,7 @@ public class DemoSetup {
 
 	private void initContext() throws IOException {
 
-		String PATH_TO_OBSERVE = "./catalogs";
+		String PATH_TO_OBSERVE = "/home/denis/cat";
 
 		String path = Paths.get(PATH_TO_OBSERVE).toAbsolutePath().normalize().toString();
 
