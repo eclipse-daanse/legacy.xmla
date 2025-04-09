@@ -105,7 +105,7 @@ public class RolapConnection extends ConnectionBase {
   private final RolapCatalog catalog;
   private CatalogReader schemaReader;
   protected Role role;
-  private Locale locale = Locale.getDefault();
+  private Locale locale = Locale.getDefault(); //TODO need take locale from LcidService
   private Scenario scenario;
   private boolean closed = false;
   private final long id;
