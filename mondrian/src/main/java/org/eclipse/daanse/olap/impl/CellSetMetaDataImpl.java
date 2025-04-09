@@ -1,5 +1,6 @@
 package org.eclipse.daanse.olap.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Statement;
@@ -15,14 +16,7 @@ public class CellSetMetaDataImpl implements CellSetMetaData {
     private final Statement statement;
     private final Query query;
 
-    private final NamedList<CellSetAxisMetaData> axesMetaData =
-        new ArrayNamedListImpl<>() {
-            @Override
-            public String getName(Object axisMetaData) {
-                return ((CellSetAxisMetaData)axisMetaData)
-                    .getAxisOrdinal().name();
-            }
-        };
+    private final List<CellSetAxisMetaData> axesMetaData =  new ArrayList<>();
     private final CellSetAxisMetaData filterAxisMetaData;
 
 
@@ -42,13 +36,7 @@ public class CellSetMetaDataImpl implements CellSetMetaData {
 
     @Override
     public List<Property> getCellProperties() {
-        final ArrayNamedListImpl<Property> list =
-            new ArrayNamedListImpl<>() {
-                @Override
-                public String getName(Object property) {
-                    return ((Property)property).getName();
-                }
-            };
+        final List<Property> list = new ArrayList<>();
         for (Property property : Property.StandardCellProperty.values()) {
             if (query.hasCellProperty(property.getName())) {
                 list.add(property);
