@@ -42,7 +42,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
@@ -52,11 +51,13 @@ import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.MaxMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.VirtualCubeMappingImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -777,10 +778,9 @@ class NonEmptyTest extends BatchTestCase {
                 ))
                 .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                 	.withMeasures(List.of(
-                		MeasureMappingImpl.builder()
+                		MaxMeasureMappingImpl.builder()
                 			.withName("Media")
                 			.withColumn(FoodmartMappingSupplier.MEDIA_TYPE_COLUMN_IN_PROMOTION)
-                			.withAggregatorType(MeasureAggregatorType.MAX)
                 			.withDatatype(InternalDataType.STRING)
                 			.build()
                 	))
@@ -903,10 +903,9 @@ class NonEmptyTest extends BatchTestCase {
                 ))
                 .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                 	.withMeasures(List.of(
-                		MeasureMappingImpl.builder()
+                		SumMeasureMappingImpl.builder()
                 			.withName("Unit Sales")
                 			.withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                			.withAggregatorType(MeasureAggregatorType.SUM)
                 			.build()
                 	))
                     .build()
@@ -2574,15 +2573,13 @@ class NonEmptyTest extends BatchTestCase {
                   .withMeasureGroups(List.of(
                 		  MeasureGroupMappingImpl.builder()
                 		  .withMeasures(List.of(
-                             MeasureMappingImpl.builder()
+                             SumMeasureMappingImpl.builder()
                                   .withName("Warehouse Cost")
                                   .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                                  .withAggregatorType(MeasureAggregatorType.SUM)
                                   .build(),
-                             MeasureMappingImpl.builder()
+                             SumMeasureMappingImpl.builder()
                               	  .withName("Warehouse Sales")
                                   .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                                  .withAggregatorType(MeasureAggregatorType.SUM)
                                   .build()
                 		   ))
                 		  .build()
@@ -2750,15 +2747,13 @@ class NonEmptyTest extends BatchTestCase {
                   .withMeasureGroups(List.of(
                 	  MeasureGroupMappingImpl.builder()
                 	  .withMeasures(List.of(
-                			  MeasureMappingImpl.builder()
+                			  SumMeasureMappingImpl.builder()
                 			  	.withName("Warehouse Cost")
                 			  	.withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                			  	.withAggregatorType(MeasureAggregatorType.SUM)
                 			  	.build(),
-                			  MeasureMappingImpl.builder()
+                			  SumMeasureMappingImpl.builder()
                 			  	.withName("Warehouse Sales")
                 			  	.withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                			  	.withAggregatorType(MeasureAggregatorType.SUM)
                 			  	.build()
                 	  ))
                       .build()
@@ -2933,15 +2928,13 @@ class NonEmptyTest extends BatchTestCase {
                   ))
                   .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                 		  .withMeasures(List.of(
-                              MeasureMappingImpl.builder()
+                              SumMeasureMappingImpl.builder()
                                   .withName("Warehouse Cost")
                                   .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                                  .withAggregatorType(MeasureAggregatorType.SUM)
                                   .build(),
-                              MeasureMappingImpl.builder()
+                              SumMeasureMappingImpl.builder()
                                   .withName("Warehouse Sales")
                                   .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                                  .withAggregatorType(MeasureAggregatorType.SUM)
                                   .build()
                 		   ))
                 		  .build())
@@ -5673,10 +5666,9 @@ class NonEmptyTest extends BatchTestCase {
                   .withMeasureGroups(List.of(
                 	MeasureGroupMappingImpl.builder()
                 	.withMeasures(List.of(
-                			MeasureMappingImpl.builder()
+                			SumMeasureMappingImpl.builder()
                             	.withName("Unit Sales")
                             	.withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            	.withAggregatorType(MeasureAggregatorType.SUM)
                             	.build()
                 	 ))
                 	.build()
@@ -5819,10 +5811,9 @@ class NonEmptyTest extends BatchTestCase {
           @Override
           protected CatalogMapping modifyCatalog(CatalogMapping catalog2) {
         	  MeasureGroupMappingImpl mgSales = MeasureGroupMappingImpl.builder().build();
-              MeasureMappingImpl m = MeasureMappingImpl.builder()
+        	  SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
             		  .withName("Unit Sales")
             		  .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-            		  .withAggregatorType(MeasureAggregatorType.SUM)
             		  .withFormatString("Standard")
             		  .withMeasureGroup(mgSales)
             		  .build();

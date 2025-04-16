@@ -25,7 +25,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
@@ -50,6 +49,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 
 public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
@@ -207,10 +207,9 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
         ))
         .build();
 
-        MeasureMappingImpl populationMeasure = MeasureMappingImpl.builder()
+        SumMeasureMappingImpl populationMeasure = SumMeasureMappingImpl.builder()
         .withName("Population")
         .withColumn(populationSpeciesMart)
-        .withAggregatorType(MeasureAggregatorType.SUM)
         .build();
         PhysicalCubeMappingImpl testCube;
 

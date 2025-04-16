@@ -22,12 +22,13 @@ import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationTableMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.AvgMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CountMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
@@ -36,11 +37,11 @@ import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TimeDimensionMappingImpl;
 
@@ -117,33 +118,30 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
             + "</Schema>";
      */
 
-    private static final MeasureMappingImpl unitSales = MeasureMappingImpl.builder()
+    private static final SumMeasureMappingImpl unitSales = SumMeasureMappingImpl.builder()
 	.withName("Unit Sales")
     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-    .withAggregatorType(MeasureAggregatorType.SUM)
     .withFormatString("Standard")
     .withVisible(false)
     .build();
 
-    private static final MeasureMappingImpl avgUnitSales = MeasureMappingImpl.builder()
+    private static final AvgMeasureMappingImpl avgUnitSales = AvgMeasureMappingImpl.builder()
     .withName("Avg Unit Sales")
     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-    .withAggregatorType(MeasureAggregatorType.AVG)
     .withFormatString("Standard")
     .withVisible(false)
     .build();
 
-    private static final MeasureMappingImpl storeCost = MeasureMappingImpl.builder()
+    private static final SumMeasureMappingImpl storeCost = SumMeasureMappingImpl.builder()
     .withName("Store Cost")
     .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-    .withAggregatorType(MeasureAggregatorType.SUM)
     .withFormatString("#,###.00")
     .build();
 
-    private static final MeasureMappingImpl customerCount = MeasureMappingImpl.builder()
+    private static final CountMeasureMappingImpl customerCount = CountMeasureMappingImpl.builder()
     .withName("Customer Count")
     .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
-    .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+    .withDistinct(true)
     .withFormatString("#,###")
     .build();
 

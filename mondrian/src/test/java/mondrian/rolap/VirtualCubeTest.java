@@ -32,7 +32,6 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
@@ -46,6 +45,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.VirtualCubeMappingImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -587,15 +587,13 @@ class VirtualCubeTest extends BatchTestCase {
                             .build()
                     ))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                        MeasureMappingImpl.builder()
+                        SumMeasureMappingImpl.builder()
                             .withName("Warehouse Cost")
                             .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
                             .build(),
-                        MeasureMappingImpl.builder()
+                        SumMeasureMappingImpl.builder()
                             .withName("Warehouse Sales")
                             .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
                             .build()
                     )).build()))
                     .build());
@@ -843,10 +841,9 @@ class VirtualCubeTest extends BatchTestCase {
                             .build()
                     ))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                    	unitsShipped = MeasureMappingImpl.builder()
+                    	unitsShipped = SumMeasureMappingImpl.builder()
                             .withName("Units Shipped")
                             .withColumn(FoodmartMappingSupplier.UNITS_SHIPPED_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
                             .withFormatString("#.0")
                             .build()
                     )).build()))
@@ -1785,11 +1782,10 @@ class VirtualCubeTest extends BatchTestCase {
                             .build()
                     ))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                    	storeSqftMeasure = MeasureMappingImpl.builder()
+                    	storeSqftMeasure = SumMeasureMappingImpl.builder()
                             .withName("Store Sqft")
                             //.withCaption("Store Sqft Caption")
                             .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
                             .withFormatString("#,###")
                             .build()
                     )).build()))

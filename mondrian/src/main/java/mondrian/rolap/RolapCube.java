@@ -63,6 +63,7 @@ import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -93,15 +94,15 @@ import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.impl.IdentifierNode;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
-import org.eclipse.daanse.rolap.aggregator.AbstractAggregator;
 import org.eclipse.daanse.rolap.aggregator.CountAggregator;
-import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.ActionMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberPropertyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.ColumnMeasureMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.CountMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
@@ -120,6 +121,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionColumnMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.SqlExpressionMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
@@ -127,13 +129,12 @@ import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.WritebackAttributeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.WritebackMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.WritebackTableMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.pojo.AnnotationMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CountMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.QueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
@@ -484,17 +485,12 @@ public class RolapCube extends CubeBase {
             		.build();
             List<AnnotationMappingImpl> annotations = new ArrayList<>();
             annotations.add(internalUsage);
-            final MeasureMappingImpl mappingMeasure = MeasureMappingImpl
+            final CountMeasureMappingImpl mappingMeasure = CountMeasureMappingImpl
             		.builder()
             		.withName("Fact Count")
-            		.withAggregatorType(MeasureAggregatorType.COUNT)
             		.withVisible(false)
             		.withAnnotations(annotations)
             		.build();
-            mappingMeasure.setName("Fact Count");
-            mappingMeasure.setAggregatorType(MeasureAggregatorType.COUNT);
-            mappingMeasure.setVisible(false);
-            mappingMeasure.setAnnotations(annotations);
             factCountMeasure =
                 createMeasure(
                     cubeMapping, measuresLevel, measureList.size(), mappingMeasure);
@@ -696,27 +692,34 @@ public class RolapCube extends CubeBase {
         int ordinal,
         final MeasureMapping measureMapping)
     {
-        ColumnMapping columnMapping = measureMapping.getColumn();
-        RolapSqlExpression measureExp;
-        if (columnMapping instanceof PhysicalColumnMapping pc) {
-            measureExp = new RolapColumn(
-                getAlias(getFact()), pc.getName());
-        } else if (columnMapping instanceof SQLExpressionColumnMapping scm) {
-            measureExp = new RolapSqlExpression(scm);
-        } else if (measureMapping.getAggregatorType().equals(MeasureAggregatorType.COUNT)) {
-            // it's ok if count has no expression; it means 'count(*)'
-            measureExp = null;
-        } else {
-            throw new BadMeasureSourceException(
-                cubeMapping.getName(), measureMapping.getName());
+        ColumnMapping columnMapping;
+        RolapSqlExpression measureExp = null;
+        if (measureMapping instanceof ColumnMeasureMapping cmm) {
+            columnMapping = cmm.getColumn();
+            if (columnMapping instanceof PhysicalColumnMapping pc) {
+                measureExp = new RolapColumn(
+                        getAlias(getFact()), pc.getName());
+            } else if (columnMapping instanceof SQLExpressionColumnMapping scm) {
+                measureExp = new RolapSqlExpression(scm);
+            } else if (measureMapping instanceof CountMeasureMapping) {
+                // it's ok if count has no expression; it means 'count(*)'
+                measureExp = null;
+            } else {
+                throw new BadMeasureSourceException(
+                        cubeMapping.getName(), measureMapping.getName());
+            }
         }
-
+        if (measureMapping instanceof SqlExpressionMeasureMapping cmm) {
+            if (cmm.getColumn() != null) {
+                measureExp = new RolapSqlExpression(cmm.getColumn());
+            } else {
+                throw new BadMeasureSourceException(
+                        cubeMapping.getName(), measureMapping.getName());
+            }
+        }
         // Validate aggregator name. Substitute deprecated "distinct count"
         // with modern "distinct-count".
-        String aggregator = measureMapping.getAggregatorType().getValue();
-        if (aggregator.equals("distinct count")) {
-            aggregator = DistinctCountAggregator.INSTANCE.getName();
-        }
+        Aggregator aggregator = AggragationFactory.getAggregator(measureMapping);
         final RolapBaseCubeMeasure measure =
             new RolapBaseCubeMeasure(
                 this, null, measuresLevel, measureMapping.getName(),

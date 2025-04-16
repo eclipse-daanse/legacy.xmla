@@ -52,7 +52,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
@@ -67,6 +66,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CountMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
@@ -78,6 +78,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TimeDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.VirtualCubeMappingImpl;
@@ -776,10 +777,10 @@ class AggregationOnDistinctCountMeasuresTest {
                           .build()
                   ))
                   .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                      MeasureMappingImpl.builder()
+                      CountMeasureMappingImpl.builder()
                           .withName("Cost Count")
                           .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                          .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                          .withDistinct(true)
                           .build()
                   )).build()))
                   .build());
@@ -901,10 +902,10 @@ class AggregationOnDistinctCountMeasuresTest {
                           .build()
                   ))
                   .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                      MeasureMappingImpl.builder()
+                      CountMeasureMappingImpl.builder()
                           .withName("Cost Count")
                           .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                          .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                          .withDistinct(true)
                           .build()
                   )).build()))
                   .build());
@@ -1027,10 +1028,10 @@ class AggregationOnDistinctCountMeasuresTest {
                           .build()
                   ))
                   .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                          MeasureMappingImpl.builder()
+                          CountMeasureMappingImpl.builder()
                           .withName("Cost Count")
                           .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                          .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                          .withDistinct(true)
                           .build()
                   )).build()))
                   .build());
@@ -2156,10 +2157,9 @@ class AggregationOnDistinctCountMeasuresTest {
               ))
               .build();
 
-        	  MeasureMappingImpl unitSales = MeasureMappingImpl.builder()
+        	  MeasureMappingImpl unitSales = SumMeasureMappingImpl.builder()
               .withName("Unit Sales")
               .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-              .withAggregatorType(MeasureAggregatorType.SUM)
               .withFormatString("Standard")
               .build();
 
@@ -2231,28 +2231,25 @@ class AggregationOnDistinctCountMeasuresTest {
                                       .build()
                               ))
                               .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                                MeasureMappingImpl.builder()
+                                SumMeasureMappingImpl.builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
                                     .withFormatString("Standard")
                                     .build(),
-                                  MeasureMappingImpl.builder()
+                                  SumMeasureMappingImpl.builder()
                                       .withName("Store Cost")
                                       .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                      .withAggregatorType(MeasureAggregatorType.SUM)
                                       .withFormatString("#,###.00")
                                       .build(),
-                                  MeasureMappingImpl.builder()
+                                  SumMeasureMappingImpl.builder()
                                       .withName("Store Sales")
                                       .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                      .withAggregatorType(MeasureAggregatorType.SUM)
                                       .withFormatString("#,###.00")
                                       .build(),
-                                  MeasureMappingImpl.builder()
+                                  CountMeasureMappingImpl.builder()
                                       .withName("Customer Count")
                                       .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
-                                      .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                                      .withDistinct(true)
                                       .withFormatString("#,###")
                                       .build()
                               )).build()))

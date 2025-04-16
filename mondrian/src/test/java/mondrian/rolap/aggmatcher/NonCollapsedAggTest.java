@@ -22,7 +22,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.MeasureGroupMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
@@ -35,11 +34,13 @@ import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.MaxMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -769,10 +770,9 @@ class NonCollapsedAggTest extends AggTableTestCase {
                             .build()
                     ))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                            MeasureMappingImpl.builder()
+                            SumMeasureMappingImpl.builder()
                             .withName("Unit Sales")
                             .withColumn(unitSalesFooFact)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
                             .withFormatString("Standard")
                             .build()
 
@@ -832,11 +832,10 @@ class NonCollapsedAggTest extends AggTableTestCase {
                 result.addAll(super.physicalCubeMeasureGroups(cube));
                 if ("Sales".equals(cube.getName())) {
                     result.add(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                    	MeasureMappingImpl.builder()
+                    	MaxMeasureMappingImpl.builder()
                         .withName("Bogus Number")
                         .withColumn(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_SALES_FACT_1997)
                         .withDatatype(InternalDataType.NUMERIC)
-                        .withAggregatorType(MeasureAggregatorType.MAX)
                         .withVisible(true)
                         .build())).build());
                 }

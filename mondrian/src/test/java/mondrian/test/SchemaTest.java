@@ -69,7 +69,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
@@ -87,6 +86,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AnnotationMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CountMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
@@ -99,7 +99,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyFormatterMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
@@ -623,10 +623,9 @@ class SchemaTest {
                 if ("Sales".equals(cube.getName())) {
                     result.add(MeasureGroupMappingImpl.builder()
                     		.withMeasures(List.of(
-                                    MeasureMappingImpl
+                                    CountMeasureMappingImpl
                                     .builder()
                                     .withName("Fact Count")
-                                    .withAggregatorType(MeasureAggregatorType.COUNT)
                                     .build()
                     				))
                     		.build()
@@ -1609,11 +1608,10 @@ class SchemaTest {
                     .withDimensionConnectors(List.of(dimension1, dimension2))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                     		.withMeasures(List.of(
-                                MeasureMappingImpl
+                                SumMeasureMappingImpl
                                     .builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
                                     .withFormatString("Standard")
                                     .build()))
                     		.build()))
@@ -1888,11 +1886,10 @@ class SchemaTest {
                     .withDimensionConnectors(List.of(dimension1, dimension2))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                     		.withMeasures(List.of(
-                                MeasureMappingImpl
+                                SumMeasureMappingImpl
                                     .builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
                                     .withFormatString("Standard")
                                     .build()))
                     		.build()))
@@ -2097,18 +2094,16 @@ class SchemaTest {
                         .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder().withMeasures(
                         			List.of(
-                                        MeasureMappingImpl
+                                        SumMeasureMappingImpl
                                             .builder()
                                             .withName("Unit Sales")
                                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                            .withAggregatorType(MeasureAggregatorType.SUM)
                                             .withFormatString("Standard")
                                             .build(),
-                                        MeasureMappingImpl
+                                        SumMeasureMappingImpl
                                             .builder()
                                             .withName("Store Sales")
                                             .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                            .withAggregatorType(MeasureAggregatorType.SUM)
                                             .withFormatString("#,###.00")
                                             .build()
                                     )
@@ -2311,18 +2306,16 @@ class SchemaTest {
                         .withMeasureGroups(List.of(
                             	MeasureGroupMappingImpl.builder().withMeasures(
                             			List.of(
-                            MeasureMappingImpl
+                            SumMeasureMappingImpl
                                 .builder()
                                 .withName("Unit Sales")
                                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("Standard")
                                 .build(),
-                            MeasureMappingImpl
+                            SumMeasureMappingImpl
                                 .builder()
                                 .withName("Store Sales")
                                 .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#,###.00")
                                 .build())).build()
                         ))
@@ -2520,18 +2513,16 @@ class SchemaTest {
                         .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder().withMeasures(
                         			List.of(
-                                        MeasureMappingImpl
+                                        SumMeasureMappingImpl
                                             .builder()
                                             .withName("Unit Sales")
                                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                            .withAggregatorType(MeasureAggregatorType.SUM)
                                             .withFormatString("Standard")
                                             .build(),
-                                        MeasureMappingImpl
+                                        SumMeasureMappingImpl
                                             .builder()
                                             .withName("Store Sales")
                                             .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                            .withAggregatorType(MeasureAggregatorType.SUM)
                                             .withFormatString("#,###.00")
                                             .build()
                                     )
@@ -2685,11 +2676,11 @@ class SchemaTest {
                         	.withHierarchies(List.of(h2)).build())
                         .build();
 
-                MeasureMappingImpl stm = MeasureMappingImpl
+                SumMeasureMappingImpl stm = SumMeasureMappingImpl
                         .builder()
                         .withName("Supply Time")
                         .withColumn(FoodmartMappingSupplier.SUPPLY_TIME_COLUMN_IN_INVENTORY_FACKT_1997)
-                        .withAggregatorType(MeasureAggregatorType.SUM)
+                        
                         .build();
 
                  PhysicalCubeMappingImpl c = PhysicalCubeMappingImpl
@@ -2702,18 +2693,18 @@ class SchemaTest {
                         .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder().withMeasures(
                         			List.of(
-                                        MeasureMappingImpl
+                                        SumMeasureMappingImpl
                                             .builder()
                                             .withName("Store Invoice")
                                             .withColumn(FoodmartMappingSupplier.STORE_INVOICE_COLUMN_IN_INVENTORY_FACKT_1997)
-                                            .withAggregatorType(MeasureAggregatorType.SUM)
+                                            
                                             .build(),
                                         stm,
-                                        MeasureMappingImpl
+                                        SumMeasureMappingImpl
                                             .builder()
                                             .withName("Warehouse Cost")
                                             .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                                            .withAggregatorType(MeasureAggregatorType.SUM)
+                                            
                                             .build()
                                     )
                         	).build()
@@ -2845,11 +2836,11 @@ class SchemaTest {
                         .withHierarchies(List.of(h2)).build())
                         .build();
 
-                    MeasureMappingImpl stm = MeasureMappingImpl
+                    SumMeasureMappingImpl stm = SumMeasureMappingImpl
                             .builder()
                             .withName("Supply Time")
                             .withColumn(FoodmartMappingSupplier.SUPPLY_TIME_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .build();
 
                     PhysicalCubeMappingImpl c = PhysicalCubeMappingImpl
@@ -2861,18 +2852,18 @@ class SchemaTest {
                         .withMeasureGroups(List.of(
                             	MeasureGroupMappingImpl.builder().withMeasures(
                             			List.of(
-                                            MeasureMappingImpl
+                                            SumMeasureMappingImpl
                                                 .builder()
                                                 .withName("Store Invoice")
                                                 .withColumn(FoodmartMappingSupplier.STORE_INVOICE_COLUMN_IN_INVENTORY_FACKT_1997)
-                                                .withAggregatorType(MeasureAggregatorType.SUM)
+                                                
                                                 .build(),
                                             stm,
-                                            MeasureMappingImpl
+                                            SumMeasureMappingImpl
                                                 .builder()
                                                 .withName("Warehouse Cost")
                                                 .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                                                .withAggregatorType(MeasureAggregatorType.SUM)
+                                                
                                                 .build()
                                         )
                             	).build()
@@ -2980,18 +2971,18 @@ class SchemaTest {
                         .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
-                                MeasureMappingImpl
+                                SumMeasureMappingImpl
                                     .builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
+                                    
                                     .withFormatString("Standard")
                                     .build(),
-                                MeasureMappingImpl
+                                SumMeasureMappingImpl
                                     .builder()
                                     .withName("Store Cost")
                                     .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
+                                    
                                     .withFormatString("#,###.00")
                                     .build()
                             ))
@@ -3085,18 +3076,18 @@ class SchemaTest {
                         .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
-                                MeasureMappingImpl
+                                SumMeasureMappingImpl
                                     .builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
+                                    
                                     .withFormatString("Standard")
                                     .build(),
-                                MeasureMappingImpl
+                                SumMeasureMappingImpl
                                     .builder()
                                     .withName("Store Cost")
                                     .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
+                                    
                                     .withFormatString("#,###.00")
                                     .build()
                             ))
@@ -3188,18 +3179,18 @@ class SchemaTest {
                         .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
-                                MeasureMappingImpl
+                                SumMeasureMappingImpl
                                     .builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
+                                    
                                     .withFormatString("Standard")
                                     .build(),
-                                MeasureMappingImpl
+                                SumMeasureMappingImpl
                                     .builder()
                                     .withName("Store Cost")
                                     .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
+                                    
                                     .withFormatString("#,###.00")
                                     .build()
                             ))
@@ -3267,17 +3258,17 @@ class SchemaTest {
                     .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
-                        MeasureMappingImpl
+                        SumMeasureMappingImpl
                             .builder()
                             .withName("Cars")
                             .withColumn(FoodmartMappingSupplier.NUM_CARS_OWNED_COLUMN_IN_CUSTOMER)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .build(),
-                        MeasureMappingImpl
+                        SumMeasureMappingImpl
                             .builder()
                             .withName("Children")
                             .withColumn(FoodmartMappingSupplier.TOTAL_CHILDREN_COLUMN_IN_CUSTOMER)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .build()
                     ))
                     .build()
@@ -3397,18 +3388,18 @@ class SchemaTest {
                     .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
-                        MeasureMappingImpl
+                        SumMeasureMappingImpl
                             .builder()
                             .withName("Unit Sales")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .withFormatString("Standard")
                             .build(),
-                        MeasureMappingImpl
+                        SumMeasureMappingImpl
                             .builder()
                             .withName("Store Cost")
                             .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .withFormatString("#,###.00")
                             .build()
                     ))
@@ -3511,18 +3502,18 @@ class SchemaTest {
                     .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
-                        MeasureMappingImpl
+                        SumMeasureMappingImpl
                             .builder()
                             .withName("Unit Sales")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .withFormatString("Standard")
                             .build(),
-                        MeasureMappingImpl
+                        SumMeasureMappingImpl
                             .builder()
                             .withName("Store Cost")
                             .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .withFormatString("#,###.00")
                             .build()
                     ))
@@ -3657,17 +3648,17 @@ class SchemaTest {
                     .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
-                        MeasureMappingImpl
+                        SumMeasureMappingImpl
                             .builder()
                             .withName("Warehouse Cost")
                             .withColumn(WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .build(),
-                        MeasureMappingImpl
+                        SumMeasureMappingImpl
                             .builder()
                             .withName("Warehouse Sales")
                             .withColumn(WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .build()
                     ))
                     .build()
@@ -3841,17 +3832,17 @@ class SchemaTest {
                     .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
-                        MeasureMappingImpl
+                        SumMeasureMappingImpl
                             .builder()
                             .withName("Warehouse Cost")
                             .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .build(),
-                        MeasureMappingImpl
+                        SumMeasureMappingImpl
                             .builder()
                             .withName("Warehouse Sales")
                             .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .build()
                     ))
                     .build()
@@ -3986,18 +3977,18 @@ class SchemaTest {
                     .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
-                        MeasureMappingImpl
+                        SumMeasureMappingImpl
                             .builder()
                             .withName("Store Sqft")
                             .withColumn(STORE_SQFT_COLUMN_IN_STORE)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .withFormatString("#,###")
                             .build(),
-                        MeasureMappingImpl
+                        SumMeasureMappingImpl
                             .builder()
                             .withName("Grocery Sqft")
                             .withColumn(GROCERY_SQFT_COLUMN_IN_STORE)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .withFormatString("#,###")
                             .build()
                     ))
@@ -4086,11 +4077,11 @@ class SchemaTest {
                 result.addAll(super.physicalCubeMeasureGroups(cube));
                 if ("Sales".equals(cube.getName())) {
                     result.add(MeasureGroupMappingImpl.builder()
-                    		.withMeasures(List.of(MeasureMappingImpl
+                    		.withMeasures(List.of(CountMeasureMappingImpl
                     	            .builder()
                     	            .withName("Customer Count2")
                     	            .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
-                    	            .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                    	            .withDistinct(true)
                     	            .withFormatString("#,###")
                     	            .build()))
                     		.build()
@@ -4166,7 +4157,7 @@ class SchemaTest {
                 result.addAll(super.physicalCubeMeasureGroups(cube));
                 if ("Sales".equals(cube.getName())) {
                     result.add(MeasureGroupMappingImpl.builder()
-                    		.withMeasures(List.of(MeasureMappingImpl
+                    		.withMeasures(List.of(SumMeasureMappingImpl
                     	            .builder()
                     	            .withName("Customer Count2")
                     	            .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
@@ -4330,15 +4321,15 @@ class SchemaTest {
                         .withDimensionConnectors(List.of(d1, d2))
                         .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                         		.withMeasures(List.of(
-                                    MeasureMappingImpl.builder()
+                                    SumMeasureMappingImpl.builder()
                                         .withName("Store Cost").withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                        .withAggregatorType(MeasureAggregatorType.SUM)
+                                        
                                         .withFormatString("#,###.00")
                                         .build(),
-                                    MeasureMappingImpl.builder()
+                                    SumMeasureMappingImpl.builder()
                                         .withName("Store Sales")
                                         .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                        .withAggregatorType(MeasureAggregatorType.SUM)
+                                        
                                         .withFormatString("#,###.00")
                                         .build()
                         		))
@@ -4561,21 +4552,21 @@ class SchemaTest {
                         .withDimensionConnectors(List.of(d1, d2, d3))
                         .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                         		.withMeasures(List.of(
-                                    MeasureMappingImpl.builder()
+                                    SumMeasureMappingImpl.builder()
                                         .withName("Store Cost").withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                        .withAggregatorType(MeasureAggregatorType.SUM)
+                                        
                                         .withFormatString("#,###.00")
                                         .build(),
-                                    MeasureMappingImpl.builder()
+                                    SumMeasureMappingImpl.builder()
                                         .withName("Store Sales")
                                         .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                        .withAggregatorType(MeasureAggregatorType.SUM)
+                                        
                                         .withFormatString("#,###.00")
                                         .build(),
-                                    MeasureMappingImpl.builder()
+                                    SumMeasureMappingImpl.builder()
                                         .withName("Unit Sales")
                                         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                        .withAggregatorType(MeasureAggregatorType.SUM)
+                                        
                                         .withFormatString("#,###")
                                         .build()
                         		))
@@ -4799,11 +4790,11 @@ class SchemaTest {
                         .withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
                         .build();
 
-                MeasureMappingImpl unitSalesMeasure = MeasureMappingImpl
+                SumMeasureMappingImpl unitSalesMeasure = SumMeasureMappingImpl
                 .builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                .withAggregatorType(MeasureAggregatorType.SUM)
+                
                 .withFormatString("Standard")
                 .build();
 
@@ -4817,11 +4808,11 @@ class SchemaTest {
                     .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(unitSalesMeasure,
-                        MeasureMappingImpl
+                        SumMeasureMappingImpl
                             .builder()
                             .withName("Store Cost")
                             .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .withFormatString("#,###.00")
                             .build()
                     ))
@@ -5021,11 +5012,11 @@ class SchemaTest {
                         		.build())
                         .build();
 
-                MeasureMappingImpl unitSalesMeasure = MeasureMappingImpl
+                SumMeasureMappingImpl unitSalesMeasure = SumMeasureMappingImpl
                     .builder()
                     .withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
+                    
                     .withFormatString("Standard")
                 .build();
 
@@ -5094,11 +5085,11 @@ class SchemaTest {
                         .build();
 
 
-                MeasureMappingImpl unitSalesMeasure = MeasureMappingImpl
+                SumMeasureMappingImpl unitSalesMeasure = SumMeasureMappingImpl
                     .builder()
                     .withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
+                    
                     .withFormatString("Standard")
                 .build();
 
@@ -5261,11 +5252,11 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                MeasureMappingImpl m = MeasureMappingImpl
+                SumMeasureMappingImpl m = SumMeasureMappingImpl
                 .builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                .withAggregatorType(MeasureAggregatorType.SUM)
+                
                 .withFormatString("Standard")
                 .build();
 
@@ -5334,11 +5325,11 @@ class SchemaTest {
                     .withMeasureGroups(List.of(
                     	MeasureGroupMappingImpl.builder()
                     	.withMeasures(List.of(
-                                MeasureMappingImpl
+                                SumMeasureMappingImpl
                                 .builder()
                                 .withName("Unit Sales")
                                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
+                                
                                 .withFormatString("Standard")
                                 .build()
                         ))
@@ -5915,16 +5906,16 @@ class SchemaTest {
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                     .withDimensionConnectors(List.of(d1, d2, d3))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                        MeasureMappingImpl.builder()
+                        SumMeasureMappingImpl.builder()
                             .withName("Unit Sales")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .withFormatString("Standard")
                             .build(),
-                        MeasureMappingImpl.builder()
+                        SumMeasureMappingImpl.builder()
                             .withName("Store Cost")
                             .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                            .withAggregatorType(MeasureAggregatorType.SUM)
+                            
                             .withFormatString("#,###.00")
                             .build()
                     		)).build()))
@@ -6049,16 +6040,16 @@ class SchemaTest {
                     .withDimensionConnectors(List.of(d1))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                     		.withMeasures(List.of(
-                                MeasureMappingImpl.builder()
+                                SumMeasureMappingImpl.builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
+                                    
                                     .withFormatString("Standard")
                                     .build(),
-                                MeasureMappingImpl.builder()
+                                SumMeasureMappingImpl.builder()
                                     .withName("Store Cost")
                                     .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
+                                    
                                     .withFormatString("#,###.00")
                                     .build()
                             ))
@@ -6208,18 +6199,18 @@ class SchemaTest {
                     .withMeasureGroups(List.of(
                     	MeasureGroupMappingImpl.builder()
                     	.withMeasures(List.of(
-                            MeasureMappingImpl
+                            SumMeasureMappingImpl
                                 .builder()
                                 .withName("Unit Sales")
                                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
+                                
                                 .withFormatString("Standard")
                                 .build(),
-                            MeasureMappingImpl
+                            SumMeasureMappingImpl
                                 .builder()
                                 .withName("Store Cost")
                                 .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
+                                
                                 .withFormatString("#,###.00")
                                 .build()
                     	))
@@ -7231,18 +7222,18 @@ class SchemaTest {
                         .withDimension((DimensionMappingImpl) look(FoodmartMappingSupplier.DIMENSION_PRODUCT))
                         .build();
 
-                MeasureMappingImpl measure1 = MeasureMappingImpl
+                SumMeasureMappingImpl measure1 = SumMeasureMappingImpl
                     .builder()
                     .withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
+                    
                     .withFormatString("Standard")
                     .build();
-                MeasureMappingImpl measure2 = MeasureMappingImpl
+                SumMeasureMappingImpl measure2 = SumMeasureMappingImpl
                     .builder()
                     .withName("Store Sales")
                     .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
+                    
                     .withFormatString("Standard")
                     .build();
                 PhysicalCubeMappingImpl c = PhysicalCubeMappingImpl
@@ -7675,7 +7666,7 @@ class SchemaTest {
                         .withDimension(sd1)
                         .build();
 
-                    MeasureMappingImpl unitSalesMeasure;
+                    SumMeasureMappingImpl unitSalesMeasure;
                     PhysicalCubeMappingImpl c1 = PhysicalCubeMappingImpl.builder()
                         .withName(salesCubeName)
                         .withDescription("Cube description")
@@ -7693,10 +7684,10 @@ class SchemaTest {
                         .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
-                        		unitSalesMeasure = MeasureMappingImpl.builder()
+                        		unitSalesMeasure = SumMeasureMappingImpl.builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
+                                    
                                     .withFormatString("Standard")
                                     //.withCaption("Measure caption")
                                     .withDescription("Measure description")
@@ -7747,7 +7738,7 @@ class SchemaTest {
                         ))
                         .build();
 
-                    MeasureMappingImpl unitsShippedMeasure;
+                    SumMeasureMappingImpl unitsShippedMeasure;
 
                     PhysicalCubeMappingImpl c2 = PhysicalCubeMappingImpl.builder()
                         .withName(warehouseCubeName)
@@ -7767,10 +7758,10 @@ class SchemaTest {
                         .withMeasureGroups(List.of(
                             	MeasureGroupMappingImpl.builder()
                             	.withMeasures(List.of(
-                                unitsShippedMeasure = MeasureMappingImpl.builder()
+                                unitsShippedMeasure = SumMeasureMappingImpl.builder()
                                 .withName("Units Shipped")
                                 .withColumn(FoodmartMappingSupplier.UNITS_SHIPPED_COLUMN_IN_INVENTORY_FACKT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
+                                
                                 .withFormatString("#.0")
                                 .build())).build()
                         ))
@@ -8283,8 +8274,8 @@ class SchemaTest {
             @Override
             protected CatalogMapping modifyCatalog(CatalogMapping schemaMappingOriginal) {
             	LevelMappingImpl stateLevel;
-            	MeasureMappingImpl unitsales1Measure;
-            	MeasureMappingImpl unitsales2Measure;
+            	SumMeasureMappingImpl unitsales1Measure;
+            	SumMeasureMappingImpl unitsales2Measure;
                 StandardDimensionMappingImpl sd1 = StandardDimensionMappingImpl.builder()
                         .withName("Store")
                         .withHierarchies(List.of(
@@ -8363,11 +8354,11 @@ class SchemaTest {
                             ))
                         .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                         		.withMeasures(List.of(
-                        				unitsales1Measure = MeasureMappingImpl.builder()
+                        				unitsales1Measure = SumMeasureMappingImpl.builder()
                                         .withName("unitsales1")
                                         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                                         .withDatatype(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                                        .withAggregatorType(MeasureAggregatorType.SUM)
+                                        
                                         .withVisible(true)
                                         .build()
                                 ))
@@ -8418,11 +8409,11 @@ class SchemaTest {
                         ))
                         .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                         		.withMeasures(List.of(
-                        				unitsales2Measure = MeasureMappingImpl.builder()
+                        				unitsales2Measure = SumMeasureMappingImpl.builder()
                                         .withName("unitsales2")
                                         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                                         .withDatatype(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                                        .withAggregatorType(MeasureAggregatorType.SUM)
+                                        
                                         .withVisible(true)
                                         .build()
                                 ))
@@ -8916,10 +8907,10 @@ class SchemaTest {
                         ))
                         .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                         		.withMeasures(List.of(
-                                    MeasureMappingImpl.builder()
+                                    SumMeasureMappingImpl.builder()
                                         .withName("Unit Sales")
                                         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                        .withAggregatorType(MeasureAggregatorType.SUM)
+                                        
                                         .withFormatString("#,###")
                                         .build()
                                 ))
@@ -9360,10 +9351,10 @@ class SchemaTest {
                         ))
                         .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
-                            MeasureMappingImpl.builder()
+                            SumMeasureMappingImpl.builder()
                                 .withName("Store Sqft")
                                 .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
+                                
                                 .withFormatString("#,###")
                                 .build()
                         )).build()))
@@ -9492,10 +9483,10 @@ class SchemaTest {
                         .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
-                                MeasureMappingImpl.builder()
+                                SumMeasureMappingImpl.builder()
                                     .withName("Store Sqft")
                                     .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
+                                    
                                     .withFormatString("#,###")
                                     .build()
                             ))
@@ -9647,10 +9638,10 @@ class SchemaTest {
                         .withMeasureGroups(List.of(
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
-                                    MeasureMappingImpl.builder()
+                                    SumMeasureMappingImpl.builder()
                                     .withName("Store Sqft")
                                     .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
+                                    
                                     .withFormatString("#,###")
                                     .build()
                         	))
@@ -9741,10 +9732,10 @@ class SchemaTest {
                         .withMeasureGroups(List.of(
                            	MeasureGroupMappingImpl.builder()
                             	.withMeasures(List.of(
-                            		MeasureMappingImpl.builder()
+                            		SumMeasureMappingImpl.builder()
                             		.withName("Store Sqft")
                             		.withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                            		.withAggregatorType(MeasureAggregatorType.SUM)
+                            		
                             		.withFormatString("#,###")
                             		.build()
                             	))
@@ -9832,10 +9823,10 @@ class SchemaTest {
                         ))
                         .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                         		.withMeasures(List.of(
-                                    MeasureMappingImpl.builder()
+                                    SumMeasureMappingImpl.builder()
                                         .withName("Store Sqft")
                                         .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                        .withAggregatorType(MeasureAggregatorType.SUM)
+                                        
                                         .withFormatString("#,###")
                                         .build()
                                 )).build()))
@@ -9974,10 +9965,10 @@ class SchemaTest {
                     .withUniqueMembers(true)
                     .build();
 
-                MeasureMappingImpl m = MeasureMappingImpl.builder()
+                SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                .withAggregatorType(MeasureAggregatorType.SUM)
+                
                 .withFormatString("Standard")
                 .build();
 
@@ -10172,10 +10163,10 @@ class SchemaTest {
                     .withUniqueMembers(true)
                     .build();
 
-                MeasureMappingImpl m = MeasureMappingImpl.builder()
+                SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                .withAggregatorType(MeasureAggregatorType.SUM)
+                
                 .withFormatString("Standard")
                 .build();
 
@@ -10283,10 +10274,10 @@ class SchemaTest {
             public TestTwoNonCollapsedAggregateModifier(CatalogMapping catalog) {
                 super(catalog);
             }
-            MeasureMappingImpl m = MeasureMappingImpl.builder()
+            SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
             .withName("Unit Sales")
             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-            .withAggregatorType(MeasureAggregatorType.SUM)
+            
             .withFormatString("Standard")
             .build();
 
@@ -10759,10 +10750,10 @@ class SchemaTest {
                     .withUniqueMembers(true)
                     .build();
 
-                MeasureMappingImpl m = MeasureMappingImpl.builder()
+                SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                .withAggregatorType(MeasureAggregatorType.SUM)
+                
                 .withFormatString("Standard")
                 .build();
 
@@ -11418,10 +11409,10 @@ class SchemaTest {
                                 ))
                                 .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                                 		.withMeasures(List.of(
-                                                MeasureMappingImpl.builder()
+                                                SumMeasureMappingImpl.builder()
                                                 .withName("Org Salary")
                                                 .withColumn(FoodmartMappingSupplier.SALARY_PAID_COLUMN_IN_SALARY)
-                                                .withAggregatorType(MeasureAggregatorType.SUM)
+                                                
                                                 .withFormatString("Currency")
                                                 .build()
                                         ))
@@ -11565,16 +11556,16 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> catalogCubes(CatalogMapping schema) {
                 List<CubeMapping> result = new ArrayList<>();
-                MeasureMappingImpl mA = MeasureMappingImpl.builder()
+                SumMeasureMappingImpl mA = SumMeasureMappingImpl.builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                .withAggregatorType(MeasureAggregatorType.SUM)
+                
                 .withFormatString("Standard")
                 .build();
-                MeasureMappingImpl mB = MeasureMappingImpl.builder()
+                SumMeasureMappingImpl mB = SumMeasureMappingImpl.builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                .withAggregatorType(MeasureAggregatorType.SUM)
+                
                 .withFormatString("Standard")
                 .build();
 
@@ -11598,16 +11589,15 @@ class SchemaTest {
                     	MeasureGroupMappingImpl.builder()
                     	.withMeasures(List.of(
                     		mA,
-                            MeasureMappingImpl.builder()
+                            CountMeasureMappingImpl.builder()
                                 .withName("Customer Count")
                                 .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                                .withDistinct(true)
                                 .withFormatString("#,###")
                                 .build(),
-                            MeasureMappingImpl.builder()
+                            CountMeasureMappingImpl.builder()
                                 .withName("Fantastic Count for Different Types of Promotion")
                                 .withColumn(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.COUNT)
                                 .withFormatString("Standard")
                                 .build()
                     	))
@@ -11634,10 +11624,9 @@ class SchemaTest {
                         	MeasureGroupMappingImpl.builder()
                         	.withMeasures(List.of(
                         mB,
-                        MeasureMappingImpl.builder()
+                        CountMeasureMappingImpl.builder()
                             .withName("Fantastic Count for Different Types of Promotion")
                             .withColumn(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_SALES_FACT_1997)
-                            .withAggregatorType(MeasureAggregatorType.COUNT)
                             .withFormatString("Standard")
                             .build()
                     )).build()))
@@ -11870,10 +11859,10 @@ class SchemaTest {
                         .withForeignKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
                         .build();
 
-                    MeasureMappingImpl m = MeasureMappingImpl.builder()
+                    SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
                     .withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
+                    
                     .withFormatString("Standard")
                     .build();
 

@@ -93,7 +93,7 @@ public class RolapBaseCubeMeasure
         String description,
         String formatString,
         RolapSqlExpression expression,
-        String aggregatorName,
+        Aggregator aggregator,
         InternalDataType datatype,
         MetaData metadata)
     {
@@ -125,11 +125,7 @@ public class RolapBaseCubeMeasure
         Context context=getCube().getContext();
         
         // Validate aggregator.
-        this.aggregator = context.getAggregator(aggregatorName).orElseThrow(()->{
-            
-            throw new OlapRuntimeException(MessageFormat.format(unknownAggregator,
-                    aggregatorName));
-        });
+        this.aggregator = aggregator;
 
         setProperty(StandardProperty.AGGREGATION_TYPE.getName(), aggregator);
         if (datatype == null) {

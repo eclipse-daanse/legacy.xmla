@@ -42,7 +42,6 @@ import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
@@ -63,6 +62,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingColumnImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -1413,17 +1413,15 @@ class TestAggregationManager extends BatchTestCase {
                         ))
                         .build();
 
-            	MeasureMappingImpl sales1UnitSales = MeasureMappingImpl.builder()
+            	MeasureMappingImpl sales1UnitSales = SumMeasureMappingImpl.builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                .withAggregatorType(MeasureAggregatorType.SUM)
                 .withFormatString("Standard")
                 .build();
 
-            	MeasureMappingImpl sales2UnitSales = MeasureMappingImpl.builder()
+            	MeasureMappingImpl sales2UnitSales = SumMeasureMappingImpl.builder()
             		.withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("Standard")
                     .build();
 
@@ -1444,10 +1442,9 @@ class TestAggregationManager extends BatchTestCase {
                     ))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
                     	sales1UnitSales,
-                        MeasureMappingImpl.builder()
+                        SumMeasureMappingImpl.builder()
                         .withName("Store Sales")
                         .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                        .withAggregatorType(MeasureAggregatorType.SUM)
                         .withFormatString("Standard")
                         .build()
                     )).build()))
@@ -1725,17 +1722,15 @@ class TestAggregationManager extends BatchTestCase {
                     ))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                     		.withMeasures(List.of(
-                                MeasureMappingImpl.builder()
+                                SumMeasureMappingImpl.builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
                                     .withFormatString("Standard")
                                     .withVisible(false)
                                     .build(),
-                                MeasureMappingImpl.builder()
+                                SumMeasureMappingImpl.builder()
                                     .withName("Store Cost")
                                     .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
                                     .withFormatString("#,###.00")
                                     .build()
                     		))
@@ -2427,10 +2422,9 @@ class TestAggregationManager extends BatchTestCase {
          */
         class TestNonCollapsedAggregateModifier extends PojoMappingModifier {
 
-        	private static final MeasureMappingImpl m = MeasureMappingImpl.builder()
+        	private static final SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
             .withName("Unit Sales")
             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-            .withAggregatorType(MeasureAggregatorType.SUM)
             .withFormatString("Standard")
             .withVisible(false)
             .build();
@@ -2868,10 +2862,9 @@ class TestAggregationManager extends BatchTestCase {
                 super(catalog);
             }
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
-            	MeasureMappingImpl m = MeasureMappingImpl.builder()
+            	SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
                         .withName("Unit Sales")
                         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                        .withAggregatorType(MeasureAggregatorType.SUM)
                         .withFormatString("Standard")
                         .build();
                 PhysicalColumnMappingImpl salesRegion = PhysicalColumnMappingImpl.builder().withName("sales_region").withDataType(ColumnDataType.VARCHAR).withCharOctetLength(30).build();
@@ -3045,10 +3038,9 @@ class TestAggregationManager extends BatchTestCase {
                     ))
                    .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                 	    .withMeasures(List.of(
-                	    	MeasureMappingImpl.builder()
+                	    	SumMeasureMappingImpl.builder()
                             	.withName("Unit Sales")
                                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("Standard")
                                 .build()
 

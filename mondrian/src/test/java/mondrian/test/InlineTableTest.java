@@ -22,7 +22,6 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
@@ -40,6 +39,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.RowMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.RowValueMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -123,17 +123,15 @@ class InlineTableTest {
                     .withMeasureGroups(List.of(
                     	MeasureGroupMappingImpl.builder()
                     	.withMeasures(List.of(
-                            MeasureMappingImpl.builder()
+                            SumMeasureMappingImpl.builder()
                                 .withName("Unit Sales")
                                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("Standard")
                                 .withVisible(true)
                                 .build(),
-                            MeasureMappingImpl.builder()
+                            SumMeasureMappingImpl.builder()
                                 .withName("Store Sales")
                                 .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#,###.00")
                                 .build()
                     	))
@@ -264,17 +262,15 @@ class InlineTableTest {
                     .withMeasureGroups(List.of(
                     	MeasureGroupMappingImpl.builder()
                     	.withMeasures(List.of(
-                            MeasureMappingImpl.builder()
+                            SumMeasureMappingImpl.builder()
                                 .withName("Unit Sales")
                                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("Standard")
                                 .withVisible(false)
                                 .build(),
-                            MeasureMappingImpl.builder()
+                            SumMeasureMappingImpl.builder()
                                 .withName("Store Sales")
                                 .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#,###.00")
                                 .build()
                     	))
@@ -443,17 +439,15 @@ class InlineTableTest {
                     .withMeasureGroups(List.of(
                     		MeasureGroupMappingImpl.builder()
                     		.withMeasures(List.of(
-                                MeasureMappingImpl.builder()
+                                SumMeasureMappingImpl.builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
                                     .withFormatString("Standard")
                                     .withVisible(false)
                                     .build(),
-                                MeasureMappingImpl.builder()
+                                SumMeasureMappingImpl.builder()
                                     .withName("Store Sales")
                                     .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    .withAggregatorType(MeasureAggregatorType.SUM)
                                     .withFormatString("#,###.00")
                                     .build()
                     				))
@@ -625,17 +619,15 @@ class InlineTableTest {
                    .withMeasureGroups(List.of(
                 		   MeasureGroupMappingImpl.builder()
                 		   .withMeasures(List.of(
-                               MeasureMappingImpl.builder()
+                               SumMeasureMappingImpl.builder()
                                    .withName("Unit Sales")
                                    .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                   .withAggregatorType(MeasureAggregatorType.SUM)
                                    .withFormatString("Standard")
                                    .withVisible(false)
                                    .build(),
-                               MeasureMappingImpl.builder()
+                               SumMeasureMappingImpl.builder()
                                    .withName("Store Sales")
                                    .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                   .withAggregatorType(MeasureAggregatorType.SUM)
                                    .withFormatString("#,###.00")
                                    .build()
                 			))

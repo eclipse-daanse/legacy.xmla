@@ -20,7 +20,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
@@ -31,6 +30,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 
 public class RolapResultTestModifier extends PojoMappingModifier {
@@ -204,10 +204,9 @@ public class RolapResultTestModifier extends PojoMappingModifier {
                     .build()
             ))
             .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                MeasureMappingImpl.builder()
+                SumMeasureMappingImpl.builder()
                     .withName("Value")
                     .withColumn(valueFt1)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build()
             )).build()))
@@ -263,10 +262,9 @@ public class RolapResultTestModifier extends PojoMappingModifier {
                     .build()
             ))
             .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                 MeasureMappingImpl.builder()
+                 SumMeasureMappingImpl.builder()
                     .withName("Value")
                     .withColumn(valueFt1)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build()
             )).build()))
@@ -322,10 +320,9 @@ public class RolapResultTestModifier extends PojoMappingModifier {
                     .build()
             ))
             .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                MeasureMappingImpl.builder()
+                SumMeasureMappingImpl.builder()
                     .withName("Value")
                     .withColumn(valueFt2)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build()
             )).build()))
@@ -381,16 +378,14 @@ public class RolapResultTestModifier extends PojoMappingModifier {
                     .build()
             ))
             .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                MeasureMappingImpl.builder()
+                SumMeasureMappingImpl.builder()
                     .withName("VExtra")
                     .withColumn(vextraFt2)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build(),
-                MeasureMappingImpl.builder()
+                SumMeasureMappingImpl.builder()
                     .withName("Value")
                     .withColumn(valueFt2)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build()
             )).build()))

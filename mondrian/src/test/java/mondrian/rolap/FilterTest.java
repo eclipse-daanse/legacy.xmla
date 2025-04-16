@@ -23,7 +23,6 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
@@ -34,6 +33,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -739,15 +739,13 @@ class FilterTest extends BatchTestCase {
                           .build()
                   ))
                   .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                      MeasureMappingImpl.builder()
+                      SumMeasureMappingImpl.builder()
                           .withName("Warehouse Cost")
                           .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                          .withAggregatorType(MeasureAggregatorType.SUM)
                           .build(),
-                      MeasureMappingImpl.builder()
+                      SumMeasureMappingImpl.builder()
                           .withName("Warehouse Sales")
                           .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                          .withAggregatorType(MeasureAggregatorType.SUM)
                           .build()
 
                   )).build()))
@@ -946,15 +944,13 @@ class FilterTest extends BatchTestCase {
                           .build()
                   ))
                   .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                          MeasureMappingImpl.builder()
+                          SumMeasureMappingImpl.builder()
                               .withName("Warehouse Cost")
                               .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                              .withAggregatorType(MeasureAggregatorType.SUM)
                               .build(),
-                          MeasureMappingImpl.builder()
+                          SumMeasureMappingImpl.builder()
                               .withName("Warehouse Sales")
                               .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                              .withAggregatorType(MeasureAggregatorType.SUM)
                               .build()
 
                   )).build()))

@@ -22,7 +22,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationLevelMappingImpl;
@@ -40,6 +39,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 
 public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
@@ -302,10 +302,9 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
                     .build()
             ))
             .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                MeasureMappingImpl.builder()
+                SumMeasureMappingImpl.builder()
                     .withName("Total")
                     .withColumn(amountFact)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build()
             )).build()))

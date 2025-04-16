@@ -24,7 +24,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
@@ -36,6 +35,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CountMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -43,7 +43,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ParentChildLinkMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
@@ -830,19 +830,19 @@ public class MyFoodmartModifier extends PojoMappingModifier {
      	PhysicalCubeMappingImpl sales;
      	PhysicalCubeMappingImpl warehouse;
      	PhysicalCubeMappingImpl hr;
-     	MeasureMappingImpl measuresSalesCount;
-     	MeasureMappingImpl measuresStoreCost;
-     	MeasureMappingImpl measuresStoreSales;
-     	MeasureMappingImpl measuresUnitSales;
+     	SumMeasureMappingImpl measuresSalesCount;
+     	SumMeasureMappingImpl measuresStoreCost;
+     	SumMeasureMappingImpl measuresStoreSales;
+     	SumMeasureMappingImpl measuresUnitSales;
 
-     	MeasureMappingImpl warehouseMeasuresStoreInvoice;
-     	MeasureMappingImpl warehouseMeasuresSupplyTime;
-     	MeasureMappingImpl warehouseMeasuresUnitsOrdered;
+     	SumMeasureMappingImpl warehouseMeasuresStoreInvoice;
+     	SumMeasureMappingImpl warehouseMeasuresSupplyTime;
+     	SumMeasureMappingImpl warehouseMeasuresUnitsOrdered;
 
-     	MeasureMappingImpl warehouseMeasuresUnitsShipped;
-     	MeasureMappingImpl warehouseMeasuresWarehouseCost;
-     	MeasureMappingImpl warehouseMeasuresWarehouseProfit;
-     	MeasureMappingImpl warehouseMeasuresWarehouseSales;
+     	SumMeasureMappingImpl warehouseMeasuresUnitsShipped;
+     	SumMeasureMappingImpl warehouseMeasuresWarehouseCost;
+     	SumMeasureMappingImpl warehouseMeasuresWarehouseProfit;
+     	SumMeasureMappingImpl warehouseMeasuresWarehouseSales;
 
         return CatalogMappingImpl.builder()
                 .withName("FoodMart")
@@ -1088,35 +1088,30 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .build()
                         ))
                         .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                        	measuresUnitSales = MeasureMappingImpl.builder()
+                        	measuresUnitSales = SumMeasureMappingImpl.builder()
                                 .withName("Unit Sales")
                                 //.withCaption("Anzahl Verkauf")
                                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("Standard")
                                 .build(),
-                            measuresStoreCost = MeasureMappingImpl.builder()
+                            measuresStoreCost = SumMeasureMappingImpl.builder()
                                 .withName("Store Cost")
                                 .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#,###.00")
                                 .build(),
-                            measuresStoreSales = MeasureMappingImpl.builder()
+                            measuresStoreSales = SumMeasureMappingImpl.builder()
                                 .withName("Store Sales")
                                 .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#,###.00")
                                 .build(),
-                            measuresSalesCount = MeasureMappingImpl.builder()
+                            measuresSalesCount = SumMeasureMappingImpl.builder()
                                 .withName("Sales Count")
                                 .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#,###")
                                 .build(),
-                            MeasureMappingImpl.builder()
+                            SumMeasureMappingImpl.builder()
                                 .withName("Customer Count")
                                 .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#,###")
                                 .build()
                         )).build()))
@@ -1189,43 +1184,36 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .build()
                         ))
                         .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                        	warehouseMeasuresStoreInvoice = MeasureMappingImpl.builder()
+                        	warehouseMeasuresStoreInvoice = SumMeasureMappingImpl.builder()
                                 .withName("Store Invoice")
                                 .withColumn(FoodmartMappingSupplier.STORE_INVOICE_COLUMN_IN_INVENTORY_FACKT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .build(),
-                             warehouseMeasuresSupplyTime = MeasureMappingImpl.builder()
+                             warehouseMeasuresSupplyTime = SumMeasureMappingImpl.builder()
                                 .withName("Supply Time")
                                 .withColumn(FoodmartMappingSupplier.SUPPLY_TIME_COLUMN_IN_INVENTORY_FACKT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .build(),
-                            warehouseMeasuresWarehouseCost = MeasureMappingImpl.builder()
+                            warehouseMeasuresWarehouseCost = SumMeasureMappingImpl.builder()
                                 .withName("Warehouse Cost")
                                 .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .build(),
-                            warehouseMeasuresWarehouseSales = MeasureMappingImpl.builder()
+                            warehouseMeasuresWarehouseSales = SumMeasureMappingImpl.builder()
                                 .withName("Warehouse Sales")
                                 .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .build(),
-                            warehouseMeasuresUnitsShipped = MeasureMappingImpl.builder()
+                            warehouseMeasuresUnitsShipped = SumMeasureMappingImpl.builder()
                                 .withName("Units Shipped")
                                 .withColumn(FoodmartMappingSupplier.UNITS_SHIPPED_COLUMN_IN_INVENTORY_FACKT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#.0")
                                 .build(),
-                            warehouseMeasuresUnitsOrdered = MeasureMappingImpl.builder()
+                            warehouseMeasuresUnitsOrdered = SumMeasureMappingImpl.builder()
                                 .withName("Units Ordered")
                                 .withColumn(FoodmartMappingSupplier.UNITS_ORDERED_COLUMN_IN_INVENTORY_FACKT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#.0")
                                 .build(),
-                            warehouseMeasuresWarehouseProfit = MeasureMappingImpl.builder()
+                            warehouseMeasuresWarehouseProfit = SumMeasureMappingImpl.builder()
                                 .withName("Warehouse Profit")
                                 //.withColumn("\"warehouse_sales\"-\"inventory_fact_1997\".\"warehouse_cost\"") //TODO
                                 .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .build()
                         )).build()))
                         .build(),
@@ -1273,16 +1261,14 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .build()
                         ))
                         .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                            MeasureMappingImpl.builder()
+                            SumMeasureMappingImpl.builder()
                                 .withName("Store Sqft")
                                 .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#,###")
                                 .build(),
-                            MeasureMappingImpl.builder()
+                            SumMeasureMappingImpl.builder()
                                 .withName("Grocery Sqft")
                                 .withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#,###")
                                 .build()
                         )).build()))
@@ -1573,22 +1559,20 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .build()
                         ))
                         .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                            MeasureMappingImpl.builder()
+                            SumMeasureMappingImpl.builder()
                                 .withName("Org Salary")
                                 .withColumn(FoodmartMappingSupplier.SALARY_PAID_COLUMN_IN_SALARY)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("Currency")
                                 .build(),
-                            MeasureMappingImpl.builder()
+                            CountMeasureMappingImpl.builder()
                                 .withName("Count")
                                 .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_SALARY)
-                                .withAggregatorType(MeasureAggregatorType.COUNT)
                                 .withFormatString("#,#")
                                 .build(),
-                            MeasureMappingImpl.builder()
+                            CountMeasureMappingImpl.builder()
                                 .withName("Number of Employees")
                                 .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_SALARY)
-                                .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                                .withDistinct(true)
                                 .withFormatString("#,#")
                                 .build()
                         )).build()))
@@ -1920,34 +1904,30 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .build()
                         ))
                         .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                            MeasureMappingImpl.builder()
+                            SumMeasureMappingImpl.builder()
                                 .withName("Unit Sales")
                                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("Standard")
                                 .build(),
-                            MeasureMappingImpl.builder()
+                            SumMeasureMappingImpl.builder()
                                 .withName("Store Cost")
                                 .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#,###.00")
                                 .build(),
-                            MeasureMappingImpl.builder()
+                            SumMeasureMappingImpl.builder()
                                 .withName("Store Sales")
                                 .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.SUM)
                                 .withFormatString("#,###.00")
                                 .build(),
-                            MeasureMappingImpl.builder()
+                            CountMeasureMappingImpl.builder()
                                 .withName("Sales Count")
                                 .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.COUNT)
                                 .withFormatString("#,###")
                                 .build(),
-                            MeasureMappingImpl.builder()
+                            CountMeasureMappingImpl.builder()
                                 .withName("Customer Count")
                                 .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
-                                .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                                .withDistinct(true)
                                 .withFormatString("#,###")
                                 .build()
                         )).build()))

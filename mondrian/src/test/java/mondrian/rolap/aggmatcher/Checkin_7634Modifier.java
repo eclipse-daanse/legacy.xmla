@@ -20,17 +20,16 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 
 public class Checkin_7634Modifier extends PojoMappingModifier {
@@ -177,22 +176,19 @@ public class Checkin_7634Modifier extends PojoMappingModifier {
                     .build()
             ))
             .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                MeasureMappingImpl.builder()
+                SumMeasureMappingImpl.builder()
                     .withName("First Measure")
                     .withColumn(first_table7634)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build(),
-                MeasureMappingImpl.builder()
+                SumMeasureMappingImpl.builder()
                     .withName("Requested Value")
                     .withColumn(request_value_table7634)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build(),
-                MeasureMappingImpl.builder()
+                SumMeasureMappingImpl.builder()
                     .withName("Shipped Value")
                     .withColumn(shipped_value_table7634)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build()
             )).build()))

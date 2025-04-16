@@ -19,12 +19,13 @@ import java.util.List;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationColumnNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationForeignKeyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.AvgMeasureMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.CountMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -34,6 +35,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 
 public class BUG_1541077Modifier extends PojoMappingModifier {
@@ -187,28 +189,25 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
                     .build()
             ))
             .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                MeasureMappingImpl.builder()
+                CountMeasureMappingImpl.builder()
                     .withName("Sales Count")
                     .withColumn(prod_id_cheques)
-                    .withAggregatorType(MeasureAggregatorType.COUNT)
                     .withFormatString("#,###")
                     .build(),
-                MeasureMappingImpl.builder()
+                CountMeasureMappingImpl.builder()
                     .withName("Store Count")
                     .withColumn(store_id_cheques)
-                    .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                    .withDistinct(true)
                     .withFormatString("#,###")
                     .build(),
-                MeasureMappingImpl.builder()
+                SumMeasureMappingImpl.builder()
                     .withName("Total Amount")
                     .withColumn(amount_cheques)
-                    .withAggregatorType(MeasureAggregatorType.SUM)
                     .withFormatString("#,###")
                     .build(),
-                MeasureMappingImpl.builder()
+                AvgMeasureMappingImpl.builder()
                     .withName("Avg Amount")
                     .withColumn(amount_cheques)
-                    .withAggregatorType(MeasureAggregatorType.AVG)
                     .withFormatString("00.0")
                     .build()
             )).build()))

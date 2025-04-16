@@ -22,11 +22,11 @@ import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationExcludeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationTableMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.AvgMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
@@ -35,7 +35,6 @@ import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
@@ -282,10 +281,9 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
             ))
             .build();
 
-	private static MeasureMappingImpl unitSales = MeasureMappingImpl.builder()
+	private static AvgMeasureMappingImpl unitSales = AvgMeasureMappingImpl.builder()
 			.withName("Unit Sales")
 			.withColumn(UNIT_SALES_COLUMN_IN_FACT_CSV_2016)
-			.withAggregatorType(MeasureAggregatorType.AVG)
 			.withFormatString("Standard")
 			.build();
 
@@ -375,16 +373,14 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                     		))
                     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
                     	unitSales,
-                        MeasureMappingImpl.builder()
+                        AvgMeasureMappingImpl.builder()
                             .withName("Store Cost")
                             .withColumn(STORE_COST_COLUMN_IN_FACT_CSV_2016)
-                            .withAggregatorType(MeasureAggregatorType.AVG)
                             .withFormatString("#,###.00")
                             .build(),
-                        MeasureMappingImpl.builder()
+                        AvgMeasureMappingImpl.builder()
                             .withName("Store Sales")
                             .withColumn(STORE_SALES_COLUMN_IN_FACT_CSV_2016)
-                            .withAggregatorType(MeasureAggregatorType.AVG)
                             .withFormatString("#,###.00")
                             .build()
                     		))

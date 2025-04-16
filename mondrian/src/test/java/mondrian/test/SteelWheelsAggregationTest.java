@@ -24,7 +24,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.steelwheels.SteelwheelsSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
@@ -42,6 +41,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -139,16 +139,14 @@ class SteelWheelsAggregationTest {
             .build()
     ))
     .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder().withMeasures(List.of(
-           MeasureMappingImpl.builder()
+           SumMeasureMappingImpl.builder()
             .withName("Price Each")
             .withColumn(SteelwheelsSupplier.PRICEEACH_COLUMN_IN_ORDER_FACT)
-            .withAggregatorType(MeasureAggregatorType.SUM)
             .withVisible(true)
             .build(),
-        MeasureMappingImpl.builder()
+        SumMeasureMappingImpl.builder()
             .withName("Total Price")
             .withColumn(SteelwheelsSupplier.TOTALPRICE_COLUMN_IN_ORDER_FACT)
-            .withAggregatorType(MeasureAggregatorType.SUM)
             .withVisible(true)
             .build()
 

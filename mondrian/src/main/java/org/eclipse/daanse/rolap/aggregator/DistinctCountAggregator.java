@@ -23,7 +23,7 @@ public class DistinctCountAggregator extends AbstractAggregator {
     public static DistinctCountAggregator INSTANCE = new DistinctCountAggregator();
 
     public DistinctCountAggregator() {
-        super("distinct-count", false);
+        super("distinct-count", true);
     }
 
     @Override

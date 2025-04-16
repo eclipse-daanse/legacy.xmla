@@ -42,16 +42,16 @@ import org.eclipse.daanse.rolap.aggregator.MinAggregator;
 import org.eclipse.daanse.rolap.aggregator.SumAggregator;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.MeasureAggregatorType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.pojo.CountMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingColumnImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -1032,9 +1032,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
               		))
                   .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                   		.withMeasures(List.of(
-                                  MeasureMappingImpl.builder()
+                                  CountMeasureMappingImpl.builder()
                                   .withName("Count Distinct of Warehouses (Large Owned)")
-                                  .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                                  .withDistinct(true)
                                   .withFormatString("#,##0")
                                   .withColumn(SQLExpressionMappingColumnImpl.builder()
                                 		  .withSqls(List.of(SqlStatementMappingImpl.builder()
@@ -1043,9 +1043,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                 				  .build()))
                                 		  .build())
                                   .build(),
-                                  MeasureMappingImpl.builder()
+                                  CountMeasureMappingImpl.builder()
                                   .withName("Count Distinct of Warehouses (Large Independent)")
-                                  .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                                  .withDistinct(true)
                                   .withFormatString("#,##0")
                                   .withColumn(SQLExpressionMappingColumnImpl.builder()
                                 		  .withSqls(List.of(SqlStatementMappingImpl.builder()
@@ -1054,9 +1054,8 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                 				  .build()))
                                 		  .build())
                                   .build(),
-                                  MeasureMappingImpl.builder()
+                                  CountMeasureMappingImpl.builder()
                                   .withName("Count All of Warehouses (Large Independent)")
-                                  .withAggregatorType(MeasureAggregatorType.COUNT)
                                   .withFormatString("#,##0")
                                   .withColumn(SQLExpressionMappingColumnImpl.builder()
                                 		  .withSqls(List.of(SqlStatementMappingImpl.builder()
@@ -1065,9 +1064,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                 				  .build()))
                                 		  .build())
                                   .build(),
-                                  MeasureMappingImpl.builder()
+                                  CountMeasureMappingImpl.builder()
                                   .withName("Count Distinct Store+Warehouse")
-                                  .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                                  .withDistinct(true)
                                   .withFormatString("#,##0")
                                   .withColumn(SQLExpressionMappingColumnImpl.builder()
                                 		  .withSqls(List.of(SqlStatementMappingImpl.builder()
@@ -1076,9 +1075,8 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                 				  .build()))
                                 		  .build())
                                   .build(),
-                                  MeasureMappingImpl.builder()
+                                  CountMeasureMappingImpl.builder()
                                   .withName("Count All Store+Warehouse")
-                                  .withAggregatorType(MeasureAggregatorType.COUNT)
                                   .withFormatString("#,##0")
                                   .withColumn(SQLExpressionMappingColumnImpl.builder()
                                 		  .withSqls(List.of(SqlStatementMappingImpl.builder()
@@ -1087,10 +1085,9 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                                 				  .build()))
                                 		  .build())
                                   .build(),
-                                  MeasureMappingImpl.builder()
+                                  CountMeasureMappingImpl.builder()
                                   .withName("Store Count")
                                   .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_WAREHOUSE)
-                                  .withAggregatorType(MeasureAggregatorType.COUNT)
                                   .withFormatString("#,###")
                                   .build()
                   				))
@@ -1538,10 +1535,10 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     // in context (MONDRIAN-2128)
       class TestCountDistinctAggWithOtherCountDistinctInContextModifier extends PojoMappingModifier {
 
-      	private static MeasureMappingImpl m = MeasureMappingImpl.builder()
+      	private static CountMeasureMappingImpl m = CountMeasureMappingImpl.builder()
                 .withName("Store Count")
                 .withColumn(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_SALES_FACT_1997)
-                .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                .withDistinct(true)
                 .build();
 
 
@@ -1578,15 +1575,14 @@ class FastBatchingCellReaderTest extends BatchTestCase{
                   .withMeasureGroups(List.of(MeasureGroupMappingImpl.builder()
                   		.withMeasures(List.of(
                   				  m,
-                                  MeasureMappingImpl.builder()
+                                  CountMeasureMappingImpl.builder()
                                   .withName("Customer Count")
                                   .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
-                                  .withAggregatorType(MeasureAggregatorType.DICTINCT_COUNT)
+                                  .withDistinct(true)
                                   .build(),
-                                  MeasureMappingImpl.builder()
+                                  SumMeasureMappingImpl.builder()
                                   .withName("Unit Sales")
                                   .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                  .withAggregatorType(MeasureAggregatorType.SUM)
                                   .build()
                   				))
                   		.build()))
