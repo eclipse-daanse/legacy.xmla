@@ -39,9 +39,19 @@ import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 import org.eclipse.daanse.rolap.aggregator.MaxAggregator;
 import org.eclipse.daanse.rolap.aggregator.MinAggregator;
 import org.eclipse.daanse.rolap.aggregator.SumAggregator;
-import org.eclipse.daanse.rolap.aggregator.experimental.NoneAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.FirstAggregator;
 import org.eclipse.daanse.rolap.aggregator.experimental.IppAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.LastAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.MedianAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.ModeAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.MovingAverage3Aggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.NoneAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.Percentile90Aggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.Quartile3Aggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.RangeAggregator;
 import org.eclipse.daanse.rolap.aggregator.experimental.RndAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.StdDevAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.VarianceAggregator;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -106,7 +116,18 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
 
     private List<Aggregator> primaryAggregators = List.of(SumAggregator.INSTANCE, CountAggregator.INSTANCE,
             DistinctCountAggregator.INSTANCE, MinAggregator.INSTANCE, MaxAggregator.INSTANCE, AvgAggregator.INSTANCE,
-            IppAggregator.INSTANCE, RndAggregator.INSTANCE, NoneAggregator.INSTANCE);
+            //experimental
+            IppAggregator.INSTANCE, RndAggregator.INSTANCE, NoneAggregator.INSTANCE
+            //very experimental
+            ,FirstAggregator.INSTANCE, LastAggregator.INSTANCE
+            ,MedianAggregator.INSTANCE, ModeAggregator.INSTANCE
+            ,MovingAverage3Aggregator.INSTANCE
+            ,Percentile90Aggregator.INSTANCE
+            ,Quartile3Aggregator.INSTANCE
+            ,RangeAggregator.INSTANCE
+            ,StdDevAggregator.INSTANCE
+            ,VarianceAggregator.INSTANCE
+            );
 
     @Activate
     public void activate(Map<String, Object> configuration) throws Exception {
