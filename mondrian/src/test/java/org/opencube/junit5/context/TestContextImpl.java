@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.mdx.parser.ccc.MdxParserProviderImpl;
+import org.eclipse.daanse.olap.api.AggregationFactory;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
@@ -325,8 +326,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
     private Optional<String> description = Optional.empty();
     private Semaphore queryLimimitSemaphore;
     private FunctionService functionService = new FunctionServiceImpl();
-    private List<Aggregator> primaryAggregators = List.of(SumAggregator.INSTANCE, CountAggregator.INSTANCE,
-            DistinctCountAggregator.INSTANCE, MinAggregator.INSTANCE, MaxAggregator.INSTANCE, AvgAggregator.INSTANCE);
+    private AggregationFactory aggregationFactory;
     
     public TestContextImpl() {
         this.eventBus = new LoggingEventBus();
@@ -927,7 +927,12 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
     }
 
     @Override
-    public Optional<Aggregator> getAggregator(String aggregatorName) {
-        return primaryAggregators.stream().filter(a->aggregatorName.equals(a.getName())).findAny();
+    public AggregationFactory getAggragationFactory() {
+        return this.aggregationFactory;
     }
+
+    public void setAggragationFactory(AggregationFactory aggregationFactory) {
+        this.aggregationFactory = aggregationFactory;
+    }
+
 }

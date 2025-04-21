@@ -719,7 +719,7 @@ public class RolapCube extends CubeBase {
         }
         // Validate aggregator name. Substitute deprecated "distinct count"
         // with modern "distinct-count".
-        Aggregator aggregator = AggragationFactory.getAggregator(measureMapping);
+        Aggregator aggregator = this.getContext().getAggragationFactory().getAggregator(measureMapping);
         final RolapBaseCubeMeasure measure =
             new RolapBaseCubeMeasure(
                 this, null, measuresLevel, measureMapping.getName(),

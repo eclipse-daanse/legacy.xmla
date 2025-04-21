@@ -154,6 +154,7 @@ public interface Context {
     default List<String> getKeywordList() {
         return KEYWORD_LIST;
     }
-    Optional<Aggregator> getAggregator(String aggregatorName);
+
+    AggregationFactory getAggragationFactory();
 
 }

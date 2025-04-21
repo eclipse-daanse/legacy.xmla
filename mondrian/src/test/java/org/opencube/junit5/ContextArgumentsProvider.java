@@ -57,6 +57,7 @@ import aQute.bnd.annotation.spi.ServiceConsumer;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
+import mondrian.rolap.AggregationFactoryImpl;
 
 @ServiceConsumer(cardinality = Cardinality.MULTIPLE, value = DatabaseProvider.class)
 public class ContextArgumentsProvider implements ArgumentsProvider, AnnotationConsumer<ContextSource> {
@@ -213,6 +214,7 @@ public class ContextArgumentsProvider implements ArgumentsProvider, AnnotationCo
 							TestContextImpl testContextImpl = new TestContextImpl();
 							testContextImpl.setDataSource(dataBaseInfo.getKey());
 							testContextImpl.setDialect(dataBaseInfo.getValue());
+							testContextImpl.setAggragationFactory(new AggregationFactoryImpl(dataBaseInfo.getValue()));
 							testContextImpl.setName("TestContext");
 
 

@@ -25,6 +25,7 @@ import javax.sql.DataSource;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.jdbc.db.dialect.api.DialectResolver;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
+import org.eclipse.daanse.olap.api.AggregationFactory;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
@@ -57,6 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.rolap.AbstractRolapContext;
+import mondrian.rolap.AggregationFactoryImpl;
 import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapConnectionPropsR;
@@ -98,15 +100,13 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
     private SqlGuardFactory sqlGuardFactory;
 
     private Dialect dialect = null;
+    
+    private AggregationFactory aggregationFactory = null;
 
     private Semaphore queryLimitSemaphore;
 
     @Reference(name = REF_NAME_MDX_PARSER_PROVIDER, target = UnresolvableNamespace.UNRESOLVABLE_FILTER)
     private MdxParserProvider mdxParserProvider;
-
-    private List<Aggregator> primaryAggregators = List.of(SumAggregator.INSTANCE, CountAggregator.INSTANCE,
-            DistinctCountAggregator.INSTANCE, MinAggregator.INSTANCE, MaxAggregator.INSTANCE, AvgAggregator.INSTANCE,
-            IppAggregator.INSTANCE, RndAggregator.INSTANCE, NoneAggregator.INSTANCE);
 
     @Activate
     public void activate(Map<String, Object> configuration) throws Exception {
@@ -124,6 +124,7 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
         try (Connection connection = dataSource.getConnection()) {
             Optional<Dialect> optionalDialect = dialectResolver.resolve(dataSource);
             dialect = optionalDialect.orElseThrow(() -> new Exception(ERR_MSG_DIALECT_INIT));
+            aggregationFactory = new AggregationFactoryImpl(dialect);
         }
 
         shepherd = new RolapResultShepherd(getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_DEFAULT_VALUE, Long.class),
@@ -227,9 +228,9 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
         return Optional.ofNullable(sqlGuardFactory);
     }
 
-    @Override
-    public Optional<Aggregator> getAggregator(String aggregatorName) {
-        return primaryAggregators.stream().filter(a->aggregatorName.equals(a.getName())).findAny();
-    }
 
+    @Override
+    public AggregationFactory getAggragationFactory() {
+        return this.aggregationFactory;
+    };
 }
