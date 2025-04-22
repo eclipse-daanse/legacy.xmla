@@ -1163,7 +1163,7 @@ public TupleList readTuples(
     if ( !( (RolapCube) query.getCube() ).isVirtual() ) {
       return Collections.singletonList( (RolapCube) query.getCube() );
     }
-    Set<RolapCube> cubes = new TreeSet<>( new RolapCube.CubeComparator() );
+    Set<RolapCube> cubes = new TreeSet<>( new RolapCubeComparator() );
     for ( Member member : getMeasures( query ) ) {
       if ( member instanceof RolapStoredMeasure rolapStoredMeasure) {
         cubes.add( rolapStoredMeasure.getCube() );

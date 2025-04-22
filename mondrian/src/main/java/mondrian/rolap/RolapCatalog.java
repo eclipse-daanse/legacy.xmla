@@ -436,12 +436,12 @@ public class RolapCatalog implements Catalog {
 //            if (cubeMapping.isEnabled()) {
 			RolapCube cube = null;
 			if (cubeMapping instanceof PhysicalCubeMapping physicalCubeMapping) {
-				cube = new RolapCube(this, mappingCatalog2, physicalCubeMapping, context);
+				cube = new RolapPhysicalCube(this, mappingCatalog2, physicalCubeMapping, context);
 				// addCube(cubeMapping, cube);
 
 			}
 			if (cubeMapping instanceof VirtualCubeMapping virtualCubeMapping) {
-				cube = new RolapCube(this, mappingCatalog2, virtualCubeMapping, context);
+				cube = new RolapVirtualCube(this, mappingCatalog2, virtualCubeMapping, context);
 				// addCube(cubeMapping, cube);
 			}
 //            }
