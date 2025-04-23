@@ -48,6 +48,7 @@ import mondrian.rolap.RolapCubeDimension;
 import mondrian.rolap.RolapDatabaseColumn;
 import mondrian.rolap.RolapDatabaseSchema;
 import mondrian.rolap.RolapDatabaseTable;
+import mondrian.rolap.RolapVirtualCube;
 
 /**
  * Default implementation of the {@link Role} interface.
@@ -459,8 +460,7 @@ public class RoleImpl implements Role {
                 }
                 // Last thing is to allow for equality correspondences
                 // to work with virtual cubes.
-                if (cubeGrant.getKey() instanceof RolapCube rolapCube
-                    && rolapCube.isVirtual()
+                if (cubeGrant.getKey() instanceof RolapVirtualCube
                     && dimension.equals(dimension1))
                 {
                     return cubeGrant.getValue();

@@ -772,7 +772,7 @@ public TupleList readTuples(
     List<TargetBase> targets, Query query ) {
     List<List<TargetBase>> targetGroupList = new ArrayList<>();
 
-    if ( !( (RolapCube) query.getCube() ).isVirtual() ) {
+    if ( ( (RolapCube) query.getCube() ) instanceof RolapPhysicalCube ) {
       targetGroupList.add( targets );
       return targetGroupList;
     }
@@ -821,7 +821,7 @@ public TupleList readTuples(
    */
   private Map<TargetBase, List<RolapCube>> getTargetToCubeMap(
     List<TargetBase> targets, Query query ) {
-    assert ( (RolapCube) query.getCube() ).isVirtual();
+    assert ( (RolapCube) query.getCube() ) instanceof RolapVirtualCube;
     Collection<RolapCube> cubesFromQuery = query.getBaseCubes().stream().map( RolapCube.class::cast ).toList();
     assert cubesFromQuery != null;
     Collection<RolapCube> baseCubesAssociatedWithVirtual =
@@ -971,7 +971,7 @@ public TupleList readTuples(
       Query query = constraint.getEvaluator().getQuery();
       cube = (RolapCube) query.getCube();
       if ( sqlConstraint.isJoinRequired() ) {
-        virtualCube = cube.isVirtual();
+        virtualCube = cube instanceof RolapVirtualCube;
       }
     }
 
@@ -1160,7 +1160,7 @@ public TupleList readTuples(
    * query)
    */
   Collection<RolapCube> getBaseCubeCollection( final Query query ) {
-    if ( !( (RolapCube) query.getCube() ).isVirtual() ) {
+    if ( ( (RolapCube) query.getCube() ) instanceof RolapPhysicalCube ) {
       return Collections.singletonList( (RolapCube) query.getCube() );
     }
     Set<RolapCube> cubes = new TreeSet<>( new RolapCubeComparator() );
@@ -1603,7 +1603,7 @@ public TupleList readTuples(
     }
 
     // Current cannot support aggregate tables for virtual cubes
-    if ( baseCube.isVirtual() ) {
+    if ( baseCube instanceof RolapVirtualCube ) {
       return null;
     }
 

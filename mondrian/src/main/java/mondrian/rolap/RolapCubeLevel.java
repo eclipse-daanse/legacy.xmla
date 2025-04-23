@@ -113,7 +113,7 @@ public class RolapCubeLevel extends RolapLevel {
             //  when registerDimension is called, the hierarchy is registered
             //  successfully to the star.  This type of hack will go away once
             //  HierarchyUsage is phased out
-            if (! getCube().isVirtual()) {
+            if ( getCube() instanceof RolapPhysicalCube) {
                 getCube().createUsage(
                     (RolapCubeHierarchy) cubeDimensionInner.getHierarchies()[0],
                     xmlDimension);
@@ -123,7 +123,7 @@ public class RolapCubeLevel extends RolapLevel {
             closedPeerCubeLevel = (RolapCubeLevel)
                 cubeDimensionInner.getHierarchies()[0].getLevels()[1];
 
-            if (!getCube().isVirtual()) {
+            if (getCube() instanceof RolapPhysicalCube) {
                 getCube().closureColumnBitKey.set(
                     closedPeerCubeLevel.starKeyColumn.getBitPosition());
             }
@@ -229,7 +229,7 @@ public class RolapCubeLevel extends RolapLevel {
      */
     public RolapStar.Column getBaseStarKeyColumn(RolapCube baseCube) {
         RolapStar.Column column = null;
-        if (getCube().isVirtual() && baseCube != null) {
+        if (getCube() instanceof RolapVirtualCube && baseCube != null) {
             RolapCubeLevel lvl = baseCube.findBaseCubeLevel(this);
             if (lvl != null) {
                 column = lvl.getStarKeyColumn();

@@ -81,6 +81,17 @@ public class RolapPhysicalCube extends RolapCube {
                     new StringBuilder("Must specify fact table of cube '").append(getName()).append("'").toString());
         }
 
+        if (getLogger().isDebugEnabled()) {
+            String msg = new StringBuilder("RolapCube<init>: cube=").append(this.name).toString();
+            getLogger().debug(msg);
+        }
+
+        // Initialize closure bit key only when we know how many columns are in
+        // the star.
+        setClosureColumnBitKey(BitKey.Factory.makeBitKey(getStar().getColumnCount()));
+
+
+
         if (getAlias(getFact()) == null) {
             throw Util.newError(new StringBuilder("Must specify alias for fact table of cube '").append(getName())
                     .append("'").toString());
@@ -89,6 +100,29 @@ public class RolapPhysicalCube extends RolapCube {
         // since Measure and VirtualCubeMeasure
         // can not be treated as the same, measure creation can not be
         // done in a common constructor.
+        List<RolapMember> measureList = initMeasures(cubeMapping);
+
+        init(cubeMapping.getDimensionConnectors());
+        init(cubeMapping, measureList);
+
+        setMeasuresHierarchyMemberReader(
+                new CacheMemberReader(new MeasureMemberSource(this.getMeasuresHierarchy(), measureList)));
+
+        checkOrdinals(cubeMapping.getName(), measureList);
+        loadAggGroup(cubeMapping);
+        initActions(cubeMapping);
+        initWritebackTables(cubeMapping);
+    }
+
+    @Override
+    protected void logMessage() {
+        if (getLogger().isDebugEnabled()) {
+            String msg = new StringBuilder("RolapCube<init>: cube=").append(this.name).toString();
+            getLogger().debug(msg);
+        }
+    }
+
+    private List<RolapMember> initMeasures(PhysicalCubeMapping cubeMapping) {
         RolapLevel measuresLevel = this.getMeasuresHierarchy().newMeasuresLevel();
 
         List<? extends MeasureMapping> measureMappings = cubeMapping.getMeasureGroups().stream()
@@ -132,20 +166,60 @@ public class RolapPhysicalCube extends RolapCube {
             factCountMeasure = createMeasure(cubeMapping, measuresLevel, measureList.size(), mappingMeasure);
             measureList.add(factCountMeasure);
         }
-
         setMeasuresHierarchyMemberReader(
                 new CacheMemberReader(new MeasureMemberSource(this.getMeasuresHierarchy(), measureList)));
 
         this.getMeasuresHierarchy().setDefaultMember(defaultMeasure);
-        init(cubeMapping.getDimensionConnectors());
-        init(cubeMapping, measureList);
 
-        setMeasuresHierarchyMemberReader(
-                new CacheMemberReader(new MeasureMemberSource(this.getMeasuresHierarchy(), measureList)));
+        return measureList;
+    }
 
-        checkOrdinals(cubeMapping.getName(), measureList);
-        loadAggGroup(cubeMapping);
+    private void initWritebackTables(PhysicalCubeMapping cubeMapping) {
+        if (cubeMapping.getWritebackTable() != null) {
+            WritebackTableMapping writebackTable = cubeMapping.getWritebackTable();
+            List<RolapWritebackColumn> columns = new ArrayList<>();
 
+            for (WritebackAttributeMapping writebackAttribute : writebackTable.getWritebackAttribute()) {
+
+                Dimension dimension = null;
+                for (Dimension currentDimension : this.getDimensions()) {
+                    if (currentDimension.getName()
+                            .equals(writebackAttribute.getDimensionConnector().getOverrideDimensionName())) {
+                        dimension = currentDimension;
+                        break;
+                    }
+                }
+                if (dimension == null) {
+                    throw Util.newError(new StringBuilder("Error while creating `WritebackTable`. Dimension '")
+                            .append(writebackAttribute.getDimensionConnector().getOverrideDimensionName())
+                            .append("' not found").toString());
+                }
+
+                columns.add(new RolapWritebackAttribute(dimension, writebackAttribute.getColumn()));
+
+            }
+            for (WritebackMeasureMapping writebackMeasure : writebackTable.getWritebackMeasure()) {
+                Member measure = null;
+                for (Member currentMeasure : this.getMeasures()) {
+                    if (currentMeasure instanceof RolapBaseCubeMeasure rbcm
+                            && rbcm.getKey().equals(writebackMeasure.getName())) {
+                        measure = currentMeasure;
+                        break;
+                    }
+                }
+                if (measure == null) {
+                    throw Util.newError(new StringBuilder("Error while creating DrillThrough  action. Measure '")
+                            .append(writebackMeasure.getName()).append("' not found").toString());
+                }
+                columns.add(new RolapWritebackMeasure(measure, writebackMeasure.getColumn()));
+            }
+            RolapWritebackTable rolapWritebackTable = new RolapWritebackTable(writebackTable.getName(),
+                    writebackTable.getSchema(), columns);
+            this.setWritebackTable(Optional.of(rolapWritebackTable));
+        }
+    }
+
+    private void initActions(PhysicalCubeMapping cubeMapping) {
         for (ActionMapping mappingAction : cubeMapping.getAction()) {
             if (mappingAction instanceof DrillThroughActionMapping mappingDrillThroughAction) {
                 List<DrillThroughColumn> columns = new ArrayList<>();
@@ -237,48 +311,6 @@ public class RolapPhysicalCube extends RolapCube {
                         mappingDrillThroughAction.getDescription(), mappingDrillThroughAction.isDefault(), columns);
                 this.actionList.add(rolapDrillThroughAction);
             }
-        }
-        if (cubeMapping.getWritebackTable() != null) {
-            WritebackTableMapping writebackTable = cubeMapping.getWritebackTable();
-            List<RolapWritebackColumn> columns = new ArrayList<>();
-
-            for (WritebackAttributeMapping writebackAttribute : writebackTable.getWritebackAttribute()) {
-
-                Dimension dimension = null;
-                for (Dimension currentDimension : this.getDimensions()) {
-                    if (currentDimension.getName()
-                            .equals(writebackAttribute.getDimensionConnector().getOverrideDimensionName())) {
-                        dimension = currentDimension;
-                        break;
-                    }
-                }
-                if (dimension == null) {
-                    throw Util.newError(new StringBuilder("Error while creating `WritebackTable`. Dimension '")
-                            .append(writebackAttribute.getDimensionConnector().getOverrideDimensionName())
-                            .append("' not found").toString());
-                }
-
-                columns.add(new RolapWritebackAttribute(dimension, writebackAttribute.getColumn()));
-
-            }
-            for (WritebackMeasureMapping writebackMeasure : writebackTable.getWritebackMeasure()) {
-                Member measure = null;
-                for (Member currentMeasure : this.getMeasures()) {
-                    if (currentMeasure instanceof RolapBaseCubeMeasure rbcm
-                            && rbcm.getKey().equals(writebackMeasure.getName())) {
-                        measure = currentMeasure;
-                        break;
-                    }
-                }
-                if (measure == null) {
-                    throw Util.newError(new StringBuilder("Error while creating DrillThrough  action. Measure '")
-                            .append(writebackMeasure.getName()).append("' not found").toString());
-                }
-                columns.add(new RolapWritebackMeasure(measure, writebackMeasure.getColumn()));
-            }
-            RolapWritebackTable rolapWritebackTable = new RolapWritebackTable(writebackTable.getName(),
-                    writebackTable.getSchema(), columns);
-            this.setWritebackTable(Optional.of(rolapWritebackTable));
         }
     }
 
@@ -374,9 +406,8 @@ public class RolapPhysicalCube extends RolapCube {
         // (We cannot do this in the constructor, because
         // cannot parse the generated query, because the schema has not been
         // set in the cube at this point.)
-        List<Formula> formulaList = new ArrayList<>();
         createCalcMembersAndNamedSets(mappingCube.getCalculatedMembers(), mappingCube.getNamedSets(), memberList,
-                formulaList, this, true);
+                this, true);
     }
 
     /**
@@ -398,10 +429,4 @@ public class RolapPhysicalCube extends RolapCube {
             }
         }
     }
-
-    @Override
-    public boolean isVirtual() {
-        return false;
-    }
-
 }

@@ -32,10 +32,9 @@ import org.mockito.Mockito;
 class RolapCubeDimensionTest {
 
   private RolapCubeDimension stubRolapCubeDimension(boolean virtualCube) {
-    RolapCube cube = mock(RolapCube.class);
-    doReturn(virtualCube).when(cube).isVirtual();
+    RolapCube cube = mock(RolapVirtualCube.class);
 
-    RolapDimension rolapDim = mock(TestPublicRolapDimension.class);    
+    RolapDimension rolapDim = mock(TestPublicRolapDimension.class);
     Hierarchy[] rolapDim_hierarchies = new Hierarchy[]{};
     doReturn(rolapDim_hierarchies).when(rolapDim).getHierarchies();
     doReturn(OlapMetaData.empty()).when(rolapDim).getMetaData();

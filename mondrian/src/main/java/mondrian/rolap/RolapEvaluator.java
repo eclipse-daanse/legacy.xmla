@@ -276,7 +276,7 @@ public boolean mightReturnNullForUnrelatedDimension() {
       return false;
     }
     RolapCube virtualCube = getCube();
-    return virtualCube.isVirtual();
+    return virtualCube instanceof RolapVirtualCube;
   }
 
   @Override

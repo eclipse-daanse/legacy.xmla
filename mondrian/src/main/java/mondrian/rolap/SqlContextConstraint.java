@@ -90,10 +90,10 @@ public class SqlContextConstraint
             return false;
         }
         RolapCube cube = (RolapCube) context.getCube();
-        if (disallowVirtualCube && cube.isVirtual()) {
+        if (disallowVirtualCube && cube instanceof RolapVirtualCube) {
             return false;
         }
-        if (cube.isVirtual()) {
+        if (cube instanceof RolapVirtualCube) {
             Query query = context.getQuery();
             Set<Cube> baseCubes = new HashSet<>();
             List<Cube> baseCubeList = new ArrayList<>();
@@ -260,7 +260,7 @@ public class SqlContextConstraint
         // MONDRIAN-2597
         //For virtual cube we add all base cubes
         //associated with this virtual cube to the key
-        if (evaluator.getCube().isVirtual()) {
+        if (evaluator.getCube() instanceof RolapVirtualCube) {
             cacheKey.addAll(evaluator.getCube().getBaseCubes());
         }
     }

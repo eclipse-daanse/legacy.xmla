@@ -75,7 +75,7 @@ public class RolapCubeDimension extends RolapDimension {
         hierarchies = new RolapCubeHierarchy[rolapDim.getHierarchies().length];
 
         RolapCube factCube = null;
-        if (cube.isVirtual()) {
+        if (cube instanceof RolapVirtualCube) {
           factCube = lookupFactCube(cubeDim, cube.getCatalog());
         }
         for (int i = 0; i < rolapDim.getHierarchies().length; i++) {

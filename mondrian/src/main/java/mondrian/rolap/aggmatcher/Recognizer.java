@@ -49,6 +49,7 @@ import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapLevel;
 import mondrian.rolap.RolapSqlExpression;
 import mondrian.rolap.RolapStar;
+import mondrian.rolap.RolapVirtualCube;
 import mondrian.rolap.Utils;
 import mondrian.rolap.sql.SqlQuery;
 
@@ -1012,7 +1013,7 @@ public abstract class Recognizer {
         List<RolapCube> list = new ArrayList<>();
         RolapCatalog schema = star.getCatalog();
         for (RolapCube cube : schema.getCubeList()) {
-            if (cube.isVirtual()) {
+            if (cube instanceof RolapVirtualCube) {
                 continue;
             }
             RolapStar cubeStar = cube.getStar();

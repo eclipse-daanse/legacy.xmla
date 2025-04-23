@@ -203,7 +203,7 @@ public abstract class RolapCube extends CubeBase {
     private Map<RolapLevel, RolapCubeLevel> virtualToBaseMap =
         new HashMap<>();
 
-    final BitKey closureColumnBitKey;
+    BitKey closureColumnBitKey = null;
 
     final List<AbstractRolapAction> actionList =
             new ArrayList<>();
@@ -240,8 +240,9 @@ public abstract class RolapCube extends CubeBase {
                 context);
         catalog.addCube(cubeMapping, this);
         fillKpiIfExist(cubeMapping);
-
+        logMessage();
     }
+
     /**
      * Private constructor used by both normal cubes and virtual cubes.
      *
@@ -280,23 +281,13 @@ public abstract class RolapCube extends CubeBase {
         this.hierarchyUsages = new ArrayList<>();
         this.context = context;
 
-        if (! isVirtual()) {
+        if (getFact() != null && this instanceof RolapPhysicalCube) {
             this.star = catalog.getRolapStarRegistry().getOrCreateStar(getFact());
             // only set if different from default (so that if two cubes share
             // the same fact table, either can turn off caching and both are
             // effected).
             if (! isCache) {
                 star.setCacheAggregations(isCache);
-            }
-        }
-
-        if (getLogger().isDebugEnabled()) {
-            if (isVirtual()) {
-                String msg = new StringBuilder("RolapCube<init>: virtual cube=").append(this.name).toString();
-                getLogger().debug(msg);
-            } else {
-                String msg = new StringBuilder("RolapCube<init>: cube=").append(this.name).toString();
-                getLogger().debug(msg);
             }
         }
 
@@ -322,7 +313,7 @@ public abstract class RolapCube extends CubeBase {
         }
 
         for (int i = 0; i < dimensions.size(); i++) {
-        	DimensionConnectorMapping mappingCubeDimension = dimensions.get(i);
+            DimensionConnectorMapping mappingCubeDimension = dimensions.get(i);
 
             // Look up usages of shared dimensions in the schema before
             // consulting the XML schema (which may be null).
@@ -335,7 +326,7 @@ public abstract class RolapCube extends CubeBase {
             }
             this.dimensions[i + 1] = dimension;
 
-            if (! isVirtual()) {
+            if (getFact() != null && this instanceof RolapPhysicalCube) {
                 createUsages(dimension, mappingCubeDimension);
             }
 
@@ -343,15 +334,6 @@ public abstract class RolapCube extends CubeBase {
             // to keep the RolapStar in sync with the realiasing
             // within the RolapCubeHierarchy objects.
             registerDimension(dimension);
-        }
-
-        // Initialize closure bit key only when we know how many columns are in
-        // the star.
-        if (! isVirtual()) {
-            closureColumnBitKey =
-                BitKey.Factory.makeBitKey(star.getColumnCount());
-        } else {
-            closureColumnBitKey = null;
         }
     }
 
@@ -371,6 +353,13 @@ public abstract class RolapCube extends CubeBase {
         return this.namedSetList;
     }
 
+    public void setStar(RolapStar star) {
+        this.star = star;
+    }
+
+    protected void setClosureColumnBitKey(BitKey closureColumnBitKey) {
+        this.closureColumnBitKey = closureColumnBitKey;
+    }
     /**
      * Returns this cube's fact table, null if the cube is virtual.
      */
@@ -406,7 +395,7 @@ public abstract class RolapCube extends CubeBase {
         return factCountMeasure;
     }
 
-    protected void fillKpiIfExist(CubeMapping cube) {
+    private void fillKpiIfExist(CubeMapping cube) {
         if (cube != null && cube.getKpis() != null) {
             cube.getKpis().stream().forEach(kpiMapping -> {
                 RolapKPI kpi = new RolapKPI();
@@ -535,7 +524,6 @@ public abstract class RolapCube extends CubeBase {
     	List<? extends CalculatedMemberMapping> list,
         List<? extends NamedSetMapping> mappingNamedSets,
         List<RolapMember> memberList,
-        List<Formula> formulaList,
         RolapCube cube,
         boolean errOnDups)
     {
@@ -558,7 +546,7 @@ public abstract class RolapCube extends CubeBase {
         }
         for (int i = 0; i < mappingNamedSets.size(); i++) {
             postNamedSet(
-                mappingNamedSets, list.size(), i, queryExp, formulaList);
+                mappingNamedSets, list.size(), i, queryExp);
         }
     }
 
@@ -619,8 +607,7 @@ public abstract class RolapCube extends CubeBase {
         List<? extends NamedSetMapping> mappingNamedSets,
         final int offset,
         int i,
-        final Query queryExp,
-        List<Formula> formulaList)
+        final Query queryExp)
     {
         NamedSetMapping mappingNamedSet = mappingNamedSets.get(i);
 //        discard(xmlNamedSet);
@@ -648,7 +635,6 @@ public abstract class RolapCube extends CubeBase {
             RolapMetaData.createMetaData(mappingNamedSet.getAnnotations()));
 
         namedSetList.add(formula);
-        formulaList.add(formula);
     }
 
     private void preNamedSet(
@@ -1017,7 +1003,7 @@ public abstract class RolapCube extends CubeBase {
     }
 
     public void register() {
-        if (isVirtual()) {
+        if (this instanceof RolapVirtualCube) {
             return;
         }
         List<RolapBaseCubeMeasure> storedMeasures =
@@ -1044,7 +1030,7 @@ public abstract class RolapCube extends CubeBase {
      * @return Whether this Cube's RolapStar should cache aggregations
      */
     public boolean isCacheAggregations() {
-        return isVirtual() || star.isCacheAggregations();
+        return this instanceof RolapVirtualCube || star.isCacheAggregations();
     }
 
     /**
@@ -1054,7 +1040,7 @@ public abstract class RolapCube extends CubeBase {
      * @param cache Whether this Cube's RolapStar should cache aggregations
      */
     public void setCacheAggregations(boolean cache) {
-        if (! isVirtual()) {
+        if (this instanceof RolapPhysicalCube) {
             star.setCacheAggregations(cache);
         }
     }
@@ -1071,7 +1057,7 @@ public abstract class RolapCube extends CubeBase {
      * Clear the in memory aggregate cache associated with this Cube.
      */
     public void clearCachedAggregations(boolean forced) {
-        if (isVirtual()) {
+        if (this instanceof RolapVirtualCube) {
             // TODO:
             // Currently a virtual cube does not keep a list of all of its
             // base cubes, so we need to iterate through each and flush
@@ -1092,7 +1078,7 @@ public abstract class RolapCube extends CubeBase {
      * Returns this cube's underlying star schema.
      */
     public RolapStar getStar() {
-        if (!isVirtual()) {
+        if (this instanceof RolapPhysicalCube ) {
             if (star != null && star.getFactTable().getRelation().equals(getFact())) {
                 return star;
             }
@@ -2046,12 +2032,7 @@ public abstract class RolapCube extends CubeBase {
         return getCatalogReader().getLevelMembers(measuresLevel, true);
     }
 
-    /**
-     * Returns whether this cube is virtual. We use the fact that virtual cubes
-     * do not have fact tables.
-     */
-    public abstract boolean isVirtual();
-
+    protected abstract void logMessage();
     /**
      * Locates the base cube hierarchy for a particular virtual hierarchy.
      * If not found, return null. This may be converted to a map lookup
@@ -2144,32 +2125,6 @@ public abstract class RolapCube extends CubeBase {
             }
         }
         return null;
-    }
-
-    RolapCubeDimension createDimension(
-    	DimensionConnectorMapping mappingCubeDimension,
-        CatalogMapping mappingSchema)
-    {
-        RolapCubeDimension dimension =
-            getOrCreateDimension(
-                mappingCubeDimension, catalog, mappingSchema,
-                dimensions.length, hierarchyList);
-
-        if (! isVirtual()) {
-            createUsages(dimension, mappingCubeDimension);
-        }
-        registerDimension(dimension);
-
-        dimension.init(mappingCubeDimension);
-
-        // add to dimensions array
-        this.dimensions = Util.append(dimensions, dimension);
-
-        return dimension;
-    }
-
-    public OlapElement lookupChild(CatalogReader schemaReader, Segment s) {
-        return lookupChild(schemaReader, s, MatchType.EXACT);
     }
 
     @Override
@@ -2407,7 +2362,7 @@ public abstract class RolapCube extends CubeBase {
      * Locates all base cubes associated with the virtual cube.
      */
     private static List<RolapCube> findBaseCubes(RolapCube cube) {
-      if (!cube.isVirtual()) {
+      if (cube instanceof RolapPhysicalCube ) {
         return Collections.singletonList(cube);
       }
       List<RolapCube> cubesList = new ArrayList<>();

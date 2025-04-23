@@ -34,6 +34,8 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCa
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 
 import mondrian.rolap.RolapCube;
+import mondrian.rolap.RolapPhysicalCube;
+import mondrian.rolap.RolapVirtualCube;
 import mondrian.rolap.RolapVirtualCubeMeasure;
 
 public class ValidMeasureCalc extends AbstractProfilingNestedUnknownCalc {
@@ -59,7 +61,7 @@ public class ValidMeasureCalc extends AbstractProfilingNestedUnknownCalc {
           return null;
         }
 
-        if (!virtualCube.isVirtual()) {
+        if (virtualCube instanceof RolapPhysicalCube) {
             // this is not a virtual cube,
             // there's nothing for ValidMeasure to do.
             // just evaluate sub-expression

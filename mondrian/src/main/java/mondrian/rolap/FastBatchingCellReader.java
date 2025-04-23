@@ -1446,7 +1446,7 @@ class BatchLoader {
         }
 
         private void generateAggregateSql() {
-            if (cube == null || cube.isVirtual()) {
+            if (cube == null || cube instanceof RolapVirtualCube) {
                 final StringBuilder buf = new StringBuilder(64);
                 buf.append(
                     "AggGen: Sorry, can not create SQL for virtual Cube \"")

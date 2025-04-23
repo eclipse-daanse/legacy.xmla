@@ -285,7 +285,7 @@ public class RolapHierarchy extends HierarchyBase {
         {
           // if cube is virtual than there is no fact in it,
           // so look for it in source cube
-          if(cube.isVirtual()) {
+          if(cube instanceof RolapVirtualCube) {
             RolapCube sourceCube = cube.getCatalog().lookupCube(cubeDimensionMapping.getPhysicalCube());
             if(sourceCube != null) {
               xmlHierarchyRelation = sourceCube.getFact();

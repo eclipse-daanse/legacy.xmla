@@ -40,6 +40,7 @@ import mondrian.olap.fun.FunUtil;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapMember;
 import mondrian.rolap.RolapStoredMeasure;
+import mondrian.rolap.RolapVirtualCube;
 
 /**
  * Abstract base class for all aggregate functions (<code>Aggregate</code>,
@@ -172,7 +173,7 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
         }
 
         RolapCube virtualCube = (RolapCube) evaluator.getCube();
-        if (virtualCube.isVirtual()) {
+        if (virtualCube instanceof RolapVirtualCube) {
             // this should be a safe cast since we've eliminated calcs above
             RolapCube baseCube = ((RolapStoredMeasure)measure).getCube();
             if (baseCube == null) {

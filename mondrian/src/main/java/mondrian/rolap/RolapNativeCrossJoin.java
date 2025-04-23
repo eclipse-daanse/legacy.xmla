@@ -192,7 +192,7 @@ public class RolapNativeCrossJoin extends RolapNativeSet {
             return null;
         }
 
-        if (cube.isVirtual()
+        if (cube instanceof RolapVirtualCube
             && !evaluator.getQuery().nativeCrossJoinVirtualCube())
         {
             // Something in the query at large (namely, some unsupported

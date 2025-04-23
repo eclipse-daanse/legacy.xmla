@@ -67,8 +67,8 @@ public class MeasureFinder extends MdxVisitorImpl
     private RolapCatalog schema;
 
     public MeasureFinder(
-        RolapCube virtualCube,
-        RolapCube baseCube,
+        RolapVirtualCube virtualCube,
+        RolapPhysicalCube baseCube,
         RolapLevel measuresLevel,
         RolapCatalog schema)
     {
@@ -112,7 +112,6 @@ public class MeasureFinder extends MdxVisitorImpl
             virtualCube.createCalcMembersAndNamedSets(
                 Collections.singletonList(mappingCalcMember),
                 Collections.<NamedSetMapping>emptyList(),
-                new ArrayList<>(),
                 new ArrayList<>(),
                 virtualCube,
                 false);

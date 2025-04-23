@@ -14,6 +14,7 @@
 package mondrian.rolap;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -60,20 +61,199 @@ public class RolapVirtualCube extends RolapCube {
 
         // Recreate CalculatedMembers, as the original members point to
         // incorrect dimensional ordinals for the virtual cube.
-        List<RolapVirtualCubeMeasure> origMeasureList = new ArrayList<>();
-        List<CalculatedMemberMapping> origCalcMeasureList = new ArrayList<>();
-        RolapCubeComparator cubeComparator = new RolapCubeComparator();
-        Map<RolapCube, List<CalculatedMemberMapping>> calculatedMembersMap = new TreeMap<>(cubeComparator);
-        Member defaultMeasure = null;
 
         this.setCubeUsages(new RolapCubeUsages(virtualCubeMapping.getCubeUsages()));
 
+        // Must init the dimensions before dealing with calculated members
+        init(virtualCubeMapping.getDimensionConnectors());
+
+        Member defaultMeasure = null;
         HashMap<String, MemberMapping> measureHash = new HashMap<>();
-        List<? extends MeasureMapping> ms = virtualCubeMapping.getReferencedMeasures();
+        //get origin measures list
+        List<RolapVirtualCubeMeasure> origMeasureList = getOriginMeasureList(catalog, virtualCubeMapping, measuresLevel, measureHash, defaultMeasure);
+        //get origin calculated members measures map by origin cube
+        Map<RolapPhysicalCube, List<CalculatedMemberMapping>> calculatedMembersMap = getOriginCalculatedMemberMap(catalog, virtualCubeMapping, measureHash, defaultMeasure);
+        //get origin calculated members list
+        List<? extends CalculatedMemberMapping> origCalcMeasureList = calculatedMembersMap.entrySet().stream().map(Map.Entry::getValue).flatMap(Collection::stream).toList();
+
+        // Loop through the base cubes containing calculated members
+        // referenced by this virtual cube. Resolve those members relative
+        // to their base cubes first, then resolve them relative to this
+        // cube so the correct dimension ordinals are used
+        List<RolapVirtualCubeMeasure> modifiedMeasureList = new ArrayList<>(origMeasureList);
+        //add measures from calculated members 
+        modifiedMeasureList.addAll(getMesuresFromCalculatedmembers(calculatedMembersMap, measuresLevel));
+
+        // Add the original calculated members from the base cubes to our
+        // list of calculated members
+        List<CalculatedMemberMapping> mappingCalculatedMemberList = new ArrayList<>(origCalcMeasureList);
+        mappingCalculatedMemberList.addAll(virtualCubeMapping.getCalculatedMembers());
+
+        // Resolve all calculated members relative to this virtual cube,
+        // whose measureHierarchy member reader now contains all base
+        // measures referenced in those calculated members
+        setMeasuresHierarchyMemberReader(new CacheMemberReader(
+                new MeasureMemberSource(this.getMeasuresHierarchy(), Util.<RolapMember>cast(modifiedMeasureList))));
+
+        createCalcMembersAndNamedSets(mappingCalculatedMemberList, virtualCubeMapping.getNamedSets(), new ArrayList<>(),
+                this, false);
+
+        // iterate through a calculated member definitions in a virtual cube
+        // retrieve calculated member source cube
+        // set it appropriate rolap calculated measure
+        Map<String, RolapHierarchy.RolapCalculatedMeasure> calcMeasuresWithBaseCube = new HashMap<>();
+        for (Map.Entry<RolapPhysicalCube, List<CalculatedMemberMapping>> entry : calculatedMembersMap.entrySet()) {
+            RolapCube rolapCube = entry.getKey();
+            List<CalculatedMemberMapping> calculatedMembers = entry.getValue();
+            for (CalculatedMemberMapping calculatedMember : calculatedMembers) {
+                List<Member> measures = rolapCube.getMeasures();
+                for (Member measure : measures) {
+                    if (measure instanceof RolapHierarchy.RolapCalculatedMeasure calculatedMeasure
+                            && calculatedMember.getName().equals(calculatedMeasure.getKey())) {
+                        calculatedMeasure.setBaseCube(rolapCube);
+                        calcMeasuresWithBaseCube.put(calculatedMeasure.getUniqueName(), calculatedMeasure);
+                    }
+                }
+            }
+        }
+
+        // reset the measureHierarchy member reader back to the list of
+        // measures that are only defined on this virtual cube
+        setMeasuresHierarchyMemberReader(new CacheMemberReader(
+                new MeasureMemberSource(this.getMeasuresHierarchy(), Util.<RolapMember>cast(origMeasureList))));
+
+        this.getMeasuresHierarchy().setDefaultMember(defaultMeasure);
+
+        List<? extends CalculatedMemberMapping> mappingVirtualCubeCalculatedMemberList = virtualCubeMapping
+                .getCalculatedMembers();
+        if (!vcHasAllCalcMembers(origCalcMeasureList, mappingVirtualCubeCalculatedMemberList)) {
+            // Remove from the calculated members array
+            // those members that weren't originally defined
+            // on this virtual cube.
+            List<Formula> calculatedMemberListCopy = new ArrayList<>(getCalculatedMemberList());
+            getCalculatedMemberList().clear();
+            for (Formula calculatedMember : calculatedMemberListCopy) {
+                if (findOriginalMembers(calculatedMember, origCalcMeasureList, getCalculatedMemberList())) {
+                    continue;
+                }
+                findOriginalMembers(calculatedMember, mappingVirtualCubeCalculatedMemberList,
+                        getCalculatedMemberList());
+            }
+        }
+
+        for (Formula calcMember : getCalculatedMemberList()) {
+            if (virtualCubeMapping.getDefaultMeasure() != null
+                    && calcMember.getName().equalsIgnoreCase(virtualCubeMapping.getDefaultMeasure().getName())) {
+                this.getMeasuresHierarchy().setDefaultMember(calcMember.getMdxMember());
+                break;
+            }
+        }
+
+        // We modify the measures schema reader one last time with a version
+        // which includes all calculated members as well.
+        final List<RolapMember> finalMeasureMembers = new ArrayList<>(origMeasureList);
+        for (Formula formula : getCalculatedMemberList()) {
+            final RolapMember calcMeasure = (RolapMember) formula.getMdxMember();
+            if (calcMeasure instanceof RolapHierarchy.RolapCalculatedMeasure rolapCalculatedMeasure
+                    && calcMeasuresWithBaseCube.containsKey(calcMeasure.getUniqueName())) {
+                rolapCalculatedMeasure
+                        .setBaseCube(calcMeasuresWithBaseCube.get(calcMeasure.getUniqueName()).getBaseCube());
+            }
+
+            MemberMapping mappingMeasure = measureHash.get(calcMeasure.getUniqueName());
+            if (mappingMeasure != null) {
+                Boolean visible = mappingMeasure.isVisible();
+                if (visible != null) {
+                    calcMeasure.setProperty(StandardProperty.VISIBLE.getName(), visible);
+                }
+            }
+
+            finalMeasureMembers.add(calcMeasure);
+        }
+        setMeasuresHierarchyMemberReader(new CacheMemberReader(
+                new MeasureMemberSource(this.getMeasuresHierarchy(), Util.<RolapMember>cast(finalMeasureMembers))));
+        // Note: virtual cubes do not get aggregate
+    }
+
+    protected void logMessage() {
+        if (getLogger().isDebugEnabled()) {
+            String msg = new StringBuilder("RolapCube<init>: virtual cube=").append(this.name).toString();
+            getLogger().debug(msg);
+        }
+    }
+
+    private List<RolapVirtualCubeMeasure> getMesuresFromCalculatedmembers(
+            Map<RolapPhysicalCube, List<CalculatedMemberMapping>> calculatedMembersMap, RolapLevel measuresLevel) {
+        List<RolapVirtualCubeMeasure> measureList = new ArrayList<RolapVirtualCubeMeasure>(); 
+        for (Map.Entry<RolapPhysicalCube, List<CalculatedMemberMapping>> entry : calculatedMembersMap.entrySet()) {
+            RolapPhysicalCube baseCube = entry.getKey();
+            List<CalculatedMemberMapping> mappingCalculatedMemberList = calculatedMembersMap.get(baseCube);
+            Query queryExp = resolveCalcMembers(mappingCalculatedMemberList, Collections.<NamedSetMapping>emptyList(),
+                    baseCube, false);
+            MeasureFinder measureFinder = new MeasureFinder(this, baseCube, measuresLevel, getCatalog());
+            queryExp.accept(measureFinder);
+            measureList.addAll(measureFinder.getMeasuresFound());
+        }
+        return measureList;
+    }
+
+    private Map<RolapPhysicalCube, List<CalculatedMemberMapping>> getOriginCalculatedMemberMap(final RolapCatalog catalog,
+            final VirtualCubeMapping virtualCubeMapping, HashMap<String, MemberMapping> measureHash, Member defaultMeasure) {
+        Map<RolapPhysicalCube, List<CalculatedMemberMapping>> calculatedMembersMap = new TreeMap<>(new RolapCubeComparator());
         List<? extends CalculatedMemberMapping> cm = virtualCubeMapping.getReferencedCalculatedMembers();
-        // for (MeasureGroupMapping measureGroup
-        // : mappingVirtualCube.getMeasureGroups())
-        // {
+        if (cm != null) {
+            for (CalculatedMemberMapping calculatedMember : cm) {
+                measureHash.put(calculatedMember.getName(), calculatedMember);
+                if (calculatedMember.getPhysicalCube() != null) {
+                    RolapCube cube = catalog.lookupCube(calculatedMember.getPhysicalCube());
+                    if (cube == null) {
+                        throw Util.newError(new StringBuilder("Cube '")
+                                .append(calculatedMember.getPhysicalCube().getName()).append("' not found").toString());
+                    }
+                    if (cube instanceof RolapPhysicalCube physicalCube) {
+                        List<Member> cubeMeasures = cube.getMeasures();
+                        boolean found = false;
+                        for (Member cubeMeasure : cubeMeasures) {
+                            if (cubeMeasure.getName().equals(calculatedMember.getName())
+                                    && cubeMeasure instanceof RolapCalculatedMember) {
+                                if (cubeMeasure.getName()
+                                        .equalsIgnoreCase(virtualCubeMapping.getDefaultMeasure() != null
+                                        ? virtualCubeMapping.getDefaultMeasure().getName()
+                                                : null)) {
+                                    defaultMeasure = cubeMeasure;
+                                }
+                                found = true;
+                                List<CalculatedMemberMapping> memberList = calculatedMembersMap.get(cube);
+                                if (memberList == null) {
+                                    memberList = new ArrayList<>();
+                                }
+                                memberList.add(calculatedMember);
+                                calculatedMembersMap.put(physicalCube, memberList);
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            throw Util.newInternal(new StringBuilder("could not find calculated member '")
+                                .append(calculatedMember.getName()).append("' in cube '")
+                                .append(calculatedMember.getPhysicalCube().getName()).append("'").toString());
+                        }
+                    } else {
+                        throw Util.newInternal(new StringBuilder("Cube '")
+                                .append(calculatedMember.getPhysicalCube().getName()).append("' is not physical cube").toString());
+                    }
+                    
+                } else {
+                    throw Util.newInternal("calculated member not found in cube usages");
+                }
+            }
+        }
+        return calculatedMembersMap;
+    }
+
+    private List<RolapVirtualCubeMeasure> getOriginMeasureList(final RolapCatalog catalog, final VirtualCubeMapping virtualCubeMapping, RolapLevel measuresLevel,
+            HashMap<String, MemberMapping> measureHash, Member defaultMeasure) {
+        List<RolapVirtualCubeMeasure> origMeasureList = new ArrayList<>();
+        List<? extends MeasureMapping> ms = virtualCubeMapping.getReferencedMeasures();
         for (MeasureMapping mappingMeasure : ms) {
             measureHash.put(mappingMeasure.getName(), mappingMeasure);
             if (mappingMeasure.getMeasureGroup() != null
@@ -129,165 +309,7 @@ public class RolapVirtualCube extends RolapCube {
                 throw Util.newInternal("measure not found in cube usages");
             }
         }
-
-        if (cm != null) {
-            for (CalculatedMemberMapping calculatedMember : cm) {
-                measureHash.put(calculatedMember.getName(), calculatedMember);
-                if (calculatedMember.getPhysicalCube() != null) {
-                    RolapCube cube = catalog.lookupCube(calculatedMember.getPhysicalCube());
-                    if (cube == null) {
-                        throw Util.newError(new StringBuilder("Cube '")
-                                .append(calculatedMember.getPhysicalCube().getName()).append("' not found").toString());
-                    }
-
-                    List<Member> cubeMeasures = cube.getMeasures();
-                    boolean found = false;
-                    for (Member cubeMeasure : cubeMeasures) {
-                        if (cubeMeasure.getName().equals(calculatedMember.getName())
-                                && cubeMeasure instanceof RolapCalculatedMember) {
-                            if (cubeMeasure.getName()
-                                    .equalsIgnoreCase(virtualCubeMapping.getDefaultMeasure() != null
-                                            ? virtualCubeMapping.getDefaultMeasure().getName()
-                                            : null)) {
-                                defaultMeasure = cubeMeasure;
-                            }
-                            found = true;
-                            List<CalculatedMemberMapping> memberList = calculatedMembersMap.get(cube);
-                            if (memberList == null) {
-                                memberList = new ArrayList<>();
-                            }
-                            memberList.add(calculatedMember);
-                            origCalcMeasureList.add(calculatedMember);
-                            calculatedMembersMap.put(cube, memberList);
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        throw Util.newInternal(new StringBuilder("could not find calculated member '")
-                                .append(calculatedMember.getName()).append("' in cube '")
-                                .append(calculatedMember.getPhysicalCube().getName()).append("'").toString());
-                    }
-                } else {
-                    throw Util.newInternal("calculated member not found in cube usages");
-                }
-            }
-        }
-        // }
-
-        // Must init the dimensions before dealing with calculated members
-        init(virtualCubeMapping.getDimensionConnectors());
-
-        // Loop through the base cubes containing calculated members
-        // referenced by this virtual cube. Resolve those members relative
-        // to their base cubes first, then resolve them relative to this
-        // cube so the correct dimension ordinals are used
-        List<RolapVirtualCubeMeasure> modifiedMeasureList = new ArrayList<>(origMeasureList);
-        for (Map.Entry<RolapCube, List<CalculatedMemberMapping>> entry : calculatedMembersMap.entrySet()) {
-            RolapCube baseCube = entry.getKey();
-            List<CalculatedMemberMapping> mappingCalculatedMemberList = calculatedMembersMap.get(baseCube);
-            Query queryExp = resolveCalcMembers(mappingCalculatedMemberList, Collections.<NamedSetMapping>emptyList(),
-                    baseCube, false);
-            MeasureFinder measureFinder = new MeasureFinder(this, baseCube, measuresLevel, getCatalog());
-            queryExp.accept(measureFinder);
-            modifiedMeasureList.addAll(measureFinder.getMeasuresFound());
-        }
-
-        // Add the original calculated members from the base cubes to our
-        // list of calculated members
-        List<CalculatedMemberMapping> mappingCalculatedMemberList = new ArrayList<>();
-        for (Map.Entry<RolapCube, List<CalculatedMemberMapping>> entry : calculatedMembersMap.entrySet()) {
-            RolapCube baseCube = entry.getKey();
-            mappingCalculatedMemberList.addAll(calculatedMembersMap.get(baseCube));
-        }
-        mappingCalculatedMemberList.addAll(virtualCubeMapping.getCalculatedMembers());
-
-        // Resolve all calculated members relative to this virtual cube,
-        // whose measureHierarchy member reader now contains all base
-        // measures referenced in those calculated members
-        setMeasuresHierarchyMemberReader(new CacheMemberReader(
-                new MeasureMemberSource(this.getMeasuresHierarchy(), Util.<RolapMember>cast(modifiedMeasureList))));
-
-        createCalcMembersAndNamedSets(mappingCalculatedMemberList, virtualCubeMapping.getNamedSets(), new ArrayList<>(),
-                new ArrayList<>(), this, false);
-
-        // iterate through a calculated member definitions in a virtual cube
-        // retrieve calculated member source cube
-        // set it appropriate rolap calculated measure
-        Map<String, RolapHierarchy.RolapCalculatedMeasure> calcMeasuresWithBaseCube = new HashMap<>();
-        for (Map.Entry<RolapCube, List<CalculatedMemberMapping>> entry : calculatedMembersMap.entrySet()) {
-            RolapCube rolapCube = entry.getKey();
-            List<CalculatedMemberMapping> calculatedMembers = calculatedMembersMap.get(rolapCube);
-            for (CalculatedMemberMapping calculatedMember : calculatedMembers) {
-                List<Member> measures = rolapCube.getMeasures();
-                for (Member measure : measures) {
-                    if (measure instanceof RolapHierarchy.RolapCalculatedMeasure calculatedMeasure
-                            && calculatedMember.getName().equals(calculatedMeasure.getKey())) {
-                        calculatedMeasure.setBaseCube(rolapCube);
-                        calcMeasuresWithBaseCube.put(calculatedMeasure.getUniqueName(), calculatedMeasure);
-                    }
-                }
-            }
-        }
-
-        // reset the measureHierarchy member reader back to the list of
-        // measures that are only defined on this virtual cube
-        setMeasuresHierarchyMemberReader(new CacheMemberReader(
-                new MeasureMemberSource(this.getMeasuresHierarchy(), Util.<RolapMember>cast(origMeasureList))));
-
-        this.getMeasuresHierarchy().setDefaultMember(defaultMeasure);
-
-        List<? extends CalculatedMemberMapping> mappingVirtualCubeCalculatedMemberList = virtualCubeMapping
-                .getCalculatedMembers();
-        if (!vcHasAllCalcMembers(origCalcMeasureList, mappingVirtualCubeCalculatedMemberList)) {
-            // Remove from the calculated members array
-            // those members that weren't originally defined
-            // on this virtual cube.
-            List<Formula> calculatedMemberListCopy = new ArrayList<>(getCalculatedMemberList());
-            getCalculatedMemberList().clear();
-            for (Formula calculatedMember : calculatedMemberListCopy) {
-                if (findOriginalMembers(calculatedMember, origCalcMeasureList, getCalculatedMemberList())) {
-                    continue;
-                }
-                findOriginalMembers(calculatedMember, mappingVirtualCubeCalculatedMemberList,
-                        getCalculatedMemberList());
-            }
-        }
-
-        for (Formula calcMember : getCalculatedMemberList()) {
-            if (virtualCubeMapping.getDefaultMeasure() != null
-                    && calcMember.getName().equalsIgnoreCase(virtualCubeMapping.getDefaultMeasure().getName())) {
-                this.getMeasuresHierarchy().setDefaultMember(calcMember.getMdxMember());
-                break;
-            }
-        }
-
-        // We modify the measures schema reader one last time with a version
-        // which includes all calculated members as well.
-        final List<RolapMember> finalMeasureMembers = new ArrayList<>();
-        for (RolapVirtualCubeMeasure measure : origMeasureList) {
-            finalMeasureMembers.add(measure);
-        }
-        for (Formula formula : getCalculatedMemberList()) {
-            final RolapMember calcMeasure = (RolapMember) formula.getMdxMember();
-            if (calcMeasure instanceof RolapHierarchy.RolapCalculatedMeasure rolapCalculatedMeasure
-                    && calcMeasuresWithBaseCube.containsKey(calcMeasure.getUniqueName())) {
-                rolapCalculatedMeasure
-                        .setBaseCube(calcMeasuresWithBaseCube.get(calcMeasure.getUniqueName()).getBaseCube());
-            }
-
-            MemberMapping mappingMeasure = measureHash.get(calcMeasure.getUniqueName());
-            if (mappingMeasure != null) {
-                Boolean visible = mappingMeasure.isVisible();
-                if (visible != null) {
-                    calcMeasure.setProperty(StandardProperty.VISIBLE.getName(), visible);
-                }
-            }
-
-            finalMeasureMembers.add(calcMeasure);
-        }
-        setMeasuresHierarchyMemberReader(new CacheMemberReader(
-                new MeasureMemberSource(this.getMeasuresHierarchy(), Util.<RolapMember>cast(finalMeasureMembers))));
-        // Note: virtual cubes do not get aggregate
+        return origMeasureList;
     }
 
     private boolean vcHasAllCalcMembers(List<? extends CalculatedMemberMapping> origCalcMeasureList,
@@ -314,10 +336,4 @@ public class RolapVirtualCube extends RolapCube {
         }
         return false;
     }
-
-    @Override
-    public boolean isVirtual() {
-        return true;
-    }
-
 }

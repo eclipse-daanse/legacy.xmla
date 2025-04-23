@@ -376,7 +376,7 @@ class RolapCubeTest {
       assertNotNull(cube);
       assertNotNull(cubeSales);
       assertNotNull(cubeWarehouse);
-      assertEquals(true, cube.isVirtual());
+      assertEquals(true, cube instanceof RolapVirtualCube);
       List<RolapCube> baseCubes = cube.getBaseCubes();
       assertNotNull(baseCubes);
       assertEquals(2, baseCubes.size());
@@ -390,7 +390,7 @@ class RolapCubeTest {
       RolapCube cubeSales =
           (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales").orElseThrow();
       assertNotNull(cubeSales);
-      assertEquals(false, cubeSales.isVirtual());
+      assertEquals(false, cubeSales instanceof RolapVirtualCube);
       List<RolapCube> baseCubes = cubeSales.getBaseCubes();
       assertNotNull(baseCubes);
       assertEquals(1, baseCubes.size());

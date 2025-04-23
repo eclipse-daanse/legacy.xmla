@@ -377,7 +377,7 @@ public class RolapCell implements Cell {
      * for retrieving base star key column.
      */
     private RolapCube getDrillThroughBaseCube() {
-        if (result.getCube().isVirtual()) {
+        if (result.getCube() instanceof RolapVirtualCube) {
             Member[] membersForDrillThrough = this.getMembersForDrillThrough();
             for (Member m : membersForDrillThrough) {
                 if (m instanceof RolapVirtualCubeMeasure) {
@@ -430,7 +430,7 @@ public class RolapCell implements Cell {
         Member[] currentMembers,
         RolapCube defaultCube)
     {
-        if (defaultCube != null && defaultCube.isVirtual()) {
+        if (defaultCube != null && defaultCube instanceof RolapVirtualCube) {
             List<RolapCube> cubes = new ArrayList<>();
             for (RolapMember member : defaultCube.getMeasuresMembers()) {
                 if (member instanceof RolapVirtualCubeMeasure measure) {
@@ -438,7 +438,7 @@ public class RolapCell implements Cell {
                 }
             }
             defaultCube = cubes.get(0);
-            assert !defaultCube.isVirtual();
+            assert defaultCube instanceof RolapPhysicalCube;
         }
         final DrillThroughVisitor visitor =
             new DrillThroughVisitor();

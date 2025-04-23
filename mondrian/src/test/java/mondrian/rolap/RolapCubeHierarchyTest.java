@@ -62,8 +62,7 @@ class RolapCubeHierarchyTest {
   @Test
   void testInit_NoFactCube() {
     RolapCubeDimension cubeDimension = mock(RolapCubeDimension.class);
-    RolapCube cubeDimension_cube = mock(RolapCube.class);
-    boolean cubeDimension_cube_isVirtual = true;
+    RolapCube cubeDimension_cube = mock(RolapVirtualCube.class);
     String cubeDimension_uniqueName = "TheDimUniqueName";
     String dimName = "DimName";
     RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
@@ -91,7 +90,6 @@ class RolapCubeHierarchyTest {
 
     doReturn(cubeDimension_cube).when(cubeDimension).getCube();
     doReturn(dimName).when(cubeDimension).getName();
-    doReturn(cubeDimension_cube_isVirtual).when(cubeDimension_cube).isVirtual();
     doReturn(cubeDimension_schema).when(cubeDimension).getCatalog();
     doReturn(schemaReader).when(cubeDimension_schema)
     .getCatalogReaderWithDefaultRole();
@@ -116,8 +114,7 @@ class RolapCubeHierarchyTest {
   @Test
   void testInit_FactCube_NoFactTable() {
     RolapCubeDimension cubeDimension = mock(RolapCubeDimension.class);
-    RolapCube cubeDimension_cube = mock(RolapCube.class);
-    boolean cubeDimension_cube_isVirtual = true;
+    RolapCube cubeDimension_cube = mock(RolapVirtualCube.class);
     String cubeDimension_uniqueName = "TheDimUniqueName";
     String dimName = "DimName";
     RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
@@ -146,7 +143,6 @@ class RolapCubeHierarchyTest {
 
     doReturn(cubeDimension_cube).when(cubeDimension).getCube();
     doReturn(dimName).when(cubeDimension).getName();
-    doReturn(cubeDimension_cube_isVirtual).when(cubeDimension_cube).isVirtual();
     doReturn(cubeDimension_schema).when(cubeDimension).getCatalog();
     doReturn(cubeDimension_schema_connection).when(cubeDimension_schema)
       .getInternalConnection();
@@ -168,8 +164,7 @@ class RolapCubeHierarchyTest {
   @Test
   void testInit_FactCube_FactTableDiffers() {
     RolapCubeDimension cubeDimension = mock(RolapCubeDimension.class);
-    RolapCube cubeDimension_cube = mock(RolapCube.class);
-    boolean cubeDimension_cube_isVirtual = true;
+    RolapCube cubeDimension_cube = mock(RolapVirtualCube.class);
     String cubeDimension_uniqueName = "TheDimUniqueName";
     RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
     RolapConnection cubeDimension_schema_connection =
@@ -205,7 +200,6 @@ class RolapCubeHierarchyTest {
 
     doReturn(cubeDimension_cube).when(cubeDimension).getCube();
     doReturn(dimName).when(cubeDimension).getName();
-    doReturn(cubeDimension_cube_isVirtual).when(cubeDimension_cube).isVirtual();
     doReturn(cubeDimension_schema).when(cubeDimension).getCatalog();
     doReturn(cubeDimension_schema_connection).when(cubeDimension_schema)
       .getInternalConnection();
@@ -228,8 +222,7 @@ class RolapCubeHierarchyTest {
   @Test
   void testInit_FactCube_FactTableEquals() {
     RolapCubeDimension cubeDimension = mock(RolapCubeDimension.class);
-    RolapCube cubeDimension_cube = mock(RolapCube.class);
-    boolean cubeDimension_cube_isVirtual = true;
+    RolapCube cubeDimension_cube = mock(RolapVirtualCube.class);
     String cubeDimension_uniqueName = "TheDimUniqueName";
     String dimName = "DimName";
     RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
@@ -267,7 +260,6 @@ class RolapCubeHierarchyTest {
 
     doReturn(cubeDimension_cube).when(cubeDimension).getCube();
     doReturn(dimName).when(cubeDimension).getName();
-    doReturn(cubeDimension_cube_isVirtual).when(cubeDimension_cube).isVirtual();
     doReturn(cubeDimension_schema).when(cubeDimension).getCatalog();
     doReturn(cubeDimension_schema_connection).when(cubeDimension_schema)
       .getInternalConnection();
