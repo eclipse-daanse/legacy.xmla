@@ -24,6 +24,7 @@ import org.eclipse.daanse.rolap.aggregator.MaxAggregator;
 import org.eclipse.daanse.rolap.aggregator.MinAggregator;
 import org.eclipse.daanse.rolap.aggregator.SumAggregator;
 import org.eclipse.daanse.rolap.aggregator.experimental.H2BitAggAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.H2PercentileAggregator;
 import org.eclipse.daanse.rolap.aggregator.experimental.ListAggAggregator;
 import org.eclipse.daanse.rolap.aggregator.experimental.MySqlBitAggAggregator;
 import org.eclipse.daanse.rolap.aggregator.experimental.NoneAggregator;
@@ -35,6 +36,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.MaxMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MinMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.NoneMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.OrderedColumnMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.PercentileMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SumMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TextAggMeasureMapping;
 
@@ -57,9 +59,19 @@ public class AggregationFactoryImpl implements AggregationFactory{
             case TextAggMeasureMapping i -> new ListAggAggregator(i.isDistinct(), i.getSeparator(), getOrderedColumns(i.getOrderByColumns()), i.getCoalesce(), i.getOnOverflowTruncate());
             case NoneMeasureMapping i -> NoneAggregator.INSTANCE;
             case BitAggMeasureMapping i -> getBitAggAggregator(i);
+            case PercentileMeasureMapping i -> getPercentileAggregator(i);
             case CustomMeasureMapping i -> findCustomAggregator(i);
             default -> throw new RuntimeException("Incorect aggregation type");
         };
+    }
+
+    private Aggregator getPercentileAggregator(PercentileMeasureMapping measure) {
+        if (dialect.getDialectName().equals("h2")) {
+            OrderedColumnMapping oc = measure.getColumn();
+            return new H2PercentileAggregator(measure.getPercentileType(), measure.getPercentile(),
+                    new RolapOrderedColumn(new RolapColumn(oc.getColumn().getTable().getName(), oc.getColumn().getName()), oc.isAscend()));
+        }
+        throw new RuntimeException("BitAggAggregation doesn't suport for dialect " + dialect.getDialectName());
     }
 
     private Aggregator getBitAggAggregator(BitAggMeasureMapping measure) {
