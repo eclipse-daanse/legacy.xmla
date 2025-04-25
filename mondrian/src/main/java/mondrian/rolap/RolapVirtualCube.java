@@ -64,24 +64,22 @@ public class RolapVirtualCube extends RolapCube {
 
         this.setCubeUsages(new RolapCubeUsages(virtualCubeMapping.getCubeUsages()));
 
+        HashMap<String, MemberMapping> measureHash = new HashMap<>();
+
+        List<RolapVirtualCubeMeasure> origMeasureList = getOriginMeasureList(catalog, virtualCubeMapping,
+            measuresLevel, measureHash);
+        Map<RolapPhysicalCube, List<CalculatedMemberMapping>> calculatedMembersMap = getOriginCalculatedMemberMap(catalog,
+            virtualCubeMapping, measureHash);
+        List<? extends CalculatedMemberMapping> origCalcMeasureList = calculatedMembersMap.entrySet().stream().map(Map.Entry::getValue).flatMap(Collection::stream).toList();
         // Must init the dimensions before dealing with calculated members
         init(virtualCubeMapping.getDimensionConnectors());
-
-        Member defaultMeasure = null;
-        HashMap<String, MemberMapping> measureHash = new HashMap<>();
-        //get origin measures list
-        List<RolapVirtualCubeMeasure> origMeasureList = getOriginMeasureList(catalog, virtualCubeMapping, measuresLevel, measureHash, defaultMeasure);
-        //get origin calculated members measures map by origin cube
-        Map<RolapPhysicalCube, List<CalculatedMemberMapping>> calculatedMembersMap = getOriginCalculatedMemberMap(catalog, virtualCubeMapping, measureHash, defaultMeasure);
-        //get origin calculated members list
-        List<? extends CalculatedMemberMapping> origCalcMeasureList = calculatedMembersMap.entrySet().stream().map(Map.Entry::getValue).flatMap(Collection::stream).toList();
 
         // Loop through the base cubes containing calculated members
         // referenced by this virtual cube. Resolve those members relative
         // to their base cubes first, then resolve them relative to this
         // cube so the correct dimension ordinals are used
         List<RolapVirtualCubeMeasure> modifiedMeasureList = new ArrayList<>(origMeasureList);
-        //add measures from calculated members 
+        //add measures from calculated members
         modifiedMeasureList.addAll(getMesuresFromCalculatedmembers(calculatedMembersMap, measuresLevel));
 
         // Add the original calculated members from the base cubes to our
@@ -122,7 +120,6 @@ public class RolapVirtualCube extends RolapCube {
         setMeasuresHierarchyMemberReader(new CacheMemberReader(
                 new MeasureMemberSource(this.getMeasuresHierarchy(), Util.<RolapMember>cast(origMeasureList))));
 
-        this.getMeasuresHierarchy().setDefaultMember(defaultMeasure);
 
         List<? extends CalculatedMemberMapping> mappingVirtualCubeCalculatedMemberList = virtualCubeMapping
                 .getCalculatedMembers();
@@ -184,7 +181,7 @@ public class RolapVirtualCube extends RolapCube {
 
     private List<RolapVirtualCubeMeasure> getMesuresFromCalculatedmembers(
             Map<RolapPhysicalCube, List<CalculatedMemberMapping>> calculatedMembersMap, RolapLevel measuresLevel) {
-        List<RolapVirtualCubeMeasure> measureList = new ArrayList<RolapVirtualCubeMeasure>(); 
+        List<RolapVirtualCubeMeasure> measureList = new ArrayList<RolapVirtualCubeMeasure>();
         for (Map.Entry<RolapPhysicalCube, List<CalculatedMemberMapping>> entry : calculatedMembersMap.entrySet()) {
             RolapPhysicalCube baseCube = entry.getKey();
             List<CalculatedMemberMapping> mappingCalculatedMemberList = calculatedMembersMap.get(baseCube);
@@ -198,7 +195,7 @@ public class RolapVirtualCube extends RolapCube {
     }
 
     private Map<RolapPhysicalCube, List<CalculatedMemberMapping>> getOriginCalculatedMemberMap(final RolapCatalog catalog,
-            final VirtualCubeMapping virtualCubeMapping, HashMap<String, MemberMapping> measureHash, Member defaultMeasure) {
+            final VirtualCubeMapping virtualCubeMapping, HashMap<String, MemberMapping> measureHash) {
         Map<RolapPhysicalCube, List<CalculatedMemberMapping>> calculatedMembersMap = new TreeMap<>(new RolapCubeComparator());
         List<? extends CalculatedMemberMapping> cm = virtualCubeMapping.getReferencedCalculatedMembers();
         if (cm != null) {
@@ -220,7 +217,7 @@ public class RolapVirtualCube extends RolapCube {
                                         .equalsIgnoreCase(virtualCubeMapping.getDefaultMeasure() != null
                                         ? virtualCubeMapping.getDefaultMeasure().getName()
                                                 : null)) {
-                                    defaultMeasure = cubeMeasure;
+                                    this.getMeasuresHierarchy().setDefaultMember(cubeMeasure);
                                 }
                                 found = true;
                                 List<CalculatedMemberMapping> memberList = calculatedMembersMap.get(cube);
@@ -241,7 +238,7 @@ public class RolapVirtualCube extends RolapCube {
                         throw Util.newInternal(new StringBuilder("Cube '")
                                 .append(calculatedMember.getPhysicalCube().getName()).append("' is not physical cube").toString());
                     }
-                    
+
                 } else {
                     throw Util.newInternal("calculated member not found in cube usages");
                 }
@@ -250,8 +247,8 @@ public class RolapVirtualCube extends RolapCube {
         return calculatedMembersMap;
     }
 
-    private List<RolapVirtualCubeMeasure> getOriginMeasureList(final RolapCatalog catalog, final VirtualCubeMapping virtualCubeMapping, RolapLevel measuresLevel,
-            HashMap<String, MemberMapping> measureHash, Member defaultMeasure) {
+    private List<RolapVirtualCubeMeasure> getOriginMeasureList(RolapCatalog catalog, VirtualCubeMapping virtualCubeMapping, RolapLevel measuresLevel,
+            HashMap<String, MemberMapping> measureHash) {
         List<RolapVirtualCubeMeasure> origMeasureList = new ArrayList<>();
         List<? extends MeasureMapping> ms = virtualCubeMapping.getReferencedMeasures();
         for (MeasureMapping mappingMeasure : ms) {
@@ -274,7 +271,6 @@ public class RolapVirtualCube extends RolapCube {
                                 .equalsIgnoreCase(virtualCubeMapping.getDefaultMeasure() != null
                                         ? virtualCubeMapping.getDefaultMeasure().getName()
                                         : null)) {
-                            defaultMeasure = cubeMeasure;
                             isDefaultMeasureFound = true;
                         }
                         found = true;
@@ -294,7 +290,7 @@ public class RolapVirtualCube extends RolapCube {
                         // Set the actual virtual cube measure
                         // to the default measure
                         if (isDefaultMeasureFound) {
-                            defaultMeasure = virtualCubeMeasure;
+                            this.getMeasuresHierarchy().setDefaultMember(virtualCubeMeasure);
                         }
                         break;
                     }
