@@ -23,10 +23,9 @@ import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 import org.eclipse.daanse.rolap.aggregator.MaxAggregator;
 import org.eclipse.daanse.rolap.aggregator.MinAggregator;
 import org.eclipse.daanse.rolap.aggregator.SumAggregator;
-import org.eclipse.daanse.rolap.aggregator.experimental.H2BitAggAggregator;
-import org.eclipse.daanse.rolap.aggregator.experimental.H2PercentileAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.BitAggAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.PercentileAggregator;
 import org.eclipse.daanse.rolap.aggregator.experimental.ListAggAggregator;
-import org.eclipse.daanse.rolap.aggregator.experimental.MySqlBitAggAggregator;
 import org.eclipse.daanse.rolap.aggregator.experimental.NoneAggregator;
 import org.eclipse.daanse.rolap.mapping.api.model.AvgMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.BitAggMeasureMapping;
@@ -66,22 +65,13 @@ public class AggregationFactoryImpl implements AggregationFactory{
     }
 
     private Aggregator getPercentileAggregator(PercentileMeasureMapping measure) {
-        if (dialect.getDialectName().equals("h2")) {
             OrderedColumnMapping oc = measure.getColumn();
-            return new H2PercentileAggregator(measure.getPercentileType(), measure.getPercentile(),
-                    new RolapOrderedColumn(new RolapColumn(oc.getColumn().getTable().getName(), oc.getColumn().getName()), oc.isAscend()));
-        }
-        throw new RuntimeException("BitAggAggregation doesn't suport for dialect " + dialect.getDialectName());
+            return new PercentileAggregator(measure.getPercentileType(), measure.getPercentile(),
+                    new RolapOrderedColumn(new RolapColumn(oc.getColumn().getTable().getName(), oc.getColumn().getName()), oc.isAscend()), dialect);
     }
 
     private Aggregator getBitAggAggregator(BitAggMeasureMapping measure) {
-        if (dialect.getDialectName().equals("h2")) { 
-            return new H2BitAggAggregator(measure.isNot(), measure.getBitAggType());
-        }
-        if (dialect.getDialectName().equals("mysql")) {
-            return new MySqlBitAggAggregator(measure.isNot(), measure.getBitAggType());
-        }
-        throw new RuntimeException("BitAggAggregation doesn't suport for dialect " + dialect.getDialectName());
+        return new BitAggAggregator(measure.isNot(), measure.getBitAggType(), dialect);
     }
 
     private List<RolapOrderedColumn> getOrderedColumns(List<? extends OrderedColumnMapping> orderByColumns) {

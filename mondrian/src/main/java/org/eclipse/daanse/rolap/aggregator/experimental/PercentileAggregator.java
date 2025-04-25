@@ -14,6 +14,7 @@ package org.eclipse.daanse.rolap.aggregator.experimental;
 
 import java.util.List;
 
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
@@ -23,22 +24,25 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.PercentileType;
 
 import mondrian.rolap.RolapOrderedColumn;
 
-public class H2PercentileAggregator implements Aggregator {
+public class PercentileAggregator implements Aggregator {
 
     private Double percentile;
     private PercentileType percentileType;
     private RolapOrderedColumn rolapOrderedColumn;
+    private Dialect dialect;
 
 
-    public H2PercentileAggregator(PercentileType percentileType, Double percentile,
-            RolapOrderedColumn rolapOrderedColumn) {
+    public PercentileAggregator(PercentileType percentileType, Double percentile,
+            RolapOrderedColumn rolapOrderedColumn, Dialect dialect) {
         this.percentile = percentile;
         this.percentileType = percentileType;
         this.rolapOrderedColumn = rolapOrderedColumn;
+        this.dialect = dialect;
     }
 
     @Override
     public Object aggregate(Evaluator evaluator, TupleList members, Calc<?> exp) {
+        //TODO
         return null;
     }
 
@@ -47,39 +51,14 @@ public class H2PercentileAggregator implements Aggregator {
         StringBuilder buf = new StringBuilder(64);
         switch (percentileType) {
             case PercentileType.DISC:
-                return disc();
+                return dialect.generatePercentileDisc(this.percentile, !this.rolapOrderedColumn.isAscend(), 
+                        this.rolapOrderedColumn.getColumn().getTable(), this.rolapOrderedColumn.getColumn().getName());
             case PercentileType.CONT:
-                return cont();
+                return dialect.generatePercentileCont(this.percentile, !this.rolapOrderedColumn.isAscend(), 
+                        this.rolapOrderedColumn.getColumn().getTable(), this.rolapOrderedColumn.getColumn().getName());
         }
         return buf;
 
-    }
-
-    private StringBuilder disc() {
-        StringBuilder buf = new StringBuilder(64);
-        buf.append("percentile_disc(").append(this.percentile).append(")").append(" WITHIN GROUP (ORDER BY ");
-        buf.append(getColumn(this.rolapOrderedColumn)).append(")");
-        //percentile_disc(0.3) WITHIN GROUP (ORDER BY price)
-        return buf;
-    }
-
-    private StringBuilder cont() {
-        StringBuilder buf = new StringBuilder(64);
-        buf.append("percentile_cont(").append(this.percentile).append(")").append(" WITHIN GROUP (ORDER BY ");
-        buf.append(getColumn(this.rolapOrderedColumn)).append(")");
-        //percentile_cont(0.3) WITHIN GROUP (ORDER BY price)
-        return buf;
-    }
-
-    private CharSequence getColumn(RolapOrderedColumn orderedColumn) {
-        StringBuilder buf = new StringBuilder(64);
-        if (orderedColumn.getColumn() != null  && orderedColumn.getColumn().getTable() != null && orderedColumn.getColumn().getName() != null) {
-            buf.append("\"").append(orderedColumn.getColumn().getTable()).append("\".\"").append(orderedColumn.getColumn().getName()).append("\"");
-            if (!orderedColumn.isAscend()) {
-                buf.append(" DESC");
-            }
-        }
-        return buf;
     }
 
     @Override

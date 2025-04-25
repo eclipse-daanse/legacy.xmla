@@ -14,6 +14,7 @@ package org.eclipse.daanse.rolap.aggregator.experimental;
 
 import java.util.List;
 
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
@@ -21,15 +22,17 @@ import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.BitAggregationType;
 
-public class H2BitAggAggregator implements Aggregator {
+public class BitAggAggregator implements Aggregator {
 
     private boolean not;
     private BitAggregationType bitAggType;
+    private Dialect dialect;
 
     //
-    public H2BitAggAggregator(boolean not, BitAggregationType bitAggType) {
+    public BitAggAggregator(boolean not, BitAggregationType bitAggType, Dialect dialect) {
         this.not = not;
         this.bitAggType = bitAggType;
+        this.dialect = dialect;
     }
 
     @Override
@@ -63,33 +66,27 @@ public class H2BitAggAggregator implements Aggregator {
     }
 
     private StringBuilder and(CharSequence operand) {
-        StringBuilder buf = new StringBuilder(64);
         if (not) {
-            buf.append("BIT_NAND_AGG(").append(operand).append(")");
+            return dialect.generateNAndBitAggregation(operand);
         } else {
-            buf.append("BIT_AND_AGG(").append(operand).append(")");
+            return dialect.generateAndBitAggregation(operand);
         }
-        return buf;
     }
 
     private StringBuilder or(CharSequence operand) {
-        StringBuilder buf = new StringBuilder(64);
         if (not) {
-            buf.append("BIT_NOR_AGG(").append(operand).append(")");
+            return dialect.generateNOrBitAggregation(operand);
         } else {
-            buf.append("BIT_OR_AGG(").append(operand).append(")");
+            return dialect.generateOrBitAggregation(operand);
         }
-        return buf;
     }
 
     private StringBuilder xor(CharSequence operand) {
-        StringBuilder buf = new StringBuilder(64);
         if (not) {
-            buf.append("BIT_XNOR_AGG(").append(operand).append(")");
+            return dialect.generateNXorBitAggregation(operand);
         } else {
-            buf.append("BIT_XOR_AGG(").append(operand).append(")");
+            return dialect.generateXorBitAggregation(operand);
         }
-        return buf;
     }
 
     @Override
