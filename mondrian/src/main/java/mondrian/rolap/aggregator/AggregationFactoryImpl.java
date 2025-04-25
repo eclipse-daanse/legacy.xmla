@@ -10,7 +10,7 @@
 * Contributors:
 *   SmartCity Jena - initial
 */ 
-package mondrian.rolap;
+package mondrian.rolap.aggregator;
 
 import java.util.List;
 
@@ -39,6 +39,9 @@ import org.eclipse.daanse.rolap.mapping.api.model.PercentileMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SumMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TextAggMeasureMapping;
 
+import mondrian.rolap.RolapColumn;
+import mondrian.rolap.RolapOrderedColumn;
+
 public class AggregationFactoryImpl implements AggregationFactory{
 
     private Dialect dialect;
@@ -54,14 +57,22 @@ public class AggregationFactoryImpl implements AggregationFactory{
             case MaxMeasureMapping i -> MaxAggregator.INSTANCE;
             case MinMeasureMapping i -> MinAggregator.INSTANCE;
             case AvgMeasureMapping i  -> AvgAggregator.INSTANCE;
-            case CountMeasureMapping i -> (i.isDistinct() ? DistinctCountAggregator.INSTANCE : CountAggregator.INSTANCE);
-            case TextAggMeasureMapping i -> new ListAggAggregator(i.isDistinct(), i.getSeparator(), getOrderedColumns(i.getOrderByColumns()), i.getCoalesce(), i.getOnOverflowTruncate());
+            case CountMeasureMapping i -> getCountAggregator(i);
+            case TextAggMeasureMapping i -> getListAggAggregator(i);
             case NoneMeasureMapping i -> NoneAggregator.INSTANCE;
             case BitAggMeasureMapping i -> getBitAggAggregator(i);
             case PercentileMeasureMapping i -> getPercentileAggregator(i);
             case CustomMeasureMapping i -> findCustomAggregator(i);
             default -> throw new RuntimeException("Incorect aggregation type");
         };
+    }
+
+    private Aggregator getCountAggregator(CountMeasureMapping i) {
+        return (i.isDistinct() ? DistinctCountAggregator.INSTANCE : CountAggregator.INSTANCE);
+    }
+
+    private Aggregator getListAggAggregator(TextAggMeasureMapping i) {
+        return new ListAggAggregator(i.isDistinct(), i.getSeparator(), getOrderedColumns(i.getOrderByColumns()), i.getCoalesce(), i.getOnOverflowTruncate());
     }
 
     private Aggregator getPercentileAggregator(PercentileMeasureMapping measure) {

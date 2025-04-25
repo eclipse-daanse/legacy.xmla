@@ -57,7 +57,7 @@ import aQute.bnd.annotation.spi.ServiceConsumer;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
-import mondrian.rolap.AggregationFactoryImpl;
+import mondrian.rolap.aggregator.AggregationFactoryImpl;
 
 @ServiceConsumer(cardinality = Cardinality.MULTIPLE, value = DatabaseProvider.class)
 public class ContextArgumentsProvider implements ArgumentsProvider, AnnotationConsumer<ContextSource> {

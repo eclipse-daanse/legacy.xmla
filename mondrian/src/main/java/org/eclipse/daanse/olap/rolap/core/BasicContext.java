@@ -58,12 +58,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.rolap.AbstractRolapContext;
-import mondrian.rolap.AggregationFactoryImpl;
 import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapConnectionPropsR;
 import mondrian.rolap.RolapResultShepherd;
 import mondrian.rolap.agg.AggregationManager;
+import mondrian.rolap.aggregator.AggregationFactoryImpl;
 
 @Component(service = Context.class, scope = ServiceScope.SINGLETON)
 public class BasicContext extends AbstractRolapContext implements RolapContext {
