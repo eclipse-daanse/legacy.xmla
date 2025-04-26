@@ -214,7 +214,7 @@ public class ContextArgumentsProvider implements ArgumentsProvider, AnnotationCo
 							TestContextImpl testContextImpl = new TestContextImpl();
 							testContextImpl.setDataSource(dataBaseInfo.getKey());
 							testContextImpl.setDialect(dataBaseInfo.getValue());
-							testContextImpl.setAggragationFactory(new AggregationFactoryImpl(dataBaseInfo.getValue()));
+							testContextImpl.setAggragationFactory(new AggregationFactoryImpl(dataBaseInfo.getValue(), testContextImpl.getCustomAggregators()));
 							testContextImpl.setName("TestContext");
 
 
