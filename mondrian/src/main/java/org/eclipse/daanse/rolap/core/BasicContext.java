@@ -14,6 +14,7 @@
 package org.eclipse.daanse.rolap.core;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,10 +33,21 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
+
+import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.core.LoggingEventBus;
 import org.eclipse.daanse.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.aggregator.AvgAggregator;
+import org.eclipse.daanse.rolap.aggregator.CountAggregator;
+import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
+import org.eclipse.daanse.rolap.aggregator.MaxAggregator;
+import org.eclipse.daanse.rolap.aggregator.MinAggregator;
+import org.eclipse.daanse.rolap.aggregator.SumAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.NoneAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.IppAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.RndAggregator;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -46,6 +58,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +89,7 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
     public static final String REF_NAME_ROLAP_CONTEXT_MAPPING_SUPPLIER = "rolapContextMappingSuppliers";
     public static final String REF_NAME_MDX_PARSER_PROVIDER = "mdxParserProvider";
     public static final String REF_NAME_EXPRESSION_COMPILER_FACTORY = "expressionCompilerFactory";
+    public static final String REF_NAME_CUSTOM_AGGREGATOR = "customAggregator";
 
     private static final String ERR_MSG_DIALECT_INIT = "Could not activate context. Error on initialisation of Dialect";
 
@@ -108,10 +122,21 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
     @Reference(name = REF_NAME_MDX_PARSER_PROVIDER, target = UnresolvableNamespace.UNRESOLVABLE_FILTER)
     private MdxParserProvider mdxParserProvider;
 
+    private List<CustomAggregatorFactory> customAggregators = new ArrayList<CustomAggregatorFactory>();
+
     @Activate
     public void activate(Map<String, Object> configuration) throws Exception {
         updateConfiguration(configuration);
         activate1();
+    }
+
+    @Reference(name = REF_NAME_CUSTOM_AGGREGATOR, cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void bindCustomAgregators(CustomAggregatorFactory aggregator) {
+        customAggregators.add(aggregator);
+    }
+
+    public void unbindCustomAgregators(CustomAggregatorFactory aggregator) {
+        customAggregators.remove(aggregator);
     }
 
     public void activate1() throws Exception {
@@ -124,7 +149,7 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
         try (Connection connection = dataSource.getConnection()) {
             Optional<Dialect> optionalDialect = dialectResolver.resolve(dataSource);
             dialect = optionalDialect.orElseThrow(() -> new Exception(ERR_MSG_DIALECT_INIT));
-            aggregationFactory = new AggregationFactoryImpl(dialect);
+            aggregationFactory = new AggregationFactoryImpl(dialect, this.getCustomAggregators());
         }
 
         shepherd = new RolapResultShepherd(getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_DEFAULT_VALUE, Long.class),
@@ -246,6 +271,11 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
                 ExecuteDurationUtil.executeDurationValue(statement.getConnection().getContext()));
         final RolapResult result = new RolapResult(dummyExecution, false);
         return result.getRootEvaluator();
+    };
+
+    @Override
+    public List<CustomAggregatorFactory> getCustomAggregators() {
+        return this.customAggregators;
     };
 
     @Override

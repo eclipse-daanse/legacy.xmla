@@ -9,14 +9,16 @@
 *
 * Contributors:
 *   SmartCity Jena - initial
-*/ 
+*/
 package mondrian.rolap.aggregator;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.AggregationFactory;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
+import org.eclipse.daanse.olap.api.aggregator.CustomAggregatorFactory;
 import org.eclipse.daanse.rolap.aggregator.AvgAggregator;
 import org.eclipse.daanse.rolap.aggregator.CountAggregator;
 import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
@@ -47,9 +49,11 @@ import mondrian.rolap.RolapOrderedColumn;
 public class AggregationFactoryImpl implements AggregationFactory{
 
     private Dialect dialect;
+    private List<CustomAggregatorFactory> customAggregators;
 
-    public AggregationFactoryImpl(Dialect dialect) {
+    public AggregationFactoryImpl(Dialect dialect, List<CustomAggregatorFactory> customAggregators) {
         this.dialect = dialect;
+        this.customAggregators = customAggregators;
     }
 
     @Override
@@ -100,8 +104,13 @@ public class AggregationFactoryImpl implements AggregationFactory{
         return List.of();
     }
 
-    private static Aggregator findCustomAggregator(CustomMeasureMapping i) {
-        //TODO
-        return null;
+    private Aggregator findCustomAggregator(CustomMeasureMapping i) {
+        Optional<CustomAggregatorFactory> oAggregator = customAggregators.stream().filter(ca -> i.getName().equals(ca.getName())).findAny();
+        if (oAggregator.isPresent()) {
+            List<Object> l = (i.getColumns() == null) ? List.of() : i.getColumns().stream().map(Object.class::cast).toList();
+            return oAggregator.get().getAggregator(i.getTemplate(), i.getProperties(), l);
+            //TODO not use object
+        }
+        throw new RuntimeException("Custom aggregator with name " + i.getName() + "not found");
     }
 }

@@ -15,6 +15,7 @@ package org.opencube.junit5.context;
 
 import java.sql.SQLException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +35,7 @@ import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
+import org.eclipse.daanse.olap.api.aggregator.CustomAggregatorFactory;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.function.FunctionService;
@@ -351,6 +353,8 @@ public class TestContextImpl extends AbstractRolapContext implements TestContext
     private Semaphore queryLimimitSemaphore;
     private FunctionService functionService = new FunctionServiceImpl();
     private AggregationFactory aggregationFactory;
+
+    private List<CustomAggregatorFactory> customAggregators = new ArrayList<CustomAggregatorFactory>();
 
     public TestContextImpl() {
         this.eventBus = new LoggingEventBus();
@@ -958,6 +962,11 @@ public class TestContextImpl extends AbstractRolapContext implements TestContext
     public void setAggragationFactory(AggregationFactory aggregationFactory) {
         this.aggregationFactory = aggregationFactory;
     }
+
+    @Override
+    public List<CustomAggregatorFactory> getCustomAggregators() {
+        return this.customAggregators;
+    };
 
     @Override
     public Evaluator createEvaluator(Statement statement) {
