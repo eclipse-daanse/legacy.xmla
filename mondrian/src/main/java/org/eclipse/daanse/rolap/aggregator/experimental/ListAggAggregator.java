@@ -14,6 +14,8 @@ package org.eclipse.daanse.rolap.aggregator.experimental;
 
 import java.util.List;
 
+import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.api.OrderedColumn;
 import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
@@ -30,14 +32,16 @@ public class ListAggAggregator implements Aggregator {
     private List<RolapOrderedColumn> columns;
     private String coalesce;
     private String onOverflowTruncate;
+    private Dialect dialect;
     
     //
-    public ListAggAggregator(boolean distinct, String separator, List<RolapOrderedColumn> columns, String coalesce, String onOverflowTruncate) {
+    public ListAggAggregator(boolean distinct, String separator, List<RolapOrderedColumn> columns, String coalesce, String onOverflowTruncate, Dialect dialect) {
         this.distinct = distinct;
         this.separator = separator;
         this.columns = columns;
         this.coalesce = coalesce;
         this.onOverflowTruncate = onOverflowTruncate;
+        this.dialect = dialect;
     }
 
     @Override
@@ -57,50 +61,11 @@ public class ListAggAggregator implements Aggregator {
 
     @Override
     public StringBuilder getExpression(CharSequence operand) {
-        StringBuilder buf = new StringBuilder(64);
-        buf.append("LISTAGG");
-        buf.append("( ");
-        if (this.distinct) {
-            buf.append("DISTINCT ");
+        List<OrderedColumn> columnsList = List.of();
+        if (this.columns != null) {
+            columnsList = this.columns.stream().map(c -> new OrderedColumn(c.getColumn().getName(), c.getColumn().getTable(), c.isAscend())).toList();
         }
-        if (this.coalesce != null) {
-            buf.append("COALESCE(").append(operand).append(", '").append(this.coalesce).append("')");
-        } else {
-            buf.append(operand);
-        }
-        buf.append(", '");
-        if (this.separator != null) {
-            buf.append(this.separator);
-        } else {
-            buf.append(", ");
-        }
-        buf.append("'");
-        if (this.onOverflowTruncate != null) {
-            buf.append(" ON OVERFLOW TRUNCATE '").append(this.onOverflowTruncate).append("' WITHOUT COUNT)");
-        } else {
-            buf.append(")");
-        }
-        if (columns != null && !columns.isEmpty()) {
-            buf.append(" WITHIN GROUP (ORDER BY ");
-            boolean first = true;
-            for(RolapOrderedColumn column : columns) {
-                if (!first) {
-                    buf.append(", ");
-                }
-                RolapColumn c = column.getColumn();
-                buf.append("\"").append(c.getTable()).append("\".\"").append(c.getName()).append("\"");
-                if (!column.isAscend()) {
-                    buf.append(" DESC");
-                }
-                first = false;
-            }
-            buf.append(")");
-        }
-        //LISTAGG(NAME, ', ') WITHIN GROUP (ORDER BY ID)
-        //LISTAGG(COALESCE(NAME, 'null'), ', ') WITHIN GROUP (ORDER BY ID)
-        //LISTAGG(ID, ', ') WITHIN GROUP (ORDER BY ID) OVER (ORDER BY ID)
-        //LISTAGG(ID, ';' ON OVERFLOW TRUNCATE 'etc' WITHOUT COUNT) WITHIN GROUP (ORDER BY ID)
-        return buf;
+        return this.dialect.generateListAgg(operand, distinct, separator, coalesce, onOverflowTruncate, columnsList);
     }
 
     @Override

@@ -72,7 +72,7 @@ public class AggregationFactoryImpl implements AggregationFactory{
     }
 
     private Aggregator getListAggAggregator(TextAggMeasureMapping i) {
-        return new ListAggAggregator(i.isDistinct(), i.getSeparator(), getOrderedColumns(i.getOrderByColumns()), i.getCoalesce(), i.getOnOverflowTruncate());
+        return new ListAggAggregator(i.isDistinct(), i.getSeparator(), getOrderedColumns(i.getOrderByColumns()), i.getCoalesce(), i.getOnOverflowTruncate(), dialect);
     }
 
     private Aggregator getPercentileAggregator(PercentileMeasureMapping measure) {
