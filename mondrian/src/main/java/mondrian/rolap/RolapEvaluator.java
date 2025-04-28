@@ -731,8 +731,7 @@ public final void setContext( Member member, boolean safe ) {
 
   @Override
 public final void setContext( List<Member> memberList ) {
-    for ( int i = 0, n = memberList.size(); i < n; i++ ) {
-      Member member = memberList.get( i );
+    for (Member member : memberList) {
       if (member == null) {
           throw new IllegalArgumentException(NULL_MEMBER_IN + memberList);
       }
@@ -742,8 +741,7 @@ public final void setContext( List<Member> memberList ) {
 
   @Override
 public final void setContext( List<Member> memberList, boolean safe ) {
-    for ( int i = 0, n = memberList.size(); i < n; i++ ) {
-      Member member = memberList.get( i );
+    for (Member member : memberList) {
       if (member == null) {
           throw new IllegalArgumentException(NULL_MEMBER_IN + memberList);
       }
@@ -753,8 +751,7 @@ public final void setContext( List<Member> memberList, boolean safe ) {
 
   @Override
 public final void setContext( Member[] members ) {
-    for ( int i = 0, length = members.length; i < length; i++ ) {
-      Member member = members[i];
+    for (Member member : members) {
       if (member == null) {
           throw new IllegalArgumentException(NULL_MEMBER_IN + Arrays.toString( members ));
       }
@@ -764,8 +761,7 @@ public final void setContext( Member[] members ) {
 
   @Override
 public final void setContext( Member[] members, boolean safe ) {
-    for ( int i = 0, length = members.length; i < length; i++ ) {
-      Member member = members[i];
+    for (Member member : members) {
       if (member == null) {
           throw new IllegalArgumentException("member should be not null");
       }
