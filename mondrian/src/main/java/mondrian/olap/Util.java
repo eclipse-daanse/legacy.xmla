@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.lang.ref.Reference;
 import java.lang.reflect.Array;
@@ -139,7 +138,6 @@ import mondrian.rolap.RolapMember;
 import mondrian.rolap.RolapUtil;
 import mondrian.util.ArraySortedSet;
 import mondrian.util.ConcatenableList;
-import mondrian.util.Pair;
 import mondrian.util.UtilCompatible;
 import mondrian.util.UtilCompatibleJdk16;
 
@@ -2402,28 +2400,6 @@ public class Util {
         }
     }
 
-    /**
-     * Compiles a script to yield a Java interface.
-     *
-     * <p>Only valid JDK 1.6 and higher; fails on JDK 1.5 and earlier.</p>
-     *
-     * @param iface Interface script should implement
-     * @param script Script code
-     * @param engineName Name of engine (e.g. "JavaScript")
-     * @param <T> Interface
-     * @return Object that implements given interface
-     */
-    public static <T> T compileScript(
-        Class<T> iface,
-        String script,
-        String engineName)
-    {
-        return compatible.compileScript(iface, script, engineName);
-    }
-
-
-
-  
     /**
      * Check the resultSize against the result limit setting. Throws
      * LimitExceededDuringCrossjoin exception if limit exceeded.

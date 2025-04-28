@@ -48,27 +48,6 @@ public class UtilCompatibleJdk16 implements UtilCompatible  {
         "An exception was encountered while trying to cleanup an execution context. A statement failed to cancel gracefully. Locus was : \"{0}\".";
 
     @Override
-	public <T> T compileScript(
-        Class<T> iface,
-        String script,
-        String engineName)
-    {
-        ScriptEngineFactory factory = ServiceLoader.load(ScriptEngineFactory.class).findFirst().get();
-//        ScriptEngineFactory factory =null; new QuickFixRhinoScriptEngineFactory();
-        ScriptEngine engine = factory.getScriptEngine();
-        try {
-            engine.eval(script);
-            Invocable inv = (Invocable) engine;
-            return inv.getInterface(iface);
-        } catch (ScriptException e) {
-            throw Util.newError(
-                e,
-                new StringBuilder("Error while compiling script to implement ").append(iface)
-                    .append(" SPI").toString());
-        }
-    }
-
-    @Override
     public void cancelStatement(Statement stmt) {
         try {
             // A call to statement.isClosed() would be great here, but in
@@ -98,11 +77,6 @@ public class UtilCompatibleJdk16 implements UtilCompatible  {
         }
     }
 
-    @Override
-    public <T> Set<T> newIdentityHashSet() {
-        return Collections.newSetFromMap(
-            new IdentityHashMap<T, Boolean>());
-    }
 
     @Override
 	public <T extends Comparable<T>> int binarySearch(
