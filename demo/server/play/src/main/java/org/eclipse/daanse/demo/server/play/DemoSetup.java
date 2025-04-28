@@ -74,7 +74,7 @@ public class DemoSetup {
 
 	private void initContext() throws IOException {
 
-		String PATH_TO_OBSERVE = "/home/denis/cat";
+		String PATH_TO_OBSERVE = "./catalogs";
 
 		String path = Paths.get(PATH_TO_OBSERVE).toAbsolutePath().normalize().toString();
 

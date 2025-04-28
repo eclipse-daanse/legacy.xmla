@@ -22,10 +22,8 @@
 	bnd.identity;id='org.glassfish.hk2.osgi-resource-locator',\
 	bnd.identity;id='com.sun.xml.messaging.saaj.impl',\
 	bnd.identity;id='org.apache.aries.spifly.dynamic.framework.extension',\
-	bnd.identity;id='org.apache.felix.http.servlet-api',\
 	bnd.identity;id='org.apache.felix.metatype',\
 	bnd.identity;id='org.eclipse.daanse.emondrian',\
-	bnd.identity;id='org.osgi.util.converter',\
 	bnd.identity;id='org.eclipse.daanse.olap.xmla.bridge',\
 	bnd.identity;id='org.eclipse.daanse.xmla.server.jakarta.saaj',\
 	bnd.identity;id='org.eclipse.daanse.jdbc.db.dialect.resolver.basic',\
