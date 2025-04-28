@@ -25,8 +25,6 @@ import org.eclipse.daanse.olap.api.type.SymbolType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
 
-import mondrian.olap.AbstractLiteralImpl;
-
 public class SymbolLiteralImpl extends AbstractLiteralImpl<String> implements SymbolLiteral {
 
 	private SymbolLiteralImpl(String o) {

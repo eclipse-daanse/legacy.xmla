@@ -24,8 +24,6 @@ import org.eclipse.daanse.olap.api.type.NullType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
 
-import mondrian.olap.AbstractLiteralImpl;
-
 public class NullLiteralImpl extends AbstractLiteralImpl<Object> implements NullLiteral {
 
 	public static final NullLiteralImpl nullValue = new NullLiteralImpl();

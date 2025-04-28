@@ -24,7 +24,6 @@ import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
 
-import mondrian.olap.AbstractLiteralImpl;
 import mondrian.olap.Util;
 
 public class StringLiteralImpl extends AbstractLiteralImpl<String> implements StringLiteral {
