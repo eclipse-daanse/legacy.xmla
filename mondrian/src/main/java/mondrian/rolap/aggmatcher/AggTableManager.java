@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.olap.Util;
-import mondrian.olap.Util.PropertyList;
 import mondrian.recorder.ListRecorder;
 import mondrian.recorder.MessageRecorder;
 import mondrian.recorder.RecorderException;
@@ -53,7 +52,7 @@ import mondrian.rolap.util.PojoUtil;
  * <li>A {@link mondrian.rolap.RolapCatalog} creates an {@link AggTableManager},
  *     and stores it in a member variable to ensure that it is not
  *     garbage-collected.
- * <li>The {@link mondrian.rolap.RolapCatalog} calls {@link #initialize(PropertyList)},
+ * <li>The {@link mondrian.rolap.RolapCatalog} calls {@link #initialize(ConnectionProps)},
  *     which scans the JDBC catalog and identifies aggregate tables.
  * <li>For each aggregate table, it creates an {@link AggStar} and calls
  *     {@link RolapStar#addAggStar(AggStar)}.
