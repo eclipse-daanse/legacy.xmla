@@ -75,6 +75,7 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
 import org.eclipse.daanse.olap.impl.CoordinateIterator;
 import org.eclipse.daanse.olap.impl.TraditionalCellSetFormatter;
+import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.opencube.junit5.context.TestContextImpl;
@@ -83,7 +84,6 @@ import org.opencube.junit5.context.TestContextImpl;
 
 import mondrian.calc.impl.UnaryTupleList;
 import mondrian.enums.DatabaseProduct;
-import mondrian.olap.IdImpl;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;

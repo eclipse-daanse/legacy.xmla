@@ -18,12 +18,14 @@
  */
 // Copyright (c) 2021 Sergei Semenkov.  All rights reserved.
 
-package mondrian.olap;
+package org.eclipse.daanse.olap.query.component;
 
 import java.io.PrintWriter;
 
 import org.eclipse.daanse.olap.api.query.component.CalculatedFormula;
 import org.eclipse.daanse.olap.api.query.component.Formula;
+
+import mondrian.olap.AbstractQueryPart;
 
 public class CalculatedFormulaImpl extends AbstractQueryPart implements CalculatedFormula {
     private final String cubeName;

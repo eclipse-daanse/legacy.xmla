@@ -38,6 +38,7 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.function.def.member.memberorderkey.MemberOrderKeyCalc;
+import org.eclipse.daanse.olap.query.component.QueryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -46,7 +47,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import mondrian.calc.impl.TupleCollections;
-import mondrian.olap.QueryImpl;
 import mondrian.rolap.RolapConnection;
 import mondrian.server.ExecutionImpl;
 

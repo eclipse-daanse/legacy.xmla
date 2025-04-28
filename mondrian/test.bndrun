@@ -106,8 +106,8 @@
     #tester.names='mondrian.rolap.aggmatcher.AggMeasureFactCountTest'
 #-runproperties.tester: \
 #	tester.names='mondrian.test.CaptionTest'
--runproperties.tester: \
-	tester.names='mondrian.rolap.TestAggregationManager'
+#-runproperties.tester: \
+#	tester.names='mondrian.rolap.TestAggregationManager'
 #-runproperties.tester: \
 #	tester.names='mondrian.test.CompoundSlicerTest'
 #-runproperties.tester: \

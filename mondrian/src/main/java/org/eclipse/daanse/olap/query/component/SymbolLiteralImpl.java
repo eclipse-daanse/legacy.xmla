@@ -11,28 +11,30 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package mondrian.olap;
+package org.eclipse.daanse.olap.query.component;
 
 import java.io.PrintWriter;
 
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
-import org.eclipse.daanse.olap.api.query.component.StringLiteral;
+import org.eclipse.daanse.olap.api.query.component.SymbolLiteral;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
 import org.eclipse.daanse.olap.api.type.StringType;
+import org.eclipse.daanse.olap.api.type.SymbolType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
 
-public class StringLiteralImpl extends AbstractLiteralImpl<String> implements StringLiteral {
-    public static final StringLiteralImpl EMPTY_STRING_LITERAL = new StringLiteralImpl("");
-    private static final StringType TYPE=StringType.INSTANCE;
-	protected StringLiteralImpl(String text) {
-		super(text);
+import mondrian.olap.AbstractLiteralImpl;
+
+public class SymbolLiteralImpl extends AbstractLiteralImpl<String> implements SymbolLiteral {
+
+	private SymbolLiteralImpl(String o) {
+		super(o);
 	}
 
-	public static StringLiteralImpl create(String text) {
-		return ("".equals(text)) ? EMPTY_STRING_LITERAL : new StringLiteralImpl(text);
+	public static AbstractLiteralImpl<String> create(String s) {
+		return new SymbolLiteralImpl(s);
 	}
 
 	@Override
@@ -42,22 +44,23 @@ public class StringLiteralImpl extends AbstractLiteralImpl<String> implements St
 
 	@Override
 	public DataType getCategory() {
-		return DataType.STRING;
+		return DataType.SYMBOL;
 	}
 
 	@Override
 	public Type getType() {
-		return TYPE;
+		return SymbolType.INSTANCE;
 	}
 
 	@Override
 	public void unparse(PrintWriter pw) {
-		pw.print(Util.quoteForMdx(getValue()));
+		pw.print(getValue());
 	}
 
 	@Override
 	public Calc<String> accept(ExpressionCompiler compiler) {
-		return new ConstantStringCalc(TYPE, getValue());
-	}
 
+		// why is this not a symbolType?
+		return new ConstantStringCalc(StringType.INSTANCE, getValue());
+	}
 }

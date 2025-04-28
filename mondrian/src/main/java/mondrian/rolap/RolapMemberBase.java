@@ -34,10 +34,10 @@ import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.MemberBase;
 import mondrian.olap.StandardProperty;
 import mondrian.olap.Util;

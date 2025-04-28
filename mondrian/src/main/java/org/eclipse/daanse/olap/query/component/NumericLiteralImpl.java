@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package mondrian.olap;
+package org.eclipse.daanse.olap.query.component;
 
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -25,6 +25,8 @@ import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
 import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantDoubleCalc;
+
+import mondrian.olap.AbstractLiteralImpl;
 
 public class NumericLiteralImpl extends AbstractLiteralImpl<BigDecimal> implements NumericLiteral {
 	private static final NumericLiteralImpl negativeOne = new NumericLiteralImpl(BigDecimal.ONE.negate());

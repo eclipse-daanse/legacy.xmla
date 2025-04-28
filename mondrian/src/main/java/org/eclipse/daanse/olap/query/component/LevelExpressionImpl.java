@@ -7,11 +7,11 @@
 * Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
 */
 
-package mondrian.mdx;
+package org.eclipse.daanse.olap.query.component;
 
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Validator;
-import org.eclipse.daanse.olap.api.calc.Calc;
+import org.eclipse.daanse.olap.api.calc.LevelCalc;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -80,7 +80,7 @@ public class LevelExpressionImpl extends AbstractExpression implements Expressio
     }
 
     @Override
-	public Calc accept(ExpressionCompiler compiler) {
+	public LevelCalc accept(ExpressionCompiler compiler) {
         return ConstantLevelCalc.of(level);
     }
 

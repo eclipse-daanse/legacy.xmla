@@ -88,6 +88,8 @@ import org.eclipse.daanse.olap.api.type.MemberType;
 import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.query.component.FormulaImpl;
+import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCatalogGrantMapping;
@@ -114,8 +116,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.FormulaImpl;
-import mondrian.olap.IdImpl;
 import mondrian.olap.RoleImpl;
 import mondrian.olap.Util;
 import mondrian.olap.exceptions.RoleUnionGrantsException;

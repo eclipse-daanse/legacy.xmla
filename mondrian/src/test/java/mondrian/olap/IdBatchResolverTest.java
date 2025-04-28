@@ -45,6 +45,8 @@ import org.eclipse.daanse.olap.api.query.component.QueryAxis;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.query.component.Subcube;
 import org.eclipse.daanse.olap.query.base.QueryProviderImpl;
+import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
+import org.eclipse.daanse.olap.query.component.QueryImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;

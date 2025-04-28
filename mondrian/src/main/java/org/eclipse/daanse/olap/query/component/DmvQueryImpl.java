@@ -18,12 +18,14 @@
 */
 // Copyright (c) 2021 Sergei Semenkov.  All rights reserved.
 
-package mondrian.olap;
+package org.eclipse.daanse.olap.query.component;
 
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.query.component.DmvQuery;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+
+import mondrian.olap.AbstractQueryPart;
 
 public class DmvQueryImpl extends AbstractQueryPart implements DmvQuery {
     private final String tableName;

@@ -9,7 +9,7 @@
 // All Rights Reserved.
 */
 
-package mondrian.olap;
+package org.eclipse.daanse.olap.query.component;
 
 import java.io.PrintWriter;
 import java.text.MessageFormat;
@@ -40,9 +40,9 @@ import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
-import mondrian.mdx.HierarchyExpressionImpl;
-import mondrian.mdx.LevelExpressionImpl;
-import mondrian.mdx.UnresolvedFunCallImpl;
+import mondrian.olap.AbstractQueryPart;
+import mondrian.olap.SystemWideProperties;
+import mondrian.olap.Util;
 
 /**
  * An axis in an MDX query. For example, the typical MDX query has two axes,

@@ -41,11 +41,11 @@ import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.cache.CacheFunDef;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.olap.function.def.set.SetFunDef;
+import org.eclipse.daanse.olap.query.component.IdImpl;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.mdx.ResolvedFunCallImpl;
-import mondrian.olap.IdImpl;
 import mondrian.olap.Util;
 
 public class NativizeSetFunDef extends AbstractFunctionDefinition {

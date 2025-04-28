@@ -13,17 +13,6 @@
  */
 package org.eclipse.daanse.olap.query.base;
 
-import mondrian.mdx.UnresolvedFunCallImpl;
-import mondrian.olap.CellPropertyImpl;
-import mondrian.olap.FormulaImpl;
-import mondrian.olap.IdImpl;
-import mondrian.olap.MemberPropertyImpl;
-import mondrian.olap.NullLiteralImpl;
-import mondrian.olap.NumericLiteralImpl;
-import mondrian.olap.QueryAxisImpl;
-import mondrian.olap.StringLiteralImpl;
-import mondrian.olap.SubcubeImpl;
-import mondrian.olap.SymbolLiteralImpl;
 import org.eclipse.daanse.mdx.model.api.expression.CallExpression;
 import org.eclipse.daanse.mdx.model.api.expression.CompoundId;
 import org.eclipse.daanse.mdx.model.api.expression.KeyObjectIdentifier;
@@ -77,6 +66,17 @@ import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.query.component.Id;
 import org.eclipse.daanse.olap.api.query.component.MemberProperty;
 import org.eclipse.daanse.olap.api.query.component.Subcube;
+import org.eclipse.daanse.olap.query.component.CellPropertyImpl;
+import org.eclipse.daanse.olap.query.component.FormulaImpl;
+import org.eclipse.daanse.olap.query.component.IdImpl;
+import org.eclipse.daanse.olap.query.component.MemberPropertyImpl;
+import org.eclipse.daanse.olap.query.component.NullLiteralImpl;
+import org.eclipse.daanse.olap.query.component.NumericLiteralImpl;
+import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
+import org.eclipse.daanse.olap.query.component.StringLiteralImpl;
+import org.eclipse.daanse.olap.query.component.SubcubeImpl;
+import org.eclipse.daanse.olap.query.component.SymbolLiteralImpl;
+import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
 
 import java.util.ArrayList;
 import java.util.List;

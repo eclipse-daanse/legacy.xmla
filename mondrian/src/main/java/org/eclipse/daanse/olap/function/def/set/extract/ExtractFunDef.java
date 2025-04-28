@@ -36,8 +36,8 @@ import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.set.distinct.DistinctCalc;
+import org.eclipse.daanse.olap.query.component.HierarchyExpressionImpl;
 
-import mondrian.mdx.HierarchyExpressionImpl;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunctionException;
 

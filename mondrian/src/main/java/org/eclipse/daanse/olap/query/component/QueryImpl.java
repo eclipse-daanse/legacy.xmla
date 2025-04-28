@@ -9,7 +9,7 @@
 // Copyright (C) 2021 Sergei Semenkov
 // All Rights Reserved.
 */
-package mondrian.olap;
+package org.eclipse.daanse.olap.query.component;
 
 
 
@@ -93,11 +93,19 @@ import org.eclipse.daanse.olap.function.def.parameter.ParameterFunDef;
 import org.eclipse.daanse.olap.impl.IdentifierParser;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
-import mondrian.mdx.HierarchyExpressionImpl;
-import mondrian.mdx.LevelExpressionImpl;
 import mondrian.mdx.MdxVisitorImpl;
-import mondrian.mdx.MemberExpressionImpl;
-import mondrian.mdx.UnresolvedFunCallImpl;
+import mondrian.olap.AbstractQueryPart;
+import mondrian.olap.DelegatingCatalogReader;
+import mondrian.olap.ExecuteDurationUtil;
+import mondrian.olap.IdBatchResolver;
+import mondrian.olap.NameResolverImpl;
+import mondrian.olap.ParameterImpl;
+import mondrian.olap.ResultStyleException;
+import mondrian.olap.StandardProperty;
+import mondrian.olap.SystemWideProperties;
+import mondrian.olap.Util;
+import mondrian.olap.ValidatorImpl;
+import mondrian.olap.Walker;
 import mondrian.olap.exceptions.MdxAxisShowSubtotalsNotSupportedException;
 import mondrian.olap.exceptions.ParameterIsNotModifiableException;
 import mondrian.olap.exceptions.UnknownParameterException;

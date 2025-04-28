@@ -110,7 +110,7 @@ public class SetListCalc  extends AbstractListCalc {
 
             };
         } else if (type instanceof org.eclipse.daanse.olap.api.type.LevelType) {
-            mondrian.mdx.UnresolvedFunCallImpl unresolvedFunCall = new mondrian.mdx.UnresolvedFunCallImpl(
+            org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl unresolvedFunCall = new org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl(
                     new PlainPropertyOperationAtom("Members"),
                     new Expression[] {arg});
             final TupleListCalc tupleListCalc = compiler.compileList(unresolvedFunCall.accept(compiler.getValidator()));

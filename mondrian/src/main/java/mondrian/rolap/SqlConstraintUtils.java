@@ -46,11 +46,11 @@ import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
 import org.eclipse.daanse.olap.function.def.member.validmeasure.ValidMeasureFunDef;
 import org.eclipse.daanse.olap.function.def.parentheses.ParenthesesFunDef;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.calc.impl.TupleCollections;
-import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.fun.MemberExtractingVisitor;

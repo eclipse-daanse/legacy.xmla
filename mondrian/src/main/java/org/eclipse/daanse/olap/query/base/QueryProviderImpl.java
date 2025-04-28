@@ -48,15 +48,14 @@ import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.query.component.Refresh;
 import org.eclipse.daanse.olap.api.query.component.Subcube;
 import org.eclipse.daanse.olap.api.query.component.Update;
-
-import mondrian.olap.DmvQueryImpl;
-import mondrian.olap.DrillThroughImpl;
-import mondrian.olap.ExplainImpl;
-import mondrian.olap.QueryAxisImpl;
-import mondrian.olap.QueryImpl;
-import mondrian.olap.RefreshImpl;
-import mondrian.olap.UpdateImpl;
 import org.eclipse.daanse.olap.api.query.component.UpdateClause;
+import org.eclipse.daanse.olap.query.component.DmvQueryImpl;
+import org.eclipse.daanse.olap.query.component.DrillThroughImpl;
+import org.eclipse.daanse.olap.query.component.ExplainImpl;
+import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
+import org.eclipse.daanse.olap.query.component.QueryImpl;
+import org.eclipse.daanse.olap.query.component.RefreshImpl;
+import org.eclipse.daanse.olap.query.component.UpdateImpl;
 
 public class QueryProviderImpl implements QueryProvider {
 

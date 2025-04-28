@@ -10,7 +10,7 @@
 // All Rights Reserved.
 */
 
-package mondrian.olap;
+package org.eclipse.daanse.olap.query.component;
 
 import java.io.PrintWriter;
 import java.text.MessageFormat;
@@ -46,6 +46,10 @@ import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.mdx.MdxVisitorImpl;
+import mondrian.olap.AbstractQueryPart;
+import mondrian.olap.SetBase;
+import mondrian.olap.StandardProperty;
+import mondrian.olap.Util;
 import mondrian.olap.exceptions.MdxMemberExpIsSetException;
 import mondrian.rolap.RolapCalculatedMember;
 

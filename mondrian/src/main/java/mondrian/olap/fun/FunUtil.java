@@ -62,10 +62,10 @@ import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMem
 import org.eclipse.daanse.olap.function.def.parentheses.ParenthesesFunDef;
 import org.eclipse.daanse.olap.function.def.set.SetFunDef;
 import org.eclipse.daanse.olap.impl.IdentifierParser.Builder;
+import org.eclipse.daanse.olap.query.component.HierarchyExpressionImpl;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
 import mondrian.calc.impl.UnaryTupleList;
-import mondrian.mdx.HierarchyExpressionImpl;
 import mondrian.olap.AbstractProperty;
 import mondrian.olap.ResultStyleException;
 import mondrian.olap.Util;

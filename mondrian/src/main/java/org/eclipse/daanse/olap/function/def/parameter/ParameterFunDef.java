@@ -19,9 +19,9 @@ import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.query.component.HierarchyExpressionImpl;
+import org.eclipse.daanse.olap.query.component.ParameterExpressionImpl;
 
-import mondrian.mdx.HierarchyExpressionImpl;
-import mondrian.mdx.ParameterExpressionImpl;
 import mondrian.olap.Util;
 
 public class ParameterFunDef  extends AbstractFunctionDefinition {

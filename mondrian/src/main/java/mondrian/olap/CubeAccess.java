@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.query.component.IdImpl;
 /**
  * This class implements object of type GrantCube to apply permissions
  * on user's MDX query

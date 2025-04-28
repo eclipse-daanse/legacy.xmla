@@ -18,35 +18,36 @@
 */
 // Copyright (c) 2021 Sergei Semenkov.  All rights reserved.
 
-package mondrian.olap;
+package org.eclipse.daanse.olap.query.component;
 
 import java.io.PrintWriter;
 
-import org.eclipse.daanse.olap.api.query.component.Refresh;
+import org.eclipse.daanse.olap.api.Command;
+import org.eclipse.daanse.olap.api.query.component.TransactionCommand;
 
-public class RefreshImpl extends AbstractQueryPart implements Refresh {
-    private final String cubeName;
+import mondrian.olap.AbstractQueryPart;
 
-    public RefreshImpl(
-            String cubeName)
+public class TransactionCommandImpl extends AbstractQueryPart implements TransactionCommand {
+
+    private final Command command;
+
+    public TransactionCommandImpl(Command command)
     {
-        this.cubeName = cubeName;
+        this.command = command;
     }
 
     @Override
     public void unparse(PrintWriter pw) {
-        pw.print("REFRESH CUBE [");
-        pw.print(cubeName);
-        pw.print("]");
+        pw.print( new StringBuilder(this.command.name()).append("TRANSACTION").toString());
     }
 
     @Override
     public Object[] getChildren() {
-        return new Object[] {cubeName};
+        return new Object[] {this.command};
     }
 
     @Override
-    public String getCubeName() {
-        return cubeName;
+    public Command getCommand() {
+        return this.command;
     }
 }

@@ -39,9 +39,9 @@ import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.query.base.Expressions;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
-import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.ResultStyleException;
 
 /**

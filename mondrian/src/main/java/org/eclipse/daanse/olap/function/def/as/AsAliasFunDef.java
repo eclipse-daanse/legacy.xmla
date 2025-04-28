@@ -33,8 +33,7 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
-
-import mondrian.olap.QueryImpl;
+import org.eclipse.daanse.olap.query.component.QueryImpl;
 
 /**
  * Definition of the <code>AS</code> MDX operator.

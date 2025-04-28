@@ -117,17 +117,18 @@ import org.eclipse.daanse.olap.impl.IdentifierNode;
 import org.eclipse.daanse.olap.impl.IdentifierParser;
 import org.eclipse.daanse.olap.impl.KeySegmentImpl;
 import org.eclipse.daanse.olap.impl.NameSegmentImpl;
+import org.eclipse.daanse.olap.query.component.DimensionExpressionImpl;
+import org.eclipse.daanse.olap.query.component.HierarchyExpressionImpl;
+import org.eclipse.daanse.olap.query.component.IdImpl;
+import org.eclipse.daanse.olap.query.component.LevelExpressionImpl;
+import org.eclipse.daanse.olap.query.component.MemberExpressionImpl;
+import org.eclipse.daanse.olap.query.component.NamedSetExpressionImpl;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
+import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.mdx.DimensionExpressionImpl;
-import mondrian.mdx.HierarchyExpressionImpl;
-import mondrian.mdx.LevelExpressionImpl;
-import mondrian.mdx.MemberExpressionImpl;
-import mondrian.mdx.NamedSetExpressionImpl;
 import mondrian.mdx.QueryPrintWriter;
-import mondrian.mdx.ResolvedFunCallImpl;
-import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.exceptions.MdxCantFindMemberException;
 import mondrian.olap.exceptions.MdxChildObjectNotFoundException;
 import mondrian.olap.exceptions.MemberNotFoundException;
@@ -785,7 +786,7 @@ public class Util {
      * <p>If <code>allowProp</code> is true, also allows property references
      * from valid members, for example
      * <code>[Measures].[Unit Sales].FORMATTED_VALUE</code>.
-     * In this case, the result will be a {@link mondrian.mdx.ResolvedFunCallImpl}.
+     * In this case, the result will be a {@link org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl}.
      *
      * @param q Query expression belongs to
      * @param nameParts Parts of the identifier
@@ -915,7 +916,7 @@ public class Util {
      * @param fail Whether to fail if not found.
      * @return Cube, or null if not found
      */
-    static Cube lookupCube(
+    public static Cube lookupCube(
         CatalogReader schemaReader,
         String cubeName,
         boolean fail)

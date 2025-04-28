@@ -12,8 +12,7 @@ package mondrian.rolap;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
-
-import mondrian.mdx.ResolvedFunCallImpl;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 
 /**
  * Implementation of {@link mondrian.rolap.RolapCalculation}

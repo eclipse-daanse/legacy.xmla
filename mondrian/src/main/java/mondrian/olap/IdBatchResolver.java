@@ -39,10 +39,11 @@ import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
+import org.eclipse.daanse.olap.query.component.HierarchyExpressionImpl;
+import org.eclipse.daanse.olap.query.component.IdImpl;
+import org.eclipse.daanse.olap.query.component.QueryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.mdx.HierarchyExpressionImpl;
 
 /**
  * Used to collect and resolve identifiers in groups of children

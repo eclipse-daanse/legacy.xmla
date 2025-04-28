@@ -19,7 +19,7 @@
 // Copyright (c) 2021 Sergei Semenkov
 // All rights reserved.
 
-package mondrian.olap;
+package org.eclipse.daanse.olap.query.component;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -28,6 +28,8 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
 import org.eclipse.daanse.olap.api.query.component.Subcube;
+
+import mondrian.olap.AbstractQueryPart;
 
 public class SubcubeImpl extends AbstractQueryPart implements Subcube {
     private final String cubeName;

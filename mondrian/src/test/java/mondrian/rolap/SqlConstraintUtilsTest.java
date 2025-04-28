@@ -56,6 +56,8 @@ import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
 import org.eclipse.daanse.olap.function.def.parentheses.ParenthesesFunDef;
+import org.eclipse.daanse.olap.query.component.MemberExpressionImpl;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.Mockito;
@@ -65,8 +67,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.calc.impl.AbstractTupleCursor;
 import mondrian.calc.impl.UnaryTupleList;
-import mondrian.mdx.MemberExpressionImpl;
-import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.fun.CrossJoinTest.NullFunDef;
 import mondrian.olap.fun.TestMember;
 import mondrian.rolap.aggmatcher.AggStar;

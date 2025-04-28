@@ -32,10 +32,10 @@ import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.query.component.HierarchyExpressionImpl;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
+import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
 
-import mondrian.mdx.HierarchyExpressionImpl;
-import mondrian.mdx.ResolvedFunCallImpl;
-import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
 

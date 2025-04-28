@@ -65,7 +65,7 @@ public class GenerateFunDef extends AbstractFunctionDefinition {
                     stringCalc = compiler.compileString(call.getArg(1));
                 } else {
                     //NumericType
-                    mondrian.mdx.UnresolvedFunCallImpl unresolvedFunCall = new mondrian.mdx.UnresolvedFunCallImpl(
+                    org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl unresolvedFunCall = new org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl(
                             new FunctionOperationAtom("str"),
                             new Expression[] {call.getArg(1)});
                     stringCalc = compiler.compileString(unresolvedFunCall.accept(compiler.getValidator()));

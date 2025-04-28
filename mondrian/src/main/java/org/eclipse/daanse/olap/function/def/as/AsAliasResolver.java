@@ -35,9 +35,8 @@ import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.NamedSetExpression;
 import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFunctionResolver;
+import org.eclipse.daanse.olap.query.component.QueryImpl;
 import org.osgi.service.component.annotations.Component;
-
-import mondrian.olap.QueryImpl;
 
 @Component(service = FunctionResolver.class)
 public class AsAliasResolver extends NoExpressionRequiredFunctionResolver {

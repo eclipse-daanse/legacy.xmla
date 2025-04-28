@@ -7,7 +7,7 @@
 * Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
 */
 
-package mondrian.mdx;
+package org.eclipse.daanse.olap.query.component;
 
 import java.util.List;
 

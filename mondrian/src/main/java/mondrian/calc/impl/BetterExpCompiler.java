@@ -53,7 +53,7 @@ public class BetterExpCompiler extends AbstractExpCompiler {
 		final Calc<?> calc = compile(exp);
 		final Type type = exp.getType();
 		if (type instanceof org.eclipse.daanse.olap.api.type.DimensionType || type instanceof org.eclipse.daanse.olap.api.type.HierarchyType) {
-			final mondrian.mdx.UnresolvedFunCallImpl unresolvedFunCall = new mondrian.mdx.UnresolvedFunCallImpl(
+			final org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl unresolvedFunCall = new org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl(
 					new PlainPropertyOperationAtom("DefaultMember"), new Expression[] { exp });
 			final Expression defaultMember = unresolvedFunCall.accept(getValidator());
 			return compileTuple(defaultMember);

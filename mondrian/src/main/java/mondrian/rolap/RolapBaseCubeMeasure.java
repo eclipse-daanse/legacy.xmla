@@ -17,12 +17,12 @@ import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.formatter.CellFormatter;
+import org.eclipse.daanse.olap.query.component.StringLiteralImpl;
 import org.eclipse.daanse.rolap.aggregator.CountAggregator;
 import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 
 import mondrian.olap.StandardProperty;
-import mondrian.olap.StringLiteralImpl;
 import mondrian.olap.exceptions.CastInvalidTypeException;
 
 /**

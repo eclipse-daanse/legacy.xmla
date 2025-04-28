@@ -23,9 +23,8 @@ import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Id;
+import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.opencube.junit5.TestUtil;
-
-import mondrian.olap.IdImpl;
 
 
 

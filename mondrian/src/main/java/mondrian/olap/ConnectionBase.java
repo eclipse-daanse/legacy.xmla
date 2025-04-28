@@ -27,6 +27,7 @@ import org.eclipse.daanse.olap.api.query.QueryProvider;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.query.base.ExpressionProviderImpl;
 import org.eclipse.daanse.olap.query.base.QueryProviderImpl;
+import org.eclipse.daanse.olap.query.component.QueryImpl;
 import org.eclipse.daanse.sql.guard.api.SqlGuard;
 import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
 import org.eclipse.daanse.sql.guard.api.elements.DatabaseCatalog;

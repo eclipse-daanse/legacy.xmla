@@ -18,7 +18,7 @@
 */
 // Copyright (c) 2021 Sergei Semenkov.  All rights reserved.
 
-package mondrian.olap;
+package org.eclipse.daanse.olap.query.component;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -27,6 +27,8 @@ import org.eclipse.daanse.mdx.model.api.select.Allocation;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Update;
 import org.eclipse.daanse.olap.api.query.component.UpdateClause;
+
+import mondrian.olap.AbstractQueryPart;
 
 public class UpdateImpl extends AbstractQueryPart implements Update {
     private final String cubeName;

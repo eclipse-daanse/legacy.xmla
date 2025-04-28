@@ -78,6 +78,11 @@ import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
+import org.eclipse.daanse.olap.query.component.FormulaImpl;
+import org.eclipse.daanse.olap.query.component.IdImpl;
+import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
+import org.eclipse.daanse.olap.query.component.QueryImpl;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberPropertyMapping;
@@ -107,12 +112,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.CubeBase;
-import mondrian.olap.FormulaImpl;
-import mondrian.olap.IdImpl;
-import mondrian.olap.QueryAxisImpl;
-import mondrian.olap.QueryImpl;
 import mondrian.olap.RoleImpl;
 import mondrian.olap.SetBase;
 import mondrian.olap.StandardProperty;
@@ -516,7 +516,7 @@ public abstract class RolapCube extends CubeBase {
      * @param list XML objects representing members
      * @param mappingNamedSets Array of XML definition of named set
      * @param memberList Output list of {@link org.eclipse.daanse.olap.api.element.Member} objects
-     * @param formulaList Output list of {@link mondrian.olap.FormulaImpl} objects
+     * @param formulaList Output list of {@link org.eclipse.daanse.olap.query.component.FormulaImpl} objects
      * @param cube the cube that the calculated members originate from
      * @param errOnDups throws an error if a duplicate member is found
      */

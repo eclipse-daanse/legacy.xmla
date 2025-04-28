@@ -38,10 +38,12 @@ import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.core.FunctionPrinter;
 import org.eclipse.daanse.olap.query.base.Expressions;
+import org.eclipse.daanse.olap.query.component.NumericLiteralImpl;
+import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
+import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
-import mondrian.mdx.ResolvedFunCallImpl;
-import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.exceptions.MdxMemberExpIsSetException;
 import mondrian.olap.exceptions.UnknownParameterException;
 import mondrian.util.ArrayStack;
@@ -64,7 +66,7 @@ import mondrian.util.ArrayStack;
  *
  * @author jhyde
  */
-abstract class ValidatorImpl implements Validator {
+public abstract class ValidatorImpl implements Validator {
     protected final ArrayStack<QueryComponent> stack = new ArrayStack<>();
     private final FunctionService functionService;
     private final Map<QueryComponent, QueryComponent> resolvedNodes =

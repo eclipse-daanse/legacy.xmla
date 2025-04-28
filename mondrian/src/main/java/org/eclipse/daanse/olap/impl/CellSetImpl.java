@@ -15,9 +15,9 @@ import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.result.CellSetAxis;
 import org.eclipse.daanse.olap.api.result.CellSetMetaData;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
 
 import mondrian.olap.ExecuteDurationUtil;
-import mondrian.olap.QueryAxisImpl;
 import mondrian.rolap.RolapCell;
 import mondrian.rolap.RolapConnection;
 import mondrian.server.ExecutionImpl;

@@ -82,10 +82,10 @@ import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMem
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyCalc;
 import org.eclipse.daanse.olap.function.def.level.member.MemberLevelCalc;
+import org.eclipse.daanse.olap.query.component.SymbolLiteralImpl;
+import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
-import mondrian.mdx.UnresolvedFunCallImpl;
-import mondrian.olap.SymbolLiteralImpl;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
 

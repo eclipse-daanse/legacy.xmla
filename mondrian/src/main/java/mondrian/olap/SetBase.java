@@ -59,7 +59,7 @@ public class SetBase extends OlapElementBase implements NamedSet {
      * @param validated Whether has been validated
      * @param metaData 
      */
-    SetBase(
+    public SetBase(
         String name,
         String caption,
         String description,

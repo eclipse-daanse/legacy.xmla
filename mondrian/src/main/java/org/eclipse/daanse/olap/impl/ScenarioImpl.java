@@ -17,9 +17,9 @@ import org.eclipse.daanse.olap.api.result.Scenario;
 import org.eclipse.daanse.olap.api.result.WritebackCell;
 import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
+import org.eclipse.daanse.olap.query.component.QueryImpl;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 
-import mondrian.mdx.ResolvedFunCallImpl;
-import mondrian.olap.QueryImpl;
 import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.RolapCalculatedMember;

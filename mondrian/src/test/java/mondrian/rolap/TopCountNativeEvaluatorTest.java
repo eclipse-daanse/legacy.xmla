@@ -24,11 +24,10 @@ import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.EmptyType;
+import org.eclipse.daanse.olap.query.component.NumericLiteralImpl;
 import org.eclipse.daanse.olap.util.type.TypeWrapperExp;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import mondrian.olap.NumericLiteralImpl;
 
 /**
  * This class contains tests for some cases related to creating

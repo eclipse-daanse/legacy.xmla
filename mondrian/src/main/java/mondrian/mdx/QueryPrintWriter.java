@@ -22,7 +22,7 @@ import org.eclipse.daanse.olap.api.Parameter;
  * subsequent times as "ParamRef".
  */
 public class QueryPrintWriter extends PrintWriter {
-    final Set<Parameter> parameters = new HashSet<>();
+    public final Set<Parameter> parameters = new HashSet<>();
 
     public QueryPrintWriter(Writer writer) {
         super(writer);

@@ -9,7 +9,7 @@
 // All Rights Reserved.
 */
 
-package mondrian.mdx;
+package org.eclipse.daanse.olap.query.component;
 
 import java.io.PrintWriter;
 

@@ -7,7 +7,7 @@
 * Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
 */
 
-package mondrian.mdx;
+package org.eclipse.daanse.olap.query.component;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -27,6 +27,7 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.query.component.expression.AbstractExpression;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
+import mondrian.mdx.QueryPrintWriter;
 import mondrian.olap.Util;
 
 /**

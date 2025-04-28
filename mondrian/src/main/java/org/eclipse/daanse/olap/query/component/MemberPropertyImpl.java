@@ -9,13 +9,16 @@
 // All Rights Reserved.
 */
 
-package mondrian.olap;
+package org.eclipse.daanse.olap.query.component;
 
 import java.io.PrintWriter;
 
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.MemberProperty;
+
+import mondrian.olap.AbstractQueryPart;
+import mondrian.olap.Util;
 
 /**
  * Member property or solve order specification.

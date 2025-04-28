@@ -37,6 +37,7 @@ import java.util.Set;
 import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.query.component.FormulaImpl;
 
 public final class StandardProperty extends AbstractProperty {
 
@@ -449,7 +450,7 @@ public final class StandardProperty extends AbstractProperty {
 	/**
 	 * The various property names which define a format string.
 	 */
-	static final Set<String> FORMAT_PROPERTIES = new HashSet<>(
+	public static final Set<String> FORMAT_PROPERTIES = new HashSet<>(
 			Arrays.asList("format", "format_string", "FORMAT", FORMAT_STRING.getName()));
 
 	@Override

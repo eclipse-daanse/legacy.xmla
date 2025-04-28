@@ -28,9 +28,9 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.function.def.set.SetFunDef;
 import org.eclipse.daanse.olap.function.def.set.level.LevelMembersFunDef;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 
 import mondrian.mdx.MdxVisitorImpl;
-import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.Util;
 
 public class TransformToFormulasVisitor extends MdxVisitorImpl {

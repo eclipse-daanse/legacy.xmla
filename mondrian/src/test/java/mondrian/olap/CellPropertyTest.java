@@ -15,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.daanse.olap.api.Segment;
+import org.eclipse.daanse.olap.query.component.CellPropertyImpl;
+import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

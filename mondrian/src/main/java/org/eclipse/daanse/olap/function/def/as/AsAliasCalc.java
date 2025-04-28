@@ -27,9 +27,9 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.query.component.QueryImpl.ScopedNamedSet;
 
 import mondrian.calc.impl.AbstractIterCalc;
-import mondrian.olap.QueryImpl.ScopedNamedSet;
 
 public class AsAliasCalc extends AbstractIterCalc {
 

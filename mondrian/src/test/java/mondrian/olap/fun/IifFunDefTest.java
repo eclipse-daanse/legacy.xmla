@@ -24,10 +24,9 @@ import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.function.def.iif.IifFunDef;
 import org.eclipse.daanse.olap.function.def.iif.IifSetResolver;
 import org.eclipse.daanse.olap.function.def.set.SetListCalc;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import mondrian.mdx.ResolvedFunCallImpl;
 
 class IifFunDefTest {
 

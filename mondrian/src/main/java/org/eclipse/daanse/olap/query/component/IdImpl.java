@@ -9,7 +9,7 @@
 // All Rights Reserved.
 */
 
-package mondrian.olap;
+package org.eclipse.daanse.olap.query.component;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -28,6 +28,8 @@ import org.eclipse.daanse.olap.api.query.component.Id;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.query.component.expression.AbstractExpression;
+
+import mondrian.olap.Util;
 
 /**
  * Multi-part identifier.

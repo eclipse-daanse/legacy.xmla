@@ -30,10 +30,10 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.cache.CacheFunDef;
+import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
 
 import mondrian.calc.impl.DelegatingTupleList;
 import mondrian.calc.impl.TupleCollections;
-import mondrian.mdx.UnresolvedFunCallImpl;
 import mondrian.olap.ResourceLimitExceededException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.fun.FunUtil;

@@ -17,9 +17,9 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
+import org.eclipse.daanse.olap.query.component.HierarchyExpressionImpl;
+import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 
-import mondrian.mdx.HierarchyExpressionImpl;
-import mondrian.mdx.ResolvedFunCallImpl;
 import mondrian.olap.StandardProperty;
 import mondrian.util.Bug;
 
