@@ -107,7 +107,7 @@ public abstract class ConnectionBase implements Connection {
             } else {
                 List<DatabaseSchema> ds = (List<DatabaseSchema>) this.getCatalogReader().getDatabaseSchemas();
                 org.eclipse.daanse.sql.guard.api.elements.DatabaseCatalog dc = new DatabaseCatalogImpl("", ds);
-                SqlGuard guard = oSqlGuardFactory.get().create("", "", dc, List.of()); //TODO add white list functions
+                SqlGuard guard = oSqlGuardFactory.get().create("", "", dc, List.of(), this.getContext().getDialect() ); //TODO add white list functions
                 try {
                     String sanetizedSql= guard.guard(queryToParse);
                     return new SqlQueryImpl(sanetizedSql, getContext().getDataSource());
