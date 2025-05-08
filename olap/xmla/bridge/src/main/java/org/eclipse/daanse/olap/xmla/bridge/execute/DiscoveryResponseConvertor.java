@@ -13,6 +13,8 @@
  */
 package org.eclipse.daanse.olap.xmla.bridge.execute;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,11 +63,15 @@ public class DiscoveryResponseConvertor {
 	private static final String EXPRESSION = "EXPRESSION";
 	private static final String DIMENSION_UNIQUE_NAME = "DIMENSION_UNIQUE_NAME";
 	private static final String DIMENSION_TYPE = "DIMENSION_TYPE";
+	private static final String DIMENSION_CARDINALITY = "DIMENSION_CARDINALITY";
 	private static final String DIMENSION_IS_VISIBLE = "DIMENSION_IS_VISIBLE";
 	private static final String DESCRIPTION = "DESCRIPTION";
 	private static final String DATA_TYPE = "DATA_TYPE";
 	private static final String CUBE_NAME = "CUBE_NAME";
 	private static final String CATALOG_NAME = "CATALOG_NAME";
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+            .withZone(ZoneId.systemDefault());
+
 
     private DiscoveryResponseConvertor() {
         //constructor
@@ -312,7 +318,7 @@ public class DiscoveryResponseConvertor {
                 r.dimensionCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DIMENSION_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
                 r.dimensionOptional().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DIMENSION_OPTIONAL", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
                 r.dimensionType().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DIMENSION_TYPE, String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
-                r.dimensionCardinality().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DIMENSION_TYPE, String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
+                r.dimensionCardinality().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DIMENSION_CARDINALITY, String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
                 r.defaultHierarchy().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DEFAULT_HIERARCHY", v, Optional.of(ItemTypeEnum.STRING))));
                 r.description().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DESCRIPTION, v, Optional.of(ItemTypeEnum.STRING))));
                 r.isVirtual().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_VIRTUAL", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
@@ -334,26 +340,26 @@ public class DiscoveryResponseConvertor {
             rowSetRows = mdSchemaCubes.stream().map(r -> {
                 List<RowSetRowItem> rowSetRowItem = new ArrayList<>();
                 if (r.catalogName() != null) {
-                    rowSetRowItem.add(new RowSetRowItemR(CATALOG_NAME, r.catalogName(), Optional.of(ItemTypeEnum.STRING)));
+                    //rowSetRowItem.add(new RowSetRowItemR(CATALOG_NAME, r.catalogName(), Optional.of(ItemTypeEnum.STRING)));
                 }
-                r.schemaName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(SCHEMA_NAME, v, Optional.of(ItemTypeEnum.STRING))));
+                //r.schemaName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(SCHEMA_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.cubeName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(CUBE_NAME, v, Optional.of(ItemTypeEnum.STRING))));
-                r.cubeType().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_TYPE", v.name(), Optional.of(ItemTypeEnum.STRING))));
-                r.cubeGuid().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_GUID", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
-                r.createdOn().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CRIATED_ON", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                r.lastSchemaUpdate().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LAST_SCHEMA_UPDATE", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                r.schemaUpdatedBy().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("SCHEMA_UPDATE_BY", v, Optional.of(ItemTypeEnum.STRING))));
-                r.lastDataUpdate().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LAST_DATA_UPDATE", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                r.dataUpdateDBy().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DATA_UPDATED_BY", v, Optional.of(ItemTypeEnum.STRING))));
+                //r.cubeType().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_TYPE", v.name(), Optional.of(ItemTypeEnum.STRING))));
+                //r.cubeGuid().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_GUID", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
+                //r.createdOn().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CRIATED_ON", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
+                //r.lastSchemaUpdate().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LAST_SCHEMA_UPDATE", v.format(formatter), Optional.of(ItemTypeEnum.DATETIME))));
+                //r.schemaUpdatedBy().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("SCHEMA_UPDATE_BY", v, Optional.of(ItemTypeEnum.STRING))));
+                r.lastDataUpdate().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LAST_DATA_UPDATE", v.format(formatter), Optional.of(ItemTypeEnum.DATETIME))));
+                //r.dataUpdateDBy().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DATA_UPDATED_BY", v, Optional.of(ItemTypeEnum.STRING))));
                 r.description().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DESCRIPTION, v, Optional.of(ItemTypeEnum.STRING))));
-                r.isDrillThroughEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_DRILL_THROUGH_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                r.isLinkable().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_LINKABLE", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                r.isWriteEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_WRITE_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                r.isSqlEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_SQL_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                r.cubeCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
+                //r.isDrillThroughEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_DRILL_THROUGH_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
+                //r.isLinkable().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_LINKABLE", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
+                //r.isWriteEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_WRITE_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
+                //r.isSqlEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_SQL_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
+                //r.cubeCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
                 r.baseCubeName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("BASE_CUBE_NAME", v, Optional.of(ItemTypeEnum.STRING))));
-                r.cubeSource().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_SOURCE", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
-                r.preferredQueryPatterns().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("PREFERRED_QUERY_PATTERNS", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
+                //r.cubeSource().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_SOURCE", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
+                //r.preferredQueryPatterns().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("PREFERRED_QUERY_PATTERNS", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
                 return (RowSetRow) new RowSetRowR(rowSetRowItem);
             }).toList();
         } else {
@@ -516,7 +522,7 @@ public class DiscoveryResponseConvertor {
                 r.description().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DESCRIPTION, v, Optional.of(ItemTypeEnum.STRING))));
                 r.expression().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(EXPRESSION, v, Optional.of(ItemTypeEnum.STRING))));
                 r.measureIsVisible().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_IS_VISIBLE", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
-                r.levelsList().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_IS_VISIBLE", v, Optional.of(ItemTypeEnum.STRING))));
+                r.levelsList().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LEVELS_LIST", v, Optional.of(ItemTypeEnum.STRING))));
                 r.measureNameSqlColumnName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_NAME_SQL_COLUMN_NAME", v, Optional.of(ItemTypeEnum.STRING))));
                 r.measureUnqualifiedCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_UNQUALIFIED_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
                 r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(MEASURE_GROUP_NAME, v, Optional.of(ItemTypeEnum.STRING))));

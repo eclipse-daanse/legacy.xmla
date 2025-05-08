@@ -1310,7 +1310,30 @@ public class Convertor {
 
         @Override
         public List<RowSetRowItem> getRowSetRowItems(Cell cell, Member[] members) {
-            return null;
+            List<RowSetRowItem> result = new ArrayList<>();
+
+            Member member = members[ memberOrdinal ];
+            final int depth = level.getDepth();
+
+            if ( member.getDepth() < depth ) {
+                // This column deals with a level below the current member. There is no value to write.
+                return result;
+            }
+
+            while ( member.getDepth() > depth ) {
+                member = member.getParentMember();
+            }
+
+            final Object propertyValue = member.getPropertyValue( property.getName() );
+
+            if ( propertyValue == null ) {
+              return result;
+            }
+
+            result.add(new RowSetRowItemR(encodedName,
+                    propertyValue.toString(),
+                    Optional.of(ItemTypeEnum.STRING)));
+            return result;
         }
     }
 

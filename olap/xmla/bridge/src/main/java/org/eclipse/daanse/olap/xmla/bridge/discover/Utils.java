@@ -539,7 +539,7 @@ public class Utils {
                     Optional.of(false),
                     Optional.of(false),
                     Optional.ofNullable(cube.getCaption() == null ? cube.getName() : cube.getCaption()),
-                    Optional.empty(),
+                    Optional.ofNullable(cube.getName()),
                     Optional.of(CubeSourceEnum.CUBE),
                     Optional.empty())
                 );

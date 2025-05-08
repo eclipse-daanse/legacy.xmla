@@ -13,6 +13,7 @@ package mondrian.olap;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.eclipse.daanse.mdx.model.api.MdxStatement;
 import org.eclipse.daanse.mdx.parser.api.MdxParser;
@@ -98,8 +99,14 @@ public abstract class ConnectionBase implements Connection {
 
         try {
             MdxParser parser = getContext().getMdxParserProvider().newParser(queryToParse, funTable.getPropertyWords());
-            MdxStatement mdxStatement = parser.parseMdxStatement();
-            return getQueryProvider().createQuery(statement, mdxStatement, strictValidation);
+            try {
+               MdxStatement mdxStatement = parser.parseMdxStatement();
+               return getQueryProvider().createQuery(statement, mdxStatement, strictValidation);
+            } catch (MdxParserException mdxPE) {
+                parser = getContext().getMdxParserProvider().newParser(queryToParse, Set.of());
+                MdxStatement mdxStatement = parser.parseDMVStatement();
+                return getQueryProvider().createQuery(statement, mdxStatement, strictValidation);
+            }
         } catch (MdxParserException mdxPE) {
             Optional<SqlGuardFactory> oSqlGuardFactory = getContext().getSqlGuardFactory();
             if (oSqlGuardFactory.isEmpty()) {
