@@ -15,6 +15,9 @@ package org.eclipse.daanse.olap.xmla.bridge.discover;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -94,6 +97,20 @@ public class OtherDiscoverService {
         TreeOpEnum.class
         //mondrian have 4 enums
     );
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+            .withZone(ZoneId.systemDefault());
+    
+    private static final String md = """
+            <Server>
+                <Name>%s</Name>
+                <ID>%s</ID>
+                <CreatedTimestamp>%s</CreatedTimestamp>
+                <LastSchemaUpdate>%s</LastSchemaUpdate>
+                <Version>11.0.7001.0</Version>
+                <Edition>Enterprise64</Edition>
+                <EditionID>1804890536</EditionID>
+            </Server>
+            """;
 
     private static List<Class<?>> classes = List.of(
         //DbSchema
@@ -298,20 +315,29 @@ public class OtherDiscoverService {
     public List<DiscoverXmlMetaDataResponseRow> xmlMetaData(DiscoverXmlMetaDataRequest request, RequestMetaData metaData, UserPrincipal userPrincipal) {
         List<DiscoverXmlMetaDataResponseRow> result = new ArrayList<>();
         Optional<String> databaseId = request.restrictions().databaseId();
+        String date = LocalDateTime.now().format(formatter);
+        if (!databaseId.isPresent()) {
+            databaseId = request.properties().catalog();
+        }
         if (databaseId.isPresent()) {
             Optional<Catalog> oCatalog = contextsListSupplyer.tryGetFirstByName(databaseId.get(),userPrincipal.roles());
             if (oCatalog.isPresent()) {
-                Catalog catalog= oCatalog.get();
+                Catalog catalog = oCatalog.get();
                 
                 if(catalog!=null) {
-                    //SerializerModifier serializerModifier = new SerializerModifier(schema);
-                    //try {
-                        result.add(new DiscoverXmlMetaDataResponseRowR(""));
-                    //} catch (JAXBException e) {
-                    //    e.printStackTrace();
-                    //}
+                    result.add(new DiscoverXmlMetaDataResponseRowR(String.format(md, catalog.getName(), catalog.getName(), date, date)));
                 }
             }
+        } else {
+            List<Catalog> cs = contextsListSupplyer.get(List.of());
+            if (cs != null) {
+                //for (Catalog catalog : cs) {
+                //result.add(new DiscoverXmlMetaDataResponseRowR(String.format(md, catalog.getName(), catalog.getName(), date, date)));
+                //}
+                //TODO
+                Catalog catalog = cs.get(0);
+                result.add(new DiscoverXmlMetaDataResponseRowR(String.format(md, catalog.getName(), catalog.getName(), date, date)));
+            }    
         }
         return result;
     }
