@@ -148,7 +148,7 @@ public class DiscoveryResponseConvertor {
                 r.catalogName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(CATALOG_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.description().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DESCRIPTION, v, Optional.of(ItemTypeEnum.STRING))));
                 r.roles().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("ROLES", v, Optional.of(ItemTypeEnum.STRING))));
-                r.dateModified().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DATE_MODIFIED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
+                r.dateModified().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DATE_MODIFIED", v.format(formatter), Optional.of(ItemTypeEnum.DATETIME))));
                 r.compatibilityLevel().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("COMPATIBILITY_LEVEL", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
                 r.type().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("TYPE", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
                 r.version().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("VERSION", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
@@ -340,26 +340,26 @@ public class DiscoveryResponseConvertor {
             rowSetRows = mdSchemaCubes.stream().map(r -> {
                 List<RowSetRowItem> rowSetRowItem = new ArrayList<>();
                 if (r.catalogName() != null) {
-                    //rowSetRowItem.add(new RowSetRowItemR(CATALOG_NAME, r.catalogName(), Optional.of(ItemTypeEnum.STRING)));
+                    rowSetRowItem.add(new RowSetRowItemR(CATALOG_NAME, r.catalogName(), Optional.of(ItemTypeEnum.STRING)));
                 }
-                //r.schemaName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(SCHEMA_NAME, v, Optional.of(ItemTypeEnum.STRING))));
+                r.schemaName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(SCHEMA_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.cubeName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(CUBE_NAME, v, Optional.of(ItemTypeEnum.STRING))));
-                //r.cubeType().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_TYPE", v.name(), Optional.of(ItemTypeEnum.STRING))));
-                //r.cubeGuid().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_GUID", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
-                //r.createdOn().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CRIATED_ON", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                //r.lastSchemaUpdate().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LAST_SCHEMA_UPDATE", v.format(formatter), Optional.of(ItemTypeEnum.DATETIME))));
-                //r.schemaUpdatedBy().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("SCHEMA_UPDATE_BY", v, Optional.of(ItemTypeEnum.STRING))));
+                r.cubeType().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_TYPE", v.name(), Optional.of(ItemTypeEnum.STRING))));
+                r.cubeGuid().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_GUID", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
+                r.createdOn().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CRIATED_ON", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
+                r.lastSchemaUpdate().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LAST_SCHEMA_UPDATE", v.format(formatter), Optional.of(ItemTypeEnum.DATETIME))));
+                r.schemaUpdatedBy().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("SCHEMA_UPDATE_BY", v, Optional.of(ItemTypeEnum.STRING))));
                 r.lastDataUpdate().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LAST_DATA_UPDATE", v.format(formatter), Optional.of(ItemTypeEnum.DATETIME))));
-                //r.dataUpdateDBy().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DATA_UPDATED_BY", v, Optional.of(ItemTypeEnum.STRING))));
+                r.dataUpdateDBy().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DATA_UPDATED_BY", v, Optional.of(ItemTypeEnum.STRING))));
                 r.description().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DESCRIPTION, v, Optional.of(ItemTypeEnum.STRING))));
-                //r.isDrillThroughEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_DRILL_THROUGH_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                //r.isLinkable().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_LINKABLE", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                //r.isWriteEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_WRITE_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                //r.isSqlEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_SQL_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                //r.cubeCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
+                r.isDrillThroughEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_DRILL_THROUGH_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
+                r.isLinkable().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_LINKABLE", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
+                r.isWriteEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_WRITE_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
+                r.isSqlEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_SQL_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
+                r.cubeCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
                 r.baseCubeName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("BASE_CUBE_NAME", v, Optional.of(ItemTypeEnum.STRING))));
-                //r.cubeSource().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_SOURCE", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
-                //r.preferredQueryPatterns().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("PREFERRED_QUERY_PATTERNS", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
+                r.cubeSource().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("CUBE_SOURCE", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
+                r.preferredQueryPatterns().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("PREFERRED_QUERY_PATTERNS", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
                 return (RowSetRow) new RowSetRowR(rowSetRowItem);
             }).toList();
         } else {
@@ -423,10 +423,9 @@ public class DiscoveryResponseConvertor {
                 r.dimensionUniqueSettings().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DIMENSION_UNIQUE_SETTINGS", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
                 r.dimensionMasterUniqueName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DIMENSION_MASTER_UNIQUE_NAME", v, Optional.of(ItemTypeEnum.STRING))));
                 r.dimensionIsVisible().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DIMENSION_IS_VISIBLE, String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                r.hierarchyOrigin().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("HIERARCHY_ORIGIN", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
+                r.hierarchyOrigin().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("HIERARCHY_ORIGIN", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.UNSIGNEDSHOT))));
                 r.dimensionIsShared().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DIMENSION_IS_SHARED", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
-                r.hierarchyIsVisible().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("HIERARCHY_IS_VISIBLE", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                r.hierarchyOrigin().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("HIERARCHY_ORIGIN", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
+                r.hierarchyIsVisible().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("HIERARCHY_IS_VISIBLE", String.valueOf(v), Optional.of(ItemTypeEnum.BOOLEAN))));
                 r.hierarchyDisplayFolder().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("HIERARCHY_DISPLAY_FOLDER", v, Optional.of(ItemTypeEnum.STRING))));
                 r.instanceSelection().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("INSTANCE_SELECTION", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
                 r.groupingBehavior().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("GROUPING_BEHAVIOR", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
@@ -452,8 +451,8 @@ public class DiscoveryResponseConvertor {
                 r.levelName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LEVEL_NAME", v, Optional.of(ItemTypeEnum.STRING))));
                 r.levelUniqueName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(LEVEL_UNIQUE_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.levelGuid().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LEVEL_GUID", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
+                r.levelNumber().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LEVEL_NUMBER", String.valueOf(v), Optional.of(ItemTypeEnum.UNSIGNEDINT))));
                 r.levelCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LEVEL_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
-                r.levelNumber().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LEVEL_NUMBER", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
                 r.levelCardinality().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LEVEL_CARDINALITY", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
                 r.levelType().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LEVEL_TYPE", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
                 r.description().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DESCRIPTION, String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
@@ -515,7 +514,7 @@ public class DiscoveryResponseConvertor {
                 r.measureCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
                 r.measureGuid().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_GUID", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
                 r.measureAggregator().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_AGGREGATOR", String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
-                r.dataType().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DATA_TYPE, String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.INTEGER))));
+                r.dataType().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DATA_TYPE, String.valueOf(v.getValue()), Optional.of(ItemTypeEnum.UNSIGNEDSHOT))));
                 r.numericPrecision().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("NUMERIC_PRECISION", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
                 r.numericScale().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("NUMERIC_SCALE", String.valueOf(v), Optional.of(ItemTypeEnum.INTEGER))));
                 r.measureUnits().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_UNITS", v, Optional.of(ItemTypeEnum.STRING))));
@@ -525,7 +524,7 @@ public class DiscoveryResponseConvertor {
                 r.levelsList().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LEVELS_LIST", v, Optional.of(ItemTypeEnum.STRING))));
                 r.measureNameSqlColumnName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_NAME_SQL_COLUMN_NAME", v, Optional.of(ItemTypeEnum.STRING))));
                 r.measureUnqualifiedCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_UNQUALIFIED_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
-                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(MEASURE_GROUP_NAME, v, Optional.of(ItemTypeEnum.STRING))));
+                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASUREGROUP_NAME", v, Optional.of(ItemTypeEnum.STRING))));
                 r.measureDisplayFolder().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_DISPLAY_FOLDER", v, Optional.of(ItemTypeEnum.STRING))));
                 r.defaultFormatString().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DEFAULT_FORMAT_STRING", v, Optional.of(ItemTypeEnum.STRING))));
                 return (RowSetRow) new RowSetRowR(rowSetRowItem);
@@ -673,10 +672,10 @@ public class DiscoveryResponseConvertor {
                 r.catalogName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(CATALOG_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.schemaName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(SCHEMA_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.cubeName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(CUBE_NAME, v, Optional.of(ItemTypeEnum.STRING))));
-                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(MEASURE_GROUP_NAME, v, Optional.of(ItemTypeEnum.STRING))));
+                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASUREGROUP_NAME", v, Optional.of(ItemTypeEnum.STRING))));
                 r.description().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DESCRIPTION, v, Optional.of(ItemTypeEnum.STRING))));
                 r.isWriteEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_WRITE_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
-                r.measureGroupCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_GROUP_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
+                r.measureGroupCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASUREGROUP_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
                 return (RowSetRow) new RowSetRowR(rowSetRowItem);
             }).toList();
         } else {

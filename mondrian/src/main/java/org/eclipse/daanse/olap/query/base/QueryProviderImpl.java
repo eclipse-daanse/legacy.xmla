@@ -104,7 +104,7 @@ public class QueryProviderImpl implements QueryProvider {
         if (dmvStatement.columns() != null) {
             dmvStatement.columns().forEach(c -> columns.addAll(convertColumns(c.objectIdentifiers())));
         }
-        Expression whereExpression = null;
+        Expression whereExpression = MdxToQueryConverter.getExpression(dmvStatement.where());
         return new DmvQueryImpl(tableName,
             columns,
             whereExpression);

@@ -25,6 +25,7 @@ import java.io.StringWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,8 @@ import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataTypeJdbc;
+import org.eclipse.daanse.olap.api.NameSegment;
+import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
@@ -44,12 +47,17 @@ import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.CalculatedFormula;
 import org.eclipse.daanse.olap.api.query.component.DmvQuery;
 import org.eclipse.daanse.olap.api.query.component.DrillThrough;
+import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
+import org.eclipse.daanse.olap.api.query.component.Id;
+import org.eclipse.daanse.olap.api.query.component.Literal;
+import org.eclipse.daanse.olap.api.query.component.NamedSetExpression;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.query.component.Refresh;
 import org.eclipse.daanse.olap.api.query.component.SqlQuery;
 import org.eclipse.daanse.olap.api.query.component.TransactionCommand;
+import org.eclipse.daanse.olap.api.query.component.UnresolvedFunCall;
 import org.eclipse.daanse.olap.api.query.component.Update;
 import org.eclipse.daanse.olap.api.query.component.UpdateClause;
 import org.eclipse.daanse.olap.api.result.AllocationPolicy;
@@ -96,6 +104,7 @@ import org.eclipse.daanse.xmla.api.discover.mdschema.measures.MdSchemaMeasuresRe
 import org.eclipse.daanse.xmla.api.discover.mdschema.members.MdSchemaMembersRequest;
 import org.eclipse.daanse.xmla.api.discover.mdschema.properties.MdSchemaPropertiesRequest;
 import org.eclipse.daanse.xmla.api.discover.mdschema.sets.MdSchemaSetsRequest;
+import org.eclipse.daanse.xmla.api.execute.ExecuteParameter;
 import org.eclipse.daanse.xmla.api.execute.ExecuteService;
 import org.eclipse.daanse.xmla.api.execute.alter.AlterRequest;
 import org.eclipse.daanse.xmla.api.execute.alter.AlterResponse;
@@ -105,6 +114,8 @@ import org.eclipse.daanse.xmla.api.execute.clearcache.ClearCacheRequest;
 import org.eclipse.daanse.xmla.api.execute.clearcache.ClearCacheResponse;
 import org.eclipse.daanse.xmla.api.execute.statement.StatementRequest;
 import org.eclipse.daanse.xmla.api.execute.statement.StatementResponse;
+import org.eclipse.daanse.xmla.api.mddataset.RowSetRow;
+import org.eclipse.daanse.xmla.api.mddataset.RowSetRowItem;
 import org.eclipse.daanse.xmla.model.record.discover.PropertiesR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.providertypes.DbSchemaProviderTypesRequestR;
 import org.eclipse.daanse.xmla.model.record.discover.dbschema.providertypes.DbSchemaProviderTypesRestrictionsR;
@@ -159,6 +170,7 @@ import org.eclipse.daanse.xmla.model.record.execute.cancel.CancelResponseR;
 import org.eclipse.daanse.xmla.model.record.execute.clearcache.ClearCacheResponseR;
 import org.eclipse.daanse.xmla.model.record.execute.statement.StatementResponseR;
 import org.eclipse.daanse.xmla.model.record.mddataset.RowSetR;
+import org.eclipse.daanse.xmla.model.record.mddataset.RowSetRowR;
 import org.eclipse.daanse.xmla.model.record.xmla_empty.EmptyresultR;
 
 public class OlapExecuteService implements ExecuteService {
@@ -236,18 +248,22 @@ public class OlapExecuteService implements ExecuteService {
                                        RequestMetaData metaData, UserPrincipal userPrincipal) {
 
 		Optional<String> oCatalog = statementRequest.properties().catalog();
-
+		Context context = null;
 		if (oCatalog.isPresent()) {
-
-			String catalogName=oCatalog.get();
-			Optional<Context> oContext = contextsListSupplyer.getContexts().stream().filter(ctx->catalogName.equals(ctx.getName())).findAny();
-			if (oContext.isPresent()) {
-				Context context = oContext.get();
+            String catalogName=oCatalog.get();
+            Optional<Context> oContext = contextsListSupplyer.getContexts().stream().filter(ctx->catalogName.equals(ctx.getName())).findAny();
+            context = oContext.get();
+		} else {
+		    if (contextsListSupplyer.getContexts() != null && !contextsListSupplyer.getContexts().isEmpty()) {
+		        context = contextsListSupplyer.getContexts().get(0);
+		    }
+		}
+		if (context != null) {
 				String statement = statementRequest.command().statement();
 				if (statement != null && statement.length() > 0) {
                     Connection connection = context.getConnection(userPrincipal.roles());
 					QueryComponent queryComponent = connection.parseStatement(statement);
-
+					
 					if (queryComponent instanceof DrillThrough drillThrough) {
 						return executeDrillThroughQuery( statementRequest,drillThrough);
 					} else if (queryComponent instanceof CalculatedFormula calculatedFormula) {
@@ -268,7 +284,6 @@ public class OlapExecuteService implements ExecuteService {
 
 				}
 
-			}
 		}
 		return new StatementResponseR(null, null);
 	}
@@ -455,6 +470,8 @@ public class OlapExecuteService implements ExecuteService {
     private StatementResponse executeDmvQuery(Connection connection,DmvQuery dmvQuery, UserPrincipal userPrincipal, RequestMetaData metaData, StatementRequest statementRequest) {
     	Catalog catalog=connection.getCatalog();
         String tableName = dmvQuery.getTableName().toUpperCase();
+        List<String> columns = dmvQuery.getColumns();
+        
         RowSetR rowSet = null;
         switch (tableName) {
             case OperationNames.DBSCHEMA_COLUMNS:
@@ -547,8 +564,8 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_HIERARCHIES:
                 MdSchemaHierarchiesRestrictionsR mdSchemaHierarchiesRestrictions =
-                    new MdSchemaHierarchiesRestrictionsR(empty(), empty(), null, empty(),
-                        empty(), empty(), null, null, empty());
+                    new MdSchemaHierarchiesRestrictionsR(empty(), empty(), empty(), empty(),
+                        empty(), empty(), empty(), empty(), empty());
                 MdSchemaHierarchiesRequest mdSchemaHierarchiesRequest =
                     new MdSchemaHierarchiesRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaHierarchiesRestrictions);
@@ -557,8 +574,8 @@ public class OlapExecuteService implements ExecuteService {
                 break;
             case OperationNames.MDSCHEMA_LEVELS:
                 MdSchemaLevelsRestrictionsR mdSchemaLevelsRestrictions =
-                    new MdSchemaLevelsRestrictionsR(empty(), empty(), null, empty(),
-                        empty(), empty(), null, empty(), null, empty());
+                    new MdSchemaLevelsRestrictionsR(empty(), empty(), empty(), empty(),
+                        empty(), empty(), empty(), empty(), empty(), empty());
                 MdSchemaLevelsRequest mdSchemaLevelsRequest =
                     new MdSchemaLevelsRequestR((PropertiesR) statementRequest.properties(),
                         mdSchemaLevelsRestrictions);
@@ -708,7 +725,101 @@ public class OlapExecuteService implements ExecuteService {
 
         }
 
-        return new StatementResponseR(null, rowSet);
+        return new StatementResponseR(null, filterRowSetByColumns(rowSet, columns, dmvQuery.getWhereExpression(), statementRequest.parameters()));
+    }
+
+    private boolean isCompatible( RowSetRow row, Expression exp, List<ExecuteParameter> parameters ) {
+        if ( exp == null ) {
+          return true;
+        }
+
+        if ( exp instanceof UnresolvedFunCall unresolvedFunCall) {
+          final String functionName = unresolvedFunCall.getOperationAtom().name();
+
+          Object o1, o2;
+          boolean result;
+
+          switch ( functionName ) {
+            case "AND":
+              return isCompatible( row, unresolvedFunCall.getArgs()[ 0 ], parameters )
+                && isCompatible( row, unresolvedFunCall.getArgs()[ 1 ], parameters );
+            case "OR":
+              return isCompatible( row, unresolvedFunCall.getArgs()[ 0 ], parameters )
+                || isCompatible( row, unresolvedFunCall.getArgs()[ 1 ], parameters );
+            case "=":
+              o1 = getValue( row, unresolvedFunCall.getArgs()[ 0 ], parameters );
+              o2 = getValue( row, unresolvedFunCall.getArgs()[ 1 ], parameters );
+
+              result = ( o1 == null && o2 == null ) || ( o1 != null && o1.equals( o2 ) );
+
+              return result;
+            case "<>":
+              o1 = getValue( row, unresolvedFunCall.getArgs()[ 0 ], parameters );
+              o2 = getValue( row, unresolvedFunCall.getArgs()[ 1 ], parameters );
+
+              result = !( ( o1 == null && o2 == null ) || ( o1 != null && o1.equals( o2 ) ) );
+
+              return result;
+            default:
+              return true;
+          }
+        } else if ( exp instanceof Id ) {
+          Object value = getValue( row, exp, parameters );
+          return value != null && value.equals( "true" );
+        }
+
+        return true;
+    }
+
+    private Object getValue(  RowSetRow row, Expression exp, List<ExecuteParameter> parameters ) {
+        if ( exp instanceof Id id) {
+            Segment s = id.getElement( 0 );
+            if (s instanceof NameSegment ns) {
+                String columnName = ns.getName();
+                if ( columnName.startsWith( "@" ) ) {
+                    columnName = columnName.substring( 1 );
+                    Object value = null;
+                    final String cn = columnName; 
+                    Optional<ExecuteParameter> oExecuteParameter  = parameters.stream().filter(p -> cn.equals(p.name())).findFirst();
+                    if ( oExecuteParameter.isPresent() ) {
+                        value = oExecuteParameter.get().value();
+                    }
+                    return value;
+                } else {
+                    Object value = null;
+                    final String cn = columnName;
+                    Optional<RowSetRowItem> oRowSetRowItem = row.rowSetRowItem().stream().filter(ri -> cn.equals(ri.tagName())).findFirst();
+                    if ( oRowSetRowItem.isPresent() && oRowSetRowItem.get().value() != null) {
+                        value = oRowSetRowItem.get().value();
+                    }
+                    return value;
+                }
+            }
+        } else if ( exp instanceof Literal l) {
+            Object value = l.getValue();
+            if ( value != null ) {
+                value = value.toString();
+            }
+            return value;
+        }
+        return null;
+    }
+
+    private RowSetR filterRowSetByColumns(RowSetR rowSet, List<String> columns, Expression where, List<ExecuteParameter> parameters) {
+        if (columns != null && !columns.isEmpty() && rowSet.rowSetRows() != null && !rowSet.rowSetRows().isEmpty()) {
+            List<RowSetRow> rowSetRows = new ArrayList<RowSetRow>();
+            for (RowSetRow rr : rowSet.rowSetRows()) {
+                if (isCompatible( rr, where, parameters )) {
+                    if (columns != null && !columns.isEmpty()  && rr.rowSetRowItem() != null) {
+                        rowSetRows.add(new RowSetRowR(rr.rowSetRowItem().stream().filter(i -> columns.contains(i.tagName())).toList()));
+                    } else {
+                        rowSetRows.add(rr);
+                    }
+                }
+            }
+            return new RowSetR(rowSetRows);
+        }
+        return rowSet;
     }
 
     private StatementResponse executeCalculatedFormula(Connection connection, CalculatedFormula calculatedFormula) {

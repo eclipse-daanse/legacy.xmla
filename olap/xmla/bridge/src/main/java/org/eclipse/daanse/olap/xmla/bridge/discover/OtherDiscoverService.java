@@ -47,6 +47,7 @@ import org.eclipse.daanse.xmla.api.discover.dbschema.schemata.DbSchemaSchemataRe
 import org.eclipse.daanse.xmla.api.discover.dbschema.sourcetables.DbSchemaSourceTablesRequest;
 import org.eclipse.daanse.xmla.api.discover.dbschema.tables.DbSchemaTablesRequest;
 import org.eclipse.daanse.xmla.api.discover.dbschema.tablesinfo.DbSchemaTablesInfoRequest;
+import org.eclipse.daanse.xmla.api.discover.discover.csdlmetadata.DiscoverCsdlMetaDataRequest;
 import org.eclipse.daanse.xmla.api.discover.discover.datasources.DiscoverDataSourcesRequest;
 import org.eclipse.daanse.xmla.api.discover.discover.datasources.DiscoverDataSourcesResponseRow;
 import org.eclipse.daanse.xmla.api.discover.discover.enumerators.DiscoverEnumeratorsRequest;
@@ -129,6 +130,7 @@ public class OtherDiscoverService {
         DiscoverPropertiesRequest.class,
         DiscoverSchemaRowsetsRequest.class,
         DiscoverXmlMetaDataRequest.class,
+        DiscoverCsdlMetaDataRequest.class,
         //MdSchema
         MdSchemaActionsRequest.class,
         MdSchemaCubesRequest.class,
