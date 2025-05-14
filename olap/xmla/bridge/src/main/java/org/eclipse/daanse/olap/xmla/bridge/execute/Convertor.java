@@ -197,6 +197,7 @@ public class Convertor {
             for (SqlColumn column : columns) {
                 rowSetRowItem.add(new RowSetRowItemR(
                     column.encodedName,
+                    column.name,
                     countStr,
                     Optional.empty())
                 );
@@ -216,6 +217,7 @@ public class Convertor {
                     }
                     rowSetRowItem.add(new RowSetRowItemR(
                             columns.get(i).encodedName,
+                            columns.get(i).name,
                             valueString,
                             Optional.of(ItemTypeEnum.fromValue(columns.get(i).xsdType))));
                 }
@@ -1284,7 +1286,7 @@ public class Convertor {
                 valueString = XmlaUtil.normalizeNumericString(valueString);
             }
 
-            result.add(new RowSetRowItemR(encodedName,
+            result.add(new RowSetRowItemR(encodedName, name,
                 valueString,
                 Optional.of(ItemTypeEnum.fromValue(valueType))));
             return result;
@@ -1330,7 +1332,7 @@ public class Convertor {
               return result;
             }
 
-            result.add(new RowSetRowItemR(encodedName,
+            result.add(new RowSetRowItemR(encodedName, name,
                     propertyValue.toString(),
                     Optional.of(ItemTypeEnum.STRING)));
             return result;
