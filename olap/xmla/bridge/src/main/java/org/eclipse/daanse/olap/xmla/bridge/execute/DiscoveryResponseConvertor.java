@@ -57,7 +57,7 @@ public class DiscoveryResponseConvertor {
 
     private static final String SCOPE = "SCOPE";
 	private static final String SCHEMA_NAME = "SCHEMA_NAME";
-	private static final String MEASURE_GROUP_NAME = "MEASURE_GROUP_NAME";
+	private static final String MEASUREGROUP_NAME = "MEASUREGROUP_NAME";
 	private static final String LEVEL_UNIQUE_NAME = "LEVEL_UNIQUE_NAME";
 	private static final String HIERARCHY_UNIQUE_NAME = "HIERARCHY_UNIQUE_NAME";
 	private static final String EXPRESSION = "EXPRESSION";
@@ -484,7 +484,7 @@ public class DiscoveryResponseConvertor {
                 r.catalogName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(CATALOG_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.schemaName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(SCHEMA_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.cubeName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(CUBE_NAME, v, Optional.of(ItemTypeEnum.STRING))));
-                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(MEASURE_GROUP_NAME, v, Optional.of(ItemTypeEnum.STRING))));
+                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(MEASUREGROUP_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.measureGroupCardinality().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_GROUP_CARDINALITY", v, Optional.of(ItemTypeEnum.STRING))));
                 r.dimensionUniqueName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DIMENSION_UNIQUE_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.dimensionCardinality().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DIMENSION_CARDINALITY", v.name(), Optional.of(ItemTypeEnum.STRING))));
@@ -524,7 +524,7 @@ public class DiscoveryResponseConvertor {
                 r.levelsList().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("LEVELS_LIST", v, Optional.of(ItemTypeEnum.STRING))));
                 r.measureNameSqlColumnName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_NAME_SQL_COLUMN_NAME", v, Optional.of(ItemTypeEnum.STRING))));
                 r.measureUnqualifiedCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_UNQUALIFIED_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
-                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASUREGROUP_NAME", v, Optional.of(ItemTypeEnum.STRING))));
+                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(MEASUREGROUP_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.measureDisplayFolder().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASURE_DISPLAY_FOLDER", v, Optional.of(ItemTypeEnum.STRING))));
                 r.defaultFormatString().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("DEFAULT_FORMAT_STRING", v, Optional.of(ItemTypeEnum.STRING))));
                 return (RowSetRow) new RowSetRowR(rowSetRowItem);
@@ -640,7 +640,7 @@ public class DiscoveryResponseConvertor {
                 r.catalogName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(CATALOG_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.schemaName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(SCHEMA_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.cubeName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(CUBE_NAME, v, Optional.of(ItemTypeEnum.STRING))));
-                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASUREGROUP_NAME", v, Optional.of(ItemTypeEnum.STRING))));
+                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(MEASUREGROUP_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.kpiName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("KPI_NAME", v, Optional.of(ItemTypeEnum.STRING))));
                 r.kpiCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("KPI_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
                 r.kpiDescription().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("KPI_DESCRIPTION", v, Optional.of(ItemTypeEnum.STRING))));
@@ -672,7 +672,7 @@ public class DiscoveryResponseConvertor {
                 r.catalogName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(CATALOG_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.schemaName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(SCHEMA_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.cubeName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(CUBE_NAME, v, Optional.of(ItemTypeEnum.STRING))));
-                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASUREGROUP_NAME", v, Optional.of(ItemTypeEnum.STRING))));
+                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(MEASUREGROUP_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.description().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(DESCRIPTION, v, Optional.of(ItemTypeEnum.STRING))));
                 r.isWriteEnabled().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("IS_WRITE_ENABLED", String.valueOf(v), Optional.of(ItemTypeEnum.STRING))));
                 r.measureGroupCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASUREGROUP_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
