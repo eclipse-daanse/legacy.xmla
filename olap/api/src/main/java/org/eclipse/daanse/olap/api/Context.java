@@ -24,7 +24,7 @@ import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
-import org.eclipse.daanse.olap.api.aggregator.Aggregator;
+import org.eclipse.daanse.olap.api.aggregator.CustomAggregatorFactory;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
@@ -139,7 +139,7 @@ public interface Context {
 
 	List<Statement> getStatements(Connection connection);
 
-    <T> T getConfigValue(String key, T dflt ,Class<T> clazz); 
+    <T> T getConfigValue(String key, T dflt ,Class<T> clazz);
 
     Semaphore getQueryLimitSemaphore();
 
@@ -157,4 +157,5 @@ public interface Context {
 
     AggregationFactory getAggragationFactory();
 
+    List<CustomAggregatorFactory> getCustomAggregators();
 }

@@ -2,6 +2,7 @@ package org.opencube.junit5.context;
 
 import java.sql.SQLException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +20,7 @@ import org.eclipse.daanse.olap.api.AggregationFactory;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
+import org.eclipse.daanse.olap.api.aggregator.CustomAggregatorFactory;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory;
@@ -327,7 +329,8 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
     private Semaphore queryLimimitSemaphore;
     private FunctionService functionService = new FunctionServiceImpl();
     private AggregationFactory aggregationFactory;
-    
+    private List<CustomAggregatorFactory> customAggregators = new ArrayList<CustomAggregatorFactory>();
+
     public TestContextImpl() {
         this.eventBus = new LoggingEventBus();
         shepherd = new RolapResultShepherd(getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_DEFAULT_VALUE, Long.class),
@@ -713,7 +716,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         return getConnection(new RolapConnectionPropsR(roles, true, Locale.getDefault(), Duration.ofSeconds(-1),
                 Optional.empty(), Optional.empty()));
     }
-    
+
     @Override
     public String getName() {
         return name;
@@ -796,7 +799,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         }
         configuration.put(key, value);
     }
-    
+
     public void setCellBatchSize(Integer cellBatchSize) {
         setConfigValue(ConfigConstants.CELL_BATCH_SIZE, cellBatchSize);
     }
@@ -934,5 +937,10 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
     public void setAggragationFactory(AggregationFactory aggregationFactory) {
         this.aggregationFactory = aggregationFactory;
     }
+
+    @Override
+    public List<CustomAggregatorFactory> getCustomAggregators() {
+        return this.customAggregators;
+    };
 
 }
