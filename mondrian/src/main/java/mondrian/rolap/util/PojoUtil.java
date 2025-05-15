@@ -218,7 +218,7 @@ public class PojoUtil {
 
 	private static List<? extends RowValueMapping> getRowValues(List<? extends RowValueMapping> list) {
 		if (list != null) {
-			return list.stream().map(c -> RowValueMappingImpl.builder().withValue(c.getValue()).withColumn((PhysicalColumnMappingImpl)c.getColumn()).build()).toList();
+			return list.stream().map(c -> RowValueMappingImpl.builder().withValue(c.getValue()).withColumn((PhysicalColumnMappingImpl)getColumn(c.getColumn())).build()).toList();
 		}
 		return List.of();	}
 
