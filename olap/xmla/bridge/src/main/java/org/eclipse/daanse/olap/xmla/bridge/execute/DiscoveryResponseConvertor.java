@@ -640,7 +640,7 @@ public class DiscoveryResponseConvertor {
                 r.catalogName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(CATALOG_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.schemaName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(SCHEMA_NAME, v, Optional.of(ItemTypeEnum.STRING))));
                 r.cubeName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(CUBE_NAME, v, Optional.of(ItemTypeEnum.STRING))));
-                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR(MEASURE_GROUP_NAME, v, Optional.of(ItemTypeEnum.STRING))));
+                r.measureGroupName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("MEASUREGROUP_NAME", v, Optional.of(ItemTypeEnum.STRING))));
                 r.kpiName().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("KPI_NAME", v, Optional.of(ItemTypeEnum.STRING))));
                 r.kpiCaption().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("KPI_CAPTION", v, Optional.of(ItemTypeEnum.STRING))));
                 r.kpiDescription().ifPresent(v -> rowSetRowItem.add(new RowSetRowItemR("KPI_DESCRIPTION", v, Optional.of(ItemTypeEnum.STRING))));
