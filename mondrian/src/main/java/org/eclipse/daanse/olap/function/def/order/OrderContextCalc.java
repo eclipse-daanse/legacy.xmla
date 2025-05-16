@@ -17,14 +17,14 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.calc.ResultStyle;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleListCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 import org.eclipse.daanse.olap.function.def.order.OrderFunDef.CalcWithDual;
 
-import mondrian.calc.impl.GenericIterCalc;
-
-public class OrderContextCalc extends GenericIterCalc {
+public class OrderContextCalc extends AbstractProfilingNestedTupleListCalc {
     private final MemberCalc[] memberCalcs;
     private final CalcWithDual calc;
     private final Member[] members; // workspace
@@ -44,7 +44,7 @@ public class OrderContextCalc extends GenericIterCalc {
     }
 
     @Override
-    public Object evaluate( Evaluator evaluator ) {
+    public TupleList evaluate( Evaluator evaluator ) {
       // Evaluate each of the members, and set as context in the
       // sub-evaluator.
       for ( int i = 0; i < memberCalcs.length; i++ ) {

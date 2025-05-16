@@ -38,8 +38,8 @@ public class AddCalculatedMembersCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
-        final TupleList list = getChildCalc(0, TupleListCalc.class).evaluateList(evaluator);
+    public TupleList evaluate(Evaluator evaluator) {
+        final TupleList list = getChildCalc(0, TupleListCalc.class).evaluate(evaluator);
         return new UnaryTupleList(addCalculatedMembers(list.slice(0), evaluator));
     }
 

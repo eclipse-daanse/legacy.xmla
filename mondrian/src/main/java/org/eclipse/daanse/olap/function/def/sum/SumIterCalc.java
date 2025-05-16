@@ -49,13 +49,13 @@ public class SumIterCalc extends AbstractProfilingNestedDoubleCalc {
         return HirarchyDependsChecker.checkAnyDependsButFirst(getChildCalcs(), hierarchy);
     }
 
-    private TupleIterable evaluateCurrentIterable(TupleIteratorCalc tupleIteratorCalc, Evaluator evaluator) {
+    private TupleIterable evaluateCurrentIterable(TupleIteratorCalc<?> tupleIteratorCalc, Evaluator evaluator) {
         final int savepoint = evaluator.savepoint();
         int currLen = 0;
         TupleIterable iterable;
         try {
             evaluator.setNonEmpty(false);
-            iterable = tupleIteratorCalc.evaluateIterable(evaluator);
+            iterable = tupleIteratorCalc.evaluate(evaluator);
         } finally {
             evaluator.restore(savepoint);
         }

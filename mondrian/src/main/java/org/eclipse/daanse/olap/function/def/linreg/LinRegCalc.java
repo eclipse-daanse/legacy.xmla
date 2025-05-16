@@ -79,7 +79,7 @@ public class LinRegCalc extends AbstractProfilingNestedDoubleCalc {
             TupleList members;
             try {
                 evaluator.setNonEmpty(false);
-                members = tupleListCalc.evaluateList(evaluator);
+                members = tupleListCalc.evaluate(evaluator);
             } finally {
                 evaluator.restore(savepoint);
             }

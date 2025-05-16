@@ -60,9 +60,7 @@ public class ExprIterCalc  extends AbstractIterCalc {
     }
 
     @Override
-    public TupleIterable evaluateIterable(
-        final Evaluator evaluator)
-    {
+    public TupleIterable evaluate(final Evaluator evaluator) {
         return new AbstractTupleIterable(getType().getArity()) {
             @Override
             public TupleCursor tupleCursor() {
@@ -82,8 +80,8 @@ public class ExprIterCalc  extends AbstractIterCalc {
                                 return false;
                             }
                             currentCursor =
-                                calcIterator.next()
-                                    .evaluateIterable(evaluator)
+                                ((TupleIterable) calcIterator.next()
+                                    .evaluate(evaluator))
                                     .tupleCursor();
                         }
                     }

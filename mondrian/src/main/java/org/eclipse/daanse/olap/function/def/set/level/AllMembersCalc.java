@@ -29,7 +29,7 @@ public class AllMembersCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         Level level = getChildCalc(0, LevelCalc.class).evaluate(evaluator);
         return FunUtil.levelMembers(level, evaluator, true);
     }

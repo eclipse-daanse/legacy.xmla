@@ -20,11 +20,11 @@ import org.eclipse.daanse.olap.api.calc.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingCalc;
 
-public class NonNativeCalc  extends AbstractProfilingCalc<Object> implements ProfilingCalc<Object> {
-    final Calc<?> parent;
+public class NonNativeCalc<E>  extends AbstractProfilingCalc<E> implements ProfilingCalc<E> {
+    final Calc<E> parent;
     final boolean nativeEnabled;
 
-    protected NonNativeCalc(Calc<?> parent, final boolean nativeEnabled) {
+    protected NonNativeCalc(Calc<E> parent, final boolean nativeEnabled) {
         super(parent.getType());
         assert parent != null;
 
@@ -33,7 +33,7 @@ public class NonNativeCalc  extends AbstractProfilingCalc<Object> implements Pro
     }
 
     @Override
-    public Object evaluate(final Evaluator evaluator) {
+    public E evaluate(final Evaluator evaluator) {
         evaluator.setNativeEnabled(nativeEnabled);
         return parent.evaluate(evaluator);
     }

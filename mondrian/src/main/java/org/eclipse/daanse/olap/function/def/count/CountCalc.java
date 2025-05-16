@@ -77,13 +77,13 @@ public class CountCalc extends AbstractProfilingNestedIntegerCalc {
         return !calc.getType().usesHierarchy(hierarchy, true);
     }
 
-    private TupleIterable evaluateCurrentIterable(TupleIteratorCalc tupleIteratorCalc, Evaluator evaluator) {
+    private TupleIterable evaluateCurrentIterable(TupleIteratorCalc<?> tupleIteratorCalc, Evaluator evaluator) {
         final int savepoint = evaluator.savepoint();
         int currLen = 0;
         TupleIterable iterable;
         try {
             evaluator.setNonEmpty(false);
-            iterable = tupleIteratorCalc.evaluateIterable(evaluator);
+            iterable = tupleIteratorCalc.evaluate(evaluator);
         } finally {
             evaluator.restore(savepoint);
         }

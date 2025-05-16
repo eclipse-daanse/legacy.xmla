@@ -26,6 +26,7 @@ import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
+import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
@@ -120,7 +121,7 @@ public Calc<?> compileCall( ResolvedFunCall call, ExpressionCompiler compiler ) 
     }
   }
 
-  public interface CalcWithDual extends Calc<Object> {
+  public interface CalcWithDual extends TupleListCalc {
     public TupleList evaluateDual( Evaluator rootEvaluator, Evaluator subEvaluator );
   }
 }

@@ -35,8 +35,8 @@ public class DistinctCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
-        TupleList list = tupleListCalc.evaluateList(evaluator);
+    public TupleList evaluate(Evaluator evaluator) {
+        TupleList list = tupleListCalc.evaluate(evaluator);
         Set<List<Member>> set = new HashSet<>(list.size());
         TupleList result = list.copyList(list.size());
         for (List<Member> element : list) {

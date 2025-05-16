@@ -93,7 +93,7 @@ public class SetListCalc  extends AbstractListCalc {
                 @Override
                 public Void evaluate(Evaluator evaluator) {
                     TupleList list =
-                        tupleListCalc.evaluateList(evaluator);
+                        tupleListCalc.evaluate(evaluator);
                     // Add only tuples which are not null. Tuples with
                     // any null members are considered null.
                     outer:
@@ -118,7 +118,7 @@ public class SetListCalc  extends AbstractListCalc {
                 @Override
                 public Void evaluate(Evaluator evaluator) {
                     TupleList list =
-                            tupleListCalc.evaluateList(evaluator);
+                            tupleListCalc.evaluate(evaluator);
                     result = list;
                     return null;
                 }
@@ -159,7 +159,7 @@ public class SetListCalc  extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(final Evaluator evaluator) {
+    public TupleList evaluate(final Evaluator evaluator) {
         result.clear();
         for (VoidCalc voidCalc : voidCalcs) {
             voidCalc.evaluate(evaluator);

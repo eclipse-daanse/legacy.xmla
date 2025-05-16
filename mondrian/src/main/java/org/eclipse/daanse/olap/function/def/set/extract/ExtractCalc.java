@@ -38,9 +38,9 @@ public class ExtractCalc extends AbstractListCalc{
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         TupleList result = TupleCollections.createList(outArity);
-        TupleList list = getChildCalc(0, TupleListCalc.class).evaluateList(evaluator);
+        TupleList list = getChildCalc(0, TupleListCalc.class).evaluate(evaluator);
         Set<List<Member>> emittedTuples = new HashSet<>();
         for (List<Member> members : list.project(extractedOrdinals)) {
             if (emittedTuples.add(members)) {

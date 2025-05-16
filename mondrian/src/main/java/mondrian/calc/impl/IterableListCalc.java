@@ -17,14 +17,15 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 
 /**
- * Adapter that converts a {@link org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc} to a
+ * Adapter that converts a
+ * {@link org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc} to a
  * {@link org.eclipse.daanse.olap.api.calc.todo.TupleListCalc}.
  *
  * @author jhyde
  * @since Oct 23, 2008
  */
 public class IterableListCalc extends AbstractListCalc {
-    private final TupleIteratorCalc tupleIteratorCalc;
+    private final TupleIteratorCalc<?> tupleIteratorCalc;
 
     /**
      * Creates an IterableListCalc.
@@ -32,15 +33,14 @@ public class IterableListCalc extends AbstractListCalc {
      * @param tupleIteratorCalc Calculation that returns an iterable.
      */
     public IterableListCalc(TupleIteratorCalc tupleIteratorCalc) {
-        super(tupleIteratorCalc.getType(), new Calc[] {tupleIteratorCalc});
+        super(tupleIteratorCalc.getType(), new Calc[] { tupleIteratorCalc });
         this.tupleIteratorCalc = tupleIteratorCalc;
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         // A TupleIterCalc is allowed to return a list. If so, save the copy.
-        final TupleIterable iterable =
-                tupleIteratorCalc.evaluateIterable(evaluator);
+        final TupleIterable iterable = tupleIteratorCalc.evaluate(evaluator);
         if (iterable instanceof TupleList tupleList) {
             return tupleList;
         }

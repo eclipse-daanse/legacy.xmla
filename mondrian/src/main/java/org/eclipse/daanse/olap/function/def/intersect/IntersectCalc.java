@@ -41,12 +41,12 @@ public class IntersectCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
-        TupleList leftList = getChildCalc(0, TupleListCalc.class).evaluateList(evaluator);
+    public TupleList evaluate(Evaluator evaluator) {
+        TupleList leftList = getChildCalc(0, TupleListCalc.class).evaluate(evaluator);
         if (leftList.isEmpty()) {
             return leftList;
         }
-        final TupleList rightList = getChildCalc(1, TupleListCalc.class).evaluateList(evaluator);
+        final TupleList rightList = getChildCalc(1, TupleListCalc.class).evaluate(evaluator);
         if (rightList.isEmpty()) {
             return rightList;
         }

@@ -38,7 +38,7 @@ public class ImmutableIterFilterCalc extends BaseIterFilterCalc {
         Calc<?>[] calcs = getChildCalcs();
         TupleListCalc lcalc = (TupleListCalc) calcs[0];
         BooleanCalc bcalc = (BooleanCalc) calcs[1];
-        TupleList members = lcalc.evaluateList(evaluator);
+        TupleList members = lcalc.evaluate(evaluator);
 
         // Not mutable, must create new list
         TupleList result = members.copyList(members.size() / 2);

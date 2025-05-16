@@ -31,7 +31,7 @@ public class SetCalc extends AbstractIterCalc{
     }
 
     @Override
-    public TupleIterable evaluateIterable(Evaluator evaluator) {
+    public TupleIterable evaluate(Evaluator evaluator) {
         TupleCalc tupleCalc = getChildCalc(0, TupleCalc.class);
         final Member[] members = tupleCalc.evaluate(evaluator);
         return new ListTupleList(tupleCalc.getType().getArity(), Arrays.asList(members));

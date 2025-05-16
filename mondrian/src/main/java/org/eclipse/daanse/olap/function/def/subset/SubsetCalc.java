@@ -29,14 +29,14 @@ public class SubsetCalc extends AbstractListCalc{
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         TupleListCalc tupleListCalc = getChildCalc(0, TupleListCalc.class);
         IntegerCalc startCalc = getChildCalc(1, IntegerCalc.class);
         IntegerCalc countCalc = getChildCalc(2, IntegerCalc.class);
         final int savepoint = evaluator.savepoint();
         try {
             evaluator.setNonEmpty(false);
-            final TupleList list = tupleListCalc.evaluateList(evaluator);
+            final TupleList list = tupleListCalc.evaluate(evaluator);
             final Integer start = startCalc.evaluate(evaluator);
             int end;
             if (countCalc != null) {

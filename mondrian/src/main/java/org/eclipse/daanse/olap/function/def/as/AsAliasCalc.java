@@ -41,7 +41,7 @@ public class AsAliasCalc extends AbstractIterCalc {
 	}
 
 	@Override
-	public TupleIterable evaluateIterable(Evaluator evaluator) {
+	public TupleIterable evaluate(Evaluator evaluator) {
 		Evaluator.NamedSetEvaluator namedSetEvaluator = evaluator.getNamedSetEvaluator(scopedNamedSet, false);
 		return namedSetEvaluator.evaluateTupleIterable(evaluator);
 	}

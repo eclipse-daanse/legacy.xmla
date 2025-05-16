@@ -326,7 +326,7 @@ public class ParameterImpl
         }
 
         @Override
-		public TupleList evaluateList(Evaluator evaluator) {
+        public TupleList evaluate(Evaluator evaluator) {
             TupleList value = (TupleList) evaluator.getParameterValue(slot);
             if (!slot.isParameterSet()) {
                 // save value if not set (setting the default value)

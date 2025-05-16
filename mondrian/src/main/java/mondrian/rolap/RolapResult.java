@@ -305,7 +305,7 @@ public class RolapResult extends ResultBase {
                         setType, new Calc[0])
                 {
                   @Override
-				public TupleList evaluateList(
+				public TupleList evaluate(
                           Evaluator evaluator)
                   {
                     ArrayList<Member> children = new ArrayList<>();
@@ -355,7 +355,7 @@ public class RolapResult extends ResultBase {
                         new Expression[0],
                         returnType);
 
-        final TupleIterable iterable = ( (TupleIteratorCalc) calc ).evaluateIterable( evaluator );
+        final TupleIterable iterable =  ( (TupleIteratorCalc<?>) calc ).evaluate( evaluator );
         TupleCursor cursor;
         if ( iterable instanceof TupleList list ) {
           cursor = list.tupleCursor();
@@ -1068,7 +1068,7 @@ public Cell getCell( int[] pos ) {
     try {
       evaluator.setNonEmpty( queryAxis.isNonEmpty() );
       evaluator.setEvalAxes( true );
-      final TupleIterable iterable = ( (TupleIteratorCalc) axisCalc ).evaluateIterable( evaluator );
+      final TupleIterable iterable = ( (TupleIteratorCalc<?>) axisCalc ).evaluate( evaluator );
       if ( axisCalc.getClass().getName().indexOf( "OrderFunDef" ) != -1 ) {
         queryAxis.setOrdered( true );
       }

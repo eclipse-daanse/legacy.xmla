@@ -114,7 +114,7 @@ public class NativizeSetFunDef extends AbstractFunctionDefinition {
         final int arity = calcs[0].getType().getArity();
         assert arity >= 0;
         if (arity == 1 || substitutionMap.isEmpty()) {
-            TupleIteratorCalc calc = (TupleIteratorCalc) funArg.accept(compiler);
+          Calc<?>   calc =  funArg.accept(compiler);
             final boolean highCardinality =
                 arity == 1
                 && isHighCardinality(funArg, compiler.getEvaluator());
@@ -122,10 +122,10 @@ public class NativizeSetFunDef extends AbstractFunctionDefinition {
                 // This can happen under JDK1.4: caller wants iterator
                 // implementation, but compiler can only provide list.
                 // Fall through and use native.
-            } else if (calc instanceof TupleListCalc) {
-                return new NonNativeListCalc((TupleListCalc) calc, highCardinality);
-            } else {
-                return new NonNativeIterCalc(calc, highCardinality);
+            } else if (calc instanceof TupleListCalc tlc) {
+                return new NonNativeListCalc(tlc, highCardinality);
+            } else  if(calc instanceof TupleIteratorCalc tic) {
+                return new NonNativeIterCalc(tic, highCardinality);
             }
         }
         if (isFirstCompileCall) {

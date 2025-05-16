@@ -40,10 +40,10 @@ public class DrilldownLevelWithIndexCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         TupleListCalc tupleListCalc = getChildCalc(0, TupleListCalc.class);
         IntegerCalc indexCalc = getChildCalc(1, IntegerCalc.class);
-        TupleList list = tupleListCalc.evaluateList(evaluator);
+        TupleList list = tupleListCalc.evaluate(evaluator);
         if (list.isEmpty()) {
             return list;
         }

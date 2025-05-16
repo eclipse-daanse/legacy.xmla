@@ -20,6 +20,8 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.ResultStyle;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.api.calc.todo.TupleCursor;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -27,10 +29,11 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.SetType;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleIterableCalc;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleListCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 
 import mondrian.calc.impl.DelegatingExpCompiler;
-import mondrian.calc.impl.GenericIterCalc;
 import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.Util;
 
@@ -343,7 +346,7 @@ public class RolapDependencyTestingEvaluator extends RolapEvaluator {
      * Expression which checks dependencies and list immutability of an
      * underlying list or iterable expression.
      */
-    private static class DteIterCalcImpl extends GenericIterCalc {
+    private static class DteIterCalcImpl extends AbstractProfilingNestedTupleIterableCalc {
         private final Calc calc;
         private final Hierarchy[] independentHierarchies;
         private final boolean mutableList;
@@ -368,19 +371,10 @@ public class RolapDependencyTestingEvaluator extends RolapEvaluator {
         }
 
         @Override
-		public Object evaluate(Evaluator evaluator) {
+		public TupleIterable evaluate(Evaluator evaluator) {
             RolapDependencyTestingEvaluator dtEval =
                     (RolapDependencyTestingEvaluator) evaluator;
-            return dtEval.evaluate(calc, independentHierarchies, mdxString);
-        }
-
-        @Override
-		public TupleList evaluateList(Evaluator evaluator) {
-            TupleList list = super.evaluateList(evaluator);
-            if (!mutableList) {
-                list = TupleCollections.unmodifiableList(list);
-            }
-            return list;
+            return (TupleIterable) dtEval.evaluate(calc, independentHierarchies, mdxString);
         }
 
         @Override
@@ -389,6 +383,64 @@ public class RolapDependencyTestingEvaluator extends RolapEvaluator {
         }
     }
 
+    
+    /**
+     * Expression which checks dependencies and list immutability of an
+     * underlying list or iterable expression.
+     */
+    private static class DteListCalcImpl extends AbstractProfilingNestedTupleListCalc {
+        private final Calc calc;
+        private final Hierarchy[] independentHierarchies;
+        private final boolean mutableList;
+        private final String mdxString;
+
+        DteListCalcImpl(
+            Calc calc,
+            Hierarchy[] independentHierarchies,
+            boolean mutableList,
+            String mdxString)
+        {
+            super(calc.getType());
+            this.calc = calc;
+            this.independentHierarchies = independentHierarchies;
+            this.mutableList = mutableList;
+            this.mdxString = mdxString;
+        }
+
+        @Override
+        public Calc[] getChildCalcs() {
+            return new Calc[] {calc};
+        }
+
+
+
+        @Override
+        public TupleList evaluate(Evaluator evaluator) {
+            RolapDependencyTestingEvaluator dtEval = (RolapDependencyTestingEvaluator) evaluator;
+            Object o = dtEval.evaluate(calc, independentHierarchies, mdxString);
+
+            if (o instanceof TupleList tupleList) {
+                return tupleList;
+            }
+            // from GenericIterCalc may cause issues
+            final TupleIterable iterable = (TupleIterable) o;
+            final TupleList tupleList = TupleCollections.createList(iterable.getArity());
+            final TupleCursor cursor = iterable.tupleCursor();
+            while (cursor.forward()) {
+                tupleList.addCurrent(cursor);
+            }
+            TupleList list = evaluate(evaluator);
+            if (!mutableList) {
+                list = TupleCollections.unmodifiableList(list);
+            }
+            return list;
+        }
+
+        @Override
+        public ResultStyle getResultStyle() {
+            return calc.getResultStyle();
+        }
+    }
     /**
      * Expression compiler which introduces dependency testing.
      *

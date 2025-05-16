@@ -46,13 +46,13 @@ public class GenerateListCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
-        TupleIteratorCalc tupleIteratorCalc = getChildCalc(0, TupleIteratorCalc.class);
+    public TupleList evaluate(Evaluator evaluator) {
+        TupleIteratorCalc<?> tupleIteratorCalc = getChildCalc(0, TupleIteratorCalc.class);
         TupleListCalc listCalc2 = getChildCalc(1, TupleListCalc.class);
         final int savepoint = evaluator.savepoint();
         try {
             evaluator.setNonEmpty(false);
-            final TupleIterable iterable1 = tupleIteratorCalc.evaluateIterable(evaluator);
+            final TupleIterable iterable1 = tupleIteratorCalc.evaluate(evaluator);
             evaluator.restore(savepoint);
             TupleList result = TupleCollections.createList(arityOut);
             Execution execution = LocusImpl.peek().getExecution();
@@ -62,7 +62,7 @@ public class GenerateListCalc extends AbstractListCalc {
                 while (cursor.forward()) {
                     CancellationChecker.checkCancelOrTimeout(rowCount++, execution);
                     cursor.setContext(evaluator);
-                    final TupleList result2 = listCalc2.evaluateList(evaluator);
+                    final TupleList result2 = listCalc2.evaluate(evaluator);
                     result.addAll(result2);
                 }
             } else {
@@ -73,7 +73,7 @@ public class GenerateListCalc extends AbstractListCalc {
                 while (cursor.forward()) {
                     CancellationChecker.checkCancelOrTimeout(rowCount++, execution);
                     cursor.setContext(evaluator);
-                    final TupleList result2 = listCalc2.evaluateList(evaluator);
+                    final TupleList result2 = listCalc2.evaluate(evaluator);
                     addDistinctTuples(result, result2, emitted);
                 }
             }

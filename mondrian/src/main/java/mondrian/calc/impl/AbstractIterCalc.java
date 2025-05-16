@@ -9,7 +9,6 @@
 
 package mondrian.calc.impl;
 
-import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.ResultStyle;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
@@ -19,41 +18,35 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 
 /**
- * Abstract implementation of the {@link org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc} interface.
+ * Abstract implementation of the
+ * {@link org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc} interface.
  *
- * <p>The derived class must
- * implement the {@link #evaluateIterable(org.eclipse.daanse.olap.api.Evaluator)} method,
- * and the {@link #evaluate(org.eclipse.daanse.olap.api.Evaluator)} method will call it.
+ * <p>
+ * The derived class must implement the
+ * {@link #evaluateIterable(org.eclipse.daanse.olap.api.Evaluator)} method, and
+ * the {@link #evaluate(org.eclipse.daanse.olap.api.Evaluator)} method will call
+ * it.
  *
  * @see mondrian.calc.impl.AbstractListCalc
  *
  * @author jhyde
  * @since Oct 24, 2008
  */
-public abstract class AbstractIterCalc
-extends AbstractProfilingNestedCalc<Object>
-implements TupleIteratorCalc
-{
+public abstract class AbstractIterCalc extends AbstractProfilingNestedCalc<TupleIterable> implements TupleIteratorCalc<TupleIterable> {
     /**
-     * Creates an abstract implementation of a compiled expression which returns
-     * a {@link TupleIterable}.
+     * Creates an abstract implementation of a compiled expression which returns a
+     * {@link TupleIterable}.
      *
-     * @param exp Expression which was compiled
-     * @param calcs List of child compiled expressions (for dependency
-     *   analysis)
+     * @param exp   Expression which was compiled
+     * @param calcs List of child compiled expressions (for dependency analysis)
      */
-    protected AbstractIterCalc( Type type, Calc<?>... calcs) {
+    protected AbstractIterCalc(Type type, Calc<?>... calcs) {
         super(type, calcs);
     }
 
     @Override
     public SetType getType() {
         return (SetType) super.getType();
-    }
-
-    @Override
-    public final Object evaluate(Evaluator evaluator) {
-        return evaluateIterable(evaluator);
     }
 
     @Override

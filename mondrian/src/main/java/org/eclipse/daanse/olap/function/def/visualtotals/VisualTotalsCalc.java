@@ -46,9 +46,9 @@ public class VisualTotalsCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         final List<Member> list =
-            tupleListCalc.evaluateList(evaluator).slice(0);
+            tupleListCalc.evaluate(evaluator).slice(0);
         final List<Member> resultList = new ArrayList<>(list);
         final int memberCount = list.size();
         for (int i = memberCount - 1; i >= 0; --i) {

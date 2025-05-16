@@ -33,7 +33,7 @@ public class SetMemberCalc extends AbstractIterCalc {
 
     // name "Sublist..."// name "Sublist..."
     @Override
-    public TupleIterable evaluateIterable(Evaluator evaluator) {
+    public TupleIterable evaluate(Evaluator evaluator) {
         final Member member = getChildCalc(0, MemberCalc.class).evaluate(evaluator);
         return member == null ? TupleCollections.createList(1)
                 : new UnaryTupleList(Collections.singletonList(member));

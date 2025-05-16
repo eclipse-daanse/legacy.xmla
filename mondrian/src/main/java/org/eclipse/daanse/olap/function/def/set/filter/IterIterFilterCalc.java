@@ -41,13 +41,13 @@ public class IterIterFilterCalc extends BaseIterFilterCalc
     @Override
     protected TupleIterable makeIterable(Evaluator evaluator) {
         Calc<?>[] calcs = getChildCalcs();
-        TupleIteratorCalc icalc = (TupleIteratorCalc) calcs[0];
+        TupleIteratorCalc<?> icalc = (TupleIteratorCalc) calcs[0];
         final BooleanCalc bcalc = (BooleanCalc) calcs[1];
 
         // This does dynamics, just in time,
         // as needed filtering
         final TupleIterable iterable =
-            icalc.evaluateIterable(evaluator);
+            icalc.evaluate(evaluator);
         final Evaluator evaluator2 = evaluator.push();
         evaluator2.setNonEmpty(false);
         return new AbstractTupleIterable(iterable.getArity()) {

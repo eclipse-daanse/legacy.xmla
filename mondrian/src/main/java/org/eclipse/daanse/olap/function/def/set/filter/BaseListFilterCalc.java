@@ -34,7 +34,7 @@ public abstract class BaseListFilterCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         // Use a native evaluator, if more efficient.
         // TODO: Figure this out at compile time.
         CatalogReader schemaReader = evaluator.getCatalogReader();

@@ -39,7 +39,7 @@ public class ImmutableListFilterCalc extends BaseListFilterCalc {
             Calc<?>[] calcs = getChildCalcs();
             TupleListCalc lcalc = (TupleListCalc) calcs[0];
             BooleanCalc bcalc = (BooleanCalc) calcs[1];
-            TupleList members0 = lcalc.evaluateList(evaluator);
+            TupleList members0 = lcalc.evaluate(evaluator);
 
             // Not mutable, must create new list;
             // for capacity planning, guess selectivity = .5

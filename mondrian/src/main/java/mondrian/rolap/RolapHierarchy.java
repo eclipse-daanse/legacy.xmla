@@ -989,7 +989,7 @@ public class RolapHierarchy extends HierarchyBase {
                          setType, new Calc[0])
                     {
                         @Override
-						public TupleList evaluateList(
+						public TupleList evaluate(
                             Evaluator evaluator)
                         {
                             return

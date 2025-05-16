@@ -23,7 +23,7 @@ import mondrian.calc.impl.AbstractIterCalc;
 
 public class SetIterableCalc extends AbstractIterCalc{
 
-    private final TupleIteratorCalc tupleIteratorCalc;
+    private final TupleIteratorCalc<?> tupleIteratorCalc;
     
     protected SetIterableCalc(Type type, Calc<?> calc, final TupleIteratorCalc tupleIteratorCalc) {
         super(type, calc);
@@ -32,8 +32,8 @@ public class SetIterableCalc extends AbstractIterCalc{
     
     // name "Sublist..."
     @Override
-    public TupleIterable evaluateIterable(Evaluator evaluator) {
-        return tupleIteratorCalc.evaluateIterable(evaluator);
+    public TupleIterable evaluate(Evaluator evaluator) {
+        return tupleIteratorCalc.evaluate(evaluator);
     }
 
 }

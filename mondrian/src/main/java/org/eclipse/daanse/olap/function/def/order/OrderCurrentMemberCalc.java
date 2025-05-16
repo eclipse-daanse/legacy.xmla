@@ -38,7 +38,7 @@ import mondrian.olap.fun.sort.Sorter;
 import mondrian.olap.fun.sort.Sorter.SorterFlag;
 
 public class OrderCurrentMemberCalc  extends AbstractListCalc implements CalcWithDual {
-    private final TupleIteratorCalc tupleIteratorCalc;
+    private final TupleIteratorCalc<?> tupleIteratorCalc;
     private final Calc<?> sortKeyCalc;
     private final List<SortKeySpec> keySpecList;
     private final int originalKeySpecCount;
@@ -56,7 +56,7 @@ public class OrderCurrentMemberCalc  extends AbstractListCalc implements CalcWit
     @Override
     public TupleList evaluateDual( Evaluator rootEvaluator, Evaluator subEvaluator ) {
       assert originalKeySpecCount == 1;
-      final TupleIterable iterable = tupleIteratorCalc.evaluateIterable( rootEvaluator );
+      final TupleIterable iterable = tupleIteratorCalc.evaluate( rootEvaluator );
       // REVIEW: If iterable happens to be a list, we'd like to pass it,
       // but we cannot yet guarantee that it is mutable.
       // final TupleList list = iterable instanceof ArrayTupleList && false ? (TupleList) iterable : null; old code
@@ -67,10 +67,10 @@ public class OrderCurrentMemberCalc  extends AbstractListCalc implements CalcWit
     }
 
     @Override
-    public TupleList evaluateList( Evaluator evaluator ) {
+    public TupleList evaluate( Evaluator evaluator ) {
       evaluator.getTiming().markStart( OrderFunDef.TIMING_NAME );
       try {
-        final TupleIterable iterable = tupleIteratorCalc.evaluateIterable( evaluator );
+        final TupleIterable iterable = tupleIteratorCalc.evaluate( evaluator );
         // REVIEW: If iterable happens to be a list, we'd like to pass it,
         // but we cannot yet guarantee that it is mutable.
         // final TupleList list = iterable instanceof ArrayTupleList && false ? (TupleList) iterable : null; old code list all time null

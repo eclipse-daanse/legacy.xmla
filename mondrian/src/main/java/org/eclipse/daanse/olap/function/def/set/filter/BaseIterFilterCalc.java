@@ -34,7 +34,7 @@ public abstract class BaseIterFilterCalc extends AbstractIterCalc {
     }
 
     @Override
-    public TupleIterable evaluateIterable(Evaluator evaluator) {
+    public TupleIterable evaluate(Evaluator evaluator) {
         evaluator.getTiming().markStart(FilterFunDef.TIMING_NAME);
         try {
             // Use a native evaluator, if more efficient.

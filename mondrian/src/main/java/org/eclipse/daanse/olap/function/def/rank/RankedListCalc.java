@@ -40,7 +40,7 @@ public class RankedListCalc extends AbstractProfilingNestedCalc {
     public Object evaluate( Evaluator evaluator ) {
       // Construct an array containing the value of the expression
       // for each member.
-      TupleList tupleList = tupleListCalc.evaluateList( evaluator );
+      TupleList tupleList = tupleListCalc.evaluate( evaluator );
       assert tupleList != null;
       if ( tuple ) {
         return new RankedTupleList( tupleList );

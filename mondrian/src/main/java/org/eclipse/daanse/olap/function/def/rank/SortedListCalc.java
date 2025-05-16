@@ -76,7 +76,7 @@ public class SortedListCalc extends AbstractProfilingNestedCalc {
         // Construct an array containing the value of the expression
         // for each member.
 
-        list = tupleListCalc.evaluateList( evaluator );
+        list = tupleListCalc.evaluate( evaluator );
         assert list != null;
         if ( list.isEmpty() ) {
           return list.getArity() == 1 ? new MemberSortResult( new Object[0], Collections.<Member, Integer>emptyMap() )

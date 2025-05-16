@@ -42,7 +42,7 @@ public class MutableIterFilterCalc extends BaseIterFilterCalc {
             TupleListCalc lcalc = (TupleListCalc) calcs[0];
             BooleanCalc bcalc = (BooleanCalc) calcs[1];
 
-            TupleList list = lcalc.evaluateList(evaluator);
+            TupleList list = lcalc.evaluate(evaluator);
 
             // make list mutable; guess selectivity .5
             TupleList result =

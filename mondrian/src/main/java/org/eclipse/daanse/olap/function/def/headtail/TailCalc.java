@@ -29,11 +29,11 @@ public class TailCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         final int savepoint = evaluator.savepoint();
         try {
             evaluator.setNonEmpty(false);
-            TupleList list = getChildCalc(0, TupleListCalc.class).evaluateList(evaluator);
+            TupleList list = getChildCalc(0, TupleListCalc.class).evaluate(evaluator);
             Integer count = getChildCalc(1, IntegerCalc.class).evaluate(evaluator);
             return tail(count, list);
         } finally {

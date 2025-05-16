@@ -43,11 +43,11 @@ public class TopBottomPercentSumCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         TupleListCalc tupleListCalc = getChildCalc(0, TupleListCalc.class);
         DoubleCalc doubleCalc = getChildCalc(1, DoubleCalc.class);
         Calc<?> calc = getChildCalc(2, Calc.class);
-        TupleList list = tupleListCalc.evaluateList(evaluator);
+        TupleList list = tupleListCalc.evaluate(evaluator);
         Double target = doubleCalc.evaluate(evaluator);
         if (list.isEmpty()) {
             return list;

@@ -56,7 +56,7 @@ public class DrilldownLevelTopBottomCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         // Use a native evaluator, if more efficient.
         // TODO: Figure this out at compile time.
         TupleListCalc tupleListCalc = getChildCalc(0, TupleListCalc.class);
@@ -69,7 +69,7 @@ public class DrilldownLevelTopBottomCalc extends AbstractListCalc {
             return (TupleList) nativeEvaluator.execute(ResultStyle.LIST);
         }
 
-        TupleList list = tupleListCalc.evaluateList(evaluator);
+        TupleList list = tupleListCalc.evaluate(evaluator);
         Integer n = integerCalc.evaluate(evaluator);
         if (n == null || n <= 0) {
             return list;

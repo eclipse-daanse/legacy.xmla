@@ -14,11 +14,10 @@
 package org.eclipse.daanse.olap.function.def.nativizeset;
 
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 
-public class NonNativeListCalc extends NonNativeCalc implements TupleListCalc {
+public class NonNativeListCalc extends NonNativeCalc<TupleList> implements TupleListCalc {
     protected NonNativeListCalc(TupleListCalc parent, boolean highCardinality) {
         super(parent, highCardinality);
     }
@@ -28,13 +27,13 @@ public class NonNativeListCalc extends NonNativeCalc implements TupleListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         evaluator.setNativeEnabled(nativeEnabled);
-        return parent().evaluateList(evaluator);
+        return parent().evaluate(evaluator);
     }
 
-    @Override
-    public TupleIterable evaluateIterable(Evaluator evaluator) {
-        return evaluateList(evaluator);
-    }
+//    @Override
+//    public TupleIterable evaluateIterable(Evaluator evaluator) {
+//        return evaluateList(evaluator);
+//    }
 }

@@ -99,7 +99,7 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
         TupleList tuples;
         try {
             evaluator.setNonEmpty(false);
-            tuples = tupleListCalc.evaluateList(evaluator);
+            tuples = tupleListCalc.evaluate(evaluator);
         } finally {
             evaluator.restore(savepoint);
         }
@@ -115,7 +115,7 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
     }
 
     protected TupleIterable evaluateCurrentIterable(
-        TupleIteratorCalc tupleIteratorCalc,
+        TupleIteratorCalc<?> tupleIteratorCalc,
         Evaluator evaluator)
     {
         final int savepoint = evaluator.savepoint();
@@ -123,7 +123,7 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
         TupleIterable iterable;
         try {
             evaluator.setNonEmpty(false);
-            iterable = tupleIteratorCalc.evaluateIterable(evaluator);
+            iterable = tupleIteratorCalc.evaluate(evaluator);
         } finally {
             evaluator.restore(savepoint);
         }

@@ -29,7 +29,7 @@ public class CountCalc extends AbstractProfilingNestedIntegerCalc {
 
     @Override
     public Integer evaluate(Evaluator evaluator) {
-        TupleList list = getChildCalc(0, TupleListCalc.class).evaluateList(evaluator);
+        TupleList list = getChildCalc(0, TupleListCalc.class).evaluate(evaluator);
         return FunUtil.count(evaluator, list, true);
     }
 

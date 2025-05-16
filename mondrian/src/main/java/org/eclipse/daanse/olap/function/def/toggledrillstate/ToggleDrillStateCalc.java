@@ -33,11 +33,11 @@ public class ToggleDrillStateCalc extends AbstractListCalc{
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         TupleListCalc listCalc0 = getChildCalc(0, TupleListCalc.class);
         TupleListCalc listCalc1 = getChildCalc(1, TupleListCalc.class);
-        final TupleList list0 = listCalc0.evaluateList(evaluator);
-        final TupleList list1 = listCalc1.evaluateList(evaluator);
+        final TupleList list0 = listCalc0.evaluate(evaluator);
+        final TupleList list1 = listCalc1.evaluate(evaluator);
         return toggleDrillStateTuples(evaluator, list0, list1);
     }
 

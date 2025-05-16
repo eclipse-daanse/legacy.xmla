@@ -10,7 +10,8 @@
 * Contributors:
 *   SmartCity Jena - initial
 *
-*/package org.eclipse.daanse.olap.api;
+*/
+package org.eclipse.daanse.olap.api;
 
 public interface CatalogCache {
 

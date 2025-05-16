@@ -37,7 +37,7 @@ public abstract class BaseListCalc extends AbstractListCalc {
   }
 
   @Override
-  public TupleList evaluateList( Evaluator evaluator ) {
+  public TupleList evaluate( Evaluator evaluator ) {
     // Use a native evaluator, if more efficient.
     // TODO: Figure this out at compile time.
     CatalogReader schemaReader = evaluator.getCatalogReader();
@@ -51,10 +51,10 @@ public abstract class BaseListCalc extends AbstractListCalc {
     TupleListCalc listCalc1 = (TupleListCalc) calcs[0];
     TupleListCalc listCalc2 = (TupleListCalc) calcs[1];
 
-    TupleList l1 = listCalc1.evaluateList( evaluator );
+    TupleList l1 = listCalc1.evaluate( evaluator );
     // check if size of first list already exceeds limit
     Util.checkCJResultLimit( l1.size() );
-    TupleList l2 = listCalc2.evaluateList( evaluator );
+    TupleList l2 = listCalc2.evaluate( evaluator );
     // check if size of second list already exceeds limit
     Util.checkCJResultLimit( l2.size() );
     // check crossjoin

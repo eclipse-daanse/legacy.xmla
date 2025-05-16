@@ -38,20 +38,20 @@ public class NonEmptyCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         final int savepoint = evaluator.savepoint();
         TupleListCalc listCalc1 = getChildCalc(0, TupleListCalc.class);
         TupleListCalc listCalc2 = getChildCalc(1, TupleListCalc.class);
         try {
             evaluator.setNonEmpty(true);
 
-            TupleList leftTuples = listCalc1.evaluateList(evaluator);
+            TupleList leftTuples = listCalc1.evaluate(evaluator);
             if (leftTuples.isEmpty()) {
                 return TupleCollections.emptyList(leftTuples.getArity());
             }
             TupleList rightTuples = null;
             if(listCalc2 != null) {
-                rightTuples = listCalc2.evaluateList(evaluator);
+                rightTuples = listCalc2.evaluate(evaluator);
             }
             TupleList result =
                     TupleCollections.createList(leftTuples.getArity());

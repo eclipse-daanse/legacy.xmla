@@ -42,7 +42,7 @@ public class CachedExistsCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         evaluator.getTiming().markStart(TIMING_NAME);
         try {
 
@@ -80,7 +80,7 @@ public class CachedExistsCalc extends AbstractListCalc {
 
             // Build subtotal cache
             HashMap<String, TupleList> setCache = new HashMap<>();
-            TupleList setToCache = getChildCalc(0, TupleListCalc.class).evaluateList(evaluator);
+            TupleList setToCache = getChildCalc(0, TupleListCalc.class).evaluate(evaluator);
             for (List<Member> tuple : setToCache) {
                 String subtotalKey = makeSubtotalKey(subtotalToListIndex, tuple, subtotal);
                 TupleList tupleCache = setCache.get(subtotalKey);

@@ -17,17 +17,17 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.BooleanCalc;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.ResultStyle;
+import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleListCalc;
 
-import mondrian.calc.impl.GenericIterCalc;
-
-public class IifSetTypeCalc extends GenericIterCalc {
+public class IifSetTypeListCalc extends AbstractProfilingNestedTupleListCalc {
 
     private final BooleanCalc booleanCalc;
     private final Calc<?> calc1;
     private final Calc<?> calc2;
 
-    protected IifSetTypeCalc(Type type, BooleanCalc booleanCalc, Calc<?> calc1, Calc<?> calc2) {
+    protected IifSetTypeListCalc(Type type, BooleanCalc booleanCalc, Calc<?> calc1, Calc<?> calc2) {
         super(type);
         this.booleanCalc = booleanCalc;
         this.calc1 = calc1;
@@ -35,10 +35,10 @@ public class IifSetTypeCalc extends GenericIterCalc {
     }
 
     @Override
-    public Object evaluate(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         final boolean b = booleanCalc.evaluate(evaluator);
         Calc<?> calc = b ? calc1 : calc2;
-        return calc.evaluate(evaluator);
+        return (TupleList) calc.evaluate(evaluator);
     }
 
     @Override

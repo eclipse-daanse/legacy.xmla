@@ -34,7 +34,7 @@ public class StrToSetHierarchyCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         String string = getChildCalc(0, StringCalc.class).evaluate(evaluator);
         if (string == null) {
             throw FunUtil.newEvalException(new EmptyExpressionWasSpecifiedException());

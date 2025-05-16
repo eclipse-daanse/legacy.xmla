@@ -49,7 +49,7 @@ public class CacheFunDef extends AbstractFunctionDefinition {
         final Expression exp = call.getArg(0);
         final ExpCacheDescriptor cacheDescriptor = new ExpCacheDescriptorImpl(exp, compiler);
         if (call.getType() instanceof SetType) {
-            return new CacheGenericIterCalc(call.getType(), cacheDescriptor);
+            return new CacheGenericListCalc(call.getType(), cacheDescriptor);
         } else {
             return new CacheGenericCalc(call.getType(), cacheDescriptor);
         }

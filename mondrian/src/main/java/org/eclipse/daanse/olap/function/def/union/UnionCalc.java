@@ -37,11 +37,11 @@ public class UnionCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         TupleListCalc listCalc0 = getChildCalc(0, TupleListCalc.class);
         TupleListCalc listCalc1 = getChildCalc(1, TupleListCalc.class);
-        TupleList list0 = listCalc0.evaluateList(evaluator);
-        TupleList list1 = listCalc1.evaluateList(evaluator);
+        TupleList list0 = listCalc0.evaluate(evaluator);
+        TupleList list1 = listCalc1.evaluate(evaluator);
         return union(list0, list1, all);
     }
 

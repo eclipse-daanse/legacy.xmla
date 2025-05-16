@@ -38,7 +38,7 @@ public class LastNonEmptyCalc extends AbstractProfilingNestedMemberCalc {
     public Member evaluate(Evaluator evaluator) {
         final TupleListCalc tupleListCalc = getChildCalc(0, TupleListCalc.class);
         final Calc<?> memberCalc = getChildCalc(1, Calc.class);
-        TupleList tupleList = tupleListCalc.evaluateList(evaluator);
+        TupleList tupleList = tupleListCalc.evaluate(evaluator);
         final List<Member> memberList = tupleList.slice(0);
         int nullCount = 0;
         int missCount = 0;

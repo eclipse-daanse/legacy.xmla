@@ -962,7 +962,7 @@ public class CrossJoinArgFactory {
             && evaluator.getActiveNativeExpansions().add(exp))
         {
             TupleListCalc listCalc0 = compiler.compileList(exp);
-            final TupleList tupleList = listCalc0.evaluateList(evaluator);
+            final TupleList tupleList = listCalc0.evaluate(evaluator);
 
             // Prevent the case when the second argument size is too large
             Util.checkCJResultLimit(tupleList.size());

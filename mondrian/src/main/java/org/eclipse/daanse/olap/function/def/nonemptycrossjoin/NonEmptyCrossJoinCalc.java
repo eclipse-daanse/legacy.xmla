@@ -40,7 +40,7 @@ public class NonEmptyCrossJoinCalc extends AbstractListCalc{
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         CatalogReader schemaReader = evaluator.getCatalogReader();
 
         // Evaluate the arguments in non empty mode, but remove from
@@ -80,12 +80,12 @@ public class NonEmptyCrossJoinCalc extends AbstractListCalc{
                         ResultStyle.LIST);
             }
 
-            final TupleList list1 = listCalc1.evaluateList(evaluator);
+            final TupleList list1 = listCalc1.evaluate(evaluator);
             if (list1.isEmpty()) {
                 evaluator.restore(savepoint);
                 return list1;
             }
-            final TupleList list2 = listCalc2.evaluateList(evaluator);
+            final TupleList list2 = listCalc2.evaluate(evaluator);
             TupleList result = CrossJoinFunDef.mutableCrossJoin(list1, list2);
 
             // remove any remaining empty crossings from the result

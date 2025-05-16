@@ -44,8 +44,8 @@ public class ExistingCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
-        TupleIterable setTuples = getChildCalc(0, TupleIteratorCalc.class).evaluateIterable(evaluator);
+    public TupleList evaluate(Evaluator evaluator) {
+        TupleIterable setTuples = (TupleIterable) getChildCalc(0, TupleIteratorCalc.class).evaluate(evaluator);
 
         TupleList result = TupleCollections.createList(setTuples.getArity());
         List<Member> contextMembers = Arrays.asList(evaluator.getMembers());

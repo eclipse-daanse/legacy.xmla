@@ -35,7 +35,7 @@ public class AncestorsCalcForLevelType extends AbstractListCalc{
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         Level level = getChildCalc(1, LevelCalc.class).evaluate(evaluator);
         Member member = getChildCalc(0, MemberCalc.class).evaluate(evaluator);
         int distance = member.getDepth() - level.getDepth();

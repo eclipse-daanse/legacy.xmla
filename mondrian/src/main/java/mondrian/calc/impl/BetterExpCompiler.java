@@ -20,7 +20,6 @@ import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.calc.ResultStyle;
 import org.eclipse.daanse.olap.api.calc.TupleCalc;
-import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.MemberType;
@@ -29,6 +28,7 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.type.member.UnknownToMemberCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuple.MemberCalcToTupleCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuple.UnknownToTupleCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplelist.CopyOfTupleListCalc;
 
 import mondrian.olap.Util;
 
@@ -88,26 +88,9 @@ public class BetterExpCompiler extends AbstractExpCompiler {
 			// Wrap the expression in an expression which creates a mutable
 			// copy.
 			
-			//TODO:	use org.eclipse.daanse.olap.calc.base.type.tuplelist.CopyOfTupleListCalc
-			return new CopyListCalc(tupleListCalc);
+			return new CopyOfTupleListCalc(tupleListCalc);
 		}
 		return tupleListCalc;
 	}
 
-//TODO:	use org.eclipse.daanse.olap.calc.base.type.tuplelist.CopyOfTupleListCalc
-@Deprecated
-private static class CopyListCalc extends AbstractListCalc {
-		private final TupleListCalc tupleListCalc;
-
-		public CopyListCalc(TupleListCalc tupleListCalc) {
-			super( tupleListCalc.getType(), new Calc[] { tupleListCalc });
-			this.tupleListCalc = tupleListCalc;
-		}
-
-		@Override
-		public TupleList evaluateList(Evaluator evaluator) {
-			final TupleList list = tupleListCalc.evaluateList(evaluator);
-			return list.copyList(-1);
-		}
-	}
 }

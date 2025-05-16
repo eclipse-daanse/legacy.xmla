@@ -109,7 +109,10 @@ public class SetFunDef extends AbstractFunctionDefinition {
             // write 'Foo.Children on 1'.
             return args[0].accept(compiler);
         }
-        return new SetListCalc(call.getType(), args, compiler, ResultStyle.LIST_MUTABLELIST);
+        
+        
+                  return new SetListCalc(call.getType(), args, compiler, ResultStyle.LIST_MUTABLELIST);
+     
     }
 
     static List<Calc<?>> compileSelf(Expression[] args, ExpressionCompiler compiler,

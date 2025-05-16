@@ -33,7 +33,7 @@ public class SiblingsCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         final Member member = getChildCalc(0, MemberCalc.class).evaluate(evaluator);
         return new UnaryTupleList(memberSiblings(member, evaluator));
     }

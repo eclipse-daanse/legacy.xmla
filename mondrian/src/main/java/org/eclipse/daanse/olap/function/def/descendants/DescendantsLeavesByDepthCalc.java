@@ -36,7 +36,7 @@ public class DescendantsLeavesByDepthCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         IntegerCalc depthCalc = getChildCalc(1, IntegerCalc.class);
         final Member member = getChildCalc(0, MemberCalc.class).evaluate(evaluator);
         List<Member> result = new ArrayList<>();

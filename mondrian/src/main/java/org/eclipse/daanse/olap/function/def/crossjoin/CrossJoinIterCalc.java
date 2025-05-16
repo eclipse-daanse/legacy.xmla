@@ -45,7 +45,7 @@ public class CrossJoinIterCalc extends AbstractIterCalc {
     }
 
     @Override
-    public TupleIterable evaluateIterable( Evaluator evaluator ) {
+    public TupleIterable evaluate( Evaluator evaluator ) {
 
       // Use a native evaluator, if more efficient.
       // TODO: Figure this out at compile time.
@@ -57,10 +57,10 @@ public class CrossJoinIterCalc extends AbstractIterCalc {
       }
 
       Calc[] calcs = getChildCalcs();
-      TupleIteratorCalc calc1 = (TupleIteratorCalc) calcs[0];
-      TupleIteratorCalc calc2 = (TupleIteratorCalc) calcs[1];
+      TupleIteratorCalc<?> calc1 = (TupleIteratorCalc) calcs[0];
+      TupleIteratorCalc<?> calc2 = (TupleIteratorCalc) calcs[1];
 
-      TupleIterable o1 = calc1.evaluateIterable( evaluator );
+      TupleIterable o1 = calc1.evaluate( evaluator );
       if ( o1 instanceof TupleList l1 ) {
         l1 = CrossJoinFunDef.nonEmptyOptimizeList( evaluator, l1, call, ctag );
         if ( l1.isEmpty() ) {
@@ -69,7 +69,7 @@ public class CrossJoinIterCalc extends AbstractIterCalc {
         o1 = l1;
       }
 
-      TupleIterable o2 = calc2.evaluateIterable( evaluator );
+      TupleIterable o2 = calc2.evaluate( evaluator );
       if ( o2 instanceof TupleList l2 ) {
         l2 = CrossJoinFunDef.nonEmptyOptimizeList( evaluator, l2, call, ctag );
         if ( l2.isEmpty() ) {

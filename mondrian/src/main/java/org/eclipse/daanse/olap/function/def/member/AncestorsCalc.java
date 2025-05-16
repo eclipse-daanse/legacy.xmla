@@ -34,7 +34,7 @@ public class AncestorsCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         Member member = getChildCalc(0, MemberCalc.class).evaluate(evaluator);
         Integer distance = getChildCalc(1, IntegerCalc.class).evaluate(evaluator);
         List<Member> ancestors = new ArrayList<>();

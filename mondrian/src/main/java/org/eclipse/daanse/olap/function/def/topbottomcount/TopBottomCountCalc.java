@@ -49,7 +49,7 @@ public class TopBottomCountCalc extends AbstractListCalc {
     }
 
     @Override
-  public TupleList evaluateList( Evaluator evaluator ) {
+  public TupleList evaluate( Evaluator evaluator ) {
       // Use a native evaluator, if more efficient.
       // TODO: Figure this out at compile time.
       TupleListCalc tupleListCalc = getChildCalc(0, TupleListCalc.class);
@@ -70,7 +70,7 @@ public class TopBottomCountCalc extends AbstractListCalc {
         return TupleCollections.emptyList( arity );
       }
 
-      TupleList list = tupleListCalc.evaluateList( evaluator );
+      TupleList list = tupleListCalc.evaluate( evaluator );
       assert list.getArity() == arity;
       if ( list.isEmpty() ) {
         return list;

@@ -41,7 +41,7 @@ public class SetItemStringTupleCalc extends AbstractProfilingNestedTupleCalc {
         final TupleList list;
         try {
             evaluator.setNonEmpty(false);
-            list = tupleListCalc.evaluateList(evaluator);
+            list = tupleListCalc.evaluate(evaluator);
             assert list != null;
         } finally {
             evaluator.restore(savepoint);

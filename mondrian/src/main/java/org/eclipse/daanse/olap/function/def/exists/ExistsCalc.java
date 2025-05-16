@@ -34,12 +34,12 @@ public class ExistsCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
-        TupleList leftTuples = getChildCalc(0, TupleListCalc.class).evaluateList(evaluator);
+    public TupleList evaluate(Evaluator evaluator) {
+        TupleList leftTuples = getChildCalc(0, TupleListCalc.class).evaluate(evaluator);
         if (leftTuples.isEmpty()) {
             return TupleCollections.emptyList(leftTuples.getArity());
         }
-        TupleList rightTuples = getChildCalc(1, TupleListCalc.class).evaluateList(evaluator);
+        TupleList rightTuples = getChildCalc(1, TupleListCalc.class).evaluate(evaluator);
         if (rightTuples.isEmpty()) {
             return TupleCollections.emptyList(leftTuples.getArity());
         }

@@ -37,9 +37,9 @@ public class DrilldownMemberCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
-        final TupleList list1 = getChildCalc(0, TupleListCalc.class).evaluateList(evaluator);
-        final TupleList list2 = getChildCalc(1, TupleListCalc.class).evaluateList(evaluator);
+    public TupleList evaluate(Evaluator evaluator) {
+        final TupleList list1 = getChildCalc(0, TupleListCalc.class).evaluate(evaluator);
+        final TupleList list2 = getChildCalc(1, TupleListCalc.class).evaluate(evaluator);
         return drilldownMember(list1, list2, evaluator);
     }
 

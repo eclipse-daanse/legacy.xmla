@@ -35,7 +35,7 @@ public class XtdWithoutMemberCalc extends AbstractListCalc {
 	}
 
 	@Override
-	public TupleList evaluateList(Evaluator evaluator) {
+	public TupleList evaluate(Evaluator evaluator) {
 		evaluator.getTiming().markStart(XtdWithoutMemberCalc.TIMING_NAME);
 		try {
 			return new UnaryTupleList(FunUtil.periodsToDate(evaluator, level, null));

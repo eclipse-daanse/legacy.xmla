@@ -29,7 +29,7 @@ public class AllMembersCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         Hierarchy hierarchy = getChildCalc(0, HierarchyCalc.class).evaluate(evaluator);
         return FunUtil.hierarchyMembers(hierarchy, evaluator, true);
     }

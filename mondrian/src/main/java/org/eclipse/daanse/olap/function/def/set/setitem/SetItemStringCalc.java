@@ -43,7 +43,7 @@ public class SetItemStringCalc extends AbstractProfilingNestedMemberCalc {
         final List<Member> list;
         try {
             evaluator.setNonEmpty(false);
-            list = tupleListCalc.evaluateList(evaluator).slice(0);
+            list = tupleListCalc.evaluate(evaluator).slice(0);
             assert list != null;
         } finally {
             evaluator.restore(savepoint);

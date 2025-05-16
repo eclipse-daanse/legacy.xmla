@@ -39,7 +39,7 @@ public class EmptyListCalc  extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         return list;
     }
 }

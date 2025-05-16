@@ -41,7 +41,7 @@ public class GenerateStringCalc extends AbstractProfilingNestedStringCalc {
         try {
             StringBuilder buf = new StringBuilder();
             int k = 0;
-            final TupleIterable iter11 = getChildCalc(0, TupleIteratorCalc.class).evaluateIterable(evaluator);
+            final TupleIterable iter11 = (TupleIterable) getChildCalc(0, TupleIteratorCalc.class).evaluate(evaluator);
             final TupleCursor cursor = iter11.tupleCursor();
             int currentIteration = 0;
             Execution execution = evaluator.getQuery().getStatement().getCurrentExecution();

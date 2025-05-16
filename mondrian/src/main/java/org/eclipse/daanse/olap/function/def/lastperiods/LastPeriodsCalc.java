@@ -34,7 +34,7 @@ public class LastPeriodsCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         Member member = getChildCalc(0, MemberCalc.class).evaluate(evaluator);
         Integer indexValue = getChildCalc(1, IntegerCalc.class).evaluate(evaluator);
 

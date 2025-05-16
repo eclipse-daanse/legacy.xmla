@@ -110,7 +110,7 @@ public class NamedSetExpressionImpl extends AbstractExpression implements Expres
             new Calc[]{/* todo: compile namedSet.getExp() */})
         {
             @Override
-			public TupleIterable evaluateIterable(
+			public TupleIterable evaluate(
                 Evaluator evaluator)
             {
                 final Evaluator.NamedSetEvaluator eval = getEval(evaluator);

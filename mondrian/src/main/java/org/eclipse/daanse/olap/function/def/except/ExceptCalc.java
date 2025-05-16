@@ -33,12 +33,12 @@ public class ExceptCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
-        TupleList list0 = getChildCalc(0, TupleListCalc.class).evaluateList(evaluator);
+    public TupleList evaluate(Evaluator evaluator) {
+        TupleList list0 = getChildCalc(0, TupleListCalc.class).evaluate(evaluator);
         if (list0.isEmpty()) {
             return list0;
         }
-        TupleList list1 = getChildCalc(1, TupleListCalc.class).evaluateList(evaluator);
+        TupleList list1 = getChildCalc(1, TupleListCalc.class).evaluate(evaluator);
         if (list1.isEmpty()) {
             return list0;
         }

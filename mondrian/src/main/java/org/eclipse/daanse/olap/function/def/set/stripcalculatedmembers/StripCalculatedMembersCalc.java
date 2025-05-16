@@ -28,8 +28,8 @@ public class StripCalculatedMembersCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
-        TupleList list = getChildCalc(0, TupleListCalc.class).evaluateList(evaluator);
+    public TupleList evaluate(Evaluator evaluator) {
+        TupleList list = getChildCalc(0, TupleListCalc.class).evaluate(evaluator);
         return FunUtil.removeCalculatedMembers(list);
     }
 

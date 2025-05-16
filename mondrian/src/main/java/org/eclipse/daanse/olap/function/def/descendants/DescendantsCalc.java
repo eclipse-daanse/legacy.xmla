@@ -40,7 +40,7 @@ public class DescendantsCalc extends AbstractListCalc{
     }
 
     @Override
-    public TupleList evaluateList( Evaluator evaluator ) {
+    public TupleList evaluate( Evaluator evaluator ) {
         MemberCalc memberCalc = getChildCalc(0, MemberCalc.class);
       LevelCalc levelCalc = getChildCalc(1, LevelCalc.class);
       final Evaluator context =

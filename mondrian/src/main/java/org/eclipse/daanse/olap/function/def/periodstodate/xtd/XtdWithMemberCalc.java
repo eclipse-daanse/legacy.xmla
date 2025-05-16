@@ -35,7 +35,7 @@ class XtdWithMemberCalc extends AbstractListCalc {
 	}
 
 	@Override
-	public TupleList evaluateList(Evaluator evaluator) {
+	public TupleList evaluate(Evaluator evaluator) {
 		evaluator.getTiming().markStart(XtdWithMemberCalc.TIMING_NAME);
 		try {
 			MemberCalc memberCalc = getChildCalc(0, MemberCalc.class);

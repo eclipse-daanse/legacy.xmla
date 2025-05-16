@@ -31,7 +31,7 @@ public class ChildrenCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         // Return the list of children. The list is immutable,
         // hence 'false' above.
         Member member = getChildCalc(0, MemberCalc.class).evaluate(evaluator);

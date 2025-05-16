@@ -31,7 +31,7 @@ public class InCalc extends AbstractProfilingNestedBooleanCalc {
     public Boolean evaluate(Evaluator evaluator) {
         final MemberCalc memberCalc = getChildCalc(0, MemberCalc.class);
         final TupleListCalc tupleListCalc = getChildCalc(1, TupleListCalc.class);
-        TupleList tupleList = tupleListCalc.evaluateList(evaluator);
+        TupleList tupleList = tupleListCalc.evaluate(evaluator);
         Member member = memberCalc.evaluate(evaluator);
         //List arg1 = (List) arguments[1].evaluate(evaluator);
 

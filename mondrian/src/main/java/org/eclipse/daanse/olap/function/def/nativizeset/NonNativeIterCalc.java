@@ -17,18 +17,18 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc;
 
-public class NonNativeIterCalc extends NonNativeCalc implements TupleIteratorCalc {
+public class NonNativeIterCalc extends NonNativeCalc<TupleIterable> implements TupleIteratorCalc<TupleIterable> {
     protected NonNativeIterCalc(TupleIteratorCalc parent, boolean highCardinality) {
         super(parent, highCardinality);
     }
 
-    TupleIteratorCalc parent() {
+    TupleIteratorCalc<?> parent() {
         return (TupleIteratorCalc) parent;
     }
 
     @Override
-    public TupleIterable evaluateIterable(Evaluator evaluator) {
+    public TupleIterable evaluate(Evaluator evaluator) {
         evaluator.setNativeEnabled(nativeEnabled);
-        return parent().evaluateIterable(evaluator);
+        return parent().evaluate(evaluator);
     }
 }

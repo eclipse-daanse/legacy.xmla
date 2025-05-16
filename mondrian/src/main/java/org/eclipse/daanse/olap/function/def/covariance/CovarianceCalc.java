@@ -35,7 +35,7 @@ public class CovarianceCalc extends AbstractProfilingNestedDoubleCalc{
 
     @Override
     public Double evaluate(Evaluator evaluator) {
-        TupleList memberList = getChildCalc(0, TupleListCalc.class).evaluateList(evaluator);
+        TupleList memberList = getChildCalc(0, TupleListCalc.class).evaluate(evaluator);
         final int savepoint = evaluator.savepoint();
         try {
             evaluator.setNonEmpty(false);

@@ -34,7 +34,7 @@ public class AscendantsCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         Member member = getChildCalc(0, MemberCalc.class).evaluate(evaluator);
         return new UnaryTupleList(ascendants(evaluator.getCatalogReader(), member));
     }

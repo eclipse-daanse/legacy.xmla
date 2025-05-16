@@ -18,6 +18,8 @@ import org.eclipse.daanse.olap.api.calc.BooleanCalc;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.ResultStyle;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc;
+import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
@@ -80,7 +82,16 @@ public class IifFunDef extends AbstractFunctionDefinition {
             compiler.compileAs(
                 call.getArg(2), call.getType(), ResultStyle.ANY_LIST);
         if (call.getType() instanceof SetType) {
-            return new IifSetTypeCalc(call.getType(), booleanCalc, calc1, calc2);
+            if (calc1 instanceof TupleListCalc tlc) {
+
+                return new IifSetTypeListCalc(call.getType(), booleanCalc, calc1, calc2);
+            } else if (calc1 instanceof TupleIteratorCalc tlc) {
+
+                return new IifSetTypeIterableCalcCalc(call.getType(), booleanCalc, calc1, calc2);
+            } else {
+                throw new IllegalArgumentException(
+                    "Iif: unexpected type for first argument: " + calc1);
+            }
         } else {
             return new IifCalc(call.getType(), booleanCalc, calc1, calc2) {
             };

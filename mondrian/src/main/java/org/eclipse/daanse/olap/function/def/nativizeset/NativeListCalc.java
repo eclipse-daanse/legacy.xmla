@@ -57,7 +57,7 @@ public class NativeListCalc  extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         return computeTuples(evaluator);
     }
 
@@ -78,7 +78,7 @@ public class NativeListCalc  extends AbstractListCalc {
             evaluator.setNonEmpty(false);
             evaluator.setNativeEnabled(false);
             TupleList simplifiedList =
-                    simpleCalc.evaluateList(evaluator);
+                    simpleCalc.evaluate(evaluator);
             NativizeSetFunDef.dumpListToLog("simplified list", simplifiedList);
             return simplifiedList;
         } finally {
@@ -96,7 +96,7 @@ public class NativeListCalc  extends AbstractListCalc {
         try {
             evaluator.setNonEmpty(true);
             evaluator.setNativeEnabled(false);
-            TupleList members = calc.evaluateList(evaluator);
+            TupleList members = calc.evaluate(evaluator);
             return members;
         } finally {
             evaluator.restore(savepoint);
@@ -215,6 +215,6 @@ public class NativeListCalc  extends AbstractListCalc {
                 .parseExpression(crossJoinExpression);
         Expression resolved = compiler.getValidator().validate(unresolved, false);
         TupleListCalc calc = compiler.compileList(resolved);
-        return calc.evaluateList(evaluator);
+        return calc.evaluate(evaluator);
     }
 }

@@ -186,6 +186,8 @@ public class AbstractExpCompiler implements ExpressionCompiler {
                 }
             }
             final Calc<?> calc = compile(exp);
+            
+
             if (substitutions > 0) {
                 final TupleIteratorCalc tupleIteratorCalc = (TupleIteratorCalc) calc;
                 if (tupleIteratorCalc == null) {

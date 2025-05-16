@@ -40,7 +40,7 @@ public class PeriodsToDateCalc extends AbstractListCalc {
     }
 
     @Override
-    public TupleList evaluateList(Evaluator evaluator) {
+    public TupleList evaluate(Evaluator evaluator) {
         LevelCalc levelCalc = getChildCalc(0, LevelCalc.class);
         MemberCalc memberCalc = getChildCalc(1, MemberCalc.class);
         evaluator.getTiming().markStart(TIMING_NAME);

@@ -36,8 +36,8 @@ public class SetMutableCalc extends AbstractIterCalc {
 
     // name "Sublist..."
     @Override
-    public TupleIterable evaluateIterable(Evaluator evaluator) {
-        TupleList list = tupleListCalc.evaluateList(evaluator);
+    public TupleIterable evaluate(Evaluator evaluator) {
+        TupleList list = tupleListCalc.evaluate(evaluator);
         TupleList result = list.copyList(list.size());
         // Add only tuples which are not null. Tuples with
         // any null members are considered null.
