@@ -56,10 +56,10 @@ import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
 import org.eclipse.daanse.olap.function.def.set.SetFunDef;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
+import org.eclipse.daanse.olap.query.component.MdxVisitorImpl;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.slf4j.Logger;
 
-import mondrian.mdx.MdxVisitorImpl;
 import mondrian.olap.ExecuteDurationUtil;
 import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;

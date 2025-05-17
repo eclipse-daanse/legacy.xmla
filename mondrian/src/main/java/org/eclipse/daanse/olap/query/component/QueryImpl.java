@@ -93,7 +93,6 @@ import org.eclipse.daanse.olap.function.def.parameter.ParameterFunDef;
 import org.eclipse.daanse.olap.impl.IdentifierParser;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
-import mondrian.mdx.MdxVisitorImpl;
 import mondrian.olap.AbstractQueryPart;
 import mondrian.olap.DelegatingCatalogReader;
 import mondrian.olap.ExecuteDurationUtil;

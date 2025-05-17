@@ -393,7 +393,7 @@ public class OlapExecuteService implements ExecuteService {
             for (UpdateClause updateClause : update.getUpdateClauses()) {
                 if (updateClause instanceof UpdateClause updateClauseImpl) {
                     StringWriter sw = new StringWriter();
-                    PrintWriter pw = new mondrian.mdx.QueryPrintWriter(sw);
+                    PrintWriter pw = new org.eclipse.daanse.olap.query.component.QueryPrintWriter(sw);
                     updateClause.getTupleExp().unparse(pw);
                     String tupleString = sw.toString();
 
@@ -412,7 +412,7 @@ public class OlapExecuteService implements ExecuteService {
                     // Cell writeBackCell = cellSet.getCell(Arrays.asList(0));
 
                     sw = new StringWriter();
-                    pw = new mondrian.mdx.QueryPrintWriter(sw);
+                    pw = new org.eclipse.daanse.olap.query.component.QueryPrintWriter(sw);
                     updateClause.getValueExp().unparse(pw);
                     String valueString = sw.toString();
 

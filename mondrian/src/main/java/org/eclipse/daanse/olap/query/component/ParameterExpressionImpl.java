@@ -27,7 +27,6 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.query.component.expression.AbstractExpression;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
-import mondrian.mdx.QueryPrintWriter;
 import mondrian.olap.Util;
 
 /**

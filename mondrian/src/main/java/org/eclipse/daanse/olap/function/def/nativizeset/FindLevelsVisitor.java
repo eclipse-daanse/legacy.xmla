@@ -24,8 +24,7 @@ import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.function.def.set.level.LevelMembersFunDef;
 import org.eclipse.daanse.olap.query.component.LevelExpressionImpl;
-
-import mondrian.mdx.MdxVisitorImpl;
+import org.eclipse.daanse.olap.query.component.MdxVisitorImpl;
 
 public class FindLevelsVisitor  extends MdxVisitorImpl {
     private final SubstitutionMap substitutionMap;

@@ -77,13 +77,13 @@ import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateCalc;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
+import org.eclipse.daanse.olap.query.component.MdxVisitorImpl;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.eclipse.daanse.olap.util.type.TypeWrapperExp;
 import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.mdx.MdxVisitorImpl;
 import mondrian.olap.ExpCacheDescriptorImpl;
 import mondrian.olap.MemberBase;
 import mondrian.olap.ResourceLimitExceededException;

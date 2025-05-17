@@ -25,8 +25,7 @@ import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.ParameterExpression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.Type;
-
-import mondrian.mdx.MdxVisitorImpl;
+import org.eclipse.daanse.olap.query.component.MdxVisitorImpl;
 
 /**
  * Visitor which collects any non-measure base members encountered while

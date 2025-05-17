@@ -23,8 +23,8 @@ import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.ParameterExpression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.query.component.MdxVisitorImpl;
 
-import mondrian.mdx.MdxVisitorImpl;
 import mondrian.olap.fun.ResolvedFunCallFinder;
 
 /**

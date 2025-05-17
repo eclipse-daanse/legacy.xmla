@@ -18,8 +18,7 @@ import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.NamedSetExpression;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
-
-import mondrian.mdx.MdxVisitorImpl;
+import org.eclipse.daanse.olap.query.component.MdxVisitorImpl;
 
 public class TransformFromFormulasVisitor  extends MdxVisitorImpl {
     private final Query query;

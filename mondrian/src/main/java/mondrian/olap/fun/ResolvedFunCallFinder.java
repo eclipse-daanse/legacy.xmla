@@ -15,8 +15,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
-
-import mondrian.mdx.MdxVisitorImpl;
+import org.eclipse.daanse.olap.query.component.MdxVisitorImpl;
 
 /**
  * Visitor class used to locate a resolved function call within an

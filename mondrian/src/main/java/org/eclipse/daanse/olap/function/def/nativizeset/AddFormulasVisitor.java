@@ -27,9 +27,8 @@ import org.eclipse.daanse.olap.api.query.component.MemberProperty;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.query.component.FormulaImpl;
+import org.eclipse.daanse.olap.query.component.MdxVisitorImpl;
 import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
-
-import mondrian.mdx.MdxVisitorImpl;
 
 public class AddFormulasVisitor extends MdxVisitorImpl {
     private final Query query;

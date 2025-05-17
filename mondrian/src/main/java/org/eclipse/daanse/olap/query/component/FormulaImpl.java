@@ -45,7 +45,6 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
-import mondrian.mdx.MdxVisitorImpl;
 import mondrian.olap.AbstractQueryPart;
 import mondrian.olap.SetBase;
 import mondrian.olap.StandardProperty;
