@@ -897,7 +897,7 @@ import mondrian.rolap.SchemaModifiers;
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' [Measures].[Unit Sales] * 2 ',\n"
             + " CELL_FORMATTER='"
-            + UdfTest.FooBarCellFormatter.class.getName()
+            + FormatterUtil.FooBarCellFormatter.class.getName()
             + "' \n"
             + "select {[Measures].[Unit Sales], [Measures].[Foo]} on 0,\n"
             + " {[Store].Children} on rows\n"
