@@ -21,11 +21,10 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleIteratorCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 
-import mondrian.calc.impl.AbstractIterCalc;
-
-public abstract class BaseIterFilterCalc extends AbstractIterCalc {
+public abstract class BaseIterFilterCalc extends AbstractProfilingNestedTupleIteratorCalc {
     private ResolvedFunCall call;
 
     protected BaseIterFilterCalc(ResolvedFunCall call, Calc<?>[] calcs) {

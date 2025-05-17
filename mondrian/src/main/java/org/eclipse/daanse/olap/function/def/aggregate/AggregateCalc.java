@@ -37,13 +37,13 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.rolap.aggregator.AbstractAggregator;
 import org.eclipse.daanse.rolap.aggregator.AvgAggregator;
 import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 
-import mondrian.calc.impl.UnaryTupleList;
 import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;

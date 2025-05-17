@@ -26,8 +26,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ServiceScope;
 
-import mondrian.calc.impl.BetterExpCompiler;
-
 @Component(scope = ServiceScope.SINGLETON, configurationPid = BaseExpressionCompilerFactory.PID, service = ExpressionCompilerFactory.class)
 public class BaseExpressionCompilerFactory implements ExpressionCompilerFactory {
 	public static final String PID = "org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory";

@@ -17,14 +17,13 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
-
-import mondrian.calc.impl.AbstractListCalc;
-import mondrian.calc.impl.TupleCollections;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 
 /**
  * Compiled expression that returns an empty list of members or tuples.
  */
-public class EmptyListCalc  extends AbstractListCalc {
+public class EmptyListCalc  extends AbstractProfilingNestedTupleListCalc {
     private final TupleList list;
 
     /**

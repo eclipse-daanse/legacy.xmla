@@ -27,18 +27,17 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.Type;
-
-import mondrian.calc.impl.AbstractIterCalc;
-import mondrian.calc.impl.AbstractTupleCursor;
-import mondrian.calc.impl.AbstractTupleIterable;
-import mondrian.calc.impl.TupleCollections;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleIteratorCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractTupleCursor;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractTupleIterable;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 
 /**
  * Compiled expression that evaluates one or more expressions, each of which
  * yields a tuple or a set of tuples, and returns the result as a tuple
  * iterator.
  */
-public class ExprIterCalc  extends AbstractIterCalc {
+public class ExprIterCalc  extends AbstractProfilingNestedTupleIteratorCalc {
     private final TupleIteratorCalc[] tupleIteratorCalcs;
 
     public ExprIterCalc(

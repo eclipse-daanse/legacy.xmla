@@ -30,13 +30,13 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberValueCalc;
 import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
-import mondrian.calc.impl.MemberArrayValueCalc;
-import mondrian.calc.impl.MemberValueCalc;
 import mondrian.olap.fun.FunUtil;
 import mondrian.olap.fun.sort.SortKeySpec;
 import mondrian.olap.fun.sort.Sorter.SorterFlag;

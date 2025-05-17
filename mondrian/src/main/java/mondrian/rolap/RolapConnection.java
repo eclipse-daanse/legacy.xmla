@@ -67,6 +67,7 @@ import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.api.result.Scenario;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.impl.ScenarioImpl;
 import org.eclipse.daanse.olap.query.component.QueryImpl;
@@ -76,7 +77,6 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.ConnectionBase;
 import mondrian.olap.ExecuteDurationUtil;
 import mondrian.olap.QueryCanceledException;

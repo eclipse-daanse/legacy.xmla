@@ -6,9 +6,9 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 
-import mondrian.calc.impl.AbstractListCalc;
-import mondrian.calc.impl.UnaryTupleList;
 import mondrian.olap.fun.FunUtil;
 
 /*
@@ -24,7 +24,7 @@ import mondrian.olap.fun.FunUtil;
 *   SmartCity Jena - initial
 *   Stefan Bischof (bipolis.org) - initial
 */
-public class XtdWithoutMemberCalc extends AbstractListCalc {
+public class XtdWithoutMemberCalc extends AbstractProfilingNestedTupleListCalc {
 	private static final String TIMING_NAME = XtdWithoutMemberCalc.class.getSimpleName();
 
 	private final Level level;

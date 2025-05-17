@@ -54,6 +54,8 @@ import org.eclipse.daanse.olap.api.type.DecimalType;
 import org.eclipse.daanse.olap.api.type.NullType;
 import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractTupleCursor;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
 import org.eclipse.daanse.olap.function.def.parentheses.ParenthesesFunDef;
 import org.eclipse.daanse.olap.query.component.MemberExpressionImpl;
@@ -65,8 +67,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.calc.impl.AbstractTupleCursor;
-import mondrian.calc.impl.UnaryTupleList;
 import mondrian.olap.fun.CrossJoinTest.NullFunDef;
 import mondrian.olap.fun.TestMember;
 import mondrian.rolap.aggmatcher.AggStar;

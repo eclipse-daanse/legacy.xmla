@@ -34,7 +34,7 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCa
  * Expression which yields the value of the current member in the current
  * dimensional context.
  *
- * @see mondrian.calc.impl.MemberValueCalc
+ * @see org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberValueCalc
  *
  * @author jhyde
  * @since Sep 27, 2005

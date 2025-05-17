@@ -22,8 +22,8 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 
-import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.Util;
 
 /**

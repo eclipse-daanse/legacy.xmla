@@ -20,12 +20,11 @@ import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleIteratorCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 
-import mondrian.calc.impl.AbstractIterCalc;
-import mondrian.calc.impl.TupleCollections;
-import mondrian.calc.impl.UnaryTupleList;
-
-public class SetMemberCalc extends AbstractIterCalc {
+public class SetMemberCalc extends AbstractProfilingNestedTupleIteratorCalc {
 
     public SetMemberCalc(Type type, MemberCalc memberCalc) {
         super(type, memberCalc);

@@ -22,11 +22,10 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 
-import mondrian.calc.impl.AbstractListCalc;
-import mondrian.calc.impl.TupleCollections;
-
-public class ExtractCalc extends AbstractListCalc{
+public class ExtractCalc extends AbstractProfilingNestedTupleListCalc{
 
     private int outArity;
     private int[] extractedOrdinals;

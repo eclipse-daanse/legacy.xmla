@@ -64,6 +64,8 @@ import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantCalcs;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
@@ -90,8 +92,6 @@ import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.calc.impl.AbstractListCalc;
-import mondrian.calc.impl.UnaryTupleList;
 import mondrian.olap.HierarchyBase;
 import mondrian.olap.InvalidHierarchyException;
 import mondrian.olap.StandardProperty;
@@ -985,7 +985,7 @@ public class RolapHierarchy extends HierarchyBase {
                         null);
                 SetType setType = new SetType(memberType1);
                 TupleListCalc tupleListCalc =
-                    new AbstractListCalc(
+                    new AbstractProfilingNestedTupleListCalc(
                          setType, new Calc[0])
                     {
                         @Override

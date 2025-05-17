@@ -17,11 +17,11 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
 
-import mondrian.calc.impl.AbstractListCalc;
 import mondrian.olap.fun.sort.Sorter;
 
-public class HierarchizeCalc extends AbstractListCalc{
+public class HierarchizeCalc extends AbstractProfilingNestedTupleListCalc{
 
     private boolean post;
 

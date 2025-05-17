@@ -54,12 +54,12 @@ import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.StringType;
+import org.eclipse.daanse.olap.calc.base.compiler.ElevatorSimplifyer;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 import org.eclipse.daanse.olap.query.component.NullLiteralImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.calc.impl.ElevatorSimplifyer;
 import mondrian.olap.NameResolverImpl;
 import mondrian.olap.ParameterImpl;
 import mondrian.olap.SystemProperty;

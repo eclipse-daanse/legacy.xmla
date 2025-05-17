@@ -58,6 +58,7 @@ import org.eclipse.daanse.olap.api.type.MemberType;
 import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFunDef;
 import org.eclipse.daanse.olap.function.def.parentheses.ParenthesesFunDef;
 import org.eclipse.daanse.olap.function.def.set.SetFunDef;
@@ -65,7 +66,6 @@ import org.eclipse.daanse.olap.impl.IdentifierParser.Builder;
 import org.eclipse.daanse.olap.query.component.HierarchyExpressionImpl;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
-import mondrian.calc.impl.UnaryTupleList;
 import mondrian.olap.AbstractProperty;
 import mondrian.olap.ResultStyleException;
 import mondrian.olap.Util;

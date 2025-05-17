@@ -24,12 +24,12 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 
-import mondrian.calc.impl.AbstractListCalc;
 import mondrian.rolap.RolapEvaluator;
 
-public class NonEmptyCrossJoinCalc extends AbstractListCalc{
+public class NonEmptyCrossJoinCalc extends AbstractProfilingNestedTupleListCalc{
     private ResolvedFunCall call;
     private int ctag;
     

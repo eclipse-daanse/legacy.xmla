@@ -28,15 +28,15 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.DelegatingTupleList;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 
-import mondrian.calc.impl.AbstractListCalc;
-import mondrian.calc.impl.DelegatingTupleList;
-import mondrian.calc.impl.TupleCollections;
-import mondrian.calc.impl.UnaryTupleList;
 import mondrian.olap.fun.sort.Sorter;
 
-public class TopBottomCountCalc extends AbstractListCalc {
+public class TopBottomCountCalc extends AbstractProfilingNestedTupleListCalc {
 
     private ResolvedFunCall call;
     private boolean top;

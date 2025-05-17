@@ -16,8 +16,7 @@ import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.calc.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
-
-import mondrian.calc.impl.DelegatingExpCompiler;
+import org.eclipse.daanse.olap.calc.base.compiler.DelegatingExpCompiler;
 
 /**
  * Evaluator that collects profiling information as it evaluates expressions.

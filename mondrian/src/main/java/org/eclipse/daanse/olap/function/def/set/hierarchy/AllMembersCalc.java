@@ -18,11 +18,11 @@ import org.eclipse.daanse.olap.api.calc.HierarchyCalc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
 
-import mondrian.calc.impl.AbstractListCalc;
 import mondrian.olap.fun.FunUtil;
 
-public class AllMembersCalc extends AbstractListCalc {
+public class AllMembersCalc extends AbstractProfilingNestedTupleListCalc {
 
     protected AllMembersCalc(Type type, final HierarchyCalc hierarchyCalc) {
         super(type, hierarchyCalc);

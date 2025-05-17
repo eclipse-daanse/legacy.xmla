@@ -28,8 +28,8 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.ArrayTupleList;
 
-import mondrian.calc.impl.ArrayTupleList;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;

@@ -21,12 +21,12 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 
-import mondrian.calc.impl.AbstractListCalc;
-import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.Util;
 
-public abstract class BaseListCalc extends AbstractListCalc {
+public abstract class BaseListCalc extends AbstractProfilingNestedTupleListCalc {
     ResolvedFunCall call;
     private int ctag;
 

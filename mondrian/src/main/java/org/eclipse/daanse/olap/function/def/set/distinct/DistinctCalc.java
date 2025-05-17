@@ -23,10 +23,9 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
 
-import mondrian.calc.impl.AbstractListCalc;
-
-public class DistinctCalc extends AbstractListCalc {
+public class DistinctCalc extends AbstractProfilingNestedTupleListCalc {
     private final TupleListCalc tupleListCalc;
 
     public DistinctCalc(ResolvedFunCall call, TupleListCalc tupleListCalc) {

@@ -18,11 +18,10 @@ import org.eclipse.daanse.olap.api.calc.IntegerCalc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 
-import mondrian.calc.impl.AbstractListCalc;
-import mondrian.calc.impl.TupleCollections;
-
-public class HeadCalc extends AbstractListCalc {
+public class HeadCalc extends AbstractProfilingNestedTupleListCalc {
 
     public HeadCalc(Type type, TupleListCalc tupleListCalc, IntegerCalc integerCalc) {
         super(type, tupleListCalc, integerCalc);

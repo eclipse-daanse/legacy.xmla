@@ -67,6 +67,9 @@ import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.calc.base.cache.CacheCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.DelegatingTupleList;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.ListTupleList;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
@@ -80,9 +83,6 @@ import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.calc.impl.DelegatingTupleList;
-import mondrian.calc.impl.ListTupleList;
-import mondrian.calc.impl.TupleCollections;
 import mondrian.mdx.MdxVisitorImpl;
 import mondrian.olap.ExpCacheDescriptorImpl;
 import mondrian.olap.MemberBase;
@@ -301,7 +301,7 @@ public class RolapResult extends ResultBase {
                         null);
         SetType setType = new SetType(memberType1);
         org.eclipse.daanse.olap.api.calc.todo.TupleListCalc tupleListCalc =
-                new mondrian.calc.impl.AbstractListCalc(
+                new org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc(
                         setType, new Calc[0])
                 {
                   @Override
@@ -321,7 +321,7 @@ public class RolapResult extends ResultBase {
                       }
                     }
 
-                    return new mondrian.calc.impl.UnaryTupleList(children);
+                    return new org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList(children);
                   }
 
                   @Override

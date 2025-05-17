@@ -19,12 +19,12 @@ import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 
-import mondrian.calc.impl.AbstractListCalc;
-import mondrian.calc.impl.UnaryTupleList;
 import mondrian.olap.fun.FunUtil;
 
-class XtdWithMemberCalc extends AbstractListCalc {
+class XtdWithMemberCalc extends AbstractProfilingNestedTupleListCalc {
 
 	private static final String TIMING_NAME = XtdWithMemberCalc.class.getSimpleName();
 	private final Level level;

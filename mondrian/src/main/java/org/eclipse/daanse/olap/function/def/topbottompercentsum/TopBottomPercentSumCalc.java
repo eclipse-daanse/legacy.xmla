@@ -24,14 +24,14 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 
-import mondrian.calc.impl.AbstractListCalc;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
 import mondrian.olap.fun.sort.Sorter;
 
-public class TopBottomPercentSumCalc extends AbstractListCalc {
+public class TopBottomPercentSumCalc extends AbstractProfilingNestedTupleListCalc {
     private boolean top;
     private boolean percent;
 

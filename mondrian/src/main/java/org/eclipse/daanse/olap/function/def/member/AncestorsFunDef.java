@@ -28,9 +28,9 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.LevelType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
-import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.fun.FunUtil;
 
 public class AncestorsFunDef extends AbstractFunctionDefinition {

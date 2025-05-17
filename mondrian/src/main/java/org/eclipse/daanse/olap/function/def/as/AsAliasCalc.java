@@ -27,11 +27,10 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleIteratorCalc;
 import org.eclipse.daanse.olap.query.component.QueryImpl.ScopedNamedSet;
 
-import mondrian.calc.impl.AbstractIterCalc;
-
-public class AsAliasCalc extends AbstractIterCalc {
+public class AsAliasCalc extends AbstractProfilingNestedTupleIteratorCalc {
 
 	private ScopedNamedSet scopedNamedSet;
 

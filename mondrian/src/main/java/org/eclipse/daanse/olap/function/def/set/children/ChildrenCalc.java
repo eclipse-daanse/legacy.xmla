@@ -19,12 +19,12 @@ import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 
-import mondrian.calc.impl.AbstractListCalc;
-import mondrian.calc.impl.UnaryTupleList;
 import mondrian.olap.fun.FunUtil;
 
-public class ChildrenCalc extends AbstractListCalc {
+public class ChildrenCalc extends AbstractProfilingNestedTupleListCalc {
 
     protected ChildrenCalc(Type type, final MemberCalc memberCalc) {
         super(type, new Calc[] { memberCalc }, false);

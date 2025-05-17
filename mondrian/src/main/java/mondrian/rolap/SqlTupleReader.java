@@ -42,14 +42,14 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEvent;
 import org.eclipse.daanse.olap.api.query.component.Query;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.ArrayTupleList;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.ListTupleList;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.calc.impl.ArrayTupleList;
-import mondrian.calc.impl.ListTupleList;
-import mondrian.calc.impl.TupleCollections;
-import mondrian.calc.impl.UnaryTupleList;
 import mondrian.olap.ExecuteDurationUtil;
 import mondrian.olap.ResourceLimitExceededException;
 import mondrian.olap.SystemWideProperties;

@@ -22,12 +22,12 @@ import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 
-import mondrian.calc.impl.AbstractListCalc;
-import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.fun.FunUtil;
 
-public class AncestorsCalc extends AbstractListCalc {
+public class AncestorsCalc extends AbstractProfilingNestedTupleListCalc {
 
     protected AncestorsCalc(Type type, final MemberCalc memberCalc, final IntegerCalc distanceCalc) {
         super(type, memberCalc, distanceCalc);

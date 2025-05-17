@@ -27,15 +27,15 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleIteratorCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractTupleCursor;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractTupleIterable;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 
-import mondrian.calc.impl.AbstractIterCalc;
-import mondrian.calc.impl.AbstractTupleCursor;
-import mondrian.calc.impl.AbstractTupleIterable;
-import mondrian.calc.impl.TupleCollections;
 import mondrian.server.LocusImpl;
 import mondrian.util.CancellationChecker;
 
-public class CrossJoinIterCalc extends AbstractIterCalc {
+public class CrossJoinIterCalc extends AbstractProfilingNestedTupleIteratorCalc {
     private ResolvedFunCall call;
     private int ctag;
     public CrossJoinIterCalc( ResolvedFunCall call, Calc[] calcs, int ctag ) {

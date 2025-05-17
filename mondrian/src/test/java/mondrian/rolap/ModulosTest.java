@@ -17,9 +17,8 @@ import java.util.Collections;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Axis;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.junit.jupiter.api.Test;
-
-import mondrian.calc.impl.UnaryTupleList;
 
 /**
  * Test that the implementations of the Modulos interface are correct.

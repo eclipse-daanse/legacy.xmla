@@ -27,13 +27,12 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.query.component.MemberExpressionImpl;
 import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
 
-import mondrian.calc.impl.AbstractListCalc;
-import mondrian.calc.impl.UnaryTupleList;
-
-public class VisualTotalsCalc extends AbstractListCalc {
+public class VisualTotalsCalc extends AbstractProfilingNestedTupleListCalc {
     private final TupleListCalc tupleListCalc;
     private final StringCalc stringCalc;
 

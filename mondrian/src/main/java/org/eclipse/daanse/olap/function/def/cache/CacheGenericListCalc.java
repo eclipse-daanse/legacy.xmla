@@ -22,8 +22,7 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleListCalc;
-
-import mondrian.calc.impl.TupleCollections;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 
 public class CacheGenericListCalc extends AbstractProfilingNestedTupleListCalc {
     private final ExpCacheDescriptor cacheDescriptor;

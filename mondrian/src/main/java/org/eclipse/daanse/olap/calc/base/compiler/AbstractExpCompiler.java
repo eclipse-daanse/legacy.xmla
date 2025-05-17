@@ -5,16 +5,28 @@
  * You must accept the terms of that agreement to use this software.
  *
  * Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
+ *
+ * ---- All changes after Fork in 2023 ------------------------
+ *
+ * Project: Eclipse daanse
+ *
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors after Fork in 2023:
+ *   SmartCity Jena - initial
  */
+package org.eclipse.daanse.olap.calc.base.compiler;
 
-package mondrian.calc.impl;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.CastOperationAtom;
 import org.eclipse.daanse.olap.api.Evaluator;
@@ -62,7 +74,6 @@ import org.eclipse.daanse.olap.calc.base.constant.ConstantDoubleCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantHierarchyCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantIntegerCalc;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
-import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
 import org.eclipse.daanse.olap.calc.base.type.booleanx.DoubleToBooleanCalc;
 import org.eclipse.daanse.olap.calc.base.type.booleanx.IntgegerToBooleanCalc;
 import org.eclipse.daanse.olap.calc.base.type.booleanx.UnknownToBooleanCalc;
@@ -70,12 +81,16 @@ import org.eclipse.daanse.olap.calc.base.type.datetime.UnknownToDateTimeCalc;
 import org.eclipse.daanse.olap.calc.base.type.dimension.DimensionOfHierarchyCalc;
 import org.eclipse.daanse.olap.calc.base.type.dimension.UnknownToDimensionCalc;
 import org.eclipse.daanse.olap.calc.base.type.doublex.IntegerToDoubleCalc;
+import org.eclipse.daanse.olap.calc.base.type.doublex.UnknownToDoubleCalc;
 import org.eclipse.daanse.olap.calc.base.type.hierarchy.DimensionDefaultHierarchyCalc;
 import org.eclipse.daanse.olap.calc.base.type.integer.DoubleToIntegerCalc;
 import org.eclipse.daanse.olap.calc.base.type.integer.UnknownToIntegerCalc;
 import org.eclipse.daanse.olap.calc.base.type.level.UnknownToLevelCalc;
 import org.eclipse.daanse.olap.calc.base.type.member.UnknownToMemberCalc;
 import org.eclipse.daanse.olap.calc.base.type.string.UnknownToStringCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.IterableListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberValueCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleValueCalc;
 import org.eclipse.daanse.olap.calc.base.util.DimensionUtil;
 import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHirarchyCalc;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberCalc;
@@ -189,7 +204,7 @@ public class AbstractExpCompiler implements ExpressionCompiler {
             
 
             if (substitutions > 0) {
-                final TupleIteratorCalc tupleIteratorCalc = (TupleIteratorCalc) calc;
+                final TupleIteratorCalc<?> tupleIteratorCalc = (TupleIteratorCalc<?>) calc;
                 if (tupleIteratorCalc == null) {
                     resultStyles =
                             Collections.singletonList(ResultStyle.ITERABLE);
@@ -414,7 +429,7 @@ public class AbstractExpCompiler implements ExpressionCompiler {
         // 'calc instanceof TupleIteratorCalc' because some generic calcs implement both
         // TupleListCalc and TupleIteratorCalc.
         if (!(calc instanceof TupleListCalc)) {
-            return toList((TupleIteratorCalc) calc);
+            return toList((TupleIteratorCalc<?>) calc);
         }
         // A set can only be implemented as a list or an iterable.
         throw Util.newInternal("Cannot convert calc to list: " + calc);
@@ -426,16 +441,16 @@ public class AbstractExpCompiler implements ExpressionCompiler {
      * @param calc Calc
      * @return List calculation.
      */
-    public TupleListCalc toList(TupleIteratorCalc calc) {
+    public TupleListCalc toList(TupleIteratorCalc<?> calc) {
         return new IterableListCalc(calc);
     }
 
     @Override
-    public TupleIteratorCalc compileIter(Expression exp) {
-        TupleIteratorCalc calc =
-                (TupleIteratorCalc) compileAs(exp, null, ResultStyle.ITERABLE_ONLY);
+    public TupleIteratorCalc<?> compileIter(Expression exp) {
+        TupleIteratorCalc<?> calc =
+                (TupleIteratorCalc<?>) compileAs(exp, null, ResultStyle.ITERABLE_ONLY);
         if (calc == null) {
-            calc = (TupleIteratorCalc) compileAs(exp, null, ResultStyle.ANY_ONLY);
+            calc = (TupleIteratorCalc<?>) compileAs(exp, null, ResultStyle.ANY_ONLY);
             assert calc != null;
         }
         return calc;
@@ -603,61 +618,6 @@ public class AbstractExpCompiler implements ExpressionCompiler {
     public List<ResultStyle> getAcceptableResultStyles() {
         return resultStyles;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	public class UnknownToDoubleCalc extends AbstractProfilingNestedDoubleCalc {
-
-		public UnknownToDoubleCalc(Type type, Calc<?> calc) {
-			super(type, new Calc[] { calc });
-		}
-
-		@Override
-		public Double evaluate(Evaluator evaluator) {
-
-			Object o = getFirstChildCalc().evaluate(evaluator);
-			if (o == null) {
-				return FunUtil.DOUBLE_NULL;
-				// null;
-				// TODO: !!! JUST REFACTORING 0 must be null
-			} else  if(Objects.equals(o, FunUtil.DOUBLE_NULL)){
-				return FunUtil.DOUBLE_NULL;
-			}else if (o instanceof Double d) {
-				return d;
-			} else if (o instanceof Number n) {
-				return n.doubleValue();
-			}
-			throw evaluator.newEvalException(null, "wrtong typed, was: " + o);
-		}
-	}
-
 
 	/**
      * Implementation of {@link ParameterSlot}.

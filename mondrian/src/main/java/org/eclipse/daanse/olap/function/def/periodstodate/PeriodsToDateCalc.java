@@ -21,13 +21,13 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 
-import mondrian.calc.impl.AbstractListCalc;
-import mondrian.calc.impl.UnaryTupleList;
 import mondrian.olap.fun.FunUtil;
 import mondrian.rolap.RolapHierarchy;
 
-public class PeriodsToDateCalc extends AbstractListCalc {
+public class PeriodsToDateCalc extends AbstractProfilingNestedTupleListCalc {
 
     private static final String TIMING_NAME = PeriodsToDateFunDef.class.getSimpleName();
 

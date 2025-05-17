@@ -30,11 +30,11 @@ import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.NamedSetExpression;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
 
-import mondrian.calc.impl.AbstractListCalc;
 import mondrian.olap.Util;
 
-public class NativeListCalc  extends AbstractListCalc {
+public class NativeListCalc  extends AbstractProfilingNestedTupleListCalc {
     private final SubstitutionMap substitutionMap;
     private final TupleListCalc simpleCalc;
     private final ExpressionCompiler compiler;

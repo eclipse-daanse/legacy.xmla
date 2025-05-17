@@ -20,8 +20,7 @@ import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
-
-import mondrian.calc.impl.ListTupleList;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.ListTupleList;
 
 public class MutableListCalc extends BaseListCalc {
     public MutableListCalc( ResolvedFunCall call, Calc[] calcs, int ctag ) {

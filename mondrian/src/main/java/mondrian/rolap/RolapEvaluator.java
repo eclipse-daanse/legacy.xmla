@@ -41,10 +41,10 @@ import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Query;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.DelegatingTupleList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.calc.impl.DelegatingTupleList;
 import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;

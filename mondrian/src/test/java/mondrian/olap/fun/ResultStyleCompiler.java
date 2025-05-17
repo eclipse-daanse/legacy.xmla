@@ -23,8 +23,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingCalc;
-
-import mondrian.calc.impl.DelegatingExpCompiler;
+import org.eclipse.daanse.olap.calc.base.compiler.DelegatingExpCompiler;
 
 /**
  * The <code>ResultStyleCompiler</code> can be used to assure that

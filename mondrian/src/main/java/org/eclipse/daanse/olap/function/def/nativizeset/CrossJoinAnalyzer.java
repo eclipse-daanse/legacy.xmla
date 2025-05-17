@@ -25,9 +25,9 @@ import java.util.Set;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.DelegatingTupleList;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 
-import mondrian.calc.impl.DelegatingTupleList;
-import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.ResourceLimitExceededException;
 import mondrian.olap.Util;
 

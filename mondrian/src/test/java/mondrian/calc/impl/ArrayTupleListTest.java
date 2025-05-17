@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.ArrayTupleList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

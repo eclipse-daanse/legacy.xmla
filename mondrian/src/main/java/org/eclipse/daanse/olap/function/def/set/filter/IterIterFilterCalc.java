@@ -24,9 +24,9 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractTupleCursor;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractTupleIterable;
 
-import mondrian.calc.impl.AbstractTupleCursor;
-import mondrian.calc.impl.AbstractTupleIterable;
 import mondrian.server.LocusImpl;
 import mondrian.util.CancellationChecker;
 

@@ -22,8 +22,7 @@ import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
-
-import mondrian.calc.impl.BetterExpCompiler;
+import org.eclipse.daanse.olap.calc.base.compiler.BetterExpCompiler;
 
 /**
  * Holds information necessary to add an expression to the expression result

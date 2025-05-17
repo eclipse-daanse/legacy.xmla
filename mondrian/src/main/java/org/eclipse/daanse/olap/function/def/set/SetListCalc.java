@@ -31,9 +31,9 @@ import org.eclipse.daanse.olap.api.type.MemberType;
 import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedVoidCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 
-import mondrian.calc.impl.AbstractListCalc;
-import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.fun.FunUtil;
 
 /**
@@ -47,7 +47,7 @@ import mondrian.olap.fun.FunUtil;
  *
  * <p>Also, does not process high-cardinality dimensions specially.
  */
-public class SetListCalc  extends AbstractListCalc {
+public class SetListCalc  extends AbstractProfilingNestedTupleListCalc {
     private TupleList result;
     private final VoidCalc[] voidCalcs;
 

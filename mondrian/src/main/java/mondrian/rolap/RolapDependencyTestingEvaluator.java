@@ -29,12 +29,12 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.SetType;
+import org.eclipse.daanse.olap.calc.base.compiler.DelegatingExpCompiler;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleIterableCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleListCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
+import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 
-import mondrian.calc.impl.DelegatingExpCompiler;
-import mondrian.calc.impl.TupleCollections;
 import mondrian.olap.Util;
 
 /**
