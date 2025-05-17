@@ -106,7 +106,6 @@ import mondrian.rolap.RolapUtil;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.server.ExecutionImpl;
 import mondrian.spi.StatisticsProvider;
-import mondrian.spi.UserDefinedFunction;
 import mondrian.spi.impl.JdbcStatisticsProvider;
 import mondrian.spi.impl.SqlStatisticsProvider;
 import mondrian.spi.impl.SqlStatisticsProviderNew;
@@ -5252,102 +5251,6 @@ public class BasicQueryTest {
   }
 
   /**
-   * A simple user-defined function which adds one to its argument, but sleeps 1 ms before doing so.
-   */
-  public static class SleepUdf implements UserDefinedFunction {
-    @Override
-	public String getName() {
-      return "SleepUdf";
-    }
-
-    @Override
-	public String getDescription() {
-      return "Returns its argument plus one but sleeps 1 ms first";
-    }
-
-//	@Override
-//	public Syntax getSyntax() {
-//		return Syntax.Function;
-//	}
-
-    @Override
-	public Type getReturnType( Type[] parameterTypes ) {
-      return NumericType.INSTANCE;
-    }
-
-    @Override
-	public Type[] getParameterTypes() {
-      return new Type[] { NumericType.INSTANCE };
-    }
-
-    @Override
-	public Object execute( Evaluator evaluator, Argument[] arguments ) {
-      final Object argValue = arguments[0].evaluateScalar( evaluator );
-      if ( argValue instanceof Number ) {
-        try {
-          Thread.sleep( 1 );
-        } catch ( Exception ex ) {
-          return null;
-        }
-        return ( (Number) argValue ).doubleValue() + 1;
-      } else {
-        // Argument might be a RuntimeException indicating that
-        // the cache does not yet have the required cell value. The
-        // function will be called again when the cache is loaded.
-        return null;
-      }
-    }
-
-  }
-
-  public static class CountConcurrentUdf implements UserDefinedFunction {
-    private static AtomicInteger count = new AtomicInteger();
-
-    @Override
-	public String getName() {
-      return "CountConcurrentUdf";
-    }
-
-    @Override
-	public String getDescription() {
-      return "Counts the current number of threads using this thing.";
-    }
-
-//    @Override
-//	public Syntax getSyntax() {
-//      return Syntax.Function;
-//    }
-
-    @Override
-	public Type getReturnType( Type[] parameterTypes ) {
-      return NumericType.INSTANCE;
-    }
-
-    @Override
-	public Type[] getParameterTypes() {
-      return new Type[] {};
-    }
-
-    @Override
-	public Object execute( Evaluator evaluator, Argument[] arguments ) {
-      try {
-        count.incrementAndGet();
-        Thread.sleep( 10000 );
-      } catch ( InterruptedException ex ) {
-        Thread.currentThread().interrupt();
-      } finally {
-        count.decrementAndGet();
-      }
-      throw new Error( "Leaving." );
-    }
-
-    static int getCount() {
-      return count.get();
-    }
-
-  }
-
-  /**
    * This unit test would cause connection leaks without a fix for bug
    * <a href="http://jira.pentaho.com/browse/MONDRIAN-571">MONDRIAN-571,
    * "HighCardSqlTupleReader does not close SQL Connections"</a>. It would be better if there was a way to verify that
@@ -5559,67 +5462,6 @@ public class BasicQueryTest {
     SystemWideProperties.instance().ResultLimit = 5000;
     executeQuery(context.getConnectionWithDefaultRole(),
         "select CrossJoin([Product].[Brand Name].Members, [Gender].[Gender].Members) on columns from [Sales]" );
-  }
-
-  /**
-   * This is a test for <a href="http://jira.pentaho.com/browse/MONDRIAN-1161"> MONDRIAN-1161</a>. It verifies that two
-   * queries can run at the same time.
-   */
-  @Disabled  //TODO: UserDefinedFunction
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testConcurrentStatementRun_2(Context context) throws Exception {
-    // timeout is issued after 2 seconds so the test query needs to
-    // run for at least that long; it will because the query references
-    // a Udf that has a 1 ms sleep in it; and there are enough rows
-    // in the result that the Udf should execute > 2000 times
-    /*
-      String baseSchema = TestUtil.getRawSchema(context);
-      String schema = SchemaUtil.getSchema(baseSchema, null, null, null, null,
-            "<UserDefinedFunction name='CountConcurrentUdf' className='" + CountConcurrentUdf.class.getName() + "'/>",
-            null );
-     */
-    TestUtil.withSchema(context, SchemaModifiers.BasicQueryTestModifier29::new);
-    final String query =
-        "WITH\n" + "  MEMBER [Measures].[CountyThigny]\n" + "    AS 'CountConcurrentUdf()'\n"
-            + "SELECT {[Measures].[CountyThigny]} ON COLUMNS,\n" + "  {[Product].members} ON ROWS\n" + "FROM [Sales]";
-
-    final ExecutorService es = Executors.newCachedThreadPool( new ThreadFactory() {
-      @Override
-	public Thread newThread( Runnable r ) {
-        final Thread thread = Executors.defaultThreadFactory().newThread( r );
-        thread.setName( "mondrian.test.BasicQueryTest.testConcurrentStatementRun_2" );
-        thread.setDaemon( true );
-        return thread;
-      }
-    } );
-
-    // Submit a query twice.
-    Future<Result> task1 = es.submit( new Callable<Result>() {
-      @Override
-	public Result call() throws Exception {
-        return executeQuery(context.getConnectionWithDefaultRole(), query );
-      }
-    } );
-    Future<Result> task2 = es.submit( new Callable<Result>() {
-      @Override
-	public Result call() throws Exception {
-        return executeQuery(context.getConnectionWithDefaultRole(), query );
-      }
-    } );
-
-    // Let the backend run a bit
-    Thread.sleep( 5000 );
-
-    // There should be 2 queries running.
-    try {
-      assertEquals( 2, CountConcurrentUdf.getCount() );
-    } finally {
-      // cleanup and leave.
-      task1.cancel( true );
-      task2.cancel( true );
-      es.shutdownNow();
-    }
   }
 
   /**

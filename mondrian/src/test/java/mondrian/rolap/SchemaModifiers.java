@@ -38,8 +38,8 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
@@ -64,7 +64,6 @@ import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberPropertyMappingImpl
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CellFormatterMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CountMeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
@@ -79,11 +78,11 @@ import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MaxMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberFormatterMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyFormatterMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ParentChildLinkMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.RowMappingImpl;
@@ -93,11 +92,14 @@ import org.eclipse.daanse.rolap.mapping.pojo.SqlSelectQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TimeDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.VirtualCubeMappingImpl;
 
-import mondrian.test.UdfTest;
+import mondrian.test.FormatterUtil;
+
+
 
 public class SchemaModifiers {
 
@@ -7229,7 +7231,7 @@ public class SchemaModifiers {
                             .build(),
                         CalculatedMemberPropertyMappingImpl.builder()
                             .withName("CELL_FORMATTER")
-                            .withValue(UdfTest.FooBarCellFormatter.class.getName())
+                            .withValue(FormatterUtil.FooBarCellFormatter.class.getName())
                             .build()
                     ))
                     .build());
@@ -8138,7 +8140,7 @@ public class SchemaModifiers {
                             .withName("Unit Sales Foo Bar")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                             
-                            .withFormatter(UdfTest.FooBarCellFormatter.class.getName())
+                            .withFormatter(FormatterUtil.FooBarCellFormatter.class.getName())
                             .withMeasureGroup(mg)
                 			.build()));
             }
@@ -9426,7 +9428,7 @@ public class SchemaModifiers {
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                             
                             .withFormatString("Standard")
-                            .withFormatter(UdfTest.FooBarCellFormatter.class.getName())
+                            .withFormatter(FormatterUtil.FooBarCellFormatter.class.getName())
                 			.build()));
             }
             return result;
@@ -9501,7 +9503,7 @@ public class SchemaModifiers {
                     .withCalculatedMemberProperties(List.of(
                         CalculatedMemberPropertyMappingImpl.builder()
                             .withName("CELL_FORMATTER")
-                            .withValue(UdfTest.FooBarCellFormatter.class.getName())
+                            .withValue(FormatterUtil.FooBarCellFormatter.class.getName())
                             .build()
                     ))
                     .build());
@@ -9535,7 +9537,7 @@ public class SchemaModifiers {
                     .withFormula("[Measures].[Unit Sales]")
                     //.dimension("Measures")
                     .withCellFormatter(CellFormatterMappingImpl.builder()
-                    		.withRef(UdfTest.FooBarCellFormatter.class.getName())
+                    		.withRef(FormatterUtil.FooBarCellFormatter.class.getName())
                     		.build())
                     .build());
             }
@@ -9622,7 +9624,7 @@ public class SchemaModifiers {
                                             .withUniqueMembers(true)
                                             //.withFormatter(UdfTest.FooBarMemberFormatter.class.getName())
                                             .withMemberFormatter(MemberFormatterMappingImpl.builder()
-                                            		.withRef(UdfTest.FooBarMemberFormatter.class.getName())
+                                            		.withRef(FormatterUtil.FooBarMemberFormatter.class.getName())
                                             		.build())
                                             .build()
             						))
@@ -9746,7 +9748,7 @@ public class SchemaModifiers {
                                             		MemberPropertyMappingImpl.builder()
                                                     .withName("Medium")
                                                     .withColumn(FoodmartMappingSupplier.MEDIA_TYPE_COLUMN_IN_PROMOTION)
-                                                    .withFormatter(MemberPropertyFormatterMappingImpl.builder().withRef(UdfTest.FooBarPropertyFormatter.class.getName()).build())
+                                                    .withFormatter(MemberPropertyFormatterMappingImpl.builder().withRef(FormatterUtil.FooBarPropertyFormatter.class.getName()).build())
                                             		.build()
                                             		))
                                             .build()
@@ -9811,7 +9813,7 @@ public class SchemaModifiers {
                                             		MemberPropertyMappingImpl.builder()
                                                     .withName("Medium")
                                                     .withColumn(FoodmartMappingSupplier.MEDIA_TYPE_COLUMN_IN_PROMOTION)
-                                                    .withFormatter(MemberPropertyFormatterMappingImpl.builder().withRef(UdfTest.FooBarPropertyFormatter.class.getName()).build())
+                                                    .withFormatter(MemberPropertyFormatterMappingImpl.builder().withRef(FormatterUtil.FooBarPropertyFormatter.class.getName()).build())
                                             		.build()
                                             		))
                                             .build()
@@ -10045,34 +10047,34 @@ public class SchemaModifiers {
         */
     }
 
-    public static class UdfTestModifier17 extends PojoMappingModifier {
-
-        /*
-            "<UserDefinedFunction name=\"Reverse\" className=\""
-            + functionClass.getName()
-            + "\"/>\n");
-            */
-
-        private final Class<? extends UdfTest.ReverseFunction> functionClass;
-
-        public UdfTestModifier17(CatalogMapping catalog, final Class<? extends UdfTest.ReverseFunction> functionClass) {
-            super(catalog);
-            this.functionClass = functionClass;
-        }
-
-        /* TODO: UserDefinedFunction
-        @Override
-        protected List<MappingUserDefinedFunction> schemaUserDefinedFunctions(MappingSchema schema) {
-            List<MappingUserDefinedFunction> result = new ArrayList<>();
-            result.addAll(super.schemaUserDefinedFunctions(schema).stream().filter(f -> !"Reverse".equals(f.name())).toList());
-            result.add(UserDefinedFunctionRBuilder.builder()
-                .name("Reverse")
-                .className(functionClass.getName())
-                .build());
-            return result;
-        }
-        */
-    }
+//    public static class UdfTestModifier17 extends PojoMappingModifier {
+//
+//        /*
+//            "<UserDefinedFunction name=\"Reverse\" className=\""
+//            + functionClass.getName()
+//            + "\"/>\n");
+//            */
+//
+//        private final Class<? extends FormatterUtil.ReverseFunction> functionClass;
+//
+//        public UdfTestModifier17(CatalogMapping catalog, final Class<? extends FormatterUtil.ReverseFunction> functionClass) {
+//            super(catalog);
+//            this.functionClass = functionClass;
+//        }
+//
+//        /* TODO: UserDefinedFunction
+//        @Override
+//        protected List<MappingUserDefinedFunction> schemaUserDefinedFunctions(MappingSchema schema) {
+//            List<MappingUserDefinedFunction> result = new ArrayList<>();
+//            result.addAll(super.schemaUserDefinedFunctions(schema).stream().filter(f -> !"Reverse".equals(f.name())).toList());
+//            result.add(UserDefinedFunctionRBuilder.builder()
+//                .name("Reverse")
+//                .className(functionClass.getName())
+//                .build());
+//            return result;
+//        }
+//        */
+//    }
 
     public static class UdfTestModifier18 extends PojoMappingModifier {
 

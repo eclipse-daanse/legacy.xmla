@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import aQute.bnd.annotation.spi.ServiceConsumer;
-import mondrian.spi.UserDefinedFunction;
 
 /**
  * Utility functions to discover Java services.

@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.fun.sort.Sorter;
 import mondrian.rolap.SchemaModifiers;
-import mondrian.spi.UserDefinedFunction;
 import mondrian.util.Bug;
 
 /**
@@ -597,65 +596,7 @@ public class PerformanceTest {
     return duration;
   }
 
-  /**
-   * Test for
-   * <a href="http://jira.pentaho.com/browse/MONDRIAN-1242">MONDRIAN-1242,
-   * "Slicer size is exponentially inflating the cell requests"</a>. This case just checks correctness; a similar case
-   * in {@link PerformanceTest} checks performance.
-   */
-  @Disabled //TODO: UserDefinedFunction
-  @ParameterizedTest
-  @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testBugMondrian1242(Context context) {
-    withSchema(context, SchemaModifiers.PerformanceTestModifier4::new);
-    // original test case for MONDRIAN-1242; ensures correct result
-    Connection connection = context.getConnectionWithDefaultRole();
-    assertQueryReturns(connection,
-      "select {[Measures].[Unit Sales]} on COLUMNS,\n"
-        + "[Store].[USA].[CA].Children on ROWS\n"
-        + "from [Sales]\n"
-        + "where ([Time].[Weekly].[All Time].[Weeklys].[1997].[4].[16]\n"
-        + " : [Time].[Weekly].[All Time].[Weeklys].[1997].[5].[25])",
-      "Axis #0:\n"
-        + "{[Time].[Weekly].[1997].[4].[16]}\n"
-        + "{[Time].[Weekly].[1997].[4].[17]}\n"
-        + "{[Time].[Weekly].[1997].[4].[18]}\n"
-        + "{[Time].[Weekly].[1997].[5].[19]}\n"
-        + "{[Time].[Weekly].[1997].[5].[20]}\n"
-        + "{[Time].[Weekly].[1997].[5].[21]}\n"
-        + "{[Time].[Weekly].[1997].[5].[22]}\n"
-        + "{[Time].[Weekly].[1997].[5].[23]}\n"
-        + "{[Time].[Weekly].[1997].[5].[24]}\n"
-        + "{[Time].[Weekly].[1997].[5].[25]}\n"
-        + "Axis #1:\n"
-        + "{[Measures].[Unit Sales]}\n"
-        + "Axis #2:\n"
-        + "{[Store].[USA].[CA].[Alameda]}\n"
-        + "{[Store].[USA].[CA].[Beverly Hills]}\n"
-        + "{[Store].[USA].[CA].[Los Angeles]}\n"
-        + "{[Store].[USA].[CA].[San Diego]}\n"
-        + "{[Store].[USA].[CA].[San Francisco]}\n"
-        + "Row #0: \n"
-        + "Row #1: 250\n"
-        + "Row #2: 724\n"
-        + "Row #3: 451\n"
-        + "Row #4: 18\n" );
-    CounterUdf.count.set( 0 );
-    Result result = executeQuery(connection,
-      "with member [Measures].[Foo] as CounterUdf()\n"
-        + "select {[Measures].[Foo]} on COLUMNS,\n"
-        + "[Gender].Children on ROWS\n"
-        + "from [Sales]\n"
-        + "where ([Customers].[USA].[CA].[Altadena].[Alice Cantrell]"
-        + " : [Customers].[USA].[CA].[Altadena].[Alice Cantrell].Lead(7000))" );
-    assertEquals(
-      "111,191",
-      result.getCell( new int[] { 0, 0 } ).getFormattedValue() );
 
-    // Count is 4 if bug is fixed,
-    // 28004 if bug is not fixed.
-    assertEquals( 4, CounterUdf.count.get() );
-  }
 
   /**
    * Tests performance of {@link Sorter#stablePartialSort}.
@@ -855,44 +796,6 @@ public class PerformanceTest {
     }
   }
 
-  /**
-   * User-defined function that counts how many times it has been invoked.
-   */
-  public static class CounterUdf implements UserDefinedFunction {
-    public static final AtomicInteger count = new AtomicInteger();
-
-    @Override
-	public String getName() {
-      return "CounterUdf";
-    }
-
-    @Override
-	public String getDescription() {
-      return "Counts the number of times it is called.";
-    }
-
-//    @Override
-//	public Syntax getSyntax() {
-//      return Syntax.Function;
-//    }
-
-    @Override
-	public Type getReturnType( Type[] parameterTypes ) {
-      return NumericType.INSTANCE;
-    }
-
-    @Override
-	public Type[] getParameterTypes() {
-      return new Type[] {};
-    }
-
-    @Override
-	public Object execute( Evaluator evaluator, Argument[] arguments ) {
-      count.incrementAndGet();
-      return evaluator.evaluateCurrent();
-    }
-
-  }
 
   private static class CountingComparator<T extends Comparable<T>>
     implements Comparator<T> {
