@@ -591,8 +591,8 @@ public abstract class RolapCube extends CubeBase {
                 "RolapCube.resolveCalcMembers",
                 new LocusImpl.Action<Query>() {
                     @Override
-					public QueryImpl execute() {
-                        final QueryImpl queryExp =
+					public Query execute() {
+                        final Query queryExp =
                             conn.parseQuery(queryString);
                         queryExp.resolve();
                         return queryExp;

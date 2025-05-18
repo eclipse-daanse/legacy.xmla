@@ -67,7 +67,7 @@ import mondrian.server.LocusImpl;
 class IdBatchResolverTest  {
 
 	@Mock
-     QueryImpl query;
+     Query query;
 
     @Captor
      ArgumentCaptor<List<NameSegment>> childNames;

@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.query.component.QueryImpl;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -72,7 +73,7 @@ class AggGenTest {
         ((TestContextImpl)context).setGenerateAggregateSql(true);
 
         final RolapConnection rolapConn = (RolapConnection) context.getConnectionWithDefaultRole();
-        QueryImpl query =
+        Query query =
             rolapConn.parseQuery(
                 "select {[Measures].[Count]} on columns from [HR]");
         rolapConn.execute(query);

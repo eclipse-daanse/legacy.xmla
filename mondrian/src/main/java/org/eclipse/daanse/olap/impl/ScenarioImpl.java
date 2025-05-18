@@ -11,13 +11,13 @@ import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Formula;
+import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.AllocationPolicy;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.api.result.Scenario;
 import org.eclipse.daanse.olap.api.result.WritebackCell;
 import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
-import org.eclipse.daanse.olap.query.component.QueryImpl;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 
 import mondrian.olap.Util;
@@ -321,7 +321,7 @@ public class ScenarioImpl implements Scenario {
         final String mdx = buf.toString();
         final RolapConnection connection =
             cube.getCatalog().getInternalConnection();
-        final QueryImpl query = connection.parseQuery(mdx);
+        final Query query = connection.parseQuery(mdx);
         final Result result = connection.execute(query);
         final Object o = result.getCell(new int[0]).getValue();
         return o instanceof Number
