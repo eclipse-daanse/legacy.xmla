@@ -1,13 +1,27 @@
 /*
-// This software is subject to the terms of the Eclipse Public License v1.0
-// Agreement, available at the following URL:
-// http://www.eclipse.org/legal/epl-v10.html.
-// You must accept the terms of that agreement to use this software.
-//
-// Copyright (C) 2005-2005 Julian Hyde
-// Copyright (C) 2005-2017 Hitachi Vantara and others
-// All Rights Reserved.
-*/
+ * This software is subject to the terms of the Eclipse Public License v1.0
+ * Agreement, available at the following URL:
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * You must accept the terms of that agreement to use this software.
+ *
+ * Copyright (C) 2005-2005 Julian Hyde
+ * Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
+ *
+ * ---- All changes after Fork in 2023 ------------------------
+ *
+ * Project: Eclipse daanse
+ *
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors after Fork in 2023:
+ *   SmartCity Jena - initial
+ */
 
 package mondrian.recorder;
 
@@ -18,9 +32,9 @@ import java.util.List;
 import org.slf4j.Logger;
 
 /**
- * Implementation of {@link MessageRecorder} that records each message
- * in a {@link List}. The calling code can then access the list and take
- * actions as needed.
+ * Implementation of {@link MessageRecorder} that records each message in a
+ * {@link List}. The calling code can then access the list and take actions as
+ * needed.
  */
 public class ListRecorder extends AbstractRecorder {
 
@@ -35,7 +49,7 @@ public class ListRecorder extends AbstractRecorder {
     }
 
     @Override
-	public void clear() {
+    public void clear() {
         super.clear();
         errorList.clear();
         warnList.clear();
@@ -55,11 +69,7 @@ public class ListRecorder extends AbstractRecorder {
     }
 
     @Override
-	protected void recordMessage(
-        final String msg,
-        final Object info,
-        final MsgType msgType)
-    {
+    protected void recordMessage(final String msg, final Object info, final MessageType msgType) {
         String context = getContext();
 
         Entry e = new Entry(context, msg, msgType, info);
@@ -74,12 +84,8 @@ public class ListRecorder extends AbstractRecorder {
             errorList.add(e);
             break;
         default:
-            e = new Entry(
-                context,
-                new StringBuilder("Unknown message type enum \"").append(msgType)
-                .append("\" for message: ").append(msg).toString(),
-                MsgType.WARN,
-                info);
+            e = new Entry(context, new StringBuilder("Unknown message type enum \"").append(msgType)
+                    .append("\" for message: ").append(msg).toString(), MessageType.WARN, info);
             warnList.add(e);
         }
     }
@@ -109,49 +115,15 @@ public class ListRecorder extends AbstractRecorder {
         }
     }
 
-    static void logMessage(
-        final Entry e,
-        final Logger logger)
-    {
-        logMessage(e.getContext(), e.getMessage(), e.getMsgType(), logger);
+    static void logMessage(final Entry e, final Logger logger) {
+        logMessage(e.context(), e.message(), e.msgType(), logger);
     }
 
     /**
-     * Entry is a Info, Warning or Error message. This is the object stored
-     * in the Lists MessageRecorder's info, warning and error message lists.
+     * Entry is a Info, Warning or Error message. This is the object stored in the
+     * Lists MessageRecorder's info, warning and error message lists.
      */
-    public static class Entry {
-        private final String context;
-        private final String msg;
-        private final MsgType msgType;
-        private final Object info;
+    public static record Entry(String context, String message, MessageType msgType, Object info) {
 
-        private Entry(
-            final String context,
-            final String msg,
-            final MsgType msgType,
-            final Object info)
-        {
-            this.context = context;
-            this.msg = msg;
-            this.msgType = msgType;
-            this.info = info;
-        }
-
-        public String getContext() {
-            return context;
-        }
-
-        public String getMessage() {
-            return msg;
-        }
-
-        public MsgType getMsgType() {
-            return msgType;
-        }
-
-        public Object getInfo() {
-            return info;
-        }
     }
 }

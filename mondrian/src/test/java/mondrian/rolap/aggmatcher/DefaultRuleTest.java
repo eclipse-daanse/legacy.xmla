@@ -60,8 +60,8 @@ class DefaultRuleTest {
             LOGGER.error("HAS ERRORS");
             for (Iterator it = msgRecorder.getErrorEntries(); it.hasNext();) {
                 ListRecorder.Entry e = (ListRecorder.Entry) it.next();
-                LOGGER.error("context=" + e.getContext());
-                LOGGER.error("message=" + e.getMessage());
+                LOGGER.error("context=" + e.context());
+                LOGGER.error("message=" + e.message());
             }
         }
     }
