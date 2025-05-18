@@ -16,12 +16,10 @@ package mondrian.rolap;
 import java.util.Collections;
 import java.util.List;
 
-import mondrian.olap.exceptions.MdxCantFindMemberException;
-
 import org.eclipse.daanse.olap.api.Segment;
-import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 
 import mondrian.olap.Util;
+import mondrian.olap.exceptions.MdxCantFindMemberException;
 /**
  * <code>ArrayMemberSource</code> implements a flat, static hierarchy. There is
  * no root member, and all members are siblings.
