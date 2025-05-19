@@ -27,6 +27,7 @@ import org.eclipse.daanse.rolap.aggregator.experimental.BitAggAggregator;
 import org.eclipse.daanse.rolap.aggregator.experimental.PercentileAggregator;
 import org.eclipse.daanse.rolap.aggregator.experimental.ListAggAggregator;
 import org.eclipse.daanse.rolap.aggregator.experimental.NoneAggregator;
+import org.eclipse.daanse.rolap.aggregator.experimental.NthValueAggregator;
 import org.eclipse.daanse.rolap.mapping.api.model.AvgMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.BitAggMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CountMeasureMapping;
@@ -34,6 +35,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CustomMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MaxMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.MinMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.NoneMeasureMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.NthAggMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.OrderedColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PercentileMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SumMeasureMapping;
@@ -63,6 +65,7 @@ public class AggregationFactoryImpl implements AggregationFactory{
             case BitAggMeasureMapping i -> getBitAggAggregator(i);
             case PercentileMeasureMapping i -> getPercentileAggregator(i);
             case CustomMeasureMapping i -> findCustomAggregator(i);
+            case NthAggMeasureMapping i -> getNthValueAggregator(i);
             default -> throw new RuntimeException("Incorect aggregation type");
         };
     }
@@ -73,6 +76,11 @@ public class AggregationFactoryImpl implements AggregationFactory{
 
     private Aggregator getListAggAggregator(TextAggMeasureMapping i) {
         return new ListAggAggregator(i.isDistinct(), i.getSeparator(), getOrderedColumns(i.getOrderByColumns()), i.getCoalesce(), i.getOnOverflowTruncate(), dialect);
+    }
+
+    private Aggregator getNthValueAggregator(NthAggMeasureMapping i) {
+        return new NthValueAggregator(i.isIgnoreNulls(), i.getN(),
+                getOrderedColumns(i.getOrderByColumns()), dialect);
     }
 
     private Aggregator getPercentileAggregator(PercentileMeasureMapping measure) {
