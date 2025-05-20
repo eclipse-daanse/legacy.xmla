@@ -32,6 +32,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Segment;
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -130,7 +131,7 @@ class SqlMemberSource
             return null;
         }
         List<Datatype> datatypeList = new ArrayList<>();
-        List<RolapSqlExpression> columnList =
+        List<SqlExpression> columnList =
             new ArrayList<>();
         for (RolapLevel x = level;; x = (RolapLevel) x.getParentLevel()) {
             columnList.add(x.keyExp);
@@ -319,7 +320,7 @@ class SqlMemberSource
                 if (level2.isAll()) {
                     continue;
                 }
-                RolapSqlExpression keyExp = level2.getKeyExp();
+                SqlExpression keyExp = level2.getKeyExp();
                 hierarchy.addToFrom(sqlQuery, keyExp);
                 sqlQuery.addSelect(getExpression(keyExp, sqlQuery), null);
                 if (level2.isUnique()) {
@@ -493,7 +494,7 @@ RME is this right
             if (level.isAll()) {
                 continue;
             }
-            final RolapSqlExpression keyExp = level.getKeyExp();
+            final SqlExpression keyExp = level.getKeyExp();
             hierarchy.addToFrom(sqlQuery, keyExp);
             final String expString =
                 getExpression(keyExp, sqlQuery);
@@ -502,7 +503,7 @@ RME is this right
 
             if (!keyExp.equals(level.getOrdinalExp())) {
                 // Ordering comes from a separate expression
-                final RolapSqlExpression ordinalExp =
+                final SqlExpression ordinalExp =
                     level.getOrdinalExp();
                 // Make sure the table is selected.
                 hierarchy.addToFrom(sqlQuery, ordinalExp);
@@ -524,7 +525,7 @@ RME is this right
 
             RolapProperty[] properties = level.getProperties();
             for (RolapProperty property : properties) {
-                final RolapSqlExpression propExpr = property.getExp();
+                final SqlExpression propExpr = property.getExp();
                 hierarchy.addToFrom(sqlQuery, propExpr);
                 final String propStringExpr =
                     getExpression(propExpr, sqlQuery);
@@ -699,7 +700,7 @@ RME is this right
         }
 
         if (level.hasCaptionColumn()) {
-            RolapSqlExpression captionExp = level.getCaptionExp();
+            SqlExpression captionExp = level.getCaptionExp();
             if (!levelCollapsed) {
                 hierarchy.addToFrom(sqlQuery, captionExp);
             }
@@ -728,7 +729,7 @@ RME is this right
 
         RolapProperty[] properties = level.getProperties();
         for (RolapProperty property : properties) {
-            final RolapSqlExpression exp = property.getExp();
+            final SqlExpression exp = property.getExp();
             if (!levelCollapsed) {
                 hierarchy.addToFrom(sqlQuery, exp);
             }
@@ -830,9 +831,9 @@ RME is this right
         if (level.isAll()) {
             return false;
         }
-        RolapSqlExpression keyExp = level.getKeyExp();
-        RolapSqlExpression ordinalExp = level.getOrdinalExp();
-        RolapSqlExpression captionExp = level.getCaptionExp();
+        SqlExpression keyExp = level.getKeyExp();
+        SqlExpression ordinalExp = level.getOrdinalExp();
+        SqlExpression captionExp = level.getCaptionExp();
 
         if (!keyExp.equals(ordinalExp)) {
             return true;
@@ -1267,8 +1268,8 @@ RME is this right
         RolapLevel level,
         boolean group)
     {
-        final RolapSqlExpression key = level.getKeyExp();
-        final RolapSqlExpression order = level.getOrdinalExp();
+        final SqlExpression key = level.getKeyExp();
+        final SqlExpression order = level.getOrdinalExp();
 
         // Make sure the tables are in the query.
         hierarchy.addToFrom(sqlQuery, key);
@@ -1302,7 +1303,7 @@ RME is this right
 
         final RolapProperty[] properties = level.getProperties();
         for (RolapProperty property : properties) {
-            final RolapSqlExpression exp = property.getExp();
+            final SqlExpression exp = property.getExp();
             hierarchy.addToFrom(sqlQuery, exp);
             final String s = getExpression(exp, sqlQuery);
             // REVIEW: Maybe use property.getType?
@@ -1369,7 +1370,7 @@ RME is this right
 
         RolapProperty[] properties = level.getProperties();
         for (RolapProperty property : properties) {
-            final RolapSqlExpression exp = property.getExp();
+            final SqlExpression exp = property.getExp();
             hierarchy.addToFrom(sqlQuery, exp);
             final String s = getExpression(exp, sqlQuery);
             String alias = sqlQuery.addSelect(s, null);

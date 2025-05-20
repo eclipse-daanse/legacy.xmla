@@ -15,6 +15,7 @@ package mondrian.rolap.util;
 
 import java.util.Objects;
 
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
@@ -28,7 +29,7 @@ public class LevelUtil {
         // constructor
     }
 
-    public static RolapSqlExpression getKeyExp(LevelMapping level) {
+    public static SqlExpression getKeyExp(LevelMapping level) {
         if (level.getColumn() instanceof SQLExpressionColumnMapping sec) {
             return new RolapSqlExpression(sec);
         } else if (level.getColumn() != null) {

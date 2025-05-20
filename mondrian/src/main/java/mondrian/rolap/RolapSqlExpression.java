@@ -17,15 +17,15 @@ import java.util.List;
 
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionColumnMapping;
 
-public class RolapSqlExpression {
-    private List<RolapSqlStatement> sqls;
+public class RolapSqlExpression implements org.eclipse.daanse.olap.api.SqlExpression{
+    private List<org.eclipse.daanse.olap.api.SqlStatement> sqls;
 
     public RolapSqlExpression() {
     }
     
     public RolapSqlExpression(SQLExpressionColumnMapping scm) {
         if (scm.getSqls() != null) {
-            sqls = scm.getSqls().stream().map(ex -> RolapSqlStatement.builder().withDialects(ex.getDialects()).withSql(ex.getSql()).build()).toList();
+            sqls = scm.getSqls().stream().map(ex -> (org.eclipse.daanse.olap.api.SqlStatement)RolapSqlStatement.builder().withDialects(ex.getDialects()).withSql(ex.getSql()).build()).toList();
         }
         else {
             sqls = List.of();
@@ -33,11 +33,11 @@ public class RolapSqlExpression {
         
     }
 
-    public List<RolapSqlStatement> getSqls() {
+    public List<org.eclipse.daanse.olap.api.SqlStatement> getSqls() {
         return sqls;
     }
 
-    public void setSqls(List<RolapSqlStatement> sqls) {
+    public void setSqls(List<org.eclipse.daanse.olap.api.SqlStatement> sqls) {
         this.sqls = sqls;
     }
 }

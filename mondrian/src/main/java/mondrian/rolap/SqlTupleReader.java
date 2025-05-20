@@ -36,6 +36,7 @@ import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -1310,15 +1311,15 @@ public TupleList readTuples(
         continue;
       }
 
-      Map<RolapSqlExpression, RolapSqlExpression>
+      Map<SqlExpression, SqlExpression>
         targetExp = getLevelTargetExpMap( currLevel, aggStar );
-      RolapSqlExpression keyExp =
+      SqlExpression keyExp =
         targetExp.get( currLevel.getKeyExp() );
-      RolapSqlExpression ordinalExp =
+      SqlExpression ordinalExp =
         targetExp.get( currLevel.getOrdinalExp() );
-      RolapSqlExpression captionExp =
+      SqlExpression captionExp =
         targetExp.get( currLevel.getCaptionExp() );
-      RolapSqlExpression parentExp = currLevel.getParentExp();
+      SqlExpression parentExp = currLevel.getParentExp();
 
       if ( parentExp != null ) {
         if ( !levelCollapsed ) {
@@ -1416,7 +1417,7 @@ public TupleList readTuples(
 
       RolapProperty[] properties = currLevel.getProperties();
       for ( RolapProperty property : properties ) {
-        final RolapSqlExpression propExp =
+        final SqlExpression propExp =
           targetExp.get( property.getExp() );
         final String propSql;
         if ( propExp instanceof mondrian.rolap.RolapColumn column) {
@@ -1450,8 +1451,8 @@ public TupleList readTuples(
    * (like ordinal). If the targetExp map has any targets not on the agg table then we need to join.
    */
   private boolean requiresJoinToDim(
-    Map<RolapSqlExpression, RolapSqlExpression> targetExp ) {
-    for ( Map.Entry<RolapSqlExpression, RolapSqlExpression> entry
+    Map<SqlExpression, SqlExpression> targetExp ) {
+    for ( Map.Entry<SqlExpression, SqlExpression> entry
       : targetExp.entrySet() ) {
       if ( entry.getKey() != null
         && entry.getKey().equals( entry.getValue() ) ) {
@@ -1468,9 +1469,9 @@ public TupleList readTuples(
    * corresponding target expression to be used.  If there's no aggStar available then we'll just return an identity
    * map. If an AggStar is present the target Expression may be on the aggregate table.
    */
-  private Map<RolapSqlExpression, RolapSqlExpression> getLevelTargetExpMap( RolapLevel level,
+  private Map<SqlExpression, SqlExpression> getLevelTargetExpMap( RolapLevel level,
                                                                                     AggStar aggStar ) {
-    Map<RolapSqlExpression, RolapSqlExpression> map =
+    Map<SqlExpression, SqlExpression> map =
       initializeIdentityMap( level );
     if ( aggStar == null ) {
       return Collections.unmodifiableMap( map );
@@ -1508,8 +1509,8 @@ public TupleList readTuples(
    * Creates a map of the expressions from a RolapLevel to themselves.  This is the starting assumption of what the
    * target expression is.
    */
-  private Map<RolapSqlExpression, RolapSqlExpression> initializeIdentityMap( RolapLevel level ) {
-    Map<RolapSqlExpression, RolapSqlExpression> map = new HashMap<>();
+  private Map<SqlExpression, SqlExpression> initializeIdentityMap( RolapLevel level ) {
+    Map<SqlExpression, SqlExpression> map = new HashMap<>();
     map.put( level.getKeyExp(), level.getKeyExp() );
     map.put( level.getOrdinalExp(), level.getOrdinalExp() );
     map.put( level.getCaptionExp(), level.getCaptionExp() );

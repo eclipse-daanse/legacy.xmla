@@ -33,6 +33,7 @@ import java.util.Set;
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rolap.aggregator.countbased.AbstractFactCountBasedAggregator;
@@ -493,12 +494,12 @@ public class AggStar {
          */
         public class JoinCondition {
             // I think this is always a Column
-            private final RolapSqlExpression left;
-            private final RolapSqlExpression right;
+            private final SqlExpression left;
+            private final SqlExpression right;
 
             private JoinCondition(
-                final RolapSqlExpression left,
-                final RolapSqlExpression right)
+                final SqlExpression left,
+                final SqlExpression right)
             {
                 if (!(left instanceof mondrian.rolap.RolapColumn)) {
                     JOIN_CONDITION_LOGGER.debug("JoinCondition.left NOT Column: {}",
@@ -518,7 +519,7 @@ public class AggStar {
             /**
              * Return the left join expression.
              */
-            public RolapSqlExpression getLeft() {
+            public SqlExpression getLeft() {
                 return this.left;
             }
 
@@ -532,7 +533,7 @@ public class AggStar {
             /**
              * Return the right join expression.
              */
-            public RolapSqlExpression getRight() {
+            public SqlExpression getRight() {
                 return this.right;
             }
 
@@ -600,7 +601,7 @@ public class AggStar {
         public class Column {
 
             private final String name;
-            private final RolapSqlExpression expression;
+            private final SqlExpression expression;
             private final Datatype datatype;
             /**
              * This is only used in RolapAggregationManager and adds
@@ -614,7 +615,7 @@ public class AggStar {
 
             protected Column(
                 final String name,
-                final RolapSqlExpression expression,
+                final SqlExpression expression,
                 final Datatype datatype,
                 final int bitPosition)
             {
@@ -665,7 +666,7 @@ public class AggStar {
                 return getTable().getAggStar().getSqlQuery();
             }
 
-            public RolapSqlExpression getExpression() {
+            public SqlExpression getExpression() {
                 return expression;
             }
 
@@ -680,7 +681,7 @@ public class AggStar {
                 if (usagePrefix == null) {
                     exprString = ExpressionUtil.getExpression(getExpression(), query);
                 } else {
-                    RolapSqlExpression expressionInner = getExpression();
+                    SqlExpression expressionInner = getExpression();
                     assert expressionInner instanceof mondrian.rolap.RolapColumn;
                     mondrian.rolap.RolapColumn columnExpr =
                         (mondrian.rolap.RolapColumn)expressionInner;
@@ -749,14 +750,14 @@ public class AggStar {
          */
         public final class Level extends Column {
             private final RolapStar.Column starColumn;
-            private final RolapSqlExpression ordinalExp;
-            private final RolapSqlExpression captionExp;
+            private final SqlExpression ordinalExp;
+            private final SqlExpression captionExp;
             private final boolean collapsed;
             private final Map<String, RolapSqlExpression> properties;
 
             private Level(
                 final String name,
-                final RolapSqlExpression expression,
+                final SqlExpression expression,
                 final int bitPosition,
                 RolapStar.Column starColumn,
                 boolean collapsed)
@@ -768,12 +769,12 @@ public class AggStar {
 
             private Level(
                 final String name,
-                final RolapSqlExpression expression,
+                final SqlExpression expression,
                 final int bitPosition,
                 RolapStar.Column starColumn,
                 boolean collapsed,
-                RolapSqlExpression ordinalExp,
-                RolapSqlExpression captionExp,
+                SqlExpression ordinalExp,
+                SqlExpression captionExp,
                 Map<String, RolapSqlExpression> props)
             {
                 super(name, expression, starColumn.getDatatype(), bitPosition);
@@ -794,11 +795,11 @@ public class AggStar {
                 return collapsed;
             }
 
-            public RolapSqlExpression getOrdinalExp() {
+            public SqlExpression getOrdinalExp() {
                 return ordinalExp;
             }
 
-            public RolapSqlExpression getCaptionExp() {
+            public SqlExpression getCaptionExp() {
                 return captionExp;
             }
 
@@ -938,8 +939,8 @@ public class AggStar {
             String tableName = rTable.getAlias();
             RelationalQueryMapping relationInner = rTable.getRelation();
             RolapStar.Condition rjoinCondition = rTable.getJoinCondition();
-            RolapSqlExpression rleft = rjoinCondition.getLeft();
-            final RolapSqlExpression rright;
+            SqlExpression rleft = rjoinCondition.getLeft();
+            final SqlExpression rright;
             if (usage == null
                 || usage.getUsageType() != UsageType.LEVEL)
             {
@@ -1006,7 +1007,7 @@ public class AggStar {
             // add level columns
             for (RolapStar.Column column : rTable.getColumns()) {
                 String nameInner = column.getName();
-                RolapSqlExpression expression = column.getExpression();
+                SqlExpression expression = column.getExpression();
                 int bitPosition = column.getBitPosition();
 
                 Level level = new Level(
@@ -1078,7 +1079,7 @@ public class AggStar {
             /**
              * The fact table column which is being aggregated.
              */
-            private final RolapSqlExpression argument;
+            private final SqlExpression argument;
             /**
              * For distinct-count measures, contains a bitKey of levels which
              * it is OK to roll up. For regular measures, this is empty, since
@@ -1088,11 +1089,11 @@ public class AggStar {
 
             private Measure(
                 final String name,
-                final RolapSqlExpression expression,
+                final SqlExpression expression,
                 final Datatype datatype,
                 final int bitPosition,
                 final Aggregator aggregator,
-                final RolapSqlExpression argument)
+                final SqlExpression argument)
             {
                 super(name, expression, datatype, bitPosition);
                 this.aggregator = aggregator;
@@ -1325,7 +1326,7 @@ public class AggStar {
             Datatype datatype = column.getDatatype();
             Aggregator aggregator = usage.getAggregator();
 
-            RolapSqlExpression expression;
+            SqlExpression expression;
             if (column.hasUsage(JdbcSchema.UsageType.FOREIGN_KEY)
                 && !aggregator.isDistinct())
             {
@@ -1334,7 +1335,7 @@ public class AggStar {
                 expression = new mondrian.rolap.RolapColumn(getName(), name);
             }
 
-            RolapSqlExpression argument;
+            SqlExpression argument;
             if (aggregator.isDistinct()) {
                 argument = usage.rMeasure.getExpression();
             } else {

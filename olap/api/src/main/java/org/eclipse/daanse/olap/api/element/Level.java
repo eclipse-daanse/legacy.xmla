@@ -17,8 +17,8 @@ package org.eclipse.daanse.olap.api.element;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
-
 
 /**
  * A <code>Level</code> is a group of {@link Member}s in a {@link Hierarchy},
@@ -79,4 +79,6 @@ public interface Level extends OlapElement, MetaElement {
     List<Member> getMembers();
 
     boolean isUnique();
+
+    SqlExpression getOrdinalExp();
 }

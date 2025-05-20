@@ -29,6 +29,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
@@ -217,7 +218,7 @@ public class JdbcSchema {
 
                 // hierarchy stuff
                 public RelationalQueryMapping relation;
-                public RolapSqlExpression joinExp;
+                public SqlExpression joinExp;
                 public String levelColumnName;
 
                 // level stuff

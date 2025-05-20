@@ -19,6 +19,7 @@ import java.util.Locale;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Segment;
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.OlapElement;
@@ -47,7 +48,7 @@ public class RolapProperty extends AbstractProperty implements OlapElement {
     private RolapLevel level;
 
     /** The column or expression which yields the property's value. */
-    private final RolapSqlExpression exp;
+    private final SqlExpression exp;
 
     private RolapStar.Column column = null;
 
@@ -67,7 +68,7 @@ public class RolapProperty extends AbstractProperty implements OlapElement {
     RolapProperty(
         String name,
         Datatype type,
-        RolapSqlExpression exp,
+        SqlExpression exp,
         MemberPropertyFormatter formatter,
         String caption,
         Boolean dependsOnLevelValue,
@@ -84,7 +85,7 @@ public class RolapProperty extends AbstractProperty implements OlapElement {
         this.level = level;
     }
 
-    public RolapSqlExpression getExp() {
+    public SqlExpression getExp() {
         return exp;
     }
 

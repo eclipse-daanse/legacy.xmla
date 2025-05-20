@@ -1523,7 +1523,7 @@ class BatchLoader {
                     && measure.getExpression() instanceof
                     RolapSqlExpression measureExpr)
                 {
-                    RolapSqlStatement measureSql = measureExpr.getSqls().get(0);
+                    org.eclipse.daanse.olap.api.SqlStatement measureSql = measureExpr.getSqls().get(0);
                     // Checks if the SQL contains "SELECT" to detect the case a
                     // subquery is used to define the measure. This is not a
                     // perfect check, because a SQL expression on column names

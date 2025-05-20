@@ -46,6 +46,8 @@ import org.eclipse.daanse.jdbc.db.record.schema.SchemaReferenceR;
 import org.eclipse.daanse.jdbc.db.record.schema.TableReferenceR;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.SqlExpression;
+import org.eclipse.daanse.olap.api.SqlStatement;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.DatabaseColumn;
@@ -521,12 +523,12 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         return null;
     }
 
-    private String getColumnName(RolapSqlExpression expression) {
+    private String getColumnName(SqlExpression expression) {
 		if (expression != null) {
 		    if (expression instanceof RolapColumn column) {
 			    return column.getName();
 		    } else {
-		        Optional<RolapSqlStatement> oSqlStatement = expression.getSqls().stream().filter(s -> s.getDialects().contains("generic")).findFirst();
+		        Optional<SqlStatement> oSqlStatement = expression.getSqls().stream().filter(s -> s.getDialects().contains("generic")).findFirst();
 		        if (oSqlStatement.isPresent()) {
 		            return oSqlStatement.get().getSql();
 		        }

@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.DimensionExpression;
@@ -320,7 +321,7 @@ public class RolapNativeSql {
                 // We must use, in order of priority,
                 //  - caption requested: caption->name->key
                 //  - name requested: name->key
-                RolapSqlExpression expression = useCaption
+                SqlExpression expression = useCaption
                 ? rolapLevel.captionExp == null
                         ? rolapLevel.nameExp == null
                             ? rolapLevel.keyExp

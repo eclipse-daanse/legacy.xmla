@@ -20,6 +20,7 @@ import static mondrian.rolap.util.RelationUtil.getAlias;
 import java.text.MessageFormat;
 import java.util.Objects;
 
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
@@ -132,7 +133,7 @@ public class HierarchyUsage {
      * The expression (usually a {@link mondrian.olap.MappingColumn}) by
      * which the hierarchy which is joined to the fact table.
      */
-    private RolapSqlExpression joinExp;
+    private SqlExpression joinExp;
 
     private final Kind kind;
 
@@ -325,7 +326,7 @@ public class HierarchyUsage {
         return this.joinTable;
     }
 
-    public RolapSqlExpression getJoinExp() {
+    public SqlExpression getJoinExp() {
         return this.joinExp;
     }
 

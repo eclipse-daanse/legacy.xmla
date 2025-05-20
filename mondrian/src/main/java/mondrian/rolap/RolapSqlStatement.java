@@ -15,7 +15,7 @@ package mondrian.rolap;
 
 import java.util.List;
 
-public class RolapSqlStatement {
+public class RolapSqlStatement implements org.eclipse.daanse.olap.api.SqlStatement {
 
     private List<String> dialects;
     private String sql;

@@ -15,6 +15,7 @@ package mondrian.rolap.util;
 
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.SqlStatement;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
 
 import mondrian.rolap.RolapSqlStatement;
@@ -35,9 +36,9 @@ public class SQLUtil {
         return codeSet;
     }
 
-    public static SqlQuery.CodeSet toCodeSet(List<RolapSqlStatement> sqls) {
+    public static SqlQuery.CodeSet toCodeSet(List<SqlStatement> sqls) {
         SqlQuery.CodeSet codeSet = new SqlQuery.CodeSet();
-        for (RolapSqlStatement sql : sqls) {
+        for (SqlStatement sql : sqls) {
             for (String dialect : sql.getDialects()) {
                 codeSet.put(dialect, sql.getSql());
             }
@@ -45,7 +46,7 @@ public class SQLUtil {
         return codeSet;
     }
 
-    public static int hashCode(RolapSqlStatement sql) {
+    public static int hashCode(SqlStatement sql) {
         return sql.getDialects().hashCode();
     }
 

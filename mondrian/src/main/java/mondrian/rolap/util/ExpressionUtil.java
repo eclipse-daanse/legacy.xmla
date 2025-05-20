@@ -15,6 +15,8 @@ package mondrian.rolap.util;
 
 import java.util.Objects;
 
+import org.eclipse.daanse.olap.api.SqlExpression;
+
 import mondrian.rolap.RolapColumn;
 import mondrian.rolap.RolapSqlExpression;
 import mondrian.rolap.sql.SqlQuery;
@@ -60,7 +62,7 @@ public class ExpressionUtil {
         return expression.equals(obj);
     }
 
-    public static String genericExpression(RolapSqlExpression expression) {
+    public static String genericExpression(SqlExpression expression) {
             for (int i = 0; i < expression.getSqls().size(); i++) {
                 if (expression.getSqls().get(i).getDialects().stream().anyMatch(d ->  "generic".equals(d))) {
                     return expression.getSqls().get(i).getSql();
@@ -76,14 +78,14 @@ public class ExpressionUtil {
     	return null;
     }
 
-    public static String getExpression(RolapSqlExpression expression, SqlQuery query) {
+    public static String getExpression(SqlExpression expression, SqlQuery query) {
         if (expression instanceof RolapColumn c) {
             return query.getDialect().quoteIdentifier(c.getTable(), c.getName());
         }
         return SQLUtil.toCodeSet(expression.getSqls()).chooseQuery(query.getDialect());
     }
 
-    public static String getTableAlias(RolapSqlExpression expression) {
+    public static String getTableAlias(SqlExpression expression) {
         if (expression instanceof RolapColumn c) {
             return c.getTable();
         }

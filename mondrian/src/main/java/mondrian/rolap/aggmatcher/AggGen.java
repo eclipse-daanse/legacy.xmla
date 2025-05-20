@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
@@ -129,7 +130,7 @@ public class AggGen {
     }
 
     protected String getRolapStarColumnName(RolapStar.Column rColumn) {
-    	RolapSqlExpression expr = rColumn.getExpression();
+    	SqlExpression expr = rColumn.getExpression();
         if (expr instanceof RolapColumn cx) {
             return cx.getName();
         }
@@ -220,7 +221,7 @@ public class AggGen {
                 }
 
 
-                RolapSqlExpression expr = column.getExpression();
+                SqlExpression expr = column.getExpression();
                 if (expr instanceof RolapColumn exprColumn) {
                     String name = exprColumn.getName();
                     JdbcSchema.Table.Column c = getColumn(factTable, name);
@@ -253,7 +254,7 @@ public class AggGen {
                 if (getLogger().isDebugEnabled()) {
                     getLogger().debug("  RolapStar.Condition: cond={}", cond);
                 }
-                RolapSqlExpression left = cond.getLeft();
+                SqlExpression left = cond.getLeft();
                 if (left instanceof RolapColumn leftColumn) {
                     String name = leftColumn.getName();
                     JdbcSchema.Table.Column c = getColumn(factTable, name);

@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -1042,7 +1043,7 @@ public abstract class Recognizer {
      * mondrian.olap.KeyExpression}, returns null. This
      * will result in an error.
      */
-    protected String getColumnName(RolapSqlExpression expr) {
+    protected String getColumnName(SqlExpression expr) {
         msgRecorder.pushContextName("Recognizer.getColumnName");
 
         try {

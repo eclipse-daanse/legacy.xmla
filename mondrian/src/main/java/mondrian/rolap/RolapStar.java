@@ -46,6 +46,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
@@ -252,7 +253,7 @@ public class RolapStar {
         localBars.remove();
     }
 
-    public static String generateExprString(RolapSqlExpression expression, SqlQuery query) {
+    public static String generateExprString(SqlExpression expression, SqlQuery query) {
         if(expression instanceof mondrian.rolap.RolapColumn col) {
             return query.getDialect().quoteIdentifier(col.getTable(),
             		col.getName());
@@ -882,7 +883,7 @@ public class RolapStar {
         };
 
         private final Table table;
-        private final RolapSqlExpression expression;
+        private final SqlExpression expression;
         private final Datatype datatype;
         private final BestFitColumnType internalType;
         private final String name;
@@ -932,7 +933,7 @@ public class RolapStar {
         private Column(
             String name,
             Table table,
-            RolapSqlExpression expression,
+            SqlExpression expression,
             Datatype datatype,
             BestFitColumnType internalType,
             Column nameColumn,
@@ -1037,7 +1038,7 @@ public class RolapStar {
             return isNameColumn;
         }
 
-        public RolapSqlExpression getExpression() {
+        public SqlExpression getExpression() {
             return expression;
         }
 
@@ -1399,7 +1400,7 @@ public class RolapStar {
          * Given a Expression return a column with that expression
          * or null.
          */
-        public Column lookupColumnByExpression(RolapSqlExpression expr) {
+        public Column lookupColumnByExpression(SqlExpression expr) {
             for (Column column : getColumns()) {
                 if (column instanceof Measure) {
                     continue;
@@ -1603,7 +1604,7 @@ public class RolapStar {
         private Column makeColumnForLevelExpr(
             RolapLevel level,
             String name,
-            RolapSqlExpression expr,
+            SqlExpression expr,
             Datatype datatype,
             BestFitColumnType internalType,
             Column nameColumn,
@@ -1666,7 +1667,7 @@ public class RolapStar {
             RolapProperty property,
             RolapLevel level,
             String name,
-            RolapSqlExpression expr,
+            SqlExpression expr,
             Datatype datatype,
             BestFitColumnType internalType,
             Column nameColumn,
@@ -2037,14 +2038,14 @@ public class RolapStar {
     public static class Condition {
         private static final Logger LOGGER = LoggerFactory.getLogger(Condition.class);
 
-        private final RolapSqlExpression left;
-        private final RolapSqlExpression right;
+        private final SqlExpression left;
+        private final SqlExpression right;
         // set in Table constructor
         Table table;
 
         Condition(
-                RolapSqlExpression left,
-                RolapSqlExpression right)
+                SqlExpression left,
+                SqlExpression right)
         {
             assert left != null;
             assert right != null;
@@ -2057,13 +2058,13 @@ public class RolapStar {
             this.left = left;
             this.right = right;
         }
-        public RolapSqlExpression getLeft() {
+        public SqlExpression getLeft() {
             return left;
         }
         public String getLeft(final SqlQuery query) {
             return RolapStar.generateExprString(this.left, query);
         }
-        public RolapSqlExpression getRight() {
+        public SqlExpression getRight() {
             return right;
         }
         public String getRight(final SqlQuery query) {
@@ -2149,7 +2150,7 @@ public class RolapStar {
                 visit(condition.right));
         }
 
-        public RolapSqlExpression visit(RolapSqlExpression expression) {
+        public SqlExpression visit(SqlExpression expression) {
             if (expression == null) {
                 return null;
             }

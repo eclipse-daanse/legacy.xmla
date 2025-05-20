@@ -32,6 +32,7 @@ import java.util.function.Predicate;
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.access.Role;
@@ -170,8 +171,8 @@ public class SqlConstraintUtils {
           }
       }
 
-      Map<RolapSqlExpression, Set<RolapMember>> mapOfSlicerMembers = null;
-      HashMap<RolapSqlExpression, Boolean> done = new HashMap<>();
+      Map<SqlExpression, Set<RolapMember>> mapOfSlicerMembers = null;
+      HashMap<SqlExpression, Boolean> done = new HashMap<>();
 
       for (int i = 0; i < columns.length; i++) {
           final RolapStar.Column column = columns[i];
@@ -184,7 +185,7 @@ public class SqlConstraintUtils {
               mapOfSlicerMembers = getSlicerMemberMap(evaluator);
           }
 
-          final RolapSqlExpression keyForSlicerMap = column.getExpression();
+          final SqlExpression keyForSlicerMap = column.getExpression();
 
           if (mapOfSlicerMembers.containsKey(keyForSlicerMap)) {
               if (!done.containsKey(keyForSlicerMap)) {
@@ -570,8 +571,8 @@ public class SqlConstraintUtils {
    * This map is used by addContextConstraint() to get the set of slicer members associated with each column in the cell
    * request's constrained columns array, {@link CellRequest#getConstrainedColumns}
    */
-  private static Map<RolapSqlExpression, Set<RolapMember>> getSlicerMemberMap( Evaluator evaluator ) {
-    Map<RolapSqlExpression, Set<RolapMember>> mapOfSlicerMembers =
+  private static Map<SqlExpression, Set<RolapMember>> getSlicerMemberMap( Evaluator evaluator ) {
+    Map<SqlExpression, Set<RolapMember>> mapOfSlicerMembers =
         new HashMap<>();
     List<Member> slicerMembers = ( (RolapEvaluator) evaluator ).getSlicerMembers();
     List<Member> expandedSlicers =
@@ -594,13 +595,13 @@ public class SqlConstraintUtils {
    * Expression.
    *
    */
-  private static void addSlicedMemberToMap( Map<RolapSqlExpression, Set<RolapMember>> mapOfSlicerMembers,
+  private static void addSlicedMemberToMap( Map<SqlExpression, Set<RolapMember>> mapOfSlicerMembers,
       Member slicerMember ) {
     if ( slicerMember == null || slicerMember.isAll() || slicerMember.isNull() ) {
       return;
     }
     assert slicerMember instanceof RolapMember;
-    RolapSqlExpression expression = ( (RolapLevel) slicerMember.getLevel() ).getKeyExp();
+    SqlExpression expression = ( (RolapLevel) slicerMember.getLevel() ).getKeyExp();
     mapOfSlicerMembers.computeIfAbsent(expression, k -> new LinkedHashSet<RolapMember>()).add( (RolapMember) slicerMember );
     addSlicedMemberToMap( mapOfSlicerMembers, slicerMember.getParentMember() );
   }
@@ -1387,7 +1388,7 @@ public class SqlConstraintUtils {
       }
     } else {
       assert ( aggStar == null );
-      RolapSqlExpression exp = level.getNameExp();
+      SqlExpression exp = level.getNameExp();
       if ( exp == null ) {
         exp = level.getKeyExp();
         datatype = level.getDatatype();
@@ -1488,7 +1489,7 @@ public class SqlConstraintUtils {
    *
    * @return generated string corresponding to the expression
    */
-  public static String constrainLevel2(SqlQuery query, RolapSqlExpression exp, Datatype datatype,
+  public static String constrainLevel2(SqlQuery query, SqlExpression exp, Datatype datatype,
                                        Comparable columnValue ) {
     String columnString = getExpression( exp, query );
     if ( columnValue == RolapUtil.sqlNullValue ) {
@@ -1672,7 +1673,7 @@ public class SqlConstraintUtils {
       assert ( aggStar == null );
       hierarchy.addToFrom( sqlQuery, level.getKeyExp() );
 
-      RolapSqlExpression nameExp = level.getNameExp();
+      SqlExpression nameExp = level.getNameExp();
       if ( nameExp == null ) {
         nameExp = level.getKeyExp();
       }

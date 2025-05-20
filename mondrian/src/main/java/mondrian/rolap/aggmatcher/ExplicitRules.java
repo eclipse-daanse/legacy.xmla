@@ -32,9 +32,9 @@ import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Segment;
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.rolap.aggregator.AbstractAggregator;
 import org.eclipse.daanse.rolap.aggregator.countbased.AvgFromAvgAggregator;
 import org.eclipse.daanse.rolap.aggregator.countbased.AvgFromSumAggregator;
 import org.eclipse.daanse.rolap.aggregator.countbased.AbstractFactCountBasedAggregator;
@@ -759,7 +759,7 @@ public class ExplicitRules {
                 return rlevel;
             }
 
-            public RolapSqlExpression getRolapFieldName() {
+            public SqlExpression getRolapFieldName() {
                 return rlevel.getKeyExp();
             }
 

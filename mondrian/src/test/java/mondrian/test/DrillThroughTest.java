@@ -43,6 +43,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Quoting;
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -399,7 +400,7 @@ class DrillThroughTest {
         }
         for (Level l : h.getLevels()) {
             if (l.getName().equals(levelName)) {
-            	RolapSqlExpression exp = ((RolapLevel) l).getNameExp();
+            	SqlExpression exp = ((RolapLevel) l).getNameExp();
                 String nameExpStr = getExpression(exp, star.getSqlQuery());
                 nameExpStr = nameExpStr.replace('"', '`') ;
                 return nameExpStr;

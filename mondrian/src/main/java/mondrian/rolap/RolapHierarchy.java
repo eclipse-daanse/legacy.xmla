@@ -36,6 +36,7 @@ import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.Segment;
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.access.AccessHierarchy;
 import org.eclipse.daanse.olap.api.access.AccessMember;
@@ -725,7 +726,7 @@ public class RolapHierarchy extends HierarchyBase {
      *    topmost ('all') expression, which may require more columns and more
      *    joins
      */
-    void addToFromInverse(SqlQuery query, RolapSqlExpression expression) {
+    void addToFromInverse(SqlQuery query, SqlExpression expression) {
         if (getRelation() == null) {
             throw Util.newError(
                 new StringBuilder("cannot add hierarchy ").append(getUniqueName())
@@ -753,7 +754,7 @@ public class RolapHierarchy extends HierarchyBase {
      *    topmost ('all') expression, which may require more columns and more
      *    joins
      */
-    void addToFrom(SqlQuery query, RolapSqlExpression expression) {
+    void addToFrom(SqlQuery query, SqlExpression expression) {
         if (getRelation() == null) {
             throw Util.newError(
                 new StringBuilder("cannot add hierarchy ").append(getUniqueName())

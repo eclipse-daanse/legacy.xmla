@@ -11,6 +11,7 @@
 
 package mondrian.rolap;
 
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
@@ -168,8 +169,8 @@ public class RolapCubeLevel extends RolapLevel {
      * @param rel the parent relation
      * @return returns the converted expression
      */
-    private RolapSqlExpression convertExpression(
-            RolapSqlExpression exp,
+    private SqlExpression convertExpression(
+            SqlExpression exp,
         QueryMapping rel)
     {
         if (getHierarchy().isUsingCubeFact()) {

@@ -36,7 +36,7 @@ public class RolapColumn extends RolapSqlExpression {
     }
 
     @Override
-	public List<RolapSqlStatement> getSqls() {
+	public List<org.eclipse.daanse.olap.api.SqlStatement> getSqls() {
 		return List.of(RolapSqlStatement.builder()
 				.withSql( table == null ? name : new StringBuilder(table).append(".").append(name).toString())
 				.withDialects(List.of("generic"))

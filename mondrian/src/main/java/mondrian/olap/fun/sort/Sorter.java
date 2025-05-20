@@ -33,6 +33,7 @@ import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleCursor;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
+import org.eclipse.daanse.olap.api.element.LimitedMember;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.DelegatingTupleList;
@@ -43,7 +44,6 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.rolap.RolapHierarchy;
 import mondrian.util.CancellationChecker;
 
 @SuppressWarnings( "squid:S4274" )
@@ -702,8 +702,8 @@ public class Sorter {
   }
 
   private static Member unwrapLimitedRollupMember( Member m ) {
-    if ( m instanceof RolapHierarchy.LimitedRollupMember ) {
-      return ( (RolapHierarchy.LimitedRollupMember) m ).member;
+    if ( m instanceof LimitedMember lm) {
+      return lm.getMember();
     }
     return m;
   }
@@ -737,7 +737,7 @@ public class Sorter {
     if(
         SystemWideProperties.instance().CompareSiblingsByOrderKey
         &&
-        ((mondrian.rolap.RolapLevel)m1.getLevel()).getOrdinalExp() != null
+        m1.getLevel().getOrdinalExp() != null
     ) {
       final Comparable k1 = m1.getOrderKey();
       final Comparable k2 = m2.getOrderKey();
