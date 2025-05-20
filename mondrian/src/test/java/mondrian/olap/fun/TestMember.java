@@ -22,6 +22,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Catalog;
+import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 
 import mondrian.olap.AbstractProperty;
@@ -267,8 +268,6 @@ public Dimension getDimension() {
       throw new UnsupportedOperationException();
     }
 
-
-
     @Override
 	public String getUniqueName() {
       throw new UnsupportedOperationException();
@@ -324,6 +323,11 @@ public Dimension getDimension() {
     @Override
 	public MetaData getMetaData() {
       throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Cube getCube() {
+        return null;
     }
 
   }

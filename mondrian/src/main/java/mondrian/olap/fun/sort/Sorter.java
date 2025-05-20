@@ -44,7 +44,6 @@ import org.slf4j.LoggerFactory;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapHierarchy;
-import mondrian.rolap.RolapUtil;
 import mondrian.util.CancellationChecker;
 
 @SuppressWarnings( "squid:S4274" )
@@ -610,10 +609,10 @@ public class Sorter {
       return 1;
     }
 
-    if ( value0 == RolapUtil.valueNotReadyException ) {
+    if ( value0 == Util.valueNotReadyException ) {
       // the left value is not in cache; continue as best as we can
       return -1;
-    } else if ( value1 == RolapUtil.valueNotReadyException ) {
+    } else if ( value1 == Util.valueNotReadyException ) {
       // the right value is not in cache; continue as best as we can
       return 1;
     } else if ( value0 == Util.nullValue ) {

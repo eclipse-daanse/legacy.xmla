@@ -39,16 +39,10 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.api.element.VirtualCube;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapCubeDimension;
-import mondrian.rolap.RolapDatabaseColumn;
-import mondrian.rolap.RolapDatabaseSchema;
-import mondrian.rolap.RolapDatabaseTable;
-import mondrian.rolap.RolapVirtualCube;
 
 /**
  * Default implementation of the {@link Role} interface.
@@ -188,7 +182,7 @@ public class RoleImpl implements Role {
         hash = 0;
     }
 
-    public void grant(RolapDatabaseSchema databaseSchema, AccessDatabaseSchema access) {
+    public void grant(DatabaseSchema databaseSchema, AccessDatabaseSchema access) {
         checkDatabaseSchema(databaseSchema);
         assert isMutable();
         databaseSchemaGrants.put(databaseSchema, access);
@@ -200,7 +194,7 @@ public class RoleImpl implements Role {
     }
 
 
-    public void grant(RolapDatabaseTable table, AccessDatabaseTable access) {
+    public void grant(DatabaseTable table, AccessDatabaseTable access) {
         checkTable(table);
         assert isMutable();
         tableGrants.put(table, access);
@@ -211,7 +205,7 @@ public class RoleImpl implements Role {
         hash = 0;
     }
 
-    public void grant(RolapDatabaseColumn column, AccessDatabaseColumn access) {
+    public void grant(DatabaseColumn column, AccessDatabaseColumn access) {
         checkColumn(column);
         assert isMutable();
         columnGrants.put(column, access);
@@ -450,17 +444,16 @@ public class RoleImpl implements Role {
                 // RolapCubeDimension, we must validate the cube
                 // assignment and make sure the cubes are the same.
                 // If not, skip to the next grant.
-                if (dimension instanceof RolapCubeDimension
-                    && dimension.equals(dimension1)
-                    && !((RolapCubeDimension)dimension1)
-                        .getCube()
-                            .equalsOlapElement(cubeGrant.getKey()))
+                if (dimension.equals(dimension1)
+                    && dimension.getCube() != null
+                    && dimension.getCube() instanceof OlapElementBase oeb 
+                    && !oeb.equalsOlapElement(cubeGrant.getKey()))
                 {
                     continue;
                 }
                 // Last thing is to allow for equality correspondences
                 // to work with virtual cubes.
-                if (cubeGrant.getKey() instanceof RolapVirtualCube
+                if (cubeGrant.getKey() instanceof VirtualCube
                     && dimension.equals(dimension1))
                 {
                     return cubeGrant.getValue();
@@ -631,7 +624,7 @@ public class RoleImpl implements Role {
     private void checkDatabaseTable(DatabaseColumn databaseColumn) {
         if (databaseColumn == null) {
             throw new IllegalArgumentException("database column should be not null");
-        }        
+        }
     }
 
     private void checkDatabaseTable(DatabaseTable databaseTable) {
@@ -860,13 +853,13 @@ public class RoleImpl implements Role {
         }
     }
 
-    private void checkTable(RolapDatabaseTable table) {
+    private void checkTable(DatabaseTable table) {
         if (table == null) {
             throw new IllegalArgumentException("database table should be not null");
         }
     }
 
-    private void checkColumn(RolapDatabaseColumn column) {
+    private void checkColumn(DatabaseColumn column) {
         if (column == null) {
             throw new IllegalArgumentException("database column should be not null");
         }

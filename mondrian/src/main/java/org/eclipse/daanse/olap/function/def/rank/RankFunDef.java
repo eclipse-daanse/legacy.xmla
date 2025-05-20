@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import mondrian.olap.ExpCacheDescriptorImpl;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.Util;
-import mondrian.rolap.RolapUtil;
 
 public class RankFunDef extends AbstractFunctionDefinition {
     static final Logger LOGGER = LoggerFactory.getLogger(RankFunDef.class);
@@ -101,7 +100,7 @@ public class RankFunDef extends AbstractFunctionDefinition {
     }
 
     static boolean valueNotReady( Object value ) {
-      return value == RolapUtil.valueNotReadyException || value == Double.valueOf( Double.NaN );
+      return value == Util.valueNotReadyException || value == Double.valueOf( Double.NaN );
     }
 
   }

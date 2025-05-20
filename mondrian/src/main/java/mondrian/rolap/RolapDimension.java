@@ -265,4 +265,9 @@ class RolapDimension extends DimensionBase {
       return this.getDimensionType() == DimensionType.MEASURES_DIMENSION;
     }
 
+    @Override
+    public Cube getCube() {
+        return null;
+    }
+
 }

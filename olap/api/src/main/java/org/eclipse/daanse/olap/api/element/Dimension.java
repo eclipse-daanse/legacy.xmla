@@ -45,4 +45,6 @@ public interface Dimension extends OlapElement, MetaElement {
      */
     Catalog getCatalog();
 
+    Cube getCube();
+
 }

@@ -1281,7 +1281,7 @@ public Cell getCell( int[] pos ) {
 //            discard( e );
         }
 
-        if (ci != null && o != RolapUtil.valueNotReadyException ) {
+        if (ci != null && o != Util.valueNotReadyException ) {
           ci.value = o;
         }
       }

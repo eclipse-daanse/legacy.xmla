@@ -509,7 +509,7 @@ public class CacheControlImpl implements CacheControl {
                         } else {
                             Arrays.sort(
                                 keys,
-                                Util.SqlNullSafeComparator.instance);
+                                RolapUtil.SqlNullSafeComparator.instance);
                             //noinspection unchecked
                             list.add(
                                 new SegmentColumn(

@@ -16,10 +16,6 @@ package mondrian.rolap;
 import static mondrian.rolap.util.RelationUtil.getAlias;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -33,11 +29,8 @@ import java.util.function.Consumer;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.olap.api.CatalogReader;
-import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
-import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Quoting;
@@ -93,11 +86,6 @@ public class RolapUtil {
     static final Logger LOGGER = LoggerFactory.getLogger(RolapUtil.class);
 
     /**
-     * Special cell value indicates that the value is not in cache yet.
-     */
-    public static final Object valueNotReadyException = Double.valueOf(0);
-
-    /**
      * Hook to run when a query is executed. This should not be
      * used at runtime but only for testing.
      */
@@ -111,50 +99,6 @@ public class RolapUtil {
 
     public static Consumer<java.sql.Statement> getDefaultCallback(final LocusImpl locus) {
         return stmt -> locus.getExecution().registerStatement(locus, stmt);
-    }
-
-    /**
-     * Wraps a schema reader in a proxy so that each call to schema reader
-     * has a locus for profiling purposes.
-     *
-     * @param connection Connection
-     * @param schemaReader Schema reader
-     * @return Wrapped schema reader
-     */
-    public static CatalogReader locusCatalogReader(
-        Connection connection,
-        final CatalogReader schemaReader)
-    {
-        final Statement statement = connection.getInternalStatement();
-        final ExecutionImpl execution = new ExecutionImpl(statement,
-            ExecuteDurationUtil.executeDurationValue(connection.getContext()));
-        final Locus locus =
-            new LocusImpl(
-                execution,
-                "Schema reader",
-                null);
-        return (CatalogReader) Proxy.newProxyInstance(
-            CatalogReader.class.getClassLoader(),
-            new Class[]{CatalogReader.class},
-            new InvocationHandler() {
-                @Override
-				public Object invoke(
-                    Object proxy,
-                    Method method,
-                    Object[] args)
-                    throws Throwable
-                {
-                    LocusImpl.push(locus);
-                    try {
-                        return method.invoke(schemaReader, args);
-                    } catch (InvocationTargetException e) {
-                        throw e.getCause();
-                    } finally {
-                        LocusImpl.pop(locus);
-                    }
-                }
-            }
-        );
     }
 
     /**
@@ -199,6 +143,31 @@ public class RolapUtil {
 		public int compareTo(Object o) {
             // collates after everything (except itself)
             return o == this ? 0 : -1;
+        }
+    }
+
+    /**
+     * A {@link Comparator} implementation which can deal
+     * correctly with {@link RolapUtil#sqlNullValue}.
+     */
+    public static class SqlNullSafeComparator
+        implements Comparator<Comparable>
+    {
+        public static final SqlNullSafeComparator instance =
+            new SqlNullSafeComparator();
+
+        private SqlNullSafeComparator() {
+        }
+
+        @Override
+        public int compare(Comparable o1, Comparable o2) {
+            if (o1 == RolapUtil.sqlNullValue) {
+                return -1;
+            }
+            if (o2 == RolapUtil.sqlNullValue) {
+                return 1;
+            }
+            return o1.compareTo(o2);
         }
     }
 

@@ -42,8 +42,6 @@ import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 
-import mondrian.rolap.RolapUtil;
-
 /**
  * <code>DelegatingCatalogReader</code> implements {@link CatalogReader} by
  * delegating all methods to an underlying {@link CatalogReader}.
@@ -354,7 +352,7 @@ public abstract class DelegatingCatalogReader implements CatalogReader {
 
     @Override
 	public CatalogReader withLocus() {
-        return RolapUtil.locusCatalogReader(
+        return Util.locusCatalogReader(
             schemaReader.getCatalog().getInternalConnection(),
             this);
     }
@@ -370,7 +368,7 @@ public abstract class DelegatingCatalogReader implements CatalogReader {
     public Context getContext() {
         return schemaReader.getContext();
     }
-    
+
     @Override
     public List<? extends DatabaseSchema> getDatabaseSchemas() {
         return schemaReader.getDatabaseSchemas();

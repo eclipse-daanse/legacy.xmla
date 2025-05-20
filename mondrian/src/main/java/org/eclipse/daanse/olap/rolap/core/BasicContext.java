@@ -29,20 +29,10 @@ import org.eclipse.daanse.olap.api.AggregationFactory;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.core.LoggingEventBus;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
-import org.eclipse.daanse.rolap.aggregator.AvgAggregator;
-import org.eclipse.daanse.rolap.aggregator.CountAggregator;
-import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
-import org.eclipse.daanse.rolap.aggregator.MaxAggregator;
-import org.eclipse.daanse.rolap.aggregator.MinAggregator;
-import org.eclipse.daanse.rolap.aggregator.SumAggregator;
-import org.eclipse.daanse.rolap.aggregator.experimental.NoneAggregator;
-import org.eclipse.daanse.rolap.aggregator.experimental.IppAggregator;
-import org.eclipse.daanse.rolap.aggregator.experimental.RndAggregator;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -100,7 +90,7 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
     private SqlGuardFactory sqlGuardFactory;
 
     private Dialect dialect = null;
-    
+
     private AggregationFactory aggregationFactory = null;
 
     private Semaphore queryLimitSemaphore;

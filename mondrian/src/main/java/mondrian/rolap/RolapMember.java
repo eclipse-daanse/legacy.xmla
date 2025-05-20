@@ -11,7 +11,7 @@
 
 package mondrian.rolap;
 
-import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.KeyMember;
 
 /**
  * A <code>RolapMember</code> is a member of a {@link RolapHierarchy}. There are
@@ -20,8 +20,7 @@ import org.eclipse.daanse.olap.api.element.Member;
  * @author jhyde
  * @since 10 August, 2001
  */
-public interface RolapMember extends Member, RolapCalculation {
-    Object getKey();
+public interface RolapMember extends KeyMember, RolapCalculation {
     @Override
 	RolapMember getParentMember();
     @Override

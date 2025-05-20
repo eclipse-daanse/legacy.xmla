@@ -27,6 +27,10 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.lang.ref.Reference;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -44,7 +48,6 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -76,6 +79,7 @@ import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.IdentifierSegment;
 import org.eclipse.daanse.olap.api.KeyIdentifierSegment;
+import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameIdentifierSegment;
 import org.eclipse.daanse.olap.api.Parameter;
@@ -92,6 +96,7 @@ import org.eclipse.daanse.olap.api.calc.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
+import org.eclipse.daanse.olap.api.element.KeyMember;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
@@ -134,9 +139,8 @@ import mondrian.olap.exceptions.MdxChildObjectNotFoundException;
 import mondrian.olap.exceptions.MemberNotFoundException;
 import mondrian.olap.fun.FunUtil;
 import mondrian.olap.fun.sort.Sorter;
-import mondrian.rolap.RolapLevel;
-import mondrian.rolap.RolapMember;
-import mondrian.rolap.RolapUtil;
+import mondrian.server.ExecutionImpl;
+import mondrian.server.LocusImpl;
 import mondrian.util.ArraySortedSet;
 import mondrian.util.ConcatenableList;
 import mondrian.util.UtilCompatible;
@@ -164,6 +168,11 @@ public class Util {
      * Placeholder which indicates a value NULL.
      */
     public static final Object nullValue = DOUBLE_NULL;
+
+    /**
+     * Special cell value indicates that the value is not in cache yet.
+     */
+    public static final Object valueNotReadyException = Double.valueOf(0);
 
     /**
      * Placeholder which indicates an EMPTY value.
@@ -636,7 +645,7 @@ public class Util {
             if (names.get(i) instanceof org.eclipse.daanse.olap.api.NameSegment nameSegment) {
                 name = nameSegment;
                 child = catalogReader.getElementChild(parent, name, matchType);
-            } else if (parent instanceof RolapLevel
+            } else if (parent instanceof Level
                        && names.get(i) instanceof IdImpl.KeySegment
                        && names.get(i).getKeyParts().size() == 1)
             {
@@ -651,7 +660,7 @@ public class Util {
                         (Level) parent, false);
                 child = null;
                 for (Member member : levelMembers) {
-                    if (((RolapMember) member).getKey().toString().equals(
+                    if (((KeyMember) member).getKey().toString().equals(
                             name.getName()))
                     {
                         child = member;
@@ -2557,31 +2566,6 @@ public class Util {
     }
 
     /**
-     * A {@link Comparator} implementation which can deal
-     * correctly with {@link RolapUtil#sqlNullValue}.
-     */
-    public static class SqlNullSafeComparator
-        implements Comparator<Comparable>
-    {
-        public static final SqlNullSafeComparator instance =
-            new SqlNullSafeComparator();
-
-        private SqlNullSafeComparator() {
-        }
-
-        @Override
-		public int compare(Comparable o1, Comparable o2) {
-            if (o1 == RolapUtil.sqlNullValue) {
-                return -1;
-            }
-            if (o2 == RolapUtil.sqlNullValue) {
-                return 1;
-            }
-            return o1.compareTo(o2);
-        }
-    }
-
-    /**
      * This class implements the Knuth-Morris-Pratt algorithm
      * to search within a byte array for a token byte array.
      */
@@ -2791,6 +2775,50 @@ public class Util {
     }
     printWriter.close();
     handler.explain( stringWriter.toString(), timing );
+  }
+
+  /**
+   * Wraps a schema reader in a proxy so that each call to schema reader
+   * has a locus for profiling purposes.
+   *
+   * @param connection Connection
+   * @param schemaReader Schema reader
+   * @return Wrapped schema reader
+   */
+  public static CatalogReader locusCatalogReader(
+      org.eclipse.daanse.olap.api.Connection connection,
+      final CatalogReader schemaReader)
+  {
+      final org.eclipse.daanse.olap.api.Statement statement = connection.getInternalStatement();
+      final ExecutionImpl execution = new ExecutionImpl(statement,
+          ExecuteDurationUtil.executeDurationValue(connection.getContext()));
+      final Locus locus =
+          new LocusImpl(
+              execution,
+              "Schema reader",
+              null);
+      return (CatalogReader) Proxy.newProxyInstance(
+          CatalogReader.class.getClassLoader(),
+          new Class[]{CatalogReader.class},
+          new InvocationHandler() {
+              @Override
+              public Object invoke(
+                  Object proxy,
+                  Method method,
+                  Object[] args)
+                  throws Throwable
+              {
+                  LocusImpl.push(locus);
+                  try {
+                      return method.invoke(schemaReader, args);
+                  } catch (InvocationTargetException e) {
+                      throw e.getCause();
+                  } finally {
+                      LocusImpl.pop(locus);
+                  }
+              }
+          }
+      );
   }
 
 }

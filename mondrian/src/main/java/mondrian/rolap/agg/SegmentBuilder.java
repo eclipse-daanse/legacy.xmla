@@ -40,6 +40,7 @@ import mondrian.rolap.CellKey;
 import mondrian.rolap.EnumConvertor;
 import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapStar;
+import mondrian.rolap.RolapUtil;
 import mondrian.rolap.StarColumnPredicate;
 import mondrian.rolap.StarPredicate;
 import mondrian.rolap.agg.Segment.ExcludedRegion;
@@ -757,7 +758,7 @@ public class SegmentBuilder {
             predicate.values(Util.cast(values));
             Comparable[] valuesArray =
                 values.toArray(new Comparable[values.size()]);
-            Arrays.sort(valuesArray, Util.SqlNullSafeComparator.instance);
+            Arrays.sort(valuesArray, RolapUtil.SqlNullSafeComparator.instance);
             ccs.add(
                 segmentColumn(predicate, new ArraySortedSet(valuesArray)));
         }

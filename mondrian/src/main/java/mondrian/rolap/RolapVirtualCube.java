@@ -26,6 +26,7 @@ import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.VirtualCube;
 import org.eclipse.daanse.olap.api.query.component.Formula;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.query.component.IdImpl;
@@ -46,7 +47,7 @@ import mondrian.olap.Util;
  * @author jhyde
  * @since 10 August, 2001
  */
-public class RolapVirtualCube extends RolapCube {
+public class RolapVirtualCube extends RolapCube implements VirtualCube {
 
     /**
      * Creates a <code>RolapCube</code> from a virtual cube.

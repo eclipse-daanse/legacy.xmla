@@ -73,7 +73,6 @@ import mondrian.olap.exceptions.CousinHierarchyMismatchException;
 import mondrian.olap.exceptions.MdxChildObjectNotFoundException;
 import mondrian.olap.fun.sort.OrderKey;
 import mondrian.olap.fun.sort.Sorter;
-import mondrian.rolap.RolapUtil;
 import mondrian.util.CancellationChecker;
 import mondrian.util.ConcatenableList;
 import mondrian.util.IdentifierParser;
@@ -446,10 +445,10 @@ public class FunUtil extends Util {
       return 1;
     }
 
-    if ( value0 == RolapUtil.valueNotReadyException ) {
+    if ( value0 == Util.valueNotReadyException ) {
       // the left value is not in cache; continue as best as we can
       return -1;
-    } else if ( value1 == RolapUtil.valueNotReadyException ) {
+    } else if ( value1 == Util.valueNotReadyException ) {
       // the right value is not in cache; continue as best as we can
       return 1;
     } else if ( value0 == Util.nullValue ) {
@@ -877,7 +876,7 @@ public class FunUtil extends Util {
       Object o = calc.evaluate( evaluator );
       if ( o == null || o == Util.nullValue ) {
         retval.nullCount++;
-      } else if ( o == RolapUtil.valueNotReadyException ) {
+      } else if ( o == Util.valueNotReadyException ) {
         // Carry on summing, so that if we are running in a
         // BatchingCellReader, we find out all the dependent cells we
         // need

@@ -183,7 +183,7 @@ public class FastBatchingCellReader implements CellReader {
         // if there is no such cell, record that we need to fetch it, and
         // return 'error'
         recordCellRequest(request);
-        return RolapUtil.valueNotReadyException;
+        return Util.valueNotReadyException;
     }
 
     @Override

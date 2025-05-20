@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.Calc;
-import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -26,7 +25,6 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
 
 import mondrian.olap.Util;
-import mondrian.rolap.RolapUtil;
 
 public class LastNonEmptyCalc extends AbstractProfilingNestedMemberCalc {
 
@@ -70,7 +68,7 @@ public class LastNonEmptyCalc extends AbstractProfilingNestedMemberCalc {
                     continue;
                 }
             }
-            if (o == RolapUtil.valueNotReadyException) {
+            if (o == Util.valueNotReadyException) {
                 // Value is not in the cache yet, so we don't know whether
                 // it will be empty. Carry on...
                 continue;
