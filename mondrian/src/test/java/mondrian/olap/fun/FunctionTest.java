@@ -514,7 +514,7 @@ public class FunctionTest {//extends FoodMartTestCase {
 		// constructing a tuple.
 		String expr = "([Gender].[M], [Time].[Time].Children.Item(2), [Measures].[Unit Sales])";
 		String expectedCalc = """
-mondrian.calc.impl.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
+org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALAR, resultStyle=VALUE, callCount=0, callMillis=0)
     org.eclipse.daanse.olap.calc.base.constant.ConstantMemberCalc(type=MemberType<member=[Gender].[Gender].[M]>, resultStyle=VALUE_NOT_NULL, callCount=0, callMillis=0)
     org.eclipse.daanse.olap.function.def.set.setitem.SetItemFunDef$3(type=MemberType<hierarchy=[Time].[Time]>, resultStyle=VALUE, callCount=0, callMillis=0)
         org.eclipse.daanse.olap.function.def.set.children.ChildrenCalc(type=SetType<MemberType<hierarchy=[Time].[Time]>>, resultStyle=LIST, callCount=0, callMillis=0)
