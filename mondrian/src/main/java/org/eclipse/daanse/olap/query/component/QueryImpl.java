@@ -57,6 +57,7 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
+import org.eclipse.daanse.olap.api.element.LimitedMember;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.NamedSet;
@@ -109,9 +110,7 @@ import mondrian.olap.exceptions.MdxAxisShowSubtotalsNotSupportedException;
 import mondrian.olap.exceptions.ParameterIsNotModifiableException;
 import mondrian.olap.exceptions.UnknownParameterException;
 import mondrian.rolap.RolapCube;
-//import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapEvaluator;
-import mondrian.rolap.RolapHierarchy;
 import mondrian.rolap.RolapMember;
 import mondrian.rolap.RolapUtil;
 import mondrian.server.ExecutionImpl;
@@ -569,9 +568,9 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         return
             !strictValidation
             && (load
-                ? ((RolapCube) getCube()).getContext()
+                ? getConnection().getContext()
                         .getConfigValue(ConfigConstants.IGNORE_INVALID_MEMBERS, ConfigConstants.IGNORE_INVALID_MEMBERS_DEFAULT_VALUE, Boolean.class)
-                : ((RolapCube) getCube()).getContext()
+                : getConnection().getContext()
                 .getConfigValue(ConfigConstants.IGNORE_INVALID_MEMBERS_DURING_QUERY, ConfigConstants.IGNORE_INVALID_MEMBERS_DURING_QUERY_DEFAULT_VALUE, Boolean.class));
     }
 
@@ -2443,16 +2442,16 @@ public class QueryImpl extends AbstractQueryPart implements Query {
     }
 
     private Member getRolapMember(Member member) {
-        if(member == null || !(member instanceof mondrian.rolap.RolapHierarchy.LimitedRollupMember)) {
+        if(member == null || !(member instanceof LimitedMember)) {
             return member;
         }
         else {
-            return ((RolapHierarchy.LimitedRollupMember)member).getSourceMember();
+            return ((LimitedMember)member).getMember();
         }
     }
 
     private Member getSubcubeMember(Member member, boolean addNullMember) {
-        Hierarchy hierarchy = ((RolapMember)member).getHierarchy();
+        Hierarchy hierarchy = member.getHierarchy();
         if(this.subcubeHierarchies.containsKey(hierarchy)) {
             HashMap<Member, Member> subcubeMembers = this.subcubeHierarchies.get(hierarchy);
             if(subcubeMembers.containsKey(member)) {

@@ -52,6 +52,7 @@ import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.LevelType;
+import org.eclipse.daanse.olap.api.element.LimitedMember;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.element.OlapElement;
@@ -1435,7 +1436,7 @@ public class RolapHierarchy extends HierarchyBase {
      *
      * @see org.eclipse.daanse.olap.api.access.MappingRole.RollupPolicy
      */
-    public static class LimitedRollupMember extends RolapCubeMember {
+    public static class LimitedRollupMember extends RolapCubeMember implements LimitedMember{
         public final RolapMember member;
         private final Expression exp;
         final HierarchyAccess hierarchyAccess;
@@ -1487,6 +1488,16 @@ public class RolapHierarchy extends HierarchyBase {
         }
 
         public RolapMember getSourceMember() { return this.member; }
+
+        @Override
+        public Member getMember() {
+            return member;
+        }
+
+        @Override
+        public HierarchyAccess getHierarchyAccess() {
+            return hierarchyAccess;
+        }
     }
 
     /**

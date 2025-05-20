@@ -114,8 +114,8 @@ public class RolapMemberBase
      * @param memberType Type of member
      */
     protected RolapMemberBase(
-        RolapMember parentMember,
-        RolapLevel level,
+        Member parentMember,
+        Level level,
         Object key,
         String name,
         MemberType memberType)

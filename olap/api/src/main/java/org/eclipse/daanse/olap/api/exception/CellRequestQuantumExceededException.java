@@ -7,7 +7,7 @@
 * Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
 */
 
-package mondrian.rolap.agg;
+package org.eclipse.daanse.olap.api.exception;
 
 /**
  * Signals that there are enough outstanding cell requests that it is

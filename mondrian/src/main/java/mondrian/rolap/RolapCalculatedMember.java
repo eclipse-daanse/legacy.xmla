@@ -18,7 +18,6 @@ import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.query.component.FormulaImpl;
 
 import mondrian.olap.StandardProperty;
-import mondrian.olap.AbstractProperty;
 import mondrian.olap.Util;
 
 /**

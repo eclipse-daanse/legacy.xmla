@@ -26,8 +26,6 @@ import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
 
 import mondrian.olap.AbstractProperty;
 import mondrian.olap.StandardProperty;
-import mondrian.rolap.RolapLevel;
-import mondrian.rolap.RolapMember;
 import mondrian.rolap.RolapMemberBase;
 import mondrian.rolap.RolapUtil;
 
@@ -53,8 +51,8 @@ public class VisualTotalMember  extends RolapMemberBase {
         final Expression exp)
     {
         super(
-            (RolapMember) member.getParentMember(),
-            (RolapLevel) member.getLevel(),
+            member.getParentMember(),
+            member.getLevel(),
             RolapUtil.sqlNullValue, name, member.getMemberType() ==  MemberType.ALL ? MemberType.ALL : MemberType.FORMULA);
         this.member = member;
         this.caption = caption;

@@ -30,8 +30,6 @@ import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 
-import mondrian.rolap.RolapEvaluator;
-
 public class ElevatorSimplifyer {
 	/**
 	 * Returns a simplified evalator whose context is the same for every dimension
@@ -55,7 +53,7 @@ public class ElevatorSimplifyer {
 		}
 		int changeCount = 0;
 		Evaluator ev = evaluator;
-		final List<Hierarchy> hierarchies = ((RolapEvaluator) evaluator).getCube().getHierarchies();
+		final List<Hierarchy> hierarchies = evaluator.getCube().getHierarchies();
 		for (final Hierarchy hierarchy : hierarchies) {
 			final Member member = ev.getContext(hierarchy);
 			if (member.isAll() || calc.dependsOn(hierarchy)) {
