@@ -413,8 +413,8 @@ class SqlConstraintUtilsTest {
         final QueryAxis querySlicerAxis = query.getSlicerAxis();
         final Member slicerMember =
             ((MemberExpression)querySlicerAxis.getSet()).getMember();
-        final RolapHierarchy slicerHierarchy =
-            ((RolapCube)query.getCube()).getTimeHierarchy(null);
+        final Hierarchy slicerHierarchy =
+            query.getCube().getTimeHierarchy(null);
 
         final ExecutionImpl execution = new ExecutionImpl(query.getStatement(), Optional.empty());
         final RolapEvaluatorRoot rolapEvaluatorRoot =
@@ -635,8 +635,8 @@ class SqlConstraintUtilsTest {
       final QueryAxis querySlicerAxis = query.getSlicerAxis();
       final Member slicerMember =
           ((MemberExpression)querySlicerAxis.getSet()).getMember();
-      final RolapHierarchy slicerHierarchy =
-          ((RolapCube)query.getCube()).getTimeHierarchy(null);
+      final Hierarchy slicerHierarchy =
+          query.getCube().getTimeHierarchy(null);
 
       final ExecutionImpl execution = new ExecutionImpl(query.getStatement(), Optional.empty());
       final RolapEvaluatorRoot rolapEvaluatorRoot =

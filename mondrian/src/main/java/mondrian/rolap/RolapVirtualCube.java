@@ -50,6 +50,11 @@ import mondrian.olap.Util;
 public class RolapVirtualCube extends RolapCube implements VirtualCube {
 
     /**
+     * Refers {@link RolapCubeUsages} if this is a virtual cube
+     */
+    private RolapCubeUsages cubeUsages;
+
+    /**
      * Creates a <code>RolapCube</code> from a virtual cube.
      */
     RolapVirtualCube(RolapCatalog catalog, CatalogMapping catalogMapping, VirtualCubeMapping virtualCubeMapping,
@@ -333,4 +338,28 @@ public class RolapVirtualCube extends RolapCube implements VirtualCube {
         }
         return false;
     }
+    
+
+    /**
+     * This method tells us if unrelated dimensions to measures from
+     * the input base cube should be pushed to default member or not
+     * during aggregation.
+     * @param baseCubeName name of the base cube for which we want
+     * to check this property
+     * @return boolean
+     */
+    @Override
+    public boolean shouldIgnoreUnrelatedDimensions(String baseCubeName) {
+        return cubeUsages != null
+            && cubeUsages.shouldIgnoreUnrelatedDimensions(baseCubeName);
+    }
+
+    public RolapCubeUsages getCubeUsages() {
+        return cubeUsages;
+    }
+
+    public void setCubeUsages(RolapCubeUsages cubeUsages) {
+        this.cubeUsages = cubeUsages;
+    }
+
 }

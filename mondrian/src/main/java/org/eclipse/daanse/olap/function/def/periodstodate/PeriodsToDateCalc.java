@@ -25,16 +25,15 @@ import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedT
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 
 import mondrian.olap.fun.FunUtil;
-import mondrian.rolap.RolapHierarchy;
 
 public class PeriodsToDateCalc extends AbstractProfilingNestedTupleListCalc {
 
     private static final String TIMING_NAME = PeriodsToDateFunDef.class.getSimpleName();
 
-    private final RolapHierarchy timeHierarchy;
+    private final Hierarchy timeHierarchy;
 
     public PeriodsToDateCalc(Type type, LevelCalc levelCalc, MemberCalc memberCalc,
-            final RolapHierarchy timeHierarchy) {
+            final Hierarchy timeHierarchy) {
         super(type, levelCalc, memberCalc);
         this.timeHierarchy = timeHierarchy;
     }

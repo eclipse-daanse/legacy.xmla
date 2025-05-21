@@ -44,6 +44,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.MemberExpression;
+import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
 import org.eclipse.daanse.olap.function.def.member.validmeasure.ValidMeasureFunDef;
@@ -1910,7 +1911,7 @@ public class SqlConstraintUtils {
 
   public static boolean containsValidMeasure( Expression... expressions ) {
     for ( Expression expression : expressions ) {
-      if ( expression instanceof ResolvedFunCallImpl fun ) {
+      if ( expression instanceof ResolvedFunCall fun ) {
         return fun.getFunDef() instanceof ValidMeasureFunDef || containsValidMeasure( fun.getArgs() );
       }
     }

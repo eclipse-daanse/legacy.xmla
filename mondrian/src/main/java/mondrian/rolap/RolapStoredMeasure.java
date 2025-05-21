@@ -27,10 +27,6 @@ import org.eclipse.daanse.olap.api.element.StoredMeasure;
  * @since 10 August, 2001
  */
 public interface RolapStoredMeasure extends RolapMeasure, StoredMeasure {
-    /**
-     * Returns the cube this measure belongs to.
-     */
-    RolapCube getCube();
 
     /**
      * Returns the column which holds the value of the measure.
@@ -49,4 +45,10 @@ public interface RolapStoredMeasure extends RolapMeasure, StoredMeasure {
      * it somewhere else.
      */
     Object getStarMeasure();
+    
+    /**
+     * Returns the cube this measure belongs to.
+     */
+    RolapCube getCube();
+
 }

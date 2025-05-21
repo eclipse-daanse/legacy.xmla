@@ -27,7 +27,7 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 
-import mondrian.rolap.RolapEvaluator;
+
 
 public class NonEmptyCrossJoinCalc extends AbstractProfilingNestedTupleListCalc{
     private ResolvedFunCall call;
@@ -60,7 +60,7 @@ public class NonEmptyCrossJoinCalc extends AbstractProfilingNestedTupleListCalc{
         try {
             evaluator.setNonEmpty(true);
             for (Member member
-                : ((RolapEvaluator) evaluator).getSlicerMembers())
+                : evaluator.getSlicerMembers())
             {
                 if (getType().getElementType().usesHierarchy(
                         member.getHierarchy(), true))

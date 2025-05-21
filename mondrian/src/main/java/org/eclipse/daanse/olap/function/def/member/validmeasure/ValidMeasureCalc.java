@@ -25,17 +25,16 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.calc.TupleCalc;
+import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.PhysicalCube;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapPhysicalCube;
-import mondrian.rolap.RolapVirtualCube;
 import mondrian.rolap.RolapVirtualCubeMeasure;
 
 public class ValidMeasureCalc extends AbstractProfilingNestedUnknownCalc {
@@ -52,8 +51,8 @@ public class ValidMeasureCalc extends AbstractProfilingNestedUnknownCalc {
 
     @Override
     public Object evaluate(Evaluator evaluator) {
-        RolapCube baseCube;
-        RolapCube virtualCube = (RolapCube) evaluator.getCube();
+        Cube baseCube;
+        Cube virtualCube = evaluator.getCube();
         final List<Member> memberList = getCalcsMembers(evaluator);
 
         if (memberList == null || memberList.size() == 0) {
@@ -61,7 +60,7 @@ public class ValidMeasureCalc extends AbstractProfilingNestedUnknownCalc {
           return null;
         }
 
-        if (virtualCube instanceof RolapPhysicalCube) {
+        if (virtualCube instanceof PhysicalCube) {
             // this is not a virtual cube,
             // there's nothing for ValidMeasure to do.
             // just evaluate sub-expression
@@ -162,8 +161,8 @@ public class ValidMeasureCalc extends AbstractProfilingNestedUnknownCalc {
     }
 
     private List<Dimension> getDimensionsToForceToAllLevel(
-        RolapCube virtualCube,
-        RolapCube baseCube,
+        Cube virtualCube,
+        Cube baseCube,
         List<Member> memberList)
     {
         List<Dimension> vMinusBDimensions = new ArrayList<>();

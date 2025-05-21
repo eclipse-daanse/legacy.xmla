@@ -26,7 +26,6 @@ import org.eclipse.daanse.olap.api.result.Result;
 import mondrian.olap.ConnectionBase;
 import mondrian.olap.QueryCanceledException;
 import mondrian.olap.QueryTimeoutException;
-import mondrian.rolap.RolapConnection;
 import mondrian.server.LocusImpl;
 
 public class StatementImpl extends mondrian.server.StatementImpl implements Statement {
@@ -196,7 +195,7 @@ public class StatementImpl extends mondrian.server.StatementImpl implements Stat
     private Query parseQuery(String mdx) {
         try {
             return LocusImpl.execute(
-                (RolapConnection) connection,
+                connection,
                 "Parsing query",
                 new LocusImpl.Action<Query>() {
                     @Override
@@ -238,7 +237,7 @@ public class StatementImpl extends mondrian.server.StatementImpl implements Stat
     }
 
     @Override
-    public RolapConnection getMondrianConnection() {
-        return (RolapConnection) connection;
+    public Connection getMondrianConnection() {
+        return connection;
     }
 }

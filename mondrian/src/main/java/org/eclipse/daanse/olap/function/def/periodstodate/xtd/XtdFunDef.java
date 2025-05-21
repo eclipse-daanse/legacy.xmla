@@ -49,8 +49,6 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.Util;
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapHierarchy;
 
 public class XtdFunDef extends AbstractFunctionDefinition {
 	
@@ -69,7 +67,7 @@ public class XtdFunDef extends AbstractFunctionDefinition {
 		if (args.length == 0) {
 			// With no args, the default implementation cannot
 			// guess the hierarchy.
-			RolapHierarchy defaultTimeHierarchy = ((RolapCube) validator.getQuery().getCube())
+			Hierarchy defaultTimeHierarchy = validator.getQuery().getCube()
 					.getTimeHierarchy(getFunctionMetaData().operationAtom().name());
 			return new SetType(MemberType.forHierarchy(defaultTimeHierarchy));
 		}

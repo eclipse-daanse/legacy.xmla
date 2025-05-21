@@ -53,6 +53,7 @@ import mondrian.rolap.CacheControlImpl;
 import mondrian.rolap.CacheKey;
 import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapCatalogCache;
+import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.RolapStoredMeasure;
 import mondrian.rolap.RolapUtil;

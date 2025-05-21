@@ -14,6 +14,7 @@ import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.LevelCalc;
 import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
+import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
@@ -23,8 +24,7 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
 import mondrian.olap.Util;
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapHierarchy;
+
 
 /**
  * Definition of the <code>PeriodsToDate</code> MDX function.
@@ -43,7 +43,7 @@ class PeriodsToDateFunDef extends AbstractFunctionDefinition {
         if (args.length == 0) {
             // With no args, the default implementation cannot
             // guess the hierarchy.
-            RolapHierarchy defaultTimeHierarchy = ((RolapCube) validator.getQuery().getCube())
+            Hierarchy defaultTimeHierarchy = validator.getQuery().getCube()
                     .getTimeHierarchy(getFunctionMetaData().operationAtom().name());
             return new SetType(MemberType.forHierarchy(defaultTimeHierarchy));
         }
@@ -67,7 +67,7 @@ class PeriodsToDateFunDef extends AbstractFunctionDefinition {
     public Calc<?> compileCall(ResolvedFunCall call, ExpressionCompiler compiler) {
         final LevelCalc levelCalc = call.getArgCount() > 0 ? compiler.compileLevel(call.getArg(0)) : null;
         final MemberCalc memberCalc = call.getArgCount() > 1 ? compiler.compileMember(call.getArg(1)) : null;
-        final RolapHierarchy timeHierarchy = levelCalc == null ? ((RolapCube) compiler.getEvaluator().getCube())
+        final Hierarchy timeHierarchy = levelCalc == null ? compiler.getEvaluator().getCube()
                 .getTimeHierarchy(getFunctionMetaData().operationAtom().name()) : null;
 
         return new PeriodsToDateCalc(call.getType(), levelCalc, memberCalc, timeHierarchy);

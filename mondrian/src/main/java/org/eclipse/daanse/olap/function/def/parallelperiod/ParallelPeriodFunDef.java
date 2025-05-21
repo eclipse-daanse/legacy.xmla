@@ -30,9 +30,6 @@ import org.eclipse.daanse.olap.calc.base.constant.ConstantIntegerCalc;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc;
 
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapHierarchy;
-
 public class ParallelPeriodFunDef extends AbstractFunctionDefinition {
 
         public ParallelPeriodFunDef(FunctionMetaData functionMetaData) {
@@ -45,8 +42,8 @@ public class ParallelPeriodFunDef extends AbstractFunctionDefinition {
                 // With no args, the default implementation cannot
                 // guess the hierarchy, so we supply the Time
                 // dimension.
-                RolapHierarchy defaultTimeHierarchy =
-                    ((RolapCube) validator.getQuery().getCube()).getTimeHierarchy(
+                Hierarchy defaultTimeHierarchy =
+                    validator.getQuery().getCube().getTimeHierarchy(
                             getFunctionMetaData().operationAtom().name());
                 return MemberType.forHierarchy(defaultTimeHierarchy);
             }
@@ -89,8 +86,8 @@ public class ParallelPeriodFunDef extends AbstractFunctionDefinition {
                 }
                 break;
             default:
-                final RolapHierarchy timeHierarchy =
-                    ((RolapCube) compiler.getEvaluator().getCube())
+                final Hierarchy timeHierarchy =
+                    compiler.getEvaluator().getCube()
                         .getTimeHierarchy(getFunctionMetaData().operationAtom().name());
                 memberCalc =
                     new HierarchyCurrentMemberFixedCalc(

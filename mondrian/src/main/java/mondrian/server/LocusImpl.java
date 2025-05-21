@@ -9,6 +9,7 @@
 
 package mondrian.server;
 
+import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
@@ -76,7 +77,7 @@ public class LocusImpl implements Locus {
     }
 
     public static <T> T execute(
-        RolapConnection connection,
+        Connection connection,
         String component,
         Action<T> action)
     {

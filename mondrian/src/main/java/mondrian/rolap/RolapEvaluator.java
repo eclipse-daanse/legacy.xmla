@@ -38,6 +38,7 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
+import org.eclipse.daanse.olap.api.element.VirtualCube;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Query;
@@ -287,7 +288,7 @@ public boolean needToReturnNullForUnrelatedDimension( Member[] members ) {
       return false;
     }
     RolapCube virtualCube = getCube();
-    if ( virtualCube.shouldIgnoreUnrelatedDimensions( baseCube.getName() ) ) {
+    if ( virtualCube instanceof VirtualCube vc && vc.shouldIgnoreUnrelatedDimensions( baseCube.getName() ) ) {
       return false;
     }
     Set<Dimension> nonJoiningDimensions = baseCube.nonJoiningDimensions( members );
@@ -512,10 +513,12 @@ public final int hashCode() {
    *
    * @return slicerMembers
    */
+  @Override
   public final List<Member> getSlicerMembers() {
     return slicerMembers;
   }
 
+  @Override
   public final Map<Hierarchy, Set<Member>> getSlicerMembersByHierarchy() {
     return slicerMembersByHierarchy;
   }
@@ -1370,11 +1373,6 @@ public final void setEvalAxes( boolean evalAxes ) {
    *
    * @return boolean
    */
-  @Override
-public boolean shouldIgnoreUnrelatedDimensions() {
-    return getCube().shouldIgnoreUnrelatedDimensions( getMeasureCube().getName() );
-  }
-
   private enum Command {
     SET_CONTEXT( 2 ) {
       @Override

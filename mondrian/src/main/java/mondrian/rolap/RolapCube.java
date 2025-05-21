@@ -190,11 +190,6 @@ public abstract class RolapCube extends CubeBase {
     private final Map<Hierarchy, HierarchyUsage> firstUsageMap =
         new HashMap<>();
 
-    /**
-     * Refers {@link RolapCubeUsages} if this is a virtual cube
-     */
-    private RolapCubeUsages cubeUsages;
-
     public RolapBaseCubeMeasure factCountMeasure;
 
     final List<RolapHierarchy> hierarchyList =
@@ -339,14 +334,6 @@ public abstract class RolapCube extends CubeBase {
 
     public List<Formula> getCalculatedMemberList() {
         return calculatedMemberList;
-    }
-
-    public RolapCubeUsages getCubeUsages() {
-        return cubeUsages;
-    }
-
-    public void setCubeUsages(RolapCubeUsages cubeUsages) {
-        this.cubeUsages = cubeUsages;
     }
 
     public List<Formula> getNamedSetList() {
@@ -1625,19 +1612,6 @@ public abstract class RolapCube extends CubeBase {
     }
 
     /**
-     * This method tells us if unrelated dimensions to measures from
-     * the input base cube should be pushed to default member or not
-     * during aggregation.
-     * @param baseCubeName name of the base cube for which we want
-     * to check this property
-     * @return boolean
-     */
-    public boolean shouldIgnoreUnrelatedDimensions(String baseCubeName) {
-        return cubeUsages != null
-            && cubeUsages.shouldIgnoreUnrelatedDimensions(baseCubeName);
-    }
-
-    /**
      * Returns a list of all hierarchies in this cube, in order of dimension.
      *
      * <p>TODO: Make this method return RolapCubeHierarchy, when the measures
@@ -1970,7 +1944,8 @@ public abstract class RolapCube extends CubeBase {
      * Returns the time hierarchy for this cube. If there is no time hierarchy,
      * throws.
      */
-    public RolapHierarchy getTimeHierarchy(String funName) {
+    @Override
+    public Hierarchy getTimeHierarchy(String funName) {
         for (RolapHierarchy hierarchy : hierarchyList) {
             if (hierarchy.getDimension().getDimensionType()
                 == DimensionType.TIME_DIMENSION)

@@ -29,7 +29,6 @@ import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapCubeLevel;
 import mondrian.rolap.RolapCubeMember;
 import mondrian.rolap.RolapEvaluator;
-import mondrian.rolap.RolapMember;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.RolapStoredMeasure;
 
@@ -42,7 +41,7 @@ public class ScenarioImpl implements Scenario {
 
     private String cubeName;
 
-    private RolapMember member;
+    private Member member;
 
     private static int nextId;
 
@@ -204,7 +203,7 @@ public class ScenarioImpl implements Scenario {
      * @param member Wrapper member
      * @return Wrapped scenario
      */
-    public static Scenario forMember(final RolapMember member) {
+    public static Scenario forMember(final Member member) {
         if (isScenario(member.getHierarchy())) {
             final Formula formula = ((RolapCalculatedMember) member)
                 .getFormula();
@@ -339,7 +338,7 @@ public class ScenarioImpl implements Scenario {
      *
      * @return Scenario member
      */
-    public RolapMember getMember() {
+    public Member getMember() {
         return member;
     }
 

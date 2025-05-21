@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
@@ -100,9 +101,9 @@ class SqlTupleReaderTest {
     Map<String, RolapSqlExpression> propertiesAgg = new HashMap<>();
     propertiesAgg.put( propertyName, expression );
     Class[] constructorArgsClasses =
-      { mondrian.rolap.aggmatcher.AggStar.Table.class, String.class, RolapSqlExpression.class, int.class,
+      { mondrian.rolap.aggmatcher.AggStar.Table.class, String.class, SqlExpression.class, int.class,
         RolapStar.Column.class, boolean.class,
-        RolapSqlExpression.class, RolapSqlExpression.class, Map.class };
+        SqlExpression.class, SqlExpression.class, Map.class };
     Object[] constructorArgs =
       { factTable, "name", expression, 0, starColumn, true,
     	  expression, null,

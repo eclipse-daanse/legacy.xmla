@@ -15,7 +15,6 @@ package org.eclipse.daanse.olap.function.def.crossjoin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +56,6 @@ import mondrian.olap.ResultStyleException;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
 import mondrian.olap.fun.MemberExtractingVisitor;
-import mondrian.rolap.RolapEvaluator;
 import mondrian.rolap.SqlConstraintUtils;
 import mondrian.server.LocusImpl;
 import mondrian.util.CancellationChecker;
@@ -554,10 +552,10 @@ public class CrossJoinFunDef extends AbstractFunctionDefinition {
                 }
             }
 
-            Map<Hierarchy, Set<Member>> mapOfSlicerMembers = new HashMap<>();
-            if (evaluator instanceof RolapEvaluator rev) {
-                mapOfSlicerMembers = rev.getSlicerMembersByHierarchy();
-            }
+            Map<Hierarchy, Set<Member>> mapOfSlicerMembers = evaluator.getSlicerMembersByHierarchy();
+            //if (evaluator instanceof RolapEvaluator rev) {
+            //    mapOfSlicerMembers = evaluator.getSlicerMembersByHierarchy();
+            //}
 
             // Now we have the non-List-Members, but some of them may not be
             // All Members (default Member need not be the All Member) and

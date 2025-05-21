@@ -32,6 +32,8 @@ package org.eclipse.daanse.olap.api;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.daanse.olap.api.calc.compiler.ParameterSlot;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
@@ -368,15 +370,6 @@ public interface Evaluator{
     Evaluator pushAggregation(List<List<Member>> list);
 
     /**
-     * Returns whether hierarchies unrelated to the measure in the current
-     * context should be ignored.
-     *
-     * @return whether hierarchies unrelated to the measure in the current
-     *     context should be ignored
-     */
-    boolean shouldIgnoreUnrelatedDimensions();
-
-    /**
      * Returns the base (non-virtual) cube that the current measure in the
      * context belongs to.
      * @return Cube
@@ -445,6 +438,13 @@ public interface Evaluator{
      * @return query timing context
      */
     QueryTiming getTiming();
+
+    /**
+     * Return the list of slicer members in the current evaluator context.
+     */
+    List<Member> getSlicerMembers();
+
+    Map<Hierarchy, Set<Member>> getSlicerMembersByHierarchy();
 
     /**
      * Interface for evaluating a particular named set.

@@ -19,6 +19,7 @@ import org.eclipse.daanse.olap.api.calc.LevelCalc;
 import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.element.Dimension;
+import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
@@ -28,8 +29,6 @@ import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc;
 
 import mondrian.olap.exceptions.FunctionMbrAndLevelHierarchyMismatchException;
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapHierarchy;
 
 public class OpeningClosingPeriodFunDef extends AbstractFunctionDefinition {
     private final boolean opening;
@@ -50,8 +49,8 @@ public class OpeningClosingPeriodFunDef extends AbstractFunctionDefinition {
             // With no args, the default implementation cannot
             // guess the hierarchy, so we supply the Time
             // dimension.
-            RolapHierarchy defaultTimeHierarchy =
-                ((RolapCube) validator.getQuery().getCube()).getTimeHierarchy(
+            Hierarchy defaultTimeHierarchy =
+                validator.getQuery().getCube().getTimeHierarchy(
                         getFunctionMetaData().operationAtom().name());
             return MemberType.forHierarchy(defaultTimeHierarchy);
         }
@@ -63,11 +62,11 @@ public class OpeningClosingPeriodFunDef extends AbstractFunctionDefinition {
         final Expression[] args = call.getArgs();
         final LevelCalc levelCalc;
         final MemberCalc memberCalc;
-        RolapHierarchy defaultTimeHierarchy = null;
+        Hierarchy defaultTimeHierarchy = null;
         switch (args.length) {
         case 0:
             defaultTimeHierarchy =
-                ((RolapCube) compiler.getEvaluator().getCube())
+                compiler.getEvaluator().getCube()
                     .getTimeHierarchy(getFunctionMetaData().operationAtom().name());
             memberCalc =
                 new HierarchyCurrentMemberFixedCalc(
@@ -77,7 +76,7 @@ public class OpeningClosingPeriodFunDef extends AbstractFunctionDefinition {
             break;
         case 1:
             defaultTimeHierarchy =
-                ((RolapCube) compiler.getEvaluator().getCube())
+                compiler.getEvaluator().getCube()
                     .getTimeHierarchy(getFunctionMetaData().operationAtom().name());
             levelCalc = compiler.compileLevel(call.getArg(0));
             memberCalc =

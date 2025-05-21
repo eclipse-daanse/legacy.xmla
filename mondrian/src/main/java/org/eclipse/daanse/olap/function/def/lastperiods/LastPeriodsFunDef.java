@@ -27,9 +27,7 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
-
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapHierarchy;
+import org.eclipse.daanse.olap.api.element.Hierarchy;
 
 public class LastPeriodsFunDef extends AbstractFunctionDefinition {
 
@@ -42,7 +40,7 @@ public class LastPeriodsFunDef extends AbstractFunctionDefinition {
         if (args.length == 1) {
             // If Member is not specified,
             // it is Time.CurrentMember.
-            RolapHierarchy defaultTimeHierarchy = ((RolapCube) validator.getQuery().getCube())
+            Hierarchy defaultTimeHierarchy = validator.getQuery().getCube()
                     .getTimeHierarchy(getFunctionMetaData().operationAtom().name());
             return new SetType(MemberType.forHierarchy(defaultTimeHierarchy));
         } else {
@@ -58,7 +56,7 @@ public class LastPeriodsFunDef extends AbstractFunctionDefinition {
         Expression[] args = call.getArgs();
         final MemberCalc memberCalc;
         if (args.length == 1) {
-            final RolapHierarchy timeHierarchy = ((RolapCube) compiler.getEvaluator().getCube())
+            final Hierarchy timeHierarchy = compiler.getEvaluator().getCube()
                     .getTimeHierarchy(getFunctionMetaData().operationAtom().name());
             memberCalc = new HierarchyCurrentMemberFixedCalc(call.getType(), timeHierarchy);
         } else {

@@ -13,7 +13,6 @@ import org.eclipse.daanse.olap.api.result.CellSetAxisMetaData;
 import org.eclipse.daanse.olap.api.result.IAxis;
 import org.eclipse.daanse.olap.api.result.Position;
 
-import mondrian.rolap.RolapConnection;
 import mondrian.server.LocusImpl;
 
 public class CellSetAxisImpl implements CellSetAxis {
@@ -66,7 +65,7 @@ public class CellSetAxisImpl implements CellSetAxis {
             @Override
             public int size() {
                 return LocusImpl.execute(
-                    (RolapConnection) cellSet.getStatement().getConnection(),
+                    cellSet.getStatement().getConnection(),
                     "Getting List<Position>.size", new LocusImpl.Action<Integer>() {
                         @Override
                         public Integer execute() {

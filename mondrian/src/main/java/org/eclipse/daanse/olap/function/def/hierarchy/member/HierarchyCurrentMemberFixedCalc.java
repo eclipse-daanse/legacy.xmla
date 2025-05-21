@@ -20,17 +20,15 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
 
-import mondrian.rolap.RolapHierarchy;
-
 public class HierarchyCurrentMemberFixedCalc extends AbstractProfilingNestedMemberCalc {
     // getContext works faster if we give RolapHierarchy rather than
     // Hierarchy
-    private final RolapHierarchy hierarchy;
+    private final Hierarchy hierarchy;
 
     public HierarchyCurrentMemberFixedCalc(Type type, Hierarchy hierarchy) {
         super(type, new Calc[] {});
         assert hierarchy != null;
-        this.hierarchy = (RolapHierarchy) hierarchy;
+        this.hierarchy = hierarchy;
     }
 
     @Override

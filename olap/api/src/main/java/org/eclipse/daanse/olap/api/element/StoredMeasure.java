@@ -17,4 +17,9 @@ public interface StoredMeasure extends Measure {
 
     String getAggregateFunction();
 
+    /**
+     * Returns the cube this measure belongs to.
+     */
+    Cube getCube();
+
 }

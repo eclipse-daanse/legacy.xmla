@@ -30,8 +30,6 @@ import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 
-import mondrian.rolap.RolapMember;
-
 public class RangeFunDef extends AbstractFunctionDefinition {
 
     static OperationAtom functionAtom = new InfixOperationAtom(":");
@@ -75,10 +73,10 @@ public class RangeFunDef extends AbstractFunctionDefinition {
         if (members[0] == null && members[1] == null) {
             throw new OlapRuntimeException(twoNullsNotSupported);
         } else if (members[0] == null) {
-            Member nullMember = ((RolapMember) members[1].evaluate(null)).getHierarchy().getNullMember();
+            Member nullMember = members[1].evaluate(null).getHierarchy().getNullMember();
             members[0] = ConstantMemberCalc.of(nullMember);
         } else if (members[1] == null) {
-            Member nullMember = ((RolapMember) members[0].evaluate(null)).getHierarchy().getNullMember();
+            Member nullMember = members[0].evaluate(null).getHierarchy().getNullMember();
             members[1] = ConstantMemberCalc.of(nullMember);
         }
 

@@ -19,7 +19,6 @@ import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
 
 import mondrian.olap.ExecuteDurationUtil;
 import mondrian.rolap.RolapCell;
-import mondrian.rolap.RolapConnection;
 import mondrian.server.ExecutionImpl;
 
 public class CellSetImpl extends ExecutionImpl implements CellSet {
@@ -130,7 +129,7 @@ public class CellSetImpl extends ExecutionImpl implements CellSet {
     @Override
     public void execute() {
         result =
-            ((RolapConnection) statement.getConnection()).execute(
+            statement.getConnection().execute(
                 this);
 
         // initialize axes

@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.olap.exceptions.CurrentMemberWithCompoundSlicerException;
-import mondrian.rolap.RolapEvaluator;
 
 public class HierarchyCurrentMemberCalc extends AbstractProfilingNestedMemberCalc {
     private static final Logger LOGGER = LoggerFactory.getLogger(HierarchyCurrentMemberCalc.class);
@@ -52,7 +51,7 @@ public class HierarchyCurrentMemberCalc extends AbstractProfilingNestedMemberCal
     }
 
     public static void validateSlicerMembers(Hierarchy hierarchy, Evaluator evaluator) {
-        if (evaluator instanceof RolapEvaluator rev) {
+        //if (evaluator instanceof RolapEvaluator rev) {
 
             String alertValue = evaluator.getCatalogReader().getContext()
                     .getConfigValue(ConfigConstants.CURRENT_MEMBER_WITH_COMPOUND_SLICER_ALERT, ConfigConstants.CURRENT_MEMBER_WITH_COMPOUND_SLICER_ALERT_DEFAULT_VALUE, String.class);
@@ -61,7 +60,7 @@ public class HierarchyCurrentMemberCalc extends AbstractProfilingNestedMemberCal
                 return; // No validation
             }
 
-            Map<Hierarchy, Set<Member>> map = rev.getSlicerMembersByHierarchy();
+            Map<Hierarchy, Set<Member>> map = evaluator.getSlicerMembersByHierarchy();
             Set<Member> members = map.get(hierarchy);
 
             if (members != null && members.size() > 1) {
@@ -73,7 +72,7 @@ public class HierarchyCurrentMemberCalc extends AbstractProfilingNestedMemberCal
                     throw new CurrentMemberWithCompoundSlicerException(hierarchy.getUniqueName());
                 }
             }
-        }
+        //}
     }
 
 }

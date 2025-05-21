@@ -113,7 +113,7 @@ public RolapEvaluatorRoot( Statement statement ) {
       assert defaultMember != null;
 
       if ( ScenarioImpl.isScenario( hierarchy ) && connection.getScenario() != null ) {
-        defaultMember = ( (ScenarioImpl) connection.getScenario() ).getMember();
+        defaultMember = (RolapMember) ( (ScenarioImpl) connection.getScenario() ).getMember();
       }
 
       // This fragment is a concurrency bottleneck, so use a cache of

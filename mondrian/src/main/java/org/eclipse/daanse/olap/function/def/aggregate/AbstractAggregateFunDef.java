@@ -23,9 +23,12 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIteratorCalc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
+import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.StoredMeasure;
+import org.eclipse.daanse.olap.api.element.VirtualCube;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.DelegatingTupleList;
@@ -37,10 +40,6 @@ import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
 import mondrian.olap.ResourceLimitExceededException;
 import mondrian.olap.SystemWideProperties;
 import mondrian.olap.fun.FunUtil;
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapMember;
-import mondrian.rolap.RolapStoredMeasure;
-import mondrian.rolap.RolapVirtualCube;
 
 /**
  * Abstract base class for all aggregate functions (<code>Aggregate</code>,
@@ -165,21 +164,21 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
             return tuplesForAggregation;
         }
 
-        RolapMember measure = AbstractAggregateFunDef.getRolapMeasureForUnrelatedDimCheck(
+        Member measure = AbstractAggregateFunDef.getRolapMeasureForUnrelatedDimCheck(
             evaluator, tuplesForAggregation);
 
         if (measure.isCalculated()) {
             return tuplesForAggregation;
         }
 
-        RolapCube virtualCube = (RolapCube) evaluator.getCube();
-        if (virtualCube instanceof RolapVirtualCube) {
+        Cube virtualCube = evaluator.getCube();
+        if (virtualCube instanceof VirtualCube vc) {
             // this should be a safe cast since we've eliminated calcs above
-            RolapCube baseCube = ((RolapStoredMeasure)measure).getCube();
+            Cube baseCube = ((StoredMeasure)measure).getCube();
             if (baseCube == null) {
                 return tuplesForAggregation;
             }
-            if (virtualCube.shouldIgnoreUnrelatedDimensions(baseCube.getName()))
+            if (vc.shouldIgnoreUnrelatedDimensions(baseCube.getName()))
             {
                 return AbstractAggregateFunDef.ignoreUnrelatedDimensions(
                     tuplesForAggregation, baseCube);
@@ -203,10 +202,10 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
      *      e.g. Aggregate( Crossjoin( {Time.[1997]}, {measures.[Unit Sales]})
      * In both cases the measure(s) will be present in tuplesForAggregation.
      */
-    private static RolapMember getRolapMeasureForUnrelatedDimCheck(
+    private static Member getRolapMeasureForUnrelatedDimCheck(
         Evaluator evaluator, TupleList tuplesForAggregation)
     {
-        RolapMember measure = (RolapMember)evaluator.getMembers()[0];
+        Member measure = evaluator.getMembers()[0];
         if (tuplesForAggregation != null
             && !tuplesForAggregation.isEmpty())
         {
@@ -217,7 +216,7 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
             // function.
             for (Member tupMember : tuplesForAggregation.get(0)) {
                 if (tupMember.isMeasure()) {
-                    measure = (RolapMember)tupMember;
+                    measure = tupMember;
                 }
             }
         }
@@ -235,7 +234,7 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
      */
     private static TupleList ignoreMeasureForNonJoiningDimension(
         TupleList tuplesForAggregation,
-        RolapCube baseCube)
+        Cube baseCube)
     {
         Set<Dimension> nonJoiningDimensions =
             AbstractAggregateFunDef.nonJoiningDimensions(baseCube, tuplesForAggregation);
@@ -256,7 +255,7 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
      */
     private static TupleList ignoreUnrelatedDimensions(
         TupleList tuplesForAggregation,
-        RolapCube baseCube)
+        Cube baseCube)
     {
         Set<Dimension> nonJoiningDimensions =
             AbstractAggregateFunDef.nonJoiningDimensions(baseCube, tuplesForAggregation);
@@ -289,7 +288,7 @@ public abstract class AbstractAggregateFunDef extends AbstractFunctionDefinition
     }
 
     private static Set<Dimension> nonJoiningDimensions(
-        RolapCube baseCube,
+        Cube baseCube,
         TupleList tuplesForAggregation)
     {
         List<Member> tuple = tuplesForAggregation.get(0);

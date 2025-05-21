@@ -132,4 +132,10 @@ public interface Cube extends OlapElement, MetaElement {
 
     List<Map<String, Entry<DataTypeJdbc, Object>>> getAllocationValues(String tupleString, Object value,
             AllocationPolicy allocationPolicy);
+
+    /**
+     * Returns the time hierarchy for this cube. If there is no time hierarchy,
+     * throws.
+     */
+    Hierarchy getTimeHierarchy(String name);
 }
