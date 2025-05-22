@@ -1,5 +1,0 @@
-<factorypath>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/soabase/record-builder/record-builder-processor/37/record-builder-processor-37.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/squareup/javapoet/1.12.1/javapoet-1.12.1.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/io/soabase/record-builder/record-builder-core/37/record-builder-core-37.jar" enabled="true" runInBatchMode="false"/>
-</factorypath>

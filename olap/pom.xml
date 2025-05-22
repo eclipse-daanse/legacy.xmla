@@ -21,7 +21,6 @@
   <packaging>pom</packaging>
   <modules>
     <module>api</module>
-    <module>rolap</module>
     <module>xmla</module>
     <module>documentation</module>
     <module>action</module>
