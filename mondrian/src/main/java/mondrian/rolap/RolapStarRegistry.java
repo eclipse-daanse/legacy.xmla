@@ -34,8 +34,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
+
+import mondrian.rolap.agg.SegmentCacheManager;
 
 /**
  * A registry for {@link RolapStar}s of this Schema.
@@ -65,7 +68,8 @@ public class RolapStarRegistry {
 			// from external cache if needed
 			RolapConnection internalConnection = schema.getInternalConnection();
 			AbstractBasicContext abc = (AbstractBasicContext) internalConnection.getContext();
-			abc.getAggregationManager().getCacheMgr(internalConnection).loadCacheForStar(star);
+			ISegmentCacheManager segmentCacheManager = abc.getAggregationManager().getCacheMgr(internalConnection);
+			((SegmentCacheManager)segmentCacheManager).loadCacheForStar(star);
 		}
 		return star;
 	}

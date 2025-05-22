@@ -42,12 +42,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.daanse.olap.api.CacheControl.CellRegion;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.api.Locus;
-import org.eclipse.daanse.olap.api.CacheControl.CellRegion;
 import org.eclipse.daanse.olap.api.element.Member;
-import org.eclipse.daanse.olap.api.exception.CellRequestQuantumExceededException;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
 import org.eclipse.daanse.olap.api.monitor.event.CellCacheEvent;
@@ -68,7 +68,6 @@ import mondrian.rolap.CacheControlImpl;
 import mondrian.rolap.CacheKey;
 import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapCatalogCache;
-import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.RolapStoredMeasure;
 import mondrian.rolap.RolapUtil;
@@ -265,7 +264,7 @@ import mondrian.util.Pair;
  *
  * @author jhyde
  */
-public class SegmentCacheManager {
+public class SegmentCacheManager implements ISegmentCacheManager {
   private final Handler handler = new Handler();
   private final Actor actor;
   public final Thread thread;
@@ -560,6 +559,7 @@ public class SegmentCacheManager {
         header ) );
   }
 
+  @Override
   public void printCacheState(
     CellRegion region,
     PrintWriter pw,
@@ -572,6 +572,7 @@ public class SegmentCacheManager {
   /**
    * Shuts down this cache manager and all active threads and indexes.
    */
+  @Override
   public void shutdown() {
     execute( new ShutdownCommand() );
     cacheExecutor.shutdown();

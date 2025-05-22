@@ -1,11 +1,26 @@
 /*
-* This software is subject to the terms of the Eclipse Public License v1.0
-* Agreement, available at the following URL:
-* http://www.eclipse.org/legal/epl-v10.html.
-* You must accept the terms of that agreement to use this software.
-*
-* Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
-*/
+ * This software is subject to the terms of the Eclipse Public License v1.0
+ * Agreement, available at the following URL:
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * You must accept the terms of that agreement to use this software.
+ *
+ * Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
+ *
+ * ---- All changes after Fork in 2023 ------------------------
+ *
+ * Project: Eclipse daanse
+ *
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors after Fork in 2023:
+ *   SmartCity Jena - initial
+ */
 
 package mondrian.rolap.agg;
 
@@ -19,6 +34,7 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -87,8 +103,9 @@ class SegmentCacheTest {
         cc.flush(cc.createMeasuresRegion(salesCube));
         Thread.sleep(1000);
 
-        ((AbstractBasicContext)connection.getContext())
-            .getAggregationManager().cacheMgr.segmentCacheWorkers
+        ISegmentCacheManager  segmentCacheManager = ((AbstractBasicContext)connection.getContext())
+            .getAggregationManager().getCacheMgr();
+        ((SegmentCacheManager)segmentCacheManager).segmentCacheWorkers
             .add(testWorker);
 
         final List<SegmentHeader> createdHeaders =
@@ -114,9 +131,11 @@ class SegmentCacheTest {
 
         try {
             // Register our custom listener.
-            ((CompositeSegmentCache)((AbstractBasicContext)connection.getContext())
-                .getAggregationManager().cacheMgr.compositeCache)
+            segmentCacheManager = ((AbstractBasicContext)connection.getContext())
+                    .getAggregationManager().getCacheMgr();
+                ((SegmentCacheManager)segmentCacheManager).compositeCache
                 .addListener(listener);
+
             // Now execute a query and check the events
             executeQuery(connection,
                 "select {[Measures].[Unit Sales]} on columns from [Sales]");
@@ -141,11 +160,11 @@ class SegmentCacheTest {
             assertEquals("FoodMart", deletedHeaders.get(0).schemaName);
             assertEquals("Unit Sales", deletedHeaders.get(0).measureName);
         } finally {
-            ((CompositeSegmentCache)((AbstractBasicContext)connection.getContext())
-            		.getAggregationManager().cacheMgr.compositeCache)
+            segmentCacheManager = ((AbstractBasicContext)connection.getContext())
+                    .getAggregationManager().getCacheMgr();
+            ((SegmentCacheManager)segmentCacheManager).compositeCache
                 .removeListener(listener);
-            ((AbstractBasicContext)connection.getContext())
-                .getAggregationManager().cacheMgr.segmentCacheWorkers
+            ((SegmentCacheManager)segmentCacheManager).segmentCacheWorkers
                 .remove(testWorker);
         }
     }

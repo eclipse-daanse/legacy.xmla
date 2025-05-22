@@ -48,6 +48,7 @@ import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Execution;
+import org.eclipse.daanse.olap.api.IAggregationManager;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Parameter;
@@ -160,8 +161,8 @@ public class RolapResult extends ResultBase {
         .getContext().getConfigValue(ConfigConstants.COMPOUND_SLICER_MEMBER_SOLVE_ORDER, ConfigConstants.COMPOUND_SLICER_MEMBER_SOLVE_ORDER_DEFAULT_VALUE, Integer.class);
     this.point = CellKey.Generator.newCellKey( axes.length );
     AbstractBasicContext abc = (AbstractBasicContext) execution.getMondrianStatement().getMondrianConnection().getContext();
-    final AggregationManager aggMgr = abc.getAggregationManager();
-    this.aggregatingReader = aggMgr.getCacheCellReader();
+    final IAggregationManager aggMgr = abc.getAggregationManager();
+    this.aggregatingReader = ((AggregationManager)aggMgr).getCacheCellReader();
     final int expDeps = execution.getMondrianStatement().getMondrianConnection().getContext().getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class);
     if ( expDeps > 0 ) {
       this.evaluator = new RolapDependencyTestingEvaluator( this, expDeps );

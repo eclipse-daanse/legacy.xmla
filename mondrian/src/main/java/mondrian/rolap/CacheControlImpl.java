@@ -44,7 +44,9 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.eclipse.daanse.olap.api.CacheControl;
+import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Execution;
+import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -71,7 +73,7 @@ import mondrian.util.ArraySortedSet;
  * @since Sep 27, 2006
  */
 public class CacheControlImpl implements CacheControl {
-    private final RolapConnection connection;
+    private final Connection connection;
 
     /**
      * Object to lock before making changes to the member cache.
@@ -98,7 +100,7 @@ public class CacheControlImpl implements CacheControl {
      *
      * @param connection Connection
      */
-    public CacheControlImpl(RolapConnection connection) {
+    public CacheControlImpl(Connection connection) {
         super();
         this.connection = connection;
     }
@@ -274,7 +276,7 @@ public class CacheControlImpl implements CacheControl {
             break;
         }
         if (!containsMeasures(cellRegion)) {
-            for (RolapCube cube : connection.getCatalog().getCubeList()) {
+            for (RolapCube cube : ((RolapConnection)connection).getCatalog().getCubeList()) {
                 flush(
                     createCrossjoinRegion(
                         createMeasuresRegion(cube),
@@ -314,7 +316,7 @@ public class CacheControlImpl implements CacheControl {
         if (connection != null
             && connection.getCatalog() != null)
         {
-            connection.getCatalog().finalCleanUp();
+            ((RolapConnection)connection).getCatalog().finalCleanUp();
         }
     }
 
@@ -579,8 +581,8 @@ public class CacheControlImpl implements CacheControl {
         }
         
 		AbstractBasicContext abc = (AbstractBasicContext) connection.getContext();
-        final SegmentCacheManager manager =
-                  		abc.getAggregationManager().getCacheMgr(this.connection);
+        final ISegmentCacheManager manager =
+                abc.getAggregationManager().getCacheMgr(this.connection);
         LocusImpl.execute(
             connection,
             "CacheControlImpl.printCacheState",
@@ -647,7 +649,7 @@ public class CacheControlImpl implements CacheControl {
         // REVIEW How is flush(s) different to executing createDeleteCommand(s)?
         synchronized (MEMBER_CACHE_LOCK) {
             // firstly clear all cache associated with native sets
-            connection.getCatalog().getNativeRegistry().flushAllNativeSetCache();
+            ((RolapConnection)connection).getCatalog().getNativeRegistry().flushAllNativeSetCache();
             final List<CellRegion> cellRegionList = new ArrayList<>();
             ((MemberSetPlus) memberSet).accept(
                 new MemberSetVisitorImpl() {

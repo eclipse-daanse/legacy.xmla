@@ -1,15 +1,30 @@
 /*
-// This software is subject to the terms of the Eclipse Public License v1.0
-// Agreement, available at the following URL:
-// http://www.eclipse.org/legal/epl-v10.html.
-// You must accept the terms of that agreement to use this software.
-//
-// Copyright (C) 2001-2005 Julian Hyde
-// Copyright (C) 2005-2017 Hitachi Vantara and others
-// All Rights Reserved.
-//
-// jhyde, 30 August, 2001
-*/
+ * This software is subject to the terms of the Eclipse Public License v1.0
+ * Agreement, available at the following URL:
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * You must accept the terms of that agreement to use this software.
+ *
+ * Copyright (C) 2001-2005 Julian Hyde
+ * Copyright (C) 2005-2017 Hitachi Vantara and others
+ * All Rights Reserved.
+ *
+ * jhyde, 30 August, 2001
+ *
+ * ---- All changes after Fork in 2023 ------------------------
+ *
+ * Project: Eclipse daanse
+ *
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors after Fork in 2023:
+ *   SmartCity Jena - initial
+ */
 package mondrian.rolap.agg;
 
 import java.io.PrintWriter;
@@ -26,7 +41,8 @@ import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
-import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.IAggregationManager;
+import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.rolap.api.RolapContext;
 import org.slf4j.Logger;
@@ -52,14 +68,14 @@ import mondrian.util.Pair;
  * @author jhyde
  * @since 30 August, 2001
  */
-public class AggregationManager extends RolapAggregationManager {
+public class AggregationManager extends RolapAggregationManager implements IAggregationManager{
 
 
 
     private static final Logger LOGGER =
         LoggerFactory.getLogger(AggregationManager.class);
 
-    public final SegmentCacheManager cacheMgr;
+    private final SegmentCacheManager cacheMgr;
 
     private RolapContext context;
 
@@ -124,14 +140,15 @@ public class AggregationManager extends RolapAggregationManager {
      * @param pw Print writer, for tracing
      * @return CacheControl API
      */
+    @Override
     public CacheControl getCacheControl(
-        RolapConnection connection,
+        Connection connection,
         final PrintWriter pw)
     {
         return new CacheControlImpl(connection) {
             @Override
 			protected void flushNonUnion(final CellRegion region) {
-                SegmentCacheManager segmentCacheManager = getCacheMgr(connection);
+                SegmentCacheManager segmentCacheManager = (SegmentCacheManager)getCacheMgr(connection);
                 final SegmentCacheManager.FlushResult result =
                     segmentCacheManager.execute(
                         new SegmentCacheManager.FlushCommand(
@@ -547,6 +564,7 @@ System.out.println(buf.toString());
         return new PinSetImpl();
     }
 
+    @Override
     public void shutdown() {
         // Send a shutdown command and wait for it to return.
         cacheMgr.shutdown();
@@ -570,7 +588,8 @@ System.out.println(buf.toString());
 
 	private Map<Connection, SegmentCacheManager> segCachStore = new HashMap<>();
 
-	public SegmentCacheManager getCacheMgr(Connection connection) {
+	@Override
+	public ISegmentCacheManager getCacheMgr(Connection connection) {
 		if (connection == null || !connection.getContext()
 		        .getConfigValue(ConfigConstants.ENABLE_SESSION_CACHING, ConfigConstants.ENABLE_SESSION_CACHING_DEFAULT_VALUE, Boolean.class)) {
 			return cacheMgr;
@@ -585,4 +604,8 @@ System.out.println(buf.toString());
 		}
 	}
 
+    @Override
+    public ISegmentCacheManager getCacheMgr() {
+        return this.cacheMgr;
+    }
 }

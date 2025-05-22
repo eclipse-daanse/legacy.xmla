@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.eclipse.daanse.olap.api.CatalogCache;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.IAggregationManager;
 import org.eclipse.daanse.olap.api.ResultShepherd;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
@@ -36,8 +37,6 @@ import org.eclipse.daanse.olap.api.monitor.event.MdxStatementStartEvent;
 import org.eclipse.daanse.olap.api.monitor.event.ServertEventCommon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.rolap.agg.AggregationManager;
 
 public abstract class AbstractBasicContext implements Context {
 
@@ -58,7 +57,7 @@ public abstract class AbstractBasicContext implements Context {
 
     protected EventBus eventBus;
 
-	protected AggregationManager aggMgr;
+	protected IAggregationManager aggMgr;
 
 	protected CatalogCache schemaCache;
 
@@ -103,7 +102,7 @@ public abstract class AbstractBasicContext implements Context {
 		return KEYWORD_LIST;
 	}
 
-	public AggregationManager getAggregationManager() {
+	public IAggregationManager getAggregationManager() {
 		if (shutdown) {
 			throw new OlapRuntimeException(SERVER_ALREADY_SHUTDOWN);
 		}

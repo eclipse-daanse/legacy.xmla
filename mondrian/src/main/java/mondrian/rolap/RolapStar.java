@@ -62,6 +62,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -98,6 +99,7 @@ import mondrian.rolap.agg.Aggregation;
 import mondrian.rolap.agg.AggregationKey;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.agg.CellRequest;
+import mondrian.rolap.agg.SegmentCacheManager;
 import mondrian.rolap.agg.SegmentWithData;
 import mondrian.rolap.aggmatcher.AggStar;
 import mondrian.rolap.sql.SqlQuery;
@@ -248,8 +250,9 @@ public class RolapStar {
 
     private Object getCellFromExternalCache(CellRequest request, RolapConnection rolapConnection) {
     	AbstractBasicContext abc = (AbstractBasicContext) LocusImpl.peek().getContext();
-        final SegmentWithData segment = abc.getAggregationManager()
-                .getCacheMgr(rolapConnection).peek(request);
+    	final ISegmentCacheManager segmentCacheManager = abc.getAggregationManager()
+                .getCacheMgr(rolapConnection);
+        final SegmentWithData segment = ((SegmentCacheManager)segmentCacheManager).peek(request);
         if (segment == null) {
             return null;
         }

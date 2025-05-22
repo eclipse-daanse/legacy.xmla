@@ -46,6 +46,8 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Execution;
+import org.eclipse.daanse.olap.api.IAggregationManager;
+import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.exception.CellRequestQuantumExceededException;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
@@ -139,15 +141,15 @@ public class FastBatchingCellReader implements CellReader {
     public FastBatchingCellReader(
         Execution execution,
         RolapCube cube,
-        AggregationManager aggMgr)
+        IAggregationManager aggMgr)
     {
         this.execution = execution;
         if (cube == null || execution == null) {
             throw new IllegalArgumentException("FastBatchingCellReader: cube and execution should not be null");
         }
         this.cube = cube;
-        this.aggMgr = aggMgr;
-        cacheMgr = aggMgr.getCacheMgr(execution.getMondrianStatement().getMondrianConnection());
+        this.aggMgr = (AggregationManager)aggMgr;
+        cacheMgr = (SegmentCacheManager)aggMgr.getCacheMgr(execution.getMondrianStatement().getMondrianConnection());
         pinnedSegments = this.aggMgr.createPinSet();
         cacheEnabled = !cube.getCatalog().getInternalConnection().getContext().getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class);
         Integer cellBatchSize = cube.getCatalog().getInternalConnection().getContext()
@@ -631,12 +633,12 @@ class BatchLoader {
 
     public BatchLoader(
         Locus locus,
-        SegmentCacheManager cacheMgr,
+        ISegmentCacheManager cacheMgr,
         Dialect dialect,
         RolapCube cube)
     {
         this.locus = locus;
-        this.cacheMgr = cacheMgr;
+        this.cacheMgr = (SegmentCacheManager)cacheMgr;
         this.dialect = dialect;
         this.cube = cube;
     }
