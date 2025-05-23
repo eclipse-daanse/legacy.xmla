@@ -71,6 +71,7 @@ import org.eclipse.daanse.olap.api.calc.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
+import org.eclipse.daanse.olap.api.element.KeyMember;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.LimitedMember;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -124,9 +125,7 @@ import mondrian.olap.Walker;
 import mondrian.olap.exceptions.MdxAxisShowSubtotalsNotSupportedException;
 import mondrian.olap.exceptions.ParameterIsNotModifiableException;
 import mondrian.olap.exceptions.UnknownParameterException;
-import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapEvaluator;
-import mondrian.rolap.RolapMember;
 import mondrian.rolap.RolapUtil;
 import mondrian.server.ExecutionImpl;
 import mondrian.server.LocusImpl;
@@ -579,7 +578,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
      */
     public boolean ignoreInvalidMembers()
     {
-        final boolean load = ((RolapCube) getCube()).isLoadInProgress();
+        final boolean load = getCube().isLoadInProgress();
         return
             !strictValidation
             && (load
@@ -1970,7 +1969,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
 
             //Must be RolapMember, not LimitedRollupMember
             OlapElement parentOlapElement = parent;
-            if(parent instanceof RolapMember rolapMember) {
+            if(parent instanceof KeyMember rolapMember) {
                 parentOlapElement = query.getRolapMember(rolapMember);
             }
             OlapElement child = null;
@@ -1983,7 +1982,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
                 }
             }
 
-            if(child instanceof RolapMember rolapMember) {
+            if(child instanceof KeyMember rolapMember) {
                 return query.getSubcubeMember(rolapMember, true);
             }
 

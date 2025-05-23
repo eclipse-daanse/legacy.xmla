@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.impl;
+package mondrian.rolap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,16 +34,6 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCa
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 
 import mondrian.olap.Util;
-import mondrian.rolap.BitKey;
-import mondrian.rolap.RolapCalculatedMember;
-import mondrian.rolap.RolapCatalog;
-import mondrian.rolap.RolapConnection;
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapCubeLevel;
-import mondrian.rolap.RolapCubeMember;
-import mondrian.rolap.RolapEvaluator;
-import mondrian.rolap.RolapStar;
-import mondrian.rolap.RolapStoredMeasure;
 
 public class ScenarioImpl implements Scenario {
 

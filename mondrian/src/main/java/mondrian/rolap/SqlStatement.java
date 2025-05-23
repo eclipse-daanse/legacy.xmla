@@ -1,12 +1,28 @@
 /*
-// This software is subject to the terms of the Eclipse Public License v1.0
-// Agreement, available at the following URL:
-// http://www.eclipse.org/legal/epl-v10.html.
-// You must accept the terms of that agreement to use this software.
-//
-// Copyright (c) 2002-2020 Hitachi Vantara..  All rights reserved.
-// Copyright (c) 2021 Sergei Semenkov.  All rights reserved.
-*/
+ * This software is subject to the terms of the Eclipse Public License v1.0
+ * Agreement, available at the following URL:
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * You must accept the terms of that agreement to use this software.
+ *
+ * Copyright (c) 2002-2020 Hitachi Vantara..  All rights reserved.
+ * Copyright (c) 2021 Sergei Semenkov.  All rights reserved.
+ *
+ * ---- All changes after Fork in 2023 ------------------------
+ *
+ * Project: Eclipse daanse
+ *
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors after Fork in 2023:
+ *   SmartCity Jena - initial
+ */
+
 package mondrian.rolap;
 
 import java.lang.reflect.InvocationTargetException;
@@ -30,6 +46,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Execution;
+import org.eclipse.daanse.olap.api.ISqlStatement;
 import org.eclipse.daanse.olap.api.monitor.event.EventCommon;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEndEvent;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEvent;
@@ -70,7 +87,7 @@ import mondrian.util.DelegatingInvocationHandler;
  * @author jhyde
  * @since 2.3
  */
-public class SqlStatement {
+public class SqlStatement implements ISqlStatement {
   private static final String TIMING_NAME = "SqlStatement-";
 
   // used for SQL logging, allows for a SQL Statement UID
@@ -133,6 +150,7 @@ public class SqlStatement {
   /**
    * Executes the current statement, and handles any SQLException.
    */
+  @Override
   public void execute() {
     long startTimeNanos;
     assert state == State.FRESH : "cannot re-execute";
@@ -293,6 +311,7 @@ public class SqlStatement {
    *
    * <p>This method is idempotent.</p>
    */
+  @Override
   public void close() {
     if ( state == State.CLOSED ) {
       return;
@@ -373,6 +392,7 @@ public class SqlStatement {
         .append(rowCount).append(" rows").toString();
   }
 
+  @Override
   public ResultSet getResultSet() {
     return resultSet;
   }
@@ -508,6 +528,7 @@ public class SqlStatement {
    *
    * @return Wrapped result set
    */
+  @Override
   public ResultSet getWrappedResultSet() {
     return (ResultSet) Proxy.newProxyInstance(
       this.getClass().getClassLoader(),

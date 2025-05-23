@@ -10,14 +10,33 @@
  *
  * Contributors:
  *  SmartCity Jena - refactor, clean API
-*/
+*
+ * ---- All changes after Fork in 2023 ------------------------
+ *
+ * Project: Eclipse daanse
+ *
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors after Fork in 2023:
+ *   SmartCity Jena - initial
+ */
+
 
 package org.eclipse.daanse.olap.api.result;
 
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.ISqlStatement;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.slf4j.Logger;
 
 
 /**
@@ -147,4 +166,7 @@ public interface Cell {
         Object newValue,
         AllocationPolicy allocationPolicy,
         Object... allocationArgs);
+
+    ISqlStatement drillThroughInternal(int maxRowCount, int firstRowOrdinal, List<OlapElement> fields,
+            boolean extendedContext, Logger logger);
 }

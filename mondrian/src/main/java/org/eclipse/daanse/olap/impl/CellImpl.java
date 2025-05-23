@@ -1,9 +1,23 @@
+/*
+ * Copyright (c) 2025 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   SmartCity Jena, Stefan Bischof - initial
+ *
+ */
 package org.eclipse.daanse.olap.impl;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.daanse.olap.api.ISqlStatement;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
@@ -16,13 +30,11 @@ import org.eclipse.daanse.olap.api.result.Scenario;
 import org.slf4j.Logger;
 
 import mondrian.olap.StandardProperty;
-import mondrian.rolap.RolapCell;
-import mondrian.rolap.SqlStatement;
 
 public class CellImpl implements Cell {
     private final int[] coordinates;
     private final CellSet olap4jCellSet;
-    final RolapCell cell;
+    Cell cell;
     private final Result result;
     /**
      * Creates a MondrianOlap4jCell.
@@ -35,7 +47,7 @@ public class CellImpl implements Cell {
         Result result,
         int[] coordinates,
         CellSet olap4jCellSet,
-        RolapCell cell)
+        Cell cell)
     {
         assert coordinates != null;
         assert olap4jCellSet != null;
@@ -51,7 +63,7 @@ public class CellImpl implements Cell {
         return olap4jCellSet;
     }
 
-    public RolapCell getRolapCell(){
+    public Cell getRolapCell(){
         return this.cell;
     }
 
@@ -255,11 +267,18 @@ public class CellImpl implements Cell {
         if (rowCountSlot != null) {
             rowCountSlot[0] = cell.getDrillThroughCount();
         }
-        final SqlStatement sqlStmt =
-            cell.drillThroughInternal(
-                maxRowCount, firstRowOrdinal, fields, extendedContext,
-                logger);
+        final ISqlStatement sqlStmt =
+                drillThroughInternal(maxRowCount, firstRowOrdinal, fields, extendedContext, logger);
         return sqlStmt.getWrappedResultSet();
+    }
+
+
+    @Override
+    public ISqlStatement drillThroughInternal(int maxRowCount, int firstRowOrdinal, List<OlapElement> fields,
+            boolean extendedContext, Logger logger) {
+        return cell.drillThroughInternal(
+                    maxRowCount, firstRowOrdinal, fields, extendedContext,
+                    logger);
     }
 
 }

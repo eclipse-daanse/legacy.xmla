@@ -44,7 +44,6 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Query;
-import org.eclipse.daanse.olap.impl.ScenarioImpl;
 
 import mondrian.olap.SolveOrderMode;
 import mondrian.olap.Util;

@@ -154,4 +154,6 @@ public interface Cube extends OlapElement, MetaElement {
      * throws.
      */
     Hierarchy getTimeHierarchy(String name);
+
+    boolean isLoadInProgress();
 }

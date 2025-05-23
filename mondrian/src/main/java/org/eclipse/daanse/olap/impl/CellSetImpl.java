@@ -31,7 +31,6 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
 
 import mondrian.olap.ExecuteDurationUtil;
-import mondrian.rolap.RolapCell;
 import mondrian.server.ExecutionImpl;
 
 public class CellSetImpl extends ExecutionImpl implements CellSet {
@@ -89,9 +88,9 @@ public class CellSetImpl extends ExecutionImpl implements CellSet {
     }
 
     private Cell getCellInternal(int[] pos) {
-        RolapCell cell;
+        Cell cell;
         try {
-            cell = (RolapCell) result.getCell(pos);
+            cell = result.getCell(pos);
         } catch (OlapRuntimeException e) {
             if (e.getMessage().indexOf("coordinates out of range") >= 0) {
                 int[] dimensions = new int[getAxes().size()];

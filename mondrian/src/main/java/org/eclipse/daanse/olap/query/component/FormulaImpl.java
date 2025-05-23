@@ -1,14 +1,30 @@
 /*
-// This software is subject to the terms of the Eclipse Public License v1.0
-// Agreement, available at the following URL:
-// http://www.eclipse.org/legal/epl-v10.html.
-// You must accept the terms of that agreement to use this software.
-//
-// Copyright (C) 2000-2005 Julian Hyde
-// Copyright (C) 2005-2017 Hitachi Vantara and others
-// Copyright (C) 2021 Sergei Semenkov
-// All Rights Reserved.
-*/
+ * This software is subject to the terms of the Eclipse Public License v1.0
+ * Agreement, available at the following URL:
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * You must accept the terms of that agreement to use this software.
+ *
+ * Copyright (C) 2000-2005 Julian Hyde
+ * Copyright (C) 2005-2017 Hitachi Vantara and others
+ * Copyright (C) 2021 Sergei Semenkov
+ * All Rights Reserved.
+ *
+ * ---- All changes after Fork in 2023 ------------------------
+ *
+ * Project: Eclipse daanse
+ *
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors after Fork in 2023:
+ *   SmartCity Jena - initial
+ */
+
 
 package org.eclipse.daanse.olap.query.component;
 
@@ -23,6 +39,7 @@ import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Validator;
+import org.eclipse.daanse.olap.api.element.CalculatedMember;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -50,7 +67,6 @@ import mondrian.olap.SetBase;
 import mondrian.olap.StandardProperty;
 import mondrian.olap.Util;
 import mondrian.olap.exceptions.MdxMemberExpIsSetException;
-import mondrian.rolap.RolapCalculatedMember;
 
 
 
@@ -627,7 +643,7 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
             Member member = memberExpr.getMember();
             returnFormula(member);
             if (member.isCalculated()
-                    && member instanceof RolapCalculatedMember rolapCalculatedMember
+                    && member instanceof CalculatedMember rolapCalculatedMember
                     && !hasCyclicReference(memberExpr))
             {
                 Formula formula = rolapCalculatedMember.getFormula();
@@ -656,7 +672,7 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
                 }
                 expList.add(memberExpr);
                 Member member = memberExpr.getMember();
-                if (member instanceof RolapCalculatedMember calculatedMember) {
+                if (member instanceof CalculatedMember calculatedMember) {
                     Expression exp1 =
                         calculatedMember.getExpression().accept(validator);
                     return hasCyclicReference(exp1, expList);

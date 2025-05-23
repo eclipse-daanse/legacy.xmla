@@ -42,6 +42,7 @@ import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.ISqlStatement;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -71,7 +72,6 @@ import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
 import org.eclipse.daanse.olap.function.def.set.SetFunDef;
-import org.eclipse.daanse.olap.impl.ScenarioImpl;
 import org.eclipse.daanse.olap.query.component.MdxVisitorImpl;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.slf4j.Logger;
@@ -543,7 +543,7 @@ public class RolapCell implements Cell {
      * @param logger Logger. If not null and debug is enabled, log SQL here
      * @return executed SQL statement
      */
-    public SqlStatement drillThroughInternal(
+    public ISqlStatement drillThroughInternal(
         int maxRowCount,
         int firstRowOrdinal,
         List<OlapElement> fields,

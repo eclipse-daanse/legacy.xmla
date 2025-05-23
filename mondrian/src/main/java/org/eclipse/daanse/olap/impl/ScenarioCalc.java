@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.olap.Util;
-import mondrian.rolap.RolapEvaluator;
 
 public class ScenarioCalc extends AbstractProfilingNestedUnknownCalc {
     static final Logger LOGGER = LoggerFactory.getLogger(ScenarioCalc.class);
@@ -144,18 +143,6 @@ public class ScenarioCalc extends AbstractProfilingNestedUnknownCalc {
             } else {
                 return d;
             }
-        } finally {
-            evaluator.restore(savepoint);
-        }
-    }
-
-    private static double evaluateAtomicCellCount(RolapEvaluator evaluator) {
-        final int savepoint = evaluator.savepoint();
-        try {
-            evaluator.setContext(
-                evaluator.getCube().getAtomicCellCountMeasure());
-            final Object o = evaluator.evaluateCurrent();
-            return ((Number) o).doubleValue();
         } finally {
             evaluator.restore(savepoint);
         }

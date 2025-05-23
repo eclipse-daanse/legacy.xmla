@@ -30,12 +30,11 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.PhysicalCube;
+import org.eclipse.daanse.olap.api.element.VirtualCubeMeasure;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
-
-import mondrian.rolap.RolapVirtualCubeMeasure;
 
 public class ValidMeasureCalc extends AbstractProfilingNestedUnknownCalc {
 
@@ -79,14 +78,13 @@ public class ValidMeasureCalc extends AbstractProfilingNestedUnknownCalc {
 
         final Member vcMeasure = memberList.get(measurePosition);
 
-        if (!RolapVirtualCubeMeasure.class
-            .isAssignableFrom(vcMeasure.getClass()))
+        if (!(vcMeasure instanceof  VirtualCubeMeasure))
         {
             // Cannot use calculated members in ValidMeasure.
             throw new OlapRuntimeException(MessageFormat.format(validMeasureUsingCalculatedMember,vcMeasure.getUniqueName()));
         }
 
-        baseCube = ((RolapVirtualCubeMeasure)vcMeasure).getCube();
+        baseCube = ((VirtualCubeMeasure)vcMeasure).getCube();
 
         List<Dimension> vMinusBDimensions =
             getDimensionsToForceToAllLevel(
