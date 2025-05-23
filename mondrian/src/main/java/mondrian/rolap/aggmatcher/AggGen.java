@@ -38,7 +38,7 @@ import java.util.Set;
 
 import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
-import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

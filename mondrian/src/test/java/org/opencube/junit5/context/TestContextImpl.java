@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2025 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   SmartCity Jena, Stefan Bischof - initial
+ *
+ */
 package org.opencube.junit5.context;
 
 import java.sql.SQLException;
@@ -298,7 +311,7 @@ import org.eclipse.daanse.olap.function.def.vba.weekday.WeekdayResolver;
 import org.eclipse.daanse.olap.function.def.vba.weekdayname.WeekdayNameResolver;
 import org.eclipse.daanse.olap.function.def.vba.year.YearResolver;
 import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalsResolver;
-import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.aggregator.AvgAggregator;
 import org.eclipse.daanse.rolap.aggregator.CountAggregator;
 import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
@@ -327,7 +340,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
     private Semaphore queryLimimitSemaphore;
     private FunctionService functionService = new FunctionServiceImpl();
     private AggregationFactory aggregationFactory;
-    
+
     public TestContextImpl() {
         this.eventBus = new LoggingEventBus();
         shepherd = new RolapResultShepherd(getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_DEFAULT_VALUE, Long.class),
@@ -713,7 +726,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         return getConnection(new RolapConnectionPropsR(roles, true, Locale.getDefault(), Duration.ofSeconds(-1),
                 Optional.empty(), Optional.empty()));
     }
-    
+
     @Override
     public String getName() {
         return name;
@@ -796,7 +809,7 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
         }
         configuration.put(key, value);
     }
-    
+
     public void setCellBatchSize(Integer cellBatchSize) {
         setConfigValue(ConfigConstants.CELL_BATCH_SIZE, cellBatchSize);
     }

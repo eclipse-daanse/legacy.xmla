@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
+package org.eclipse.daanse.rolap.aggmatch.jaxb;
 
 import mondrian.rolap.aggmatcher.Recognizer;
 
@@ -220,7 +220,7 @@ public abstract class NameMatcher extends CaseMatcher {
 	public void setPretemplate(String pretemplate) {
 		this.pretemplate = pretemplate;
 	}
-	
+
     public void setPosttemplate(String posttemplate) {
         this.posttemplate = posttemplate;
     }

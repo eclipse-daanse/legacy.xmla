@@ -11,39 +11,29 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
+package org.eclipse.daanse.rolap.aggmatch.jaxb;
 
-import mondrian.rolap.aggmatcher.Recognizer;
+public class IgnoreMapRef extends Ref {
 
-/**
- * This is used to identify foreign key columns in a candidate
- * aggregate table given the name of a foreign key column of the
- * base fact table. This allows such foreign keys to be identified
- * by using a regular exprsssion. The default is to simply
- * match the base fact table's foreign key column name.
- */
-public class ForeignKeyMatch extends NameMatcher {
-
-    @Override
     public void validate(
         final AggRules rules,
         final mondrian.recorder.MessageRecorder msgRecorder
     ) {
         msgRecorder.pushContextName(getName());
         try {
-            super.validate(rules, msgRecorder);
+            if (!rules.hasIgnoreMap(getRefId())) {
+                String msg = "No IgnoreMap has id equal to refid \"" +
+                    getRefId() +
+                    "\"";
+                msgRecorder.reportError(msg);
+            }
         } finally {
             msgRecorder.popContextName();
         }
     }
 
     @Override
-    public Recognizer.Matcher getMatcher(final String foreignKeyName) {
-        return super.getMatcher(foreignKeyName);
-    }
-
-    @Override
     protected String getName() {
-        return "ForeignKeyMatch";
+        return "IgnoreMapRef";
     }
 }

@@ -11,9 +11,9 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
+package org.eclipse.daanse.rolap.aggmatch.jaxb;
 
-public class TableMatchRef extends Ref {
+public class LevelMapRef extends Ref {
 
     public void validate(
         final AggRules rules,
@@ -21,8 +21,8 @@ public class TableMatchRef extends Ref {
     ) {
         msgRecorder.pushContextName(getName());
         try {
-            if (!rules.hasTableMatch(getRefId())) {
-                String msg = "No TableMatch has id equal to refid \"" +
+            if (!rules.hasLevelMap(getRefId())) {
+                String msg = "No LevelMap has id equal to refid \"" +
                     getRefId() +
                     "\"";
                 msgRecorder.reportError(msg);
@@ -34,6 +34,6 @@ public class TableMatchRef extends Ref {
 
     @Override
     protected String getName() {
-        return "TableMatchRef";
+        return "LevelMapRef";
     }
 }

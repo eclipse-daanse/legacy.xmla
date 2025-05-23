@@ -90,7 +90,7 @@ import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.query.component.FormulaImpl;
 import org.eclipse.daanse.olap.query.component.IdImpl;
-import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCatalogGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessColumnGrantMapping;

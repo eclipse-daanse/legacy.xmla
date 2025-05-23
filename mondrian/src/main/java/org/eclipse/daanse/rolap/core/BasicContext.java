@@ -11,7 +11,7 @@
 *   SmartCity Jena - initial
 *   Stefan Bischof (bipolis.org) - initial
 */
-package org.eclipse.daanse.olap.rolap.core;
+package org.eclipse.daanse.rolap.core;
 
 import java.sql.Connection;
 import java.util.List;
@@ -32,7 +32,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.core.LoggingEventBus;
-import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -58,7 +58,7 @@ import mondrian.rolap.aggregator.AggregationFactoryImpl;
 @Component(service = Context.class, scope = ServiceScope.SINGLETON)
 public class BasicContext extends AbstractRolapContext implements RolapContext {
 
-    public static final String PID = "org.eclipse.daanse.olap.rolap.core.BasicContext";
+    public static final String PID = "org.eclipse.daanse.rolap.core.BasicContext";
 
     public static final String REF_NAME_DIALECT_RESOLVER = "dialectResolver";
     public static final String REF_NAME_DATA_SOURCE = "dataSource";

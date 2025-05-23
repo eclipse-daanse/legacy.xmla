@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
+package org.eclipse.daanse.rolap.aggmatch.jaxb;
 
 /**
  * A RolapConnection uses one AggRule. If no name is specified, then

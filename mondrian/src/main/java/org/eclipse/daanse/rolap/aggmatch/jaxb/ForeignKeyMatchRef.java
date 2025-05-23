@@ -11,9 +11,9 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
+package org.eclipse.daanse.rolap.aggmatch.jaxb;
 
-public class MeasureMapRef extends Ref {
+public class ForeignKeyMatchRef extends Ref {
 
     public void validate(
         final AggRules rules,
@@ -21,8 +21,8 @@ public class MeasureMapRef extends Ref {
     ) {
         msgRecorder.pushContextName(getName());
         try {
-            if (!rules.hasMeasureMap(getRefId())) {
-                String msg = "No MeasureMap has id equal to refid \"" +
+            if (!rules.hasForeignKeyMatch(getRefId())) {
+                String msg = "No ForeignKeyMatch has id equal to refid \"" +
                     getRefId() +
                     "\"";
                 msgRecorder.reportError(msg);
@@ -34,6 +34,6 @@ public class MeasureMapRef extends Ref {
 
     @Override
     protected String getName() {
-        return "MeasureMapRef";
+        return "ForeignKeyMatchRef";
     }
 }

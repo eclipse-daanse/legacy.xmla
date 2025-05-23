@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2025 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   SmartCity Jena, Stefan Bischof - initial
+ *
+ */
 package org.eclipse.daanse.demo.server.play;
 
 import java.io.IOException;
@@ -16,7 +29,7 @@ import org.eclipse.daanse.io.fs.watcher.api.FileSystemWatcherListener;
 import org.eclipse.daanse.io.fs.watcher.api.FileSystemWatcherWhiteboardConstants;
 import org.eclipse.daanse.io.fs.watcher.api.propertytypes.FileSystemWatcherListenerProperties;
 import org.eclipse.daanse.jdbc.datasource.metatype.h2.api.Constants;
-import org.eclipse.daanse.olap.rolap.core.BasicContext;
+import org.eclipse.daanse.rolap.core.BasicContext;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.cm.annotations.RequireConfigurationAdmin;
@@ -37,7 +50,7 @@ public class CatalogsFileListener implements FileSystemWatcherListener {
 	private static final String PID_H2 = Constants.PID_DATASOURCE;
 	private static final String PID_CSV_IMPORTER = org.eclipse.daanse.jdbc.db.importer.csv.api.Constants.PID_CSV_DATA_IMPORTER;
 
-	public static final String PID_CONTEXT = "org.eclipse.daanse.olap.rolap.core.BasicContext";
+	public static final String PID_CONTEXT = "org.eclipse.daanse.rolap.core.BasicContext";
 
 	public static final String PID_PARSER = "org.eclipse.daanse.mdx.parser.ccc.MdxParserProviderImpl";
 

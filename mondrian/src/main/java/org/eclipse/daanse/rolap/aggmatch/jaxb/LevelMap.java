@@ -11,25 +11,26 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.rolap.aggmatch.jaxb;
+package org.eclipse.daanse.rolap.aggmatch.jaxb;
 
 import java.util.List;
 
 import mondrian.rolap.aggmatcher.Recognizer;
 
 /**
- * This is the template that maps from a combination of measure
- * measure_name,
- * measure_column_name, and
- * aggregate_name ("count", "sum", "avg", "min", "max",
- * "distinct-count").
+ * This is the template that maps from a combination of level
+ * usage_prefix
+ * hierarchy_name
+ * level_name
+ * level_column_name
  */
-public class MeasureMap extends RegexMapper {
+public class LevelMap extends RegexMapper {
 
     private static final List<String> TEMPLATE_NAMES = List.of(
-        "measure_name",
-        "measure_column_name",
-        "aggregate_name"
+        "usage_prefix",
+        "hierarchy_name",
+        "level_name",
+        "level_column_name"
     );
 
     protected List<String> getTemplateNames() {
@@ -37,19 +38,21 @@ public class MeasureMap extends RegexMapper {
     }
 
     public Recognizer.Matcher getMatcher(
-        final String measureName,
-        final String measuerColumnName,
-        final String aggregateName
+        final String usagePrefix,
+        final String hierarchyName,
+        final String levelName,
+        final String levelColumnName
     ) {
         return getMatcher(new String[]{
-            measureName,
-            measuerColumnName,
-            aggregateName
+            usagePrefix,
+            hierarchyName,
+            levelName,
+            levelColumnName
         });
     }
 
     @Override
     protected String getName() {
-        return "MeasureMap";
+        return "LevelMap";
     }
 }

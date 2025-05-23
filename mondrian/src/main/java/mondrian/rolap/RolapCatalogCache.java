@@ -1,13 +1,28 @@
 /*
-// This software is subject to the terms of the Eclipse Public License v1.0
-// Agreement, available at the following URL:
-// http://www.eclipse.org/legal/epl-v10.html.
-// You must accept the terms of that agreement to use this software.
-//
-// Copyright (C) 2001-2005 Julian Hyde and others
-// Copyright (C) 2005-2019 Hitachi Vantara and others
-// All Rights Reserved.
-*/
+ * This software is subject to the terms of the Eclipse Public License v1.0
+ * Agreement, available at the following URL:
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * You must accept the terms of that agreement to use this software.
+ *
+ * Copyright (C) 2001-2005 Julian Hyde and others
+ * Copyright (C) 2005-2019 Hitachi Vantara and others
+ * All Rights Reserved.
+ *
+ * ---- All changes after Fork in 2023 ------------------------
+ *
+ * Project: Eclipse daanse
+ *
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors after Fork in 2023:
+ *   SmartCity Jena - initial
+ */
 package mondrian.rolap;
 
 import java.lang.ref.Reference;
@@ -21,7 +36,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.eclipse.daanse.olap.api.CatalogCache;
 import org.eclipse.daanse.olap.api.ConnectionProps;
-import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.util.reference.expiring.ExpiringReference;
 import org.slf4j.Logger;
@@ -134,7 +149,7 @@ public class RolapCatalogCache implements CatalogCache {
 	 * Adds <tt>schema</tt> to the pool. <b>Attention!</b> This method is not doing
 	 * any synchronization internally and relies on the assumption that it is
 	 * invoked inside a critical section
-	 * 
+	 *
 	 * @param schema     schema to be stored
 	 * @param md5Bytes   md5 hash, can be <tt>null</tt>
 	 * @param pinTimeout timeout mark

@@ -8,14 +8,15 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *   SmartCity Jena, Stefan Bischof - initial
- *
+ *   SmartCity Jena - initial
+ *   Stefan Bischof (bipolis.org) - initial
  */
-package mondrian.rolap;
+package org.eclipse.daanse.rolap.api;
 
-import org.eclipse.daanse.olap.core.AbstractBasicContext;
-import org.eclipse.daanse.rolap.api.RolapContext;
+import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 
-public abstract class AbstractRolapContext extends AbstractBasicContext implements RolapContext {
+public interface RolapContext extends Context {
 
+	CatalogMapping getCatalogMapping();
 }

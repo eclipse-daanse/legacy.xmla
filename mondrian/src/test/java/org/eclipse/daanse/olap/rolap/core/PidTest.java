@@ -15,7 +15,7 @@ package org.eclipse.daanse.olap.rolap.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.eclipse.daanse.olap.rolap.core.BasicContext;
+import org.eclipse.daanse.rolap.core.BasicContext;
 import org.junit.jupiter.api.Test;
 
 class PidTest {

@@ -5,7 +5,23 @@
  * You must accept the terms of that agreement to use this software.
  *
  * Copyright (c) 2002-2019 Hitachi Vantara..  All rights reserved.
+ *
+ * ---- All changes after Fork in 2023 ------------------------
+ *
+ * Project: Eclipse daanse
+ *
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors after Fork in 2023:
+ *   SmartCity Jena - initial
  */
+
 
 package mondrian.rolap.aggmatcher;
 
@@ -20,7 +36,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.junit.jupiter.api.BeforeAll;
@@ -56,7 +72,7 @@ class AggSchemaScanTest {
       CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
       List<? extends DatabaseSchemaMapping> schemas = catalogMapping.getDbschemas();
       DatabaseSchemaMapping databaseSchema = schemas.getFirst();
-      
+
       //RolapConnectionPropsR rc =  new RolapConnectionPropsR(List.of(), false, Locale.getDefault(), 0l, TimeUnit.SECONDS, Optional.of("bogus"),Optional.of("bogus"));
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
       //jdbcSchema.resetAllTablesLoaded();

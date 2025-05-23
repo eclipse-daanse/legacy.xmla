@@ -1,34 +1,48 @@
 /*
-// This software is subject to the terms of the Eclipse Public License v1.0
-// Agreement, available at the following URL:
-// http://www.eclipse.org/legal/epl-v10.html.
-// You must accept the terms of that agreement to use this software.
-//
-// Copyright (C) 2005-2005 Julian Hyde
-// Copyright (C) 2005-2017 Hitachi Vantara and others
-// All Rights Reserved.
-*/
-
+ * This software is subject to the terms of the Eclipse Public License v1.0
+ * Agreement, available at the following URL:
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * You must accept the terms of that agreement to use this software.
+ *
+ * Copyright (C) 2005-2005 Julian Hyde
+ * Copyright (C) 2005-2017 Hitachi Vantara and others
+ * All Rights Reserved.
+ *
+ * ---- All changes after Fork in 2023 ------------------------
+ *
+ * Project: Eclipse daanse
+ *
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors after Fork in 2023:
+ *   SmartCity Jena - initial
+ */
 package mondrian.rolap.aggmatcher;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.AggRule;
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.AggRules;
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.CharCaseEnum;
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.FactCountMatch;
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.FactCountMatchRef;
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.ForeignKeyMatch;
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.IgnoreMap;
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.LevelMap;
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.LevelMapRef;
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.MeasureMap;
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.MeasureMapRef;
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.Regex;
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.TableMatch;
-import org.eclipse.daanse.olap.rolap.aggmatch.jaxb.TableMatchRef;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.AggRule;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.AggRules;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.CharCaseEnum;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.FactCountMatch;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.FactCountMatchRef;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.ForeignKeyMatch;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.IgnoreMap;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.LevelMap;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.LevelMapRef;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.MeasureMap;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.MeasureMapRef;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.Regex;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.TableMatch;
+import org.eclipse.daanse.rolap.aggmatch.jaxb.TableMatchRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,45 +75,45 @@ public class DefaultRules {
      */
     public static synchronized DefaultRules getInstance() {
         if (instance == null) {
-         
+
             AggRules aggrules = new AggRules();
-            
+
             TableMatch tm=new TableMatch();
             tm.setId("ta");
             tm.setPretemplate("agg_.+_");
-            
+
             aggrules.getTableMatches().add(tm);
-            
+
             FactCountMatch fcm=new FactCountMatch();
             fcm.setId("fca");
             aggrules.getFactCountMatches().add(fcm);
-            
+
             LevelMap lvlMap=new LevelMap();
             lvlMap.setId("lxx");
             aggrules.getLevelMaps().add(lvlMap);
-            
+
             Regex regexLog=new Regex();
             regexLog.setId("logical");
             regexLog.setCharCase(CharCaseEnum.LOWER);
             regexLog.setTemplate("${hierarchy_name}_${level_name}");
-            
+
             Regex regexMixed=new Regex();
             regexMixed.setId("mixed");
             regexMixed.setCharCase(CharCaseEnum.LOWER);
             regexMixed.setTemplate("${hierarchy_name}_${level_column_name}");
-            
+
             Regex regexUsage=new Regex();
             regexUsage.setId("usage");
             regexUsage.setCharCase(CharCaseEnum.EXACT);
             regexUsage.setTemplate("${usage_prefix}${level_column_name}");
-            
+
             Regex regexPhysical=new Regex();
             regexPhysical.setId("physical");
             regexPhysical.setCharCase(CharCaseEnum.EXACT);
             regexPhysical.setTemplate("${level_column_name}");
 
             lvlMap.setRegexs(List.of(regexLog,regexMixed,regexUsage,regexPhysical));
-           
+
             MeasureMap measMap=new MeasureMap();
             measMap.setId("mxx");
 
@@ -111,7 +125,7 @@ public class DefaultRules {
 //            Sometimes a base fact table foreign key is also used in a
 //            measure. This Regex is used to match such usages in
 //            the aggregate table. Using such a match only makes sense
-//            if one prior to attempting to match knows that the 
+//            if one prior to attempting to match knows that the
 //            column in question in the base fact table is indeed used
 //            as a measure (for this matches any foreign key).
 
@@ -119,7 +133,7 @@ public class DefaultRules {
             mmRegexForeignKey.setId("foreignkey");
             mmRegexForeignKey.setCharCase(CharCaseEnum.EXACT);
             mmRegexForeignKey.setTemplate("${measure_column_name}");
-            
+
             Regex mmRegexPhysical=new Regex();
             mmRegexPhysical.setId("physical");
             mmRegexPhysical.setCharCase(CharCaseEnum.EXACT);
@@ -128,31 +142,31 @@ public class DefaultRules {
             measMap.setRegexs(List.of(mmRegexLogical,mmRegexForeignKey,mmRegexPhysical));
 
             aggrules.getMeasureMaps().add(measMap);
-            
+
             AggRule aggRDefault=new AggRule();
             aggRDefault.setTag("default");
-            
+
             FactCountMatchRef factCountMatchRef=new FactCountMatchRef();
             factCountMatchRef.setRefId("fca");
             aggRDefault.setFactCountMatchRef(factCountMatchRef);
-            
+
             ForeignKeyMatch foreignKeyMatch=new ForeignKeyMatch();
             foreignKeyMatch.setId("fka");
             aggRDefault.setForeignKeyMatch(foreignKeyMatch);
-            
+
             TableMatchRef tableMatchRef=new TableMatchRef();
             tableMatchRef.setRefId("ta");
             aggRDefault.setTableMatchRef(tableMatchRef);
-            
+
             LevelMapRef levelMapRef=new LevelMapRef();
             levelMapRef.setRefId("lxx");
             aggRDefault.setLevelMapRef(levelMapRef);
-            
+
             MeasureMapRef measureMapRef=new MeasureMapRef();
             measureMapRef.setRefId("mxx");
             aggRDefault.setMeasureMapRef(measureMapRef);
-            
-            
+
+
             aggrules.getAggRules().add(aggRDefault);
             // validate the DefaultDef.AggRules object
             ListRecorder reclists = new ListRecorder();

@@ -52,7 +52,7 @@ import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -2680,7 +2680,7 @@ class SchemaTest {
                         .builder()
                         .withName("Supply Time")
                         .withColumn(FoodmartMappingSupplier.SUPPLY_TIME_COLUMN_IN_INVENTORY_FACKT_1997)
-                        
+
                         .build();
 
                  PhysicalCubeMappingImpl c = PhysicalCubeMappingImpl
@@ -2697,14 +2697,14 @@ class SchemaTest {
                                             .builder()
                                             .withName("Store Invoice")
                                             .withColumn(FoodmartMappingSupplier.STORE_INVOICE_COLUMN_IN_INVENTORY_FACKT_1997)
-                                            
+
                                             .build(),
                                         stm,
                                         SumMeasureMappingImpl
                                             .builder()
                                             .withName("Warehouse Cost")
                                             .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                                            
+
                                             .build()
                                     )
                         	).build()
@@ -2840,7 +2840,7 @@ class SchemaTest {
                             .builder()
                             .withName("Supply Time")
                             .withColumn(FoodmartMappingSupplier.SUPPLY_TIME_COLUMN_IN_INVENTORY_FACKT_1997)
-                            
+
                             .build();
 
                     PhysicalCubeMappingImpl c = PhysicalCubeMappingImpl
@@ -2856,14 +2856,14 @@ class SchemaTest {
                                                 .builder()
                                                 .withName("Store Invoice")
                                                 .withColumn(FoodmartMappingSupplier.STORE_INVOICE_COLUMN_IN_INVENTORY_FACKT_1997)
-                                                
+
                                                 .build(),
                                             stm,
                                             SumMeasureMappingImpl
                                                 .builder()
                                                 .withName("Warehouse Cost")
                                                 .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                                                
+
                                                 .build()
                                         )
                             	).build()
@@ -2975,14 +2975,14 @@ class SchemaTest {
                                     .builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    
+
                                     .withFormatString("Standard")
                                     .build(),
                                 SumMeasureMappingImpl
                                     .builder()
                                     .withName("Store Cost")
                                     .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                    
+
                                     .withFormatString("#,###.00")
                                     .build()
                             ))
@@ -3080,14 +3080,14 @@ class SchemaTest {
                                     .builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    
+
                                     .withFormatString("Standard")
                                     .build(),
                                 SumMeasureMappingImpl
                                     .builder()
                                     .withName("Store Cost")
                                     .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                    
+
                                     .withFormatString("#,###.00")
                                     .build()
                             ))
@@ -3183,14 +3183,14 @@ class SchemaTest {
                                     .builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    
+
                                     .withFormatString("Standard")
                                     .build(),
                                 SumMeasureMappingImpl
                                     .builder()
                                     .withName("Store Cost")
                                     .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                    
+
                                     .withFormatString("#,###.00")
                                     .build()
                             ))
@@ -3262,13 +3262,13 @@ class SchemaTest {
                             .builder()
                             .withName("Cars")
                             .withColumn(FoodmartMappingSupplier.NUM_CARS_OWNED_COLUMN_IN_CUSTOMER)
-                            
+
                             .build(),
                         SumMeasureMappingImpl
                             .builder()
                             .withName("Children")
                             .withColumn(FoodmartMappingSupplier.TOTAL_CHILDREN_COLUMN_IN_CUSTOMER)
-                            
+
                             .build()
                     ))
                     .build()
@@ -3392,14 +3392,14 @@ class SchemaTest {
                             .builder()
                             .withName("Unit Sales")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("Standard")
                             .build(),
                         SumMeasureMappingImpl
                             .builder()
                             .withName("Store Cost")
                             .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("#,###.00")
                             .build()
                     ))
@@ -3506,14 +3506,14 @@ class SchemaTest {
                             .builder()
                             .withName("Unit Sales")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("Standard")
                             .build(),
                         SumMeasureMappingImpl
                             .builder()
                             .withName("Store Cost")
                             .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("#,###.00")
                             .build()
                     ))
@@ -3652,13 +3652,13 @@ class SchemaTest {
                             .builder()
                             .withName("Warehouse Cost")
                             .withColumn(WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                            
+
                             .build(),
                         SumMeasureMappingImpl
                             .builder()
                             .withName("Warehouse Sales")
                             .withColumn(WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                            
+
                             .build()
                     ))
                     .build()
@@ -3836,13 +3836,13 @@ class SchemaTest {
                             .builder()
                             .withName("Warehouse Cost")
                             .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                            
+
                             .build(),
                         SumMeasureMappingImpl
                             .builder()
                             .withName("Warehouse Sales")
                             .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                            
+
                             .build()
                     ))
                     .build()
@@ -3981,14 +3981,14 @@ class SchemaTest {
                             .builder()
                             .withName("Store Sqft")
                             .withColumn(STORE_SQFT_COLUMN_IN_STORE)
-                            
+
                             .withFormatString("#,###")
                             .build(),
                         SumMeasureMappingImpl
                             .builder()
                             .withName("Grocery Sqft")
                             .withColumn(GROCERY_SQFT_COLUMN_IN_STORE)
-                            
+
                             .withFormatString("#,###")
                             .build()
                     ))
@@ -4258,13 +4258,13 @@ class SchemaTest {
                         		.withMeasures(List.of(
                                     SumMeasureMappingImpl.builder()
                                         .withName("Store Cost").withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                        
+
                                         .withFormatString("#,###.00")
                                         .build(),
                                     SumMeasureMappingImpl.builder()
                                         .withName("Store Sales")
                                         .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                        
+
                                         .withFormatString("#,###.00")
                                         .build()
                         		))
@@ -4489,19 +4489,19 @@ class SchemaTest {
                         		.withMeasures(List.of(
                                     SumMeasureMappingImpl.builder()
                                         .withName("Store Cost").withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                        
+
                                         .withFormatString("#,###.00")
                                         .build(),
                                     SumMeasureMappingImpl.builder()
                                         .withName("Store Sales")
                                         .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                        
+
                                         .withFormatString("#,###.00")
                                         .build(),
                                     SumMeasureMappingImpl.builder()
                                         .withName("Unit Sales")
                                         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                        
+
                                         .withFormatString("#,###")
                                         .build()
                         		))
@@ -4729,7 +4729,7 @@ class SchemaTest {
                 .builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                
+
                 .withFormatString("Standard")
                 .build();
 
@@ -4747,7 +4747,7 @@ class SchemaTest {
                             .builder()
                             .withName("Store Cost")
                             .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("#,###.00")
                             .build()
                     ))
@@ -4951,7 +4951,7 @@ class SchemaTest {
                     .builder()
                     .withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    
+
                     .withFormatString("Standard")
                 .build();
 
@@ -5024,7 +5024,7 @@ class SchemaTest {
                     .builder()
                     .withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    
+
                     .withFormatString("Standard")
                 .build();
 
@@ -5191,7 +5191,7 @@ class SchemaTest {
                 .builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                
+
                 .withFormatString("Standard")
                 .build();
 
@@ -5264,7 +5264,7 @@ class SchemaTest {
                                 .builder()
                                 .withName("Unit Sales")
                                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                
+
                                 .withFormatString("Standard")
                                 .build()
                         ))
@@ -5844,13 +5844,13 @@ class SchemaTest {
                         SumMeasureMappingImpl.builder()
                             .withName("Unit Sales")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("Standard")
                             .build(),
                         SumMeasureMappingImpl.builder()
                             .withName("Store Cost")
                             .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("#,###.00")
                             .build()
                     		)).build()))
@@ -5978,13 +5978,13 @@ class SchemaTest {
                                 SumMeasureMappingImpl.builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    
+
                                     .withFormatString("Standard")
                                     .build(),
                                 SumMeasureMappingImpl.builder()
                                     .withName("Store Cost")
                                     .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                    
+
                                     .withFormatString("#,###.00")
                                     .build()
                             ))
@@ -6138,14 +6138,14 @@ class SchemaTest {
                                 .builder()
                                 .withName("Unit Sales")
                                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                
+
                                 .withFormatString("Standard")
                                 .build(),
                             SumMeasureMappingImpl
                                 .builder()
                                 .withName("Store Cost")
                                 .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                
+
                                 .withFormatString("#,###.00")
                                 .build()
                     	))
@@ -7161,14 +7161,14 @@ class SchemaTest {
                     .builder()
                     .withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    
+
                     .withFormatString("Standard")
                     .build();
                 SumMeasureMappingImpl measure2 = SumMeasureMappingImpl
                     .builder()
                     .withName("Store Sales")
                     .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                    
+
                     .withFormatString("Standard")
                     .build();
                 PhysicalCubeMappingImpl c = PhysicalCubeMappingImpl
@@ -7622,7 +7622,7 @@ class SchemaTest {
                         		unitSalesMeasure = SumMeasureMappingImpl.builder()
                                     .withName("Unit Sales")
                                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                    
+
                                     .withFormatString("Standard")
                                     //.withCaption("Measure caption")
                                     .withDescription("Measure description")
@@ -7696,7 +7696,7 @@ class SchemaTest {
                                 unitsShippedMeasure = SumMeasureMappingImpl.builder()
                                 .withName("Units Shipped")
                                 .withColumn(FoodmartMappingSupplier.UNITS_SHIPPED_COLUMN_IN_INVENTORY_FACKT_1997)
-                                
+
                                 .withFormatString("#.0")
                                 .build())).build()
                         ))
@@ -8293,7 +8293,7 @@ class SchemaTest {
                                         .withName("unitsales1")
                                         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                                         .withDatatype(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                                        
+
                                         .withVisible(true)
                                         .build()
                                 ))
@@ -8348,7 +8348,7 @@ class SchemaTest {
                                         .withName("unitsales2")
                                         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                                         .withDatatype(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
-                                        
+
                                         .withVisible(true)
                                         .build()
                                 ))
@@ -8845,7 +8845,7 @@ class SchemaTest {
                                     SumMeasureMappingImpl.builder()
                                         .withName("Unit Sales")
                                         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                        
+
                                         .withFormatString("#,###")
                                         .build()
                                 ))
@@ -9289,7 +9289,7 @@ class SchemaTest {
                             SumMeasureMappingImpl.builder()
                                 .withName("Store Sqft")
                                 .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                
+
                                 .withFormatString("#,###")
                                 .build()
                         )).build()))
@@ -9421,7 +9421,7 @@ class SchemaTest {
                                 SumMeasureMappingImpl.builder()
                                     .withName("Store Sqft")
                                     .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                    
+
                                     .withFormatString("#,###")
                                     .build()
                             ))
@@ -9576,7 +9576,7 @@ class SchemaTest {
                                     SumMeasureMappingImpl.builder()
                                     .withName("Store Sqft")
                                     .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                    
+
                                     .withFormatString("#,###")
                                     .build()
                         	))
@@ -9670,7 +9670,7 @@ class SchemaTest {
                             		SumMeasureMappingImpl.builder()
                             		.withName("Store Sqft")
                             		.withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                            		
+
                             		.withFormatString("#,###")
                             		.build()
                             	))
@@ -9761,7 +9761,7 @@ class SchemaTest {
                                     SumMeasureMappingImpl.builder()
                                         .withName("Store Sqft")
                                         .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                        
+
                                         .withFormatString("#,###")
                                         .build()
                                 )).build()))
@@ -9903,7 +9903,7 @@ class SchemaTest {
                 SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                
+
                 .withFormatString("Standard")
                 .build();
 
@@ -10101,7 +10101,7 @@ class SchemaTest {
                 SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                
+
                 .withFormatString("Standard")
                 .build();
 
@@ -10212,7 +10212,7 @@ class SchemaTest {
             SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
             .withName("Unit Sales")
             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-            
+
             .withFormatString("Standard")
             .build();
 
@@ -10688,7 +10688,7 @@ class SchemaTest {
                 SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                
+
                 .withFormatString("Standard")
                 .build();
 
@@ -11347,7 +11347,7 @@ class SchemaTest {
                                                 SumMeasureMappingImpl.builder()
                                                 .withName("Org Salary")
                                                 .withColumn(FoodmartMappingSupplier.SALARY_PAID_COLUMN_IN_SALARY)
-                                                
+
                                                 .withFormatString("Currency")
                                                 .build()
                                         ))
@@ -11494,13 +11494,13 @@ class SchemaTest {
                 SumMeasureMappingImpl mA = SumMeasureMappingImpl.builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                
+
                 .withFormatString("Standard")
                 .build();
                 SumMeasureMappingImpl mB = SumMeasureMappingImpl.builder()
                 .withName("Unit Sales")
                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                
+
                 .withFormatString("Standard")
                 .build();
 
@@ -11797,7 +11797,7 @@ class SchemaTest {
                     SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
                     .withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    
+
                     .withFormatString("Standard")
                     .build();
 
