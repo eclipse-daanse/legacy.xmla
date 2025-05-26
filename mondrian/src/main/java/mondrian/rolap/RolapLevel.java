@@ -641,7 +641,7 @@ public class RolapLevel extends LevelBase {
             for (NameSegment nameSegment : keySegment.getKeyParts()) {
                 final String keyValue = nameSegment.getName();
                 if (RolapUtil.mdxNullLiteral().equalsIgnoreCase(keyValue)) {
-                    keyValues.add(RolapUtil.sqlNullValue);
+                    keyValues.add(Util.sqlNullValue);
                 } else {
                     keyValues.add(keyValue);
                 }

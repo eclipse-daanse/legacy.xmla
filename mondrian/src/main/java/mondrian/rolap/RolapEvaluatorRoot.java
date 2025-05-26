@@ -57,7 +57,7 @@ import mondrian.olap.Util;
  * @author jhyde
  * @since Nov 11, 2008
  */
-class RolapEvaluatorRoot {
+public class RolapEvaluatorRoot {
   final Map<Object, Object> expResultCache = new HashMap<>();
   final Map<Object, Object> tmpExpResultCache = new HashMap<>();
   final RolapCube cube;

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *   SmartCity Jena, Stefan Bischof - removements- use plain jdk8++ java
- * 
+ *
  * ---- All changes after Fork in 2023 ------------------------
  *
  * Project: Eclipse daanse
@@ -30,15 +30,7 @@ package mondrian.olap;
 
 import static mondrian.olap.fun.FunUtil.DOUBLE_EMPTY;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringWriter;
+import java.io.*;
 import java.lang.ref.Reference;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
@@ -129,9 +121,11 @@ import org.eclipse.daanse.olap.api.query.component.MemberProperty;
 import org.eclipse.daanse.olap.api.query.component.ParameterExpression;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
+import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
+import org.eclipse.daanse.olap.function.def.member.validmeasure.ValidMeasureFunDef;
 import org.eclipse.daanse.olap.impl.IdentifierNode;
 import org.eclipse.daanse.olap.impl.IdentifierParser;
 import org.eclipse.daanse.olap.impl.KeySegmentImpl;
@@ -172,6 +166,9 @@ public class Util {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Util.class);
 
+    public static final Logger PROFILE_LOGGER =
+            LoggerFactory.getLogger("mondrian.profile");
+
     /**
      * Special value which indicates that a {@code double} computation has returned the MDX null value. See {@link
      * DoubleCalc}.
@@ -201,6 +198,11 @@ public class Util {
      * and therefore caches will not be incorrectly shared. */
     public static final UUID JVM_INSTANCE_UUID = UUID.randomUUID();
 
+    /**
+     * Special value represents a null key.
+     */
+    public static final Comparable<?> sqlNullValue =
+        Util.UtilComparable.INSTANCE;
     /**
      * Whether this is an IBM JVM.
      */
@@ -2835,4 +2837,42 @@ public class Util {
       );
   }
 
+    /**
+     * Comparable value, equal only to itself. Used to represent the NULL value,
+     * as returned from a SQL query.
+     */
+    private static final class UtilComparable
+        implements Comparable, Serializable
+    {
+        private static final long serialVersionUID = -2595758291465179116L;
+
+        public static final Util.UtilComparable INSTANCE =
+            new Util.UtilComparable();
+
+        // singleton
+        private UtilComparable() {
+        }
+
+        // do not override equals and hashCode -- use identity
+
+        @Override
+        public String toString() {
+            return "#null";
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            // collates after everything (except itself)
+            return o == this ? 0 : -1;
+        }
+    }
+
+    public static boolean containsValidMeasure( Expression... expressions ) {
+        for ( Expression expression : expressions ) {
+          if ( expression instanceof ResolvedFunCall fun ) {
+            return fun.getFunDef() instanceof ValidMeasureFunDef || containsValidMeasure( fun.getArgs() );
+          }
+        }
+        return false;
+      }
 }

@@ -94,11 +94,11 @@ import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateCalc;
-import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
 import org.eclipse.daanse.olap.query.component.MdxVisitorImpl;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.eclipse.daanse.olap.util.type.TypeWrapperExp;
 import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
+import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalMember;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,7 +153,7 @@ public class RolapResult extends ResultBase {
    * @param execute
    *          Whether to execute the query
    */
-  RolapResult( final Execution execution, boolean execute ) {
+  public RolapResult( final Execution execution, boolean execute ) {
     super( execution, null );
     this.maxEvalDepth = query.getConnection().getContext().getConfigValue(ConfigConstants.MAX_EVAL_DEPTH, ConfigConstants.MAX_EVAL_DEPTH_DEFAULT_VALUE, Integer.class);
     this.solveOrder = execution

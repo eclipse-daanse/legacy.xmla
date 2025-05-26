@@ -125,8 +125,6 @@ import mondrian.olap.Walker;
 import mondrian.olap.exceptions.MdxAxisShowSubtotalsNotSupportedException;
 import mondrian.olap.exceptions.ParameterIsNotModifiableException;
 import mondrian.olap.exceptions.UnknownParameterException;
-import mondrian.rolap.RolapEvaluator;
-import mondrian.rolap.RolapUtil;
 import mondrian.server.ExecutionImpl;
 import mondrian.server.LocusImpl;
 import mondrian.util.ArrayStack;
@@ -344,7 +342,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         statement.setQuery(this);
         resolve();
 
-        if (RolapUtil.PROFILE_LOGGER.isDebugEnabled()
+        if (Util.PROFILE_LOGGER.isDebugEnabled()
             && statement.getProfileHandler() == null)
         {
             statement.enableProfiling(
@@ -354,7 +352,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
                         if (timing != null) {
                             plan += "\n" + timing;
                         }
-                        RolapUtil.PROFILE_LOGGER.debug(plan);
+                        Util.PROFILE_LOGGER.debug(plan);
                     }
                 }
             );
@@ -552,7 +550,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         final Validator validator = createValidator(resolvedIdentifiers);
         resolve(validator); // resolve self and children
         // Create a dummy result so we can use its evaluator
-        final Evaluator evaluator = RolapUtil.createEvaluator(statement);
+        final Evaluator evaluator = getConnection().getContext().createDummyEvaluator(statement);
         ExpressionCompiler compiler =
             createCompiler(
                 evaluator, validator, Collections.singletonList(resultStyle));
@@ -1469,7 +1467,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         // REVIEW: Set query on a connection's shared internal statement is
         // not re-entrant.
         statement.setQuery(this);
-        Evaluator evaluator = RolapEvaluator.create(statement);
+        Evaluator evaluator = this.getConnection().getContext().createEvaluator(statement);
         final Validator validator = createValidator();
         List<ResultStyle> resultStyleList;
         resultStyleList =
@@ -1489,7 +1487,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         // REVIEW: Set query on a connection's shared internal statement is
         // not re-entrant.
         statement.setQuery(this);
-        Evaluator evaluator = RolapEvaluator.create(statement);
+        Evaluator evaluator = this.getConnection().getContext().createEvaluator(statement);
         Validator validator = createValidator();
         return createCompiler(
             evaluator,
@@ -1513,9 +1511,9 @@ public class QueryImpl extends AbstractQueryPart implements Query {
         if (profileHandler != null) {
             // Cannot test dependencies and profile at the same time. Profiling
             // trumps.
-            compiler = RolapUtil.createProfilingCompiler(compiler);
+            compiler = getConnection().getContext().createProfilingCompiler(compiler);
         } else if (expDeps > 0) {
-            compiler = RolapUtil.createDependencyTestingCompiler(compiler);
+            compiler = getConnection().getContext().createDependencyTestingCompiler(compiler);
         }
         return compiler;
     }

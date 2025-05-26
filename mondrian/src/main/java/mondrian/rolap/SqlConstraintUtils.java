@@ -1,15 +1,31 @@
 /*
-// This software is subject to the terms of the Eclipse Public License v1.0
-// Agreement, available at the following URL:
-// http://www.eclipse.org/legal/epl-v10.html.
-// You must accept the terms of that agreement to use this software.
-//
-// Copyright (C) 2004-2005 TONBELLER AG
-// Copyright (C) 2005-2005 Julian Hyde
-// Copyright (C) 2005-2020 Hitachi Vantara and others
-// Copyright (C) 2021 Sergei Semenkov
-// All Rights Reserved.
-*/
+ * This software is subject to the terms of the Eclipse Public License v1.0
+ * Agreement, available at the following URL:
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * You must accept the terms of that agreement to use this software.
+ *
+ * Copyright (C) 2004-2005 TONBELLER AG
+ * Copyright (C) 2005-2005 Julian Hyde
+ * Copyright (C) 2005-2020 Hitachi Vantara and others
+ * Copyright (C) 2021 Sergei Semenkov
+ * All Rights Reserved.
+ *
+ * ---- All changes after Fork in 2023 ------------------------
+ *
+ * Project: Eclipse daanse
+ *
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors after Fork in 2023:
+ *   SmartCity Jena - initial
+ */
+
 package mondrian.rolap;
 
 import static mondrian.rolap.util.ExpressionUtil.getExpression;
@@ -492,7 +508,7 @@ public class SqlConstraintUtils {
    */
   private static void addSimpleColumnConstraint( SqlQuery sqlQuery, RolapStar.Column column, String expr,
       final String value ) {
-    if ( ( RolapUtil.mdxNullLiteral().equalsIgnoreCase( value ) ) || ( value.equalsIgnoreCase( RolapUtil.sqlNullValue
+    if ( ( RolapUtil.mdxNullLiteral().equalsIgnoreCase( value ) ) || ( value.equalsIgnoreCase( Util.sqlNullValue
         .toString() ) ) ) {
       sqlQuery.addWhere( expr, " is ", RolapUtil.SQL_NULL_LITERAL);
     } else {
@@ -1320,7 +1336,7 @@ public class SqlConstraintUtils {
    * @return string value corresponding to the member
    */
   private static String getColumnValue( Object key, Dialect dialect, Datatype datatype ) {
-    if ( key != RolapUtil.sqlNullValue ) {
+    if ( key != Util.sqlNullValue ) {
       return key.toString();
     } else {
       return RolapUtil.mdxNullLiteral();
@@ -1493,7 +1509,7 @@ public class SqlConstraintUtils {
   public static String constrainLevel2(SqlQuery query, SqlExpression exp, Datatype datatype,
                                        Comparable columnValue ) {
     String columnString = getExpression( exp, query );
-    if ( columnValue == RolapUtil.sqlNullValue ) {
+    if ( columnValue == Util.sqlNullValue ) {
       return new StringBuilder(columnString).append(" is ").append(RolapUtil.SQL_NULL_LITERAL).toString();
     } else {
       final StringBuilder buf = new StringBuilder();
@@ -1783,7 +1799,7 @@ public class SqlConstraintUtils {
       Iterator<RolapMember> it = c.iterator();
       while ( it.hasNext() ) {
         m = it.next();
-        if ( m.getKey() == RolapUtil.sqlNullValue ) {
+        if ( m.getKey() == Util.sqlNullValue ) {
           containsNullKey = true;
         }
       }
@@ -1907,15 +1923,6 @@ public class SqlConstraintUtils {
 
   public static boolean measuresConflictWithMembers( Set<Member> measuresMembers, CrossJoinArg[] cjArgs ) {
     return measuresConflictWithMembers( measuresMembers, getCJArgMembers( cjArgs ) );
-  }
-
-  public static boolean containsValidMeasure( Expression... expressions ) {
-    for ( Expression expression : expressions ) {
-      if ( expression instanceof ResolvedFunCall fun ) {
-        return fun.getFunDef() instanceof ValidMeasureFunDef || containsValidMeasure( fun.getArgs() );
-      }
-    }
-    return false;
   }
 
   /**

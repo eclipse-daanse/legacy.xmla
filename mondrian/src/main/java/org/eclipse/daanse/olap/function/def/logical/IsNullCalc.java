@@ -20,7 +20,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedBooleanCalc;
 
-import mondrian.rolap.RolapUtil;
+import mondrian.olap.Util;
 
 public class IsNullCalc extends AbstractProfilingNestedBooleanCalc {
 
@@ -38,7 +38,7 @@ public class IsNullCalc extends AbstractProfilingNestedBooleanCalc {
      * Dimension members with a null value are treated as the null member.
      */
     private boolean nonAllWithNullKey(KeyMember member) {
-        return !member.isAll() && member.getKey() == RolapUtil.sqlNullValue;
+        return !member.isAll() && member.getKey() == Util.sqlNullValue;
     }
 
 }

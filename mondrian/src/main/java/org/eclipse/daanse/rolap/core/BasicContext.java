@@ -29,6 +29,9 @@ import org.eclipse.daanse.olap.api.AggregationFactory;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.core.LoggingEventBus;
@@ -47,13 +50,20 @@ import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import mondrian.olap.ExecuteDurationUtil;
 import mondrian.rolap.AbstractRolapContext;
 import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapConnectionPropsR;
+import mondrian.rolap.RolapDependencyTestingEvaluator;
+import mondrian.rolap.RolapEvaluator;
+import mondrian.rolap.RolapEvaluatorRoot;
+import mondrian.rolap.RolapProfilingEvaluator;
+import mondrian.rolap.RolapResult;
 import mondrian.rolap.RolapResultShepherd;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.aggregator.AggregationFactoryImpl;
+import mondrian.server.ExecutionImpl;
 
 @Component(service = Context.class, scope = ServiceScope.SINGLETON)
 public class BasicContext extends AbstractRolapContext implements RolapContext {
@@ -222,5 +232,38 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
     @Override
     public AggregationFactory getAggragationFactory() {
         return this.aggregationFactory;
+    }
+
+    @Override
+    public Evaluator createEvaluator(Statement statement) {
+        final RolapEvaluatorRoot root = new RolapEvaluatorRoot( statement );
+        return new RolapEvaluator( root );
     };
+
+    @Override
+    public Evaluator createDummyEvaluator(Statement statement) {
+        ExecutionImpl dummyExecution = new ExecutionImpl(statement,
+                ExecuteDurationUtil.executeDurationValue(statement.getConnection().getContext()));
+        final RolapResult result = new RolapResult(dummyExecution, false);
+        return result.getRootEvaluator();
+    };
+
+    @Override
+    public ExpressionCompiler createProfilingCompiler(ExpressionCompiler compiler) {
+        return new RolapProfilingEvaluator.ProfilingEvaluatorCompiler(
+            compiler);
+    }
+
+    /**
+     * Creates a compiler which will generate programs which will test
+     * whether the dependencies declared via
+     * {@link mondrian.calc.Calc#dependsOn(MappingHierarchy)} are accurate.
+     */
+    @Override
+    public ExpressionCompiler createDependencyTestingCompiler(
+        ExpressionCompiler compiler)
+    {
+        return new RolapDependencyTestingEvaluator.DteCompiler(compiler);
+    }
+
 }

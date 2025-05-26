@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.visualtotals;
+package org.eclipse.daanse.rolap.function.def.visualtotals;
 
 import java.util.List;
 

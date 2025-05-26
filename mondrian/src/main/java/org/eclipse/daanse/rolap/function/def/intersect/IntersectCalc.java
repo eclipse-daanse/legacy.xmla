@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.intersect;
+package org.eclipse.daanse.rolap.function.def.intersect;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,7 +25,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
-import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
+import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalMember;
 
 public class IntersectCalc extends AbstractProfilingNestedTupleListCalc {
 

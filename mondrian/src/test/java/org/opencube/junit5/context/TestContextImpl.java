@@ -31,7 +31,10 @@ import org.eclipse.daanse.mdx.parser.ccc.MdxParserProviderImpl;
 import org.eclipse.daanse.olap.api.AggregationFactory;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.ConnectionProps;
+import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory;
@@ -96,7 +99,7 @@ import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHierarchyResolv
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.NamedSetCurrentResolver;
-import org.eclipse.daanse.olap.function.def.intersect.IntersectResolver;
+import org.eclipse.daanse.rolap.function.def.intersect.IntersectResolver;
 import org.eclipse.daanse.olap.function.def.lastperiods.LastPeriodsResolver;
 import org.eclipse.daanse.olap.function.def.leadlag.LagResolver;
 import org.eclipse.daanse.olap.function.def.leadlag.LeadResolver;
@@ -310,7 +313,7 @@ import org.eclipse.daanse.olap.function.def.vba.typename.TypeNameResolver;
 import org.eclipse.daanse.olap.function.def.vba.weekday.WeekdayResolver;
 import org.eclipse.daanse.olap.function.def.vba.weekdayname.WeekdayNameResolver;
 import org.eclipse.daanse.olap.function.def.vba.year.YearResolver;
-import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalsResolver;
+import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalsResolver;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.aggregator.AvgAggregator;
 import org.eclipse.daanse.rolap.aggregator.CountAggregator;
@@ -322,11 +325,18 @@ import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
 
+import mondrian.olap.ExecuteDurationUtil;
 import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapConnectionPropsR;
+import mondrian.rolap.RolapDependencyTestingEvaluator;
+import mondrian.rolap.RolapEvaluator;
+import mondrian.rolap.RolapEvaluatorRoot;
+import mondrian.rolap.RolapProfilingEvaluator;
+import mondrian.rolap.RolapResult;
 import mondrian.rolap.RolapResultShepherd;
 import mondrian.rolap.agg.AggregationManager;
+import mondrian.server.ExecutionImpl;
 
 public class TestContextImpl extends AbstractBasicContext implements TestContext, RolapContext {
 
@@ -946,6 +956,39 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
 
     public void setAggragationFactory(AggregationFactory aggregationFactory) {
         this.aggregationFactory = aggregationFactory;
+    }
+
+    @Override
+    public Evaluator createEvaluator(Statement statement) {
+        final RolapEvaluatorRoot root = new RolapEvaluatorRoot( statement );
+        return new RolapEvaluator( root );
+
+    }
+
+    @Override
+    public Evaluator createDummyEvaluator(Statement statement) {
+        ExecutionImpl dummyExecution = new ExecutionImpl(statement,
+                ExecuteDurationUtil.executeDurationValue(statement.getConnection().getContext()));
+        final RolapResult result = new RolapResult(dummyExecution, false);
+        return result.getRootEvaluator();
+    }
+
+    @Override
+    public ExpressionCompiler createProfilingCompiler(ExpressionCompiler compiler) {
+        return new RolapProfilingEvaluator.ProfilingEvaluatorCompiler(
+            compiler);
+    }
+
+    /**
+     * Creates a compiler which will generate programs which will test
+     * whether the dependencies declared via
+     * {@link mondrian.calc.Calc#dependsOn(MappingHierarchy)} are accurate.
+     */
+    @Override
+    public ExpressionCompiler createDependencyTestingCompiler(
+        ExpressionCompiler compiler)
+    {
+        return new RolapDependencyTestingEvaluator.DteCompiler(compiler);
     }
 
 }

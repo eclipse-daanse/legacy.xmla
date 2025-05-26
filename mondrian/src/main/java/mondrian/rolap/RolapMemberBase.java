@@ -47,7 +47,7 @@ import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
-import org.eclipse.daanse.olap.function.def.visualtotals.VisualTotalMember;
+import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalMember;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,7 +162,7 @@ public class RolapMemberBase
 
     protected RolapMemberBase() {
         super();
-        this.key = RolapUtil.sqlNullValue;
+        this.key = Util.sqlNullValue;
     }
 
     RolapMemberBase(RolapMember parentMember, RolapLevel level, Object value) {
@@ -592,20 +592,20 @@ public class RolapMemberBase
         RolapMemberBase other = (RolapMemberBase)o;
         assert this.key != null && other.key != null;
 
-        if (this.key == RolapUtil.sqlNullValue
-            && other.key == RolapUtil.sqlNullValue)
+        if (this.key == Util.sqlNullValue
+            && other.key == Util.sqlNullValue)
         {
             // if both keys are null, they are equal.
             // compare by unique name.
             return this.getName().compareTo(other.getName());
         }
 
-        if (other.key == RolapUtil.sqlNullValue) {
+        if (other.key == Util.sqlNullValue) {
             // not null is greater than null
             return 1;
         }
 
-        if (this.key == RolapUtil.sqlNullValue) {
+        if (this.key == Util.sqlNullValue) {
             // null is less than not null
             return -1;
         }
@@ -963,7 +963,7 @@ public class RolapMemberBase
      */
     protected static String keyToString(Object key) {
         String name;
-        if (key == null || RolapUtil.sqlNullValue.equals(key)) {
+        if (key == null || Util.sqlNullValue.equals(key)) {
             name = RolapUtil.mdxNullLiteral();
         } else if (key instanceof NameSegment) {
             name = ((NameSegment) key).getName();

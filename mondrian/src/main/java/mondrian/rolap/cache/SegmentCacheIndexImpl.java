@@ -6,13 +6,13 @@
  *
  * Copyright (c) 2002-2019 Hitachi Vantara.
  * All Rights Reserved.
- * 
+ *
  * For more information please visit the Project: Hitachi Vantara - Mondrian
- * 
+ *
  * ---- All changes after Fork in 2023 ------------------------
- * 
+ *
  * Project: Eclipse daanse
- * 
+ *
  * Copyright (c) 2023 Contributors to the Eclipse Foundation.
  *
  * This program and the accompanying materials are made
@@ -886,7 +886,7 @@ public class SegmentCacheIndexImpl implements SegmentCacheIndex {
                     Comparable value =
                         coordinates.get(column.columnExpression);
                     if (value == null) {
-                        value = RolapUtil.sqlNullValue;
+                        value = Util.sqlNullValue;
                     }
                     if (constrainedColumn.values != null
                         && !constrainedColumn.values.contains(value))

@@ -221,7 +221,7 @@ public class SqlTupleReader implements TupleReader {
               // member is at top of hierarchy; its parent is the
               // 'all' member. Convert null to placeholder value
               // for uniformity in hashmaps.
-              parentValue = RolapUtil.sqlNullValue;
+              parentValue = Util.sqlNullValue;
             } else {
               Object parentKey =
                 cache.makeKey(
@@ -243,7 +243,7 @@ public class SqlTupleReader implements TupleReader {
           }
           Object value = accessors.get( column++ ).get();
           if ( value == null ) {
-            value = RolapUtil.sqlNullValue;
+            value = Util.sqlNullValue;
           }
           Object captionValue;
           if ( childLevel.hasCaptionColumn() ) {
@@ -325,7 +325,7 @@ public class SqlTupleReader implements TupleReader {
             // If we're building a list of siblings at this level,
             // we haven't seen this one before, so add it.
             if ( siblings.get( i ) != null ) {
-              if ( value == RolapUtil.sqlNullValue ) {
+              if ( value == Util.sqlNullValue ) {
                 addAsOldestSibling( siblings.get( i ), member );
               } else {
                 siblings.get( i ).add( member );
@@ -643,7 +643,7 @@ public TupleList readMembers(
   protected List<Member> bumpNullMember( List<Member> members ) {
     if ( !members.isEmpty()
       && ( (RolapMemberBase) members.get( members.size() - 1 ) ).getKey()
-      == RolapUtil.sqlNullValue ) {
+      == Util.sqlNullValue ) {
       Member removed = members.remove( members.size() - 1 );
       members.add( 0, removed );
     }
@@ -1160,7 +1160,7 @@ public TupleList readTuples(
     Set<Member> measures = new HashSet<>(constraint.getEvaluator().getQuery().getMeasuresMembers());
     for ( Member measure : measures ) {
       if ( measure.isCalculated()
-        && SqlConstraintUtils.containsValidMeasure(
+        && Util.containsValidMeasure(
         measure.getExpression() ) ) {
         return true;
       }

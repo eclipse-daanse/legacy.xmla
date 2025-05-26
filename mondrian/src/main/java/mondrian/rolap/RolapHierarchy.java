@@ -354,7 +354,7 @@ public class RolapHierarchy extends HierarchyBase {
                 OlapMetaData.empty());
         allLevel.init(cubeDimensionMapping);
         this.allMember = new RolapMemberBase(
-            null, allLevel, RolapUtil.sqlNullValue,
+            null, allLevel, Util.sqlNullValue,
             allMemberName, Member.MemberType.ALL);
         // assign "all member" caption
         if (xmlHierarchy.getAllMemberCaption() != null
@@ -1376,7 +1376,7 @@ public class RolapHierarchy extends HierarchyBase {
             super(
                 null,
                 level,
-                RolapUtil.sqlNullValue,
+                Util.sqlNullValue,
                 RolapUtil.mdxNullLiteral(),
                 MemberType.NULL);
             assert level != null;

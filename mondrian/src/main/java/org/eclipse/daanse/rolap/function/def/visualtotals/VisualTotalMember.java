@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.visualtotals;
+package org.eclipse.daanse.rolap.function.def.visualtotals;
 
 import java.util.List;
 
@@ -26,8 +26,8 @@ import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
 
 import mondrian.olap.AbstractProperty;
 import mondrian.olap.StandardProperty;
+import mondrian.olap.Util;
 import mondrian.rolap.RolapMemberBase;
-import mondrian.rolap.RolapUtil;
 
 /**
  * Calculated member for <code>VisualTotals</code> function.
@@ -53,7 +53,7 @@ public class VisualTotalMember  extends RolapMemberBase {
         super(
             member.getParentMember(),
             member.getLevel(),
-            RolapUtil.sqlNullValue, name, member.getMemberType() ==  MemberType.ALL ? MemberType.ALL : MemberType.FORMULA);
+            Util.sqlNullValue, name, member.getMemberType() ==  MemberType.ALL ? MemberType.ALL : MemberType.FORMULA);
         this.member = member;
         this.caption = caption;
         this.exp = exp;
@@ -165,7 +165,7 @@ public class VisualTotalMember  extends RolapMemberBase {
         if (property == null) {
             return null;
         }
-        
+
         if(property == StandardProperty.CHILDREN_CARDINALITY) {
             return member.getPropertyValue(propertyName, matchCase);}
         else {

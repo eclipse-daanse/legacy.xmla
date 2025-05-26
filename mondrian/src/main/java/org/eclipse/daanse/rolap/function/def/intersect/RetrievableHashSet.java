@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.intersect;
+package org.eclipse.daanse.rolap.function.def.intersect;
 
 import java.util.HashMap;
 

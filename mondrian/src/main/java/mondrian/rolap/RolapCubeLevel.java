@@ -498,7 +498,7 @@ public class RolapCubeLevel extends RolapLevel {
                 assert !member.isCalculated();
                 assert memberColumnPredicate.getMember().getKey() != null;
                 assert memberColumnPredicate.getMember().getKey()
-                    != RolapUtil.sqlNullValue;
+                    != Util.sqlNullValue;
                 assert !member.isNull();
 
                 // use the member as constraint, this will give us some

@@ -96,8 +96,6 @@ public class RolapUtil {
     public static final Logger SQL_LOGGER = LoggerFactory.getLogger("mondrian.sql");
     public static final Logger MONITOR_LOGGER =
         LoggerFactory.getLogger("mondrian.server.monitor");
-    public static final Logger PROFILE_LOGGER =
-        LoggerFactory.getLogger("mondrian.profile");
 
     static final Logger LOGGER = LoggerFactory.getLogger(RolapUtil.class);
 
@@ -106,12 +104,6 @@ public class RolapUtil {
      * used at runtime but only for testing.
      */
     private static ExecuteQueryHook queryHook = null;
-
-    /**
-     * Special value represents a null key.
-     */
-    public static final Comparable<?> sqlNullValue =
-        RolapUtilComparable.INSTANCE;
 
     public static Consumer<java.sql.Statement> getDefaultCallback(final LocusImpl locus) {
         return stmt -> locus.getExecution().registerStatement(locus, stmt);
@@ -133,36 +125,6 @@ public class RolapUtil {
     }
 
     /**
-     * Comparable value, equal only to itself. Used to represent the NULL value,
-     * as returned from a SQL query.
-     */
-    private static final class RolapUtilComparable
-        implements Comparable, Serializable
-    {
-        private static final long serialVersionUID = -2595758291465179116L;
-
-        public static final RolapUtilComparable INSTANCE =
-            new RolapUtilComparable();
-
-        // singleton
-        private RolapUtilComparable() {
-        }
-
-        // do not override equals and hashCode -- use identity
-
-        @Override
-		public String toString() {
-            return "#null";
-        }
-
-        @Override
-		public int compareTo(Object o) {
-            // collates after everything (except itself)
-            return o == this ? 0 : -1;
-        }
-    }
-
-    /**
      * A {@link Comparator} implementation which can deal
      * correctly with {@link RolapUtil#sqlNullValue}.
      */
@@ -177,10 +139,10 @@ public class RolapUtil {
 
         @Override
         public int compare(Comparable o1, Comparable o2) {
-            if (o1 == RolapUtil.sqlNullValue) {
+            if (o1 == Util.sqlNullValue) {
                 return -1;
             }
-            if (o2 == RolapUtil.sqlNullValue) {
+            if (o2 == Util.sqlNullValue) {
                 return 1;
             }
             return o1.compareTo(o2);
@@ -202,7 +164,7 @@ public class RolapUtil {
             try {
                 return o1.compareTo(o2);
             } catch (ClassCastException cce) {
-                if (o2 == RolapUtilComparable.INSTANCE) {
+                if (o2 == Util.sqlNullValue) {
                     return 1;
                 }
                 throw new OlapRuntimeException(cce);
@@ -426,16 +388,6 @@ public class RolapUtil {
         }
     }
 
-    /**
-     * Creates a compiler which will generate programs which will test
-     * whether the dependencies declared via
-     * {@link mondrian.calc.Calc#dependsOn(MappingHierarchy)} are accurate.
-     */
-    public static ExpressionCompiler createDependencyTestingCompiler(
-        ExpressionCompiler compiler)
-    {
-        return new RolapDependencyTestingEvaluator.DteCompiler(compiler);
-    }
 
     /**
      * Locates a member specified by its member name, from an array of
@@ -563,23 +515,6 @@ public class RolapUtil {
             return rolapCubeMember.getRolapMember();
         }
         return member;
-    }
-
-    public static ExpressionCompiler createProfilingCompiler(ExpressionCompiler compiler) {
-        return new RolapProfilingEvaluator.ProfilingEvaluatorCompiler(
-            compiler);
-    }
-
-    /**
-     * Creates a dummy evaluator.
-     */
-    public static Evaluator createEvaluator(
-        Statement statement)
-    {
-        ExecutionImpl dummyExecution = new ExecutionImpl(statement,
-                ExecuteDurationUtil.executeDurationValue(statement.getConnection().getContext()));
-        final RolapResult result = new RolapResult(dummyExecution, false);
-        return result.getRootEvaluator();
     }
 
     public static interface ExecuteQueryHook {

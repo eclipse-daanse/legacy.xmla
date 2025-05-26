@@ -409,7 +409,7 @@ class SqlMemberSource
                     }
                     Object value = accessors.get(column).get();
                     if (value == null) {
-                        value = RolapUtil.sqlNullValue;
+                        value = Util.sqlNullValue;
                     }
                     RolapMember parent = member;
                     MemberKey key = new MemberKey(parent, value);
@@ -425,7 +425,7 @@ RME is this right
                             member.setOrdinal(lastOrdinal++);
                         }
 */
-                        if (value == RolapUtil.sqlNullValue) {
+                        if (value == Util.sqlNullValue) {
                             addAsOldestSibling(list, member);
                         } else {
                             list.add(member);
@@ -1062,7 +1062,7 @@ RME is this right
 
                 Object value = accessors.get(0).get();
                 if (value == null) {
-                    value = RolapUtil.sqlNullValue;
+                    value = Util.sqlNullValue;
                 }
                 Object captionValue;
                 int columnOffset = 1;
@@ -1082,7 +1082,7 @@ RME is this right
                             parentMember2, childLevel, value, captionValue,
                             parentChild, stmt, key, columnOffset);
                 }
-                if (value == RolapUtil.sqlNullValue) {
+                if (value == Util.sqlNullValue) {
                     children.toArray(); // not remove call consolidate in ConcatenableList
                     addAsOldestSibling(children, member);
                 } else {

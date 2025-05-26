@@ -56,7 +56,6 @@ import mondrian.olap.ResultStyleException;
 import mondrian.olap.Util;
 import mondrian.olap.fun.FunUtil;
 import mondrian.olap.fun.MemberExtractingVisitor;
-import mondrian.rolap.SqlConstraintUtils;
 import mondrian.server.LocusImpl;
 import mondrian.util.CancellationChecker;
 
@@ -516,7 +515,7 @@ public class CrossJoinFunDef extends AbstractFunctionDefinition {
             Formula[] formula = query.getFormulas();
             if (formula != null) {
                 for (Formula f : formula) {
-                    if (SqlConstraintUtils.containsValidMeasure(f.getExpression())) {
+                    if (Util.containsValidMeasure(f.getExpression())) {
                         // short circuit if VM is present.
                         return list;
                     }

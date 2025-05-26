@@ -1,11 +1,26 @@
 /*
-* This software is subject to the terms of the Eclipse Public License v1.0
-* Agreement, available at the following URL:
-* http://www.eclipse.org/legal/epl-v10.html.
-* You must accept the terms of that agreement to use this software.
-*
-* Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
-*/
+ * This software is subject to the terms of the Eclipse Public License v1.0
+ * Agreement, available at the following URL:
+ * http://www.eclipse.org/legal/epl-v10.html.
+ * You must accept the terms of that agreement to use this software.
+ *
+ * Copyright (c) 2002-2017 Hitachi Vantara..  All rights reserved.
+ *
+ * ---- All changes after Fork in 2023 ------------------------
+ *
+ * Project: Eclipse daanse
+ *
+ * Copyright (c) 2023 Contributors to the Eclipse Foundation.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors after Fork in 2023:
+ *   SmartCity Jena - initial
+ */
 
 package mondrian.rolap;
 
@@ -255,7 +270,7 @@ public class RolapDependencyTestingEvaluator extends RolapEvaluator {
         boolean faking;
         boolean disabled;
         final Random random = new SecureRandom();
-        		 
+
 
         DteRoot(RolapResult result, int expDeps) {
             super(result);
@@ -383,7 +398,7 @@ public class RolapDependencyTestingEvaluator extends RolapEvaluator {
         }
     }
 
-    
+
     /**
      * Expression which checks dependencies and list immutability of an
      * underlying list or iterable expression.
@@ -447,8 +462,8 @@ public class RolapDependencyTestingEvaluator extends RolapEvaluator {
      * <p>It also checks that the caller does not modify lists unless it has
      * explicitly asked for a mutable list.
      */
-    static class DteCompiler extends DelegatingExpCompiler {
-        DteCompiler(ExpressionCompiler compiler) {
+    public static class DteCompiler extends DelegatingExpCompiler {
+        public DteCompiler(ExpressionCompiler compiler) {
             super(compiler);
         }
 
