@@ -267,13 +267,15 @@ public class SqlTupleReader implements TupleReader {
                   .findMember( value );
             }
             if ( member == null ) {
+              if (parentMember  == null || !parentMember.getKey().equals(value)) {
               member = memberBuilder.makeMember(
                 parentMember, childLevel, value, captionValue,
                 parentChild, stmt, key, column );
+              }
             }
           }
 
-
+          if (member != null) {
           // Skip over the columns consumed by makeMember
           if ( !childLevel.getOrdinalExp().equals(
             childLevel.getKeyExp() ) ) {
@@ -334,8 +336,11 @@ public class SqlTupleReader implements TupleReader {
           }
         }
         setCurrMember( member );
+        }
       }
-      getList().add( member );
+      if (member != null) {
+          getList().add( member );
+      }
       return column;
     }
 
@@ -1347,8 +1352,13 @@ public TupleList readTuples(
           final String parentAlias =
             sqlQuery.addSelectGroupBy(
               parentSql, currLevel.getInternalType() );
-          sqlQuery.addOrderBy(
-            parentSql, parentAlias, true, false, true, false );
+          if (level.getNullParentValue() == null) {
+              sqlQuery.addOrderBy(
+                      parentSql, parentAlias, true, false, true, false );
+          } else {
+              sqlQuery.addOrderBy(
+                      parentSql, parentAlias, true, false, level.getNullParentValue(), level.getDatatype(), false);
+          }
         }
       }
       String keySql = getExpression( keyExp, sqlQuery );

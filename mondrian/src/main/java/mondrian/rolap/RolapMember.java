@@ -26,6 +26,7 @@
 package mondrian.rolap;
 
 import org.eclipse.daanse.olap.api.element.KeyMember;
+import org.eclipse.daanse.olap.api.element.Level;
 
 /**
  * A <code>RolapMember</code> is a member of a {@link RolapHierarchy}. There are
@@ -45,4 +46,6 @@ public interface RolapMember extends KeyMember, RolapCalculation {
     /** @deprecated will be removed in mondrian-4.0 */
     @Deprecated
 	boolean isAllMember();
+    
+    void setLevel(Level level);
 }

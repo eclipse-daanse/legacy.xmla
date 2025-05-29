@@ -95,4 +95,6 @@ public interface Level extends OlapElement, MetaElement {
     boolean isUnique();
 
     SqlExpression getOrdinalExp();
+
+    boolean isParentChild();
 }

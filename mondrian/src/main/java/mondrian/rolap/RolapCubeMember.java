@@ -28,6 +28,7 @@ package mondrian.rolap;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.Segment;
+import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.query.component.Expression;
@@ -50,7 +51,7 @@ public class RolapCubeMember
     extends DelegatingRolapMember
     implements RolapMemberInCube
 {
-    protected final RolapCubeLevel cubeLevel;
+    protected RolapCubeLevel cubeLevel;
     protected final RolapCubeMember parentCubeMember;
 
     /**
@@ -188,6 +189,12 @@ public class RolapCubeMember
     @Override
 	public final RolapCubeLevel getLevel() {
         return cubeLevel;
+    }
+
+    @Override
+    public final void setLevel(Level level) {
+        super.setLevel(level);
+        this.cubeLevel = (RolapCubeLevel)level;
     }
 
     @Override

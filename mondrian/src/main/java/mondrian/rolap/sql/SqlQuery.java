@@ -30,6 +30,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
@@ -652,6 +653,25 @@ public class SqlQuery {
         } else {
             orderBy.add(orderExpr);
         }
+    }
+
+    public void addOrderBy(String expr, String alias, boolean ascending, boolean prepend, String nullParentValue,
+            org.eclipse.daanse.jdbc.db.dialect.api.Datatype type, boolean collateNullsLast) {
+        String orderExpr =
+                dialect.generateOrderItemForOrderValue(
+                    dialect.requiresOrderByAlias() && alias != null
+                        ? dialect.quoteIdentifier(alias)
+                        : expr,
+                    nullParentValue,
+                    type,
+                    ascending,
+                    collateNullsLast).toString();
+            if (prepend) {
+                orderBy.add(0, orderExpr);
+            } else {
+                orderBy.add(orderExpr);
+            }
+        
     }
 
     @Override

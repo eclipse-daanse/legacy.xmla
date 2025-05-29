@@ -216,9 +216,9 @@ public class RolapLevel extends LevelBase {
                 .append("' must have uniqueMembers=\"true\"").toString());
         }
         this.nullParentValue = nullParentValue;
-        Util.assertPrecondition(
-            parentExp != null || nullParentValue == null,
-            "parentExp != null || nullParentValue == null");
+        //Util.assertPrecondition(
+        //    parentExp != null || nullParentValue == null,
+        //    "parentExp != null || nullParentValue == null");
         this.xmlClosure = mappingClosure;
         for (RolapProperty property : properties) {
             if (property.getExp() instanceof mondrian.rolap.RolapColumn column) {
@@ -320,7 +320,7 @@ public class RolapLevel extends LevelBase {
     }
 
     public boolean hasOrdinalExp() {
-      return !getOrdinalExp().equals(getKeyExp());
+      return getOrdinalExp() != null && !getOrdinalExp().equals(getKeyExp());
     }
 
     final int getFlags() {
@@ -346,6 +346,7 @@ public class RolapLevel extends LevelBase {
     /**
      * Returns whether this level is parent-child.
      */
+    @Override
     public boolean isParentChild() {
         return parentExp != null;
     }
@@ -369,15 +370,19 @@ public class RolapLevel extends LevelBase {
     }
 
     RolapLevel(
-        RolapHierarchy hierarchy,
-        int depth,
-        LevelMapping mappingLevel)
+            String name,
+            RolapSqlExpression parentExp,
+            String nullParentValue,
+            ParentChildLinkMapping parentChildLink,
+            RolapHierarchy hierarchy,
+            int depth,
+            LevelMapping mappingLevel)
     {
 
         this(
             hierarchy,
-            mappingLevel.getName(),
-            mappingLevel.getName(),
+            name,
+            name,
             mappingLevel.isVisible(),
             mappingLevel.getDescription(),
             depth,
@@ -385,9 +390,9 @@ public class RolapLevel extends LevelBase {
             LevelUtil.getNameExp(mappingLevel),
             LevelUtil.getCaptionExp(mappingLevel),
             LevelUtil.getOrdinalExp(mappingLevel),
-            LevelUtil.getParentExp(mappingLevel),
-            mappingLevel.getNullParentValue(),
-            mappingLevel.getParentChildLink(),
+            parentExp,
+            nullParentValue,
+            parentChildLink,
             createProperties(mappingLevel),
             (mappingLevel.isUniqueMembers() ? FLAG_UNIQUE : 0),
             getType(mappingLevel),
@@ -403,7 +408,7 @@ public class RolapLevel extends LevelBase {
 
         setLevelInProperties();
         if (!Util.isEmpty(mappingLevel.getName())) {
-            setCaption(mappingLevel.getName());
+            setCaption(getName());
         }
 
         FormatterCreateContext memberFormatterContext =
@@ -415,6 +420,22 @@ public class RolapLevel extends LevelBase {
             FormatterFactory.instance()
                 .createRolapMemberFormatter(memberFormatterContext);
         levelMapping = mappingLevel;
+    }
+
+    RolapLevel(
+        RolapHierarchy hierarchy,
+        int depth,
+        LevelMapping mappingLevel)
+    {
+
+        this(mappingLevel.getName(),
+                LevelUtil.getParentExp(mappingLevel),
+                mappingLevel.getNullParentValue(),
+                mappingLevel.getParentChildLink(),
+                hierarchy,
+                depth,
+                mappingLevel);
+
     }
 
     private static Datatype getType(LevelMapping mappingLevel) {
@@ -571,6 +592,10 @@ public class RolapLevel extends LevelBase {
     public List<Member> getMembers() {
         //TODO need to set members in level
         return members != null ? members: List.of();
+    }
+
+    public LevelMapping getLevelMapping() {
+        return levelMapping;
     }
 
     private static final Map<String, BestFitColumnType> VALUES =

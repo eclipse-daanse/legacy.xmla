@@ -685,10 +685,11 @@ public class RolapCubeHierarchy extends RolapHierarchy {
                 if (member instanceof VisualTotalMember) {
                     continue;
                 }
-                final RolapCubeMember cubeMember = (RolapCubeMember) member;
-                final RolapMember rolapMember = cubeMember.getRolapMember();
-                lookup.put(rolapMember.getUniqueName(), cubeMember);
-                rolapParents.add(rolapMember);
+                if (member instanceof RolapCubeMember cubeMember) {
+                    final RolapMember rolapMember = cubeMember.getRolapMember();
+                    lookup.put(rolapMember.getUniqueName(), cubeMember);
+                    rolapParents.add(rolapMember);
+                }
             }
 
             // get member children from shared member reader if possible,
@@ -708,6 +709,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
                 RolapCubeMember parent =
                     lookup.get(
                         currMember.getParentMember().getUniqueName());
+                if (parent != null) {
                 RolapCubeLevel level =
                     parent.getLevel().getChildLevel();
                 if (level == null) {
@@ -718,8 +720,9 @@ public class RolapCubeHierarchy extends RolapHierarchy {
                     lookupCubeMember(
                         parent, currMember, level);
                 children.add(newmember);
+                }
             }
-
+            //this.setCorrectLevel(children);
             // Put them in a temporary hash table first. Register them later,
             // when we know their size (hence their 'cost' to the cache pool).
             Map<RolapMember, List<RolapMember>> tempMap =
@@ -831,6 +834,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
                         super.getMembersInLevel(
                             level, constraint);
                 }
+                setCorrectLevel(list);
                 List<RolapMember> newlist = new ArrayList<>();
                 for (RolapMember member : list) {
                     // note that there is a special case for the all member
@@ -863,6 +867,24 @@ public class RolapCubeHierarchy extends RolapHierarchy {
             }
         }
 
+        private void setCorrectLevel(List<RolapMember> list) {
+            if (list != null) {
+                for (RolapMember m : list) {
+                    if (m.getParentMember() != null ) {
+                        Level pl = m.getParentMember().getLevel();
+                        if (pl != null) {
+                            Level cl = pl.getChildLevel();
+                            if (cl != null) {
+                                m.setLevel(cl);
+                            } else {
+                                m.setLevel(pl);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         private RolapCubeMember lookupCubeMemberWithParent(
             RolapMember member,
             RolapCubeLevel cubeLevel)
@@ -875,7 +897,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
                 // In parent-child hierarchies, a member's parent may be in the
                 // same level.
                 final RolapCubeLevel parentLevel =
-                    parentMember.getLevel() == member.getLevel()
+                    parentMember.getLevel() == member.getLevel() || cubeLevel.getParentLevel() == null
                         ? cubeLevel
                         : cubeLevel.getParentLevel();
                 parentCubeMember =

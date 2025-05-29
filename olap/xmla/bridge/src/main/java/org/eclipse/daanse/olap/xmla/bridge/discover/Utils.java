@@ -111,6 +111,8 @@ import org.eclipse.daanse.xmla.model.record.discover.mdschema.sets.MdSchemaSetsR
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import mondrian.olap.Util;
+
 public class Utils {
 
     private static final String SCHEMA = "SCHEMA";
@@ -1595,9 +1597,9 @@ public class Utils {
         Optional<VisibilityEnum> oLevelVisibility
     ) {
         List<Level> levels = h.getLevels() == null ? List.of() : Arrays.asList(h.getLevels());
-        return getLevelsWithFilterByUniqueName(getLevelsWithFilterByName(levels, oLevelName), oLevelUniqueName)
-            .stream()
-            .map(level -> {
+        List<MdSchemaLevelsResponseRow> res = new ArrayList();
+        List<Level> ls = getLevelsWithFilterByUniqueName(getLevelsWithFilterByName(levels, oLevelName), oLevelUniqueName);
+        for (Level level : ls) {
                 String desc = level.getDescription();
                 if (desc == null) {
                     desc =
@@ -1619,7 +1621,7 @@ public class Utils {
                 //int levelCardinality = extra.getLevelCardinality(level); //TODO
                 int levelCardinality = cube.getLevelCardinality(level, true, true);
 
-                return (MdSchemaLevelsResponseRow) new MdSchemaLevelsResponseRowR(
+                res.add((MdSchemaLevelsResponseRow) new MdSchemaLevelsResponseRowR(
                     Optional.ofNullable(catalogName),
                     Optional.ofNullable(schemaName),
                     Optional.ofNullable(cubeName),
@@ -1644,9 +1646,122 @@ public class Utils {
                     Optional.empty(),
                     Optional.empty(),
                     Optional.empty(),
-                    Optional.of(LevelOriginEnum.NONE)
-                );
-            }).toList();
+                    Optional.of(LevelOriginEnum.NONE)));
+
+/*                if (level.isParentChild()) {
+                    String name = level.getName() + "_child";
+                    String uniqueName = Util.makeFqName(h, name);
+                    res.add((MdSchemaLevelsResponseRow) new MdSchemaLevelsResponseRowR(
+                            Optional.ofNullable(catalogName),
+                            Optional.ofNullable(schemaName),
+                            Optional.ofNullable(cubeName),
+                            Optional.ofNullable(dimensionUniqueName),
+                            Optional.ofNullable(h.getUniqueName()),
+                            Optional.ofNullable(name),
+                            Optional.ofNullable(uniqueName),
+                            Optional.empty(),
+                            Optional.ofNullable(name),
+                            Optional.ofNullable(level.getDepth()),
+                            Optional.of(levelCardinality),
+                            Optional.of(getLevelType(level)),
+                            Optional.ofNullable(desc),
+                            Optional.of(CustomRollupSettingEnum.NONE),
+                            Optional.of(LevelUniqueSettingsEnum.fromValue(String.valueOf(uniqueSettings))),
+                            Optional.ofNullable(level.isVisible()),
+                            Optional.empty(),
+                            Optional.empty(),
+                            Optional.empty(),
+                            Optional.empty(),
+                            Optional.empty(),
+                            Optional.empty(),
+                            Optional.empty(),
+                            Optional.empty(),
+                            Optional.of(LevelOriginEnum.NONE)));
+
+                } */
+            }
+/*        
+        res.add(new MdSchemaLevelsResponseRowR(
+                Optional.ofNullable(catalogName),
+                Optional.ofNullable(schemaName),
+                Optional.ofNullable(cubeName),
+                Optional.ofNullable(dimensionUniqueName),
+                Optional.ofNullable(h.getUniqueName()),
+                Optional.ofNullable("1"),
+                Optional.ofNullable("[Dimension].[Dimension].[1]"),
+                Optional.empty(),
+                Optional.ofNullable("1"),
+                Optional.ofNullable(0),
+                Optional.of(17),
+                Optional.of(LevelTypeEnum.REGULAR),
+                Optional.empty(),
+                Optional.of(CustomRollupSettingEnum.NONE),
+                Optional.of(LevelUniqueSettingsEnum.KEY_COLUMNS),
+                Optional.ofNullable(true),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.of(LevelOriginEnum.NONE)));
+
+        res.add(new MdSchemaLevelsResponseRowR(
+                Optional.ofNullable(catalogName),
+                Optional.ofNullable(schemaName),
+                Optional.ofNullable(cubeName),
+                Optional.ofNullable(dimensionUniqueName),
+                Optional.ofNullable(h.getUniqueName()),
+                Optional.ofNullable("2"),
+                Optional.ofNullable("[Dimension].[Dimension].[2]"),
+                Optional.empty(),
+                Optional.ofNullable("2"),
+                Optional.ofNullable(0),
+                Optional.of(17),
+                Optional.of(LevelTypeEnum.REGULAR),
+                Optional.empty(),
+                Optional.of(CustomRollupSettingEnum.NONE),
+                Optional.of(LevelUniqueSettingsEnum.KEY_COLUMNS),
+                Optional.ofNullable(true),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.of(LevelOriginEnum.NONE)));
+        res.add(new MdSchemaLevelsResponseRowR(
+                Optional.ofNullable(catalogName),
+                Optional.ofNullable(schemaName),
+                Optional.ofNullable(cubeName),
+                Optional.ofNullable(dimensionUniqueName),
+                Optional.ofNullable(h.getUniqueName()),
+                Optional.ofNullable("3"),
+                Optional.ofNullable("[Dimension].[Dimension].[3]"),
+                Optional.empty(),
+                Optional.ofNullable("3"),
+                Optional.ofNullable(0),
+                Optional.of(17),
+                Optional.of(LevelTypeEnum.REGULAR),
+                Optional.empty(),
+                Optional.of(CustomRollupSettingEnum.NONE),
+                Optional.of(LevelUniqueSettingsEnum.KEY_COLUMNS),
+                Optional.ofNullable(true),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.of(LevelOriginEnum.NONE)));
+        */
+        return res;
     }
 
     private static LevelTypeEnum getLevelType(Level level) {

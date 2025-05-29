@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
+import org.eclipse.daanse.olap.function.def.set.level.LevelMembersCalc;
 
 public class DrilldownMemberCalc extends AbstractProfilingNestedTupleListCalc {
 
@@ -37,7 +38,25 @@ public class DrilldownMemberCalc extends AbstractProfilingNestedTupleListCalc {
 
     @Override
     public TupleList evaluate(Evaluator evaluator) {
-        final TupleList list1 = getChildCalc(0, TupleListCalc.class).evaluate(evaluator);
+        TupleListCalc tc = getChildCalc(0, TupleListCalc.class);
+        TupleList list1;
+        TupleList list = tc.evaluate(evaluator);
+        if ( tc instanceof LevelMembersCalc ) {
+            TupleList result = TupleCollections.createList(list.getArity());
+            int i = 0;
+            int n = list.size();
+            final Member[] members = new Member[list.getArity()];
+            while (i < n) {
+                List<Member> o = list.get(i++);
+                o.toArray(members);
+                if (notHaveparents(list, o)) {
+                    result.add(o);
+                }
+            }
+            list1 = result;
+        } else {
+            list1 = list;
+        }
         final TupleList list2 = getChildCalc(1, TupleListCalc.class).evaluate(evaluator);
         return drilldownMember(list1, list2, evaluator);
     }
@@ -92,6 +111,17 @@ public class DrilldownMemberCalc extends AbstractProfilingNestedTupleListCalc {
             drillDownObj(evaluator, members, set1, result);
         }
         return result;
+    }
+
+    private boolean notHaveparents(TupleList tl, List<Member> o) {
+        boolean parentIsNull = o.stream().noneMatch(it -> (it.getParentMember() != null));
+        if (!parentIsNull) {
+            List<Member> parents = o.stream().filter(m -> (m.getParentMember() != null)).map(it -> it.getParentMember()).toList();
+            boolean nothaveParent = tl.stream().noneMatch(it -> (it.stream().noneMatch(m -> parents.contains(m))));
+            return nothaveParent;
+        } else {
+            return true;
+        }
     }
 
 }

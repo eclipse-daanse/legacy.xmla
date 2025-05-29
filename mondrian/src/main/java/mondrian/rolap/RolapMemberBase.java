@@ -181,6 +181,11 @@ public class RolapMemberBase
     }
 
     @Override
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
+    @Override
 	public RolapHierarchy getHierarchy() {
         return (RolapHierarchy) level.getHierarchy();
     }

@@ -38,7 +38,7 @@ public abstract class MemberBase
   implements Member {
 
   protected Member parentMember;
-  protected final Level level;
+  protected Level level;
   protected String uniqueName;
 
   /**

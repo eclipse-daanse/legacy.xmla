@@ -35,11 +35,13 @@ import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.daanse.mdx.model.api.expression.operation.InternalOperationAtom;
@@ -120,6 +122,7 @@ import mondrian.rolap.format.FormatterCreateContext;
 import mondrian.rolap.format.FormatterFactory;
 import mondrian.rolap.sql.MemberChildrenConstraint;
 import mondrian.rolap.sql.SqlQuery;
+import mondrian.rolap.util.LevelUtil;
 import mondrian.rolap.util.PojoUtil;
 import mondrian.rolap.util.RelationUtil;
 
@@ -381,23 +384,61 @@ public class RolapHierarchy extends HierarchyBase {
         if (hasAll) {
             this.levels = new RolapLevel[xmlHierarchy.getLevels().size() + 1];
             this.levels[0] = allLevel;
-            for (int i = 0; i < xmlHierarchy.getLevels().size(); i++) {
-                final LevelMapping xmlLevel = xmlHierarchy.getLevels().get(i);
+            int i = 1;
+            for (LevelMapping xmlLevel : xmlHierarchy.getLevels()) {
                 if (getKeyExp(xmlLevel) == null
                     && xmlHierarchy.getMemberReaderClass() == null)
                 {
                     throw new OlapRuntimeException(MessageFormat.format(
                         levelMustHaveNameExpression, xmlLevel.getName()));
                 }
-                levels[i + 1] = new RolapLevel(this, i + 1, xmlLevel);
+                if (xmlLevel.getParentColumn() != null) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(xmlLevel.getName()).append(i);
+                    RolapLevel l = new RolapLevel(sb.toString(), LevelUtil.getParentExp(xmlLevel), xmlLevel.getNullParentValue(), xmlLevel.getParentChildLink(), this, i, xmlLevel);
+                    levels[i] = l;
+                    Map<Integer, Set<RolapMember>> childMap = getChildMap((RolapLevel)l);
+                    for (Map.Entry<Integer, Set<RolapMember>> e : childMap.entrySet()) {
+                        if (e.getKey() != 0) {
+                            i++;
+                            sb = new StringBuilder();
+                            sb.append(xmlLevel.getName()).append(i);
+                            RolapLevel rl = new RolapLevel(sb.toString(), null, null, null, this, i, l.getLevelMapping());
+                            this.levels = Util.append(this.levels, rl);
+                        }
+                    }
+                } else {
+                    RolapLevel l = new RolapLevel(this, i, xmlLevel);
+                    levels[i] = l;
+                }
+                i++;
             }
         } else {
             this.levels = new RolapLevel[xmlHierarchy.getLevels().size()];
-            for (int i = 0; i < xmlHierarchy.getLevels().size(); i++) {
-                levels[i] = new RolapLevel(this, i, xmlHierarchy.getLevels().get(i));
+            int i = 0;
+            for (LevelMapping xmlLevel : xmlHierarchy.getLevels()) {
+                if (xmlLevel.getParentColumn() != null) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(xmlLevel.getName()).append(i+1);
+                    RolapLevel l = new RolapLevel(sb.toString(), LevelUtil.getParentExp(xmlLevel), xmlLevel.getNullParentValue(), xmlLevel.getParentChildLink(), this, i, xmlLevel);
+                    levels[i] = l;
+                    Map<Integer, Set<RolapMember>> childMap = getChildMap((RolapLevel)l);
+                    for (Map.Entry<Integer, Set<RolapMember>> e : childMap.entrySet()) {
+                        if (e.getKey() != 0) {
+                            i++;
+                            sb = new StringBuilder();
+                            sb.append(xmlLevel.getName()).append(i+1);
+                            RolapLevel rl = new RolapLevel(sb.toString(), null, null, null, this, i, l.getLevelMapping());
+                            this.levels = Util.append(this.levels, rl);
+                        }
+                    }
+                } else {
+                    RolapLevel rl = new RolapLevel(this, i, xmlLevel);
+                    levels[i] = rl;
+                }
+                i++;
             }
         }
-
         String sharedDimensionName = cubeDimensionMapping.getDimension() != null && cubeDimensionMapping.getDimension().getName() != null
         		? cubeDimensionMapping.getDimension().getName() : cubeDimensionMapping.getOverrideDimensionName();
         this.sharedHierarchyName = sharedDimensionName;
@@ -427,6 +468,29 @@ public class RolapHierarchy extends HierarchyBase {
             setCaption(xmlHierarchy.getName());
         }
         defaultMemberName = xmlHierarchy.getDefaultMember();
+    }
+
+    private Map<Integer, Set<RolapMember>> getChildMap(RolapLevel l) {
+        if (this.memberReader == null) {
+            this.memberReader = getRolapCatalog().createMemberReader(
+                null, this, memberReaderClass);
+        }
+        List<RolapMember> members = this.memberReader.getMembers();
+        Map<Integer, Set<RolapMember>> childMap = new HashMap<>();
+        int i = 0;
+        for (RolapMember member : members) {
+            if (member.getParentMember() == null || member.getParentMember().getLevel() == null || member.getParentMember().getLevel().isAll()) {
+                childMap.computeIfAbsent(i, k -> new HashSet<>()).add(member);
+            } else {
+                    Optional<Map.Entry<Integer, Set<RolapMember>>> o = childMap.entrySet().stream().filter(e -> e.getValue().contains(member.getParentMember())).findFirst();
+                    if (o.isPresent()) {
+                        childMap.computeIfAbsent(o.get().getKey() + 1, k -> new HashSet<>()).add(member);
+                    } else {
+                        childMap.computeIfAbsent(i++, k -> new HashSet<>()).add(member);
+                    }
+            }
+        }
+        return childMap;
     }
 
     @Override

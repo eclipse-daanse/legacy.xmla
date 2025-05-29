@@ -50,6 +50,9 @@ public class AggregateChildrenCalc extends AbstractProfilingNestedUnknownCalc {
     Object aggregateChildren(Evaluator evaluator, Hierarchy hierarchy, final Calc<?> valueFunCall) {
         Member member = evaluator.getPreviousContext(hierarchy);
         List<Member> members = new ArrayList<>();
+        if (member == null) {
+            member = hierarchy.getDefaultMember();
+        }
         if (member != null) {
             evaluator.getCatalogReader().getParentChildContributingChildren(member.getDataMember(), hierarchy, members);
         }
