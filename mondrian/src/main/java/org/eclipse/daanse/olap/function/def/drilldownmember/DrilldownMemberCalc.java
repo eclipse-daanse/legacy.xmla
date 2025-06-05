@@ -21,10 +21,17 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.Member.MemberType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 import org.eclipse.daanse.olap.function.def.set.level.LevelMembersCalc;
+
+import mondrian.rolap.RolapCubeLevel;
+import mondrian.rolap.RolapCubeMember;
+import mondrian.rolap.RolapPseudoLeafMember;
+import mondrian.rolap.RolapMember;
+import mondrian.rolap.RolapMemberBase;
 
 public class DrilldownMemberCalc extends AbstractProfilingNestedTupleListCalc {
 
@@ -80,6 +87,15 @@ public class DrilldownMemberCalc extends AbstractProfilingNestedTupleListCalc {
             if (memberSet.contains(member)) {
                 List<Member> children = evaluator.getCatalogReader().getMemberChildren(member);
                 final Member[] tuple2 = tuple.clone();
+                if (tuple[k].getLevel().isShowParentAsLeaf() && children.size() > 0) {
+                    final Member[] t = tuple.clone();
+                    RolapMember m =
+                            new RolapMemberBase(((RolapMember)member), (((mondrian.rolap.RolapCubeMember)children.get(0)).getRolapMember().getLevel()), member.getName(), member.getName(), MemberType.REGULAR);
+                    t[k] = new RolapPseudoLeafMember(
+                            (RolapCubeMember) member, m,
+                            ((mondrian.rolap.RolapCubeLevel)member.getLevel().getChildLevel()));
+                    resultList.addTuple(t);
+                }
                 for (Member childMember : children) {
                     tuple2[k] = childMember;
                     resultList.addTuple(tuple2);

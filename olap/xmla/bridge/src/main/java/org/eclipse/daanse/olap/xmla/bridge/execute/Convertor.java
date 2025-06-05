@@ -45,6 +45,7 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.api.element.PseudoLeafMember;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.CellSet;
@@ -771,6 +772,9 @@ public class Convertor {
         int memberOrdinal,
         int childrenCount
     ) {
+        if (currentMember instanceof PseudoLeafMember) {
+            return 0;
+        }
         int displayInfo = 0xffff & childrenCount;
 
         if (nextPosition != null) {

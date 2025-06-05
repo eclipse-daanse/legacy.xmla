@@ -97,4 +97,8 @@ public interface Level extends OlapElement, MetaElement {
     SqlExpression getOrdinalExp();
 
     boolean isParentChild();
+
+    boolean isShowParentAsLeaf();
+
+    String getNameFormat();
 }

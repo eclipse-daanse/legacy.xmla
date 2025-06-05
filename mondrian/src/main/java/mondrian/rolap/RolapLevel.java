@@ -133,7 +133,10 @@ public class RolapLevel extends LevelBase {
     private final MetaData metaData;
     private final BestFitColumnType internalType; // may be null
 
+    private final boolean showParentAsLeaf;
+    private final String nameFormat;
     protected LevelMapping levelMapping;
+
     /**
      * Creates a level.
      *
@@ -164,6 +167,63 @@ public class RolapLevel extends LevelBase {
         LevelType levelType,
         String approxRowCount,
         MetaData metaData)
+    {
+        this(
+                hierarchy,
+                name,
+                caption,
+                visible,
+                description,
+                depth,
+                keyExp,
+                nameExp,
+                captionExp,
+                ordinalExp,
+                parentExp,
+                nullParentValue,
+                mappingClosure,
+                properties,
+                flags,
+                datatype,
+                internalType,
+                hideMemberCondition,
+                levelType,
+                approxRowCount,
+                metaData, false, null);
+    }
+
+    /**
+     * Creates a level.
+     *
+     * @pre parentExp != null || nullParentValue == null
+     * @pre properties != null
+     * @pre levelType != null
+     * @pre hideMemberCondition != null
+     */
+    protected RolapLevel(
+        RolapHierarchy hierarchy,
+        String name,
+        String caption,
+        boolean visible,
+        String description,
+        int depth,
+        SqlExpression keyExp,
+        SqlExpression nameExp,
+        SqlExpression captionExp,
+        SqlExpression ordinalExp,
+        SqlExpression parentExp,
+        String nullParentValue,
+        ParentChildLinkMapping mappingClosure,
+        RolapProperty[] properties,
+        int flags,
+        Datatype datatype,
+        BestFitColumnType internalType,
+        HideMemberCondition hideMemberCondition,
+        LevelType levelType,
+        String approxRowCount,
+        MetaData metaData,
+        boolean showParentAsLeaf,
+        String nameFormat)
     {
         super(
             hierarchy, name, caption, visible, description, depth, levelType);
@@ -226,6 +286,8 @@ public class RolapLevel extends LevelBase {
             }
         }
         this.properties = properties;
+        this.showParentAsLeaf = showParentAsLeaf;
+        this.nameFormat = nameFormat;
         List<Property> list = new ArrayList<>();
         for (Level level = this; level != null;
              level = level.getParentLevel())
@@ -304,6 +366,16 @@ public class RolapLevel extends LevelBase {
 
     public SqlExpression getKeyExp() {
         return keyExp;
+    }
+
+    @Override
+    public boolean isShowParentAsLeaf() {
+        return showParentAsLeaf;
+    }
+
+    @Override
+    public String getNameFormat() {
+        return nameFormat;
     }
 
     @Override
@@ -404,7 +476,8 @@ public class RolapLevel extends LevelBase {
                     ? "TimeHalfYears"
                     : mappingLevel.getLevelType().getValue()),
             mappingLevel.getApproxRowCount(),
-            RolapMetaData.createMetaData(mappingLevel.getAnnotations()));
+            RolapMetaData.createMetaData(mappingLevel.getAnnotations()),
+            mappingLevel.isShowParentAsLeaf(), mappingLevel.getNameFormat());
 
         setLevelInProperties();
         if (!Util.isEmpty(mappingLevel.getName())) {
