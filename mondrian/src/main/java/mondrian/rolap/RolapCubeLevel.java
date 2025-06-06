@@ -89,8 +89,8 @@ public class RolapCubeLevel extends RolapLevel {
             level.getLevelType(),
             "" + level.getApproxRowCount(),
             level.getMetaData(),
-            level.isShowParentAsLeaf(),
-            level.getNameFormat());
+            level.isParentAsLeafEnable(),
+            level.getParentAsLeafNameFormat());
 
         this.rolapLevel = level;
         this.cubeHierarchy = cubeHierarchy;

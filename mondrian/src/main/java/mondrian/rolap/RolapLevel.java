@@ -133,8 +133,8 @@ public class RolapLevel extends LevelBase {
     private final MetaData metaData;
     private final BestFitColumnType internalType; // may be null
 
-    private final boolean showParentAsLeaf;
-    private final String nameFormat;
+    private final boolean parentAsLeafEnable;
+    private final String parentAsLeafNameFormat;
     protected LevelMapping levelMapping;
 
     /**
@@ -222,8 +222,8 @@ public class RolapLevel extends LevelBase {
         LevelType levelType,
         String approxRowCount,
         MetaData metaData,
-        boolean showParentAsLeaf,
-        String nameFormat)
+        boolean parentAsLeafEnable,
+        String parentAsLeafNameFormat)
     {
         super(
             hierarchy, name, caption, visible, description, depth, levelType);
@@ -286,8 +286,8 @@ public class RolapLevel extends LevelBase {
             }
         }
         this.properties = properties;
-        this.showParentAsLeaf = showParentAsLeaf;
-        this.nameFormat = nameFormat;
+        this.parentAsLeafEnable = parentAsLeafEnable;
+        this.parentAsLeafNameFormat = parentAsLeafNameFormat;
         List<Property> list = new ArrayList<>();
         for (Level level = this; level != null;
              level = level.getParentLevel())
@@ -369,13 +369,13 @@ public class RolapLevel extends LevelBase {
     }
 
     @Override
-    public boolean isShowParentAsLeaf() {
-        return showParentAsLeaf;
+    public boolean isParentAsLeafEnable() {
+        return parentAsLeafEnable;
     }
 
     @Override
-    public String getNameFormat() {
-        return nameFormat;
+    public String getParentAsLeafNameFormat() {
+        return parentAsLeafNameFormat;
     }
 
     @Override
@@ -477,7 +477,7 @@ public class RolapLevel extends LevelBase {
                     : mappingLevel.getLevelType().getValue()),
             mappingLevel.getApproxRowCount(),
             RolapMetaData.createMetaData(mappingLevel.getAnnotations()),
-            mappingLevel.isShowParentAsLeaf(), mappingLevel.getNameFormat());
+            mappingLevel.isParentAsLeafEnable(), mappingLevel.getParentAsLeafNameFormat());
 
         setLevelInProperties();
         if (!Util.isEmpty(mappingLevel.getName())) {

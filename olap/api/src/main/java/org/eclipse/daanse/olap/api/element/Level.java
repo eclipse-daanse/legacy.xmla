@@ -98,7 +98,7 @@ public interface Level extends OlapElement, MetaElement {
 
     boolean isParentChild();
 
-    boolean isShowParentAsLeaf();
+    boolean isParentAsLeafEnable();
 
-    String getNameFormat();
+    String getParentAsLeafNameFormat();
 }

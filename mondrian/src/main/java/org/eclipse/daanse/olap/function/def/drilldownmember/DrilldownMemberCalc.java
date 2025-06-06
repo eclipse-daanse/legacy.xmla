@@ -87,10 +87,16 @@ public class DrilldownMemberCalc extends AbstractProfilingNestedTupleListCalc {
             if (memberSet.contains(member)) {
                 List<Member> children = evaluator.getCatalogReader().getMemberChildren(member);
                 final Member[] tuple2 = tuple.clone();
-                if (tuple[k].getLevel().isShowParentAsLeaf() && children.size() > 0) {
+                if (tuple[k].getLevel().isParentAsLeafEnable() && children.size() > 0) {
                     final Member[] t = tuple.clone();
+                    String name;
+                    if (tuple[k].getLevel().getParentAsLeafNameFormat() != null) {
+                        name = String.format(tuple[k].getLevel().getParentAsLeafNameFormat(), member.getName());
+                    } else {
+                        name = member.getName();
+                    }
                     RolapMember m =
-                            new RolapMemberBase(((RolapMember)member), (((mondrian.rolap.RolapCubeMember)children.get(0)).getRolapMember().getLevel()), member.getName(), member.getName(), MemberType.REGULAR);
+                            new RolapMemberBase(((RolapMember)member), (((mondrian.rolap.RolapCubeMember)children.get(0)).getRolapMember().getLevel()), member.getName(), name, MemberType.REGULAR);
                     t[k] = new RolapPseudoLeafMember(
                             (RolapCubeMember) member, m,
                             ((mondrian.rolap.RolapCubeLevel)member.getLevel().getChildLevel()));
