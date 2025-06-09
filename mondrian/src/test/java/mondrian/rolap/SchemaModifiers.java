@@ -69,6 +69,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
@@ -81,6 +82,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberFormatterMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyFormatterMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ParentChildHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ParentChildLinkMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
@@ -269,7 +271,7 @@ public class SchemaModifiers {
                         	StandardDimensionMappingImpl.builder()
                         		.withName("Store Type")
                         		.withHierarchies(List.of(
-                        			HierarchyMappingImpl.builder()
+                        			ExplicitHierarchyMappingImpl.builder()
                         				.withVisible(true)
                         				.withHasAll(true)
                         				.withLevels(List.of(
@@ -300,7 +302,7 @@ public class SchemaModifiers {
                         	StandardDimensionMappingImpl.builder()
                         		.withName("Has coffee bar")
                         		.withHierarchies(List.of(
-                        			HierarchyMappingImpl.builder()
+                        			ExplicitHierarchyMappingImpl.builder()
                         				.withVisible(true)
                         				.withHasAll(true)
                         				.withLevels(List.of(
@@ -390,7 +392,7 @@ public class SchemaModifiers {
     	private static final StandardDimensionMappingImpl d = StandardDimensionMappingImpl.builder()
         .withName("Employee")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                 .withQuery(JoinQueryMappingImpl.builder()
@@ -681,7 +683,7 @@ public class SchemaModifiers {
     	private static final StandardDimensionMappingImpl customStoreDimension = StandardDimensionMappingImpl.builder()
         .withName("CustomStore")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -788,7 +790,7 @@ public class SchemaModifiers {
     	private static final StandardDimensionMappingImpl customStoreDimension = StandardDimensionMappingImpl.builder()
     	        .withName("CustomStore")
     	        .withHierarchies(List.of(
-    	            HierarchyMappingImpl.builder()
+    	            ExplicitHierarchyMappingImpl.builder()
     	                .withHasAll(true)
     	                .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
     	                .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -866,7 +868,7 @@ public class SchemaModifiers {
     	private static final StandardDimensionMappingImpl customStoreDimension = StandardDimensionMappingImpl.builder()
     	        .withName("CustomStore")
     	        .withHierarchies(List.of(
-    	            HierarchyMappingImpl.builder()
+    	            ExplicitHierarchyMappingImpl.builder()
     	                .withHasAll(true)
     	                .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
     	                .withUniqueKeyLevelName("Store Name")
@@ -948,7 +950,7 @@ public class SchemaModifiers {
     	private static final StandardDimensionMappingImpl customStoreDimension = StandardDimensionMappingImpl.builder()
     	        .withName("CustomStore")
     	        .withHierarchies(List.of(
-    	            HierarchyMappingImpl.builder()
+    	            ExplicitHierarchyMappingImpl.builder()
     	                .withHasAll(true)
     	                .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
     	                .withUniqueKeyLevelName("Store Name")
@@ -1226,7 +1228,7 @@ public class SchemaModifiers {
                     			dEducationLevel = StandardDimensionMappingImpl.builder()
                                 .withName("Education Level")
                                 .withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -1254,7 +1256,7 @@ public class SchemaModifiers {
                         		dGender = StandardDimensionMappingImpl.builder()
                         		.withName("Gender")
                         		.withHierarchies(List.of(
-                        			HierarchyMappingImpl.builder()
+                        			ExplicitHierarchyMappingImpl.builder()
                         				.withHasAll(true)
                         				.withDefaultMember("[Gender].[F]")
                         				.withAllMemberName("All Gender")
@@ -1381,7 +1383,7 @@ public class SchemaModifiers {
                     .withUniqueMembers(true)
                     .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
                     .build();
-                HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                     .builder()
                     .withHasAll(true)
                     .withAllMemberName("All Employees")
@@ -1462,16 +1464,7 @@ public class SchemaModifiers {
                     .withType(InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
                     .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                    .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                     .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
-                    .withNullParentValue("0")
-                    .withParentChildLink(
-                    	ParentChildLinkMappingImpl.builder()
-                    		.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                    		.withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                    		.withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
-                    		.build()
-                    )
                     .withMemberProperties(List.of(
                             MemberPropertyMappingImpl.builder()
                                 .withName("Marital Status")
@@ -1499,7 +1492,7 @@ public class SchemaModifiers {
                                 .build()
                         ))
                         .build();
-                HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                HierarchyMappingImpl hierarchy = ParentChildHierarchyMappingImpl
                     .builder()
                     .withHasAll(true)
                     .withAllMemberName("All Employees")
@@ -1512,7 +1505,17 @@ public class SchemaModifiers {
                     				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
                     				.build())
                     		.build())
-                    .withLevels(List.of(level1, level2))
+                    //.withLevels(List.of(level1, level2))
+                    .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
+                    .withNullParentValue("0")
+                    .withParentChildLink(
+                        ParentChildLinkMappingImpl.builder()
+                            .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                            .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                            .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
+                            .build()
+                    )
+                    .withLevel(level2)
                     .build();
 
                 DimensionConnectorMappingImpl dimension = DimensionConnectorMappingImpl
@@ -1536,7 +1539,7 @@ public class SchemaModifiers {
     	private static final StandardDimensionMappingImpl sharedEmployeeDimension = StandardDimensionMappingImpl.builder()
     	        .withName("SharedEmployee")
     	        .withHierarchies(List.of(
-    	            HierarchyMappingImpl.builder()
+    	            ParentChildHierarchyMappingImpl.builder()
     	                .withHasAll(true)
     	                .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
     	                .withQuery((JoinQueryMappingImpl.builder()
@@ -1548,20 +1551,20 @@ public class SchemaModifiers {
                         				.build())
                         		.build())
     	                )
-    	                .withLevels(List.of(
+    	                .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
+    	                .withNullParentValue("0")
+                        .withParentChildLink(ParentChildLinkMappingImpl.builder()
+                                .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
+                                .build())
+    	                .withLevel(
                             LevelMappingImpl.builder()
                                 .withName("Employee Id")
                                 .withType(InternalDataType.NUMERIC)
                                 .withUniqueMembers(true)
                                 .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                                .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                                 .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
-                                .withNullParentValue("0")
-                                .withParentChildLink(ParentChildLinkMappingImpl.builder()
-                                        .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                                        .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                                        .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
-                                		.build())
                                 .withMemberProperties(List.of(
                                     MemberPropertyMappingImpl.builder()
                                         .withName("Marital Status")
@@ -1589,7 +1592,7 @@ public class SchemaModifiers {
                                         .build()
                                 ))
                                 .build()
-                        ))
+                        )
                         .build()
     	            ))
     	        .build();
@@ -1637,7 +1640,7 @@ public class SchemaModifiers {
                         	StandardDimensionMappingImpl.builder()
                         		.withName("Department")
                         		.withHierarchies(List.of(
-                        			HierarchyMappingImpl.builder()
+                        			ExplicitHierarchyMappingImpl.builder()
                         				.withHasAll(true)
                         				.withPrimaryKey(FoodmartMappingSupplier.DEPARTMENT_ID_COLUMN_IN_DEPARTMENT)
                         				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.DEPARTAMENT_TABLE).build())
@@ -1740,14 +1743,7 @@ public class SchemaModifiers {
                     .withType(InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
                     .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                    .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                     .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
-                    .withNullParentValue("0")
-                    .withParentChildLink(ParentChildLinkMappingImpl.builder()
-                        .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                        .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                        .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
-                        .build())
                     .withMemberProperties(List.of(
                         MemberPropertyMappingImpl.builder()
                             .withName("Marital Status")
@@ -1776,13 +1772,20 @@ public class SchemaModifiers {
                     ))
                     .build();
 
-                HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                HierarchyMappingImpl hierarchy = ParentChildHierarchyMappingImpl
                     .builder()
                     .withHasAll(true)
                     .withAllMemberName("All Employees")
                     .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
-                    .withLevels(List.of(level))
+                    .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
+                    .withNullParentValue("0")
+                    .withParentChildLink(ParentChildLinkMappingImpl.builder()
+                            .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                            .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                            .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
+                            .build())
+                    .withLevel(level)
                     .build();
 
                 DimensionConnectorMappingImpl dimension = DimensionConnectorMappingImpl
@@ -1831,9 +1834,7 @@ public class SchemaModifiers {
                     .withType(InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
                     .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                    .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                     .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
-                    .withNullParentValue("0")
                     .withMemberProperties(List.of(
                         MemberPropertyMappingImpl.builder()
                             .withName("Marital Status")
@@ -1862,13 +1863,15 @@ public class SchemaModifiers {
                     ))
                     .build();
 
-                HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                HierarchyMappingImpl hierarchy = ParentChildHierarchyMappingImpl
                     .builder()
                     .withHasAll(true)
                     .withAllMemberName("All Employees")
                     .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
-                    .withLevels(List.of(level))
+                    .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
+                    .withNullParentValue("0")
+                    .withLevel(level)
                     .build();
 
                 DimensionConnectorMappingImpl dimension = DimensionConnectorMappingImpl
@@ -1933,7 +1936,7 @@ public class SchemaModifiers {
                 		.withDimension(StandardDimensionMappingImpl.builder()
                 			.withName("Department")
                 			.withHierarchies(List.of(
-                				HierarchyMappingImpl.builder()
+                				ExplicitHierarchyMappingImpl.builder()
                 					.withHasAll(true)
                 					.withPrimaryKey(FoodmartMappingSupplier.DEPARTMENT_ID_COLUMN_IN_DEPARTMENT)
                 					.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.DEPARTAMENT_TABLE).build())
@@ -1955,20 +1958,20 @@ public class SchemaModifiers {
                     	.withDimension(StandardDimensionMappingImpl.builder()
                     		.withName("Employees")
                     		.withHierarchies(List.of(
-                    			HierarchyMappingImpl.builder()
+                    			ParentChildHierarchyMappingImpl.builder()
                                 	.withHasAll(true)
                                 	.withAllMemberName("All Employees")
                                 	.withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                 	.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
-                                	.withLevels(List.of(
+                                	.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
+                                	.withNullParentValue("0")
+                                	.withLevel(
                                 		LevelMappingImpl.builder()
                                         	.withName("Employee Id")
                                         	.withType(InternalDataType.NUMERIC)
                                         	.withUniqueMembers(true)
                                         	.withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                                        	.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                                         	.withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
-                                        	.withNullParentValue("0")
                                         	.withMemberProperties(List.of(
                                         		MemberPropertyMappingImpl.builder()
                                                 .withName("Marital Status").withColumn(FoodmartMappingSupplier.MARITAL_STATUS_COLUMN_IN_EMPLOYEE).build(),
@@ -1984,7 +1987,7 @@ public class SchemaModifiers {
                                                 .withName("Management Role").withColumn(FoodmartMappingSupplier.MANAGEMENT_ROLE_COLUMN_IN_EMPLOYEE).build()
                                         ))
                                         .build()
-                                ))
+                                )
                                 .build()
                             ))
                     		.build()
@@ -2059,26 +2062,26 @@ public class SchemaModifiers {
                         .withForeignKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_SALARY)
                         .withDimension(StandardDimensionMappingImpl.builder()
                         	.withHierarchies(List.of(
-                        			HierarchyMappingImpl.builder()
+                        			ParentChildHierarchyMappingImpl.builder()
                         				.withHasAll(true)
                         				.withAllMemberName("All Employees")
                         				.withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                         				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
-                        				.withLevels(List.of(
+                        				.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
+                        				.withNullParentValue("0")
+                                        .withParentChildLink(ParentChildLinkMappingImpl.builder()
+                                                .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                                .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                                .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
+                                                .build())
+                        				.withLevel(
                         					LevelMappingImpl.builder()
                         						.withName("Employee Id")
                         						.withType(InternalDataType.NUMERIC)
                         						.withUniqueMembers(true)
                         						.withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                        						.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                         						.withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
-                        						.withNullParentValue("0")
                         						.withOrdinalColumn(FoodmartMappingSupplier.LAST_NAME_COLUMN_IN_EMPLOYEE)
-                        						.withParentChildLink(ParentChildLinkMappingImpl.builder()
-                        								.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                        								.withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                        								.withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
-                        								.build())
                         						.withMemberProperties(List.of(
                         								MemberPropertyMappingImpl.builder()
                         								.withName("First Name")
@@ -2086,7 +2089,7 @@ public class SchemaModifiers {
                         								.build()
                         						))
                         						.build()
-                        					))
+                        					)
                                 .build()
                         ))
                         .build()
@@ -2132,27 +2135,27 @@ public class SchemaModifiers {
         private static final StandardDimensionMappingImpl d = StandardDimensionMappingImpl.builder()
         .withName("Employees")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ParentChildHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withAllMemberName("All Employees")
                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
-                .withLevels(List.of(
+                .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
+                .withNullParentValue("0")
+                .withParentChildLink(ParentChildLinkMappingImpl.builder()
+                    .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                    .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                    .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
+                    .build())
+                .withLevel(
                     LevelMappingImpl.builder()
                         .withName("Employee Name")
                         .withType(InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                        .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                         .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
-                        .withNullParentValue("0")
-                        .withParentChildLink(ParentChildLinkMappingImpl.builder()
-                            .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                            .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                            .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
-                            .build())
                         .build()
-                ))
+                )
                 .build()
         )).build();
 
@@ -2319,27 +2322,27 @@ public class SchemaModifiers {
                         	StandardDimensionMappingImpl.builder()
                         		.withName("Employees")
                         		.withHierarchies(List.of(
-                        				HierarchyMappingImpl.builder()
+                        				ParentChildHierarchyMappingImpl.builder()
                         				.withHasAll(true)
                         				.withAllMemberName("All")
                         				.withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                         				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
-                        				.withLevels(List.of(
+                        				.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
+                        				.withNullParentValue("0")
+                                        .withParentChildLink(ParentChildLinkMappingImpl.builder()
+                                                .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                                .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                                .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
+                                                .build())
+                        				.withLevel(
                         					LevelMappingImpl.builder()
                         					.withName("Employee Id")
                         					.withType(InternalDataType.NUMERIC)
                         					.withUniqueMembers(true)
                         					.withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                        					.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                         					.withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
-                        					.withNullParentValue("0")
-                        					.withParentChildLink(ParentChildLinkMappingImpl.builder()
-                        						.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                        						.withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                        						.withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
-                        						.build())
                         					.build()
-                        				))
+                        				)
                                 .build()))
                         	.build()
                         )
@@ -2403,22 +2406,22 @@ public class SchemaModifiers {
                             	StandardDimensionMappingImpl.builder()
                             		.withName("Employees")
                             		.withHierarchies(List.of(
-                            			HierarchyMappingImpl.builder()
+                            			ParentChildHierarchyMappingImpl.builder()
                             			.withHasAll(true)
                             			.withAllMemberName("All")
                             			.withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                             			.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
-                            			.withLevels(List.of(
+                            			.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
+                            			.withNullParentValue("0")
+                            			.withLevel(
                             				LevelMappingImpl.builder()
                             				.withName("Employee Id")
                             				.withType(InternalDataType.NUMERIC)
                             				.withUniqueMembers(true)
                             				.withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                            				.withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                             				.withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
-                            				.withNullParentValue("0")
                             				.build()
-                            			))
+                            			)
                             			.build()
                             		))
                             		.build())
@@ -2545,7 +2548,7 @@ public class SchemaModifiers {
                 StandardDimensionMappingImpl employeeDimension = StandardDimensionMappingImpl.builder()
                 .withName("Employee")
                 .withHierarchies(List.of(
-                    HierarchyMappingImpl.builder()
+                    ParentChildHierarchyMappingImpl.builder()
                         .withName("Employee")
                         .withHasAll(false)
                         .withPrimaryKey(storeId)
@@ -2559,24 +2562,24 @@ public class SchemaModifiers {
                             	)
                             	.build()
                         )
-                        .withLevels(List.of(
+                        .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
+                        .withNullParentValue("nullParentValue")
+                        .withParentChildLink(ParentChildLinkMappingImpl.builder()
+                                .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
+                                .build())
+                        .withLevel(
                             LevelMappingImpl.builder()
                                 .withName("Employee")
                                 .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                 .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
-                                .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
-                                .withNullParentValue("nullParentValue")
                                 .withType(InternalDataType.INTEGER)
                                 .withUniqueMembers(true)
                                 .withLevelType(LevelType.REGULAR)
                                 .withHideMemberIfType(HideMemberIfType.NEVER)
-                                .withParentChildLink(ParentChildLinkMappingImpl.builder()
-                                    .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                                    .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                                    .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
-                                    .build())
                                 .build()
-                        ))
+                        )
                         .build()
                 ))
                 .build();
@@ -2626,7 +2629,7 @@ public class SchemaModifiers {
     	private static final StandardDimensionMappingImpl productDimension = StandardDimensionMappingImpl.builder()
     			.withName("Store")
     			.withHierarchies(List.of(
-    				HierarchyMappingImpl.builder()
+    				ExplicitHierarchyMappingImpl.builder()
     					.withHasAll(true)
     					.withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
     					.withQuery(JoinQueryMappingImpl.builder()
@@ -2646,7 +2649,7 @@ public class SchemaModifiers {
 
     					))
     					.build(),
-        			HierarchyMappingImpl.builder()
+        			ExplicitHierarchyMappingImpl.builder()
         				.withName("BrandOnly")
         				.withHasAll(true)
     					.withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
@@ -2875,7 +2878,7 @@ public class SchemaModifiers {
                 		.withDimension(TimeDimensionMappingImpl.builder()
                 				.withName("Time_Alphabetical")
                 				.withHierarchies(List.of(
-                						HierarchyMappingImpl.builder()
+                						ExplicitHierarchyMappingImpl.builder()
                 							.withHasAll(false)
                 							.withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                 							.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -2912,7 +2915,7 @@ public class SchemaModifiers {
                         .withDimension(TimeDimensionMappingImpl.builder()
                         		.withName("Month_Alphabetical")
                         		.withHierarchies(List.of(
-                        			HierarchyMappingImpl.builder()
+                        			ExplicitHierarchyMappingImpl.builder()
                         				.withHasAll(false)
                         				.withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                         				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -2991,7 +2994,7 @@ public class SchemaModifiers {
                 	.withDimension(StandardDimensionMappingImpl.builder()
                 		.withName("Store")
                 		.withHierarchies(List.of(
-                			HierarchyMappingImpl.builder()
+                			ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -3034,7 +3037,7 @@ public class SchemaModifiers {
                 		.withDimension(StandardDimensionMappingImpl.builder()
                 				.withName("Store Type")
                 				.withHierarchies(List.of(
-                						HierarchyMappingImpl.builder()
+                						ExplicitHierarchyMappingImpl.builder()
                 							.withName("Store Types Hierarchy")
                 							.withAllMemberName("All Store Types Member Name")
                 							.withHasAll(true)
@@ -3092,7 +3095,7 @@ public class SchemaModifiers {
                 	.withDimension(StandardDimensionMappingImpl.builder()
                 		.withName("Retail")
                 		.withHierarchies(List.of(
-                			HierarchyMappingImpl.builder()
+                			ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -3186,7 +3189,7 @@ public class SchemaModifiers {
                 	.withDimension(StandardDimensionMappingImpl.builder()
                 			.withName("Product Ragged")
                 			.withHierarchies(List.of(
-                				HierarchyMappingImpl.builder()
+                				ExplicitHierarchyMappingImpl.builder()
                 					.withHasAll(false)
                 					.withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                 					.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_TABLE).build())
@@ -3245,7 +3248,7 @@ public class SchemaModifiers {
                         		StandardDimensionMappingImpl.builder()
                         		.withName("Product Ragged")
                         		.withHierarchies(List.of(
-                        				HierarchyMappingImpl.builder()
+                        				ExplicitHierarchyMappingImpl.builder()
                         				.withHasAll(true)
                         				.withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                         				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_TABLE).build())
@@ -3301,7 +3304,7 @@ public class SchemaModifiers {
                 		StandardDimensionMappingImpl.builder()
                 			.withName("Product Ragged")
                 			.withHierarchies(List.of(
-                			   HierarchyMappingImpl.builder()
+                			   ExplicitHierarchyMappingImpl.builder()
                             	.withHasAll(true)
                             	.withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                             	.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_TABLE).build())
@@ -3357,7 +3360,7 @@ public class SchemaModifiers {
                 		TimeDimensionMappingImpl.builder()
                 			.withName("Time")
                 			.withHierarchies(List.of(
-                			   HierarchyMappingImpl.builder()
+                			   ExplicitHierarchyMappingImpl.builder()
                             	.withHasAll(false)
                             	.withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                             	.withDefaultMember("[Time].[1997].[Q1].[1]")
@@ -3422,7 +3425,7 @@ public class SchemaModifiers {
                 		StandardDimensionMappingImpl.builder()
                 			.withName("Store2")
                 			.withHierarchies(List.of(
-                			   HierarchyMappingImpl.builder()
+                			   ExplicitHierarchyMappingImpl.builder()
                             	.withHasAll(false)
                             	.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                             	.withDefaultMember("[Store2].[USA].[OR]")
@@ -3506,7 +3509,7 @@ public class SchemaModifiers {
     	private static final StandardDimensionMappingImpl storeDimension = StandardDimensionMappingImpl.builder()
     			.withName("Store")
     			.withHierarchies(List.of(
-    				HierarchyMappingImpl.builder()
+    				ExplicitHierarchyMappingImpl.builder()
     					.withHasAll(true)
     					.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
     					.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -3528,7 +3531,7 @@ public class SchemaModifiers {
                 .build()
     			)).build();
 
-    	private static final HierarchyMappingImpl timeHierarchy = HierarchyMappingImpl.builder()
+    	private static final HierarchyMappingImpl timeHierarchy = ExplicitHierarchyMappingImpl.builder()
 		.withHasAll(true)
 		.withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
 		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -3680,7 +3683,7 @@ public class SchemaModifiers {
     	private static final StandardDimensionMappingImpl storeDimension = StandardDimensionMappingImpl.builder()
     			.withName("Store")
     			.withHierarchies(List.of(
-    				HierarchyMappingImpl.builder()
+    				ExplicitHierarchyMappingImpl.builder()
     					.withHasAll(true)
     					.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
     					.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -3695,7 +3698,7 @@ public class SchemaModifiers {
                 .build()
     			)).build();
 
-    	private static final HierarchyMappingImpl timeHierarchy = HierarchyMappingImpl.builder()
+    	private static final HierarchyMappingImpl timeHierarchy = ExplicitHierarchyMappingImpl.builder()
 		.withHasAll(true)
 		.withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
 		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -3757,7 +3760,7 @@ public class SchemaModifiers {
                                         SumMeasureMappingImpl.builder()
                                             .withName("Unit Sales")
                                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                            
+
                                             .withFormatString("Standard")
                                             .build()
                             		))
@@ -3853,7 +3856,7 @@ public class SchemaModifiers {
                 		StandardDimensionMappingImpl.builder()
                 			.withName("Gender2")
                 			.withHierarchies(List.of(
-                			   HierarchyMappingImpl.builder()
+                			   ExplicitHierarchyMappingImpl.builder()
                             	.withHasAll(true)
                             	.withAllMemberName("All Gender")
                             	.withPrimaryKey(CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -3903,7 +3906,7 @@ public class SchemaModifiers {
                     	StandardDimensionMappingImpl.builder()
                     		.withName("ProdAmbiguousLevelName")
                     		.withHierarchies(List.of(
-                    			HierarchyMappingImpl.builder()
+                    			ExplicitHierarchyMappingImpl.builder()
                     				.withHasAll(true)
                     				.withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                     				.withQuery(JoinQueryMappingImpl.builder()
@@ -4043,7 +4046,7 @@ public class SchemaModifiers {
                         		StandardDimensionMappingImpl.builder()
                         		.withName("ProductView")
                         		.withHierarchies(List.of(
-                        			HierarchyMappingImpl.builder()
+                        			ExplicitHierarchyMappingImpl.builder()
                                     	.withHasAll(true)
                                     	.withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                     	.withQuery(v)
@@ -4138,7 +4141,7 @@ public class SchemaModifiers {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     		.withName("Gender3")
                     		.withHierarchies(List.of(
-                    			HierarchyMappingImpl.builder()
+                    			ExplicitHierarchyMappingImpl.builder()
                     			.withHasAll(true)
                     			.withAllMemberName("All Gender")
                     			.withAllMemberCaption("Frauen und Maenner")
@@ -4186,7 +4189,7 @@ public class SchemaModifiers {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     	.withName("Position2608")
                     	.withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withAllMemberName("All Position")
                             .withAllMemberCaption("Frauen und Maenner")
@@ -4295,7 +4298,7 @@ public class SchemaModifiers {
                         .withVisible(true)
                         .withName("Example")
                         .withHierarchies(List.of(
-                            HierarchyMappingImpl.builder()
+                            ExplicitHierarchyMappingImpl.builder()
                                 .withHasAll(true)
                                 .withName("Example Hierarchy")
                                 .withVisible(true)
@@ -4426,7 +4429,7 @@ public class SchemaModifiers {
                 		.withDimension(StandardDimensionMappingImpl.builder()
                 			.withName("Gender4")
                             .withHierarchies(List.of(
-                            	HierarchyMappingImpl.builder()
+                            	ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Gender")
                                         .withAllLevelName("GenderLevel")
@@ -4472,7 +4475,7 @@ public class SchemaModifiers {
                 		.withDimension(StandardDimensionMappingImpl.builder()
                 			.withName("Customer_2")
                             .withHierarchies(List.of(
-                            	HierarchyMappingImpl.builder()
+                            	ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Customers")
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -4518,7 +4521,7 @@ public class SchemaModifiers {
                 	.withMeasures(List.of(
                 		SumMeasureMappingImpl.builder()
                         .withName("zero")
-                        
+
                         .withColumn(SQLExpressionMappingColumnImpl.builder()
                         	.withSqls(List.of(
                         		SqlStatementMappingImpl.builder()
@@ -4565,7 +4568,7 @@ public class SchemaModifiers {
     	private static final SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
     	        .withName("Unit Sales")
     	        .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-    	        
+
     	        .withFormatString("Standard")
     	        .build();
 
@@ -4623,7 +4626,7 @@ public class SchemaModifiers {
                                         .withDimension(TimeDimensionMappingImpl.builder()
                                         		.withName("Time")
                                                 .withHierarchies(List.of(
-                                                        HierarchyMappingImpl.builder()
+                                                        ExplicitHierarchyMappingImpl.builder()
                                                             .withHasAll(false)
                                                             .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                                                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -4689,7 +4692,7 @@ public class SchemaModifiers {
     	private static final SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
     	        .withName("Unit Sales")
     	        .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-    	        
+
     	        .withFormatString("Standard")
     	        .build();
 
@@ -4720,7 +4723,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         		.withName("Product")
                                                 .withHierarchies(List.of(
-                                                        HierarchyMappingImpl.builder()
+                                                        ExplicitHierarchyMappingImpl.builder()
                                                             .withHasAll(true)
                                                             .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                                             .withQuery(JoinQueryMappingImpl.builder()
@@ -4751,7 +4754,7 @@ public class SchemaModifiers {
                                         .withDimension(TimeDimensionMappingImpl.builder()
                                         		.withName("Time")
                                                 .withHierarchies(List.of(
-                                                        HierarchyMappingImpl.builder()
+                                                        ExplicitHierarchyMappingImpl.builder()
                                                             .withHasAll(false)
                                                             .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                                                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -4843,7 +4846,7 @@ public class SchemaModifiers {
 
             */
 
-    	private static final HierarchyMappingImpl timeHierarchy = HierarchyMappingImpl.builder()
+    	private static final HierarchyMappingImpl timeHierarchy = ExplicitHierarchyMappingImpl.builder()
 		.withHasAll(false)
 		.withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
 		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -4871,7 +4874,7 @@ public class SchemaModifiers {
     			.withName("Time")
     			.withHierarchies(List.of(timeHierarchy)).build();
 
-    	private static final HierarchyMappingImpl productHierarchy = HierarchyMappingImpl.builder()
+    	private static final HierarchyMappingImpl productHierarchy = ExplicitHierarchyMappingImpl.builder()
 		.withHasAll(true)
 		.withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
 		.withQuery(JoinQueryMappingImpl.builder()
@@ -4897,7 +4900,7 @@ public class SchemaModifiers {
     			.withName("Product")
     			.withHierarchies(List.of(productHierarchy)).build();
 
-    	private static final HierarchyMappingImpl warehouseHierarchy = HierarchyMappingImpl.builder()
+    	private static final HierarchyMappingImpl warehouseHierarchy = ExplicitHierarchyMappingImpl.builder()
 		.withHasAll(true)
 		.withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
 		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
@@ -4963,7 +4966,7 @@ public class SchemaModifiers {
                             			mUnitSales = SumMeasureMappingImpl.builder()
                                         .withName("Unit Sales")
                                         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                        
+
                                         .withFormatString("Standard")
                                         .build()
                             	))
@@ -4996,7 +4999,7 @@ public class SchemaModifiers {
                                     SumMeasureMappingImpl.builder()
                                         .withName("Warehouse Sales")
                                         .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                                        
+
                                         .withFormatString("Standard")
                                         .build()
                             	))
@@ -5073,7 +5076,7 @@ public class SchemaModifiers {
     	private static final SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
     	        .withName("Unit Sales")
     	        .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-    	        
+
     	        .build();
 
         public BasicQueryTestModifier17(CatalogMapping catalog) {
@@ -5139,7 +5142,7 @@ public class SchemaModifiers {
                             			TimeDimensionMappingImpl.builder()
                                         .withName("Time")
                                         .withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(false)
                                                 .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -5270,7 +5273,7 @@ public class SchemaModifiers {
                             			TimeDimensionMappingImpl.builder()
                                         .withName("Time")
                                         .withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(false)
                                                 .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -5400,7 +5403,7 @@ public class SchemaModifiers {
                             			TimeDimensionMappingImpl.builder()
                                         .withName("Time")
                                         .withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(false)
                                                 .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -5472,20 +5475,20 @@ public class SchemaModifiers {
                         SumMeasureMappingImpl.builder()
                             .withName("Unit Sales")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("Standard")
                             .withVisible(false)
                             .build(),
                         SumMeasureMappingImpl.builder()
                             .withName("Store Cost")
                             .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("#,###.00")
                             .build(),
                         SumMeasureMappingImpl.builder()
                             .withName("Store Sales")
                             .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("#,###.00")
                             .build(),
                         CountMeasureMappingImpl.builder()
@@ -5566,7 +5569,7 @@ public class SchemaModifiers {
                 			StandardDimensionMappingImpl.builder()
                             .withName("Product")
                             .withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withHasAll(false)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                     .withQuery(JoinQueryMappingImpl.builder()
@@ -5621,7 +5624,7 @@ public class SchemaModifiers {
                     			StandardDimensionMappingImpl.builder()
                     				.withName("Gender")
                     				.withHierarchies(List.of(
-                    					HierarchyMappingImpl.builder()
+                    					ExplicitHierarchyMappingImpl.builder()
                     						.withHasAll(false)
                     						.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                     						.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -5642,14 +5645,14 @@ public class SchemaModifiers {
                             SumMeasureMappingImpl.builder()
                                 .withName("Unit Sales")
                                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                
+
                                 .withFormatString("Standard")
                                 .withVisible(false)
                                 .build(),
                             SumMeasureMappingImpl.builder()
                                 .withName("Store Cost")
                                 .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                
+
                                 .withFormatString("#,###.00")
                                 .build()
                 		))
@@ -5715,7 +5718,7 @@ public class SchemaModifiers {
                 			StandardDimensionMappingImpl.builder()
                             .withName("Cities")
                             .withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withAllMemberName("All Cities")
                                     .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -5739,7 +5742,7 @@ public class SchemaModifiers {
                     			StandardDimensionMappingImpl.builder()
                                 .withName("Customers")
                                 .withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Customers")
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -5797,7 +5800,7 @@ public class SchemaModifiers {
                     			StandardDimensionMappingImpl.builder()
                     				.withName("Gender")
                     				.withHierarchies(List.of(
-                    					HierarchyMappingImpl.builder()
+                    					ExplicitHierarchyMappingImpl.builder()
                     						.withHasAll(true)
                     						.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                     						.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -5818,14 +5821,14 @@ public class SchemaModifiers {
                         SumMeasureMappingImpl.builder()
                             .withName("Unit Sales")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("Standard")
                             .withVisible(false)
                             .build(),
                         SumMeasureMappingImpl.builder()
                             .withName("Store Sales")
                             .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("#,###.00")
                             .build()
                 	))
@@ -5870,7 +5873,7 @@ public class SchemaModifiers {
                     	.withMeasures(List.of(
                     		SumMeasureMappingImpl.builder()
                             .withName("Bad Measure")
-                            
+
                             .withFormatString("Standard")
                             .build()
                     	))
@@ -5917,7 +5920,7 @@ public class SchemaModifiers {
                     		SumMeasureMappingImpl.builder()
                             .withName("Bad Measure")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("Standard")
                             .withColumn(SQLExpressionMappingColumnImpl.builder()
                             		.withSqls(List.of(
@@ -5976,7 +5979,7 @@ public class SchemaModifiers {
     	private static final SumMeasureMappingImpl mSupplyTime = SumMeasureMappingImpl.builder()
                 .withName("Supply Time")
                 .withColumn(FoodmartMappingSupplier.SUPPLY_TIME_COLUMN_IN_INVENTORY_FACKT_1997)
-                
+
     			.build();
 
         public BasicQueryTestModifier26(CatalogMapping catalog) {
@@ -6010,13 +6013,13 @@ public class SchemaModifiers {
                             SumMeasureMappingImpl.builder()
                                 .withName("Store Invoice")
                                 .withColumn(FoodmartMappingSupplier.STORE_INVOICE_COLUMN_IN_INVENTORY_FACKT_1997)
-                                
+
                                 .build(),
                             mSupplyTime,
                             SumMeasureMappingImpl.builder()
                                 .withName("Warehouse Cost")
                                 .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                                
+
                                 .build()
                     	))
                     	.build()
@@ -6042,19 +6045,19 @@ public class SchemaModifiers {
     	private static final SumMeasureMappingImpl mStoreInvoice = SumMeasureMappingImpl.builder()
                 .withName("Store Invoice")
                 .withColumn(FoodmartMappingSupplier.STORE_INVOICE_COLUMN_IN_INVENTORY_FACKT_1997)
-                
+
     			.build();
 
     	private static final SumMeasureMappingImpl mSupplyTime = SumMeasureMappingImpl.builder()
                 .withName("Supply Time")
                 .withColumn(FoodmartMappingSupplier.SUPPLY_TIME_COLUMN_IN_INVENTORY_FACKT_1997)
-                
+
     			.build();
 
     	private static final SumMeasureMappingImpl mWarehouseCost = SumMeasureMappingImpl.builder()
                 .withName("Warehouse Cost")
                 .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                
+
     			.build();
 
 
@@ -6138,7 +6141,7 @@ public class SchemaModifiers {
                         	.withDimension(StandardDimensionMappingImpl.builder()
                                     .withName("Gender")
                                     .withHierarchies(List.of(
-                                        HierarchyMappingImpl.builder()
+                                        ExplicitHierarchyMappingImpl.builder()
                                             .withHasAll(true)
                                             .withAllMemberName("All Gender")
                                             .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -6159,7 +6162,7 @@ public class SchemaModifiers {
                     	.withMeasures(List.of(
                                 SumMeasureMappingImpl.builder()
                                 .withName("zero")
-                                
+
                                 .withColumn(SQLExpressionMappingColumnImpl.builder()
                                     .withSqls(List.of(
                                         SqlStatementMappingImpl.builder()
@@ -6229,7 +6232,7 @@ public class SchemaModifiers {
                             		.withDimension(StandardDimensionMappingImpl.builder()
                             				.withName("Dim")
                             				.withHierarchies(List.of(
-                                                HierarchyMappingImpl.builder()
+                                                ExplicitHierarchyMappingImpl.builder()
                                                     .withHasAll(true)
                                                     .withLevels(List.of(
                                                         LevelMappingImpl.builder()
@@ -6246,7 +6249,7 @@ public class SchemaModifiers {
                             	.withMeasures(List.of(
                                     SumMeasureMappingImpl.builder()
                                         .withName("Measure")
-                                        
+
                                         .withColumn(SQLExpressionMappingColumnImpl.builder()
                                             .withSqls(List.of(
                                                 SqlStatementMappingImpl.builder().withDialects(List.of("generic")).withSql("1").build()
@@ -6304,7 +6307,7 @@ public class SchemaModifiers {
                             	.withDimension(StandardDimensionMappingImpl.builder()
                                     .withName("Product - Bug")
                                     .withHierarchies(List.of(
-                                        HierarchyMappingImpl.builder()
+                                        ExplicitHierarchyMappingImpl.builder()
                                             .withHasAll(true)
                                             .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                             .withQuery(JoinQueryMappingImpl.builder()
@@ -6334,7 +6337,7 @@ public class SchemaModifiers {
                             		.withMeasures(List.of(
                                         SumMeasureMappingImpl.builder()
                                             .withName("Sales")
-                                            
+
                                             .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
                                             .build()
                             		))
@@ -6350,7 +6353,7 @@ public class SchemaModifiers {
                             	.withDimension(StandardDimensionMappingImpl.builder()
                                     .withName("Product - no Bug")
                                     .withHierarchies(List.of(
-                                        HierarchyMappingImpl.builder()
+                                        ExplicitHierarchyMappingImpl.builder()
                                             .withHasAll(true)
                                             .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                             .withQuery(JoinQueryMappingImpl.builder()
@@ -6380,7 +6383,7 @@ public class SchemaModifiers {
                             		.withMeasures(List.of(
                                         SumMeasureMappingImpl.builder()
                                             .withName("Sales")
-                                            
+
                                             .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
                                             .build()
                             		))
@@ -6413,7 +6416,7 @@ public class SchemaModifiers {
         private static final StandardDimensionMappingImpl dStoreSizeSQFT = StandardDimensionMappingImpl.builder()
         .withName("Store Size in SQFT")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -6542,7 +6545,7 @@ public class SchemaModifiers {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     .withName("Promotions")
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withAllMemberName("All Promotions")
                             .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -6606,7 +6609,7 @@ public class SchemaModifiers {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     .withName("Promotions")
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withAllMemberName("All Promotions")
                             .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -6669,7 +6672,7 @@ public class SchemaModifiers {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     .withName("Promotions")
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withAllMemberName("All Promotions")
                             .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -6725,7 +6728,7 @@ public class SchemaModifiers {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     .withName("Promotions")
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withAllMemberName("All Promotions")
                             .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -6788,7 +6791,7 @@ public class SchemaModifiers {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     .withName("Promotions")
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withAllMemberName("All Promotions")
                             .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -6862,32 +6865,32 @@ public class SchemaModifiers {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     .withName("Promotions")
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ParentChildHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withAllMemberName("All Employees")
                             .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
-                            .withLevels(List.of(
+                            .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
+                            .withNullParentValue("0")
+                            .withParentColumn(SQLExpressionMappingColumnImpl.builder()
+                                .withSqls(List.of(
+                                    SqlStatementMappingImpl.builder()
+                                        .withSql("RTRIM("+ colName + ")")
+                                        .withDialects(List.of("generic"))
+                                        .build()
+                                )).withDataType(ColumnDataType.VARCHAR).build())
+                            .withParentChildLink(ParentChildLinkMappingImpl.builder()
+                                .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
+                                .build())
+                            .withLevel(
                                 LevelMappingImpl.builder()
                                     .withName("Employee Id")
                                     .withType(InternalDataType.NUMERIC)
                                     .withUniqueMembers(true)
                                     .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                                    .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                                     .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
-                                    .withNullParentValue("0")
-                                    .withParentColumn(SQLExpressionMappingColumnImpl.builder()
-                                        .withSqls(List.of(
-                                            SqlStatementMappingImpl.builder()
-                                                .withSql("RTRIM("+ colName + ")")
-                                                .withDialects(List.of("generic"))
-                                                .build()
-                                        )).withDataType(ColumnDataType.VARCHAR).build())
-                                    .withParentChildLink(ParentChildLinkMappingImpl.builder()
-                                        .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                                        .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                                        .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
-                                        .build())
                                     .withMemberProperties(List.of(
                                     	MemberPropertyMappingImpl.builder()
                                             .withName("Marital Status").withColumn(FoodmartMappingSupplier.MARITAL_STATUS_COLUMN_IN_EMPLOYEE)
@@ -6909,7 +6912,7 @@ public class SchemaModifiers {
                                             .build()
                                     ))
                                     .build()
-                            ))
+                            )
                             .build()
                     ))
                     .build()).build());
@@ -6953,7 +6956,7 @@ public class SchemaModifiers {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     .withName("Promotions")
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withAllMemberName("All Promotions")
                             .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -7031,7 +7034,7 @@ public class SchemaModifiers {
         private static final TimeDimensionMappingImpl dTime = TimeDimensionMappingImpl.builder()
         .withName("Time")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(false)
                 .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -7066,7 +7069,7 @@ public class SchemaModifiers {
         private static final StandardDimensionMappingImpl dProduct = StandardDimensionMappingImpl.builder()
         .withName("Product")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                 .withQuery(JoinQueryMappingImpl.builder()
@@ -7144,7 +7147,7 @@ public class SchemaModifiers {
                                 		mWarehouseSales = SumMeasureMappingImpl.builder()
                                 			.withName("Warehouse Sales")
                                 			.withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                                			
+
                                 			.withFormatString("Standard")
                                 			.build()
                                 	))
@@ -7342,7 +7345,7 @@ public class SchemaModifiers {
                 		StandardDimensionMappingImpl.builder()
                 			.withName("Store2")
                 			.withHierarchies(List.of(
-                			   HierarchyMappingImpl.builder()
+                			   ExplicitHierarchyMappingImpl.builder()
                             	.withHasAll(true)
                             	.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                             	.withAllMemberName("All Stores")
@@ -7412,7 +7415,7 @@ public class SchemaModifiers {
 				result.add(DimensionConnectorMappingImpl.builder().withOverrideDimensionName("Promotions")
 						.withForeignKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_SALES_FACT_1997)
 						.withDimension(StandardDimensionMappingImpl.builder().withName("Promotions")
-								.withHierarchies(List.of(HierarchyMappingImpl.builder().withHasAll(true)
+								.withHierarchies(List.of(ExplicitHierarchyMappingImpl.builder().withHasAll(true)
 										.withAllMemberName("All Promotions").withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
 										.withDefaultMember("[All Promotions]")
 										.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PROMOTION_TABLE).build())
@@ -7464,7 +7467,7 @@ public class SchemaModifiers {
 				result.add(DimensionConnectorMappingImpl.builder().withOverrideDimensionName("Promotions")
 						.withForeignKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_SALES_FACT_1997)
 						.withDimension(StandardDimensionMappingImpl.builder().withName("Promotions")
-								.withHierarchies(List.of(HierarchyMappingImpl.builder()
+								.withHierarchies(List.of(ExplicitHierarchyMappingImpl.builder()
 										.withHasAll(true)
 										.withAllMemberName("All Promotions")
 										.withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -7525,7 +7528,7 @@ public class SchemaModifiers {
                 			StandardDimensionMappingImpl.builder()
                 				.withName("Store2")
                 				.withHierarchies(List.of(
-                					HierarchyMappingImpl.builder()
+                					ExplicitHierarchyMappingImpl.builder()
                 						.withHasAll(true)
                 						.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE_RAGGED)
                 						.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_RAGGED_TABLE).build())
@@ -7554,7 +7557,7 @@ public class SchemaModifiers {
                 			StandardDimensionMappingImpl.builder()
                 				.withName("Store3")
                 				.withHierarchies(List.of(
-                					HierarchyMappingImpl.builder()
+                					ExplicitHierarchyMappingImpl.builder()
                 						.withHasAll(true)
                 						.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                 						.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -7618,7 +7621,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("Store2")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withAllMemberName("All Stores")
             						.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_RAGGED_TABLE).build())
@@ -7675,7 +7678,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("Education Level2")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
             						.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -7732,7 +7735,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("Gender4")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
             						.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -7795,7 +7798,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("Store")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE_RAGGED)
             						.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_RAGGED_TABLE).build())
@@ -7857,7 +7860,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("Promotions2")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
             						.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PROMOTION_TABLE).build())
@@ -7977,7 +7980,7 @@ public class SchemaModifiers {
         private static final TimeDimensionMappingImpl dTime = TimeDimensionMappingImpl.builder()
         .withName("Time")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
             .withVisible(true)
                 .withHasAll(false)
                 .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
@@ -8050,7 +8053,7 @@ public class SchemaModifiers {
                             	.withMeasures(List.of(
                             		SumMeasureMappingImpl.builder()
                             	        .withName("Unit Sales")
-                            	        
+
                             	        .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
                             	        .build()
                             	))
@@ -8139,7 +8142,7 @@ public class SchemaModifiers {
                 mg.setMeasures(List.of(SumMeasureMappingImpl.builder()
                             .withName("Unit Sales Foo Bar")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatter(FormatterUtil.FooBarCellFormatter.class.getName())
                             .withMeasureGroup(mg)
                 			.build()));
@@ -8180,7 +8183,7 @@ public class SchemaModifiers {
                         SumMeasureMappingImpl.builder()
                     		.withName("Sum Unit Sales")
                     		.withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    		
+
                     		.withMeasureGroup(mg)
                     		.build()
                 	));
@@ -8347,7 +8350,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("NuStore")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
             						.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -8414,7 +8417,7 @@ public class SchemaModifiers {
                                                 .build()
             						))
             						.build(),
-                					HierarchyMappingImpl.builder()
+                					ExplicitHierarchyMappingImpl.builder()
                                     .withName("NuStore2")
                                     .withAllMemberName("All NuStore2s")
             						.withHasAll(true)
@@ -8516,7 +8519,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("NuStore")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
             						.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -8543,7 +8546,7 @@ public class SchemaModifiers {
                                                 .build()
             						))
             						.build(),
-                					HierarchyMappingImpl.builder()
+                					ExplicitHierarchyMappingImpl.builder()
                 					.withName("NuStore2")
                 					.withAllMemberName("All NuStore2s")
             						.withHasAll(true)
@@ -8612,7 +8615,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("ACC")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withAllMemberName("All")
             						.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -8640,7 +8643,7 @@ public class SchemaModifiers {
                 			StandardDimensionMappingImpl.builder()
                 				.withName("Store Name sans All")
                 				.withHierarchies(List.of(
-                					HierarchyMappingImpl.builder()
+                					ExplicitHierarchyMappingImpl.builder()
                 						.withHasAll(false)
                 						.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                 						.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -8707,7 +8710,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("Store Type 2")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withName("Store Type 2")
             						.withHasAll(true)
             						.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -8783,7 +8786,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("SameName")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withPrimaryKey(id)
             						.withQuery(i)
@@ -8833,7 +8836,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("Customer Last Name")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withAllMemberName("All Customers")
             						.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -8929,7 +8932,7 @@ public class SchemaModifiers {
                 			StandardDimensionMappingImpl.builder()
                                 .withName("Alternative Promotion")
                                 .withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withPrimaryKey(promoId)
                                         .withQuery(itq)
@@ -8951,14 +8954,14 @@ public class SchemaModifiers {
                             SumMeasureMappingImpl.builder()
                                 .withName("Unit Sales")
                                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                
+
                                 .withFormatString("Standard")
                                 .withVisible(false)
                                 .build(),
                             SumMeasureMappingImpl.builder()
                             	.withName("Store Sales")
                             	.withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                            	
+
                             	.withFormatString("#,###.00")
                                 .build()
                         ))
@@ -8995,7 +8998,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName(new StringBuilder("Gender").append(i).toString())
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withAllMemberName("All Gender")
             						.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -9266,7 +9269,7 @@ public class SchemaModifiers {
             		.withDimension(StandardDimensionMappingImpl.builder()
             				.withName("Scenario")
                             .withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withPrimaryKey(foo)
                                         .withHasAll(true)
                                         .withQuery(InlineTableQueryMappingImpl.builder()
@@ -9426,7 +9429,7 @@ public class SchemaModifiers {
                 mg.setMeasures(List.of(SumMeasureMappingImpl.builder()
                             .withName("Unit Sales Foo Bar")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("Standard")
                             .withFormatter(FormatterUtil.FooBarCellFormatter.class.getName())
                 			.build()));
@@ -9463,7 +9466,7 @@ public class SchemaModifiers {
                 mg.setMeasures(List.of(SumMeasureMappingImpl.builder()
                             .withName("Unit Sales Foo Bar")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("Standard")
                             .withCellFormatter(CellFormatterMappingImpl.builder()
                             		.withRef("return \"foo\" + value + \"bar\";")
@@ -9612,7 +9615,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("Promotion Media2")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withAllMemberName("All Media")
             						.withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -9674,7 +9677,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("Promotion Media2")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withAllMemberName("All Media")
             						.withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -9733,7 +9736,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("Promotions2")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withAllMemberName("All Promotions")
             						.withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -9798,7 +9801,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("Promotions2")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withAllMemberName("All Promotions")
             						.withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -9867,7 +9870,7 @@ public class SchemaModifiers {
             			StandardDimensionMappingImpl.builder()
             				.withName("Promotions2")
             				.withHierarchies(List.of(
-            					HierarchyMappingImpl.builder()
+            					ExplicitHierarchyMappingImpl.builder()
             						.withHasAll(true)
             						.withAllMemberName("All Promotions")
             						.withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -10511,7 +10514,7 @@ public class SchemaModifiers {
     	private static final SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
     	        .withName("Unit Sales")
     	        .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-    	        
+
     	        .withFormatString("Standard")
     	        .build();
 
@@ -10532,7 +10535,7 @@ public class SchemaModifiers {
                             		.withDimension(StandardDimensionMappingImpl.builder()
                             				.withName("Product")
                             				.withHierarchies(List.of(
-                            						HierarchyMappingImpl.builder()
+                            						ExplicitHierarchyMappingImpl.builder()
                                                     .withHasAll(true)
                                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                                     .withQuery(
@@ -10565,19 +10568,19 @@ public class SchemaModifiers {
                             						SumMeasureMappingImpl.builder()
                                                         .withName("Customer Count")
                                                         .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
-                                                        
+
                                                         .withFormatString("Standard")
                                                         .build(),
                                                    SumMeasureMappingImpl.builder()
                                                         .withName("Store Sales")
                                                         .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                                        
+
                                                         .withFormatString("Standard")
                                                         .build(),
                                                    SumMeasureMappingImpl.builder()
                                                         .withName("Store Cost")
                                                         .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                                        
+
                                                         .withFormatString("Standard")
                                                         .build()
                             				)).build()
@@ -10613,7 +10616,7 @@ public class SchemaModifiers {
     	private static final SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
     	        .withName("Unit Sales")
     	        .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-    	        
+
     	        .withFormatString("Standard")
     	        .build();
 
@@ -10634,7 +10637,7 @@ public class SchemaModifiers {
                             		.withDimension(StandardDimensionMappingImpl.builder()
                             				.withName("Gender")
                             				.withHierarchies(List.of(
-                            						HierarchyMappingImpl.builder()
+                            						ExplicitHierarchyMappingImpl.builder()
                                                     .withHasAll(true)
                                                     .withAllMemberName("All Gender")
                                                     .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -10741,7 +10744,7 @@ public class SchemaModifiers {
         private static final SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
         .withName("Unit Sales")
         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-        
+
         .withFormatString("Standard")
         .build();
 
@@ -10767,7 +10770,7 @@ public class SchemaModifiers {
                                         .withName("Time")
 
                                         .withHierarchies(List.of(
-                                                HierarchyMappingImpl.builder()
+                                                ExplicitHierarchyMappingImpl.builder()
                                                     .withHasAll(true)
                                                     .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                                                     .withQuery(TableQueryMappingImpl.builder()
@@ -11013,7 +11016,7 @@ public class SchemaModifiers {
         SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
         .withName("Unit Sales")
         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-        
+
         .withFormatString("Standard")
         .build();
 
@@ -11040,7 +11043,7 @@ public class SchemaModifiers {
                             			TimeDimensionMappingImpl.builder()
                                             .withName("Time")
                                             .withHierarchies(List.of(
-                                                HierarchyMappingImpl.builder()
+                                                ExplicitHierarchyMappingImpl.builder()
                                                     .withHasAll(true)
                                                     .withName("Weekly")
                                                     .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
@@ -11080,7 +11083,7 @@ public class SchemaModifiers {
                             			StandardDimensionMappingImpl.builder()
                                             .withName("Product")
                                             .withHierarchies(List.of(
-                                                HierarchyMappingImpl.builder()
+                                                ExplicitHierarchyMappingImpl.builder()
                                                     .withHasAll(true)
                                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                                     .withQuery(
@@ -11141,7 +11144,7 @@ public class SchemaModifiers {
                             					StandardDimensionMappingImpl.builder()
                             						.withName("Customers")
                             						.withHierarchies(List.of(
-                            							HierarchyMappingImpl.builder()
+                            							ExplicitHierarchyMappingImpl.builder()
                             								.withHasAll(true)
                             								.withAllMemberName("All Customers")
                             								.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -11242,13 +11245,13 @@ public class SchemaModifiers {
                                             SumMeasureMappingImpl.builder()
                                                 .withName("Store Cost")
                                                 .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                                
+
                                                 .withFormatString("#,###.00")
                                                 .build(),
                                             SumMeasureMappingImpl.builder()
                                                 .withName("Store Sales")
                                                 .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                                
+
                                                 .withFormatString("#,###.00")
                                                 .build(),
                                             CountMeasureMappingImpl.builder()
@@ -11405,14 +11408,14 @@ public class SchemaModifiers {
     	private static final SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
         .withName("Unit Sales")
         .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-        
+
         .withFormatString("Standard")
         .build();
 
     	private static final StandardDimensionMappingImpl dimensionStore = StandardDimensionMappingImpl.builder()
                 .withName("Store")
                 .withHierarchies(List.of(
-                    HierarchyMappingImpl.builder()
+                    ExplicitHierarchyMappingImpl.builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -11445,7 +11448,7 @@ public class SchemaModifiers {
     	private static final TimeDimensionMappingImpl dimensionTime = TimeDimensionMappingImpl.builder()
                 .withName("Time")
                 .withHierarchies(List.of(
-                    HierarchyMappingImpl.builder()
+                    ExplicitHierarchyMappingImpl.builder()
                         .withHasAll(false)
                         .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -11513,13 +11516,13 @@ public class SchemaModifiers {
                             						SumMeasureMappingImpl.builder()
                                                         .withName("Store Cost")
                                                         .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                                        
+
                                                         .withFormatString("#,###.00")
                                                         .build(),
                                                    SumMeasureMappingImpl.builder()
                                                         .withName("Store Sales")
                                                         .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                                        
+
                                                         .withFormatString("#,###.00")
                                                         .build()
                                                 )
@@ -11607,7 +11610,7 @@ public class SchemaModifiers {
     	private static final SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
     		.withName("Unit Sales")
             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-            
+
             .withFormatString("Standard")
             .build();
 
@@ -11632,7 +11635,7 @@ public class SchemaModifiers {
                             		.withDimension(TimeDimensionMappingImpl.builder()
                                             .withName("Time")
                                             .withHierarchies(List.of(
-                                                HierarchyMappingImpl.builder()
+                                                ExplicitHierarchyMappingImpl.builder()
                                                     .withHasAll(false)
                                                     .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                                                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -11766,7 +11769,7 @@ public class SchemaModifiers {
     	private static final SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
     		.withName("Unit Sales")
             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-            
+
             .withFormatString("Standard")
             .build();
 
@@ -11791,7 +11794,7 @@ public class SchemaModifiers {
                             		.withDimension(StandardDimensionMappingImpl.builder()
                                             .withName("Promotions")
                                             .withHierarchies(List.of(
-                                                HierarchyMappingImpl.builder()
+                                                ExplicitHierarchyMappingImpl.builder()
                                                     .withHasAll(true)
                                                     .withAllMemberName("All Promotions")
                                                     .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -11822,13 +11825,13 @@ public class SchemaModifiers {
                                         SumMeasureMappingImpl.builder()
                                             .withName("Store Sales")
                                             .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                            
+
                                             .withFormatString("Standard")
                                             .build(),
                                         SumMeasureMappingImpl.builder()
                                              .withName("Store Cost")
                                              .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                             
+
                                              .withFormatString("Standard")
                                              .build()
                             				)
@@ -12006,7 +12009,7 @@ public class SchemaModifiers {
     	private static final StandardDimensionMappingImpl storeDimension = StandardDimensionMappingImpl.builder()
         .withName("Store")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -12039,7 +12042,7 @@ public class SchemaModifiers {
     	private static final TimeDimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
         .withName("Time")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(false)
                 .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -12063,7 +12066,7 @@ public class SchemaModifiers {
                         .build()
                 ))
                 .build(),
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withName("Weekly")
                 .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
@@ -12102,7 +12105,7 @@ public class SchemaModifiers {
         	SumMeasureMappingImpl mUnitSalesSales1 = SumMeasureMappingImpl.builder()
             		.withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    
+
                     .withFormatString("Standard")
                     .withMeasureGroup(mgSales1)
                     .build();
@@ -12110,7 +12113,7 @@ public class SchemaModifiers {
         	SumMeasureMappingImpl mStoreCostSales1 = SumMeasureMappingImpl.builder()
         	        .withName("Store Cost")
         	        .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-        	        
+
         	        .withFormatString("#,###.00")
         	        .withMeasureGroup(mgSales1)
         	        .build();
@@ -12118,7 +12121,7 @@ public class SchemaModifiers {
         	SumMeasureMappingImpl mStoreSalesSales1 = SumMeasureMappingImpl.builder()
         	        .withName("Store Sales")
         	        .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-        	        
+
         	        .withFormatString("#,###.00")
         	        .withMeasureGroup(mgSales1)
         	        .build();
@@ -12130,7 +12133,7 @@ public class SchemaModifiers {
         	SumMeasureMappingImpl mUnitSalesSales2 = SumMeasureMappingImpl.builder()
             		.withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    
+
                     .withFormatString("Standard")
                     .withMeasureGroup(mgSales2)
                     .build();
@@ -12138,7 +12141,7 @@ public class SchemaModifiers {
         	SumMeasureMappingImpl mStoreCostSales2 = SumMeasureMappingImpl.builder()
         	        .withName("Store Cost")
         	        .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-        	        
+
         	        .withFormatString("#,###.00")
         	        .withMeasureGroup(mgSales2)
         	        .build();
@@ -12146,7 +12149,7 @@ public class SchemaModifiers {
         	SumMeasureMappingImpl mStoreSalesSales2 = SumMeasureMappingImpl.builder()
         	        .withName("Store Sales")
         	        .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-        	        
+
         	        .withFormatString("#,###.00")
         	        .withMeasureGroup(mgSales2)
         	        .build();
@@ -12287,7 +12290,7 @@ public class SchemaModifiers {
                 		.withDimension(StandardDimensionMappingImpl.builder()
                                 .withName("Gender")
                                 .withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(false)
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -12307,14 +12310,14 @@ public class SchemaModifiers {
                 		SumMeasureMappingImpl.builder()
                 			.withName("Store Sales")
                 			.withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                			
+
                 			.withFormatString("Standard")
                 			.withVisible(false)
                 			.build(),
                 		SumMeasureMappingImpl.builder()
                         	.withName("Store Cost")
                         	.withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                        	
+
                         	.withFormatString("Standard")
                         	.withVisible(false)
                         	.build()
@@ -12420,7 +12423,7 @@ public class SchemaModifiers {
                 		StandardDimensionMappingImpl.builder()
                         	.withName("Store Type")
                         	.withHierarchies(List.of(
-                        		HierarchyMappingImpl.builder()
+                        		ExplicitHierarchyMappingImpl.builder()
                             		.withName("Store Types Hierarchy")
                             		.withAllMemberName("All Store Types Member Name")
                             		.withHasAll(true)
@@ -12441,7 +12444,7 @@ public class SchemaModifiers {
                     	StandardDimensionMappingImpl.builder()
                            	.withName("Country")
                            	.withHierarchies(List.of(
-                           		HierarchyMappingImpl.builder()
+                           		ExplicitHierarchyMappingImpl.builder()
                                		.withHasAll(true)
                                		//.withPrimaryKey("customer_id") //TODO customer_id absent in store table
                                		.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -12463,13 +12466,13 @@ public class SchemaModifiers {
                         SumMeasureMappingImpl.builder()
                             .withName("Store Sqft")
                             .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                            
+
                             .withFormatString("#,###")
                             .build(),
                         SumMeasureMappingImpl.builder()
                             .withName("Grocery Sqft")
                             .withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE)
-                            
+
                             .withFormatString("#,###")
                             .withDescription("Grocery Sqft Description...")
                             .withAnnotations(List.of(
@@ -12545,7 +12548,7 @@ public class SchemaModifiers {
                         .withDimension(StandardDimensionMappingImpl.builder()
                         	.withName("Gender")
                         	.withHierarchies(List.of(
-                        		HierarchyMappingImpl.builder()
+                        		ExplicitHierarchyMappingImpl.builder()
                         			.withHasAll(false)
                         			.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                         			.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -12567,7 +12570,7 @@ public class SchemaModifiers {
                             SumMeasureMappingImpl.builder()
                             .withName("Unit Sales")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("Standard")
                             .withVisible(false)
                             .build()
@@ -12673,7 +12676,7 @@ public class SchemaModifiers {
     	private static final DimensionMappingImpl dimensionStoreX = StandardDimensionMappingImpl.builder()
     		.withName("StoreX")
     		.withHierarchies(List.of(
-    			HierarchyMappingImpl.builder()
+    			ExplicitHierarchyMappingImpl.builder()
     				.withHasAll(true)
     				.withPrimaryKey(storeIdX)
     				.withQuery(TableQueryMappingImpl.builder().withTable(storeX).build())
@@ -12700,7 +12703,7 @@ public class SchemaModifiers {
     	private static final DimensionMappingImpl dimensionStoreY = StandardDimensionMappingImpl.builder()
        		.withName("StoreY")
        		.withHierarchies(List.of(
-       			HierarchyMappingImpl.builder()
+       			ExplicitHierarchyMappingImpl.builder()
        				.withHasAll(true)
        				.withPrimaryKey(storeIdY)
        				.withQuery(TableQueryMappingImpl.builder().withTable(storeY).build())
@@ -12789,7 +12792,7 @@ public class SchemaModifiers {
                             		SumMeasureMappingImpl.builder()
                                     	.withName("Amount")
                                         .withColumn(amount_cheques)
-                                        
+
                                         .withFormatString("00.0")
                                         .build()
                             	))
@@ -12851,7 +12854,7 @@ public class SchemaModifiers {
            		.withName("Store")
            		.withVisible(true)
            		.withHierarchies(List.of(
-           			HierarchyMappingImpl.builder()
+           			ExplicitHierarchyMappingImpl.builder()
            				.withHasAll(true)
            				.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
            				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -12874,7 +12877,7 @@ public class SchemaModifiers {
            		.withName("Time")
            		.withVisible(true)
            		.withHierarchies(List.of(
-           			HierarchyMappingImpl.builder()
+           			ExplicitHierarchyMappingImpl.builder()
            				.withName("Time Hierarchy")
            				.withVisible(true)
            				.withHasAll(true)
@@ -12918,7 +12921,7 @@ public class SchemaModifiers {
            		.withName("Warehouse")
            		.withVisible(true)
            		.withHierarchies(List.of(
-           			HierarchyMappingImpl.builder()
+           			ExplicitHierarchyMappingImpl.builder()
            				.withName("Warehouse")
            				.withVisible(true)
            				.withHasAll(true)
@@ -12953,14 +12956,14 @@ public class SchemaModifiers {
               		.withName("Store Sales")
               		.withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
               		.withFormatString("#,###.00")
-              		
+
               		.withMeasureGroup(mgSales)
               		.build();
 
             SumMeasureMappingImpl mWarehouseSales = SumMeasureMappingImpl.builder()
               		.withName("Warehouse Sales")
               		.withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-              		
+
               		.withMeasureGroup(mgWarehouse)
               		.build();
 
@@ -13117,7 +13120,7 @@ public class SchemaModifiers {
                         .withDimension(StandardDimensionMappingImpl.builder()
                         	.withName("Alternative Promotion")
                         	.withHierarchies(List.of(
-                        		HierarchyMappingImpl.builder()
+                        		ExplicitHierarchyMappingImpl.builder()
                                 .withHasAll(true)
                                 .withPrimaryKey(promoId)
                                 .withQuery(InlineTableQueryMappingImpl.builder()
@@ -13143,14 +13146,14 @@ public class SchemaModifiers {
                        SumMeasureMappingImpl.builder()
                             .withName("Unit Sales")
                             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("Standard")
                             .withVisible(false)
                             .build(),
                        SumMeasureMappingImpl.builder()
                             .withName("Store Sales")
                             .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                            
+
                             .withFormatString("#,###.00")
                             .build()
                 	))
@@ -13219,7 +13222,7 @@ public class SchemaModifiers {
                         .withDimension(StandardDimensionMappingImpl.builder()
                         		.withName("Store")
                         		.withHierarchies(List.of(
-                        			HierarchyMappingImpl.builder()
+                        			ExplicitHierarchyMappingImpl.builder()
                         				.withHasAll(true)
                         				.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                         				.withLevels(List.of(
@@ -13255,7 +13258,7 @@ public class SchemaModifiers {
                            SumMeasureMappingImpl.builder()
                                 .withName("Store Sqfts")
                                 .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                
+
                                 .withFormatString("#,###")
                                 .build()
                         ))
@@ -14133,7 +14136,7 @@ public class SchemaModifiers {
         private Result result;
         private PhysicalCubeMappingImpl cube;
 
-        private static final HierarchyMappingImpl hCustomers = HierarchyMappingImpl.builder()
+        private static final HierarchyMappingImpl hCustomers = ExplicitHierarchyMappingImpl.builder()
 		.withHasAll(true)
 		.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
 		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -14162,7 +14165,7 @@ public class SchemaModifiers {
 		))
 		.build();
 
-        private static final HierarchyMappingImpl hCustomers2 = HierarchyMappingImpl.builder()
+        private static final HierarchyMappingImpl hCustomers2 = ExplicitHierarchyMappingImpl.builder()
 		.withHasAll(true)
 		.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
 		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -14191,7 +14194,7 @@ public class SchemaModifiers {
 		))
 		.build();
 
-        private static final HierarchyMappingImpl hCustomers3 = HierarchyMappingImpl.builder()
+        private static final HierarchyMappingImpl hCustomers3 = ExplicitHierarchyMappingImpl.builder()
 		.withHasAll(true)
 		.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
 		.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -14280,7 +14283,7 @@ public class SchemaModifiers {
                     			SumMeasureMappingImpl.builder()
                     				.withName("Unit Sales")
                     				.withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    				
+
                     				.withFormatString("Standard")
                     				.build()
                     			))
@@ -15927,7 +15930,7 @@ public class SchemaModifiers {
         	StandardDimensionMappingImpl store2Dimension = StandardDimensionMappingImpl.builder()
                     .withName("Store2")
                     .withHierarchies(List.of(
-                    		store2Hierarchy = HierarchyMappingImpl.builder()
+                    		store2Hierarchy = ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(hasAll)
                             .withDefaultMember(defaultMem)
                             .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -16302,7 +16305,7 @@ public class SchemaModifiers {
                         .withDimension(StandardDimensionMappingImpl.builder()
                         .withName("Customers")
                         .withHierarchies(List.of(
-                        	customersHierarchy = HierarchyMappingImpl.builder()
+                        	customersHierarchy = ExplicitHierarchyMappingImpl.builder()
                                 .withVisible(true)
                                 .withHasAll(true)
                                 .withAllMemberName("All Customers")
@@ -16378,7 +16381,7 @@ public class SchemaModifiers {
                                         .build()
                                 ))
                                 .build(),
-                            HierarchyMappingImpl.builder()
+                            ExplicitHierarchyMappingImpl.builder()
                                 .withName("Gender")
                                 .withVisible(true)
                                 .withHasAll(true)
@@ -16403,7 +16406,7 @@ public class SchemaModifiers {
 
                                 ))
                                 .build(),
-                            HierarchyMappingImpl.builder()
+                            ExplicitHierarchyMappingImpl.builder()
                                 .withName("Marital Status")
                                 .withVisible(true)
                                 .withHasAll(true)
@@ -16437,7 +16440,7 @@ public class SchemaModifiers {
                         .withDimension(StandardDimensionMappingImpl.builder()
                         .withName("Store")
                         .withHierarchies(List.of(
-                        	storeHierarchy = HierarchyMappingImpl.builder()
+                        	storeHierarchy = ExplicitHierarchyMappingImpl.builder()
                                 .withVisible(true)
                                 .withHasAll(true)
                                 .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -17101,7 +17104,7 @@ public class SchemaModifiers {
         	StandardDimensionMappingImpl d = StandardDimensionMappingImpl.builder()
             .withName("WarehouseShared")
             .withHierarchies(List.of(
-            		warehouseSharedHierarchy = HierarchyMappingImpl.builder()
+            		warehouseSharedHierarchy = ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
@@ -17146,12 +17149,12 @@ public class SchemaModifiers {
                                         SumMeasureMappingImpl.builder()
                                             .withName("Measure1_0")
                                             .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                                            
+
                                             .build(),
                                         SumMeasureMappingImpl.builder()
                                             .withName("Measure1_1")
                                             .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                                            
+
                                             .build()
                                     ))
                             		.build()))
@@ -17184,12 +17187,12 @@ public class SchemaModifiers {
                                         SumMeasureMappingImpl.builder()
                                             .withName("Measure2_0")
                                             .withColumn(FoodmartMappingSupplier.WAREHOUSE_COST_COLUMN_IN_INVENTORY_FACKT_1997)
-                                            
+
                                             .build(),
                                         SumMeasureMappingImpl.builder()
                                             .withName("Measure2_1")
                                             .withColumn(FoodmartMappingSupplier.WAREHOUSE_SALES_COLUMN_IN_INVENTORY_FACKT_1997)
-                                            
+
                                             .build()
                                     ))
                             		.build()
@@ -17322,7 +17325,7 @@ public class SchemaModifiers {
         	TimeDimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
             .withName("Time")
             .withHierarchies(List.of(
-                HierarchyMappingImpl.builder()
+                ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -17372,7 +17375,7 @@ public class SchemaModifiers {
                                                 SumMeasureMappingImpl.builder()
                                                 .withName("Unit Sales")
                                                 .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                                                
+
                                                 .withFormatString("Standard")
                                                 .build()
                                         ))
@@ -17424,7 +17427,7 @@ public class SchemaModifiers {
         	TimeDimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
             .withName("Time")
             .withHierarchies(List.of(
-                HierarchyMappingImpl.builder()
+                ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -17458,7 +17461,7 @@ public class SchemaModifiers {
         	SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
             .withName("Unit Sales")
             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-            
+
             .withFormatString("Standard")
             .build();
 
@@ -17488,13 +17491,13 @@ public class SchemaModifiers {
                                 			SumMeasureMappingImpl.builder()
                                             .withName("Store Cost")
                                             .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                            
+
                                             .withFormatString("#,###.00")
                                             .build(),
                                             SumMeasureMappingImpl.builder()
                                             .withName("Store Sales")
                                             .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                            
+
                                             .withFormatString("#,###.00")
                                             .build(),
                                             CountMeasureMappingImpl.builder()
@@ -17549,7 +17552,7 @@ public class SchemaModifiers {
         	TimeDimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
             .withName("Time")
             .withHierarchies(List.of(
-                HierarchyMappingImpl.builder()
+                ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -17577,7 +17580,7 @@ public class SchemaModifiers {
         	SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
             .withName("Unit Sales")
             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-            
+
             .withFormatString("Standard")
             .build();
 
@@ -17656,7 +17659,7 @@ public class SchemaModifiers {
         	TimeDimensionMappingImpl storeSqftDimension = TimeDimensionMappingImpl.builder()
             .withName("StoreSqft")
             .withHierarchies(List.of(
-                HierarchyMappingImpl.builder()
+                ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -17708,7 +17711,7 @@ public class SchemaModifiers {
                                 		.withMeasures(List.of(
                                 				SumMeasureMappingImpl.builder()
                                                 .withName("Big Unit Sales")
-                                                
+
                                                 .withFormatString("Standard")
                                                 .withColumn(SQLExpressionMappingColumnImpl.builder()
                                                     .withSqls(List.of(
@@ -17721,7 +17724,7 @@ public class SchemaModifiers {
                                                 SumMeasureMappingImpl.builder()
                                                 .withName("Pass Agg enabled")
                                                 .withColumn(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
-                                                
+
                                                 .build()
 
                                 		))
@@ -17789,7 +17792,7 @@ public class SchemaModifiers {
         	StandardDimensionMappingImpl frozenSqftDimension = StandardDimensionMappingImpl.builder()
             .withName("Frozen sqft")
             .withHierarchies(List.of(
-                HierarchyMappingImpl.builder()
+                ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
                     .withLevels(List.of(
@@ -17807,7 +17810,7 @@ public class SchemaModifiers {
         	StandardDimensionMappingImpl grocerySqftDimension = StandardDimensionMappingImpl.builder()
                     .withName("Grocery sqft")
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
                             .withLevels(List.of(
@@ -17825,7 +17828,7 @@ public class SchemaModifiers {
         	StandardDimensionMappingImpl meatSqftDimension = StandardDimensionMappingImpl.builder()
                     .withName("Meat sqft")
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
                             .withLevels(List.of(
@@ -17843,7 +17846,7 @@ public class SchemaModifiers {
         	StandardDimensionMappingImpl storeSqftDimension = StandardDimensionMappingImpl.builder()
                     .withName("Store sqft")
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
                             .withLevels(List.of(
@@ -17889,22 +17892,22 @@ public class SchemaModifiers {
                                                 SumMeasureMappingImpl.builder()
                                                 .withName("Frozen sqft")
                                                 .withColumn(FoodmartMappingSupplier.FROZEN_SQFT_COLUMN_IN_STORE)
-                                                
+
                                                 .build(),
                                                 SumMeasureMappingImpl.builder()
                                                 .withName("Grocery sqft")
                                                 .withColumn(FoodmartMappingSupplier.GROCERY_SQFT_COLUMN_IN_STORE)
-                                                
+
                                                 .build(),
                                                 SumMeasureMappingImpl.builder()
                                                 .withName("Meat sqft")
                                                 .withColumn(FoodmartMappingSupplier.MEAT_SQFT_COLUMN_IN_STORE)
-                                                
+
                                                 .build(),
                                                 SumMeasureMappingImpl.builder()
                                                 .withName("Store sqft")
                                                 .withColumn(FoodmartMappingSupplier.STORE_SQFT_COLUMN_IN_STORE)
-                                                
+
                                                 .build()
                                 		))
                                 		.build()))
@@ -17958,7 +17961,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         	.withName("Customers Dimension")
                                         	.withHierarchies(List.of(
-                                        		HierarchyMappingImpl.builder()
+                                        		ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true).withAllMemberName("All Customers hierarchy name").withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
                                                 .withLevels(List.of(
@@ -17981,7 +17984,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         	.withName("Product Dimension")
                                         	.withHierarchies(List.of(
-                                        		HierarchyMappingImpl.builder()
+                                        		ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true).withAllMemberName("All products hierarchy name").withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_TABLE).build())
                                                 .withLevels(List.of(
@@ -18004,7 +18007,7 @@ public class SchemaModifiers {
                                                 SumMeasureMappingImpl.builder()
                                                 .withName("Store Sales")
                                                 .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                                
+
                                                 .withFormatString("#,###.00")
                                                 .build()
                                 		))
@@ -18059,7 +18062,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         	.withName("Customers Dimension")
                                         	.withHierarchies(List.of(
-                                        		HierarchyMappingImpl.builder()
+                                        		ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true).withAllMemberName("All Customers hierarchy name").withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
                                                 .withLevels(List.of(
@@ -18081,7 +18084,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         	.withName("Product Dimension")
                                         	.withHierarchies(List.of(
-                                        		HierarchyMappingImpl.builder()
+                                        		ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true).withAllMemberName("All products hierarchy name").withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_TABLE).build())
                                                 .withLevels(List.of(
@@ -18103,7 +18106,7 @@ public class SchemaModifiers {
                                                 SumMeasureMappingImpl.builder()
                                                 .withName("Store Sales")
                                                 .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                                                
+
                                                 .withFormatString("#,###.00")
                                                 .build()
                                 		))
@@ -18142,7 +18145,7 @@ public class SchemaModifiers {
         	SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
             .withName("Unit Sales")
             .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-            
+
             .withFormatString("Standard")
             .build();
 
@@ -18159,7 +18162,7 @@ public class SchemaModifiers {
                         .withDimension(StandardDimensionMappingImpl.builder()
                         	.withName("Promotions")
                         	.withHierarchies(List.of(
-                            HierarchyMappingImpl.builder()
+                            ExplicitHierarchyMappingImpl.builder()
                                 .withHasAll(true)
                                 .withAllMemberName("All Promotions")
                                 .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -18188,7 +18191,7 @@ public class SchemaModifiers {
                 			SumMeasureMappingImpl.builder()
                 			.withName("Unit Sales")
                 			.withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                			
+
                 			.withFormatString("Standard")
                 			.build()
                 		)).build()))
@@ -18305,7 +18308,7 @@ public class SchemaModifiers {
         	SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
                     .withName("Unit Sales")
                     .withColumn(FoodmartMappingSupplier.UNIT_SALES_COLUMN_IN_SALES_FACT_1997)
-                    
+
                     .withFormatString("Standard")
                     .build();
 
@@ -18325,7 +18328,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         	.withName("Store")
                                         	.withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withName("Stores")
                                                 .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -18372,7 +18375,7 @@ public class SchemaModifiers {
                                 		.withDimension(TimeDimensionMappingImpl.builder()
                                 			.withName("Time")
                                 			.withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true).withName("Time By Week").withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
                                                 .withLevels(List.of(
@@ -18399,7 +18402,7 @@ public class SchemaModifiers {
                                                         .build()
                                                 ))
                                                 .build(),
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(false).withName("Time2").withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
                                                 .withLevels(List.of(
@@ -18435,7 +18438,7 @@ public class SchemaModifiers {
                                     	.withDimension(StandardDimensionMappingImpl.builder()
                                     		.withName("Product")
                                     		.withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true).withName("Products").withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                                 .withQuery(
                                                         JoinQueryMappingImpl.builder()
@@ -18485,7 +18488,7 @@ public class SchemaModifiers {
                                                         .build()
                                                 ))
                                                 .build(),
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withName("Product Name")
                                                 .withHasAll(true)
                                                 .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
@@ -18519,7 +18522,7 @@ public class SchemaModifiers {
                                             .withDimension(StandardDimensionMappingImpl.builder()
                                             	.withName("Promotion")
                                             	.withHierarchies(List.of(
-                                            	HierarchyMappingImpl.builder()
+                                            	ExplicitHierarchyMappingImpl.builder()
                                                     .withHasAll(true)
                                                     .withAllMemberName("All Promotions")
                                                     .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -18541,7 +18544,7 @@ public class SchemaModifiers {
                                     	.withDimension(StandardDimensionMappingImpl.builder()
                                     		.withName("Currency")
                                     		.withHierarchies(List.of(
-                                        	HierarchyMappingImpl.builder()
+                                        	ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
                                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PROMOTION_TABLE).build())
@@ -18561,7 +18564,7 @@ public class SchemaModifiers {
                                     	.withDimension(StandardDimensionMappingImpl.builder()
                                     		.withName("Customer")
                                     		.withHierarchies(List.of(
-                                    		HierarchyMappingImpl.builder()
+                                    		ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withAllMemberName("All Customers")
                                                 .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -18598,7 +18601,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         	.withName("Store Size in SQFT")
                                         	.withHierarchies(List.of(
-                                        	HierarchyMappingImpl.builder()
+                                        	ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -18799,7 +18802,7 @@ public class SchemaModifiers {
                                     	.withDimension(StandardDimensionMappingImpl.builder()
                                     		.withName("Markets")
                                     		.withHierarchies(List.of(
-                                    			marketsHierarchy = HierarchyMappingImpl.builder()
+                                    			marketsHierarchy = ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withAllMemberName("All Markets")
                                                 .withPrimaryKey(SteelwheelsSupplier.CUSTOMERNUMBER_COLUMN_IN_CUSTOMER_W_TER)
@@ -18882,7 +18885,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         	.withName("Customers")
                                         	.withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withAllMemberName("All Customers")
                                                 .withPrimaryKey(SteelwheelsSupplier.CUSTOMERNUMBER_COLUMN_IN_CUSTOMER_W_TER)
@@ -18939,7 +18942,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         	.withName("Product")
                                         	.withHierarchies(List.of(
-                                        	HierarchyMappingImpl.builder()
+                                        	ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true).withName("")
                                                 .withAllMemberName("All Products")
                                                 .withPrimaryKey(SteelwheelsSupplier.PRODUCTCODE_COLUMN_IN_PRODUCTS)
@@ -18998,7 +19001,7 @@ public class SchemaModifiers {
                                         .withDimension(TimeDimensionMappingImpl.builder()
                                         	.withName("Time")
                                         	.withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withAllMemberName("All Years")
                                                 .withPrimaryKey(SteelwheelsSupplier.TIME_ID_COLUMN_IN_TIME)
@@ -19059,7 +19062,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         	.withName("Order Status")
                                         	.withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withAllMemberName("All Status Types")
                                                 .withPrimaryKey(SteelwheelsSupplier.STATUS_COLUMN_IN_ORDER_FACT)
@@ -19082,7 +19085,7 @@ public class SchemaModifiers {
                                             SumMeasureMappingImpl.builder()
                                                 .withName("Quantity")
                                                 .withColumn(SteelwheelsSupplier.QUANTITYORDERED_COLUMN_IN_ORDER_FACT)
-                                                
+
                                                 .withFormatString("#,###")
                                                 .withAnnotations(List.of(
                                                     AnnotationMappingImpl.builder()
@@ -19094,7 +19097,7 @@ public class SchemaModifiers {
                                             SumMeasureMappingImpl.builder()
                                                 .withName("Sales")
                                                 .withColumn(SteelwheelsSupplier.TOTALPRICE_COLUMN_IN_ORDER_FACT)
-                                                
+
                                                 .withFormatString("#,###")
                                                 .withAnnotations(List.of(
                                                     AnnotationMappingImpl.builder()
@@ -19379,7 +19382,7 @@ public class SchemaModifiers {
         	StandardDimensionMappingImpl marketsDimension = StandardDimensionMappingImpl.builder()
                     .withName("Markets")
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withAllMemberName("All Markets")
                             .withPrimaryKey(SteelwheelsSupplier.CUSTOMERNUMBER_COLUMN_IN_CUSTOMER_W_TER)
@@ -19426,7 +19429,7 @@ public class SchemaModifiers {
         	StandardDimensionMappingImpl customersDimension = StandardDimensionMappingImpl.builder()
             .withName("Customers")
             .withHierarchies(List.of(
-                HierarchyMappingImpl.builder()
+                ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withAllMemberName("All Customers")
                     .withPrimaryKey(SteelwheelsSupplier.CUSTOMERNUMBER_COLUMN_IN_CUSTOMER_W_TER)
@@ -19480,7 +19483,7 @@ public class SchemaModifiers {
         	StandardDimensionMappingImpl productDimension = StandardDimensionMappingImpl.builder()
         		.withName("Product")
         		.withHierarchies(List.of(
-        				HierarchyMappingImpl.builder()
+        				ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withAllMemberName("All Products")
                     .withPrimaryKey(SteelwheelsSupplier.PRODUCTCODE_COLUMN_IN_PRODUCTS)
@@ -19536,7 +19539,7 @@ public class SchemaModifiers {
         	TimeDimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
             .withName("Time")
             .withHierarchies(List.of(
-            		HierarchyMappingImpl.builder()
+            		ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withAllMemberName("All Years")
                     .withPrimaryKey(SteelwheelsSupplier.TIME_ID_COLUMN_IN_TIME)
@@ -19578,7 +19581,7 @@ public class SchemaModifiers {
         	StandardDimensionMappingImpl orderStatusDimension = StandardDimensionMappingImpl.builder()
             .withName("Order Status")
             .withHierarchies(List.of(
-            		HierarchyMappingImpl.builder()
+            		ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withAllMemberName("All Status Types")
                     .withPrimaryKey(SteelwheelsSupplier.STATUS_COLUMN_IN_ORDER_FACT)
@@ -19633,13 +19636,13 @@ public class SchemaModifiers {
                                         .withName("Price Each")
                                         .withColumn(SteelwheelsSupplier.PRICEEACH_COLUMN_IN_ORDER_FACT)
                                         .withFormatString("#,###.0")
-                                        
+
                                         .build(),
                                     SumMeasureMappingImpl.builder()
                                         .withName("Total Price")
                                         .withColumn(SteelwheelsSupplier.TOTALPRICE_COLUMN_IN_ORDER_FACT)
                                         .withFormatString("#,###.00")
-                                        
+
                                         .build()
                                 )).build()))
                                 .build(),
@@ -19676,13 +19679,13 @@ public class SchemaModifiers {
                                         .withName("Price Each")
                                         .withColumn(SteelwheelsSupplier.PRICEEACH_COLUMN_IN_ORDER_FACT)
                                         .withFormatString("#,###.0")
-                                        
+
                                         .build(),
                                     SumMeasureMappingImpl.builder()
                                         .withName("Total Price")
                                         .withColumn(SteelwheelsSupplier.TOTALPRICE_COLUMN_IN_ORDER_FACT)
                                         .withFormatString("#,###.00")
-                                        
+
                                         .build()
 
                                 )).build()))
@@ -19720,13 +19723,13 @@ public class SchemaModifiers {
                                         .withName("Price Each")
                                         .withColumn(SteelwheelsSupplier.PRICEEACH_COLUMN_IN_ORDER_FACT)
                                         .withFormatString("#,###.0")
-                                        
+
                                         .build(),
                                     SumMeasureMappingImpl.builder()
                                         .withName("Total Price")
                                         .withColumn(SteelwheelsSupplier.TOTALPRICE_COLUMN_IN_ORDER_FACT)
                                         .withFormatString("#,###.00")
-                                        
+
                                         .build()
                                 )).build()))
                                 .build()
@@ -19762,7 +19765,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         	.withName("Orders")
                                         	.withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withAllMemberName("All Orders")
                                                 .withPrimaryKey(ordernumber)
@@ -19791,7 +19794,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         .withName("Customers")
                                         .withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withAllMemberName("All Customers")
                                                 .withPrimaryKey(SteelwheelsSupplier.CUSTOMERNUMBER_COLUMN_IN_CUSTOMER_W_TER)
@@ -19815,13 +19818,13 @@ public class SchemaModifiers {
                                         .withName("Quantity")
                                         .withColumn(SteelwheelsSupplier.QUANTITYORDERED_COLUMN_IN_ORDER_FACT)
                                         .withFormatString("#,###")
-                                        
+
                                         .build(),
                                     SumMeasureMappingImpl.builder()
                                         .withName("Sales")
                                         .withColumn(SteelwheelsSupplier.TOTALPRICE_COLUMN_IN_ORDER_FACT)
                                         .withFormatString("#,###")
-                                        
+
                                         .build()
                                 )).build()))
                             .build()))
@@ -19944,7 +19947,7 @@ public class SchemaModifiers {
         	StandardDimensionMappingImpl productDimension = StandardDimensionMappingImpl.builder()
             .withName("Product")
             .withHierarchies(List.of(
-                HierarchyMappingImpl.builder()
+                ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withAllMemberName("All Products")
                     .withPrimaryKey(SteelwheelsSupplier.PRODUCTCODE_COLUMN_IN_PRODUCTS)
@@ -20013,7 +20016,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         	.withName("Markets")
                                         	.withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withAllMemberName("All Markets")
                                                 .withPrimaryKey(SteelwheelsSupplier.CUSTOMERNUMBER_COLUMN_IN_CUSTOMER_W_TER)
@@ -20061,7 +20064,7 @@ public class SchemaModifiers {
                                 		.withDimension(StandardDimensionMappingImpl.builder()
                                 			.withName("Customers")
                                 			.withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withAllMemberName("All Customers")
                                                 .withPrimaryKey(SteelwheelsSupplier.CUSTOMERNUMBER_COLUMN_IN_CUSTOMER_W_TER)
@@ -20090,7 +20093,7 @@ public class SchemaModifiers {
                                         .withDimension(TimeDimensionMappingImpl.builder()
                                         	.withName("Time")
                                         	.withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withAllMemberName("All Years")
                                                 .withPrimaryKey(SteelwheelsSupplier.TIME_ID_COLUMN_IN_TIME)
@@ -20132,7 +20135,7 @@ public class SchemaModifiers {
                                         .withDimension(StandardDimensionMappingImpl.builder()
                                         	.withName("Order Status")
                                         	.withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                                 .withHasAll(true)
                                                 .withAllMemberName("All Status Types")
                                                 .withPrimaryKey(SteelwheelsSupplier.STATUS_COLUMN_IN_ORDER_FACT)
@@ -20155,13 +20158,13 @@ public class SchemaModifiers {
                                         .withName("Quantity")
                                         .withColumn(SteelwheelsSupplier.QUANTITYORDERED_COLUMN_IN_ORDER_FACT)
                                         .withFormatString("#,###")
-                                        
+
                                         .build(),
                                     SumMeasureMappingImpl.builder()
                                         .withName("Sales")
                                         .withColumn(SteelwheelsSupplier.TOTALPRICE_COLUMN_IN_ORDER_FACT)
                                         .withFormatString("#,###")
-                                        
+
                                         .build()
                                 )).build()))
                     .build())).build();
@@ -20367,7 +20370,7 @@ public class SchemaModifiers {
             .withVisible(true)
             .withName("Customers Dimension")
             .withHierarchies(List.of(
-            	customersHierarchy = HierarchyMappingImpl.builder()
+            	customersHierarchy = ExplicitHierarchyMappingImpl.builder()
                     .withName("Customers Hierarchy")
                     .withVisible(true)
                     .withHasAll(true)
@@ -20424,14 +20427,14 @@ public class SchemaModifiers {
                                 SumMeasureMappingImpl.builder()
                                     .withName("Price Each")
                                     .withColumn(SteelwheelsSupplier.PRICEEACH_COLUMN_IN_ORDER_FACT)
-                                    
+
                                     .withVisible(true)
                                     .build(),
                                 SumMeasureMappingImpl.builder()
                                     .withName("Total Price")
                                     .withColumn(SteelwheelsSupplier.TOTALPRICE_COLUMN_IN_ORDER_FACT)
                                     .withVisible(true)
-                                    
+
                                     .build()
                             )).build()))
                             .build()
@@ -20570,7 +20573,7 @@ public class SchemaModifiers {
             .withVisible(true)
             .withName("Customers Dimension")
             .withHierarchies(List.of(
-            	customersHierarchy = HierarchyMappingImpl.builder()
+            	customersHierarchy = ExplicitHierarchyMappingImpl.builder()
                     .withName("Customers Hierarchy")
                     .withVisible(true)
                     .withHasAll(true)
@@ -20627,14 +20630,14 @@ public class SchemaModifiers {
                                 SumMeasureMappingImpl.builder()
                                     .withName("Price Each")
                                     .withColumn(SteelwheelsSupplier.PRICEEACH_COLUMN_IN_ORDER_FACT)
-                                    
+
                                     .withVisible(true)
                                     .build(),
                                 SumMeasureMappingImpl.builder()
                                     .withName("Total Price")
                                     .withColumn(SteelwheelsSupplier.TOTALPRICE_COLUMN_IN_ORDER_FACT)
                                     .withVisible(true)
-                                    
+
                                     .build()
                             )).build()))
                             .build()
@@ -20811,7 +20814,7 @@ public class SchemaModifiers {
         	.withVisible(true)
             .withName("Dimension1")
             .withHierarchies(List.of(
-            	dimension1Hierarchy = HierarchyMappingImpl.builder()
+            	dimension1Hierarchy = ExplicitHierarchyMappingImpl.builder()
                     .withName("Customers Hierarchy")
                     .withVisible(true)
                     .withHasAll(true)
@@ -20837,7 +20840,7 @@ public class SchemaModifiers {
             .withVisible(true)
             .withName("Dimension2")
             .withHierarchies(List.of(
-            	dimension2Hierarchy = HierarchyMappingImpl.builder()
+            	dimension2Hierarchy = ExplicitHierarchyMappingImpl.builder()
                     .withVisible(true)
                     .withHasAll(true)
                     .withAllMemberName("All Customers")
@@ -20888,7 +20891,7 @@ public class SchemaModifiers {
                             	measure1 = SumMeasureMappingImpl.builder()
                                     .withName("Measure1")
                                     .withColumn(SteelwheelsSupplier.QUANTITYORDERED_COLUMN_IN_ORDER_FACT)
-                                    
+
                                     .build()
                             )).build()))
                             .build(),
@@ -20910,7 +20913,7 @@ public class SchemaModifiers {
                             	measure2Internal = SumMeasureMappingImpl.builder()
                                     .withName("Measure2:Internal")
                                     .withColumn(SteelwheelsSupplier.TOTALPRICE_COLUMN_IN_ORDER_FACT)
-                                    
+
                                     .build()
                             )).build()))
                             .build(),
@@ -21041,7 +21044,7 @@ public class SchemaModifiers {
         	StandardDimensionMappingImpl customersDimension = StandardDimensionMappingImpl.builder()
             .withName("Customers")
             .withHierarchies(List.of(
-                HierarchyMappingImpl.builder()
+                ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withAllMemberName("All Customers")
                     .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -21070,7 +21073,7 @@ public class SchemaModifiers {
         	SumMeasureMappingImpl m = SumMeasureMappingImpl.builder()
             .withName("Unit Sales")
             .withColumn(unitSalesSalesFact1998)
-            
+
             .withFormatString("Standard")
             .build();
 

@@ -35,7 +35,6 @@ import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -97,10 +96,12 @@ import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.ExplicitHierarchyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.ParentChildHierarchyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.ParentChildLinkMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
@@ -146,6 +147,7 @@ public class RolapHierarchy extends HierarchyBase {
     private final static String levelMustHaveNameExpression =
         "Level ''{0}'' must have a name expression (a ''column'' attribute or an <Expression> child";
     private final static String hierarchyHasNoLevels = "Hierarchy ''{0}'' must have at least one level.";
+    private final static String hierarchyHasNoParentColumn = "Parent child Hierarchy ''{0}'' must have parent column.";
     private final static String hierarchyLevelNamesNotUnique = "Level names within hierarchy ''{0}'' are not unique; there is more than one level with name ''{1}''.";
     private final static String hierarchyMustNotHaveMoreThanOneSource = "Hierarchy ''{0}'' has more than one source (memberReaderClass, <Table>, <Join> or <View>)";
 
@@ -367,76 +369,102 @@ public class RolapHierarchy extends HierarchyBase {
         }
         this.allMember.setOrdinal(0);
 
-        if (xmlHierarchy.getLevels().isEmpty()) {
-            throw new OlapRuntimeException(MessageFormat.format(hierarchyHasNoLevels,
-                getUniqueName()));
-        }
-
-        Set<String> levelNameSet = new HashSet<>();
-        for (LevelMapping level : xmlHierarchy.getLevels()) {
-            if (!levelNameSet.add(level.getName())) {
-                throw new OlapRuntimeException(MessageFormat.format(hierarchyLevelNamesNotUnique,
-                        getUniqueName(), level.getName()));
+        if (xmlHierarchy instanceof ExplicitHierarchyMapping eh) {
+            if (eh.getLevels().isEmpty()) {
+                throw new OlapRuntimeException(MessageFormat.format(hierarchyHasNoLevels,
+                        getUniqueName()));
             }
-        }
 
-        // If the hierarchy has an 'all' member, the 'all' level is level 0.
-        if (hasAll) {
-            this.levels = new RolapLevel[xmlHierarchy.getLevels().size() + 1];
-            this.levels[0] = allLevel;
-            int i = 1;
-            for (LevelMapping xmlLevel : xmlHierarchy.getLevels()) {
+            Set<String> levelNameSet = new HashSet<>();
+            for (LevelMapping level : eh.getLevels()) {
+                if (!levelNameSet.add(level.getName())) {
+                    throw new OlapRuntimeException(MessageFormat.format(hierarchyLevelNamesNotUnique,
+                        getUniqueName(), level.getName()));
+                }
+            }
+
+            // If the hierarchy has an 'all' member, the 'all' level is level 0.
+            if (hasAll) {
+                this.levels = new RolapLevel[eh.getLevels().size() + 1];
+                this.levels[0] = allLevel;
+                int i = 1;
+                for (LevelMapping xmlLevel : eh.getLevels()) {
+                    if (getKeyExp(xmlLevel) == null
+                        && xmlHierarchy.getMemberReaderClass() == null)
+                    {
+                        throw new OlapRuntimeException(MessageFormat.format(
+                            levelMustHaveNameExpression, xmlLevel.getName()));
+                    }
+                    RolapLevel l = new RolapLevel(this, i, xmlLevel);
+                    levels[i] = l;
+                    i++;
+                }
+            } else {
+                this.levels = new RolapLevel[eh.getLevels().size()];
+                int i = 0;
+                for (LevelMapping xmlLevel : eh.getLevels()) {
+                    RolapLevel rl = new RolapLevel(this, i, xmlLevel);
+                    levels[i] = rl;
+                    i++;
+                }
+            }
+        } else if (xmlHierarchy instanceof ParentChildHierarchyMapping pch ){
+            if (pch.getLevel() == null) {
+                throw new OlapRuntimeException(MessageFormat.format(hierarchyHasNoLevels,
+                        getUniqueName()));
+            }
+            if (pch.getParentColumn() == null) {
+                throw new OlapRuntimeException(MessageFormat.format(hierarchyHasNoParentColumn,
+                        getUniqueName()));
+            }
+            // If the hierarchy has an 'all' member, the 'all' level is level 0.
+            if (hasAll) {
+                this.levels = new RolapLevel[2];
+                this.levels[0] = allLevel;
+                int i = 1;
+                LevelMapping xmlLevel = pch.getLevel();
+                
                 if (getKeyExp(xmlLevel) == null
                     && xmlHierarchy.getMemberReaderClass() == null)
                 {
-                    throw new OlapRuntimeException(MessageFormat.format(
-                        levelMustHaveNameExpression, xmlLevel.getName()));
+                   throw new OlapRuntimeException(MessageFormat.format(
+                       levelMustHaveNameExpression, xmlLevel.getName()));
                 }
-                if (xmlLevel.getParentColumn() != null) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(xmlLevel.getName()).append(i);
-                    RolapLevel l = new RolapLevel(sb.toString(), LevelUtil.getParentExp(xmlLevel), xmlLevel.getNullParentValue(), xmlLevel.getParentChildLink(), this, i, xmlLevel);
-                    levels[i] = l;
-                    Map<Integer, Set<RolapMember>> childMap = getChildMap((RolapLevel)l);
-                    for (Map.Entry<Integer, Set<RolapMember>> e : childMap.entrySet()) {
-                        if (e.getKey() != 0) {
-                            i++;
-                            sb = new StringBuilder();
-                            sb.append(xmlLevel.getName()).append(i);
-                            RolapLevel rl = new RolapLevel(sb.toString(), null, null, null, this, i, l.getLevelMapping());
-                            this.levels = Util.append(this.levels, rl);
-                        }
+                
+                StringBuilder sb = new StringBuilder();
+                sb.append(xmlLevel.getName()).append(i);
+                RolapLevel l = new RolapLevel(sb.toString(), LevelUtil.getParentExp(pch), pch.getNullParentValue(), pch.getParentChildLink(), this, i,
+                        pch.isParentAsLeafEnable(), pch.getParentAsLeafNameFormat(), xmlLevel);
+                levels[i] = l;
+                Map<Integer, Set<RolapMember>> childMap = getChildMap((RolapLevel)l);
+                for (Map.Entry<Integer, Set<RolapMember>> e : childMap.entrySet()) {
+                    if (e.getKey() != 0) {
+                        i++;
+                        sb = new StringBuilder();
+                        sb.append(xmlLevel.getName()).append(i);
+                        RolapLevel rl = new RolapLevel(sb.toString(), this, i, pch.isParentAsLeafEnable(), pch.getParentAsLeafNameFormat(), l.getLevelMapping());
+                        this.levels = Util.append(this.levels, rl);
                     }
-                } else {
-                    RolapLevel l = new RolapLevel(this, i, xmlLevel);
-                    levels[i] = l;
                 }
-                i++;
-            }
-        } else {
-            this.levels = new RolapLevel[xmlHierarchy.getLevels().size()];
-            int i = 0;
-            for (LevelMapping xmlLevel : xmlHierarchy.getLevels()) {
-                if (xmlLevel.getParentColumn() != null) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(xmlLevel.getName()).append(i+1);
-                    RolapLevel l = new RolapLevel(sb.toString(), LevelUtil.getParentExp(xmlLevel), xmlLevel.getNullParentValue(), xmlLevel.getParentChildLink(), this, i, xmlLevel);
-                    levels[i] = l;
-                    Map<Integer, Set<RolapMember>> childMap = getChildMap((RolapLevel)l);
-                    for (Map.Entry<Integer, Set<RolapMember>> e : childMap.entrySet()) {
-                        if (e.getKey() != 0) {
-                            i++;
-                            sb = new StringBuilder();
-                            sb.append(xmlLevel.getName()).append(i+1);
-                            RolapLevel rl = new RolapLevel(sb.toString(), null, null, null, this, i, l.getLevelMapping());
-                            this.levels = Util.append(this.levels, rl);
-                        }
+            } else {
+                this.levels = new RolapLevel[1];
+                int i = 0;
+                LevelMapping xmlLevel = pch.getLevel();
+                StringBuilder sb = new StringBuilder();
+                sb.append(xmlLevel.getName()).append(i+1);
+                RolapLevel l = new RolapLevel(sb.toString(), LevelUtil.getParentExp(pch), pch.getNullParentValue(), pch.getParentChildLink(), this, i,
+                        pch.isParentAsLeafEnable(), pch.getParentAsLeafNameFormat(), xmlLevel);
+                levels[i] = l;
+                Map<Integer, Set<RolapMember>> childMap = getChildMap((RolapLevel)l);
+                for (Map.Entry<Integer, Set<RolapMember>> e : childMap.entrySet()) {
+                    if (e.getKey() != 0) {
+                        i++;
+                        sb = new StringBuilder();
+                        sb.append(xmlLevel.getName()).append(i+1);
+                        RolapLevel rl = new RolapLevel(sb.toString(), this, i, pch.isParentAsLeafEnable(), pch.getParentAsLeafNameFormat(), l.getLevelMapping());
+                        this.levels = Util.append(this.levels, rl);
                     }
-                } else {
-                    RolapLevel rl = new RolapLevel(this, i, xmlLevel);
-                    levels[i] = rl;
                 }
-                i++;
             }
         }
         String sharedDimensionName = cubeDimensionMapping.getDimension() != null && cubeDimensionMapping.getDimension().getName() != null

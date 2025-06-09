@@ -448,6 +448,8 @@ public class RolapLevel extends LevelBase {
             ParentChildLinkMapping parentChildLink,
             RolapHierarchy hierarchy,
             int depth,
+            boolean parentAsLeafEnable,
+            String parentAsLeafNameFormat,
             LevelMapping mappingLevel)
     {
 
@@ -477,7 +479,7 @@ public class RolapLevel extends LevelBase {
                     : mappingLevel.getLevelType().getValue()),
             mappingLevel.getApproxRowCount(),
             RolapMetaData.createMetaData(mappingLevel.getAnnotations()),
-            mappingLevel.isParentAsLeafEnable(), mappingLevel.getParentAsLeafNameFormat());
+            parentAsLeafEnable, parentAsLeafNameFormat);
 
         setLevelInProperties();
         if (!Util.isEmpty(mappingLevel.getName())) {
@@ -502,12 +504,32 @@ public class RolapLevel extends LevelBase {
     {
 
         this(mappingLevel.getName(),
-                LevelUtil.getParentExp(mappingLevel),
-                mappingLevel.getNullParentValue(),
-                mappingLevel.getParentChildLink(),
+                null,
+                null,
+                null,
                 hierarchy,
                 depth,
+                false, null,
                 mappingLevel);
+
+    }
+
+    RolapLevel(
+            String name,
+            RolapHierarchy hierarchy,
+            int depth,
+            boolean parentAsLeafEnable,
+            String parentAsLeafNameFormat,
+            LevelMapping mappingLevel){
+
+            this(name,
+                    null,
+                    null,
+                    null,
+                    hierarchy,
+                    depth,
+                    parentAsLeafEnable, parentAsLeafNameFormat,
+                    mappingLevel);
 
     }
 

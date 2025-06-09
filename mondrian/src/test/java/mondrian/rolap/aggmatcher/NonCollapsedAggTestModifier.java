@@ -28,6 +28,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
@@ -358,7 +359,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     	.withName("dimension")
                     	.withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withName("tenant")
                             .withHasAll(true)
                             .withAllMemberName("All tenants")
@@ -398,7 +399,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
 
                             ))
                             .build(),
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withName("distributor")
                             .withHasAll(true)
                             .withAllMemberName("All distributors")
@@ -463,7 +464,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
                                     .build()
                             ))
                             .build(),
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withName("network")
                             .withHasAll(true)
                             .withAllMemberName("All networks")
@@ -551,7 +552,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     	.withName("dimension")
                     	.withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withName("tenant")
                             .withHasAll(true)
                             .withAllMemberName("All tenants")
@@ -590,7 +591,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
                                     .build()
                             ))
                             .build(),
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withName("distributor")
                             .withHasAll(true)
                             .withAllMemberName("All distributors")
@@ -665,7 +666,7 @@ public class NonCollapsedAggTestModifier extends PojoMappingModifier {
                                     .build()
                             ))
                             .build(),
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withName("network")
                             .withHasAll(true)
                             .withAllMemberName("All networks")

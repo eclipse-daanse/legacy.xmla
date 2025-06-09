@@ -37,6 +37,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
@@ -314,7 +315,7 @@ class NativeFilterMatchingTest extends BatchTestCase {
 
         class TestCachedNativeFilterModifier extends PojoMappingModifier {
 
-        	private static final HierarchyMappingImpl h = HierarchyMappingImpl.builder()
+        	private static final HierarchyMappingImpl h =ExplicitHierarchyMappingImpl.builder()
             .withHasAll(true)
             .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())

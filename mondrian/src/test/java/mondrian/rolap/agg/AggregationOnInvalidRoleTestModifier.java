@@ -41,6 +41,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
@@ -122,7 +123,7 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
             .withHideMemberIfType(HideMemberIfType.NEVER)
             .build();
 
-    private static HierarchyMappingImpl customerHierarchy = HierarchyMappingImpl.builder()
+    private static HierarchyMappingImpl customerHierarchy = ExplicitHierarchyMappingImpl.builder()
             .withName("Customer")
             .withVisible(true)
             .withHasAll(true)
@@ -179,7 +180,7 @@ public class AggregationOnInvalidRoleTestModifier extends PojoMappingModifier {
             .withDimension(StandardDimensionMappingImpl.builder()
             	.withName("Product Code")
             	.withHierarchies(List.of(
-                HierarchyMappingImpl.builder()
+                ExplicitHierarchyMappingImpl.builder()
                     .withName("Product Code")
                     .withVisible(true)
                     .withHasAll(true)

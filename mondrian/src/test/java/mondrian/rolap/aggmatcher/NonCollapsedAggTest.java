@@ -30,6 +30,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
@@ -591,7 +592,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
                             .withDimension(StandardDimensionMappingImpl.builder()
                             	.withName("dimension")
                             	.withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withName("tenant")
                                     .withHasAll(true)
                                     .withAllMemberName("All tenants")
@@ -633,7 +634,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
 
                                     ))
                                     .build(),
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withName("distributor")
                                     .withHasAll(true)
                                     .withAllMemberName("All distributors")
@@ -698,7 +699,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
                                             .build()
                                     ))
                                     .build(),
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withName("network")
                                     .withHasAll(true)
                                     .withAllMemberName("All networks")

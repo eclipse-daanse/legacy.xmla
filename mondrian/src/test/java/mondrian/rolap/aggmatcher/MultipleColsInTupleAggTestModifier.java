@@ -29,6 +29,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
@@ -227,7 +228,7 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
                     .withDimension(StandardDimensionMappingImpl.builder()
                         .withName("Store")
                         .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withPrimaryKey(storeIdStoreCsv)
                             .withQuery(TableQueryMappingImpl.builder().withTable(storeCsv).build())
@@ -248,7 +249,7 @@ public class MultipleColsInTupleAggTestModifier extends PojoMappingModifier {
                     .withDimension(StandardDimensionMappingImpl.builder()
                         .withName("Product")
                         .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withPrimaryKey(prodIdProductCsv)
                             .withQuery(JoinQueryMappingImpl.builder()

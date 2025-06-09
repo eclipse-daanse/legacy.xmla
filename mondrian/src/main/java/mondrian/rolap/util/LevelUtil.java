@@ -17,6 +17,7 @@ import java.util.Objects;
 
 import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.rolap.mapping.api.model.LevelMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.ParentChildHierarchyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SQLExpressionColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 
@@ -76,11 +77,11 @@ public class LevelUtil {
         }
     }
 
-    public static RolapSqlExpression getParentExp(LevelMapping level) {
-        if (level.getParentColumn() instanceof SQLExpressionColumnMapping sec) {
+    public static RolapSqlExpression getParentExp(ParentChildHierarchyMapping hierarchy) {
+        if (hierarchy.getParentColumn() instanceof SQLExpressionColumnMapping sec) {
             return new RolapSqlExpression(sec);
-        } else if (level.getParentColumn() != null) {
-            return new RolapColumn(getTableName(level.getColumn().getTable()), level.getParentColumn().getName());
+        } else if (hierarchy.getParentColumn() != null) {
+            return new RolapColumn(getTableName(hierarchy.getParentColumn().getTable()), hierarchy.getParentColumn().getName());
         } else {
             return null;
         }

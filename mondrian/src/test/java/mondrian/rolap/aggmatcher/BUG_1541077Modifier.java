@@ -28,6 +28,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AvgMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CountMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
@@ -153,7 +154,7 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     	.withName("StoreX")
                     	.withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withPrimaryKey(store_id_store_x)
                             .withQuery(TableQueryMappingImpl.builder().withTable(store_x).build())
@@ -173,7 +174,7 @@ public class BUG_1541077Modifier extends PojoMappingModifier {
                     .withDimension(StandardDimensionMappingImpl.builder()
                         .withName("ProductX")
                         .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withPrimaryKey(prod_id_product_x)
                             .withQuery(TableQueryMappingImpl.builder().withTable(product_x).build())

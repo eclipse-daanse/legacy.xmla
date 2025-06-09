@@ -56,6 +56,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AccessDimensionGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
@@ -410,7 +411,7 @@ class RolapCatalogTest {
 
         AccessMemberGrantMappingImpl memberGrant = AccessMemberGrantMappingImpl.builder().withMember("member").withAccess(AccessMember.ALL).build();
 
-        HierarchyMappingImpl h = HierarchyMappingImpl.builder().build();
+        HierarchyMappingImpl h = ExplicitHierarchyMappingImpl.builder().build();
         AccessHierarchyGrantMappingImpl grant = AccessHierarchyGrantMappingImpl.builder().build();
         grant.setAccess(AccessHierarchy.CUSTOM);
         grant.setRollupPolicyType(RollupPolicyType.FULL);

@@ -40,6 +40,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
@@ -155,7 +156,7 @@ public class SpeciesNonCollapsedAggTestModifier extends PojoMappingModifier {
         StandardDimensionMappingImpl animal = StandardDimensionMappingImpl.builder()
         .withName("Animal")
         .withHierarchies(List.of(
-        	animalsHierarchy = HierarchyMappingImpl.builder()
+        	animalsHierarchy = ExplicitHierarchyMappingImpl.builder()
                 .withName("Animals")
                 .withHasAll(true)
                 .withAllMemberName("All Animals")

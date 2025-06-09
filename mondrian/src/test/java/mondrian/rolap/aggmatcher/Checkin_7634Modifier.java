@@ -23,6 +23,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
@@ -110,7 +111,7 @@ public class Checkin_7634Modifier extends PojoMappingModifier {
                     .withDimension(StandardDimensionMappingImpl.builder()
                         .withName("Geography")
                         .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withAllMemberName("All Regions")
                             .withPrimaryKey(cust_loc_id_geography7631)
@@ -145,7 +146,7 @@ public class Checkin_7634Modifier extends PojoMappingModifier {
                     .withDimension(StandardDimensionMappingImpl.builder()
                         .withName("Product")
                         .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withAllMemberName("All Products")
                             .withPrimaryKey(prod_id_prod7631)

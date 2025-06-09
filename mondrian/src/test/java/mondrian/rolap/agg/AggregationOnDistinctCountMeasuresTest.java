@@ -75,6 +75,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
@@ -730,7 +731,7 @@ class AggregationOnDistinctCountMeasuresTest {
         	  StandardDimensionMappingImpl warehouse2Dimension = StandardDimensionMappingImpl.builder()
               .withName("Warehouse2")
               .withHierarchies(List.of(
-                  HierarchyMappingImpl.builder()
+                  ExplicitHierarchyMappingImpl.builder()
                       .withHasAll(true)
                       .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
                       .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
@@ -859,7 +860,7 @@ class AggregationOnDistinctCountMeasuresTest {
         	  StandardDimensionMappingImpl warehouse2Dimension = StandardDimensionMappingImpl.builder()
               .withName("Warehouse2")
               .withHierarchies(List.of(
-                  HierarchyMappingImpl.builder()
+                  ExplicitHierarchyMappingImpl.builder()
                       .withHasAll(true)
                       .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
                       .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
@@ -987,7 +988,7 @@ class AggregationOnDistinctCountMeasuresTest {
         	  StandardDimensionMappingImpl warehouse2Dimension = StandardDimensionMappingImpl.builder()
               .withName("Warehouse2")
               .withHierarchies(List.of(
-                  HierarchyMappingImpl.builder()
+                  ExplicitHierarchyMappingImpl.builder()
                       .withHasAll(true)
                       .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
                       .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
@@ -2127,7 +2128,7 @@ class AggregationOnDistinctCountMeasuresTest {
         	  TimeDimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
               .withName("Time")
               .withHierarchies(List.of(
-                  HierarchyMappingImpl.builder()
+                  ExplicitHierarchyMappingImpl.builder()
                       .withHasAll(false)
                       .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                       .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())

@@ -46,6 +46,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
@@ -1122,7 +1123,7 @@ protected void assertQuerySql(Connection connection,
                           .withDimension(StandardDimensionMappingImpl.builder()
                         	  .withName("AltStore")
                         	  .withHierarchies(List.of(
-                              HierarchyMappingImpl.builder()
+                              ExplicitHierarchyMappingImpl.builder()
                                   .withHasAll(true)
                                   .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                                   .withAllMemberName("All")
@@ -1140,7 +1141,7 @@ protected void assertQuerySql(Connection connection,
                                           .build()
                                   ))
                                   .build(),
-                              HierarchyMappingImpl.builder()
+                              ExplicitHierarchyMappingImpl.builder()
                                   .withName("City")
                                   .withHasAll(true)
                                   .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -1159,7 +1160,7 @@ protected void assertQuerySql(Connection connection,
                                           .build()
                                   ))
                                   .build(),
-                              HierarchyMappingImpl.builder()
+                              ExplicitHierarchyMappingImpl.builder()
                                   .withName("State")
                                   .withHasAll(true)
                                   .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)

@@ -21,6 +21,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
@@ -376,7 +377,7 @@ class CachedExistsTest{
                     		.withDimension(TimeDimensionMappingImpl.builder()
                     				.withName("Time")
                     				.withHierarchies(List.of(
-                    					HierarchyMappingImpl.builder()
+                    					ExplicitHierarchyMappingImpl.builder()
                                             .withName("Time")
                                             .withHasAll(true)
                                             .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
@@ -391,7 +392,7 @@ class CachedExistsTest{
                                                     .build()
                                             ))
                                             .build(),
-                    					HierarchyMappingImpl.builder()
+                    					ExplicitHierarchyMappingImpl.builder()
                                             .withName("Weekly")
                                             .withHasAll(true)
                                             .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
@@ -406,7 +407,7 @@ class CachedExistsTest{
                                                     .build()
                                             ))
                                             .build(),
-                    					HierarchyMappingImpl.builder()
+                    					ExplicitHierarchyMappingImpl.builder()
                                             .withName("Weekly2")
                                             .withHasAll(true)
                                             .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)

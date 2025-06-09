@@ -50,6 +50,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
@@ -729,7 +730,7 @@ class SqlQueryTest  extends BatchTestCase {
                             .withDimension(StandardDimensionMappingImpl.builder()
                             	.withName("StoreEmpSalary")
                             	.withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withAllMemberName("All Salary")
                                     .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_EMPLOYEE)
@@ -874,7 +875,7 @@ class SqlQueryTest  extends BatchTestCase {
                             .withDimension(StandardDimensionMappingImpl.builder()
                             		.withName("Gender")
                             		.withHierarchies(List.of(
-                            			HierarchyMappingImpl.builder()
+                            			ExplicitHierarchyMappingImpl.builder()
                             			.withHasAll(true)
                             			.withAllMemberName("All Gender")
                             			.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)

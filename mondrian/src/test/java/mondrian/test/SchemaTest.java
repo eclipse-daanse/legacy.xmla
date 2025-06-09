@@ -92,6 +92,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
@@ -104,6 +105,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.MemberMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyFormatterMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.NamedSetMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ParentChildHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ParentChildLinkMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;
@@ -292,7 +294,7 @@ class SchemaTest {
                         .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
                         .withUniqueMembers(true)
                         .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -382,7 +384,7 @@ class SchemaTest {
                         .withColumn(FoodmartMappingSupplier.PRODUCT_NAME_COLUMN_IN_PRODUCT)
                         .withUniqueMembers(true)
                         .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(false)
                         .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
@@ -448,7 +450,7 @@ class SchemaTest {
                         .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
                         .withUniqueMembers(true)
                         .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -508,7 +510,7 @@ class SchemaTest {
                 List<DimensionConnectorMapping> result = new ArrayList<>();
                 result.addAll(super.cubeDimensionConnectors(cube));
                 if ("Sales".equals(cube.getName())) {
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -568,7 +570,7 @@ class SchemaTest {
                             .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
                             .withUniqueMembers(true)
                             .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -691,7 +693,7 @@ class SchemaTest {
                         .withColumn(yearly_income)
                         .withUniqueMembers(true)
                         .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         .withPrimaryKey(customer_id)
@@ -755,7 +757,7 @@ class SchemaTest {
                             .withColumn(FoodmartMappingSupplier.YEARLY_INCOME_COLUMN_IN_CUSTOMER)
                             .withUniqueMembers(true)
                             .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(customer_id)
@@ -814,7 +816,7 @@ class SchemaTest {
                             .withColumn(yearly_income)
                             .withUniqueMembers(true)
                             .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -869,7 +871,7 @@ class SchemaTest {
                             .withColumn(FoodmartMappingSupplier.GENDER_COLUMN_IN_CUSTOMER)
                             .withUniqueMembers(true)
                             .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -938,7 +940,7 @@ class SchemaTest {
                             .withColumn(FoodmartMappingSupplier.YEARLY_INCOME_COLUMN_IN_CUSTOMER)
                             .withUniqueMembers(true)
                             .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.CITY_COLUMN_IN_CUSTOMER)
@@ -1004,7 +1006,7 @@ class SchemaTest {
                             .withColumn(FoodmartMappingSupplier.YEARLY_INCOME_COLUMN_IN_CUSTOMER)
                             .withUniqueMembers(true)
                             .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -1076,7 +1078,7 @@ class SchemaTest {
                             .withColumn(FoodmartMappingSupplier.YEARLY_INCOME_COLUMN_IN_CUSTOMER)
                             .withUniqueMembers(true)
                             .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -1284,7 +1286,7 @@ class SchemaTest {
                             .withColumn(FoodmartMappingSupplier.YEARLY_INCOME_COLUMN_IN_CUSTOMER)
                             .withUniqueMembers(true)
                             .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -1351,7 +1353,7 @@ class SchemaTest {
                             .withColumn(FoodmartMappingSupplier.YEARLY_INCOME_COLUMN_IN_CUSTOMER)
                             .withUniqueMembers(true)
                             .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -1557,14 +1559,14 @@ class SchemaTest {
                     .withUniqueMembers(true)
                     .build();
 
-                HierarchyMappingImpl h11 = HierarchyMappingImpl
+                HierarchyMappingImpl h11 = ExplicitHierarchyMappingImpl
                     .builder()
                     .withHasAll(true)
                     .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                     .withQuery(join11)
                     .withLevels(List.of(l11, l12, l13))
                     .build();
-                HierarchyMappingImpl h12 = HierarchyMappingImpl
+                HierarchyMappingImpl h12 = ExplicitHierarchyMappingImpl
                     .builder()
                     .withName("MyHierarchy")
                     .withHasAll(true)
@@ -1573,7 +1575,7 @@ class SchemaTest {
                     .withLevels(List.of(l21, l22, l23, l24))
                     .build();
 
-                HierarchyMappingImpl h21 = HierarchyMappingImpl
+                HierarchyMappingImpl h21 = ExplicitHierarchyMappingImpl
                     .builder()
                     .withHasAll(true)
                     .withAllMemberName("All Customers")
@@ -1804,14 +1806,14 @@ class SchemaTest {
                     .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                     .withUniqueMembers(true)
                     .build();
-                HierarchyMappingImpl h11 = HierarchyMappingImpl
+                HierarchyMappingImpl h11 = ExplicitHierarchyMappingImpl
                     .builder()
                     .withHasAll(true)
                     .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                     .withQuery(join11)
                     .withLevels(List.of(l11, l12, l13))
                     .build();
-                HierarchyMappingImpl h12 = HierarchyMappingImpl
+                HierarchyMappingImpl h12 = ExplicitHierarchyMappingImpl
                     .builder()
                     .withName("MyHierarchy")
                     .withHasAll(true)
@@ -1820,7 +1822,7 @@ class SchemaTest {
                     .withLevels(List.of(l21, l22, l23))
                     .build();
 
-                HierarchyMappingImpl h21 = HierarchyMappingImpl
+                HierarchyMappingImpl h21 = ExplicitHierarchyMappingImpl
                     .builder()
                     .withHasAll(true)
                     .withAllMemberName("All Customers")
@@ -2015,7 +2017,7 @@ class SchemaTest {
                         .withUniqueMembers(true)
                         .build();
 
-                HierarchyMappingImpl h1 = HierarchyMappingImpl
+                HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -2058,7 +2060,7 @@ class SchemaTest {
                         .withUniqueMembers(true)
                         .build();
 
-            	HierarchyMappingImpl h2 = HierarchyMappingImpl
+            	HierarchyMappingImpl h2 = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         .withAllMemberName("All Customers")
@@ -2224,7 +2226,7 @@ class SchemaTest {
                         .withUniqueMembers(true)
                         .build();
 
-                HierarchyMappingImpl h1 = HierarchyMappingImpl
+                HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -2268,7 +2270,7 @@ class SchemaTest {
                         .withUniqueMembers(true)
                         .build();
 
-                HierarchyMappingImpl h2 = HierarchyMappingImpl
+                HierarchyMappingImpl h2 = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         .withAllMemberName("All Customers")
@@ -2433,7 +2435,7 @@ class SchemaTest {
                         .withUniqueMembers(true)
                         .build();
 
-                HierarchyMappingImpl h1 = HierarchyMappingImpl
+                HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -2477,7 +2479,7 @@ class SchemaTest {
                         .withUniqueMembers(true)
                         .build();
 
-            	HierarchyMappingImpl h2 = HierarchyMappingImpl
+            	HierarchyMappingImpl h2 = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         .withAllMemberName("All Customers")
@@ -2631,7 +2633,7 @@ class SchemaTest {
                         .withUniqueMembers(true)
                         .build();
 
-            	HierarchyMappingImpl h1 = HierarchyMappingImpl
+            	HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         //.withPrimaryKeyTable(FoodmartMappingSupplier.STORE_TABLE)
@@ -2653,7 +2655,7 @@ class SchemaTest {
                         .withUniqueMembers(true)
                         .build();
 
-            	HierarchyMappingImpl h2 = HierarchyMappingImpl
+            	HierarchyMappingImpl h2 = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -2791,7 +2793,7 @@ class SchemaTest {
                         .withUniqueMembers(true)
                         .build();
 
-                HierarchyMappingImpl h1 = HierarchyMappingImpl
+                HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -2812,7 +2814,7 @@ class SchemaTest {
                         .withUniqueMembers(true)
                         .build();
 
-                HierarchyMappingImpl h2 = HierarchyMappingImpl
+                HierarchyMappingImpl h2 = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -3358,7 +3360,7 @@ class SchemaTest {
                         .withForeignKey(FoodmartMappingSupplier.STORE_COST_COLUMN_IN_SALES_FACT_1997)
                         .build();
 
-                HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                         .builder()
                         .withName("Store")
                         .withHasAll(true)
@@ -3611,7 +3613,7 @@ class SchemaTest {
                         .withUniqueMembers(true)
                         .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .build();
-                    HierarchyMappingImpl h1 = HierarchyMappingImpl.builder()
+                    HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl.builder()
                         .withQuery(v1)
                         .withLevels(List.of(l1))
                         .build();
@@ -3788,7 +3790,7 @@ class SchemaTest {
                             .withUniqueMembers(true)
                             .build();
 
-                    HierarchyMappingImpl h1 = HierarchyMappingImpl.builder()
+                    HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl.builder()
                     	.withHasAll(true)
                         .withDefaultMember("[USA]")
                         .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
@@ -3941,7 +3943,7 @@ class SchemaTest {
                         .withUniqueMembers(true)
                         .build();
 
-                    HierarchyMappingImpl h1 = HierarchyMappingImpl.builder()
+                    HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl.builder()
                     	.withHasAll(true)
                         .withLevels(List.of(l1))
                         .build();
@@ -4211,7 +4213,7 @@ class SchemaTest {
                         .withLevelType(LevelType.TIME_MONTHS)
                         .build();
 
-                    HierarchyMappingImpl h11 = HierarchyMappingImpl.builder()
+                    HierarchyMappingImpl h11 = ExplicitHierarchyMappingImpl.builder()
                         .withHasAll(false)
                         .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -4237,7 +4239,7 @@ class SchemaTest {
                         .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .build();
 
-                    HierarchyMappingImpl h21 = HierarchyMappingImpl.builder()
+                    HierarchyMappingImpl h21 = ExplicitHierarchyMappingImpl.builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
                         .withLevels(List.of(l21, l22))
@@ -4430,7 +4432,7 @@ class SchemaTest {
                         .withLevelType(LevelType.TIME_MONTHS)
                         .build();
 
-                    HierarchyMappingImpl h11 = HierarchyMappingImpl.builder()
+                    HierarchyMappingImpl h11 = ExplicitHierarchyMappingImpl.builder()
                         .withHasAll(false)
                         .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -4450,7 +4452,7 @@ class SchemaTest {
                         .withColumn(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
                         .build();
 
-                    HierarchyMappingImpl h21 = HierarchyMappingImpl.builder()
+                    HierarchyMappingImpl h21 = ExplicitHierarchyMappingImpl.builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_SALES_FACT_1997)
                         .withLevels(List.of(l21))
@@ -4468,7 +4470,7 @@ class SchemaTest {
                             .withColumn(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
                             .build();
 
-                    HierarchyMappingImpl h31 = HierarchyMappingImpl.builder()
+                    HierarchyMappingImpl h31 = ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
                             .withLevels(List.of(l31))
@@ -4641,7 +4643,7 @@ class SchemaTest {
                                     .build()
                             ))
                             .build();
-                        HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                        HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withName("Store2")
                             .withHasAll(true)
@@ -4814,7 +4816,7 @@ class SchemaTest {
                             ))
                             .build();
 
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withName("Store2")
                             .withHasAll(true)
@@ -4923,7 +4925,7 @@ class SchemaTest {
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
 
-                HierarchyMappingImpl h1 = HierarchyMappingImpl.builder()
+                HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl.builder()
                         .withHasAll(true)
                         .withAllMemberName("All Media")
                         .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -5229,7 +5231,7 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                HierarchyMappingImpl h1 = HierarchyMappingImpl.builder()
+                HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withAllMemberName("All Media")
                     .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -5310,7 +5312,7 @@ class SchemaTest {
             @Override
             protected List<CubeMapping> cubes(List<? extends CubeMapping> cubes) {
                 List<CubeMapping> result = new ArrayList<>();
-                HierarchyMappingImpl h1 = HierarchyMappingImpl.builder()
+                HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withAllMemberName("All Media")
                     .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -5939,7 +5941,7 @@ class SchemaTest {
                             ))
                     .build()).build();
 
-                HierarchyMappingImpl h1 = HierarchyMappingImpl.builder()
+                HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withAllMemberName("All Gender")
                     .withPrimaryKey(CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -6106,7 +6108,7 @@ class SchemaTest {
                 LevelMappingImpl l11 = LevelMappingImpl.builder().withName("Years").withColumn(FoodmartMappingSupplier.THE_YEAR_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(true).withLevelType(LevelType.TIME_YEARS).build();
                 LevelMappingImpl l12 = LevelMappingImpl.builder().withName("Quarters").withColumn(FoodmartMappingSupplier.QUARTER_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false).withLevelType(LevelType.TIME_QUARTERS).build();
                 LevelMappingImpl l13 = LevelMappingImpl.builder().withName("Months").withColumn(FoodmartMappingSupplier.MONTH_OF_YEAR_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false).withLevelType(LevelType.TIME_MONTHS).build();
-                HierarchyMappingImpl h1 = HierarchyMappingImpl.builder().withName("CALENDAR")
+                HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl.builder().withName("CALENDAR")
                     .withHasAll(true).withAllMemberName("All TIME(CALENDAR)").withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
                     .withLevels(List.of(l11, l12, l13))
@@ -6472,7 +6474,7 @@ class SchemaTest {
                         .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                         .withUniqueMembers(true)
                         .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                         .builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
@@ -6608,7 +6610,7 @@ class SchemaTest {
                             .withName("Level2")
                             .withColumn(id)
                             .build();
-                        HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                        HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(false)
                             .withPrimaryKey(id)
@@ -6749,7 +6751,7 @@ class SchemaTest {
                             .withName("Level2")
                             .withColumn(id)
                             .build();
-                        HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                        HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(false)
                             .withPrimaryKey(id)
@@ -6861,7 +6863,7 @@ class SchemaTest {
                             .withName("Level2")
                             .withColumn(id)
                             .build();
-                        HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                        HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(false)
                             .withPrimaryKey(id)
@@ -6989,7 +6991,7 @@ class SchemaTest {
                             .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
                             .build();
-                        HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                        HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
@@ -7062,7 +7064,7 @@ class SchemaTest {
                             .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withUniqueMembers(true)
                             .build();
-                        HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                        HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(true)
                             .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
@@ -7297,7 +7299,7 @@ class SchemaTest {
                             .withName("Quarter hours").withColumn(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
                             .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withLevelType(LevelType.TIME_UNDEFINED).build();
-                        HierarchyMappingImpl h = HierarchyMappingImpl.builder()
+                        HierarchyMappingImpl h = ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
                             .withLevels(List.of(l1, l2, l3, l4))
@@ -7342,7 +7344,7 @@ class SchemaTest {
                             .withName("Quarter hours").withColumn(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY).withUniqueMembers(false)
                             .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                             .withLevelType(LevelType.fromValue("TimeUnspecified")).build();
-                        HierarchyMappingImpl h = HierarchyMappingImpl.builder()
+                        HierarchyMappingImpl h = ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
                             .withLevels(List.of(l1, l2, l3, l4))
@@ -7454,7 +7456,7 @@ class SchemaTest {
                             AnnotationMappingImpl.builder().withName("a").withValue("Time shared").build()
                         ))
                         .withHierarchies(List.of(
-                            HierarchyMappingImpl.builder()
+                            ExplicitHierarchyMappingImpl.builder()
                                 .withHasAll(false)
                                 .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                                 //.withCaption("Time shared hierarchy caption")
@@ -7489,7 +7491,7 @@ class SchemaTest {
                     StandardDimensionMappingImpl sd2 = StandardDimensionMappingImpl.builder()
                         .withName("Warehouse")
                         .withHierarchies(List.of(
-                            HierarchyMappingImpl.builder()
+                            ExplicitHierarchyMappingImpl.builder()
                                 .withHasAll(false)
                                 .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
@@ -7533,7 +7535,7 @@ class SchemaTest {
                     		.build();
 
 
-                    HierarchyMappingImpl h11 = HierarchyMappingImpl.builder()
+                    HierarchyMappingImpl h11 = ExplicitHierarchyMappingImpl.builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                         //.withCaption("Hierarchy caption")
@@ -8106,7 +8108,7 @@ class SchemaTest {
                         	.withSqls(List.of(SqlStatementMappingImpl.builder().withSql("'foobar'").withDialects(List.of("generic")).build()))
                             .withDataType(ColumnDataType.VARCHAR).build()).build();
 
-                    HierarchyMappingImpl h = HierarchyMappingImpl.builder()
+                    HierarchyMappingImpl h = ExplicitHierarchyMappingImpl.builder()
                         .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
                         .withLevels(List.of(l))
@@ -8214,7 +8216,7 @@ class SchemaTest {
                 StandardDimensionMappingImpl sd1 = StandardDimensionMappingImpl.builder()
                         .withName("Store")
                         .withHierarchies(List.of(
-                            HierarchyMappingImpl.builder()
+                            ExplicitHierarchyMappingImpl.builder()
                                 .withHasAll(true)
                                 .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -8251,7 +8253,7 @@ class SchemaTest {
                 StandardDimensionMappingImpl sd2 = StandardDimensionMappingImpl.builder()
                         .withName("Product")
                         .withHierarchies(List.of(
-                            HierarchyMappingImpl.builder()
+                            ExplicitHierarchyMappingImpl.builder()
                                 .withName("New Hierarchy 0")
                                 .withHasAll(true)
                                 .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
@@ -8660,7 +8662,7 @@ class SchemaTest {
                         				.withQuery(j1).build())
                         		.build();
 
-                        HierarchyMappingImpl h = HierarchyMappingImpl.builder()
+                        HierarchyMappingImpl h = ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                             .withQuery(j)
                             .withLevels(List.of(l1, l2, l3, l4, l5, l6, l7))
@@ -8784,7 +8786,7 @@ class SchemaTest {
                     				.withQuery(j1)
                     				.build()).build();
 
-                    HierarchyMappingImpl h1 = HierarchyMappingImpl.builder()
+                    HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl.builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                         .withQuery(j)
@@ -8805,7 +8807,7 @@ class SchemaTest {
                         		.withDimension(TimeDimensionMappingImpl.builder()
                         			.withName("Time")
                         			.withHierarchies(List.of(
-                        				HierarchyMappingImpl.builder()
+                        				ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(false)
                                         .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -9008,7 +9010,7 @@ class SchemaTest {
                     				.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PRODUCT_CLASS_TABLE).build())
                     				.build()).build();
 
-                    HierarchyMappingImpl h = HierarchyMappingImpl.builder()
+                    HierarchyMappingImpl h = ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true).withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                             .withQuery(j)
                             .withLevels(List.of(l1, l2, l3, l4, l5, l6, l7))
@@ -9082,7 +9084,7 @@ class SchemaTest {
                 		.withDimension(StandardDimensionMappingImpl.builder()
                 			.withName("Position")
                 			.withHierarchies(List.of(
-                            HierarchyMappingImpl.builder()
+                            ExplicitHierarchyMappingImpl.builder()
                                 .withHasAll(true)
                                 .withAllMemberName("All Position")
                                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
@@ -9271,7 +9273,7 @@ class SchemaTest {
                             	.withDimension(StandardDimensionMappingImpl.builder()
                             		.withName("Store Type")
                             		.withHierarchies(List.of(
-                            			HierarchyMappingImpl.builder()
+                            			ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withLevels(List.of(
                                             LevelMappingImpl.builder()
@@ -9402,7 +9404,7 @@ class SchemaTest {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Bar")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withLevels(List.of(
                                             LevelMappingImpl.builder()
@@ -9550,7 +9552,7 @@ class SchemaTest {
                             	.withDimension(StandardDimensionMappingImpl.builder()
                             		.withName("Bacon")
                             		.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withLevels(List.of(
                                             LevelMappingImpl.builder()
@@ -9648,7 +9650,7 @@ class SchemaTest {
                         		.withDimension(StandardDimensionMappingImpl.builder()
                         			.withName("Bar")
                         			.withHierarchies(List.of(
-                                       HierarchyMappingImpl.builder()
+                                       ExplicitHierarchyMappingImpl.builder()
                                         .withName("Bacon")
                                         .withHasAll(true)
                                         .withVisible(testValue)
@@ -9741,7 +9743,7 @@ class SchemaTest {
                         		.withOverrideDimensionName("Bar")
                         		.withDimension(StandardDimensionMappingImpl.builder()
                                 .withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withName("Bacon")
                                         .withHasAll(false)
                                         .withLevels(List.of(
@@ -9918,7 +9920,7 @@ class SchemaTest {
                             .withDimension(StandardDimensionMappingImpl.builder()
                             	.withName("Product")
                             	.withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                     .withQuery(JoinQueryMappingImpl.builder()
@@ -10116,7 +10118,7 @@ class SchemaTest {
                             .withDimension(StandardDimensionMappingImpl.builder()
                             	.withName("Product")
                             	.withHierarchies(List.of(
-                                   HierarchyMappingImpl.builder()
+                                   ExplicitHierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                     .withQuery(JoinQueryMappingImpl.builder()
@@ -10315,7 +10317,7 @@ class SchemaTest {
                             .withDimension(StandardDimensionMappingImpl.builder()
                             	.withName("Product")
                             	.withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                     .withQuery(
@@ -10339,7 +10341,7 @@ class SchemaTest {
                             .withDimension(StandardDimensionMappingImpl.builder()
                             	.withName("Store")
                             	.withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                                     .withQuery(
@@ -10703,7 +10705,7 @@ class SchemaTest {
                             .withDimension(StandardDimensionMappingImpl.builder()
                             	.withName("Product")
                             	.withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                     .withQuery(
@@ -10829,7 +10831,7 @@ class SchemaTest {
                         	.withUniqueMembers(false)
                         	.withOrdinalColumn(FoodmartMappingSupplier.POSITION_ID_COLUMN_IN_EMPLOYEE)
                             .withColumn(ex).build();
-                        HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                        HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(true)
                             .withAllMemberName("All Position")
@@ -10929,7 +10931,7 @@ class SchemaTest {
                             .withAlias("meatShack")
                             .withTable(t)
                             .build();
-                    HierarchyMappingImpl hierarchy = HierarchyMappingImpl
+                    HierarchyMappingImpl hierarchy = ExplicitHierarchyMappingImpl
                             .builder()
                             .withHasAll(false)
                             .withPrimaryKey(lvl3Id)
@@ -11101,7 +11103,7 @@ class SchemaTest {
                         .withDimension(StandardDimensionMappingImpl.builder()
                         	.withName("Store")
                         	.withHierarchies(List.of(
-                            HierarchyMappingImpl.builder()
+                            ExplicitHierarchyMappingImpl.builder()
                                 .withHasAll(true)
                                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                 .withQuery(
@@ -11187,7 +11189,7 @@ class SchemaTest {
                         .withDimension(StandardDimensionMappingImpl.builder()
                             .withName("Pay Type")
                             .withHierarchies(List.of(
-                            	HierarchyMappingImpl.builder()
+                            	ExplicitHierarchyMappingImpl.builder()
                                 .withHasAll(true)
                                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                 .withQuery(
@@ -11219,7 +11221,7 @@ class SchemaTest {
                         .withDimension(StandardDimensionMappingImpl.builder()
                                 .withName("Store Type")
                                 .withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                 .withHasAll(true)
                                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                 .withQuery(
@@ -11250,7 +11252,7 @@ class SchemaTest {
                         .withDimension(StandardDimensionMappingImpl.builder()
                                 .withName("Position")
                                 .withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                 .withHasAll(true)
                                 .withAllMemberName("All Position")
                                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
@@ -11280,27 +11282,27 @@ class SchemaTest {
                         .withDimension(StandardDimensionMappingImpl.builder()
                                 .withName("Employees")
                                 .withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ParentChildHierarchyMappingImpl.builder()
                                 .withHasAll(true)
                                 .withAllMemberName("All Employees")
                                 .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE)
                 						.withSqlWhereExpression(SqlStatementMappingImpl.builder().withSql("1 = 1").build())
                 						.build())
-                                .withLevels(List.of(
+                                .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
+                                .withNullParentValue("0")
+                                .withParentChildLink(ParentChildLinkMappingImpl.builder()
+                                        .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                        .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                        .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
+                                        .build())
+                                .withLevel(
                                     LevelMappingImpl.builder()
                                         .withName("Employee Id")
                                         .withType(org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType.NUMERIC)
                                         .withUniqueMembers(true)
                                         .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                                        .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                                         .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
-                                        .withNullParentValue("0")
-                                        .withParentChildLink(ParentChildLinkMappingImpl.builder()
-                                            .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                                            .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                                            .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
-                                            .build())
                                         .withMemberProperties(List.of(
                                             MemberPropertyMappingImpl.builder()
                                                 .withName("Marital Status")
@@ -11328,7 +11330,7 @@ class SchemaTest {
                                                 .build()
                                         ))
                                         .build()
-                                ))
+                                )
                                 .build()
                         )).build())
                         .build();
@@ -11769,7 +11771,7 @@ class SchemaTest {
 
             @Override
             protected CatalogMapping modifyCatalog(CatalogMapping schemaMappingOriginal) {
-                HierarchyMappingImpl h1 = HierarchyMappingImpl.builder()
+                HierarchyMappingImpl h1 = ExplicitHierarchyMappingImpl.builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())

@@ -32,6 +32,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
@@ -46,7 +47,7 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
 	private static DimensionMappingImpl storeDimension = StandardDimensionMappingImpl.builder()
             .withName("Store")
             .withHierarchies(List.of(
-            	HierarchyMappingImpl.builder()
+            	ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -222,7 +223,7 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
 	private static DimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
             .withName("Time")
             .withHierarchies(List.of(
-                HierarchyMappingImpl.builder()
+                ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(false)
                     .withPrimaryKey(TIME_ID_COLUMN_IN_TIME_CSV)
                     .withQuery(TableQueryMappingImpl.builder().withTable(TIME_CSV_TABLE).build())
@@ -249,7 +250,7 @@ public class AggMeasureFactCountTestModifier extends PojoMappingModifier {
                             .build()
                     ))
                     .build(),
-                HierarchyMappingImpl.builder()
+                ExplicitHierarchyMappingImpl.builder()
                     .withHasAll(true)
                     .withName("Weekly")
                     .withPrimaryKey(TIME_ID_COLUMN_IN_TIME_CSV)

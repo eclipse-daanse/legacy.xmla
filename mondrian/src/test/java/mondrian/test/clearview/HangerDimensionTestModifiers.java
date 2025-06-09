@@ -25,6 +25,7 @@ import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMa
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
@@ -81,7 +82,7 @@ public class HangerDimensionTestModifiers {
                 	StandardDimensionMappingImpl.builder()
                 		.withName("Le System-Trend Hanger")
                 		.withHierarchies(List.of(
-                			HierarchyMappingImpl.builder()
+                			ExplicitHierarchyMappingImpl.builder()
             				.withHasAll(true)
             				.withPrimaryKey(hangerKey)
             				.withQuery(InlineTableQueryMappingImpl.builder()

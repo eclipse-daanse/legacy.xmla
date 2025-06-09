@@ -23,6 +23,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
@@ -167,7 +168,7 @@ public class RolapResultTestModifier extends PojoMappingModifier {
                     .withForeignKey(d1IdFt1)
                     .withDimension(StandardDimensionMappingImpl.builder()
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                       ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withPrimaryKey(d1IdD1)
                             .withQuery(TableQueryMappingImpl.builder().withTable(d1).build())
@@ -187,7 +188,7 @@ public class RolapResultTestModifier extends PojoMappingModifier {
                     .withForeignKey(d2IdFt1)
                     .withDimension(StandardDimensionMappingImpl.builder()
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withPrimaryKey(d2IdD2)
                             .withQuery(TableQueryMappingImpl.builder().withTable(d2).build())
@@ -222,7 +223,7 @@ public class RolapResultTestModifier extends PojoMappingModifier {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     	.withName("D1")
                     	.withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(false)
                             .withDefaultMember("[D1].[d]")
                             .withPrimaryKey(d1IdD1)
@@ -244,7 +245,7 @@ public class RolapResultTestModifier extends PojoMappingModifier {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     	.withName("D2")
                     	.withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(false)
                             .withDefaultMember("[D2].[w]")
                             .withPrimaryKey(d2IdD2)
@@ -280,7 +281,7 @@ public class RolapResultTestModifier extends PojoMappingModifier {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     	.withName("D1")
                     	.withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withDefaultMember("[D1].[d]")
                             .withPrimaryKey(d1IdD1)
@@ -302,7 +303,7 @@ public class RolapResultTestModifier extends PojoMappingModifier {
                     .withDimension(StandardDimensionMappingImpl.builder()
                     	.withName("D2")
                     	.withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withDefaultMember("[D2].[w]")
                             .withPrimaryKey(d2IdD2)
@@ -338,7 +339,7 @@ public class RolapResultTestModifier extends PojoMappingModifier {
                     .withDimension(StandardDimensionMappingImpl.builder()
                         .withName("D1")
                         .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withDefaultMember("[D1].[d]")
                             .withPrimaryKey(d1IdD1)
@@ -360,7 +361,7 @@ public class RolapResultTestModifier extends PojoMappingModifier {
                     	.withDimension(StandardDimensionMappingImpl.builder()
                     	.withName("D2")
                     	.withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(false)
                             .withDefaultMember("[D2].[w]")
                             .withPrimaryKey(d2IdD2)

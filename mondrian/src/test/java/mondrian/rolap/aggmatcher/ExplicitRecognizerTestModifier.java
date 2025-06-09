@@ -32,6 +32,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.CountMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
@@ -158,7 +159,7 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
     	StandardDimensionMappingImpl storeDimension = StandardDimensionMappingImpl.builder()
         .withName("Store")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -199,7 +200,7 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
         StandardDimensionMappingImpl productDimension = StandardDimensionMappingImpl.builder()
         .withName("Product")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
 				.withQuery(JoinQueryMappingImpl.builder()
@@ -250,7 +251,7 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
                                 .withDimension(TimeDimensionMappingImpl.builder()
                                 	.withName("TimeExtra")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(false)
                                         .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -290,7 +291,7 @@ public class ExplicitRecognizerTestModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                     .withName("Gender")
                                     .withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())

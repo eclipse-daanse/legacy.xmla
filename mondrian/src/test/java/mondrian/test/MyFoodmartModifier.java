@@ -38,6 +38,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CountMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
@@ -45,6 +46,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ParentChildHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ParentChildLinkMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SQLExpressionMappingColumnImpl;
@@ -629,7 +631,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
     	StandardDimensionMappingImpl storeDimension = StandardDimensionMappingImpl.builder()
         .withName("Store")
         .withHierarchies(List.of(
-        		storeHierarchy = HierarchyMappingImpl.builder()
+        		storeHierarchy = ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -673,7 +675,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
         .withName("Store Size in SQFT")
         //.withCaption("Quadrat-Fuesse:-)")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -691,7 +693,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
         StandardDimensionMappingImpl storeTypeDimension = StandardDimensionMappingImpl.builder()
         .withName("Store Type")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -709,7 +711,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
         TimeDimensionMappingImpl timeDimension = TimeDimensionMappingImpl.builder()
         .withName("Time")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(false)
                 .withPrimaryKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_TIME_BY_DAY)
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -748,7 +750,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
         StandardDimensionMappingImpl productDimension = StandardDimensionMappingImpl.builder()
         .withName("Product")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                 .withQuery(JoinQueryMappingImpl.builder()
@@ -798,7 +800,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
      StandardDimensionMappingImpl warehouseDimension = StandardDimensionMappingImpl.builder()
         .withName("Warehouse")
         .withHierarchies(List.of(
-            HierarchyMappingImpl.builder()
+            ExplicitHierarchyMappingImpl.builder()
                 .withHasAll(true)
                 .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
                 .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
@@ -890,7 +892,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Promotion Media")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Media")
                                         .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -911,7 +913,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Promotions")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Promotions")
                                         .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -932,7 +934,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Customers")
                                 	.withHierarchies(List.of(
-                                customersHierarchy = HierarchyMappingImpl.builder()
+                                customersHierarchy = ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Customers")
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -1008,7 +1010,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Education Level")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -1029,7 +1031,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Gender")
                                 	.withHierarchies(List.of(
-                                	     genderHierarchy = HierarchyMappingImpl.builder()
+                                	     genderHierarchy = ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Gender")
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -1050,7 +1052,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Marital Status")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Marital Status")
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -1071,7 +1073,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Yearly Income")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Marital Status")
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -1226,7 +1228,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Store Type")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withLevels(List.of(
                                             LevelMappingImpl.builder()
@@ -1247,7 +1249,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Has coffee bar")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withLevels(List.of(
                                             LevelMappingImpl.builder()
@@ -1283,7 +1285,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(TimeDimensionMappingImpl.builder()
                                 	.withName("Time")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(false)
                                         .withPrimaryKey(FoodmartMappingSupplier.THE_DATE_COLUMN_IN_TIME_BY_DAY)
                                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.TIME_BY_DAY_TABLE).build())
@@ -1318,7 +1320,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Store")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                         .withQuery(JoinQueryMappingImpl.builder()
@@ -1402,7 +1404,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Pay Type")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                         .withQuery(JoinQueryMappingImpl.builder()
@@ -1431,7 +1433,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Store Type")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                         .withQuery(JoinQueryMappingImpl.builder()
@@ -1460,7 +1462,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Position")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Position")
                                         .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
@@ -1487,7 +1489,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Department")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withPrimaryKey(FoodmartMappingSupplier.DEPARTMENT_ID_COLUMN_IN_DEPARTMENT)
                                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.DEPARTAMENT_TABLE).build())
@@ -1507,25 +1509,25 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Employees")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ParentChildHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Employees")
                                         .withPrimaryKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
                                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
-                                        .withLevels(List.of(
+                                        .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
+                                        .withNullParentValue("0")
+                                        .withParentChildLink(ParentChildLinkMappingImpl.builder()
+                                                .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                                .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                                                .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
+                                                .build())
+                                        .withLevel(
                                             LevelMappingImpl.builder()
                                                 .withName("Employee Id")
                                                 .withType(InternalDataType.NUMERIC)
                                                 .withColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE)
-                                                .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                                                 .withNameColumn(FoodmartMappingSupplier.FULL_NAME_COLUMN_IN_EMPLOYEE)
-                                                .withNullParentValue("0")
                                                 .withUniqueMembers(true)
-                                                .withParentChildLink(ParentChildLinkMappingImpl.builder()
-                                                    .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                                                    .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                                                    .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
-                                                    .build())
                                                 .withMemberProperties(List.of(
                                                     MemberPropertyMappingImpl.builder()
                                                         .withName("Marital Status")
@@ -1553,7 +1555,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                                         .build()
                                                 ))
                                                 .build()
-                                        ))
+                                        )
                                         .build()
                                 )).build())
                                 .build()
@@ -1602,7 +1604,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Store")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE_RAGGED)
                                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_RAGGED_TABLE).build())
@@ -1701,7 +1703,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Promotion Media")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Media")
                                         .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -1722,7 +1724,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Promotions")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Promotions")
                                         .withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
@@ -1743,7 +1745,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Customers")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Customers")
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -1825,7 +1827,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Education Level")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -1845,7 +1847,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Gender")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Gender")
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -1866,7 +1868,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Marital Status")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Marital Status")
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -1887,7 +1889,7 @@ public class MyFoodmartModifier extends PojoMappingModifier {
                                 .withDimension(StandardDimensionMappingImpl.builder()
                                 	.withName("Yearly Income")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                         .withHasAll(true)
                                         .withAllMemberName("All Marital Status")
                                         .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)

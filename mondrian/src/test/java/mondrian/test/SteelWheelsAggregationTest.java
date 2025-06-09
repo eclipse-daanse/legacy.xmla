@@ -35,6 +35,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
@@ -105,7 +106,7 @@ class SteelWheelsAggregationTest {
     //.withCaption("Address Line 1")
     .build();
 
-    private static final HierarchyMappingImpl customersHierarchy = HierarchyMappingImpl.builder()
+    private static final HierarchyMappingImpl customersHierarchy = ExplicitHierarchyMappingImpl.builder()
     .withName("Customers Hierarchy")
     .withVisible(true)
     .withHasAll(true)

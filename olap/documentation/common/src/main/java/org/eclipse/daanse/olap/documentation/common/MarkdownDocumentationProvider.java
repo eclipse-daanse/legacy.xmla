@@ -69,9 +69,11 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.ExplicitHierarchyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.HierarchyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.ParentChildHierarchyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.PhysicalCubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlSelectQueryMapping;
@@ -322,8 +324,15 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
         int res = 0;
             if (d.getDimension()!= null &&  d.getDimension().getHierarchies() != null) {
                 for (HierarchyMapping h : d.getDimension().getHierarchies()) {
-                    if (h.getLevels() != null) {
-                        res = res + h.getLevels().size();
+                    if (h instanceof ExplicitHierarchyMapping eh) {
+                        if (eh.getLevels() != null) {
+                            res = res + eh.getLevels().size();
+                        }
+                    }
+                    if (h instanceof ParentChildHierarchyMapping pch) {
+                        if (pch.getLevel() != null) {
+                            res = res + 1;
+                        }
                     }
                 }
             }

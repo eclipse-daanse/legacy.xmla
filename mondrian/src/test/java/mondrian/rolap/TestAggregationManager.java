@@ -68,6 +68,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.AggregationMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AggregationNameMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinedQueryElementMappingImpl;
@@ -1343,7 +1344,7 @@ class TestAggregationManager extends BatchTestCase {
             	StandardDimensionMappingImpl store1Dimension = StandardDimensionMappingImpl.builder()
                 .withName("Store1")
                 .withHierarchies(List.of(
-                    HierarchyMappingImpl.builder()
+                    ExplicitHierarchyMappingImpl.builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())
@@ -1394,7 +1395,7 @@ class TestAggregationManager extends BatchTestCase {
             	StandardDimensionMappingImpl store2Dimension = StandardDimensionMappingImpl.builder()
                 .withName("Store2")
                 .withHierarchies(List.of(
-                    HierarchyMappingImpl.builder()
+                    ExplicitHierarchyMappingImpl.builder()
                         .withHasAll(true)
                         .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE_RAGGED)
                         .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_RAGGED_TABLE).build())
@@ -1667,7 +1668,7 @@ class TestAggregationManager extends BatchTestCase {
                             .withDimension(StandardDimensionMappingImpl.builder()
                             	.withName("Product")
                             	.withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                     .withQuery(JoinQueryMappingImpl.builder()
@@ -1722,7 +1723,7 @@ class TestAggregationManager extends BatchTestCase {
                             .withDimension(StandardDimensionMappingImpl.builder()
                             	.withName("Gender")
                             	.withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withHasAll(false)
                                     .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -2519,7 +2520,7 @@ class TestAggregationManager extends BatchTestCase {
                     				StandardDimensionMappingImpl.builder()
                                     .withName("Product")
                                     .withHierarchies(List.of(
-                                        HierarchyMappingImpl.builder()
+                                        ExplicitHierarchyMappingImpl.builder()
                                             .withHasAll(true)
                                             .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                             .withQuery(
@@ -2956,7 +2957,7 @@ class TestAggregationManager extends BatchTestCase {
                             .withForeignKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_SALES_FACT_1997)
                             .withDimension(StandardDimensionMappingImpl.builder()
                             	.withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.PRODUCT_ID_COLUMN_IN_PRODUCT)
                                     .withQuery(
@@ -3019,7 +3020,7 @@ class TestAggregationManager extends BatchTestCase {
                             .withDimension(StandardDimensionMappingImpl.builder()
                             		.withName("Store")
                                 	.withHierarchies(List.of(
-                                    HierarchyMappingImpl.builder()
+                                    ExplicitHierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                                     .withQuery(

@@ -50,6 +50,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MaxMeasureMappingImpl;
@@ -761,7 +762,7 @@ class NonEmptyTest extends BatchTestCase {
                 				  StandardDimensionMappingImpl.builder()
                 				  .withName("Promotions")
                 				  .withHierarchies(List.of(
-                						  HierarchyMappingImpl.builder()
+                						  ExplicitHierarchyMappingImpl.builder()
                 						  	.withHasAll(true)
                 						  	.withLevels(List.of(
                 						  		LevelMappingImpl.builder()
@@ -844,7 +845,7 @@ class NonEmptyTest extends BatchTestCase {
                 				  StandardDimensionMappingImpl.builder()
                 				  .withName("Promotions")
                 				  .withHierarchies(List.of(
-                						  HierarchyMappingImpl.builder()
+                						  ExplicitHierarchyMappingImpl.builder()
                 						  	.withHasAll(true)
                 						  	.withPrimaryKey(FoodmartMappingSupplier.PROMOTION_ID_COLUMN_IN_PROMOTION)
                 						  	.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.PROMOTION_TABLE).build())
@@ -867,7 +868,7 @@ class NonEmptyTest extends BatchTestCase {
               				  StandardDimensionMappingImpl.builder()
               				  .withName("Customers")
               				  .withHierarchies(List.of(
-              						  HierarchyMappingImpl.builder()
+              						  ExplicitHierarchyMappingImpl.builder()
               						  	.withHasAll(true)
               						  	.withAllMemberName("All Customers")
               						  	.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -2516,7 +2517,7 @@ class NonEmptyTest extends BatchTestCase {
           private static final StandardDimensionMappingImpl  d = StandardDimensionMappingImpl.builder()
           .withName("Warehouse2")
           .withHierarchies(List.of(
-              HierarchyMappingImpl.builder()
+              ExplicitHierarchyMappingImpl.builder()
                   .withHasAll(true)
                   .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
                   .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
@@ -2700,7 +2701,7 @@ class NonEmptyTest extends BatchTestCase {
           StandardDimensionMappingImpl warehouse2Dimension =  StandardDimensionMappingImpl.builder()
           .withName("Warehouse2")
           .withHierarchies(List.of(
-              HierarchyMappingImpl.builder()
+              ExplicitHierarchyMappingImpl.builder()
                   .withHasAll(true)
                   .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
                   .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
@@ -2873,7 +2874,7 @@ class NonEmptyTest extends BatchTestCase {
           private static final StandardDimensionMappingImpl  d = StandardDimensionMappingImpl.builder()
           .withName("Warehouse2")
           .withHierarchies(List.of(
-              HierarchyMappingImpl.builder()
+              ExplicitHierarchyMappingImpl.builder()
                   .withHasAll(true)
                   .withPrimaryKey(FoodmartMappingSupplier.WAREHOUSE_ID_COLUMN_IN_WAREHOUSE)
                   .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.WAREHOUSE_TABLE).build())
@@ -5645,7 +5646,7 @@ class NonEmptyTest extends BatchTestCase {
                           .withDimension(StandardDimensionMappingImpl.builder()
                         		  .withName("Gender")
                         		  .withHierarchies(List.of(
-                        			  HierarchyMappingImpl.builder()
+                        			  ExplicitHierarchyMappingImpl.builder()
                         			  .withHasAll(true)
                         			  .withAllMemberName("All Gender")
                         			  .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
@@ -5734,7 +5735,7 @@ class NonEmptyTest extends BatchTestCase {
           private static final StandardDimensionMappingImpl d = StandardDimensionMappingImpl.builder()
           .withName("Store")
           .withHierarchies(List.of(
-              HierarchyMappingImpl.builder()
+              ExplicitHierarchyMappingImpl.builder()
                   .withHasAll(true)
                   .withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                   .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.STORE_TABLE).build())

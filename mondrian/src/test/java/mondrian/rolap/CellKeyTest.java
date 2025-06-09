@@ -26,6 +26,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
@@ -415,7 +416,7 @@ class CellKeyTest  {
                     			StandardDimensionMappingImpl.builder()
                     				.withName("City")
                     				.withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                             .withHasAll(true)
                                             .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -436,7 +437,7 @@ class CellKeyTest  {
                     			StandardDimensionMappingImpl.builder()
                     				.withName("Gender")
                     				.withHierarchies(List.of(
-                                            HierarchyMappingImpl.builder()
+                                            ExplicitHierarchyMappingImpl.builder()
                                             .withHasAll(true)
                                             .withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                                             .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())
@@ -457,7 +458,7 @@ class CellKeyTest  {
                          		StandardDimensionMappingImpl.builder()
                          			.withName("Address2")
                          			.withHierarchies(List.of(
-                         					HierarchyMappingImpl.builder()
+                         					ExplicitHierarchyMappingImpl.builder()
                          					.withHasAll(true)
                          					.withPrimaryKey(FoodmartMappingSupplier.CUSTOMER_ID_COLUMN_IN_CUSTOMER)
                          					.withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.CUSTOMER_TABLE).build())

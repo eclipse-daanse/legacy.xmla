@@ -20,6 +20,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.QueryMappingImpl;
@@ -40,7 +41,7 @@ class RolapDimensionTest {
   private RolapCube cube;
   private DimensionMappingImpl xmlDimension;
   private DimensionConnectorMappingImpl xmlCubeDimension;
-  private HierarchyMappingImpl hierarchy;
+  private ExplicitHierarchyMappingImpl hierarchy;
 
 
   @BeforeEach
@@ -54,7 +55,7 @@ class RolapDimensionTest {
     Mockito.when(cube.getFact()).thenReturn(fact);
 
     xmlDimension = StandardDimensionMappingImpl.builder().build();
-    hierarchy = HierarchyMappingImpl.builder().build();
+    hierarchy = ExplicitHierarchyMappingImpl.builder().build();
     LevelMappingImpl level = LevelMappingImpl.builder()
     	    .withVisible(true)
             .withMemberProperties(List.of())

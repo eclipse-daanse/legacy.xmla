@@ -27,6 +27,7 @@ import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalColumnMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
+import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.InlineTableQueryMappingImpl;
@@ -100,7 +101,7 @@ class InlineTableTest {
                         		StandardDimensionMappingImpl.builder()
                         			.withName("Alternative Promotion")
                         			.withHierarchies(List.of(
-                        				HierarchyMappingImpl.builder()
+                        				ExplicitHierarchyMappingImpl.builder()
                         					.withHasAll(true)
                         					.withPrimaryKey(promoId)
                         					.withQuery(InlineTableQueryMappingImpl.builder()
@@ -223,7 +224,7 @@ class InlineTableTest {
             private static final StandardDimensionMappingImpl d = StandardDimensionMappingImpl.builder()
                     .withName("Shared Alternative Promotion")
                     .withHierarchies(List.of(
-                        HierarchyMappingImpl.builder()
+                        ExplicitHierarchyMappingImpl.builder()
                             .withHasAll(true)
                             .withPrimaryKey(promoId)
                             .withQuery(InlineTableQueryMappingImpl.builder()
@@ -404,7 +405,7 @@ class InlineTableTest {
                             	StandardDimensionMappingImpl.builder()
                             		.withName("Store")
                             		.withHierarchies(List.of(
-                            			HierarchyMappingImpl.builder()
+                            			ExplicitHierarchyMappingImpl.builder()
                             				.withHasAll(true)
                             				.withPrimaryKey(FoodmartMappingSupplier.STORE_ID_COLUMN_IN_STORE)
                             				.withQuery(j)
@@ -595,7 +596,7 @@ class InlineTableTest {
                         	.withDimension(StandardDimensionMappingImpl.builder()
                             .withName("Alternative Promotion")
                             .withHierarchies(List.of(
-                                HierarchyMappingImpl.builder()
+                                ExplicitHierarchyMappingImpl.builder()
                                     .withHasAll(true)
                                     .withPrimaryKey(id)
                                     .withQuery(InlineTableQueryMappingImpl.builder()
