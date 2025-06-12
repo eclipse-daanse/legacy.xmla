@@ -267,10 +267,12 @@ public class SqlTupleReader implements TupleReader {
                   .findMember( value );
             }
             if ( member == null ) {
-              if (parentMember  == null || !parentMember.getKey().equals(value)) {
-              member = memberBuilder.makeMember(
-                parentMember, childLevel, value, captionValue,
-                parentChild, stmt, key, column );
+              if (parentMember  == null || !(parentMember instanceof SqlMemberSource.RolapParentChildMember) || !parentMember.getKey().equals(value)) {
+                if (parentMember  == null || !parentMember.getLevel().equals(childLevel) || !parentMember.getKey().equals(value)) {
+                    member = memberBuilder.makeMember(
+                            parentMember, childLevel, value, captionValue,
+                            parentChild, stmt, key, column );
+                }
               }
             }
           }

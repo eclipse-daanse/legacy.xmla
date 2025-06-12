@@ -390,8 +390,8 @@ void testResultLimitWithinCrossjoin_1(Context foodMartContext) {
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testResultLimitWithinCrossjoin(Context foodMartContext) {
-   SystemWideProperties.instance().ResultLimit = 1000;
    Connection connection= foodMartContext.getConnectionWithDefaultRole();
+   SystemWideProperties.instance().ResultLimit = 1000;
     TestUtil.assertAxisThrows(connection, "Hierarchize(Crossjoin(Union({[Gender].CurrentMember}, [Gender].Children), "
         + "Union({[Product].CurrentMember}, [Product].[Brand Name].Members)))",
       "result (1,539) exceeded limit (1,000)","Sales" );

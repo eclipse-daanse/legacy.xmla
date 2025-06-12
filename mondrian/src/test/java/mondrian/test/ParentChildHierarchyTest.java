@@ -246,7 +246,7 @@ class ParentChildHierarchyTest {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET] AS 'Head(FILTER([*BASE_MEMBERS__EmployeesNoClosure_], NOT ISEMPTY ([Measures].[Count])), 5)'\n"
-            + "SET [*BASE_MEMBERS__EmployeesNoClosure_] AS '[EmployeesNoClosure].[Employee Id].MEMBERS'\n"
+            + "SET [*BASE_MEMBERS__EmployeesNoClosure_] AS '[EmployeesNoClosure].[Employee Id1].MEMBERS'\n"
             + "SET [*BASE_MEMBERS__Measures_] AS '{[Measures].[*FORMATTED_MEASURE_0]}'\n"
             + "SET [*CJ_ROW_AXIS] AS 'GENERATE([*NATIVE_CJ_SET], {([EmployeesNoClosure].CURRENTMEMBER)})'\n"
             + "SET [*SORTED_ROW_AXIS] AS 'ORDER([*CJ_ROW_AXIS],[EmployeesNoClosure].CURRENTMEMBER.ORDERKEY,ASC)'\n"
@@ -734,7 +734,7 @@ class ParentChildHierarchyTest {
             "with member [Measures].[Parent] as '[Employees].CurrentMember.Parent.Name'\n"
             + "select {[Measures].[Parent]}\n"
             + "ON COLUMNS,\n"
-            + "{[Employees], Head([Employees].[Employee Id].Members, 14)}\n"
+            + "{[Employees], Head([Employees].[Employee Id1].Members, 14)}\n"
             + "ON ROWS from [HR]",
             expected);
     }
@@ -927,7 +927,7 @@ class ParentChildHierarchyTest {
             "[Employees].[Employees].[Sheri Nowmer]",
             "$39,431.67",
             "select `time_by_day`.`the_year` as `Year`,"
-            + " `employee`.`employee_id` as `Employee Id (Key)`,"
+            + " `employee`.`employee_id` as `Employee Id1 (Key)`,"
             + " `salary`.`salary_paid` as `Org Salary` "
             + "from `salary` =as= `salary`,"
             + " `time_by_day` =as= `time_by_day`,"
@@ -937,7 +937,7 @@ class ParentChildHierarchyTest {
             + " and `salary`.`employee_id` = `employee`.`employee_id`"
             + " and `employee`.`employee_id` = 1 "
             + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
-                ? "order by `Year` ASC, `Employee Id (Key) ASC"
+                ? "order by `Year` ASC, `Employee Id1 (Key) ASC"
                 : "order by `time_by_day`.`the_year` ASC, `employee`.`employee_id` ASC"),
             12);
 
@@ -950,7 +950,7 @@ class ParentChildHierarchyTest {
             "[Employees].[Employees].[Sheri Nowmer].[Derrick Whelply]",
             "$36,494.07",
             "select `time_by_day`.`the_year` as `Year`,"
-            + " `employee`.`employee_id` as `Employee Id (Key)`,"
+            + " `employee`.`employee_id` as `Employee Id1 (Key)`,"
             + " `salary`.`salary_paid` as `Org Salary` "
             + "from `salary` =as= `salary`,"
             + " `time_by_day` =as= `time_by_day`,"
@@ -960,7 +960,7 @@ class ParentChildHierarchyTest {
             + " and `salary`.`employee_id` = `employee`.`employee_id`"
             + " and `employee`.`employee_id` = 2 "
                 + (getDialect(context.getConnectionWithDefaultRole()).requiresOrderByAlias()
-                ? "order by `Year` ASC, `Employee Id (Key) ASC"
+                ? "order by `Year` ASC, `Employee Id1 (Key) ASC"
                 : "order by `time_by_day`.`the_year` ASC, `employee`.`employee_id` ASC"),
             12);
     }
@@ -991,12 +991,12 @@ class ParentChildHierarchyTest {
             + " `store`.`store_city` as `Store City`,"
             + " `store`.`store_name` as `Store Name`,"
             + " `store`.`store_type` as `Store Type`,"
-            + " `position`.`pay_type` as `Pay Type`,"           
+            + " `position`.`pay_type` as `Pay Type`,"
             + " `employee`.`management_role` as `Management Role`,"
             + " `employee`.`position_title` as `Position Title`,"
             + " `department`.`department_id` as `Department Description`,"
-            + " `employee`.`full_name` as `Employee Id`,"
-            + " `employee`.`employee_id` as `Employee Id (Key)`,"
+            + " `employee`.`full_name` as `Employee Id1`,"
+            + " `employee`.`employee_id` as `Employee Id1 (Key)`,"
             + " `salary`.`salary_paid` as `Org Salary` "
             + "from"
             + " `salary` =as= `salary`,"
@@ -1022,14 +1022,14 @@ class ParentChildHierarchyTest {
                 + " `Store Country` ASC,"
                 + " `Store State` ASC,"
                 + " `Store City` ASC,"
-                + " `Store Name` ASC,"                
+                + " `Store Name` ASC,"
                 + " `Store Type` ASC,"
                 + " `Pay Type` ASC,"
                 + " `Management Role` ASC,"
                 + " `Position Title` ASC,"
                 + " `Department Description` ASC,"
-                + " `Employee Id` ASC,"
-                + " `Employee Id (Key)` ASC"
+                + " `Employee Id1` ASC,"
+                + " `Employee Id1 (Key)` ASC"
                 : " `time_by_day`.`the_year` ASC,"
                 + " `time_by_day`.`quarter` ASC,"
                 + " `time_by_day`.`the_month` ASC,"
@@ -1193,7 +1193,7 @@ class ParentChildHierarchyTest {
         assertExprReturns(connection, "HR","[Employees].Members.Count", "1,156");
         // <Level>.MEMBERS
         assertExprReturns(connection, "HR",
-            "[Employees].[Employee Id].Members.Count", "1,155");
+            "[Employees].[Employee Id1].Members.Count", "1,155");
         // <Member>.CHILDREN
         assertExprReturns(connection, "HR",
             "[Employees].[Sheri Nowmer].Children.Count", "7");
@@ -1402,7 +1402,7 @@ class ParentChildHierarchyTest {
                     }
                     ++found;
                     final Level level = hierarchy.getLevels()[1];
-                    assertEquals("Employee Id", level.getName());
+                    assertEquals("Employee Id1", level.getName());
                     final List<Member> memberList =
                         schemaReader.getLevelMembers(level, true);
                     assertEquals(1155, memberList.size());
@@ -1529,7 +1529,7 @@ class ParentChildHierarchyTest {
             + "Set [*SORTED_ROW_AXIS] as 'Order([*CJ_ROW_AXIS],[Employees].[Employees].CurrentMember.OrderKey,ASC,[Store].[Store].CurrentMember.OrderKey,BASC,[Measures].[*FORMATTED_MEASURE_0],BDESC)'\n"
             + "Set [*NATIVE_MEMBERS_Store] as 'Generate([*NATIVE_CJ_SET], {[Store].[Store].CurrentMember})'\n"
             + "Set [*NATIVE_MEMBERS_Pay Type] as 'Generate([*NATIVE_CJ_SET], {[Pay Type].[Pay Type].CurrentMember})'\n"
-            + "Set [*BASE_MEMBERS_Employees] as '[Employees].[Employees].[Employee Id].Members'\n"
+            + "Set [*BASE_MEMBERS_Employees] as '[Employees].[Employees].[Employee Id1].Members'\n"
             + "Set [*BASE_MEMBERS_Measures] as '{[Measures].[*FORMATTED_MEASURE_0]}'\n"
             + "Set [*BASE_MEMBERS_Store] as '[Store].[Store].[Store Country].Members'\n"
             + "Set [*CJ_COL_AXIS] as '[*METRIC_CJ_SET]'\n"

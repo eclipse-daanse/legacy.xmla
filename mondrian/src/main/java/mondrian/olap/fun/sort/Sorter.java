@@ -687,6 +687,13 @@ public class Sorter {
     }
 
     while ( true ) {
+      if (m1 == null) {
+          return -1;
+      }
+      if (m2 == null) {
+          return 1;
+      }
+
       int depth1 = m1.getDepth();
       int depth2 = m2.getDepth();
       if ( depth1 < depth2 ) {

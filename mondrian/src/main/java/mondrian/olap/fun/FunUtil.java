@@ -315,6 +315,9 @@ public class FunUtil extends Util {
     // only add accessible levels
     for ( Level level : schemaReader.getHierarchyLevels( hierarchy ) ) {
       FunUtil.addMembers( schemaReader, members, level );
+      if (level.isParentChild()) {
+          break;
+      }
     }
     return members;
   }

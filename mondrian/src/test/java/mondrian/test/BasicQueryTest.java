@@ -5451,9 +5451,10 @@ public class BasicQueryTest {
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testResultLimit(Context context) throws Exception {
-    SystemWideProperties.instance().ResultLimit = 1000;
-    assertAxisThrows(context.getConnectionWithDefaultRole(), "CrossJoin([Product].[Brand Name].Members, [Gender].[Gender].Members)",
-        "result (1,001) exceeded limit (1,000)", "Sales" );
+        Connection connection = context.getConnectionWithDefaultRole();
+        SystemWideProperties.instance().ResultLimit = 1000;
+        assertAxisThrows(connection, "CrossJoin([Product].[Brand Name].Members, [Gender].[Gender].Members)",
+                "result (1,001) exceeded limit (1,000)", "Sales" );
   }
 
     @ParameterizedTest

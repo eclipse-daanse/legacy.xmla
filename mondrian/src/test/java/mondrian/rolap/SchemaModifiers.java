@@ -1780,11 +1780,11 @@ public class SchemaModifiers {
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_TABLE).build())
                     .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE)
                     .withNullParentValue("0")
-                    .withParentChildLink(ParentChildLinkMappingImpl.builder()
-                            .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                            .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
-                            .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
-                            .build())
+                    //.withParentChildLink(ParentChildLinkMappingImpl.builder()
+                    //        .withParentColumn(FoodmartMappingSupplier.SUPERVISOR_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                    //        .withChildColumn(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_EMPLOYEE_CLOSURE)
+                    //        .withTable(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.EMPLOYEE_CLOSURE_TABLE).build())
+                    //        .build())
                     .withLevel(level)
                     .build();
 
@@ -2166,25 +2166,6 @@ public class SchemaModifiers {
             SumMeasureMappingImpl mOrgSalary;
             result.addAll(super.catalogCubes(schema));
             result.add(PhysicalCubeMappingImpl.builder()
-                .withName("CustomSales")
-                .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
-                .withDimensionConnectors(List.of(DimensionConnectorMappingImpl.builder()
-                		.withOverrideDimensionName("Employees")
-                        .withForeignKey(FoodmartMappingSupplier.TIME_ID_COLUMN_IN_SALES_FACT_1997)
-                		.withDimension(d)
-                		.build()))
-                .withMeasureGroups(List.of(
-                	MeasureGroupMappingImpl.builder().withMeasures(List.of(
-                            SumMeasureMappingImpl.builder()
-                            .withName("Store Sales")
-                            .withColumn(FoodmartMappingSupplier.STORE_SALES_COLUMN_IN_SALES_FACT_1997)
-                            .build()
-                    ))
-                	.build()
-                ))
-                .build()
-            );
-            result.add(PhysicalCubeMappingImpl.builder()
                     .withName("CustomSales")
                     .withQuery(TableQueryMappingImpl.builder().withTable(FoodmartMappingSupplier.SALES_FACT_1997_TABLE).build())
                     .withDimensionConnectors(List.of(DimensionConnectorMappingImpl.builder()
@@ -2232,6 +2213,7 @@ public class SchemaModifiers {
             	    .withDimensionConnectors(List.of(
             	    	DimensionConnectorMappingImpl.builder()
             	    	.withOverrideDimensionName("Employees")
+            	    	.withForeignKey(FoodmartMappingSupplier.EMPLOYEE_ID_COLUMN_IN_SALARY)
             	    	.withDimension(d)
             	    	.build()
             	    ))

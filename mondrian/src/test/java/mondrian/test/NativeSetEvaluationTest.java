@@ -2211,8 +2211,9 @@ protected void assertQuerySql(Connection connection,
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testResultLimitInNativeCJ(Context context) {
-    SystemWideProperties.instance().ResultLimit = 400;
-    assertAxisThrows(context.getConnectionWithDefaultRole(), "NonEmptyCrossjoin({[Product].[All Products].Children}, "
+      Connection connection = context.getConnectionWithDefaultRole();
+      SystemWideProperties.instance().ResultLimit = 400;
+    assertAxisThrows(connection, "NonEmptyCrossjoin({[Product].[All Products].Children}, "
         + "{ [Customers].[Name].members})",
       "exceeded limit (400)", "Sales");
   }

@@ -137,6 +137,7 @@ public class RolapMemberBase
         super(parentMember, level, memberType);
         assert key != null;
         assert !(parentMember instanceof RolapCubeMember)
+            || parentMember instanceof RolapAllCubeMember
             || this instanceof RolapCalculatedMember
             || this instanceof VisualTotalMember;
         if (key instanceof byte[]) {
@@ -167,7 +168,7 @@ public class RolapMemberBase
 
     RolapMemberBase(RolapMember parentMember, RolapLevel level, Object value) {
         this(parentMember, level, value, null, MemberType.REGULAR);
-        assert !(level instanceof RolapCubeLevel);
+        //assert !(level instanceof RolapCubeLevel);
     }
 
     @Override

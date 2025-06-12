@@ -1132,13 +1132,15 @@ class NonEmptyTest extends BatchTestCase {
     ((TestContextImpl)context).setLevelPreCacheThreshold(0);
     ((TestContextImpl)context).setExpandNonNative(true);
     ((TestContextImpl)context).setEnableNativeCrossJoin(true);
-    SystemWideProperties.instance().ResultLimit = 2;
+    
 
     try {
+      Connection connection = context.getConnectionWithDefaultRole();
+      SystemWideProperties.instance().ResultLimit = 2;
       executeQuery(
         "select "
           + "NonEmptyCrossJoin({[Gender].Children, [Gender].[F]}, {[Store].Children, [Store].[Mexico]}) on columns "
-          + "from [Sales]", context.getConnectionWithDefaultRole() );
+          + "from [Sales]", connection );
       fail( "Expected error did not occur" );
     } catch ( Throwable e ) {
       String expectedErrorMsg =

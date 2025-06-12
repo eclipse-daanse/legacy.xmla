@@ -1142,12 +1142,13 @@ RME is this right
             // and all of the children. The children and the data member belong
             // to the parent member; the data member does not have any
             // children.
-            member =
-                childLevel.hasClosedPeer()
-                ? new RolapParentChildMember(
-                    parentMember, rolapChildLevel, value, member)
-                : new RolapParentChildMemberNoClosure(
+            member = new RolapParentChildMemberNoClosure(
                     parentMember, rolapChildLevel, value, member);
+            //member = childLevel.hasClosedPeer()
+            //    ? new RolapParentChildMember(
+            //        parentMember, rolapChildLevel, value, member)
+            //    : new RolapParentChildMemberNoClosure(
+            //        parentMember, rolapChildLevel, value, member);
         }
         Property[] properties = childLevel.getProperties();
         final List<SqlStatement.Accessor> accessors = stmt.getAccessors();
@@ -1451,7 +1452,7 @@ RME is this right
      * to a corresponding member of the auxiliary dimension which maps onto
      * the closure table.
      */
-    private static class RolapParentChildMember extends RolapMemberBase {
+    static class RolapParentChildMember extends RolapMemberBase {
         private final RolapMember dataMember;
         private int depth = 0;
 
@@ -1513,6 +1514,11 @@ RME is this right
             return true;
         }
 
+        @Override
+        public boolean isCalculated() {
+            return false;
+        }
+        
         @Override
 		public Expression getExpression() {
             return super.getHierarchy().getAggregateChildrenExpression();

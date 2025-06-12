@@ -448,10 +448,14 @@ public class HierarchyUsage {
             //    the last level.
             final Level[] levels = hierarchy.getLevels();
             RolapLevel joinLevel = (RolapLevel) levels[levels.length - 1];
+            String tableName = getTableAlias(joinLevel.getKeyExp());
+            if (hierarchy instanceof RolapCubeHierarchy rch) {
+                tableName = rch.lookupTableNameByAlias(tableName);
+            }
             this.joinTable =
                 findJoinTable(
                     hierarchy,
-                    getTableAlias(joinLevel.getKeyExp()));
+                    tableName);
             this.joinExp = joinLevel.getKeyExp();
         }
 
