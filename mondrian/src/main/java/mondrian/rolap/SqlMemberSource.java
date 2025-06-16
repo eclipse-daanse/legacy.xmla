@@ -601,7 +601,7 @@ RME is this right
     // implement MemberSource
     @Override
 	public List<RolapMember> getRootMembers() {
-        return getMembersInLevel((RolapLevel) hierarchy.getLevels().get(0));
+        return getMembersInLevel((RolapLevel) hierarchy.getLevels().getFirst());
     }
 
     /**

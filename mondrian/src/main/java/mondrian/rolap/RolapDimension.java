@@ -151,11 +151,10 @@ class RolapDimension extends DimensionBase {
 
         // if there was no dimension type assigned, determine now.
         if (dimensionType == null) {
-            for (int i = 0; i < hierarchies.size(); i++) {
-                List<? extends Level> levels = hierarchies.get(i).getLevels();
+            for (Hierarchy h : hierarchies) {
+                List<? extends Level> levels = h.getLevels();
                 LevLoop:
-                for (int j = 0; j < levels.size(); j++) {
-                    Level lev = levels.get(j);
+                for (Level lev : levels) {
                     if (lev.isAll()) {
                         continue LevLoop;
                     }
@@ -202,9 +201,9 @@ class RolapDimension extends DimensionBase {
      * Initializes a dimension within the context of a cube.
      */
     void init(DimensionConnectorMapping mappingDimension) {
-        for (int i = 0; i < hierarchies.size(); i++) {
-            if (hierarchies.get(i) != null) {
-                ((RolapHierarchy) hierarchies.get(i)).init(mappingDimension);
+        for (Hierarchy h : hierarchies) {
+            if (h != null) {
+                ((RolapHierarchy) h).init(mappingDimension);
             }
         }
     }

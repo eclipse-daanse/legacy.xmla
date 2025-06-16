@@ -1086,7 +1086,7 @@ class MemberCacheControlTest {
 
         try {
             final Hierarchy storeHierarchy =
-                salesCube.getDimensions().get(1).getHierarchies().get(0);
+                salesCube.getDimensions().get(1).getHierarchies().getFirst();
             assertEquals("Store", storeHierarchy.getName());
             final CacheControl.MemberSet storeMemberSet =
                 cacheControl.createMemberSet(
@@ -1103,7 +1103,7 @@ class MemberCacheControlTest {
                 executeQuery(context.getConnectionWithDefaultRole(),
                     "select [Store].[Mexico].[Yucatan] on 0 from [Sales]");
             final Member storeYucatanMember =
-                result.getAxes()[0].getPositions().get(0).get(0);
+                result.getAxes()[0].getPositions().get(0).getFirst();
             final CacheControl.MemberSet storeYucatanMemberSet =
                 cacheControl.createMemberSet(
                     storeYucatanMember, true);

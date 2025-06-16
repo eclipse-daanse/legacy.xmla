@@ -251,7 +251,7 @@ public class MemberCacheHelper implements MemberCache {
         // Important: Do this even if the member is apparently not in the cache.
         RolapLevel level = ((MemberKey) key).getLevel();
         if (level == null) {
-            level = (RolapLevel) this.rolapHierarchy.getLevels().get(0);
+            level = (RolapLevel) this.rolapHierarchy.getLevels().getFirst();
         }
         final RolapLevel levelRef = level;
         mapLevelToMembers.getCache().execute(

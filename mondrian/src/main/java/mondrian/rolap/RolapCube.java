@@ -2039,8 +2039,7 @@ public abstract class RolapCube extends CubeBase {
             if (dimension.getName().equals(
                     hierarchy.getDimension().getName()))
             {
-                for (int j = 0; j <  dimension.getHierarchies().size(); j++) {
-                    Hierarchy hier = dimension.getHierarchies().get(j);
+                for (Hierarchy hier : dimension.getHierarchies()) {
                     if (hier.getName().equals(hierarchy.getName())) {
                         return (RolapHierarchy)hier;
                     }

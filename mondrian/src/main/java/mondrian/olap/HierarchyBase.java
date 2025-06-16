@@ -182,7 +182,7 @@ public abstract class HierarchyBase
             // Key segment searches bottom level by default. For example,
             // [Products].&[1] is shorthand for [Products].[Product Name].&[1].
             final IdImpl.KeySegment keySegment = (IdImpl.KeySegment) s;
-            oe = levels.get(levels.size() - 1)
+            oe = levels.getLast()
                 .lookupChild(schemaReader, keySegment, matchType);
         }
 

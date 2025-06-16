@@ -724,7 +724,7 @@ public class RolapHierarchy extends HierarchyBase {
             final CatalogReader schemaReader =
                 getRolapCatalog().getCatalogReaderWithDefaultRole();
             List<RolapMember> calcMemberList =
-                Util.cast(schemaReader.getCalculatedMembers(getLevels().get(0)));
+                Util.cast(schemaReader.getCalculatedMembers(getLevels().getFirst()));
 
 
             // Note: We require that the root member is not a hidden member

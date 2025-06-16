@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.DimensionType;
+import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 
@@ -79,13 +80,13 @@ public class RolapCubeDimension extends RolapDimension {
         if (cube instanceof RolapVirtualCube) {
           factCube = lookupFactCube(cubeDim, cube.getCatalog());
         }
-        for (int i = 0; i < rolapDim.getHierarchies().size(); i++) {
-          final RolapCubeHierarchy cubeHierarchy =
+        for (Hierarchy h : rolapDim.getHierarchies()) {
+            final RolapCubeHierarchy cubeHierarchy =
                 new RolapCubeHierarchy(
                     this,
                     cubeDim,
-                    (RolapHierarchy) rolapDim.getHierarchies().get(i),
-                    ((HierarchyBase) rolapDim.getHierarchies().get(i)).getSubName(),
+                    (RolapHierarchy) h,
+                    ((HierarchyBase) h).getSubName(),
                     hierarchyList.size(),
                     factCube);
             hierarchies.add(cubeHierarchy);

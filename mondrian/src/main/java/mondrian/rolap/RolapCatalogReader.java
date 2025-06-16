@@ -28,7 +28,6 @@
 package mondrian.rolap;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -133,7 +132,7 @@ public class RolapCatalogReader
         final List<? extends Level> levels = hierarchy.getLevels();
         final Level firstLevel;
         if (hierarchyAccess == null) {
-            firstLevel = levels.get(0);
+            firstLevel = levels.getFirst();
         } else {
             firstLevel = levels.get(hierarchyAccess.getTopLevelDepth());
         }

@@ -7895,7 +7895,7 @@ class SchemaTest {
         assertEquals("Store", dimension.getCaption());
         checkAnnotations(dimension.getMetaData(), "a", "Dimension");
 
-        final Hierarchy hierarchy = dimension.getHierarchies().get(0);
+        final Hierarchy hierarchy = dimension.getHierarchies().getFirst();
         assertEquals("Hierarchy description", hierarchy.getDescription());
         assertEquals("Store", hierarchy.getCaption());
         checkAnnotations(hierarchy.getMetaData(), "a", "Hierarchy");
@@ -7911,7 +7911,7 @@ class SchemaTest {
         final List<Member> memberList =
             cube.getCatalogReader(null).withLocus()
                 .getLevelMembers(level, false);
-        final Member member = memberList.get(0);
+        final Member member = memberList.getFirst();
         assertEquals("Canada", member.getName());
         assertEquals("Canada", member.getCaption());
         assertNull(member.getDescription());
@@ -7924,7 +7924,7 @@ class SchemaTest {
         assertNull(allMember.getDescription());
 
         // All level.
-        final Level allLevel = hierarchy.getLevels().get(0);
+        final Level allLevel = hierarchy.getLevels().getFirst();
         assertEquals("(All)", allLevel.getName());
         assertNull(allLevel.getDescription());
         assertEquals(allLevel.getName(), allLevel.getCaption());
@@ -7942,7 +7942,7 @@ class SchemaTest {
         // Now look at the hierarchy usage within that dimension usage.
         // Because the dimension usage has a name, use that as a prefix for
         // name, caption and description of the hierarchy usage.
-        final Hierarchy timeHierarchy = timeDimension.getHierarchies().get(0);
+        final Hierarchy timeHierarchy = timeDimension.getHierarchies().getFirst();
         // The hierarchy in the shared dimension does not have a name, so the
         // hierarchy usage inherits the name of the dimension usage, Time1.
         //final boolean ssasCompatibleNaming =
@@ -7988,15 +7988,15 @@ class SchemaTest {
         // No annotations.
         checkAnnotations(time2Hierarchy.getMetaData());
 
-        final Dimension measuresDimension = cube.getDimensions().get(0);
+        final Dimension measuresDimension = cube.getDimensions().getFirst();
         final Hierarchy measuresHierarchy =
-            measuresDimension.getHierarchies().get(0);
+            measuresDimension.getHierarchies().getFirst();
         final Level measuresLevel =
-            measuresHierarchy.getLevels().get(0);
+            measuresHierarchy.getLevels().getFirst();
         final CatalogReader schemaReader = cube.getCatalogReader(null);
         final List<Member> measures =
             schemaReader.getLevelMembers(measuresLevel, true);
-        final Member measure = measures.get(0);
+        final Member measure = measures.getFirst();
         assertEquals("Unit Sales", measure.getName());
         assertEquals("Unit Sales", measure.getCaption());
         assertEquals("Measure description", measure.getDescription());
@@ -8049,11 +8049,11 @@ class SchemaTest {
         checkAnnotations(cube2.getMetaData(), "a", "Virtual cube");
 
         final CatalogReader schemaReader2 = cube2.getCatalogReader(null);
-        final Dimension measuresDimension2 = cube2.getDimensions().get(0);
+        final Dimension measuresDimension2 = cube2.getDimensions().getFirst();
         final Hierarchy measuresHierarchy2 =
-            measuresDimension2.getHierarchies().get(0);
+            measuresDimension2.getHierarchies().getFirst();
         final Level measuresLevel2 =
-            measuresHierarchy2.getLevels().get(0);
+            measuresHierarchy2.getLevels().getFirst();
         final List<Member> measures2 =
             schemaReader2.getLevelMembers(measuresLevel2, true);
         final Member measure2 = measures2.get(0);
@@ -9225,7 +9225,7 @@ class SchemaTest {
                         List<Member> members =
                             context.getConnectionWithDefaultRole()
                                 .getCatalogReader().getLevelMembers(
-                                    dim.getHierarchy().getLevels().get(0),
+                                    dim.getHierarchy().getLevels().getFirst(),
                                     true);
                         assertTrue(
                             members.toString().contains(
@@ -9807,7 +9807,7 @@ class SchemaTest {
             assertNotNull(hier);
             assertEquals("Bacon",
                 hier.getName());
-            final Level level = hier.getLevels().get(0);
+            final Level level = hier.getLevels().getFirst();
             assertEquals("Samosa", level.getName());
             assertTrue(testValue.equals(level.isVisible()));
         }

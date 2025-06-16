@@ -188,14 +188,15 @@ public class RolapCubeHierarchy extends RolapHierarchy {
         extractNewAliases(rolapHierarchy.getRelation(), currentRelation);
         this.relation = currentRelation;
         this.levels = new ArrayList<>();
-        for (int i = 0; i < rolapHierarchy.getLevels().size(); i++) {
+        boolean first = true;
+        for (Level l : rolapHierarchy.getLevels()) {
             this.levels.add(
                 new RolapCubeLevel(
-                    (RolapLevel) rolapHierarchy.getLevels().get(i), this));
-            if (i == 0 && rolapHierarchy.getAllMember() != null) {
+                    (RolapLevel) l, this));
+            if (first && rolapHierarchy.getAllMember() != null) {
                 RolapCubeLevel allLevel;
                 if (hasAll()) {
-                    allLevel = (RolapCubeLevel) this.levels.get(0);
+                    allLevel = (RolapCubeLevel) this.levels.getFirst();
                 } else {
                     // create an all level if one doesn't normally
                     // exist in the hierarchy
@@ -211,6 +212,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
                         rolapHierarchy.getAllMember(),
                         allLevel);
             }
+            first = false;
         }
 
         // Compute whether the unique names of members of this hierarchy are
@@ -1014,7 +1016,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
 
         @Override
 		public List<RolapMember> getRootMembers() {
-            return getMembersInLevel((RolapLevel) getLevels().get(0));
+            return getMembersInLevel((RolapLevel) getLevels().getFirst());
         }
 
         @Override

@@ -212,7 +212,7 @@ public class CacheControlImpl implements CacheControl {
         }
         final List<Member> measures =
             cube.getCatalogReader(null).withLocus().getLevelMembers(
-                measuresDimension.getHierarchy().getLevels().get(0),
+                measuresDimension.getHierarchy().getLevels().getFirst(),
                 false);
         if (measures.isEmpty()) {
             return new EmptyCellRegion();

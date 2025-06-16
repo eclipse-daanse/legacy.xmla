@@ -472,7 +472,7 @@ public abstract class RolapAggregationManager {
         } else if (member instanceof RolapCubeHierarchy
             || member instanceof RolapCubeDimension)
         {
-            level = (RolapCubeLevel) member.getHierarchy().getLevels().get(0);
+            level = (RolapCubeLevel) member.getHierarchy().getLevels().getFirst();
             if (level.isAll()) {
                 level = level.getChildLevel();
             }
