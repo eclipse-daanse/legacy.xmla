@@ -56,7 +56,7 @@ public abstract class HierarchyBase
     protected final String name;
     protected final String uniqueName;
     protected String description;
-    protected Level[] levels;
+    protected List<Level> levels;
     protected final boolean hasAll;
     protected String allMemberName;
     protected String allLevelName;
@@ -144,7 +144,7 @@ public abstract class HierarchyBase
     }
 
     @Override
-	public Level[] getLevels() {
+	public List<? extends Level> getLevels() {
         return levels;
     }
 
@@ -182,7 +182,7 @@ public abstract class HierarchyBase
             // Key segment searches bottom level by default. For example,
             // [Products].&[1] is shorthand for [Products].[Product Name].&[1].
             final IdImpl.KeySegment keySegment = (IdImpl.KeySegment) s;
-            oe = levels[levels.length - 1]
+            oe = levels.get(levels.size() - 1)
                 .lookupChild(schemaReader, keySegment, matchType);
         }
 

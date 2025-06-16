@@ -624,8 +624,8 @@ public class QueryImpl extends AbstractQueryPart implements Query {
 
             for(Hierarchy hierarchy : getCube().getHierarchies()) {
 
-                org.eclipse.daanse.olap.api.element.Level[] levels = hierarchy.getLevels();
-                org.eclipse.daanse.olap.api.element.Level lastLevel = levels[levels.length - 1];
+                List<org.eclipse.daanse.olap.api.element.Level> levels = (List<Level>) hierarchy.getLevels();
+                org.eclipse.daanse.olap.api.element.Level lastLevel = levels.getLast();
                 LevelExpressionImpl levelExpr = new LevelExpressionImpl(lastLevel);
                 Expression levelMembers = new UnresolvedFunCallImpl( new PlainPropertyOperationAtom("AllMembers"),
                   new Expression[] {levelExpr}

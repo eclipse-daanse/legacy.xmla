@@ -449,7 +449,7 @@ public class RoleImpl implements Role {
             if (access == AccessCube.NONE || access == AccessCube.CUSTOM) {
                 continue;
             }
-            final Dimension[] dimensions = cubeGrant.getKey().getDimensions();
+            final List<? extends Dimension> dimensions = cubeGrant.getKey().getDimensions();
             for (Dimension dimension1 : dimensions) {
                 // If the dimensions have the same identity,
                 // we found an access rule.
@@ -936,10 +936,10 @@ public class RoleImpl implements Role {
             this.access = access;
             this.rollupPolicy = rollupPolicy;
             this.topLevel = topLevel == null
-                ? hierarchy.getLevels()[0]
+                ? hierarchy.getLevels().get(0)
                 : topLevel;
             this.bottomLevel = bottomLevel == null
-                ? hierarchy.getLevels()[hierarchy.getLevels().length - 1]
+                ? hierarchy.getLevels().getLast()
                 : bottomLevel;
         }
 

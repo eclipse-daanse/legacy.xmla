@@ -320,7 +320,7 @@ public class Convertor {
                     Level level = levels[j];
                     for (int k = 0; k <= level.getDepth(); k++) {
                         final Level level2 =
-                            level.getHierarchy().getLevels()[k];
+                            level.getHierarchy().getLevels().get(k);
                         //if (level2.getLevelType() == Level.Type.ALL) {
                         //    continue;
                         //}

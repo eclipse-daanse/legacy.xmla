@@ -1201,7 +1201,7 @@ class CacheControlTest {
             connection
                 .getCatalog().lookupCube("Sales").orElseThrow();
         Hierarchy hier =
-            cube.getDimensions()[2].getHierarchies()[0];
+            cube.getDimensions().get(2).getHierarchies().get(0);
         Member hierMember = hier.getAllMember();
         CellRegion measuresRegion = cacheControl.createMeasuresRegion(cube);
         CellRegion hierRegion =

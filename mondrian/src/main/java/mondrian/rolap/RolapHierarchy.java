@@ -217,8 +217,8 @@ public class RolapHierarchy extends HierarchyBase {
                 : new StringBuilder("All ").append(name).append("s").toString();
         this.closureFor = closureFor;
         if (hasAll) {
-            this.levels = new RolapLevel[1];
-            this.levels[0] =
+            this.levels = new ArrayList<Level>();
+            this.levels.add(
                 new RolapLevel(
                     this,
                     this.allLevelName,
@@ -240,9 +240,9 @@ public class RolapHierarchy extends HierarchyBase {
                     RolapLevel.HideMemberCondition.Never,
                     LevelType.REGULAR,
                     "",
-                    OlapMetaData.empty());
+                    OlapMetaData.empty()));
         } else {
-            this.levels = new RolapLevel[0];
+            this.levels = new ArrayList<Level>();
         }
 
         // The null member belongs to a level with very similar properties to
@@ -385,8 +385,8 @@ public class RolapHierarchy extends HierarchyBase {
 
             // If the hierarchy has an 'all' member, the 'all' level is level 0.
             if (hasAll) {
-                this.levels = new RolapLevel[eh.getLevels().size() + 1];
-                this.levels[0] = allLevel;
+                this.levels = new ArrayList<Level>();
+                this.levels.add(allLevel);
                 int i = 1;
                 for (LevelMapping xmlLevel : eh.getLevels()) {
                     if (getKeyExp(xmlLevel) == null
@@ -396,15 +396,15 @@ public class RolapHierarchy extends HierarchyBase {
                             levelMustHaveNameExpression, xmlLevel.getName()));
                     }
                     RolapLevel l = new RolapLevel(this, i, xmlLevel);
-                    levels[i] = l;
+                    levels.add(l);
                     i++;
                 }
             } else {
-                this.levels = new RolapLevel[eh.getLevels().size()];
+                this.levels = new ArrayList<Level>();
                 int i = 0;
                 for (LevelMapping xmlLevel : eh.getLevels()) {
                     RolapLevel rl = new RolapLevel(this, i, xmlLevel);
-                    levels[i] = rl;
+                    levels.add(rl);
                     i++;
                 }
             }
@@ -419,8 +419,8 @@ public class RolapHierarchy extends HierarchyBase {
             }
             // If the hierarchy has an 'all' member, the 'all' level is level 0.
             if (hasAll) {
-                this.levels = new RolapLevel[2];
-                this.levels[0] = allLevel;
+                this.levels = new ArrayList<Level>();
+                this.levels.add(allLevel);
                 int i = 1;
                 LevelMapping xmlLevel = pch.getLevel();
                 
@@ -435,7 +435,7 @@ public class RolapHierarchy extends HierarchyBase {
                 sb.append(xmlLevel.getName()).append(i);
                 RolapLevel l = new RolapLevel(sb.toString(), LevelUtil.getParentExp(pch), pch.getNullParentValue(), pch.getParentChildLink(), this, i,
                         pch.isParentAsLeafEnable(), pch.getParentAsLeafNameFormat(), xmlLevel);
-                levels[i] = l;
+                levels.add(l);
                 Map<Integer, Set<RolapMember>> childMap = getChildMap((RolapLevel)l);
                 for (Map.Entry<Integer, Set<RolapMember>> e : childMap.entrySet()) {
                     if (e.getKey() != 0) {
@@ -443,18 +443,18 @@ public class RolapHierarchy extends HierarchyBase {
                         sb = new StringBuilder();
                         sb.append(xmlLevel.getName()).append(i);
                         RolapLevel rl = new RolapLevel(sb.toString(), this, i, pch.isParentAsLeafEnable(), pch.getParentAsLeafNameFormat(), l.getLevelMapping());
-                        this.levels = Util.append(this.levels, rl);
+                        this.levels.add(rl);
                     }
                 }
             } else {
-                this.levels = new RolapLevel[1];
+                this.levels = new ArrayList<Level>();
                 int i = 0;
                 LevelMapping xmlLevel = pch.getLevel();
                 StringBuilder sb = new StringBuilder();
                 sb.append(xmlLevel.getName()).append(i+1);
                 RolapLevel l = new RolapLevel(sb.toString(), LevelUtil.getParentExp(pch), pch.getNullParentValue(), pch.getParentChildLink(), this, i,
                         pch.isParentAsLeafEnable(), pch.getParentAsLeafNameFormat(), xmlLevel);
-                levels[i] = l;
+                levels.add(l);
                 Map<Integer, Set<RolapMember>> childMap = getChildMap((RolapLevel)l);
                 for (Map.Entry<Integer, Set<RolapMember>> e : childMap.entrySet()) {
                     if (e.getKey() != 0) {
@@ -462,7 +462,7 @@ public class RolapHierarchy extends HierarchyBase {
                         sb = new StringBuilder();
                         sb.append(xmlLevel.getName()).append(i+1);
                         RolapLevel rl = new RolapLevel(sb.toString(), this, i, pch.isParentAsLeafEnable(), pch.getParentAsLeafNameFormat(), l.getLevelMapping());
-                        this.levels = Util.append(this.levels, rl);
+                        this.levels.add(rl);
                     }
                 }
             }
@@ -636,7 +636,7 @@ public class RolapHierarchy extends HierarchyBase {
                 null,
                 true,
                 null,
-                this.levels.length,
+                this.levels.size(),
                 null,
                 null,
                 null,
@@ -652,7 +652,7 @@ public class RolapHierarchy extends HierarchyBase {
                 LevelType.REGULAR,
                 "",
                 OlapMetaData.empty());
-        this.levels = Util.append(this.levels, level);
+        this.levels.add(level);
         return level;
     }
 
@@ -724,7 +724,7 @@ public class RolapHierarchy extends HierarchyBase {
             final CatalogReader schemaReader =
                 getRolapCatalog().getCatalogReaderWithDefaultRole();
             List<RolapMember> calcMemberList =
-                Util.cast(schemaReader.getCalculatedMembers(getLevels()[0]));
+                Util.cast(schemaReader.getCalculatedMembers(getLevels().get(0)));
 
 
             // Note: We require that the root member is not a hidden member
@@ -1351,7 +1351,7 @@ public class RolapHierarchy extends HierarchyBase {
         // Create the upper level.
         // This represents all groups of descendants. For example, in the
         // Employee closure hierarchy, this level has a row for every employee.
-        int index = peerHier.levels.length;
+        int index = peerHier.levels.size();
         int flags = src.getFlags() &~ RolapLevel.FLAG_UNIQUE;
         RolapSqlExpression keyExp =
             new RolapColumn(clos.getTable().getTable().getName(), clos.getParentColumn().getName());
@@ -1370,7 +1370,7 @@ public class RolapHierarchy extends HierarchyBase {
                 src.getLevelType(),
                 "",
                 OlapMetaData.empty());
-        peerHier.levels = Util.append(peerHier.levels, level);
+        peerHier.levels.add(level);
 
         // Create lower level.
         // This represents individual items. For example, in the Employee
@@ -1401,7 +1401,7 @@ public class RolapHierarchy extends HierarchyBase {
             src.getLevelType(),
             "",
             OlapMetaData.empty());
-        peerHier.levels = Util.append(peerHier.levels, sublevel);
+        peerHier.levels.add(sublevel);
 
         return peerDimension;
     }

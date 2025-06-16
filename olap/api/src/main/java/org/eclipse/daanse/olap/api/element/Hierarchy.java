@@ -36,7 +36,7 @@ public interface Hierarchy extends OlapElement, MetaElement {
      *
      * @post return != null
      */
-    Level[] getLevels();
+    List<? extends Level> getLevels();
 
     /**
      * Returns the default member of this hierarchy.

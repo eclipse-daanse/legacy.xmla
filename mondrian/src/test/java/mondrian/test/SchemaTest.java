@@ -7890,17 +7890,17 @@ class SchemaTest {
         final Catalog schema = cube.getCatalog();
         checkAnnotations(schema.getMetaData(), "a", "Schema", "b", "Xyz");
 
-        final Dimension dimension = cube.getDimensions()[1];
+        final Dimension dimension = cube.getDimensions().get(1);
         assertEquals("Dimension description", dimension.getDescription());
         assertEquals("Store", dimension.getCaption());
         checkAnnotations(dimension.getMetaData(), "a", "Dimension");
 
-        final Hierarchy hierarchy = dimension.getHierarchies()[0];
+        final Hierarchy hierarchy = dimension.getHierarchies().get(0);
         assertEquals("Hierarchy description", hierarchy.getDescription());
         assertEquals("Store", hierarchy.getCaption());
         checkAnnotations(hierarchy.getMetaData(), "a", "Hierarchy");
 
-        final Level level = hierarchy.getLevels()[1];
+        final Level level = hierarchy.getLevels().get(1);
         assertEquals("Level description", level.getDescription());
         assertEquals("Store Country", level.getCaption());
         checkAnnotations(level.getMetaData(), "a", "Level");
@@ -7924,7 +7924,7 @@ class SchemaTest {
         assertNull(allMember.getDescription());
 
         // All level.
-        final Level allLevel = hierarchy.getLevels()[0];
+        final Level allLevel = hierarchy.getLevels().get(0);
         assertEquals("(All)", allLevel.getName());
         assertNull(allLevel.getDescription());
         assertEquals(allLevel.getName(), allLevel.getCaption());
@@ -7932,7 +7932,7 @@ class SchemaTest {
 
         // the first time dimension overrides the caption and description of the
         // shared time dimension
-        final Dimension timeDimension = cube.getDimensions()[2];
+        final Dimension timeDimension = cube.getDimensions().get(2);
         assertEquals("Time1", timeDimension.getName());
         assertEquals("Time shared description", timeDimension.getDescription());
         assertEquals("Time1", timeDimension.getCaption());
@@ -7942,7 +7942,7 @@ class SchemaTest {
         // Now look at the hierarchy usage within that dimension usage.
         // Because the dimension usage has a name, use that as a prefix for
         // name, caption and description of the hierarchy usage.
-        final Hierarchy timeHierarchy = timeDimension.getHierarchies()[0];
+        final Hierarchy timeHierarchy = timeDimension.getHierarchies().get(0);
         // The hierarchy in the shared dimension does not have a name, so the
         // hierarchy usage inherits the name of the dimension usage, Time1.
         //final boolean ssasCompatibleNaming =
@@ -7962,14 +7962,14 @@ class SchemaTest {
         checkAnnotations(timeHierarchy.getMetaData());
 
         // the second time dimension does not overrides caption and description
-        final Dimension time2Dimension = cube.getDimensions()[3];
+        final Dimension time2Dimension = cube.getDimensions().get(3);
         assertEquals("Time2", time2Dimension.getName());
         assertEquals(
             "Time shared description", time2Dimension.getDescription());
         assertEquals("Time2", time2Dimension.getCaption());
         checkAnnotations(time2Dimension.getMetaData(), "a", "Time shared");
 
-        final Hierarchy time2Hierarchy = time2Dimension.getHierarchies()[0];
+        final Hierarchy time2Hierarchy = time2Dimension.getHierarchies().get(0);
         // The hierarchy in the shared dimension does not have a name, so the
         // hierarchy usage inherits the name of the dimension usage, Time2.
 
@@ -7988,11 +7988,11 @@ class SchemaTest {
         // No annotations.
         checkAnnotations(time2Hierarchy.getMetaData());
 
-        final Dimension measuresDimension = cube.getDimensions()[0];
+        final Dimension measuresDimension = cube.getDimensions().get(0);
         final Hierarchy measuresHierarchy =
-            measuresDimension.getHierarchies()[0];
+            measuresDimension.getHierarchies().get(0);
         final Level measuresLevel =
-            measuresHierarchy.getLevels()[0];
+            measuresHierarchy.getLevels().get(0);
         final CatalogReader schemaReader = cube.getCatalogReader(null);
         final List<Member> measures =
             schemaReader.getLevelMembers(measuresLevel, true);
@@ -8049,11 +8049,11 @@ class SchemaTest {
         checkAnnotations(cube2.getMetaData(), "a", "Virtual cube");
 
         final CatalogReader schemaReader2 = cube2.getCatalogReader(null);
-        final Dimension measuresDimension2 = cube2.getDimensions()[0];
+        final Dimension measuresDimension2 = cube2.getDimensions().get(0);
         final Hierarchy measuresHierarchy2 =
-            measuresDimension2.getHierarchies()[0];
+            measuresDimension2.getHierarchies().get(0);
         final Level measuresLevel2 =
-            measuresHierarchy2.getLevels()[0];
+            measuresHierarchy2.getLevels().get(0);
         final List<Member> measures2 =
             schemaReader2.getLevelMembers(measuresLevel2, true);
         final Member measure2 = measures2.get(0);
@@ -9225,7 +9225,7 @@ class SchemaTest {
                         List<Member> members =
                             context.getConnectionWithDefaultRole()
                                 .getCatalogReader().getLevelMembers(
-                                    dim.getHierarchy().getLevels()[0],
+                                    dim.getHierarchy().getLevels().get(0),
                                     true);
                         assertTrue(
                             members.toString().contains(
@@ -9807,7 +9807,7 @@ class SchemaTest {
             assertNotNull(hier);
             assertEquals("Bacon",
                 hier.getName());
-            final Level level = hier.getLevels()[0];
+            final Level level = hier.getLevels().get(0);
             assertEquals("Samosa", level.getName());
             assertTrue(testValue.equals(level.isVisible()));
         }
@@ -11864,7 +11864,7 @@ class SchemaTest {
         final CatalogReader schemaReader = rolapConn.getCatalogReader();
         final Catalog schema = schemaReader.getCatalog();
         for (Cube cube : schema.getCubes()) {
-            Dimension dim = cube.getDimensions()[1];
+            Dimension dim = cube.getDimensions().get(1);
             final MetaData metaData = dim.getMetaData();
             assertEquals(1, metaData.size());
             assertEquals("bar", metaData.get("foo"));

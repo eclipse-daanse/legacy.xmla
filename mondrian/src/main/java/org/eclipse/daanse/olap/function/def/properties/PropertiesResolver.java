@@ -94,9 +94,9 @@ public class PropertiesResolver  implements FunctionResolver {
             if (hierarchy == null) {
                 return DataType.VALUE;
             }
-            Level[] levels = hierarchy.getLevels();
+            List<? extends Level> levels = hierarchy.getLevels();
             Property property = Util.lookupProperty(
-                levels[levels.length - 1], propertyName);
+                levels.getLast(), propertyName);
             if (property == null) {
                 // we'll likely get a runtime error
                 return DataType.VALUE;

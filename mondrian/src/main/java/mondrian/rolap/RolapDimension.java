@@ -34,6 +34,10 @@ import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.MetaData;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
@@ -107,7 +111,7 @@ class RolapDimension extends DimensionBase {
         assert metadata != null;
         this.schema = schema;
         this.metaData = metadata;
-        this.hierarchies = new RolapHierarchy[0];
+        this.hierarchies = new ArrayList<>();
     }
 
     /**
@@ -137,21 +141,21 @@ class RolapDimension extends DimensionBase {
         }
 
         if (mappingDimension != null) {
-        	this.hierarchies = new RolapHierarchy[mappingDimension.getHierarchies().size()];
+        	this.hierarchies = new ArrayList<>();
         	for (int i = 0; i < mappingDimension.getHierarchies().size(); i++) {
         		RolapHierarchy hierarchy = new RolapHierarchy(
         				cube, this, mappingDimension.getHierarchies().get(i), dimensionConnector);
-        		hierarchies[i] = hierarchy;
+        		hierarchies.add(hierarchy);
         	}
         }        
 
         // if there was no dimension type assigned, determine now.
         if (dimensionType == null) {
-            for (int i = 0; i < hierarchies.length; i++) {
-                Level[] levels = hierarchies[i].getLevels();
+            for (int i = 0; i < hierarchies.size(); i++) {
+                List<? extends Level> levels = hierarchies.get(i).getLevels();
                 LevLoop:
-                for (int j = 0; j < levels.length; j++) {
-                    Level lev = levels[j];
+                for (int j = 0; j < levels.size(); j++) {
+                    Level lev = levels.get(j);
                     if (lev.isAll()) {
                         continue LevLoop;
                     }
@@ -198,9 +202,9 @@ class RolapDimension extends DimensionBase {
      * Initializes a dimension within the context of a cube.
      */
     void init(DimensionConnectorMapping mappingDimension) {
-        for (int i = 0; i < hierarchies.length; i++) {
-            if (hierarchies[i] != null) {
-                ((RolapHierarchy) hierarchies[i]).init(mappingDimension);
+        for (int i = 0; i < hierarchies.size(); i++) {
+            if (hierarchies.get(i) != null) {
+                ((RolapHierarchy) hierarchies.get(i)).init(mappingDimension);
             }
         }
     }
@@ -224,7 +228,7 @@ class RolapDimension extends DimensionBase {
                 this, subName,
                 caption, visible, description, null, hasAll, closureFor,
                 OlapMetaData.empty());
-        this.hierarchies = Util.append(this.hierarchies, hierarchy);
+        this.hierarchies.add(hierarchy);
         return hierarchy;
     }
 
@@ -236,7 +240,7 @@ class RolapDimension extends DimensionBase {
      */
     @Override
 	public Hierarchy getHierarchy() {
-        return hierarchies[0];
+        return hierarchies.getFirst();
     }
 
     @Override

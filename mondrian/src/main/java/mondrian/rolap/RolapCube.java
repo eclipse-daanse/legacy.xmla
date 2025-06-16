@@ -282,7 +282,7 @@ public abstract class RolapCube extends CubeBase {
             caption,
             visible,
             description,
-            new RolapDimension[dimensions.size() + 1]);
+            new ArrayList<>());
 
         assert metaData != null;
         this.catalog = catalog;
@@ -312,7 +312,7 @@ public abstract class RolapCube extends CubeBase {
                 DimensionType.MEASURES_DIMENSION,
                 OlapMetaData.empty());
 
-        this.dimensions[0] = measuresDimension;
+        this.dimensions.add(measuresDimension);
 
         this.measuresHierarchy =
             measuresDimension.newHierarchy(null, false, null);
@@ -335,7 +335,7 @@ public abstract class RolapCube extends CubeBase {
                 String msg = new StringBuilder("RolapCube<init>: dimension=").append(dimension.getName()).toString();
                 getLogger().debug(msg);
             }
-            this.dimensions[i + 1] = dimension;
+            this.dimensions.add(dimension);
 
             if (getFact() != null && this instanceof RolapPhysicalCube) {
                 createUsages(dimension, mappingCubeDimension);
@@ -1099,12 +1099,12 @@ public abstract class RolapCube extends CubeBase {
         // in a hierarchy to join on, and there is more than one hierarchy,
         // then a HierarchyUsage can not be created for the hierarchies
         // that do not have the level defined.
-        RolapCubeHierarchy[] hierarchies =
-            (RolapCubeHierarchy[]) dimension.getHierarchies();
+        List<RolapCubeHierarchy> hierarchies =
+            (List<RolapCubeHierarchy>) dimension.getHierarchies();
 
-        if (hierarchies.length == 1) {
+        if (hierarchies.size() == 1) {
             // Only one, so let lower level error checking handle problems
-            createUsage(hierarchies[0], mappingCubeDimension);
+            createUsage(hierarchies.getFirst(), mappingCubeDimension);
 
         } else if (mappingCubeDimension.getLevel() != null) {
             int cnt = 0;
@@ -1127,7 +1127,7 @@ public abstract class RolapCube extends CubeBase {
             if (cnt == 0) {
                 // None of the hierarchies had the level, let lower level
                 // detect and throw error
-                createUsage(hierarchies[0], mappingCubeDimension);
+                createUsage(hierarchies.getFirst(), mappingCubeDimension);
             }
 
         } else {
@@ -1318,7 +1318,7 @@ public abstract class RolapCube extends CubeBase {
     void registerDimension(RolapCubeDimension dimension) {
         RolapStar starInner = getStar();
 
-        Hierarchy[] hierarchies = dimension.getHierarchies();
+        List<? extends Hierarchy> hierarchies = dimension.getHierarchies();
 
         for (Hierarchy hierarchy1 : hierarchies) {
             RolapHierarchy hierarchy = (RolapHierarchy) hierarchy1;
@@ -1327,7 +1327,7 @@ public abstract class RolapCube extends CubeBase {
             if (relation == null) {
                 continue; // e.g. [Measures] hierarchy
             }
-            RolapCubeLevel[] levels = (RolapCubeLevel[]) hierarchy.getLevels();
+            List<RolapCubeLevel> levels = (List<RolapCubeLevel>) hierarchy.getLevels();
 
             HierarchyUsage[] hierarchyUsagesInner = getUsages(hierarchy);
             if (hierarchyUsagesInner.length == 0) {
@@ -1756,18 +1756,18 @@ public abstract class RolapCube extends CubeBase {
      */
     private static QueryMapping reorder(
         QueryMapping relation,
-        RolapLevel[] levels)
+        List<RolapCubeLevel> levels)
     {
         // Need at least two levels, with only one level theres nothing to do.
-        if (levels.length < 2) {
+        if (levels.size() < 2) {
             return relation;
         }
 
         Map<String, RelNode> nodeMap = new HashMap<>();
 
         // Create RelNode in top down order (year -> day)
-        for (int i = 0; i < levels.length; i++) {
-            RolapLevel level = levels[i];
+        for (int i = 0; i < levels.size(); i++) {
+            RolapLevel level = levels.get(i);
 
             if (level.isAll()) {
                 continue;
@@ -2003,7 +2003,7 @@ public abstract class RolapCube extends CubeBase {
      */
     @Override
 	public Set<Dimension> nonJoiningDimensions(Set<Dimension> otherDims) {
-        Dimension[] baseCubeDimensions = getDimensions();
+        List<? extends Dimension> baseCubeDimensions = getDimensions();
         Set<String>  baseCubeDimNames = new HashSet<>();
         for (Dimension baseCubeDimension : baseCubeDimensions) {
             baseCubeDimNames.add(baseCubeDimension.getUniqueName());
@@ -2019,7 +2019,7 @@ public abstract class RolapCube extends CubeBase {
 
     @Override
 	public List<Member> getMeasures() {
-        Level measuresLevel = dimensions[0].getHierarchies()[0].getLevels()[0];
+        Level measuresLevel = dimensions.getFirst().getHierarchies().getFirst().getLevels().get(0);
         return getCatalogReader().getLevelMembers(measuresLevel, true);
     }
 
@@ -2034,13 +2034,13 @@ public abstract class RolapCube extends CubeBase {
      * @return base cube hierarchy if found
      */
     public RolapHierarchy findBaseCubeHierarchy(RolapHierarchy hierarchy) {
-        for (int i = 0; i < getDimensions().length; i++) {
-            Dimension dimension = getDimensions()[i];
+        for (int i = 0; i < getDimensions().size(); i++) {
+            Dimension dimension = getDimensions().get(i);
             if (dimension.getName().equals(
                     hierarchy.getDimension().getName()))
             {
-                for (int j = 0; j <  dimension.getHierarchies().length; j++) {
-                    Hierarchy hier = dimension.getHierarchies()[j];
+                for (int j = 0; j <  dimension.getHierarchies().size(); j++) {
+                    Hierarchy hier = dimension.getHierarchies().get(j);
                     if (hier.getName().equals(hierarchy.getName())) {
                         return (RolapHierarchy)hier;
                     }
@@ -2099,7 +2099,7 @@ public abstract class RolapCube extends CubeBase {
                         if (isClosure) {
                             final RolapCubeLevel baseLevel =
                                 ((RolapCubeLevel)
-                                    hier.getLevels()[1]).getClosedPeer();
+                                    hier.getLevels().get(1)).getClosedPeer();
                             virtualToBaseMap.put(level, baseLevel);
                             return baseLevel;
                         }

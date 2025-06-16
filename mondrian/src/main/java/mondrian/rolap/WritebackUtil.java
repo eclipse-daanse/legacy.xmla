@@ -120,7 +120,7 @@ public class WritebackUtil {
                                     }
                                 }
                                 if (oRolapHierarchy.isPresent()) {
-                                    Level[] levels = oRolapHierarchy.get().getLevels();
+                                    List<? extends Level> levels = oRolapHierarchy.get().getLevels();
                                     Optional<Member> oRolapMember = getHierarchy(levels, ls, rolapCube);
                                     Set<Member> members = getLevelLeafMembers(levels, oRolapMember, rolapCube);
                                     Map<Member, Object> data = getData(members, rolapBaseCubeMeasure.getUniqueName(), rolapCube);
@@ -131,8 +131,8 @@ public class WritebackUtil {
                                 if (hs != null && hs.stream().anyMatch(h -> h instanceof Hierarchy)) {
                                     for (Hierarchy h : hs) {
                                         if (h instanceof Hierarchy rolapCubeHierarchy) {
-                                            Level[] levels = rolapCubeHierarchy.getLevels();
-                                            if (levels != null && levels.length > 0) {
+                                            List<? extends Level> levels = rolapCubeHierarchy.getLevels();
+                                            if (levels != null && levels.size() > 0) {
                                                 Set<Member> members = getLevelLeafMembers(levels, Optional.empty(),
                                                     rolapCube);
 
@@ -155,9 +155,9 @@ public class WritebackUtil {
             return res;
         }
 
-    private static Optional<Member> getHierarchy(Level[] levels, List<String> memberNames, Cube cube) {
+    private static Optional<Member> getHierarchy(List<? extends Level> levels, List<String> memberNames, Cube cube) {
         Optional<Member> result = Optional.empty();
-        if (levels.length > memberNames.size()) {
+        if (levels.size() > memberNames.size()) {
             Level level = null;
             for (int i = 0; i < memberNames.size(); i++) {
                 int index = i;
@@ -203,7 +203,7 @@ public class WritebackUtil {
         return res;
     }
 
-    private static Set<Member> getLevelLeafMembers(Level[] levels, Optional<Member> oRolapMember, Cube rolapCube) {
+    private static Set<Member> getLevelLeafMembers(List<? extends Level> levels, Optional<Member> oRolapMember, Cube rolapCube) {
         Set<Member> result = new HashSet<>();
         if (oRolapMember.isPresent()) {
             Level level = oRolapMember.get().getLevel();

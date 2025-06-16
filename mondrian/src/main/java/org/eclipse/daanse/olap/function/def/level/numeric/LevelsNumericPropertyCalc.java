@@ -13,6 +13,8 @@
 */
 package org.eclipse.daanse.olap.function.def.level.numeric;
 
+import java.util.List;
+
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.HierarchyCalc;
 import org.eclipse.daanse.olap.api.calc.IntegerCalc;
@@ -37,13 +39,13 @@ public class LevelsNumericPropertyCalc extends AbstractProfilingNestedLevelCalc 
     }
 
     private Level nthLevel(Hierarchy hierarchy, int n) {
-        Level[] levels = hierarchy.getLevels();
+        List<? extends Level> levels = hierarchy.getLevels();
 
-        if (n >= levels.length || n < 0) {
+        if (n >= levels.size() || n < 0) {
             throw FunUtil.newEvalException(LevelsNumericPropertyDef.levelsFunctionMetaData,
                     new StringBuilder("Index '").append(n).append("' out of bounds").toString());
         }
-        return levels[n];
+        return levels.get(n);
     }
 
 }

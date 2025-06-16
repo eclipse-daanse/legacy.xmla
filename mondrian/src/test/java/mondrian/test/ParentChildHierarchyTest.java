@@ -1401,7 +1401,7 @@ class ParentChildHierarchyTest {
                         continue;
                     }
                     ++found;
-                    final Level level = hierarchy.getLevels()[1];
+                    final Level level = hierarchy.getLevels().get(1);
                     assertEquals("Employee Id1", level.getName());
                     final List<Member> memberList =
                         schemaReader.getLevelMembers(level, true);

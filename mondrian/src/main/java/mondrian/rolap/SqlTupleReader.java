@@ -155,7 +155,7 @@ public class SqlTupleReader implements TupleReader {
   private class Target extends TargetBase {
     final MemberCache cache;
 
-    RolapLevel[] levels;
+    List<RolapLevel> levels;
     int levelDepth;
     boolean parentChild;
     List<RolapMember> members;
@@ -180,7 +180,7 @@ public class SqlTupleReader implements TupleReader {
 
     @Override
 	public void open() {
-      levels = (RolapLevel[]) level.getHierarchy().getLevels();
+      levels = (List<RolapLevel>) level.getHierarchy().getLevels();
       setList( new ArrayList<>() );
       levelDepth = level.getDepth();
       parentChild = level.isParentChild();
@@ -188,9 +188,9 @@ public class SqlTupleReader implements TupleReader {
       // is the current member of level#i plus its siblings
       members =
         new ArrayList<>(
-          Collections.<RolapMember>nCopies( levels.length, null ) );
+          Collections.<RolapMember>nCopies( levels.size(), null ) );
       siblings = new ArrayList<>();
-      for ( int i = 0; i < levels.length + 1; i++ ) {
+      for ( int i = 0; i < levels.size() + 1; i++ ) {
         siblings.add( new ArrayList<>() );
       }
     }
@@ -204,7 +204,7 @@ public class SqlTupleReader implements TupleReader {
       } else {
         boolean checkCacheStatus = true;
         for ( int i = 0; i <= levelDepth; i++ ) {
-          RolapLevel childLevel = levels[ i ];
+          RolapLevel childLevel = levels.get( i );
           if ( childLevel.isAll() ) {
             member = memberBuilder.allMember();
             continue;
@@ -292,6 +292,9 @@ public class SqlTupleReader implements TupleReader {
             }
           }
           column += childLevel.getProperties().length;
+          if (childLevel.getParentLevel() != null && childLevel.getParentLevel().isParentChild()) {
+              column += 1;
+          }
 
           // Cache in our intermediate map the key/member pair
           // for later lookups of children.
@@ -1304,14 +1307,14 @@ public TupleList readTuples(
         hierarchy = baseCube.findBaseCubeHierarchy( hierarchy );
     }
 
-    RolapLevel[] levels = (RolapLevel[]) hierarchy.getLevels();
+    List<RolapLevel> levels = (List<RolapLevel>) hierarchy.getLevels();
     int levelDepth = level.getDepth();
 
     boolean needsGroupBy =
       RolapUtil.isGroupByNeeded( hierarchy, levels, levelDepth );
 
     for ( int i = 0; i <= levelDepth; i++ ) {
-      RolapLevel currLevel = levels[ i ];
+      RolapLevel currLevel = levels.get( i );
       if ( currLevel.isAll() ) {
         continue;
       }

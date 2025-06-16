@@ -34,6 +34,7 @@ import static mondrian.rolap.util.RelationUtil.find;
 import static mondrian.rolap.util.RelationUtil.getAlias;
 
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Objects;
 
 import org.eclipse.daanse.olap.api.SqlExpression;
@@ -446,8 +447,8 @@ public class HierarchyUsage {
         } else {
             // 3. If neither of the above, the join is assumed to be to key of
             //    the last level.
-            final Level[] levels = hierarchy.getLevels();
-            RolapLevel joinLevel = (RolapLevel) levels[levels.length - 1];
+            final List<? extends Level> levels = hierarchy.getLevels();
+            RolapLevel joinLevel = (RolapLevel) levels.getLast();
             String tableName = getTableAlias(joinLevel.getKeyExp());
             if (hierarchy instanceof RolapCubeHierarchy rch) {
                 tableName = rch.lookupTableNameByAlias(tableName);

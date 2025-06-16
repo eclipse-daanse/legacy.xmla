@@ -303,8 +303,8 @@ public class RolapResult extends ResultBase {
 
       for(Map.Entry<Hierarchy, Calc> entry : query.getSubcubeHierarchyCalcs().entrySet()) {
         Hierarchy hierarchy = entry.getKey();
-        org.eclipse.daanse.olap.api.element.Level[] levels = hierarchy.getLevels();
-        org.eclipse.daanse.olap.api.element.Level lastLevel = levels[levels.length - 1];
+        List<? extends org.eclipse.daanse.olap.api.element.Level> levels = hierarchy.getLevels();
+        org.eclipse.daanse.olap.api.element.Level lastLevel = levels.getLast();
 
         Calc calc = entry.getValue();
 

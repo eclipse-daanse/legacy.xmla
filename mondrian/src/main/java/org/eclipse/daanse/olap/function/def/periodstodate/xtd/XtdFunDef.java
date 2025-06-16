@@ -27,6 +27,7 @@
 package org.eclipse.daanse.olap.function.def.periodstodate.xtd;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
@@ -106,9 +107,9 @@ public class XtdFunDef extends AbstractFunctionDefinition {
     private static Level getFirstTimeLevel(Cube cube, LevelType levelType) {
         for (Dimension dimension : cube.getDimensions()) {
             if (dimension.getDimensionType() == DimensionType.TIME_DIMENSION) {
-                Hierarchy[] hierarchies = dimension.getHierarchies();
+                List<? extends Hierarchy> hierarchies = dimension.getHierarchies();
                 for (Hierarchy hierarchy : hierarchies) {
-                    Level[] levels = hierarchy.getLevels();
+                    List<? extends Level> levels = hierarchy.getLevels();
                     for (Level level : levels) {
                         if (level.getLevelType() == levelType) {
                             return level;

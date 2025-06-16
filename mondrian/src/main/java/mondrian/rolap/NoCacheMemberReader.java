@@ -122,7 +122,7 @@ public class NoCacheMemberReader implements MemberReader, MemberCache {
 	public List<RolapMember> getMembers() {
         System.out.println("NoCache getMembers");
         List<RolapMember> v = new ArrayList<>();
-        RolapLevel[] levels = (RolapLevel[]) getHierarchy().getLevels();
+        List<RolapLevel> levels =  (List<RolapLevel>) getHierarchy().getLevels();
         // todo: optimize by walking to children for members we know about
         for (RolapLevel level : levels) {
             List<RolapMember> membersInLevel =

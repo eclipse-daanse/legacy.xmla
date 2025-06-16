@@ -14,6 +14,7 @@
 
 package org.eclipse.daanse.olap.calc.base.util;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -31,9 +32,9 @@ public class DimensionUtil {
 	 * @return {@link Optional<Hierarchy>} Default hierarchy, or empty
 	 */
 	public static Optional<Hierarchy> getDimensionDefaultHierarchy(Dimension dimension) {
-		final Hierarchy[] hierarchies = dimension.getHierarchies();
-		if (hierarchies.length == 1) {
-			return Optional.of(hierarchies[0]);
+		final List<? extends Hierarchy> hierarchies = dimension.getHierarchies();
+		if (hierarchies.size() == 1) {
+			return Optional.of(hierarchies.getFirst());
 		}
 		// In SSAS 2005, dimensions with more than one hierarchy do not have
 		// a default hierarchy.

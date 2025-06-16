@@ -241,7 +241,7 @@ class RolapCubeTest {
                     getDimensionWithName(
                         "Product",
                         salesCube.getDimensions())
-                    .getHierarchy().getLevels()[0]);
+                    .getHierarchy().getLevels().getFirst());
 
             assertEquals(
                 expectedCalculatedMembersFromProduct.length,
@@ -256,7 +256,7 @@ class RolapCubeTest {
                     getDimensionWithName(
                         "Gender",
                         salesCube.getDimensions())
-                    .getHierarchy().getLevels()[0]);
+                    .getHierarchy().getLevels().getFirst());
             assertEquals(0, calculatedMembers.size());
         } finally {
             connection.close();

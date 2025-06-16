@@ -167,9 +167,9 @@ public final class NameResolverImpl implements NameResolver {
             if (element instanceof Hierarchy) {
                 return element;
             } else if (element instanceof Dimension dimension) {
-                final Hierarchy[] hierarchies = dimension.getHierarchies();
-                if (hierarchies.length == 1) {
-                    return hierarchies[0];
+                final List<? extends Hierarchy> hierarchies = dimension.getHierarchies();
+                if (hierarchies.size() == 1) {
+                    return hierarchies.getFirst();
                 }
                 return null;
             } else {

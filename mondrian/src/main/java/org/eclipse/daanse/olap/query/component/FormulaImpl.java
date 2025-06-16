@@ -271,8 +271,8 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
                         final Hierarchy hierarchy;
                         if (parent instanceof Dimension dimension)
                         {
-                            if (dimension.getHierarchies().length == 1) {
-                                hierarchy = dimension.getHierarchies()[0];
+                            if (dimension.getHierarchies().size() == 1) {
+                                hierarchy = dimension.getHierarchies().getFirst();
                             } else {
                                 hierarchy = null;
                             }
@@ -283,7 +283,7 @@ public class FormulaImpl extends AbstractQueryPart implements Formula {
                             throw new OlapRuntimeException(
                                 MessageFormat.format(mdxCalculatedHierarchyError, id.toString()));
                         }
-                        level = hierarchy.getLevels()[0];
+                        level = hierarchy.getLevels().getFirst();
                     }
                     if (parentMember != null
                         && parentMember.isCalculated())

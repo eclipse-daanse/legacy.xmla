@@ -656,12 +656,11 @@ public class CrossJoinArgFactory {
         if ((args[1] instanceof LevelExpression)) {
             level = (RolapLevel) ((LevelExpression) args[1]).getLevel();
         } else if (args[1] instanceof NumericLiteral descendantsDepth) {
-            RolapLevel[] levels = (RolapLevel[])
-                member.getHierarchy().getLevels();
+            List<RolapLevel> levels = (List<RolapLevel>) member.getHierarchy().getLevels();
             int currentDepth = member.getDepth();
             int newDepth = currentDepth + descendantsDepth.getIntValue();
-            if (newDepth < levels.length) {
-                level = levels[newDepth];
+            if (newDepth < levels.size()) {
+                level = levels.get(newDepth);
             }
         } else {
             return null;

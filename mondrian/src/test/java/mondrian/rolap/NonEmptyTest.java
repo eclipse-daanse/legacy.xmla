@@ -3145,8 +3145,8 @@ class NonEmptyTest extends BatchTestCase {
         + "from [Sales]\n"
         + "where ([Store].[All Stores].[USA].[CA].[San Francisco].[Store 14], [Time].[1997].[Q1].[1])" );
     Result r = c.run();
-    Level[] levels = smr.getHierarchy().getLevels();
-    Level nameLevel = levels[ levels.length - 1 ];
+    List<? extends Level> levels = smr.getHierarchy().getLevels();
+    Level nameLevel = levels.getLast();
 
     // evaluator for [All Customers], [Store 14], [1/1/1997]
     Evaluator evaluator = getEvaluator( r, new int[] { 0, 0 } );
@@ -3207,8 +3207,8 @@ class NonEmptyTest extends BatchTestCase {
         + "{[Customers].[All Customers], [Customers].[Name].Members} ON rows\n"
         + "from [Sales]\n"
         + "where ([Store].[All Stores].[USA].[CA].[San Francisco].[Store 14], [Time].[1997].[Q1].[1])", context.getConnectionWithDefaultRole() );
-    Level[] levels = smr.getHierarchy().getLevels();
-    Level nameLevel = levels[ levels.length - 1 ];
+    List<? extends Level> levels = smr.getHierarchy().getLevels();
+    Level nameLevel = levels.getLast();
 
     // evaluator for [All Customers], [Store 14], [1/1/1997]
     Evaluator evaluator = getEvaluator( r, new int[] { 0, 0 } );

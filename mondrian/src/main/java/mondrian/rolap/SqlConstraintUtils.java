@@ -214,8 +214,8 @@ public class SqlConstraintUtils {
 
                   if (!slicerMembers.isEmpty()) {
                       // get level
-                      final int levelIndex = slicerMembers.get(0).getHierarchy().getLevels().length - 1;
-                      RolapLevel levelForWhere = (RolapLevel) slicerMembers.get(0).getHierarchy().getLevels()[levelIndex];
+                      final int levelIndex = slicerMembers.get(0).getHierarchy().getLevels().size() - 1;
+                      RolapLevel levelForWhere = (RolapLevel) slicerMembers.get(0).getHierarchy().getLevels().get(levelIndex);
                       // build where constraint
                       final String where =
                           generateSingleValueInExpr(sqlQuery, baseCube, aggStar, slicerMembers, levelForWhere,

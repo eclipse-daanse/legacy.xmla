@@ -47,7 +47,7 @@ public abstract class CubeBase extends OlapElementBase implements Cube {
     protected final String name;
     private final String uniqueName;
     private final String description;
-    protected Dimension[] dimensions;
+    protected List<Dimension> dimensions;
     private final static String mdxCubeName = "cube ''{0}''";
 
     /**
@@ -63,7 +63,7 @@ public abstract class CubeBase extends OlapElementBase implements Cube {
         String caption,
         boolean visible,
         String description,
-        Dimension[] dimensions)
+        List<Dimension> dimensions)
     {
         this.name = name;
         this.caption = caption;
@@ -106,14 +106,14 @@ public abstract class CubeBase extends OlapElementBase implements Cube {
     }
 
     @Override
-	public Dimension[] getDimensions() {
+	public List<? extends Dimension> getDimensions() {
         return dimensions;
     }
 
     @Override
 	public Hierarchy lookupHierarchy(NameSegment s, boolean unique) {
         for (Dimension dimension : dimensions) {
-            Hierarchy[] hierarchies = dimension.getHierarchies();
+            List<? extends Hierarchy> hierarchies = dimension.getHierarchies();
             for (Hierarchy hierarchy : hierarchies) {
                 String nameInner = unique
                     ? hierarchy.getUniqueName() : hierarchy.getName();

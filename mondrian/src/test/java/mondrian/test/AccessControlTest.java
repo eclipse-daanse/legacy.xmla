@@ -2736,8 +2736,8 @@ class AccessControlTest {
             Hierarchy hierarchy = cube.lookupHierarchy(
                 new IdImpl.NameSegmentImpl("Employees"), false);
 
-            Level[] levels = hierarchy.getLevels();
-            Level topLevel = levels[1];
+            List<? extends Level> levels = hierarchy.getLevels();
+            Level topLevel = levels.get(1);
 
             role.grant(hierarchy, AccessHierarchy.CUSTOM, null, null, RollupPolicy.FULL);
             role.grant(hierarchy.getAllMember(), AccessMember.NONE);

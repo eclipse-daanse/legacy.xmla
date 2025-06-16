@@ -356,10 +356,10 @@ public final class IdBatchResolver {
      * flag uniqueName.
      */
     private Collection<String> getOlapElementNames(
-        OlapElement[] olapElements, final boolean uniqueName)
+        List<? extends OlapElement> olapElements, final boolean uniqueName)
     {
 
-		return Stream.of(olapElements)
+		return olapElements.stream()
 				.map(olapElement -> uniqueName ? olapElement.getUniqueName() : olapElement.getName()).toList();
 
     }

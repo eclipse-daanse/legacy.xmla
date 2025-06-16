@@ -121,7 +121,7 @@ public class TransformToFormulasVisitor extends MdxVisitorImpl {
                     element = ((MemberExpression) curr).getMember();
                 }
                 if (element != null) {
-                    Level level = element.getHierarchy().getLevels()[0];
+                    Level level = element.getHierarchy().getLevels().getFirst();
                     Id memberId = NativizeSetFunDef.createSentinelId(level);
                     Formula formula =
                         query.findFormula(memberId.toString());

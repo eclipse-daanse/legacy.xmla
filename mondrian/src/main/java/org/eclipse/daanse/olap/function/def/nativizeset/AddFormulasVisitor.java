@@ -66,7 +66,7 @@ public class AddFormulasVisitor extends MdxVisitorImpl {
         }
 
         for (Dimension dim : dimensions) {
-            Level level = dim.getHierarchy().getLevels()[0];
+            Level level = dim.getHierarchy().getLevels().getFirst();
             formulas.add(createSentinelFormula(level));
         }
 

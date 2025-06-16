@@ -116,7 +116,7 @@ public class SmartMemberReader implements MemberReader {
     @Override
 	public List<RolapMember> getMembers() {
         List<RolapMember> v = new ConcatenableList<>();
-        RolapLevel[] levels = (RolapLevel[]) getHierarchy().getLevels();
+        List<RolapLevel> levels = (List<RolapLevel>) getHierarchy().getLevels();
         // todo: optimize by walking to children for members we know about
         for (RolapLevel level : levels) {
             List<RolapMember> membersInLevel = getMembersInLevel(level);

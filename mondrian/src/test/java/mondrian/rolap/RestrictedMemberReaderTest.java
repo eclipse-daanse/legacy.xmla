@@ -51,7 +51,9 @@ class RestrictedMemberReaderTest {
     Catalog schema = Mockito.mock(Catalog.class);
     Dimension dimension = Mockito.mock(Dimension.class);
     RolapHierarchy hierarchy = Mockito.mock(RolapHierarchy.class);
-    Level[] hierarchyAccessLevels = new Level[] { null };
+    List<? extends Level> hierarchyAccessLevels = new ArrayList<>();
+    hierarchyAccessLevels.add(null);
+
     MemberReader delegateMemberReader = Mockito.mock(MemberReader.class);
     HierarchyAccess roleAccess = null;
     Role role = Mockito.mock(Role.class);
@@ -90,7 +92,9 @@ class RestrictedMemberReaderTest {
     Catalog schema = Mockito.mock(Catalog.class);
     Dimension dimension = Mockito.mock(Dimension.class);
     RolapHierarchy hierarchy = Mockito.mock(RolapHierarchy.class);
-    Level[] hierarchyAccessLevels = new Level[] { null };
+    List<? extends Level> hierarchyAccessLevels = new ArrayList<>();
+    hierarchyAccessLevels.add(null);
+
     MemberReader delegateMemberReader = Mockito.mock(MemberReader.class);
     HierarchyAccess roleAccess = null;
     Role role = Mockito.mock(Role.class);
@@ -298,7 +302,8 @@ class RestrictedMemberReaderTest {
       Dimension dimension = Mockito.mock(Dimension.class);
       RolapHierarchy hierarchy = Mockito.mock(RolapHierarchy.class);
 
-      Level[] hierarchyAccessLevels = new Level[] { null };
+      List<? extends Level> hierarchyAccessLevels = new ArrayList<>();
+      hierarchyAccessLevels.add(null);
 
       Mockito.doReturn(schema).when(dimension).getCatalog();
       Mockito.doReturn(dimension).when(hierarchy).getDimension();

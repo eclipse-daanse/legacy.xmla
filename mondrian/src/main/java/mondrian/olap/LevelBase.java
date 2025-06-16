@@ -118,18 +118,18 @@ public abstract class LevelBase
     @Override
 	public Level getChildLevel() {
         int childDepth = depth + 1;
-        Level[] levels = hierarchy.getLevels();
-        return (childDepth < levels.length)
-            ? levels[childDepth]
+        List<? extends Level> levels = hierarchy.getLevels();
+        return (childDepth < levels.size())
+            ? levels.get(childDepth)
             : null;
     }
 
     @Override
 	public Level getParentLevel() {
         int parentDepth = depth - 1;
-        Level[] levels = hierarchy.getLevels();
+        List<? extends Level> levels = hierarchy.getLevels();
         return (parentDepth >= 0)
-            ? levels[parentDepth]
+            ? levels.get(parentDepth)
             : null;
     }
 

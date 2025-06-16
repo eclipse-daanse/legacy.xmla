@@ -164,7 +164,7 @@ public class ValidMeasureCalc extends AbstractProfilingNestedUnknownCalc {
         List<Member> memberList)
     {
         List<Dimension> vMinusBDimensions = new ArrayList<>();
-        Set<Dimension> virtualCubeDims = new HashSet<>(Arrays.asList(virtualCube.getDimensions()));
+        Set<Dimension> virtualCubeDims = new HashSet<>(virtualCube.getDimensions());
         Set<Dimension> nonJoiningDims =
             baseCube.nonJoiningDimensions(virtualCubeDims);
 

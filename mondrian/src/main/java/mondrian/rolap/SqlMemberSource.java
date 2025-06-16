@@ -119,7 +119,7 @@ class SqlMemberSource
     // implement MemberSource
     @Override
 	public int getMemberCount() {
-        RolapLevel[] levels = (RolapLevel[]) hierarchy.getLevels();
+        List<RolapLevel> levels = (List<RolapLevel>) hierarchy.getLevels();
         int count = 0;
         for (RolapLevel level : levels) {
             count += getLevelMemberCount(level);
@@ -268,8 +268,8 @@ class SqlMemberSource
                     context,
                 "while generating query to count members in level " + level);
         int levelDepth = level.getDepth();
-        RolapLevel[] levels = (RolapLevel[]) hierarchy.getLevels();
-        if (levelDepth == levels.length) {
+        List<RolapLevel> levels = (List<RolapLevel>) hierarchy.getLevels();
+        if (levelDepth == levels.size()) {
             // "select count(*) from schema.customer"
             sqlQuery.addSelect("count(*)", null);
             hierarchy.addToFrom(sqlQuery, level.getKeyExp());
@@ -279,7 +279,7 @@ class SqlMemberSource
             List<String> columnList = new ArrayList<>();
             int columnCount = 0;
             for (int i = levelDepth; i >= 0; i--) {
-                RolapLevel level2 = levels[i];
+                RolapLevel level2 = levels.get(i);
                 if (level2.isAll()) {
                      continue;
                 }
@@ -331,7 +331,7 @@ class SqlMemberSource
         } else {
             sqlQuery.setDistinct(true);
             for (int i = levelDepth; i >= 0; i--) {
-                RolapLevel level2 = levels[i];
+                RolapLevel level2 = levels.get(i);
                 if (level2.isAll()) {
                     continue;
                 }
@@ -366,7 +366,7 @@ class SqlMemberSource
         Pair<String, List<BestFitColumnType>> pair = makeKeysSql(context);
         final String sql = pair.left;
         List<BestFitColumnType> types = pair.right;
-        RolapLevel[] levels = (RolapLevel[]) hierarchy.getLevels();
+        List<RolapLevel> levels = (List<RolapLevel>) hierarchy.getLevels();
         SqlStatement stmt =
             RolapUtil.executeQuery(
                 context, sql, types, 0, 0,
@@ -504,7 +504,7 @@ RME is this right
             SqlQuery.newQuery(
                 context,
                 "while generating query to retrieve members of " + hierarchy);
-        RolapLevel[] levels = (RolapLevel[]) hierarchy.getLevels();
+        List<RolapLevel> levels = (List<RolapLevel>) hierarchy.getLevels();
         for (RolapLevel level : levels) {
             if (level.isAll()) {
                 continue;
@@ -601,7 +601,7 @@ RME is this right
     // implement MemberSource
     @Override
 	public List<RolapMember> getRootMembers() {
-        return getMembersInLevel((RolapLevel) hierarchy.getLevels()[0]);
+        return getMembersInLevel((RolapLevel) hierarchy.getLevels().get(0));
     }
 
     /**
@@ -642,7 +642,7 @@ RME is this right
 
         RolapLevel level = (RolapLevel) member.getLevel().getChildLevel();
 
-        RolapLevel[] levels = (RolapLevel[]) hierarchy.getLevels();
+        List<RolapLevel> levels = (List<RolapLevel>) hierarchy.getLevels();
         int levelDepth = level.getDepth();
 
         boolean needsGroupBy =

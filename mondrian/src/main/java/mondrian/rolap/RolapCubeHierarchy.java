@@ -92,7 +92,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
     private final int removePrefixLength;
 
     // redundant copy of {@link #levels} with tigher type
-    private final RolapCubeLevel[] cubeLevels;
+    //private final List<RolapCubeLevel> cubeLevels;
 
     /**
      * Creates a RolapCubeHierarchy.
@@ -187,17 +187,15 @@ public class RolapCubeHierarchy extends RolapHierarchy {
         }
         extractNewAliases(rolapHierarchy.getRelation(), currentRelation);
         this.relation = currentRelation;
-        this.levels =
-            this.cubeLevels =
-                new RolapCubeLevel[rolapHierarchy.getLevels().length];
-        for (int i = 0; i < rolapHierarchy.getLevels().length; i++) {
-            this.cubeLevels[i] =
+        this.levels = new ArrayList<>();
+        for (int i = 0; i < rolapHierarchy.getLevels().size(); i++) {
+            this.levels.add(
                 new RolapCubeLevel(
-                    (RolapLevel) rolapHierarchy.getLevels()[i], this);
+                    (RolapLevel) rolapHierarchy.getLevels().get(i), this));
             if (i == 0 && rolapHierarchy.getAllMember() != null) {
                 RolapCubeLevel allLevel;
                 if (hasAll()) {
-                    allLevel = this.cubeLevels[0];
+                    allLevel = (RolapCubeLevel) this.levels.get(0);
                 } else {
                     // create an all level if one doesn't normally
                     // exist in the hierarchy
@@ -276,10 +274,6 @@ public class RolapCubeHierarchy extends RolapHierarchy {
         return caption;
     }
 
-    @Override
-    public RolapCubeLevel[] getLevels() {
-        return cubeLevels;
-    }
 
     @Override
 	public String getAllMemberName() {
@@ -451,7 +445,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
      */
     private RolapCubeMember bootstrapLookup(RolapMember rolapMember) {
         RolapCubeMember parent = getParent(rolapMember);
-        RolapCubeLevel level = cubeLevels[rolapMember.getLevel().getDepth()];
+        RolapCubeLevel level = (RolapCubeLevel) levels.get(rolapMember.getLevel().getDepth());
         return reader.lookupCubeMember(parent, rolapMember, level);
     }
 
@@ -663,7 +657,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
         @Override
 		public List<RolapMember> getRootMembers() {
             if (rootMembers == null) {
-                rootMembers = getMembersInLevel(cubeLevels[0]);
+                rootMembers = getMembersInLevel((RolapLevel) getLevels().getFirst());
             }
             return rootMembers;
         }
@@ -1020,7 +1014,7 @@ public class RolapCubeHierarchy extends RolapHierarchy {
 
         @Override
 		public List<RolapMember> getRootMembers() {
-            return getMembersInLevel(cubeLevels[0]);
+            return getMembersInLevel((RolapLevel) getLevels().get(0));
         }
 
         @Override

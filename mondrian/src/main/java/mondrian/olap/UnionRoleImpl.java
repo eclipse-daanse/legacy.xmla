@@ -327,7 +327,7 @@ class UnionRoleImpl implements Role {
             int access = -1;
             for (HierarchyAccess hierarchyAccess : list) {
                 if (hierarchyAccess.getBottomLevelDepth()
-                    == hierarchy.getLevels().length)
+                    == hierarchy.getLevels().size())
                 {
                     // No restrictions. Skip.
                     continue;
@@ -391,7 +391,7 @@ class UnionRoleImpl implements Role {
         private boolean isBottomLeveRestricted() {
             for (HierarchyAccess hierarchyAccess : list) {
                 if (hierarchyAccess.getBottomLevelDepth()
-                    == hierarchy.getLevels().length)
+                    == hierarchy.getLevels().size())
                 {
                     return true;
                 }

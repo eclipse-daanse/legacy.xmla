@@ -545,10 +545,10 @@ public abstract class Recognizer {
 
         // In generaly, there is only one cube.
         for (RolapCube cube : findCubes()) {
-            Dimension[] dims = cube.getDimensions();
+            List<? extends Dimension> dims = cube.getDimensions();
             // start dimensions at 1 (0 is measures)
-            for (int j = 1; j < dims.length; j++) {
-                Dimension dim = dims[j];
+            for (int j = 1; j < dims.size(); j++) {
+                Dimension dim = dims.get(j);
                 // Ok, got dimension.
                 // See if any of the levels exist as columns in the
                 // aggTable. This requires applying a map from:
@@ -559,7 +559,7 @@ public abstract class Recognizer {
                 // Remember that the rule is if a level does appear,
                 // then all of the higher levels must also appear.
 
-                Hierarchy[] hierarchies = dim.getHierarchies();
+                List<? extends Hierarchy> hierarchies = dim.getHierarchies();
                 for (Hierarchy hierarchy : hierarchies) {
                     HierarchyUsage[] hierarchyUsages =
                         cube.getUsages(hierarchy);

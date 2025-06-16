@@ -154,7 +154,7 @@ public class SqlContextConstraint
         // measure
         if (measureMembers.isEmpty()) {
             Cube cube = query.getCube();
-            Dimension dimension = cube.getDimensions()[0];
+            Dimension dimension = cube.getDimensions().getFirst();
             query.addMeasuresMembers(
                 dimension.getHierarchy().getDefaultMember());
         }

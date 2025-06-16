@@ -1086,7 +1086,7 @@ class MemberCacheControlTest {
 
         try {
             final Hierarchy storeHierarchy =
-                salesCube.getDimensions()[1].getHierarchies()[0];
+                salesCube.getDimensions().get(1).getHierarchies().get(0);
             assertEquals("Store", storeHierarchy.getName());
             final CacheControl.MemberSet storeMemberSet =
                 cacheControl.createMemberSet(
@@ -1189,7 +1189,7 @@ class MemberCacheControlTest {
             // But you can still use the private all member for purposes like
             // flushing.
             final Hierarchy timeHierarchy =
-                salesCube.getDimensions()[4].getHierarchies()[0];
+                salesCube.getDimensions().get(4).getHierarchies().get(0);
             assertEquals("Time", timeHierarchy.getName());
             final CacheControl.MemberSet timeMemberSet =
                 cacheControl.createMemberSet(

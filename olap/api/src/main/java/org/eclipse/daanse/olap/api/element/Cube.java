@@ -55,7 +55,7 @@ public interface Cube extends OlapElement, MetaElement {
     /**
      * Returns the dimensions of this cube.
      */
-    Dimension[] getDimensions();
+    List<? extends Dimension> getDimensions();
 
     /**
      * Returns the named sets of this cube.

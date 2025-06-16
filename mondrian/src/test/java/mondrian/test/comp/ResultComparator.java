@@ -62,12 +62,12 @@ class ResultComparator {
         NodeList slicerList = xmlRoot.getElementsByTagName("slicer");
 
         Cube cube = result.getQuery().getCube();
-        Dimension[] dims = cube.getDimensions();
+        List<? extends Dimension> dims = cube.getDimensions();
         HashSet<String> defaultDimMembers = new HashSet<>();
 
         for (Dimension dim : dims) {
             String uniqueName =
-                dim.getHierarchies()[0].getDefaultMember().getUniqueName();
+                dim.getHierarchies().getFirst().getDefaultMember().getUniqueName();
             defaultDimMembers.add(uniqueName);
         }
 
@@ -238,7 +238,7 @@ class ResultComparator {
         final Element dataResultXml,
         final Result result)
     {
-        final Dimension[] dimensions =
+        final List<? extends Dimension> dimensions =
             result.getQuery().getCube().getDimensions();
         String axisName = "slicer";
         final Axis slicerAxis = result.getSlicerAxis();
@@ -302,7 +302,7 @@ class ResultComparator {
                 }
             }
         }
-        return dimension.getHierarchies()[0].getDefaultMember();
+        return dimension.getHierarchies().getFirst().getDefaultMember();
     }
 
     private void axisToXml(

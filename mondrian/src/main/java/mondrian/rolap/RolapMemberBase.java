@@ -730,7 +730,7 @@ public class RolapMemberBase
             // Getting the members by Level is the fastest way that I could
             // find for getting all of a hierarchy's members.
             List<List<Member>> list = new ArrayList<>();
-            Level[] levels = hierarchy.getLevels();
+            List<? extends Level> levels = hierarchy.getLevels();
             for (Level level : levels) {
                 List<Member> members =
                     schemaReader.getLevelMembers(level, true);
@@ -753,7 +753,7 @@ public class RolapMemberBase
         Hierarchy hierarchy)
     {
         int cardinality = 0;
-        Level[] levels = hierarchy.getLevels();
+        List<? extends Level> levels = hierarchy.getLevels();
         for (Level level1 : levels) {
             cardinality += schemaReader.getLevelCardinality(level1, true, true);
         }

@@ -27,6 +27,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.CatalogReader;
@@ -66,7 +68,8 @@ import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opencube.junit5.context.TestContextImpl;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import mondrian.olap.RoleImpl;
 import mondrian.olap.SystemWideProperties;
@@ -420,7 +423,7 @@ class RolapCatalogTest {
 
         Level level = mock(Level.class);
         Hierarchy hierarchy = mock(Hierarchy.class);
-        when(hierarchy.getLevels()).thenReturn(new Level[]{level});
+        when(hierarchy.getLevels()).thenAnswer(setupDummyListAnswer(level));
         when(level.getHierarchy()).thenReturn(hierarchy);
         when(cube.lookupHierarchy(any(HierarchyMapping.class))).thenReturn(hierarchy);
         Dimension dimension = mock(Dimension.class);
@@ -449,6 +452,18 @@ class RolapCatalogTest {
         if (expectedMemberAccess != null) {
             assertEquals(expectedMemberAccess, role.getAccess(member));
         }
+    }
+
+    private static  <N> Answer<List<N>> setupDummyListAnswer(N... values) {
+        final List<N> someList = new LinkedList<>(Arrays.asList(values));
+
+        Answer<List<N>> answer = new Answer<>() {
+            @Override
+              public List<N> answer(InvocationOnMock invocation) throws Throwable {
+                return someList;
+            }
+        };
+        return answer;
     }
 
     private void assertMondrianException(

@@ -11,6 +11,7 @@
 */
 package mondrian.rolap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.element.Catalog;
@@ -72,22 +73,22 @@ public class RolapCubeDimension extends RolapDimension {
         this.caption = cubeDim.getOverrideDimensionName();
 
         // create new hierarchies
-        hierarchies = new RolapCubeHierarchy[rolapDim.getHierarchies().length];
+        hierarchies = new ArrayList<>();
 
         RolapCube factCube = null;
         if (cube instanceof RolapVirtualCube) {
           factCube = lookupFactCube(cubeDim, cube.getCatalog());
         }
-        for (int i = 0; i < rolapDim.getHierarchies().length; i++) {
+        for (int i = 0; i < rolapDim.getHierarchies().size(); i++) {
           final RolapCubeHierarchy cubeHierarchy =
                 new RolapCubeHierarchy(
                     this,
                     cubeDim,
-                    (RolapHierarchy) rolapDim.getHierarchies()[i],
-                    ((HierarchyBase) rolapDim.getHierarchies()[i]).getSubName(),
+                    (RolapHierarchy) rolapDim.getHierarchies().get(i),
+                    ((HierarchyBase) rolapDim.getHierarchies().get(i)).getSubName(),
                     hierarchyList.size(),
                     factCube);
-            hierarchies[i] = cubeHierarchy;
+            hierarchies.add(cubeHierarchy);
             hierarchyList.add(cubeHierarchy);
         }
     }

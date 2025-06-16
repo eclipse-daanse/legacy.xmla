@@ -1076,7 +1076,7 @@ public class Util {
      * such level.
      */
     public static Level lookupHierarchyLevel(Hierarchy hierarchy, String s) {
-        final Level[] levels = hierarchy.getLevels();
+        final List<? extends Level> levels = hierarchy.getLevels();
         for (Level level : levels) {
             if (level.getName().equalsIgnoreCase(s)) {
                 return level;

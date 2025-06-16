@@ -15,6 +15,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.CatalogReader;
@@ -80,7 +83,7 @@ class RolapCubeHierarchyTest {
     RolapHierarchy rolapHierarchy = mock(RolapHierarchy.class);
     Hierarchy rolapHierarchy_hierarchy = null;
     String rolapHierarchy_uniqueName = "TheDimUniqueName";
-    Level[] rolapHierarchy_levels = new Level[]{};
+    List<? extends Level> rolapHierarchy_levels = new ArrayList<>();
 
     String subName = null;
 
@@ -132,7 +135,7 @@ class RolapCubeHierarchyTest {
     RolapHierarchy rolapHierarchy = mock(RolapHierarchy.class);
     Hierarchy rolapHierarchy_hierarchy = null;
     String rolapHierarchy_uniqueName = "TheDimUniqueName";
-    Level[] rolapHierarchy_levels = new Level[]{};
+    List<? extends Level> rolapHierarchy_levels = new ArrayList<>();
 
     String subName = null;
 
@@ -177,7 +180,7 @@ class RolapCubeHierarchyTest {
     Hierarchy rolapHierarchy_hierarchy = null;
     String rolapHierarchy_uniqueName = "TheDimUniqueName";
     String dimName = "DimName";
-    Level[] rolapHierarchy_levels = new Level[]{};
+    List<? extends Level> rolapHierarchy_levels = new ArrayList<>();
     QueryMapping rolapHierarchy_relation = mock(TableQueryMapping.class);
     CatalogReader schemaReader = mock(CatalogReader.class);
     Context context = mock(Context.class);
@@ -239,7 +242,7 @@ class RolapCubeHierarchyTest {
     RolapHierarchy rolapHierarchy = mock(RolapHierarchy.class);
     Hierarchy rolapHierarchy_hierarchy = null;
     String rolapHierarchy_uniqueName = "TheDimUniqueName";
-    Level[] rolapHierarchy_levels = new Level[]{};
+    List<? extends Level> rolapHierarchy_levels = new ArrayList<>();
     TableQueryMapping rolapHierarchy_relation = mock(TableQueryMapping.class);
     PhysicalTableMappingImpl table = mock(PhysicalTableMappingImpl.class);
     doReturn("TableName").when(table).getName();

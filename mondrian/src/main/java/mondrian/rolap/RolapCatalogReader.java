@@ -130,12 +130,12 @@ public class RolapCatalogReader
 	public List<Member> getHierarchyRootMembers(Hierarchy hierarchy) {
         final HierarchyAccess hierarchyAccess =
             role.getAccessDetails(hierarchy);
-        final Level[] levels = hierarchy.getLevels();
+        final List<? extends Level> levels = hierarchy.getLevels();
         final Level firstLevel;
         if (hierarchyAccess == null) {
-            firstLevel = levels[0];
+            firstLevel = levels.get(0);
         } else {
-            firstLevel = levels[hierarchyAccess.getTopLevelDepth()];
+            firstLevel = levels.get(hierarchyAccess.getTopLevelDepth());
         }
         return getLevelMembers(firstLevel, true);
     }
@@ -706,14 +706,14 @@ public class RolapCatalogReader
         assert hierarchy != null;
         final HierarchyAccess hierarchyAccess =
             role.getAccessDetails(hierarchy);
-        final Level[] levels = hierarchy.getLevels();
+        final List<Level> levels = (List<Level>) hierarchy.getLevels();
         if (hierarchyAccess == null) {
-            return Arrays.asList(levels);
+            return  levels;
         }
-        Level topLevel = levels[hierarchyAccess.getTopLevelDepth()];
-        Level bottomLevel = levels[hierarchyAccess.getBottomLevelDepth()];
+        Level topLevel = levels.get(hierarchyAccess.getTopLevelDepth());
+        Level bottomLevel = levels.get(hierarchyAccess.getBottomLevelDepth());
         List<Level> restrictedLevels =
-            Arrays.asList(levels).subList(
+            levels.subList(
                 topLevel.getDepth(), bottomLevel.getDepth() + 1);
         assert restrictedLevels.size() >= 1 : "postcondition";
         return restrictedLevels;

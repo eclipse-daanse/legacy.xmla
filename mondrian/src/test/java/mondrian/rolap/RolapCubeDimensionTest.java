@@ -18,6 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -35,7 +36,7 @@ class RolapCubeDimensionTest {
     RolapCube cube = mock(RolapVirtualCube.class);
 
     RolapDimension rolapDim = mock(TestPublicRolapDimension.class);
-    Hierarchy[] rolapDim_hierarchies = new Hierarchy[]{};
+    List<? extends Hierarchy> rolapDim_hierarchies = new ArrayList<>();
     doReturn(rolapDim_hierarchies).when(rolapDim).getHierarchies();
     doReturn(OlapMetaData.empty()).when(rolapDim).getMetaData();
     

@@ -94,7 +94,7 @@ class SqlTupleReaderTest {
     RolapHierarchy hierarchy = mock( RolapHierarchy.class, Answers.RETURNS_MOCKS );
     when( hierarchy.getRelation() ).thenReturn( queryMapping );
     when( targetLevel.getHierarchy() ).thenReturn( hierarchy );
-    when( hierarchy.getLevels() ).thenReturn( new RolapLevel[] { levelIter } );
+    when( hierarchy.getLevels() ).thenAnswer(setupDummyListAnswer(levelIter));
     SqlTupleReader.WhichSelect whichSelect = SqlTupleReader.WhichSelect.LAST;
     JdbcSchema.Table dbTable = mock( JdbcSchema.Table.class, Answers.RETURNS_MOCKS );
     when( dbTable.getColumnUsages( any() ) ).thenReturn( mock( Iterator.class ) );

@@ -442,11 +442,11 @@ public abstract class RolapAggregationManager {
         final CellRequest request)
     {
         final RolapCubeHierarchy hierarchy = member.getHierarchy();
-        final RolapCubeLevel[] levels = hierarchy.getLevels();
-        for (int j = levels.length - 1, depth = member.getLevel().getDepth();
+        final List<RolapCubeLevel> levels = (List<RolapCubeLevel>) hierarchy.getLevels();
+        for (int j = levels.size() - 1, depth = member.getLevel().getDepth();
              j > depth; j--)
         {
-            final RolapCubeLevel level = levels[j];
+            final RolapCubeLevel level = levels.get(j);
             RolapStar.Column column = level.getBaseStarKeyColumn(baseCube);
             if (column != null) {
                 request.addConstrainedColumn(column, null);
@@ -472,7 +472,7 @@ public abstract class RolapAggregationManager {
         } else if (member instanceof RolapCubeHierarchy
             || member instanceof RolapCubeDimension)
         {
-            level = (RolapCubeLevel) member.getHierarchy().getLevels()[0];
+            level = (RolapCubeLevel) member.getHierarchy().getLevels().get(0);
             if (level.isAll()) {
                 level = level.getChildLevel();
             }

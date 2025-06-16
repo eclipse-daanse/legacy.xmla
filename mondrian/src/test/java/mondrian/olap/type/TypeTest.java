@@ -313,7 +313,7 @@ class TypeTest {
         return new MemberType(
             unitSalesMeasure.getDimension(),
             unitSalesMeasure.getDimension().getHierarchy(),
-            unitSalesMeasure.getDimension().getHierarchy().getLevels()[0],
+            unitSalesMeasure.getDimension().getHierarchy().getLevels().getFirst(),
             unitSalesMeasure);
     }
 

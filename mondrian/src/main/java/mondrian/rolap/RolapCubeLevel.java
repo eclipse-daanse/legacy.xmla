@@ -134,13 +134,13 @@ public class RolapCubeLevel extends RolapLevel {
             //  HierarchyUsage is phased out
             if ( getCube() instanceof RolapPhysicalCube) {
                 getCube().createUsage(
-                    (RolapCubeHierarchy) cubeDimensionInner.getHierarchies()[0],
+                    (RolapCubeHierarchy) cubeDimensionInner.getHierarchies().getFirst(),
                     xmlDimension);
             }
             cubeDimensionInner.init(xmlDimension);
             getCube().registerDimension(cubeDimensionInner);
             closedPeerCubeLevel = (RolapCubeLevel)
-                cubeDimensionInner.getHierarchies()[0].getLevels()[1];
+                cubeDimensionInner.getHierarchies().getFirst().getLevels().get(1);
 
             if (getCube() instanceof RolapPhysicalCube) {
                 getCube().closureColumnBitKey.set(

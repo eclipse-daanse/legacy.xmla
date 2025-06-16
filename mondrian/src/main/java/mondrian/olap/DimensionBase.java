@@ -35,7 +35,7 @@ public abstract class DimensionBase
     protected final String name;
     protected final String uniqueName;
     protected final String description;
-    protected Hierarchy[] hierarchies;
+    protected List<Hierarchy> hierarchies;
     protected DimensionType dimensionType;
     private final static String mdxDimensionName = "dimension ''{0}''";
 
@@ -77,13 +77,13 @@ public abstract class DimensionBase
     }
 
     @Override
-	public Hierarchy[] getHierarchies() {
+	public List<? extends Hierarchy> getHierarchies() {
         return hierarchies;
     }
 
     @Override
 	public Hierarchy getHierarchy() {
-        return hierarchies[0];
+        return hierarchies.getFirst();
     }
 
     @Override

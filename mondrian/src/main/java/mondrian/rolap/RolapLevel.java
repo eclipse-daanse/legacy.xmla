@@ -644,7 +644,7 @@ public class RolapLevel extends LevelBase {
             final RolapDimension dimension = ((RolapHierarchy) hierarchy)
                 .createClosedPeerDimension(this, xmlClosure);
             closedPeerLevel =
-                    (RolapLevel) dimension.getHierarchies()[0].getLevels()[1];
+                    (RolapLevel) dimension.getHierarchies().getFirst().getLevels().get(1);
         }
     }
 
@@ -865,7 +865,7 @@ public class RolapLevel extends LevelBase {
     private boolean isTooRagged() {
         // Is this the special case of raggedness that native evaluation
         // is able to handle?
-        if (getDepth() == getHierarchy().getLevels().length - 1) {
+        if (getDepth() == getHierarchy().getLevels().size() - 1) {
             switch (getHideMemberCondition()) {
             case Never:
             case IfBlankName:
@@ -892,7 +892,7 @@ public class RolapLevel extends LevelBase {
     }
 
     public static RolapLevel lookupLevel(
-        RolapLevel[] levels,
+        List<RolapCubeLevel> levels,
         String levelName)
     {
         for (RolapLevel level : levels) {

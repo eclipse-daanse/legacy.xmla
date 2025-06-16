@@ -686,7 +686,7 @@ public class Utils {
         List<DbSchemaTablesResponseRow> result
     ) {
         if (hierarchy.getLevels() != null) {
-            result.addAll(Arrays.stream(hierarchy.getLevels()).map(l -> {
+            result.addAll(hierarchy.getLevels().stream().map(l -> {
                 String cubeName = cube.getName();
                 String hierarchyName = getHierarchyName(hierarchy.getName(), dimensionName);
                 String levelName = l.getName();
@@ -1062,7 +1062,7 @@ public class Utils {
                         oMemberUniqueName, oMemberType, emitInvisibleMembers);
                 }
             }
-            List<Dimension> dimensions = cube.getDimensions() == null ? List.of() : Arrays.asList(cube.getDimensions());
+            List<? extends Dimension> dimensions = cube.getDimensions() == null ? List.of() : cube.getDimensions();
             return getDimensionsWithFilterByUniqueName(dimensions, oDimensionUniqueName)
                 .stream()
                 .map(d -> getMdSchemaMembersResponseRow(catalogName, schemaName, cube, d,
@@ -1081,8 +1081,8 @@ public class Utils {
         Optional<MemberTypeEnum> oMemberType,
         Optional<Boolean> emitInvisibleMembers
     ) {
-        List<Hierarchy> hierarchies = dimension.getHierarchies() == null ? List.of() :
-            Arrays.asList(dimension.getHierarchies());
+        List<? extends Hierarchy> hierarchies = dimension.getHierarchies() == null ? List.of() :
+            dimension.getHierarchies();
         return getHierarchiesWithFilterByUniqueName(hierarchies, oHierarchyUniqueName)
             .stream()
             .map(h -> getMdSchemaMembersResponseRow(catalogName, schemaName, cube, h,
@@ -1105,20 +1105,20 @@ public class Utils {
                     "LevelNumber invalid");
                 return List.of();
             }
-            Level[] levels = hierarchy.getLevels();
-            if (levelNumber >= levels.length) {
+            List<? extends Level> levels = hierarchy.getLevels();
+            if (levelNumber >= levels.size()) {
                 LOGGER.warn(
                     "LevelNumber ("
                         + levelNumber
                         + ") is greater than number of levels ("
-                        + levels.length
+                        + levels.size()
                         + ") for hierarchy \""
                         + hierarchy.getUniqueName()
                         + "\"");
                 return List.of();
             }
 
-            Level level = levels[levelNumber];
+            Level level = levels.get(levelNumber);
             List<Member> members = cube.getLevelMembers(level, true);
             return getMdSchemaMembersResponseRow(catalogName, schemaName, cube, members,
                 oMemberUniqueName, oMemberType, emitInvisibleMembers);
@@ -1127,7 +1127,7 @@ public class Utils {
             // the Hierarchy (rather than getting them one at a time).
             // The value returned is not used at this point but they are
             // now cached in the SchemaReader.
-            List<Level> levels = hierarchy.getLevels() == null ? List.of() : Arrays.asList(hierarchy.getLevels());
+            List<? extends Level> levels = hierarchy.getLevels() == null ? List.of() : hierarchy.getLevels();
             return levels.stream().map(l -> getMdSchemaMembersResponseRow(catalogName, schemaName, cube,
                 cube.getLevelMembers(l, true), oMemberUniqueName, oMemberType, emitInvisibleMembers)).
                 flatMap(Collection::stream).toList();
@@ -1244,8 +1244,8 @@ public class Utils {
         return List.of(r);
     }
 
-    private static List<Hierarchy> getHierarchiesWithFilterByUniqueName(
-        List<Hierarchy> hierarchies,
+    private static List<? extends Hierarchy> getHierarchiesWithFilterByUniqueName(
+        List<? extends Hierarchy> hierarchies,
         Optional<String> oHierarchyUniqueName
     ) {
         if (oHierarchyUniqueName.isPresent()) {
@@ -1288,7 +1288,7 @@ public class Utils {
         Optional<String> oDimensionUniqueName,
         Optional<VisibilityEnum> oDimensionVisibility
     ) {
-        List<Dimension> dimensions = cube.getDimensions() == null ? List.of() : Arrays.asList(cube.getDimensions());
+        List<? extends Dimension> dimensions = cube.getDimensions() == null ? List.of() : cube.getDimensions();
         return getDimensionsWithFilterByUniqueName(dimensions, oDimensionUniqueName)
             .stream()
             .map(d -> getMdSchemaMeasureGroupDimensionsResponseRow(catalogName, schemaName, cube, d,
@@ -1348,7 +1348,7 @@ public class Utils {
         Optional<VisibilityEnum> oDimensionVisibility,
         Optional<Boolean> deep
     ) {
-        List<Dimension> dimensions = cube.getDimensions() == null ? List.of() : Arrays.asList(cube.getDimensions());
+        List<? extends Dimension> dimensions = cube.getDimensions() == null ? List.of() : cube.getDimensions();
         return getDimensionsWithFilterByName(
             getDimensionsWithFilterByUniqueName(dimensions, oDimensionUniqueName), oDimensionName)
             .stream()
@@ -1373,7 +1373,7 @@ public class Utils {
                 cube.getName() + " Cube - "
                     + dimension.getName() + " Dimension";
         }
-        List<Dimension> dimensions = cube.getDimensions() != null ? Arrays.asList(cube.getDimensions()) : List.of();
+        List<? extends Dimension> dimensions = cube.getDimensions() != null ? cube.getDimensions() : List.of();
         //Is this the number of primaryKey members there are??
         // According to microsoft this is:
         //    "The number of members in the key attribute."
@@ -1387,11 +1387,11 @@ public class Utils {
 
         String firstHierarchyUniqueName = null;
         Level lastLevel = null;
-        if (dimension.getHierarchies() != null && dimension.getHierarchies().length > 0) {
-            Hierarchy firstHierarchy = dimension.getHierarchies()[0];
+        if (dimension.getHierarchies() != null && dimension.getHierarchies().size() > 0) {
+            Hierarchy firstHierarchy = dimension.getHierarchies().getFirst();
             firstHierarchyUniqueName = firstHierarchy.getUniqueName();
-            if (firstHierarchy.getLevels() != null && firstHierarchy.getLevels().length > 0) {
-                lastLevel = firstHierarchy.getLevels()[firstHierarchy.getLevels().length - 1];
+            if (firstHierarchy.getLevels() != null && firstHierarchy.getLevels().size() > 0) {
+                lastLevel = firstHierarchy.getLevels().getLast();
             }
         }
             /*
@@ -1520,7 +1520,7 @@ public class Utils {
         Optional<String> oLevelUniqueName,
         Optional<VisibilityEnum> oLevelVisibility
     ) {
-        List<Dimension> dimensions = cube.getDimensions() == null ? List.of() : Arrays.asList(cube.getDimensions());
+        List<? extends Dimension> dimensions = cube.getDimensions() == null ? List.of() : cube.getDimensions();
         return getDimensionsWithFilterByUniqueName(dimensions, oDimensionUniqueName)
             .stream()
             .map(d -> getMdSchemaLevelsResponseRow(cube, catalogName, schemaName, cube.getName(), d, oHierarchyUniqueName,
@@ -1529,8 +1529,8 @@ public class Utils {
             .flatMap(Collection::stream).toList();
     }
 
-    private static List<Dimension> getDimensionsWithFilterByUniqueName(
-        List<Dimension> dimensions,
+    private static List<? extends Dimension> getDimensionsWithFilterByUniqueName(
+        List<? extends Dimension> dimensions,
         Optional<String> oDimensionUniqueName
     ) {
         if (oDimensionUniqueName.isPresent()) {
@@ -1539,8 +1539,8 @@ public class Utils {
         return dimensions;
     }
 
-    private static List<Dimension> getDimensionsWithFilterByName(
-        List<Dimension> dimensions,
+    private static List<? extends Dimension> getDimensionsWithFilterByName(
+        List<? extends Dimension> dimensions,
         Optional<String> oDimensionName
     ) {
         if (oDimensionName.isPresent()) {
@@ -1560,8 +1560,8 @@ public class Utils {
         Optional<String> oLevelUniqueName,
         Optional<VisibilityEnum> oLevelVisibility
     ) {
-        List<Hierarchy> hierarchies = dimension.getHierarchies() == null ? List.of() :
-            Arrays.asList(dimension.getHierarchies());
+        List<? extends Hierarchy> hierarchies = dimension.getHierarchies() == null ? List.of() :
+            dimension.getHierarchies();
         return getHierarchiesWithFilterByUniqueName(hierarchies, oHierarchyUniqueName)
             .stream().map(h -> getMdSchemaLevelsResponseRow(
                 cube,
@@ -1575,8 +1575,8 @@ public class Utils {
                 oLevelVisibility)).flatMap(Collection::stream).toList();
     }
 
-    private static List<Hierarchy> getHierarchiesWithFilterByName(
-        List<Hierarchy> hierarchies,
+    private static List<? extends Hierarchy> getHierarchiesWithFilterByName(
+        List<? extends Hierarchy> hierarchies,
         Optional<String> oHierarchyName
     ) {
         if (oHierarchyName.isPresent()) {
@@ -1596,9 +1596,9 @@ public class Utils {
         Optional<String> oLevelUniqueName,
         Optional<VisibilityEnum> oLevelVisibility
     ) {
-        List<Level> levels = h.getLevels() == null ? List.of() : Arrays.asList(h.getLevels());
+        List<? extends Level> levels = h.getLevels() == null ? List.of() : h.getLevels();
         List<MdSchemaLevelsResponseRow> res = new ArrayList();
-        List<Level> ls = getLevelsWithFilterByUniqueName(getLevelsWithFilterByName(levels, oLevelName), oLevelUniqueName);
+        List<? extends Level> ls = getLevelsWithFilterByUniqueName(getLevelsWithFilterByName(levels, oLevelName), oLevelUniqueName);
         for (Level level : ls) {
                 String desc = level.getDescription();
                 if (desc == null) {
@@ -1810,8 +1810,8 @@ public class Utils {
         };
     }
 
-    private static List<Level> getLevelsWithFilterByName(
-        List<Level> levels,
+    private static List<? extends Level> getLevelsWithFilterByName(
+        List<? extends Level> levels,
         Optional<String> oLevelName
     ) {
         if (oLevelName.isPresent()) {
@@ -1820,8 +1820,8 @@ public class Utils {
         return levels;
     }
 
-    private static List<Level> getLevelsWithFilterByUniqueName(
-        List<Level> levels,
+    private static List<? extends Level> getLevelsWithFilterByUniqueName(
+        List<? extends Level> levels,
         Optional<String> oLevelUniqueNameName
     ) {
         if (oLevelUniqueNameName.isPresent()) {
@@ -1931,7 +1931,7 @@ public class Utils {
         Optional<Boolean> deep
     ) {
         List<MdSchemaHierarchiesResponseRow> result = new ArrayList<>();
-        List<Dimension> dimensions = c.getDimensions() == null ? List.of() : Arrays.asList(c.getDimensions());
+        List<? extends Dimension> dimensions = c.getDimensions() == null ? List.of() : c.getDimensions();
         int ordinal = 0;
         for (Dimension dimension : dimensions) {
             if (!oDimensionUniqueName.isPresent() || oDimensionUniqueName.get().equals(dimension.getUniqueName())) {
@@ -1948,7 +1948,7 @@ public class Utils {
                     oHierarchyOrigin,
                     deep));
             }
-            ordinal += dimension.getHierarchies().length;
+            ordinal += dimension.getHierarchies().size();
         }
         return result;
     }
@@ -1966,8 +1966,8 @@ public class Utils {
         Optional<Integer> oHierarchyOrigin,
         Optional<Boolean> deep
     ) {
-        List<Hierarchy> hierarchies = dimension.getHierarchies() == null ? List.of() :
-            Arrays.asList(dimension.getHierarchies());
+        List<? extends Hierarchy> hierarchies = dimension.getHierarchies() == null ? List.of() :
+            dimension.getHierarchies();
 
         return getHierarchiesWithFilterByName(getHierarchiesWithFilterByUniqueName(hierarchies, oHierarchyName),
 oHierarchyName)
@@ -2041,7 +2041,7 @@ oHierarchyName)
         }
 
         final List<Member> levelMembers = cube.getLevelMembers(
-                    hierarchy.getLevels()[0], true);
+                    hierarchy.getLevels().getFirst(), true);
         return new MdSchemaHierarchiesResponseRowR(
             Optional.ofNullable(catalogName),
             Optional.ofNullable(schemaName),
@@ -2233,7 +2233,7 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : catalog.getCubes();
                 oCubeSource,
                 oPropertyVisibility);
         } else {
-            List<Dimension> dimensions = cube.getDimensions() == null ? List.of() : Arrays.asList(cube.getDimensions());
+            List<? extends Dimension> dimensions = cube.getDimensions() == null ? List.of() : cube.getDimensions();
             return getDimensionsWithFilterByUniqueName(dimensions, oDimensionUniqueName)
                 .stream().filter(d -> d != null)
                 .map(d -> getMdSchemaMeasuresResponseRow(catalogName, schemaName, cube, d,
@@ -2258,8 +2258,8 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : catalog.getCubes();
         Optional<CubeSourceEnum> oCubeSource,
         Optional<VisibilityEnum> oPropertyVisibility
     ) {
-        List<Hierarchy> hierarchies = dimension.getHierarchies() == null ? List.of() :
-            Arrays.asList(dimension.getHierarchies());
+        List<? extends Hierarchy> hierarchies = dimension.getHierarchies() == null ? List.of() :
+            dimension.getHierarchies();
         return getHierarchiesWithFilterByUniqueName(hierarchies, oHierarchyUniqueName)
             .stream().filter(h -> h != null)
             .map(h -> getMdSchemaPropertiesResponseRow(catalogName, schemaName, cube, h,
@@ -2280,7 +2280,7 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : catalog.getCubes();
         Optional<CubeSourceEnum> oCubeSource,
         Optional<VisibilityEnum> oPropertyVisibility
     ) {
-        List<Level> levels = hierarchy.getLevels() == null ? List.of() : Arrays.asList(hierarchy.getLevels());
+        List<? extends Level> levels = hierarchy.getLevels() == null ? List.of() : hierarchy.getLevels();
         return levels.stream().map(l -> getMdSchemaPropertiesResponseRow(catalogName,
             schemaName, cube, l, oPropertyName, oPropertyOrigin, oCubeSource, oPropertyVisibility))
             .flatMap(Collection::stream).toList();
@@ -2425,9 +2425,9 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : catalog.getCubes();
         for (Dimension dimension : cube.getDimensions()) {
             if (!DimensionType.MEASURES_DIMENSION.equals(dimension.getDimensionType())) {
                 for (Hierarchy hierarchy : dimension.getHierarchies()) {
-                    Level[] levels = hierarchy.getLevels();
-                    if (levels != null && levels.length > 0) {
-                        Level lastLevel = levels[levels.length - 1];
+                    List<? extends Level> levels = hierarchy.getLevels();
+                    if (levels != null && levels.size() > 0) {
+                        Level lastLevel = levels.getLast();
                         if (j++ > 0) {
                             builder.append(',');
                         }

@@ -85,7 +85,7 @@ public class LastNonEmptyCalc extends AbstractProfilingNestedMemberCalc {
         final Hierarchy hierarchy = tupleListCalc.getType().getHierarchy();
         return (hierarchy == null)
             ? tupleListCalc.getType().getDimension()
-                .getHierarchies()[0].getNullMember()
+                .getHierarchies().getFirst().getNullMember()
             : hierarchy.getNullMember();
 
     }

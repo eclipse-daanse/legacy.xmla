@@ -29,6 +29,8 @@
  */
 package org.eclipse.daanse.olap.api.element;
 
+import java.util.List;
+
 /**
  * A <code>Dimension</code> represents a dimension of a cube.
  *
@@ -41,7 +43,7 @@ public interface Dimension extends OlapElement, MetaElement {
     /**
      * Returns an array of the hierarchies which belong to this dimension.
      */
-    Hierarchy[] getHierarchies();
+    List<? extends Hierarchy> getHierarchies();
 
     /**
      * Returns whether this is the <code>[Measures]</code> dimension.

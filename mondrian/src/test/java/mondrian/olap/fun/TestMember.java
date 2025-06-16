@@ -264,7 +264,7 @@ public Dimension getDimension() {
 
   private static class MockDimension implements Dimension {
     @Override
-	public Hierarchy[] getHierarchies() {
+	public List<? extends Hierarchy> getHierarchies() {
       throw new UnsupportedOperationException();
     }
 

@@ -44,12 +44,12 @@ public class OpeningClosingPeriodCalc extends AbstractProfilingNestedMemberCalc{
         Level level;
         if (levelCalc == null) {
             int targetDepth = member.getLevel().getDepth() + 1;
-            Level[] levels = member.getHierarchy().getLevels();
+            List<? extends Level> levels = member.getHierarchy().getLevels();
 
-            if (levels.length <= targetDepth) {
+            if (levels.size() <= targetDepth) {
                 return member.getHierarchy().getNullMember();
             }
-            level = levels[targetDepth];
+            level = levels.get(targetDepth);
         } else {
             level = levelCalc.evaluate(evaluator);
         }

@@ -1736,7 +1736,7 @@ public class TestUtil {
 
 	public static Dimension getDimensionWithName(
 			String name,
-			Dimension[] dimensions)
+			List<? extends Dimension> dimensions)
 	{
 		Dimension resultDimension = null;
 		for (Dimension dimension : dimensions) {
@@ -1892,15 +1892,15 @@ public class TestUtil {
 	    return cubes.stream().filter(c -> name.equals(c.getName())).findFirst();
     }
 
-    public static Optional<Dimension> getDimensionByNameFromArray(Dimension[] dimensions, String name){
-        return Arrays.stream(dimensions).filter(d -> name.equals(d.getName())).findFirst();
+    public static Optional<? extends Dimension> getDimensionByNameFromArray(List<? extends Dimension> dimensions, String name){
+        return dimensions.stream().filter(d -> name.equals(d.getName())).findFirst();
     }
 
-    public static Optional<Hierarchy> getHierarchyByNameFromArray(Hierarchy[] hierarchies, String name){
-        return Arrays.stream(hierarchies).filter(h -> name.equals(h.getName())).findFirst();
+    public static Optional<? extends Hierarchy> getHierarchyByNameFromArray(List<? extends Hierarchy> hierarchies, String name){
+        return hierarchies.stream().filter(h -> name.equals(h.getName())).findFirst();
     }
 
-    public static Optional<Level> getLevelByNameFromArray(Level[] hierarchies, String name){
-        return Arrays.stream(hierarchies).filter(l -> name.equals(l.getName())).findFirst();
+    public static Optional<? extends Level> getLevelByNameFromArray(List<? extends Level> hierarchies, String name){
+        return hierarchies.stream().filter(l -> name.equals(l.getName())).findFirst();
     }
 }
