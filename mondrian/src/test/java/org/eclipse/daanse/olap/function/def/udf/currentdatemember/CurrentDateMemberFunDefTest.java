@@ -31,9 +31,9 @@ class CurrentDateMemberFunDefTest {
     @Disabled //TODO: UserDefinedFunction
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCurrentDateMemberUdf(Context context) {
+    void testCurrentDateMemberUdf(Context<?> context) {
         //TODO: context redesign
-        //Assertions.fail("Handle comment , Context redesign nedded");
+        //Assertions.fail("Handle comment , Context<?> redesign nedded");
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -68,7 +68,7 @@ class CurrentDateMemberFunDefTest {
     */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testGetReturnType(Context context) {
+    void testGetReturnType(Context<?> context) {
         Connection connection=context.getConnectionWithDefaultRole();
         String query = "WITH MEMBER [Time].[Time].[YTD] AS SUM( YTD(CurrentDateMember"
              + "([Time].[Time], '[\"Time\"]\\.[\"Time\"]\\.[yyyy]\\.[Qq].[m]', EXACT)), Measures.[Unit Sales]) SELECT Time.Time.YTD on 0 FROM sales";

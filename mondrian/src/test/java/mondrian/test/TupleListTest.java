@@ -59,7 +59,7 @@ class TupleListTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testUnaryTupleList(Context context) {
+    void testUnaryTupleList(Context<?> context) {
         // empty list
         final TupleList list0 = new UnaryTupleList();
         assertTrue(list0.isEmpty());
@@ -98,7 +98,7 @@ class TupleListTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testArrayTupleList(Context context) {
+    void testArrayTupleList(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         final Member genderFMember = xxx(connection, "[Gender].[F]");
         final Member genderMMember = xxx(connection,"[Gender].[M]");
@@ -181,7 +181,7 @@ class TupleListTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDelegatingTupleList(Context context) {
+    void testDelegatingTupleList(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         final Member genderFMember = xxx(connection, "[Gender].[F]");
         final Member genderMMember = xxx(connection, "[Gender].[M]");
@@ -208,7 +208,7 @@ class TupleListTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDelegatingTupleListSlice(Context context) {
+    void testDelegatingTupleListSlice(Context<?> context) {
         // Functional test.
         Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,

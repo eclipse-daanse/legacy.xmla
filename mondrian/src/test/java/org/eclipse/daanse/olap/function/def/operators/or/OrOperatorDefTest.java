@@ -32,34 +32,34 @@ class OrOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOr2(Context context) {
+    void testOr2(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=0 OR 0=0 ", true );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrAssociativity1(Context context) {
+    void testOrAssociativity1(Context<?> context) {
         // Would give 'false' if OR were stronger than AND (wrong!)
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=1 AND 1=0 OR 1=1 ", true );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrAssociativity2(Context context) {
+    void testOrAssociativity2(Context<?> context) {
         // Would give 'false' if OR were stronger than AND (wrong!)
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=1 OR 1=0 AND 1=1 ", true );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrAssociativity3(Context context) {
+    void testOrAssociativity3(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " (1=0 OR 1=1) AND 1=1 ", true );
     }
 
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testComplexOrExpr(Context context) {
+    void testComplexOrExpr(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         switch (getDatabaseProduct(TestUtil.getDialect(connection).getDialectName())) {
             case INFOBRIGHT:

@@ -572,7 +572,7 @@ public interface CatalogReader {
     Map<? extends Member, AccessMember>
         getMemberChildrenWithDetails(Member member, Evaluator evaluator);
 
-    Context getContext();
+    Context<?> getContext();
 
     List<? extends DatabaseSchema> getDatabaseSchemas();
 }

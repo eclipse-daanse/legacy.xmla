@@ -33,7 +33,7 @@ class ParentFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testParent(Context context) {
+    void testParent(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
             "[Gender].Parent",
@@ -49,8 +49,8 @@ class ParentFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testParentPC(Context context) {
-        //final Context testContext = getContext().withCube( "HR" );
+    void testParentPC(Context<?> context) {
+        //final Context<?> testContext<?> = getContext().withCube( "HR" );
         Connection connection = context.getConnectionWithDefaultRole();
         assertAxisReturns(connection, "HR",
             "[Employees].Parent",
@@ -89,7 +89,7 @@ class ParentFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBasic5(Context context) {
+    void testBasic5(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
                 "select{ [Product].[All Products].[Drink].Parent} on columns "
@@ -101,7 +101,7 @@ class ParentFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFirstInLevel5(Context context) {
+    void testFirstInLevel5(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Time].[1997].[Q2].[4].Parent} on columns,"
@@ -113,7 +113,7 @@ class ParentFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAll5(Context context) {
+    void testAll5(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Time].[1997].[Q2].Parent} on columns,"

@@ -201,9 +201,9 @@ public class OlapExecuteService implements ExecuteService {
 
     @Override
     public CancelResponse cancel(CancelRequest cancel, RequestMetaData metaData, UserPrincipal userPrincipal) {
-        List<Context> contexts = contextsListSupplyer.getContexts();
+        List<Context<?>> contexts = contextsListSupplyer.getContexts();
         // TODO: Context should have cencel with session
-        for (Context context : contexts) {
+        for (Context<?> context : contexts) {
             try {
                 final Connection connection = context.getConnection(userPrincipal.roles());
                 /*
@@ -216,8 +216,8 @@ public class OlapExecuteService implements ExecuteService {
                  * ((mondrian.xmla.impl.DefaultXmlaRequest)xmlaRequest).setProperty(CANCELED,
                  * "true"); } }
                  */
-
-                for (Statement statement : connection.getContext().getStatements(connection)) {
+                Context<Connection> cont = (Context<Connection>) connection.getContext();
+                for (Statement statement : cont.getStatements(connection)) {
                     statement.cancel();
                 }
                 /*
@@ -247,7 +247,7 @@ public class OlapExecuteService implements ExecuteService {
         Optional<String> oCatalog = statementRequest.properties().catalog();
         if (oCatalog.isPresent()) {
             String catalogName = oCatalog.get();
-            Optional<Context> oContext = contextsListSupplyer.getContexts().stream()
+            Optional<Context<?>> oContext = contextsListSupplyer.getContexts().stream()
                     .filter(ctx -> catalogName.equals(ctx.getName())).findAny();
             Context context = oContext.get();
             String statement = statementRequest.command().statement();

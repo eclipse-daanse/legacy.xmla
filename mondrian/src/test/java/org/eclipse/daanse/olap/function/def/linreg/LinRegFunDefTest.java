@@ -36,7 +36,7 @@ class LinRegFunDefTest {
     @Disabled //disabled for CI build
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void _testLinRegAll(Context context) {
+    void _testLinRegAll(Context<?> context) {
         // We have not implemented the LastPeriods function, so we use
         //   [Time].CurrentMember.Lag(9) : [Time].CurrentMember
         // is equivalent to
@@ -109,7 +109,7 @@ class LinRegFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLinRegPointMonth(Context context) {
+    void testLinRegPointMonth(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER \n"
                 + "[Measures].[Test] as \n"
@@ -169,7 +169,7 @@ class LinRegFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLinRegIntercept(Context context) {
+    void testLinRegIntercept(Context<?> context) {
         FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
             "LinRegIntercept([Time].[Month].members,"
                 + " [Measures].[Unit Sales], [Measures].[Store Sales])",
@@ -239,7 +239,7 @@ Intel platforms):
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLinRegSlope(Context context) {
+    void testLinRegSlope(Context<?> context) {
         FunctionTest.assertExprReturns(context.getConnectionWithDefaultRole(),
             "LinRegSlope([Time].[Month].members,"
                 + " [Measures].[Unit Sales], [Measures].[Store Sales])",
@@ -283,7 +283,7 @@ Intel platforms):
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLinRegPoint(Context context) {
+    void testLinRegPoint(Context<?> context) {
         // NOTE: mdx does not parse
         if ( false ) {
             assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -342,7 +342,7 @@ Intel platforms):
     @Disabled //disabled for CI build
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void _testLinRegR2(Context context) {
+    void _testLinRegR2(Context<?> context) {
         // Why would R2 equal the slope
         if ( false ) {
             assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -380,7 +380,7 @@ Intel platforms):
     @Disabled //disabled for CI build
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void _testLinRegVariance(Context context) {
+    void _testLinRegVariance(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LinRegVariance([Time].[Month].members,"
                 + " [Measures].[Unit Sales], [Measures].[Store Sales])",

@@ -27,19 +27,19 @@ class EqualStringOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStringEquals(Context context) {
+    void testStringEquals(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " \"foo\" = \"bar\" ", false );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStringEqualsAssociativity(Context context) {
+    void testStringEqualsAssociativity(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " \"foo\" = \"fo\" || \"o\" ", true );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStringEqualsEmpty(Context context) {
+    void testStringEqualsEmpty(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " \"\" = \"\" ", true );
     }
 

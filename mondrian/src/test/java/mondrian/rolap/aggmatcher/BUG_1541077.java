@@ -37,7 +37,7 @@ public class BUG_1541077 extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    public void testStoreCount(Context context) throws Exception {
+    public void testStoreCount(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
@@ -63,7 +63,7 @@ public class BUG_1541077 extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    public void testSalesCount(Context context) throws Exception {
+    public void testSalesCount(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
@@ -89,7 +89,7 @@ public class BUG_1541077 extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    public void testTotalAmount(Context context) throws Exception {
+    public void testTotalAmount(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
@@ -115,7 +115,7 @@ public class BUG_1541077 extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    public void testBug1541077(Context context) throws Exception {
+    public void testBug1541077(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);

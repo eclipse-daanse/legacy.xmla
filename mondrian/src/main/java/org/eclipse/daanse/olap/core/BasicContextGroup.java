@@ -43,9 +43,9 @@ public class BasicContextGroup implements ContextGroup {
 	public static final String REF_NAME_CONTEXTS = "context";
 
 
-	private List<Context> contexts = new CopyOnWriteArrayList<Context>();
-	private List<Context> contextsValid = List.of();
-	private List<Context> contextsFailing = List.of();
+	private List<Context<?>> contexts = new CopyOnWriteArrayList<Context<?>>();
+	private List<Context<?>> contextsValid = List.of();
+	private List<Context<?>> contextsFailing = List.of();
 
 	private BasicContextGroupConfig config;
 
@@ -87,8 +87,8 @@ public class BasicContextGroup implements ContextGroup {
 				// And Collect them in a Set
 				.collect(Collectors.toSet());
 
-		List<Context> tmpValid = new ArrayList<>();
-		List<Context> tmpFailing = new ArrayList<>();
+		List<Context<?>> tmpValid = new ArrayList<>();
+		List<Context<?>> tmpFailing = new ArrayList<>();
 		contexts.stream().forEach(c -> {
 			if (duplicats.contains(c.getName())) {
 				tmpFailing.add(c);
@@ -100,7 +100,7 @@ public class BasicContextGroup implements ContextGroup {
 		contextsFailing = tmpFailing;
 	}
 
-	public List<Context> getValidContexts() {
+	public List<Context<?>> getValidContexts() {
 		return contextsValid;
 	}
 

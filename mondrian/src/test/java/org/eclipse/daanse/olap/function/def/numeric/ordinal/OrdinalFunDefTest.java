@@ -29,8 +29,8 @@ class OrdinalFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrdinal(Context context) {
-        //final Context testContext =
+    void testOrdinal(Context<?> context) {
+        //final Context<?> testContext<?> =
         //  getContext().withCube( "Sales Ragged" );
         Connection connection = context.getConnectionWithDefaultRole();
         Cell cell =

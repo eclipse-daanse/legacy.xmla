@@ -27,7 +27,7 @@ class SubsetFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSubset(Context context) {
+    void testSubset(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Subset([Promotion Media].Children, 7, 2)",
             "[Promotion Media].[Promotion Media].[Product Attachment]\n"
@@ -36,7 +36,7 @@ class SubsetFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSubsetNegativeCount(Context context) {
+    void testSubsetNegativeCount(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Subset([Promotion Media].Children, 3, -1)",
             "" );
@@ -44,7 +44,7 @@ class SubsetFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSubsetNegativeStart(Context context) {
+    void testSubsetNegativeStart(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Subset([Promotion Media].Children, -2, 4)",
             "" );
@@ -52,7 +52,7 @@ class SubsetFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSubsetDefault(Context context) {
+    void testSubsetDefault(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Subset([Promotion Media].Children, 11)",
             "[Promotion Media].[Promotion Media].[Sunday Paper, Radio]\n"
@@ -62,7 +62,7 @@ class SubsetFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSubsetOvershoot(Context context) {
+    void testSubsetOvershoot(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Subset([Promotion Media].Children, 15)",
             "" );
@@ -70,7 +70,7 @@ class SubsetFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSubsetEmpty(Context context) {
+    void testSubsetEmpty(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Subset([Gender].[F].Children, 1)",
             "" );

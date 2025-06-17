@@ -27,7 +27,7 @@ class StdevFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStdev(Context context) {
+    void testStdev(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "STDEV({[Store].[All Stores].[USA].children},[Measures].[Store Sales])",
             "65,825.45" );

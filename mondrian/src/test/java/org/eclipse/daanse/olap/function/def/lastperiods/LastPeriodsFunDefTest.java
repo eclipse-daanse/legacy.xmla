@@ -26,7 +26,7 @@ class LastPeriodsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLastPeriods(Context context) {
+    void testLastPeriods(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "LastPeriods(0, [Time].[1998])", "" );
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",

@@ -27,7 +27,7 @@ class PrevMemberFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAll2(Context context) {
+    void testAll2(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(), "select {[Gender].PrevMember} ON COLUMNS from Sales" );
         // previous to [Gender].[All] is null, so no members are returned
@@ -36,7 +36,7 @@ class PrevMemberFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBasic(Context context) {
+    void testBasic(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Gender].[M].PrevMember} ON COLUMNS from Sales" );
@@ -47,7 +47,7 @@ class PrevMemberFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFirstInLevel(Context context) {
+    void testFirstInLevel(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Gender].[F].PrevMember} ON COLUMNS from Sales" );
@@ -56,7 +56,7 @@ class PrevMemberFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAll(Context context) {
+    void testAll(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(), "select {[Gender].PrevMember} ON COLUMNS from Sales" );
         // previous to [Gender].[All] is null, so no members are returned

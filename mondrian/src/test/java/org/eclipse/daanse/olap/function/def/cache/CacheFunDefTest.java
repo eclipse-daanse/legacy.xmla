@@ -28,7 +28,7 @@ class CacheFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCache(Context context) {
+    void testCache(Context<?> context) {
         // test various data types: integer, string, member, set, tuple
         assertExprReturns(context.getConnectionWithDefaultRole(), "Cache(1 + 2)", "3" );
         assertExprReturns(context.getConnectionWithDefaultRole(), "Cache('foo' || 'bar')", "foobar" );

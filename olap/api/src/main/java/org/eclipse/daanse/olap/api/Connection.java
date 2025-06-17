@@ -142,7 +142,7 @@ public interface Connection {
      */
     DataSource getDataSource();
 
-    Context getContext();
+    Context<?> getContext();
 
     Scenario getScenario();
 

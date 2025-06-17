@@ -33,7 +33,7 @@ import mondrian.rolap.RolapCatalogCache;
 class StrToMemberFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStrToMember(Context context) {
+    void testStrToMember(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(\"[Time].[1997].[Q2].[4]\").Name",
             "4" );
@@ -41,7 +41,7 @@ class StrToMemberFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStrToMemberUniqueName(Context context) {
+    void testStrToMemberUniqueName(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(\"[Store].[USA].[CA]\").Name",
             "CA" );
@@ -49,7 +49,7 @@ class StrToMemberFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStrToMemberFullyQualifiedName(Context context) {
+    void testStrToMemberFullyQualifiedName(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "StrToMember(\"[Store].[All Stores].[USA].[CA]\").Name",
             "CA" );
@@ -57,7 +57,7 @@ class StrToMemberFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStrToMemberNull(Context context) {
+    void testStrToMemberNull(Context<?> context) {
         // SSAS 2005 gives "#Error An MDX expression was expected. An empty
         // expression was specified."
         assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
@@ -78,7 +78,7 @@ class StrToMemberFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStrToMemberIgnoreInvalidMembers(Context context) {
+    void testStrToMemberIgnoreInvalidMembers(Context<?> context) {
         context.getCatalogCache().clear();
         ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(true);
 

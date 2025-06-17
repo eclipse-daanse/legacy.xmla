@@ -40,7 +40,7 @@ public class DimensionsFunctionsTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testDimensionsNumeric(Context context) {
+	void testDimensionsNumeric(Context<?> context) {
 		TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(2).Name", "{}");
 		TestUtil.assertMemberExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(3).CurrentMember",
 				FunctionTest.allHiers());
@@ -55,7 +55,7 @@ public class DimensionsFunctionsTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testDimensionsString(Context context) {
+	void testDimensionsString(Context<?> context) {
 		TestUtil.assertExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(\"foo\").UniqueName", "{}");
 		TestUtil.assertMemberExprDependsOn(context.getConnectionWithDefaultRole(), "Dimensions(\"foo\").CurrentMember",
 				FunctionTest.allHiers());
@@ -69,7 +69,7 @@ public class DimensionsFunctionsTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testDimensionsDepends(Context context) {
+	void testDimensionsDepends(Context<?> context) {
 		final String expression = """
 				Crossjoin(
 				{Dimensions("Measures").CurrentMember.Hierarchy.CurrentMember},

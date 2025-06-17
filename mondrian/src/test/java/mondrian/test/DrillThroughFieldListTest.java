@@ -52,7 +52,7 @@ class DrillThroughFieldListTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testOneJoin(Context context) {
+  void testOneJoin(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
     String mdx = "SELECT\n"
         + "[Measures].[Unit Sales] ON COLUMNS,\n"
@@ -124,7 +124,7 @@ class DrillThroughFieldListTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testOneJoinTwoMeasures(Context context) {
+  void testOneJoinTwoMeasures(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
     String mdx = "SELECT\n"
         + "{[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS,\n"
@@ -200,7 +200,7 @@ class DrillThroughFieldListTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testTwoJoins(Context context) {
+  void testTwoJoins(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
     String mdx = "SELECT\n"
         + "{[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS,\n"
@@ -285,7 +285,7 @@ class DrillThroughFieldListTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testNoJoin(Context context) {
+  void testNoJoin(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
     String mdx = "SELECT\n"
         + "Measures.[Store Sqft] on COLUMNS\n"
@@ -332,7 +332,7 @@ class DrillThroughFieldListTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testVirtualCube(Context context) {
+  void testVirtualCube(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
     String mdx = " SELECT\n"
         + " [Measures].[Unit Sales] ON COLUMNS\n"

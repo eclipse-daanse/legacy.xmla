@@ -24,7 +24,7 @@ import org.opencube.junit5.context.TestContext;
 public class AppandExpressiveNamesCatalog implements TestContextUpdater {
 
 	@Override
-	public void updateContext(Context context) {
+	public void updateContext(Context<?> context) {
 
         ((TestContext)context).setCatalogMappingSupplier(new org.eclipse.daanse.rolap.mapping.instance.rec.complex.expressivenames.ExpressivenamesMappingSupplier());
 	}

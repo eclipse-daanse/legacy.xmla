@@ -295,7 +295,7 @@ public class SpyCatalogReader implements CatalogReader {
 	}
 
     @Override
-    public Context getContext() {
+    public Context<?> getContext() {
         return delegate.getContext();
     }
 

@@ -182,7 +182,7 @@ class SteelWheelsAggregationTest {
     @Disabled //disabled for CI build
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class)
-    void testWithAggregation(Context context) throws Exception {
+    void testWithAggregation(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
 
@@ -234,7 +234,7 @@ class SteelWheelsAggregationTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class)
-    void testWithAggregationNoRestrictionsOnTopLevel(Context context) throws Exception {
+    void testWithAggregationNoRestrictionsOnTopLevel(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         final CatalogMapping schema = getSchemaWith(
@@ -281,7 +281,7 @@ class SteelWheelsAggregationTest {
     @Disabled //disabled for CI build
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class)
-    void testUnionWithAggregation(Context context) throws Exception {
+    void testUnionWithAggregation(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         AccessRoleMappingImpl powerUserRole;
@@ -346,7 +346,7 @@ class SteelWheelsAggregationTest {
     @Disabled //disabled for CI build
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class)
-    void testWithAggregationUnionRolesWithSameGrants(Context context) throws Exception {
+    void testWithAggregationUnionRolesWithSameGrants(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         AccessRoleMappingImpl powerUserRole;

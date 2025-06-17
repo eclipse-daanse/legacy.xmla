@@ -30,7 +30,7 @@ class CrossJoinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCrossjoinNested(Context context) {
+    void testCrossjoinNested(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "  CrossJoin(\n"
                 + "    CrossJoin(\n"
@@ -78,7 +78,7 @@ class CrossJoinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCrossjoinSingletonTuples(Context context) {
+    void testCrossjoinSingletonTuples(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "CrossJoin({([Gender].[M])}, {([Marital Status].[S])})",
             "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}" );
@@ -86,7 +86,7 @@ class CrossJoinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCrossjoinSingletonTuplesNested(Context context) {
+    void testCrossjoinSingletonTuplesNested(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "CrossJoin({([Gender].[M])}, CrossJoin({([Marital Status].[S])}, [Store].[Store].children))",
             "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Store].[Store].[Canada]}\n"
@@ -96,7 +96,7 @@ class CrossJoinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCrossjoinAsterisk(Context context) {
+    void testCrossjoinAsterisk(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Gender].[Gender].[M]} * {[Marital Status].[Marital Status].[S]}",
             "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S]}" );
@@ -104,7 +104,7 @@ class CrossJoinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCrossjoinAsteriskTuple(Context context) {
+    void testCrossjoinAsteriskTuple(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} ON COLUMNS, "
                 + "NON EMPTY [Store].[All Stores] "
@@ -122,7 +122,7 @@ class CrossJoinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCrossjoinAsteriskAssoc(Context context) {
+    void testCrossjoinAsteriskAssoc(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Order({[Gender].Children} * {[Marital Status].Children} * {[Time].[1997].[Q2].Children},"
                 + "[Measures].[Unit Sales])",
@@ -142,7 +142,7 @@ class CrossJoinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCrossjoinAsteriskInsideBraces(Context context) {
+    void testCrossjoinAsteriskInsideBraces(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Gender].[M] * [Marital Status].[S] * [Time].[1997].[Q2].Children}",
             "{[Gender].[Gender].[M], [Marital Status].[Marital Status].[S], [Time].[Time].[1997].[Q2].[4]}\n"
@@ -152,7 +152,7 @@ class CrossJoinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCrossJoinAsteriskQuery(Context context) {
+    void testCrossJoinAsteriskQuery(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT {[Measures].members * [1997].children} ON COLUMNS,\n"
                 + " {[Store].[USA].children * [Position].[All Position].children} DIMENSION PROPERTIES [Store].[Store SQFT] "
@@ -377,7 +377,7 @@ class CrossJoinFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCrossjoinResolve(Context context) {
+    void testCrossjoinResolve(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with\n"
                 + "member [Measures].[Filtered Unit Sales] as\n"
@@ -410,7 +410,7 @@ class CrossJoinFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCrossjoinOrder(Context context) {
+    void testCrossjoinOrder(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
                 + "\n"
@@ -430,7 +430,7 @@ class CrossJoinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCrossjoinDupHierarchyFails(Context context) {
+    void testCrossjoinDupHierarchyFails(Context<?> context) {
         assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select [Measures].[Unit Sales] ON COLUMNS,\n"
                 + " CrossJoin({[Time].[Quarter].[Q1]}, {[Time].[Month].[5]}) ON ROWS\n"
@@ -459,7 +459,7 @@ class CrossJoinFunDefTest {
     //* Tests cases of different hierarchies in the same dimension. (Compare to {@link #testCrossjoinDupHierarchyFails()}).
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCrossjoinDupDimensionOk(Context context) {
+    void testCrossjoinDupDimensionOk(Context<?> context) {
         final String expectedResult =
             "Axis #0:\n"
                 + "{}\n"
@@ -496,7 +496,7 @@ class CrossJoinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testItemTuple(Context context) {
+    void testItemTuple(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "CrossJoin([Gender].[All Gender].children, "
                 + "[Time].[1997].[Q2].children).Item(0).Item(1).UniqueName",

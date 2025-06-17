@@ -178,7 +178,7 @@ public class CrossJoinTest {
   // in CrossJoinFunDef$CrossJoinIterCalc$1$1.forward()
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testCrossJoinIterCalc_IterationCancellationOnForward(Context foodMartContext) {
+  void testCrossJoinIterCalc_IterationCancellationOnForward(Context<?> foodMartContext) {
    ((TestContextImpl)foodMartContext).setCheckCancelOrTimeoutInterval(1);
     // Get product members as TupleList
    Connection con= foodMartContext.getConnectionWithDefaultRole();
@@ -383,13 +383,13 @@ public class CrossJoinTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-void testResultLimitWithinCrossjoin_1(Context foodMartContext) {
+void testResultLimitWithinCrossjoin_1(Context<?> foodMartContext) {
 	}
 
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testResultLimitWithinCrossjoin(Context foodMartContext) {
+  void testResultLimitWithinCrossjoin(Context<?> foodMartContext) {
    Connection connection= foodMartContext.getConnectionWithDefaultRole();
    SystemWideProperties.instance().ResultLimit = 1000;
     TestUtil.assertAxisThrows(connection, "Hierarchize(Crossjoin(Union({[Gender].CurrentMember}, [Gender].Children), "

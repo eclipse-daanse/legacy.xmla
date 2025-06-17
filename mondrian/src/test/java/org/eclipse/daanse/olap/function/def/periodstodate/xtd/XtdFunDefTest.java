@@ -44,7 +44,7 @@ public class XtdFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testYtd(Context context) {
+	void testYtd(Context<?> context) {
 
 		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Ytd()", "[Time].[Time].[1997]");
 
@@ -74,7 +74,7 @@ public class XtdFunDefTest {
 	 */
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testGeneratePlusXtd(Context context) {
+	void testGeneratePlusXtd(Context<?> context) {
 
 		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", """
 				generate(
@@ -111,7 +111,7 @@ public class XtdFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testQtd(Context context) {
+	void testQtd(Context<?> context) {
 		// zero args
 		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				with member [Measures].[Foo] as ' SetToStr(Qtd()) '
@@ -141,7 +141,7 @@ public class XtdFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testMtd(Context context) {
+	void testMtd(Context<?> context) {
 		// zero args
 		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				with member [Measures].[Foo] as ' SetToStr(Mtd()) '

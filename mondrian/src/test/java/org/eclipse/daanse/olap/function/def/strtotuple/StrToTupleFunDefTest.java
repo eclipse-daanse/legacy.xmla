@@ -32,7 +32,7 @@ class StrToTupleFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStrToTuple(Context context) {
+    void testStrToTuple(Context<?> context) {
         // single dimension yields member
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{StrToTuple(\"[Time].[1997].[Q2]\", [Time])}",
@@ -48,7 +48,7 @@ class StrToTupleFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStrToTupleIgnoreInvalidMembers(Context context) {
+    void testStrToTupleIgnoreInvalidMembers(Context<?> context) {
         context.getCatalogCache().clear();
         ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(true);
         // If any member is invalid, the whole tuple is null.
@@ -60,7 +60,7 @@ class StrToTupleFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStrToTupleDuHierarchiesFails(Context context) {
+    void testStrToTupleDuHierarchiesFails(Context<?> context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "{StrToTuple(\"([Gender].[F], [Time].[1997].[Q2], [Gender].[M])\", [Gender], [Time], [Gender])}",
             "Tuple contains more than one member of hierarchy '[Gender].[Gender]'.", "Sales" );
@@ -68,7 +68,7 @@ class StrToTupleFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStrToTupleDupHierInSameDimensions(Context context) {
+    void testStrToTupleDupHierInSameDimensions(Context<?> context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "{StrToTuple("
                 + "\"([Gender].[F], "
@@ -82,7 +82,7 @@ class StrToTupleFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStrToTupleDepends(Context context) {
+    void testStrToTupleDepends(Context<?> context) {
         assertMemberExprDependsOn(context.getConnectionWithDefaultRole(),
             "StrToTuple(\"[Time].[1997].[Q2]\", [Time])",
             "{}" );

@@ -52,7 +52,7 @@ class ScenarioTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCreateScenario(Context context) throws SQLException {
+    void testCreateScenario(Context<?> context) throws SQLException {
         final Connection connection =
             context.getConnectionWithDefaultRole();
         try {
@@ -76,7 +76,7 @@ class ScenarioTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSetCell(Context context) throws SQLException {
+    void testSetCell(Context<?> context) throws SQLException {
         final Connection connection =
             context.getConnectionWithDefaultRole();
         try {
@@ -98,7 +98,7 @@ class ScenarioTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSetCellWithoutScenarioFails(Context context) throws SQLException {
+    void testSetCellWithoutScenarioFails(Context<?> context) throws SQLException {
         final Connection connection =
             context.getConnectionWithDefaultRole();
         try {
@@ -126,7 +126,7 @@ class ScenarioTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSetCellCalcError(Context context) throws SQLException {
+    void testSetCellCalcError(Context<?> context) throws SQLException {
         final Connection connection = context.getConnectionWithDefaultRole();
         connection.setScenario(connection.createScenario());
         Statement pstmt = connection.createStatement();
@@ -176,7 +176,7 @@ class ScenarioTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testUnsupportedAllocationPolicyFails(Context context) throws SQLException {
+    void testUnsupportedAllocationPolicyFails(Context<?> context) throws SQLException {
         final Connection connection = context.getConnectionWithDefaultRole();
         connection.setScenario(connection.createScenario());
         final Statement pstmt = connection.createStatement();
@@ -215,7 +215,7 @@ class ScenarioTest {
     @Disabled //disabled by reason wrong Scenario with InlineTabl foo
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testEqualIncrement(Context context) throws SQLException {
+    void testEqualIncrement(Context<?> context) throws SQLException {
         assertAllocation(context, AllocationPolicy.EQUAL_INCREMENT);
     }
 
@@ -224,11 +224,11 @@ class ScenarioTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testEqualAllocation(Context context) throws SQLException {
+    void testEqualAllocation(Context<?> context) throws SQLException {
         assertAllocation(context, AllocationPolicy.EQUAL_ALLOCATION);
     }
 
-    private void assertAllocation(Context context,
+    private void assertAllocation(Context<?> context,
         final AllocationPolicy allocationPolicy) throws SQLException
     {
         // TODO: Should not need to explicitly create a scenario. Add element
@@ -422,7 +422,7 @@ class ScenarioTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBugMondrian815(Context context) throws SQLException {
+    void testBugMondrian815(Context<?> context) throws SQLException {
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
                 "Sales",
@@ -510,7 +510,7 @@ class ScenarioTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testScenarioPropertyBug1496(Context context) {
+    void testScenarioPropertyBug1496(Context<?> context) {
         // looking up the $scenario property for a non ScenarioCalc member
         // causes class cast exception
         // http://jira.pentaho.com/browse/MONDRIAN-1496

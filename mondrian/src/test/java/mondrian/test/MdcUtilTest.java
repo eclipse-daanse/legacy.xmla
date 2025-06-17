@@ -41,7 +41,7 @@ class MdcUtilTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMdcContext(Context context) throws Exception {
+  void testMdcContext(Context<?> context) throws Exception {
 
     Connection connection = context.getConnectionWithDefaultRole();
     flushSchemaCache(connection);

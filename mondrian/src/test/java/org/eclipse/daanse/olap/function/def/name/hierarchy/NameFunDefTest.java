@@ -26,7 +26,7 @@ class NameFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchyName(Context context) {
+    void testHierarchyName(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "[Time].[1997].Hierarchy.Name", "Time" );
     }
 

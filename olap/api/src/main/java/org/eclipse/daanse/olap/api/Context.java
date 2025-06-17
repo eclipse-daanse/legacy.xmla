@@ -36,9 +36,10 @@ import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
  * to calculate and Data Cubes
  *
  * @author stbischof
+ * @param <C>
  *
  */
-public interface Context {
+public interface Context<C extends Connection> {
 
     List<String> KEYWORD_LIST = Collections.unmodifiableList(Arrays.asList("$AdjustedProbability",
             "$Distance", "$Probability", "$ProbabilityStDev", "$ProbabilityStdDeV", "$ProbabilityVariance", "$StDev",
@@ -117,15 +118,15 @@ public interface Context {
 	/*
 	 * Gives access to the {@link Connection}.
 	 */
-	Connection getConnectionWithDefaultRole();
-	Connection getConnection(List<String> roles);
+	C getConnectionWithDefaultRole();
+	C getConnection(List<String> roles);
 
-    Connection getConnection(ConnectionProps props);
+    C getConnection(ConnectionProps props);
 
 
-	void addConnection(Connection rolapConnection);
+	void addConnection(C rolapConnection);
 
-	void removeConnection(Connection rolapConnection);
+	void removeConnection(C rolapConnection);
 
 	ResultShepherd getResultShepherd();
 
@@ -137,9 +138,9 @@ public interface Context {
 
 	EventBus getMonitor();
 
-	List<Statement> getStatements(Connection connection);
+	List<Statement> getStatements(C connection);
 
-    <T> T getConfigValue(String key, T dflt ,Class<T> clazz); 
+    <T> T getConfigValue(String key, T dflt ,Class<T> clazz);
 
     Semaphore getQueryLimitSemaphore();
 
@@ -165,7 +166,7 @@ public interface Context {
     Evaluator createDummyEvaluator(Statement statement);
 
     ExpressionCompiler createProfilingCompiler(ExpressionCompiler compiler);
-    
+
     ExpressionCompiler createDependencyTestingCompiler(ExpressionCompiler compiler);
 
 }

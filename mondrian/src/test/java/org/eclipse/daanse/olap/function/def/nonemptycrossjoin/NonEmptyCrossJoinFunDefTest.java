@@ -29,7 +29,7 @@ class NonEmptyCrossJoinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonEmptyCrossJoin(Context context) {
+    void testNonEmptyCrossJoin(Context<?> context) {
         // NonEmptyCrossJoin needs to evaluate measures to find out whether
         // cells are empty, so it implicitly depends upon all dimensions.
         String s1 = allHiersExcept( "[Store].[Store]" );

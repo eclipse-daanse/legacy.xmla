@@ -43,7 +43,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
      */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testSimpleFullyJoiningCJ(Context context) {
+  void testSimpleFullyJoiningCJ(Context<?> context) {
     verifySameNativeAndNot(context.getConnectionWithDefaultRole(),
         "select {measures.[unit sales], measures.[warehouse sales]} on 0, "
         + " nonemptycrossjoin( Gender.Gender.members, product.[product category].members) on 1 "
@@ -53,7 +53,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testPartiallyJoiningCJ(Context context) {
+  void testPartiallyJoiningCJ(Context<?> context) {
     String query = "select measures.[warehouse sales] on 0, "
       + " NON EMPTY Crossjoin ( Gender.Gender.gender.members, product.product.[product category].members) on 1 "
       + " from [warehouse and sales]";
@@ -73,7 +73,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testOneFullyJoiningCube(Context context) {
+  void testOneFullyJoiningCube(Context<?> context) {
     verifySameNativeAndNot(context.getConnectionWithDefaultRole(),
         "select {measures.[unit sales], measures.[warehouse sales]} on 0, "
         + " nonemptycrossjoin( Gender.Gender.members, product.[product category].members) on 1 "
@@ -81,7 +81,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
         "");
   }
 
-  void testNoApplicableCube(Context context) {
+  void testNoApplicableCube(Context<?> context) {
     verifySameNativeAndNot(context.getConnectionWithDefaultRole(),
         "select {measures.[unit sales]} on 0, "
         + " nonemptycrossjoin( Gender.Gender.members, [Warehouse].[All Warehouses].children) on 1 "
@@ -96,7 +96,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testShouldBeFullyJoiningCJ(Context context) {
+  void testShouldBeFullyJoiningCJ(Context<?> context) {
     verifySameNativeAndNot(context.getConnectionWithDefaultRole(),
         "select measures.[warehouse Sales] on 0, "
         + " nonemptycrossjoin( Gender.[All Gender], "
@@ -107,7 +107,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMeasureChangesContextOfInapplicableDimension(Context context) {
+  void testMeasureChangesContextOfInapplicableDimension(Context<?> context) {
       verifySameNativeAndNot(context.getConnectionWithDefaultRole(),
           "with member [Measures].[allW] as \n"
           + "'([Measures].[Unit Sales], [Warehouse].[All Warehouses])'\n"
@@ -121,7 +121,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMeasureChangesContextOfApplicableDimension(Context context) {
+  void testMeasureChangesContextOfApplicableDimension(Context<?> context) {
     String query =
         "with member [Measures].[allW] as \n"
         + "'([Measures].[Warehouse Sales], [Warehouse].[All Warehouses])'\n"
@@ -161,7 +161,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNECJWithValidMeasureAndInapplicableDimension(Context context) {
+  void testNECJWithValidMeasureAndInapplicableDimension(Context<?> context) {
     // with this query the crossjoin optimizer also causes issues if
     // evaluated non-natively- so both
     // native on/off will give same results, but wrong unless cjoptimizer
@@ -204,7 +204,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDisjointDimensionCJ(Context context) {
+  void testDisjointDimensionCJ(Context<?> context) {
     // No fully joining dimensions.
     assertQueryReturns(context.getConnectionWithDefaultRole(),
         "with member measures.vmWS as 'ValidMeasure(measures.[Warehouse Sales])'"
@@ -242,7 +242,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testWarehouseForcedToAllLevel(Context context) {
+  void testWarehouseForcedToAllLevel(Context<?> context) {
     verifySameNativeAndNot(context.getConnectionWithDefaultRole(),
         "with member [Measures].[validUS] as \n"
         + "'ValidMeasure([Measures].[Unit Sales])'\n"
@@ -256,7 +256,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMdxCJOfApplicableAndNonApplicable(Context context) {
+  void testMdxCJOfApplicableAndNonApplicable(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
         "WITH\n"
         + "MEMBER Measures.[ValidM Unit Sales] as 'ValidMeasure([Measures].[Unit Sales])' "
@@ -295,7 +295,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testAllMemberTupleInapplicableDim(Context context) {
+  void testAllMemberTupleInapplicableDim(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
         "WITH\n"
         + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Warehouse_],"
@@ -345,7 +345,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testIntermixedDimensionGroupings(Context context) {
+  void testIntermixedDimensionGroupings(Context<?> context) {
     // crossjoin places intermixes applicable and inapplicable
     // attributes, which
     // this verifies that the projected crossjoin is in the correct order,
@@ -375,7 +375,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testCachedShouldNotBeUsed(Context context) {
+  void testCachedShouldNotBeUsed(Context<?> context) {
     // First query doesn't use a measure like ValidMeasure, so results in an
     // empty tuples set being cached.  The second query should not reuse the
     // cache results from the first query, since it *does* use VM.
@@ -399,7 +399,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testShouldUseCache(Context context) {
+  void testShouldUseCache(Context<?> context) {
     // verify cache does get used for applicable grouped target tuple queries
     ((TestContextImpl)context).setGenerateFormattedSql(true);
     String mySqlGenderQuery = "select\n"
@@ -413,7 +413,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
       + "    `customer`.`gender`\n"
       + "order by\n"
       + "    ISNULL(`c0`) ASC, `c0` ASC";
-    //TestContext tc = getTestContext().withFreshConnection();
+    //TestContext<?> tc = getTestContext().withFreshConnection();
     //context.setProperty(RolapConnectionProperties.UseSchemaPool.name(), Boolean.toString(false));
     SqlPattern mysqlPattern =
       new SqlPattern(
@@ -446,7 +446,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testTupleQueryShouldBeCachedForVirtualCube(Context context) {
+  void testTupleQueryShouldBeCachedForVirtualCube(Context<?> context) {
 	  context.getCatalogCache().clear();
       ((TestContextImpl)context).setGenerateFormattedSql(true);
     String mySqlMembersQuery =
@@ -496,7 +496,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
             + "    ISNULL(1) ASC, 1 ASC,\n"
             + "    ISNULL(2) ASC, 2 ASC,\n"
             + "    ISNULL(3) ASC, 3 ASC";
-    //final TestContext context = getTestContext().withFreshConnection();
+    //final TestContext<?> context = getTestContext().withFreshConnection();
     SqlPattern mysqlPatternMembers =
       new SqlPattern(
           DatabaseProduct.MYSQL,

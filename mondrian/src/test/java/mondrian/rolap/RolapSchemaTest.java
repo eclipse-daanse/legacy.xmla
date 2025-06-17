@@ -108,7 +108,8 @@ class RolapCatalogTest {
         RolapConnection rolapConnectionMock = mock(RolapConnection.class);
         AggregationManager aggManagerMock = mock(AggregationManager.class);
         SegmentCacheManager scManagerMock = mock(SegmentCacheManager.class);
-        when(rolapConnectionMock.getContext()).thenReturn(contextMock);
+        Context context = contextMock;
+        when(rolapConnectionMock.getContext()).thenReturn(context);
         when(contextMock.getAggregationManager()).thenReturn(aggManagerMock);
         //when(contextMock.getConfig()).thenReturn(new TestConfig());
         when(contextMock.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)).thenReturn(true);

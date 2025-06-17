@@ -24,7 +24,7 @@ class CaptionFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLevelCaption(Context context) {
+    void testLevelCaption(Context<?> context) {
         TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1997].Level.Caption", "Year" );
     }
 

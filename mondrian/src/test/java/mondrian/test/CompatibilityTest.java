@@ -75,7 +75,7 @@ class CompatibilityTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCubeCase(Context foodMartContext) {
+    void testCubeCase(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         String queryFrom = "select {[Measures].[Unit Sales]} on columns from ";
         String result =
@@ -96,7 +96,7 @@ class CompatibilityTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCubeBrackets(Context foodMartContext) {
+    void testCubeBrackets(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         String queryFrom = "select {[Measures].[Unit Sales]} on columns from ";
         String result =
@@ -117,7 +117,7 @@ class CompatibilityTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testReservedWord(Context foodMartContext) {
+    void testReservedWord(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
     	TestUtil.assertAxisThrows(
     		connection,
@@ -140,7 +140,7 @@ class CompatibilityTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testDimensionCase(Context foodMartContext) {
+    void testDimensionCase(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         checkAxis(connection, "[Measures].[Unit Sales]", "[Measures].[Unit Sales]");
         checkAxis(connection, "[Measures].[Unit Sales]", "[MEASURES].[Unit Sales]");
@@ -158,7 +158,7 @@ class CompatibilityTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testDimensionBrackets(Context foodMartContext) {
+    void testDimensionBrackets(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         checkAxis(connection, "[Measures].[Unit Sales]", "Measures.[Unit Sales]");
         checkAxis(connection, "[Measures].[Unit Sales]", "MEASURES.[Unit Sales]");
@@ -176,7 +176,7 @@ class CompatibilityTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testMemberCase(Context foodMartContext) {
+    void testMemberCase(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         checkAxis(connection, "[Measures].[Unit Sales]", "[Measures].[UNIT SALES]");
         checkAxis(connection, "[Measures].[Unit Sales]", "[Measures].[uNiT sAlEs]");
@@ -203,7 +203,7 @@ class CompatibilityTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCalculatedMemberCase(Context foodMartContext) {
+    void testCalculatedMemberCase(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         SystemWideProperties.instance().CaseSensitive = false;
         TestUtil.assertQueryReturns(
@@ -240,7 +240,7 @@ class CompatibilityTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testSolveOrderCase(Context foodMartContext) {
+    void testSolveOrderCase(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         checkSolveOrder(connection, "SOLVE_ORDER");
         checkSolveOrder(connection, "SoLvE_OrDeR");
@@ -272,7 +272,7 @@ class CompatibilityTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testMemberBrackets(Context foodMartContext) {
+    void testMemberBrackets(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         checkAxis(connection, "[Measures].[Profit]", "[Measures].Profit");
         checkAxis(connection, "[Measures].[Profit]", "[Measures].pRoFiT");
@@ -303,7 +303,7 @@ class CompatibilityTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testHierarchyNames(Context foodMartContext) {
+    void testHierarchyNames(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         checkAxis(connection, "[Customers].[Customers].[All Customers]", "[Customers].[All Customers]");
         checkAxis(
@@ -343,7 +343,7 @@ class CompatibilityTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCaseInsensitiveNullMember(Context foodMartContext) throws SQLException, IOException {
+    void testCaseInsensitiveNullMember(Context<?> foodMartContext) throws SQLException, IOException {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         DataSource dataSource = connection.getDataSource();
         final Dialect dialect = foodMartContext.getDialect();
@@ -423,7 +423,7 @@ class CompatibilityTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNullNameColumn(Context foodMartContext) {
+    void testNullNameColumn(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         DataSource dataSource = connection.getDataSource();
         final Dialect dialect = foodMartContext.getDialect();
@@ -514,7 +514,7 @@ class CompatibilityTest {
       */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNullCollation(Context foodMartContext) {
+    void testNullCollation(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         DataSource dataSource = connection.getDataSource();
         final Dialect dialect = foodMartContext.getDialect();
@@ -563,7 +563,7 @@ class CompatibilityTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testPropertyCaseSensitivity(Context foodMartContext) {
+    void testPropertyCaseSensitivity(Context<?> foodMartContext) {
     	Connection connection = foodMartContext.getConnectionWithDefaultRole();
         boolean caseSensitive = props.CaseSensitive;
 

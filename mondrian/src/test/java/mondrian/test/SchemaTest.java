@@ -211,7 +211,7 @@ class SchemaTest {
     // Tests follow...
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSolveOrderInCalculatedMember(Context context) {
+    void testSolveOrderInCalculatedMember(Context<?> context) {
         class TestSolveOrderInCalculatedMemberModifier extends PojoMappingModifier{
             public TestSolveOrderInCalculatedMemberModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -278,7 +278,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchyDefaultMember(Context context) {
+    void testHierarchyDefaultMember(Context<?> context) {
         class TestHierarchyDefaultMemberModifier extends PojoMappingModifier {
             public TestHierarchyDefaultMemberModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -346,7 +346,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDefaultMemberName(Context context) {
+    void testDefaultMemberName(Context<?> context) {
         class TestDefaultMemberNameModifier extends PojoMappingModifier {
             public TestDefaultMemberNameModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -434,7 +434,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchyAbbreviatedDefaultMember(Context context) {
+    void testHierarchyAbbreviatedDefaultMember(Context<?> context) {
         class TestHierarchyAbbreviatedDefaultMemberModifier extends PojoMappingModifier {
             public TestHierarchyAbbreviatedDefaultMemberModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -499,7 +499,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchyNoLevelsFails(Context context) {
+    void testHierarchyNoLevelsFails(Context<?> context) {
         class TestHierarchyNoLevelsFailsModifier extends PojoMappingModifier {
             public TestHierarchyNoLevelsFailsModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -547,7 +547,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchyNonUniqueLevelsFails(Context context) {
+    void testHierarchyNonUniqueLevelsFails(Context<?> context) {
         class TestHierarchyNonUniqueLevelsFailsModifier extends PojoMappingModifier {
             public TestHierarchyNonUniqueLevelsFailsModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -614,7 +614,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCountMeasure(Context context) {
+    void testCountMeasure(Context<?> context) {
         class TestCountMeasureModifier extends PojoMappingModifier {
             public TestCountMeasureModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -670,7 +670,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchyTableNotFound(Context context) {
+    void testHierarchyTableNotFound(Context<?> context) {
         class TestHierarchyTableNotFoundModifier extends PojoMappingModifier {
             public TestHierarchyTableNotFoundModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -734,7 +734,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPrimaryKeyTableNotFound(Context context) {
+    void testPrimaryKeyTableNotFound(Context<?> context) {
         class TestPrimaryKeyTableNotFoundModifier extends PojoMappingModifier {
             public TestPrimaryKeyTableNotFoundModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -795,7 +795,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLevelTableNotFound(Context context) {
+    void testLevelTableNotFound(Context<?> context) {
         class TestLevelTableNotFoundModifier extends PojoMappingModifier {
             public TestLevelTableNotFoundModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -855,7 +855,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchyBadDefaultMember(Context context) {
+    void testHierarchyBadDefaultMember(Context<?> context) {
         class TestHierarchyBadDefaultMemberModifier extends PojoMappingModifier {
             public TestHierarchyBadDefaultMemberModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -923,7 +923,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDuplicateTableAlias(Context context) {
+    void testDuplicateTableAlias(Context<?> context) {
         class TestDuplicateTableAliasModifier extends PojoMappingModifier {
             public TestDuplicateTableAliasModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -989,7 +989,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDuplicateTableAliasSameForeignKey(Context context) {
+    void testDuplicateTableAliasSameForeignKey(Context<?> context) {
         class TestDuplicateTableAliasSameForeignKeyModifier extends PojoMappingModifier {
             public TestDuplicateTableAliasSameForeignKeyModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -1061,7 +1061,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDimensionsShareTable(Context context) {
+    void testDimensionsShareTable(Context<?> context) {
         class TestDimensionsShareTableModifier extends PojoMappingModifier {
             public TestDimensionsShareTableModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -1269,7 +1269,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDimensionsShareTableNativeNonEmptyCrossJoin(Context context) {
+    void testDimensionsShareTableNativeNonEmptyCrossJoin(Context<?> context) {
         class TestDimensionsShareTableNativeNonEmptyCrossJoinModifier extends PojoMappingModifier {
             public TestDimensionsShareTableNativeNonEmptyCrossJoinModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -1336,7 +1336,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDimensionsShareTableSameForeignKeys(Context context) {
+    void testDimensionsShareTableSameForeignKeys(Context<?> context) {
         class TestDimensionsShareTableSameForeignKeysModifier extends PojoMappingModifier {
             public TestDimensionsShareTableSameForeignKeysModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -1431,7 +1431,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSnowflakeHierarchyValidationNotNeeded(Context context) {
+    void testSnowflakeHierarchyValidationNotNeeded(Context<?> context) {
         // this test breaks when using aggregates at the moment
         // due to a known limitation
         if ((context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
@@ -1695,7 +1695,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSnowflakeHierarchyValidationNotNeeded2(Context context) {
+    void testSnowflakeHierarchyValidationNotNeeded2(Context<?> context) {
         class TestSnowflakeHierarchyValidationNotNeeded2Modifier extends PojoMappingModifier {
             public TestSnowflakeHierarchyValidationNotNeeded2Modifier(CatalogMapping catalog) {
                 super(catalog);
@@ -1975,7 +1975,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDimensionsShareJoinTable(Context context) {
+    void testDimensionsShareJoinTable(Context<?> context) {
         class TestDimensionsShareJoinTableModifier extends PojoMappingModifier {
             public TestDimensionsShareJoinTableModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -2183,7 +2183,7 @@ class SchemaTest {
     //NOTE : test have issue with alias and Level. we have hierarchy with inner join .
     //Left join have alias with "customer_region" . Level of  hierarchy use table (reference) without alias with table name "region".
     //After that we have exception that "region" not exist (we should use alias as name of table in sql).
-    void testDimensionsShareJoinTableOneAlias(Context context) {
+    void testDimensionsShareJoinTableOneAlias(Context<?> context) {
         class TestDimensionsShareJoinTableOneAliasModifier extends PojoMappingModifier {
             public TestDimensionsShareJoinTableOneAliasModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -2392,7 +2392,7 @@ class SchemaTest {
     //NOTE : test have issue with alias and Level. we have hierarchy with inner join .
     //Left join have alias with "store_region" . Level of  hierarchy use table (reference) without alias with table name "region".
     //After that we have exception that "region" not exist (we should use alias as name of table in sql).
-    void testDimensionsShareJoinTableTwoAliases(Context context) {
+    void testDimensionsShareJoinTableTwoAliases(Context<?> context) {
         class TestDimensionsShareJoinTableTwoAliasesModifier extends PojoMappingModifier {
             public TestDimensionsShareJoinTableTwoAliasesModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -2597,7 +2597,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTwoAliasesDimensionsShareTable(Context context) {
+    void testTwoAliasesDimensionsShareTable(Context<?> context) {
         class TestTwoAliasesDimensionsShareTableModifier extends PojoMappingModifier {
             public TestTwoAliasesDimensionsShareTableModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -2772,7 +2772,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTwoAliasesDimensionsShareTableSameForeignKeys(Context context) {
+    void testTwoAliasesDimensionsShareTableSameForeignKeys(Context<?> context) {
         class TestTwoAliasesDimensionsShareTableSameForeignKeysModifier extends PojoMappingModifier {
             public TestTwoAliasesDimensionsShareTableSameForeignKeysModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -2932,7 +2932,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMultipleDimensionUsages(Context context) {
+    void testMultipleDimensionUsages(Context<?> context) {
         class TestMultipleDimensionUsagesModifier extends PojoMappingModifier {
             public TestMultipleDimensionUsagesModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -3036,7 +3036,7 @@ class SchemaTest {
     @Disabled // Disabled caption: caption doesn't support now. this test will delete in future
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMultipleDimensionHierarchyCaptionUsages(Context context) {
+    void testMultipleDimensionHierarchyCaptionUsages(Context<?> context) {
         class TestMultipleDimensionHierarchyCaptionUsagesModifier extends PojoMappingModifier {
             public TestMultipleDimensionHierarchyCaptionUsagesModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -3150,7 +3150,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDimensionCreation(Context context) {
+    void testDimensionCreation(Context<?> context) {
         class TestDimensionCreationModifier extends PojoMappingModifier {
             public TestDimensionCreationModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -3235,7 +3235,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDimensionUsageLevel(Context context) {
+    void testDimensionUsageLevel(Context<?> context) {
         class TestDimensionUsageLevelModifier extends PojoMappingModifier {
             public TestDimensionUsageLevelModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -3343,7 +3343,7 @@ class SchemaTest {
     @Disabled // Disabled caption: caption doesn't support now. this test will delete in future
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAllMemberMultipleDimensionUsages(Context context) {
+    void testAllMemberMultipleDimensionUsages(Context<?> context) {
         class TestAllMemberMultipleDimensionUsagesModifier extends PojoMappingModifier {
             public TestAllMemberMultipleDimensionUsagesModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -3473,7 +3473,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonAliasedDimensionUsage(Context context) {
+    void testNonAliasedDimensionUsage(Context<?> context) {
         class TestNonAliasedDimensionUsageModifier extends PojoMappingModifier {
             public TestNonAliasedDimensionUsageModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -3561,7 +3561,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testViewDegenerateDims(Context context) {
+    void testViewDegenerateDims(Context<?> context) {
         class TestViewDegenerateDimsModifier extends PojoMappingModifier {
             public TestViewDegenerateDimsModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -3742,7 +3742,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testViewFactTable(Context context) {
+    void testViewFactTable(Context<?> context) {
         class TestViewFactTableModifier extends PojoMappingModifier {
             public TestViewFactTableModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -3924,7 +3924,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testViewFactTable2(Context context) {
+    void testViewFactTable2(Context<?> context) {
         class TestViewFactTable2Modifier extends PojoMappingModifier {
             public TestViewFactTable2Modifier(CatalogMapping catalog) {
                 super(catalog);
@@ -4066,7 +4066,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDeprecatedDistinctCountAggregator(Context context) {
+    void testDeprecatedDistinctCountAggregator(Context<?> context) {
         class TestDeprecatedDistinctCountAggregatorModifier extends PojoMappingModifier{
 
             public TestDeprecatedDistinctCountAggregatorModifier(CatalogMapping catalog) {
@@ -4150,7 +4150,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testUnknownUsages(Context context) {
+    void testUnknownUsages(Context<?> context) {
         class TestUnknownUsagesModifier extends PojoMappingModifier {
             public TestUnknownUsagesModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -4356,7 +4356,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testUnknownUsages1(Context context) {
+    void testUnknownUsages1(Context<?> context) {
         class TestUnknownUsages1Modifier extends PojoMappingModifier {
             public TestUnknownUsages1Modifier(CatalogMapping catalog) {
                 super(catalog);
@@ -4534,7 +4534,7 @@ class SchemaTest {
         //        .setTarget(sw)
         //        .build();
 
-//        LoggerContext ctx = (LoggerContext) LogManager.getContext( false );
+//        LoggerContext<?> ctx = (LoggerContext) LogManager.getContext( false );
         //Configuration config = ctx.getConfiguration();
         //LoggerConfig loggerConfig = config.getLoggerConfig( logger.getName() );
         //loggerConfig.addAppender( appender, org.apache.logging.log4j.Level.ALL, null );
@@ -4612,7 +4612,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPropertyFormatter(Context context) {
+    void testPropertyFormatter(Context<?> context) {
         class TestPropertyFormatterModifier extends PojoMappingModifier {
             public TestPropertyFormatterModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -4705,7 +4705,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBugMondrian233(Context context) {
+    void testBugMondrian233(Context<?> context) {
         class TestBugMondrian233Modifier extends PojoMappingModifier {
             public TestBugMondrian233Modifier(CatalogMapping catalog) {
                 super(catalog);
@@ -4785,7 +4785,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBugMondrian303(Context context) {
+    void testBugMondrian303(Context<?> context) {
         class TestBugMondrian303Modifier extends PojoMappingModifier {
             public TestBugMondrian303Modifier(CatalogMapping catalog) {
                 super(catalog);
@@ -4915,7 +4915,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCubeWithOneDimensionOneMeasure(Context context) {
+    void testCubeWithOneDimensionOneMeasure(Context<?> context) {
         class TestCubeWithOneDimensionOneMeasureModifier extends PojoMappingModifier {
             public TestCubeWithOneDimensionOneMeasureModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -5005,7 +5005,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCubeWithOneDimensionUsageOneMeasure(Context context) {
+    void testCubeWithOneDimensionUsageOneMeasure(Context<?> context) {
         class TestCubeWithOneDimensionUsageOneMeasureModifier extends PojoMappingModifier {
             public TestCubeWithOneDimensionUsageOneMeasureModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -5076,7 +5076,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCubeHasFact(Context context) {
+    void testCubeHasFact(Context<?> context) {
         class TestCubeHasFactModifier extends PojoMappingModifier {
             public TestCubeHasFactModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -5117,7 +5117,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCubeCaption(Context context) throws SQLException {
+    void testCubeCaption(Context<?> context) throws SQLException {
         class TestCubeCaptionModifier extends PojoMappingModifier {
             public TestCubeCaptionModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -5181,7 +5181,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCubeWithNoDimensions(Context context) {
+    void testCubeWithNoDimensions(Context<?> context) {
         class TestCubeWithNoDimensionsModifier extends PojoMappingModifier {
             public TestCubeWithNoDimensionsModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -5223,7 +5223,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCubeWithNoMeasuresFails(Context context) {
+    void testCubeWithNoMeasuresFails(Context<?> context) {
         class TestCubeWithNoMeasuresFailsModifier extends PojoMappingModifier {
             public TestCubeWithNoMeasuresFailsModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -5304,7 +5304,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCubeWithOneCalcMeasure(Context context) {
+    void testCubeWithOneCalcMeasure(Context<?> context) {
         class TestCubeWithOneCalcMeasureModifier extends PojoMappingModifier {
             public TestCubeWithOneCalcMeasureModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -5399,7 +5399,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCalcMemberInCube(Context context) {
+    void testCalcMemberInCube(Context<?> context) {
         class TestCalcMemberInCubeModifier1 extends PojoMappingModifier {
             public TestCalcMemberInCubeModifier1(CatalogMapping catalog) {
                 super(catalog);
@@ -5811,7 +5811,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAggTableSupportOfSharedDims(Context context) {
+    void testAggTableSupportOfSharedDims(Context<?> context) {
         class TestAggTableSupportOfSharedDimsModifier extends PojoMappingModifier {
             public TestAggTableSupportOfSharedDimsModifier(CatalogMapping catalogMapping) {
                     super(catalogMapping);
@@ -5918,7 +5918,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLevelTableAttributeAsView(Context context) {
+    void testLevelTableAttributeAsView(Context<?> context) {
         class TestLevelTableAttributeAsViewModifier extends PojoMappingModifier {
             public TestLevelTableAttributeAsViewModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -6062,7 +6062,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testInvalidSchemaAccess(Context context) {
+    void testInvalidSchemaAccess(Context<?> context) {
         class TestInvalidSchemaAccess extends PojoMappingModifier {
             public TestInvalidSchemaAccess(CatalogMapping catalog) {
                 super(catalog);
@@ -6095,7 +6095,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAllMemberNoStringReplace(Context context) {
+    void testAllMemberNoStringReplace(Context<?> context) {
         class TestAllMemberNoStringReplaceModifier extends PojoMappingModifier {
             public TestAllMemberNoStringReplaceModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -6173,7 +6173,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testUnionRole(Context context) {
+    void testUnionRole(Context<?> context) {
         class TestUnionRoleModifier extends PojoMappingModifier {
             public TestUnionRoleModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -6242,7 +6242,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testUnionRoleContainsGrants(Context context) {
+    void testUnionRoleContainsGrants(Context<?> context) {
         class TestUnionRoleContainsGrantsModifier extends PojoMappingModifier {
             public TestUnionRoleContainsGrantsModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -6288,7 +6288,7 @@ class SchemaTest {
     @Disabled // Disabled role now as reference to role not a string. we not aable set wrong string role. this test will delete in future
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testUnionRoleIllegalForwardRef(Context context) {
+    void testUnionRoleIllegalForwardRef(Context<?> context) {
         class TestUnionRoleIllegalForwardRefModifier extends PojoMappingModifier {
             public TestUnionRoleIllegalForwardRefModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -6339,7 +6339,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVirtualCubeNamedSetSupportInSchema(Context context) {
+    void testVirtualCubeNamedSetSupportInSchema(Context<?> context) {
         class TestVirtualCubeNamedSetSupportInSchemaModifier extends PojoMappingModifier {
             public TestVirtualCubeNamedSetSupportInSchemaModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -6403,7 +6403,7 @@ class SchemaTest {
     @Disabled //TODO need investigate
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVirtualCubeNamedSetSupportInSchemaError(Context context) {
+    void testVirtualCubeNamedSetSupportInSchemaError(Context<?> context) {
         class TestVirtualCubeNamedSetSupportInSchemaErrorModifier extends PojoMappingModifier {
             public TestVirtualCubeNamedSetSupportInSchemaErrorModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -6456,7 +6456,7 @@ class SchemaTest {
     @Disabled //not implemented yet
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void _testValidatorFindsNumericLevel(Context context) {
+    void _testValidatorFindsNumericLevel(Context<?> context) {
 
         class TestValidatorFindsNumericLevelModifier extends PojoMappingModifier {
             public TestValidatorFindsNumericLevelModifier(CatalogMapping catalog) {
@@ -6512,7 +6512,7 @@ class SchemaTest {
     @Disabled // Disabled role now as reference to role not a string. we not aable set wrong string role. this test will delete in future
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testInvalidRoleError(Context context) {
+    void testInvalidRoleError(Context<?> context) {
         class TestInvalidRoleErrorModifier extends PojoMappingModifier {
             public TestInvalidRoleErrorModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -6551,7 +6551,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBinaryLevelKey(Context context) {
+    void testBinaryLevelKey(Context<?> context) {
         switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
         case DERBY:
         case MARIADB:
@@ -6705,7 +6705,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLevelInternalType(Context context) {
+    void testLevelInternalType(Context<?> context) {
         // One of the keys is larger than Integer.MAX_VALUE (2 billion), so
         // will only work if we use long values.
         class TestLevelInternalTypeModifier extends PojoMappingModifier {
@@ -6822,7 +6822,7 @@ class SchemaTest {
     @ParameterizedTest
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLevelInternalTypeErr(Context context) {
+    void testLevelInternalTypeErr(Context<?> context) {
         class TestLevelInternalTypeErrModifier extends PojoMappingModifier {
             public TestLevelInternalTypeErrModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -6916,7 +6916,7 @@ class SchemaTest {
     @Disabled // Adventure Works schema not found
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void _testAttributeHierarchy(Context context) {
+    void _testAttributeHierarchy(Context<?> context) {
         // from email from peter tran dated 2008/9/8
         // TODO: schema syntax to create attribute hierarchy
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -6961,7 +6961,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testScdJoin(Context context) {
+    void testScdJoin(Context<?> context) {
         class TestScdJoinModifier extends PojoMappingModifier {
             public TestScdJoinModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -7035,7 +7035,7 @@ class SchemaTest {
     @Disabled //not implemented yet
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void _testNonUniqueAlias(Context context) {
+    void _testNonUniqueAlias(Context<?> context) {
         class TestNonUniqueAliasModifier extends PojoMappingModifier {
             public TestNonUniqueAliasModifier(CatalogMapping catalog) {
                 super(catalog);
@@ -7118,7 +7118,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBugMondrian482(Context context) {
+    void testBugMondrian482(Context<?> context) {
         // until bug MONDRIAN-495, "Table filter concept does not support
         // dialects." is fixed, this test case only works on MySQL
         if (!Bug.BugMondrian495Fixed
@@ -7265,7 +7265,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBugMondrian355(Context context) {
+    void testBugMondrian355(Context<?> context) {
     	context.getCatalogCache().clear();
         checkBugMondrian355(context, "TimeHalfYears");
 
@@ -7273,7 +7273,7 @@ class SchemaTest {
         checkBugMondrian355(context, "TimeHalfYears");
     }
 
-    public void checkBugMondrian355(Context context, String timeHalfYear) {
+    public void checkBugMondrian355(Context<?> context, String timeHalfYear) {
     	context.getCatalogCache().clear();
         class CheckBugMondrian355Modifier1 extends PojoMappingModifier {
             public CheckBugMondrian355Modifier1(CatalogMapping catalog) {
@@ -7428,7 +7428,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCaptionDescriptionAndAnnotation(Context context) {
+    void testCaptionDescriptionAndAnnotation(Context<?> context) {
         final String schemaName = "Description schema";
         final String salesCubeName = "DescSales";
         final String virtualCubeName = "DescWarehouseAndSales";
@@ -8090,7 +8090,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCaption(Context context) {
+    void testCaption(Context<?> context) {
         class TestCaptionModifier extends PojoMappingModifier {
 
             public TestCaptionModifier(CatalogMapping catalog) {
@@ -8171,7 +8171,7 @@ class SchemaTest {
      * Implementation of {@link MemberPropertyFormatter} that throws.
      */
     public static class DummyPropertyFormatter implements MemberPropertyFormatter {
-        public DummyPropertyFormatter(Context context) {
+        public DummyPropertyFormatter(Context<?> context) {
             throw new RuntimeException("oops");
         }
 
@@ -8191,7 +8191,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBugMondrian747(Context context) {
+    void testBugMondrian747(Context<?> context) {
         // Test case requires a pecular inline view, and it works on dialects
         // that scalar subqery, viz oracle. I believe that the mondrian code
         // being works in all dialects.
@@ -8595,7 +8595,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBugMondrian463(Context context) {
+    void testBugMondrian463(Context<?> context) {
         if (!SystemWideProperties.instance().FilterChildlessSnowflakeMembers)
         {
             // Similar to aggregates. If we turn off filtering,
@@ -8907,7 +8907,7 @@ class SchemaTest {
         checkBugMondrian463(context);
     }
 
-    private void checkBugMondrian463(Context context) {
+    private void checkBugMondrian463(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select [Measures] on 0,\n"
             + " head([Product3].members, 10) on 1\n"
@@ -8946,7 +8946,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLeftDeepJoinFails(Context context) {
+    void testLeftDeepJoinFails(Context<?> context) {
         class TestLeftDeepJoinFailsModifier extends PojoMappingModifier {
 
             public TestLeftDeepJoinFailsModifier(CatalogMapping catalog) {
@@ -9066,7 +9066,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCaptionWithOrdinalColumn(Context context) {
+    void testCaptionWithOrdinalColumn(Context<?> context) {
     	context.getCatalogCache().clear();
         class TestCaptionWithOrdinalColumnModifier extends PojoMappingModifier {
 
@@ -9153,7 +9153,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBugMondrian923(Context context) throws Exception {
+    void testBugMondrian923(Context<?> context) throws Exception {
         class TestBugMondrian923Modifier extends PojoMappingModifier {
 
             public TestBugMondrian923Modifier(CatalogMapping catalog) {
@@ -9252,7 +9252,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCubesVisibility(Context context) throws Exception {
+    void testCubesVisibility(Context<?> context) throws Exception {
         for (Boolean testValue : new Boolean[] {true, false}) {
             class TestCubesVisibilityModifier extends PojoMappingModifier {
 
@@ -9330,7 +9330,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVirtualCubesVisibility(Context context) throws Exception {
+    void testVirtualCubesVisibility(Context<?> context) throws Exception {
         for (Boolean testValue : new Boolean[] {true, false}) {
             class TestVirtualCubesVisibilityModifier extends PojoMappingModifier {
 
@@ -9384,7 +9384,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDimensionVisibility(Context context) throws Exception {
+    void testDimensionVisibility(Context<?> context) throws Exception {
         for (Boolean testValue : new Boolean[] {true, false}) {
             class TestDimensionVisibilityModifier extends PojoMappingModifier {
 
@@ -9471,7 +9471,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVirtualDimensionVisibility(Context context) throws Exception {
+    void testVirtualDimensionVisibility(Context<?> context) throws Exception {
         for (Boolean testValue : new Boolean[] {true, false}) {
             class TestVirtualDimensionVisibilityModifier extends PojoMappingModifier {
 
@@ -9531,7 +9531,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDimensionUsageVisibility(Context context) throws Exception {
+    void testDimensionUsageVisibility(Context<?> context) throws Exception {
         for (Boolean testValue : new Boolean[] {true, false}) {
             class TestDimensionUsageVisibilityModifier extends PojoMappingModifier {
                 private Boolean value;
@@ -9629,7 +9629,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchyVisibility(Context context) throws Exception {
+    void testHierarchyVisibility(Context<?> context) throws Exception {
         for (Boolean testValue : new Boolean[] {true, false}) {
         	context.getCatalogCache().clear();
             class TestHierarchyVisibilityModifier extends PojoMappingModifier {
@@ -9724,7 +9724,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLevelVisibility(Context context) throws Exception {
+    void testLevelVisibility(Context<?> context) throws Exception {
         for (Boolean testValue : new Boolean[] {true, false}) {
             class TestLevelVisibilityModifier extends PojoMappingModifier {
 
@@ -9815,7 +9815,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonCollapsedAggregate(Context context) throws Exception {
+    void testNonCollapsedAggregate(Context<?> context) throws Exception {
         if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false
             && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false)
         {
@@ -10011,7 +10011,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonCollapsedAggregateOnNonUniqueLevelFails(Context context)
+    void testNonCollapsedAggregateOnNonUniqueLevelFails(Context<?> context)
         throws Exception
     {
         if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false
@@ -10200,7 +10200,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTwoNonCollapsedAggregate(Context context) throws Exception {
+    void testTwoNonCollapsedAggregate(Context<?> context) throws Exception {
         if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false
             && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false)
         {
@@ -10601,7 +10601,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCollapsedError(Context context) throws Exception {
+    void testCollapsedError(Context<?> context) throws Exception {
         if (context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false
             && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class) == false)
         {
@@ -10794,7 +10794,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBugMondrian1047(Context context) {
+    void testBugMondrian1047(Context<?> context) {
         // Test case only works under MySQL, due to how columns are quoted.
         switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
         case MARIADB:
@@ -10812,7 +10812,7 @@ class SchemaTest {
     }
 
 
-    public void checkBugMondrian1047(Context context, int n) {
+    public void checkBugMondrian1047(Context<?> context, int n) {
         class CheckBugMondrian1047Modifier extends PojoMappingModifier{
             public CheckBugMondrian1047Modifier(CatalogMapping catalog) {
                 super(catalog);
@@ -10884,7 +10884,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBugMondrian1065(Context context) {
+    void testBugMondrian1065(Context<?> context) {
         // Test case only works under Oracle
         switch (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())) {
         case ORACLE:
@@ -11046,7 +11046,7 @@ class SchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMondrian1390(Context context) throws Exception {
+    void testMondrian1390(Context<?> context) throws Exception {
         Catalog schema = context.getConnectionWithDefaultRole().getCatalog();
         Cube salesCube = schema.lookupCube("Sales").orElseThrow();
         CatalogReader sr = salesCube.getCatalogReader(null).withLocus();
@@ -11086,7 +11086,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMondrian1499(Context context) throws Exception {
+    void testMondrian1499(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(false);
         ((TestContextImpl)context).setReadAggregates(false);
         class TestMondrian1499Modifier extends PojoMappingModifier {
@@ -11483,7 +11483,7 @@ class SchemaTest {
     */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMondrian1073(Context context) throws Exception {
+    void testMondrian1073(Context<?> context) throws Exception {
         class TestMondrian1073Modifier extends PojoMappingModifier {
 
             public TestMondrian1073Modifier(CatalogMapping catalog) {
@@ -11592,7 +11592,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMultiByteSchemaReadFromFile(Context context) throws IOException {
+    void testMultiByteSchemaReadFromFile(Context<?> context) throws IOException {
         //String rawSchema = TestContext.getRawFoodMartSchema().replace(
         class TestMultiByteSchemaReadFromFile extends PojoMappingModifier {
 
@@ -11644,7 +11644,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBugMonrian2528(Context context) {
+    void testBugMonrian2528(Context<?> context) {
         class TestBugMonrian2528Modifier extends PojoMappingModifier {
 
             public TestBugMonrian2528Modifier(CatalogMapping catalog) {
@@ -11762,7 +11762,7 @@ class SchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMondrian1275(Context context) throws Exception {
+    void testMondrian1275(Context<?> context) throws Exception {
         class TestMondrian1275Modifier extends PojoMappingModifier {
 
             public TestMondrian1275Modifier(CatalogMapping catalog) {

@@ -28,7 +28,7 @@ class StrToSetFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStrToSet(Context context) {
+    void testStrToSet(Context<?> context) {
         // TODO: handle text after '}'
         // TODO: handle string which ends too soon
         // TODO: handle spaces before first '{'
@@ -88,7 +88,7 @@ class StrToSetFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStrToSetDupDimensionsFails(Context context) {
+    void testStrToSetDupDimensionsFails(Context<?> context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "StrToSet("
                 + "\""
@@ -105,7 +105,7 @@ class StrToSetFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStrToSetIgnoreInvalidMembers(Context context) {
+    void testStrToSetIgnoreInvalidMembers(Context<?> context) {
         context.getCatalogCache().clear();
         ((TestContextImpl)context).setIgnoreInvalidMembersDuringQuery(true);
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",

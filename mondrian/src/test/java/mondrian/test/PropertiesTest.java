@@ -54,7 +54,7 @@ class PropertiesTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMandatoryMemberProperties(Context context) {
+    void testMandatoryMemberProperties(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
         CatalogReader scr = salesCube.getCatalogReader(null).withLocus();
@@ -195,7 +195,7 @@ class PropertiesTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGetChildCardinalityPropertyValue(Context context) {
+    void testGetChildCardinalityPropertyValue(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
         CatalogReader scr = salesCube.getCatalogReader(null);
@@ -215,7 +215,7 @@ class PropertiesTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPropertiesMDX(Context context) {
+    void testPropertiesMDX(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "SELECT {[Customers].[All Customers].[USA].[CA]} DIMENSION PROPERTIES \n"
             + " CATALOG_NAME, SCHEMA_NAME, CUBE_NAME, DIMENSION_UNIQUE_NAME, \n"
@@ -258,7 +258,7 @@ class PropertiesTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMemberProperties(Context context) {
+    void testMemberProperties(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "SELECT {[Store].Children} DIMENSION PROPERTIES\n"
             + " CATALOG_NAME, PARENT_UNIQUE_NAME, [Store Type], FORMAT_EXP\n"
@@ -275,7 +275,7 @@ class PropertiesTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMemberPropertiesBad(Context context) {
+    void testMemberPropertiesBad(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "SELECT {[Store].Children} DIMENSION PROPERTIES\n"
             + " CATALOG_NAME, PARENT_UNIQUE_NAME, [Store Type], BAD\n"
@@ -289,7 +289,7 @@ class PropertiesTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMandatoryCellProperties(Context context) {
+    void testMandatoryCellProperties(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         Query salesCube = connection.parseQuery(
             "select \n"
@@ -344,7 +344,7 @@ class PropertiesTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPropertyDescription(Context context) throws Exception {
+    void testPropertyDescription(Context<?> context) throws Exception {
         withSchema(context, SchemaModifiers.PropertiesTestModifier::new);
         List<Cube> cubes = context.getConnectionWithDefaultRole().getCatalog()
             .getCubes();

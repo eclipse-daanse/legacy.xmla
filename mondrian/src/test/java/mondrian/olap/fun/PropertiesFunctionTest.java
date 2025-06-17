@@ -45,56 +45,56 @@ class PropertiesFunctionTest {
   // Below the tests for the "Time" hierarchy and dimention.
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testMemberCaptionPropertyOnTimeDimension(Context context) {
+  void testMemberCaptionPropertyOnTimeDimension(Context<?> context) {
     verifyMemberCaptionPropertyFunction(context, "[Time].[Time].Properties('MEMBER_CAPTION')", DataType.STRING, STRING_TYPE, TIME_MEMBER_CAPTION );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testCurrentMemberCaptionPropertyOnTimeDimension(Context context) {
+  void testCurrentMemberCaptionPropertyOnTimeDimension(Context<?> context) {
     verifyMemberCaptionPropertyFunction( context, "[Time].[Time].CurrentMember.Properties('MEMBER_CAPTION')", DataType.STRING, STRING_TYPE, TIME_MEMBER_CAPTION );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testMemberCaptionPropertyOnTimeHierarchy(Context context) {
+  void testMemberCaptionPropertyOnTimeHierarchy(Context<?> context) {
     verifyMemberCaptionPropertyFunction( context, "[Time].[Time].Properties('MEMBER_CAPTION')", DataType.STRING, STRING_TYPE, TIME_MEMBER_CAPTION );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testCurrentMemberCaptionPropertyOnTimeHierarchy(Context context) {
+  void testCurrentMemberCaptionPropertyOnTimeHierarchy(Context<?> context) {
     verifyMemberCaptionPropertyFunction( context, "[Time].[Time].CurrentMember.Properties('MEMBER_CAPTION')", DataType.STRING, STRING_TYPE, TIME_MEMBER_CAPTION );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testGenerateWithMemberCaptionPropertyOnTimeDimension(Context context) {
+  void testGenerateWithMemberCaptionPropertyOnTimeDimension(Context<?> context) {
     verifyGenerateWithMemberCaptionPropertyFunction( context, "Generate([Time].[Time].CurrentMember, [Time].[Time].CurrentMember.Properties('MEMBER_CAPTION'))", DataType.STRING, STRING_TYPE, TIME_MEMBER_CAPTION );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testGenerateWithMemberCaptionPropertyOnTimeHierarchy(Context context) {
+  void testGenerateWithMemberCaptionPropertyOnTimeHierarchy(Context<?> context) {
     verifyGenerateWithMemberCaptionPropertyFunction( context, "Generate([Time].[Time].CurrentMember, [Time].[Time].CurrentMember.Properties('MEMBER_CAPTION'))", DataType.STRING, STRING_TYPE, TIME_MEMBER_CAPTION );
   }
 
   // Below the tests for the "Time.Weekly" hierarchy.
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testMemberCaptionPropertyOnWeeklyHierarchy(Context context) {
+  void testMemberCaptionPropertyOnWeeklyHierarchy(Context<?> context) {
     verifyMemberCaptionPropertyFunction( context, "[Time].[Weekly].Properties('MEMBER_CAPTION')", DataType.STRING, STRING_TYPE, TIME_WEEKLY_MEMBER_CAPTION );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testCurrentMemberCaptionPropertyOnWeeklyHierarchy(Context context) {
+  void testCurrentMemberCaptionPropertyOnWeeklyHierarchy(Context<?> context) {
     verifyMemberCaptionPropertyFunction( context, "[Time].[Weekly].CurrentMember.Properties('MEMBER_CAPTION')", DataType.STRING, STRING_TYPE, TIME_WEEKLY_MEMBER_CAPTION );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testGenerateWithMemberCaptionPropertyOnWeeklyHierarchy(Context context) {
+  void testGenerateWithMemberCaptionPropertyOnWeeklyHierarchy(Context<?> context) {
     verifyGenerateWithMemberCaptionPropertyFunction( context, "Generate([Time].[Weekly].CurrentMember, [Time].[Weekly].CurrentMember.Properties('MEMBER_CAPTION'))", DataType.STRING, STRING_TYPE, TIME_WEEKLY_MEMBER_CAPTION );
   }
 
@@ -102,41 +102,41 @@ class PropertiesFunctionTest {
   // Below the tests for the "Store" hierarchy and dimention.
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testMemberCaptionPropertyOnStoreDimension(Context context) {
+  void testMemberCaptionPropertyOnStoreDimension(Context<?> context) {
     verifyMemberCaptionPropertyFunction( context, "[Store].Properties('MEMBER_CAPTION')", DataType.STRING, STRING_TYPE, STORE_MEMBER_CAPTION );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testCurrentMemberCaptionPropertyOnStoreDimension(Context context) {
+  void testCurrentMemberCaptionPropertyOnStoreDimension(Context<?> context) {
     verifyMemberCaptionPropertyFunction( context, "[Store].CurrentMember.Properties('MEMBER_CAPTION')", DataType.STRING, STRING_TYPE, STORE_MEMBER_CAPTION );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testMemberCaptionPropertyOnStoreHierarchy(Context context) {
+  void testMemberCaptionPropertyOnStoreHierarchy(Context<?> context) {
     verifyMemberCaptionPropertyFunction( context, "[Store].[Store].Properties('MEMBER_CAPTION')", DataType.STRING, STRING_TYPE, STORE_MEMBER_CAPTION );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testCurrentMemberCaptionPropertyOnStoreHierarchy(Context context) {
+  void testCurrentMemberCaptionPropertyOnStoreHierarchy(Context<?> context) {
     verifyMemberCaptionPropertyFunction( context, "[Store].[Store].CurrentMember.Properties('MEMBER_CAPTION')", DataType.STRING, STRING_TYPE, STORE_MEMBER_CAPTION );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testGenerateWithMemberCaptionPropertyOnStoreDimension(Context context) {
+  void testGenerateWithMemberCaptionPropertyOnStoreDimension(Context<?> context) {
     verifyGenerateWithMemberCaptionPropertyFunction( context, "Generate([Store].CurrentMember, [Store].CurrentMember.Properties('MEMBER_CAPTION'))", DataType.STRING, STRING_TYPE, STORE_MEMBER_CAPTION );
   }
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testGenerateWithMemberCaptionPropertyOnStoreHierarchy(Context context) {
+  void testGenerateWithMemberCaptionPropertyOnStoreHierarchy(Context<?> context) {
     verifyGenerateWithMemberCaptionPropertyFunction( context, "Generate([Store].CurrentMember, [Store].[Store].CurrentMember.Properties('MEMBER_CAPTION'))", DataType.STRING, STRING_TYPE, STORE_MEMBER_CAPTION );
   }
 
-  private void verifyMemberCaptionPropertyFunction(Context context, String propertyQuery, DataType expectedCategory, Type expectedReturnType, String expectedResult ) {
+  private void verifyMemberCaptionPropertyFunction(Context<?> context, String propertyQuery, DataType expectedCategory, Type expectedReturnType, String expectedResult ) {
 	connection = context.getConnectionWithDefaultRole();
     query = connection.parseQuery( generateQueryString( propertyQuery ) );
     assertNotNull( query );
@@ -151,7 +151,7 @@ class PropertiesFunctionTest {
     assertEquals( expectedResult, result.getCell( ZERO_POS ).getFormattedValue() );
   }
 
-  private void verifyGenerateWithMemberCaptionPropertyFunction( Context context,  String functionQuery, DataType expectedCategory, Type expectedReturnType, String expectedResult ) {
+  private void verifyGenerateWithMemberCaptionPropertyFunction( Context<?> context,  String functionQuery, DataType expectedCategory, Type expectedReturnType, String expectedResult ) {
     connection = context.getConnectionWithDefaultRole();
     try {
       query = connection.parseQuery( generateQueryString( functionQuery ) );

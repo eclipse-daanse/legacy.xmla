@@ -30,7 +30,7 @@ class PeriodsToDateFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPeriodsToDate(Context context) {
+    void testPeriodsToDate(Context<?> context) {
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(), "PeriodsToDate()", "{[Time].[Time]}" );
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "PeriodsToDate([Time].[Year])",

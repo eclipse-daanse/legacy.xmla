@@ -28,7 +28,7 @@ class MultiplyOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMultiply(Context context) {
+    void testMultiply(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "4*7", "28" );
         assertExprReturns(context.getConnectionWithDefaultRole(), "5 * " + NullNumericExpr, "" ); // 5 * null --> null
         assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " * - 2", "" );
@@ -37,7 +37,7 @@ class MultiplyOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMultiplyPrecedence(Context context) {
+    void testMultiplyPrecedence(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "3 + 4 * 5 + 6", "29" );
         assertExprReturns(context.getConnectionWithDefaultRole(), "5 * 24 / 4 * 2", "60" );
         assertExprReturns(context.getConnectionWithDefaultRole(), "48 / 4 / 2", "6" );
@@ -48,7 +48,7 @@ class MultiplyOperatorDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMultiplyBug774807(Context context) {
+    void testMultiplyBug774807(Context<?> context) {
         final String desiredResult =
             "Axis #0:\n"
                 + "{}\n"

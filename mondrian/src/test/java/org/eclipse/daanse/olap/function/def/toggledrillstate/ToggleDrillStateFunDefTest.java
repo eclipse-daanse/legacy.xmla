@@ -28,7 +28,7 @@ class ToggleDrillStateFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testToggleDrillState(Context context) {
+    void testToggleDrillState(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "ToggleDrillState({[Customers].[USA],[Customers].[Canada]},"
                 + "{[Customers].[USA],[Customers].[USA].[CA]})",
@@ -41,7 +41,7 @@ class ToggleDrillStateFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testToggleDrillState2(Context context) {
+    void testToggleDrillState2(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "ToggleDrillState([Product].[Product Department].members, "
                 + "{[Product].[All Products].[Food].[Snack Foods]})",
@@ -73,7 +73,7 @@ class ToggleDrillStateFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testToggleDrillState3(Context context) {
+    void testToggleDrillState3(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "ToggleDrillState("
                 + "{[Time].[1997].[Q1],"
@@ -90,7 +90,7 @@ class ToggleDrillStateFunDefTest {
     // bug 634860
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testToggleDrillStateTuple(Context context) {
+    void testToggleDrillStateTuple(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "ToggleDrillState(\n"
                 + "{([Store].[USA].[CA],"
@@ -109,7 +109,7 @@ class ToggleDrillStateFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testToggleDrillStateRecursive(Context context) {
+    void testToggleDrillStateRecursive(Context<?> context) {
         // We expect this to fail.
         assertQueryThrows(context,
             "Select \n"

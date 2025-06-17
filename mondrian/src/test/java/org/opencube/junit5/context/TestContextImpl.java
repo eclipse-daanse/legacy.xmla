@@ -326,6 +326,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
 
 import mondrian.olap.ExecuteDurationUtil;
+import mondrian.rolap.AbstractRolapContext;
 import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapConnectionPropsR;
@@ -338,7 +339,7 @@ import mondrian.rolap.RolapResultShepherd;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.server.ExecutionImpl;
 
-public class TestContextImpl extends AbstractBasicContext implements TestContext, RolapContext {
+public class TestContextImpl extends AbstractRolapContext implements TestContext {
 
     private Dialect dialect;
     private DataSource dataSource;
@@ -722,17 +723,17 @@ public class TestContextImpl extends AbstractBasicContext implements TestContext
     }
 
     @Override
-    public org.eclipse.daanse.olap.api.Connection getConnectionWithDefaultRole() {
+    public RolapConnection getConnectionWithDefaultRole() {
         return getConnection(new RolapConnectionPropsR());
     }
 
     @Override
-    public org.eclipse.daanse.olap.api.Connection getConnection(ConnectionProps props) {
+    public RolapConnection getConnection(ConnectionProps props) {
         return new RolapConnection(this, props);
     }
 
     @Override
-    public org.eclipse.daanse.olap.api.Connection getConnection(List<String> roles) {
+    public RolapConnection getConnection(List<String> roles) {
         return getConnection(new RolapConnectionPropsR(roles, true, Locale.getDefault(), Duration.ofSeconds(-1),
                 Optional.empty(), Optional.empty()));
     }

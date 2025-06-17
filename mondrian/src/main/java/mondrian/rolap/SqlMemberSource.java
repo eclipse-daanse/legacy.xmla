@@ -622,7 +622,7 @@ RME is this right
      */
     Pair<String, List<BestFitColumnType>> makeChildMemberSql(
         RolapMember member,
-        Context context,
+        Context<?> context,
         MemberChildrenConstraint constraint)
     {
         SqlQuery sqlQuery =

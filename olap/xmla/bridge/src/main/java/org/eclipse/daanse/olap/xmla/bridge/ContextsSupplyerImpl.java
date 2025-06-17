@@ -42,12 +42,12 @@ public class ContextsSupplyerImpl implements ContextListSupplyer {
 	}
 
 	@Override
-	public List<Context> getContexts() {
+	public List<Context<?>> getContexts() {
 		return contextsGroup.getValidContexts();
 	}
 
 	@Override
-	public Optional<Context> getContext(String name) {
+	public Optional<Context<?>> getContext(String name) {
 		return getContexts().stream().filter(c -> c.getName().equals(name)).findFirst();
 
 	}

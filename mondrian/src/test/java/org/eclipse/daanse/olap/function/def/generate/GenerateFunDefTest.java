@@ -38,7 +38,7 @@ class GenerateFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGenerateDepends(Context context) {
+    void testGenerateDepends(Context<?> context) {
         assertSetExprDependsOn(context.getConnectionWithDefaultRole(),
             "Generate([Product].CurrentMember.Children, Crossjoin({[Product].CurrentMember}, Crossjoin([Store].[Store "
                 + "State].Members, [Store Type].Members)), ALL)",
@@ -60,7 +60,7 @@ class GenerateFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGenerate(Context context) {
+    void testGenerate(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Generate({[Store].[USA], [Store].[USA].[CA]}, {[Store].CurrentMember.Children})",
             "[Store].[Store].[USA].[CA]\n"
@@ -75,7 +75,7 @@ class GenerateFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGenerateNonSet(Context context) {
+    void testGenerateNonSet(Context<?> context) {
         // SSAS implicitly converts arg #2 to a set
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Generate({[Store].[USA], [Store].[USA].[CA]}, [Store].PrevMember, ALL)",
@@ -90,7 +90,7 @@ class GenerateFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGenerateAll(Context context) {
+    void testGenerateAll(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Generate({[Store].[USA].[CA], [Store].[USA].[OR].[Portland]},"
                 + " Ascendants([Store].CurrentMember),"
@@ -106,7 +106,7 @@ class GenerateFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGenerateUnique(Context context) {
+    void testGenerateUnique(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Generate({[Store].[USA].[CA], [Store].[USA].[OR].[Portland]},"
                 + " Ascendants([Store].CurrentMember))",
@@ -119,7 +119,7 @@ class GenerateFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGenerateUniqueTuple(Context context) {
+    void testGenerateUniqueTuple(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Generate({([Store].[USA].[CA],[Product].[All Products]), "
                 + "([Store].[USA].[CA],[Product].[All Products])},"
@@ -129,7 +129,7 @@ class GenerateFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGenerateCrossJoin(Context context) {
+    void testGenerateCrossJoin(Context<?> context) {
         // Note that the different regions have different Top 2.
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Generate({[Store].[USA].[CA], [Store].[USA].[CA].[San Francisco]},\n"
@@ -146,7 +146,7 @@ class GenerateFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGenerateString(Context context) {
+    void testGenerateString(Context<?> context) {
         TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Generate({Time.[1997], Time.[1998]},"
                 + " Time.[Time].CurrentMember.Name)",
@@ -162,7 +162,7 @@ class GenerateFunDefTest {
     @Disabled
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGenerateWillTimeout(Context context) {
+    void testGenerateWillTimeout(Context<?> context) {
         ((TestContextImpl)context).setQueryTimeout(5);
         SystemWideProperties.instance().EnableNativeNonEmpty = false;
         try {
@@ -181,7 +181,7 @@ class GenerateFunDefTest {
     // The test case for the issue: MONDRIAN-2402
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGenerateForStringMemberProperty(Context context) {
+    void testGenerateForStringMemberProperty(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Store].[Store].[Lineage of Time] AS\n"
                 + " Generate(Ascendants([Time].[Time].CurrentMember), [Time].[Time].CurrentMember.Properties(\"MEMBER_CAPTION\"), \",\")\n"

@@ -31,7 +31,7 @@ public interface ContextGroup {
      *
      * @return Context
      */
-	List<Context> getValidContexts();
+	List<Context<?>> getValidContexts();
 	
 
 

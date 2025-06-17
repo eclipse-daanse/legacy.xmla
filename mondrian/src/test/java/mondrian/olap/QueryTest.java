@@ -46,7 +46,7 @@ class QueryTest {
     private QueryImpl queryWithoutCellProps;
 
 
-    private void beforeTest(Context context)
+    private void beforeTest(Context<?> context)
     {
 
         ConnectionBase connection =
@@ -76,7 +76,7 @@ class QueryTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHasCellPropertyWhenQueryHasCellProperties(Context context) {
+    void testHasCellPropertyWhenQueryHasCellProperties(Context<?> context) {
         beforeTest(context);
         assertTrue(queryWithCellProps.hasCellProperty("Value"));
         assertFalse(queryWithCellProps.hasCellProperty("Language"));
@@ -84,7 +84,7 @@ class QueryTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIsCellPropertyEmpty(Context context) {
+    void testIsCellPropertyEmpty(Context<?> context) {
         beforeTest(context);
         assertTrue(queryWithoutCellProps.isCellPropertyEmpty());
     }

@@ -27,7 +27,7 @@ class VarFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVar(Context context) {
+    void testVar(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "VAR({[Store].[All Stores].[USA].children},[Measures].[Store Sales])",
             "4,332,990,493.69" );

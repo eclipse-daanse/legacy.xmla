@@ -28,7 +28,7 @@ class GreaterOrEqualOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGe(Context context) {
+    void testGe(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 2 > 1.0 + 1.0 ", false );
         checkNullOp(context.getConnectionWithDefaultRole(), ">=" );
     }

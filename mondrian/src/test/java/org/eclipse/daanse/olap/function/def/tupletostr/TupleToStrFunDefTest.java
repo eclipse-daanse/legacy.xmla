@@ -26,7 +26,7 @@ class TupleToStrFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTupleToStr(Context context) {
+    void testTupleToStr(Context<?> context) {
         // Applied to a dimension (which becomes a member)
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TupleToStr([Product])",

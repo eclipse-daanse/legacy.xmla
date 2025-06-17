@@ -63,7 +63,7 @@ public class Checkin_7634 extends CsvDBTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    public void testCrossJoin(Context context) throws Exception {
+    public void testCrossJoin(Context<?> context) throws Exception {
         prepareContext(context);
         // explicit use of [Product].[Class1]
         String mdx =

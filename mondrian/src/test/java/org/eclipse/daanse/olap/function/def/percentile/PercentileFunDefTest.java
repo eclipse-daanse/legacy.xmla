@@ -26,7 +26,7 @@ class PercentileFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPercentile(Context context) {
+    void testPercentile(Context<?> context) {
         // same result as median
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "Percentile({[Store].[All Stores].[USA].children}, [Measures].[Store Sales], 50)",
@@ -60,7 +60,7 @@ class PercentileFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPercentileBugMondrian1045(Context context) {
+    void testPercentileBugMondrian1045(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "Percentile({[Store].[All Stores].[USA]}, [Measures].[Store Sales], 50)",
             "565,238.13" );

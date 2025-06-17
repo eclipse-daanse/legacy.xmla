@@ -417,7 +417,7 @@ class SqlConstraintUtilsTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testReplaceCompoundSlicerPlaceholder(Context context) {
+    void testReplaceCompoundSlicerPlaceholder(Context<?> context) {
         final Connection connection = context.getConnectionWithDefaultRole();
 
         final String queryText =
@@ -639,7 +639,7 @@ class SqlConstraintUtilsTest {
     // test with a placeholder member
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testExpandSupportedCalculatedMembers2(Context context) {
+    void testExpandSupportedCalculatedMembers2(Context<?> context) {
       final Connection connection = context.getConnectionWithDefaultRole();
 
       final String queryText =
@@ -840,7 +840,7 @@ class SqlConstraintUtilsTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testConstrainLevel(Context context){
+    void testConstrainLevel(Context<?> context){
 
         final RolapCubeLevel level = mock( RolapCubeLevel.class);
         final RolapCube baseCube = mock(RolapCube.class);

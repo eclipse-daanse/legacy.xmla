@@ -29,7 +29,7 @@ class ExceptFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testExceptEmpty(Context context) {
+    void testExceptEmpty(Context<?> context) {
         // If left is empty, result is empty.
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Except(Filter([Gender].Members, 1=0), {[Gender].[Gender].[M]})", "" );
@@ -46,7 +46,7 @@ class ExceptFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testExceptCrossjoin(Context context) {
+    void testExceptCrossjoin(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Except(CROSSJOIN({[Promotion Media].[All Media]},\n"
                 + "                  [Product].[All Products].Children),\n"
@@ -58,7 +58,7 @@ class ExceptFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testExtract(Context context) {
+    void testExtract(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Extract(\n"
                 + "Crossjoin({[Gender].[F], [Gender].[M]},\n"
@@ -151,7 +151,7 @@ class ExceptFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchizeExcept(Context context) throws Exception {
+    void testHierarchizeExcept(Context<?> context) throws Exception {
         final String[] mdxA =
             new String[] {
                 "SELECT {[Measures].[Unit Sales], [Measures].[Store Sales]} ON COLUMNS, Hierarchize(Except({[Customers].[USA]"

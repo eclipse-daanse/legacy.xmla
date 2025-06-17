@@ -30,7 +30,7 @@ class SetItemFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSetItemInt(Context context) {
+    void testSetItemInt(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Customers].[All Customers].[USA].[OR].[Lebanon].[Mary Frances Christian]}.Item(0)",
             "[Customers].[Customers].[USA].[OR].[Lebanon].[Mary Frances Christian]" );
@@ -79,7 +79,7 @@ class SetItemFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSetItemString(Context context) {
+    void testSetItemString(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Gender].[M], [Gender].[F]}.Item(\"M\")",
             "[Gender].[Gender].[M]" );

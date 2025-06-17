@@ -27,7 +27,7 @@ class IntersectFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIntersectAll(Context context) {
+    void testIntersectAll(Context<?> context) {
         // Note: duplicates retained from left, not from right; and order is
         // preserved.
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -41,7 +41,7 @@ class IntersectFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIntersect(Context context) {
+    void testIntersect(Context<?> context) {
         // Duplicates not preserved. Output in order that first duplicate
         // occurred.
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -54,7 +54,7 @@ class IntersectFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIntersectTuples(Context context) {
+    void testIntersectTuples(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Intersect(\n"
                 + "  {([Time].[1997].[Q2], [Gender].[M]),\n"
@@ -71,7 +71,7 @@ class IntersectFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIntersectRightEmpty(Context context) {
+    void testIntersectRightEmpty(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Intersect({[Time].[1997]}, {})",
             "" );
@@ -79,7 +79,7 @@ class IntersectFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIntersectLeftEmpty(Context context) {
+    void testIntersectLeftEmpty(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Intersect({}, {[Store].[USA].[CA]})",
             "" );

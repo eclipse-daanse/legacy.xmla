@@ -16,6 +16,6 @@ package mondrian.rolap;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.rolap.api.RolapContext;
 
-public abstract class AbstractRolapContext extends AbstractBasicContext implements RolapContext {
+public abstract class AbstractRolapContext extends AbstractBasicContext<RolapConnection> implements RolapContext {
 
 }

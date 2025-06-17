@@ -26,7 +26,7 @@ class DistinctFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDistinctTwoMembers(Context context) {
+    void testDistinctTwoMembers(Context<?> context) {
         //getTestContext().withCube( "HR" ).
         assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Distinct({[Employees].[All Employees].[Sheri Nowmer].[Donna Arnold],"
@@ -36,7 +36,7 @@ class DistinctFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDistinctThreeMembers(Context context) {
+    void testDistinctThreeMembers(Context<?> context) {
         //getTestContext().withCube( "HR" ).
         assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Distinct({[Employees].[All Employees].[Sheri Nowmer].[Donna Arnold],"
@@ -48,7 +48,7 @@ class DistinctFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDistinctFourMembers(Context context) {
+    void testDistinctFourMembers(Context<?> context) {
         //getTestContext().withCube( "HR" ).
         assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Distinct({[Employees].[All Employees].[Sheri Nowmer].[Donna Arnold],"
@@ -61,7 +61,7 @@ class DistinctFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDistinctTwoTuples(Context context) {
+    void testDistinctTwoTuples(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Distinct({([Time].[1997],[Store].[All Stores].[Mexico]), "
                 + "([Time].[1997], [Store].[All Stores].[Mexico])})",
@@ -70,7 +70,7 @@ class DistinctFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDistinctSomeTuples(Context context) {
+    void testDistinctSomeTuples(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Distinct({([Time].[1997],[Store].[All Stores].[Mexico]), "
                 + "crossjoin({[Time].[1997]},{[Store].[All Stores].children})})",

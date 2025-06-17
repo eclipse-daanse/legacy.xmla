@@ -101,7 +101,7 @@ public class RolapCatalogReader
     protected final RolapCatalog catalog;
     private final SqlConstraintFactory sqlConstraintFactory =
         SqlConstraintFactory.instance();
-    private Context context;
+    private Context<?> context;
     private static final Logger LOGGER =
         LoggerFactory.getLogger(RolapCatalogReader.class);
 
@@ -111,7 +111,7 @@ public class RolapCatalogReader
      * @param role Role for access control, must not be null
      * @param catalog Schema
      */
-    RolapCatalogReader(Context context, Role role, RolapCatalog catalog) {
+    RolapCatalogReader(Context<?> context, Role role, RolapCatalog catalog) {
         assert role != null : "precondition: role != null";
         assert catalog != null;
         assert context != null;

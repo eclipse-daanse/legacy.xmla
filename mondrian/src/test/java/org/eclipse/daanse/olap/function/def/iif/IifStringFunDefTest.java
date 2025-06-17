@@ -26,7 +26,7 @@ class IifStringFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIIf(Context context) {
+    void testIIf(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "IIf(([Measures].[Unit Sales],[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]) > 100, \"Yes\",\"No\")",
             "Yes" );
@@ -34,7 +34,7 @@ class IifStringFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIIfWithStringAndNull(Context context) {
+    void testIIfWithStringAndNull(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "IIf(([Measures].[Unit Sales],[Product].[Drink].[Alcoholic Beverages].[Beer and Wine]) > 100, null,\"foo\")",
             "" );
@@ -45,7 +45,7 @@ class IifStringFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIsEmptyWithNull(Context context) {
+    void testIsEmptyWithNull(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "iif (isempty(null), \"is empty\", \"not is empty\")",
             "is empty" );

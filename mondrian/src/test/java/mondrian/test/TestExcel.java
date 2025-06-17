@@ -33,7 +33,7 @@ public class TestExcel {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void test(Context context) {
+    void test(Context<?> context) {
         String mdxQueryString = """
                 SELECT NON EMPTY CrossJoin(Hierarchize(AddCalculatedMembers({DrilldownLevel({[Store].[All Stores]})})),Hierarchize(AddCalculatedMembers({DrilldownLevel({[Position].[All Position]})}))) DIMENSION PROPERTIES PARENT_UNIQUE_NAME ON COLUMNS  FROM [HR] WHERE ([Measures].[Count]) CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS
                 """;
@@ -46,12 +46,12 @@ public class TestExcel {
             CellSet cellSet = statement.executeQuery(query);
 
             System.out.println(cellSet);
-            
+
             StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter= new PrintWriter(stringWriter);
             new RectangularCellSetFormatter(true).format(cellSet, printWriter);
 
-            
+
             System.out.println(stringWriter);
             System.out.println("...");
         }

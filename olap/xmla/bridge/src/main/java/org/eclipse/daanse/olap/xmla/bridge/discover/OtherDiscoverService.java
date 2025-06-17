@@ -249,7 +249,7 @@ public class OtherDiscoverService {
             String propertyValue = "";
             if (propertyDefinition.name().equals(PropertyDefinition.Catalog.name())) {
                 if (properetyCatalog.isPresent()) {
-                	Optional<Context> oContext= contextsListSupplyer.getContext(properetyCatalog.get());
+                	Optional<Context<?>> oContext= contextsListSupplyer.getContext(properetyCatalog.get());
                 	if(oContext.isPresent()) {
                 		propertyValue=oContext.get().getName();
                 	}else {

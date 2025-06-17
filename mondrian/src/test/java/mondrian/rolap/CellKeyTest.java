@@ -333,7 +333,7 @@ class CellKeyTest  {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCellLookup(Context context) {
+    void testCellLookup(Context<?> context) {
         if (!isDefaultNullMemberRepresentation()) {
             return;
         }

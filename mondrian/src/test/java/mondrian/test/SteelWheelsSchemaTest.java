@@ -78,7 +78,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMeasures(Context context) {
+    void testMeasures(Context<?> context) {
         if (!TestUtil.databaseIsValid(context.getConnectionWithDefaultRole(), "Sales")) {
             return;
         }
@@ -91,7 +91,7 @@ class SteelWheelsSchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMondrian1273(Context context) {
+    void testMondrian1273(Context<?> context) {
         //createContext(context, schema);
         withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier1::new);
         if (!databaseIsValid(((TestContext)context).getConnection(List.of("dev")), "Sales")) {
@@ -124,7 +124,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMarkets(Context context) {
+    void testMarkets(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
@@ -198,7 +198,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testBugMondrian755(Context context) {
+    void testBugMondrian755(Context<?> context) {
         //getTestContext(context);
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
@@ -259,7 +259,7 @@ class SteelWheelsSchemaTest {
             + "From [SteelWheelsSales]");
     }
 
-    private void checkCellZero(Context context, String mdx) {
+    private void checkCellZero(Context<?> context, String mdx) {
         final Result result = executeQuery(context.getConnectionWithDefaultRole(), mdx);
         final Cell cell = result.getCell(new int[result.getAxes().length]);
         assertTrue(cell.canDrillThrough());
@@ -275,7 +275,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testBugMondrian756(Context context) {
+    void testBugMondrian756(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
@@ -302,7 +302,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testBugMondrian756b(Context context) {
+    void testBugMondrian756b(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
@@ -325,7 +325,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testBugMondrian805(Context context) {
+    void testBugMondrian805(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
@@ -364,7 +364,7 @@ class SteelWheelsSchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMondrianBug476_770_957(Context context) throws Exception {
+    void testMondrianBug476_770_957(Context<?> context) throws Exception {
         withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier4::new);
         final String mdxQuery =
             "with set [*NATIVE_CJ_SET] as 'Filter([*BASE_MEMBERS_Time], (NOT IsEmpty([Measures].[Price Each])))'\n"
@@ -408,7 +408,7 @@ class SteelWheelsSchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testBugMondrian935(Context context) {
+    void testBugMondrian935(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
@@ -459,7 +459,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testPropertyWithParameterOfTimestampType(Context context) throws Exception {
+    void testPropertyWithParameterOfTimestampType(Context<?> context) throws Exception {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
@@ -486,7 +486,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testEsr1587(Context context) {
+    void testEsr1587(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
@@ -508,7 +508,7 @@ class SteelWheelsSchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMondrian1133(Context context) {
+    void testMondrian1133(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
@@ -539,7 +539,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMondrian1197(Context context) {
+    void testMondrian1197(Context<?> context) {
 
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
@@ -980,7 +980,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testRangeSortWithNullKeys(Context context) {
+    void testRangeSortWithNullKeys(Context<?> context) {
 
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
@@ -1057,7 +1057,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testBug1285(Context context) {
+    void testBug1285(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
@@ -1147,7 +1147,7 @@ class SteelWheelsSchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testDoubleValueCanBeRankedAmongIntegers(Context context) {
+    void testDoubleValueCanBeRankedAmongIntegers(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
@@ -1188,7 +1188,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMondrian1360(Context context) {
+    void testMondrian1360(Context<?> context) {
         withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier6::new);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1230,7 +1230,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMondrian1464(Context context) {
+    void testMondrian1464(Context<?> context) {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
@@ -1264,7 +1264,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMondrian1252(Context context) throws Exception {
+    void testMondrian1252(Context<?> context) throws Exception {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
@@ -1343,7 +1343,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMondrian1750(Context context) throws Exception {
+    void testMondrian1750(Context<?> context) throws Exception {
         //if (!databaseIsValid(context.getConnection())) {
         //    return;
         //}
@@ -1381,7 +1381,7 @@ class SteelWheelsSchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMondrian2411_1(Context context) throws Exception {
+    void testMondrian2411_1(Context<?> context) throws Exception {
         // Tests a user query followed by an admin query
         withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier8::new);
         assertQueryReturns(((TestContext)context).getConnection(List.of("Power User")),
@@ -1621,7 +1621,7 @@ class SteelWheelsSchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMondrian2411_2(Context context) throws Exception {
+    void testMondrian2411_2(Context<?> context) throws Exception {
         withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier8::new);
 
         assertQueryReturns(((TestContext)context).getConnection(List.of("Administrator")),
@@ -1861,7 +1861,7 @@ class SteelWheelsSchemaTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMondrian2411_3(Context context) throws Exception {
+    void testMondrian2411_3(Context<?> context) throws Exception {
         // Tests an admin query followed by a user query, but both are wrapped
         // with a no-op role in a union.
         if ((context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
@@ -2111,7 +2111,7 @@ class SteelWheelsSchemaTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandSteelWheelsCatalog.class, dataloader = SteelWheelsDataLoader.class )
-    void testMondrian2652(Context context) {
+    void testMondrian2652(Context<?> context) {
         // Check if there is a valid SteelWheels database.
         //if (!databaseIsValid(context.getConnection())) {
         //    return;

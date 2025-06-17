@@ -29,7 +29,7 @@ class DivideOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDivide(Context context) {
+    void testDivide(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "10 / 5", "2" );
         assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " / - 2", "" );
         assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " / " + NullNumericExpr, "" );
@@ -65,7 +65,7 @@ class DivideOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDividePrecedence(Context context) {
+    void testDividePrecedence(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "24 / 4 / 2 * 10 - -1", "31" );
     }
 

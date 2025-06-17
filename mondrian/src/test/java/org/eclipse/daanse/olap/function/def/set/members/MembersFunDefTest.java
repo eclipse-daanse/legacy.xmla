@@ -30,7 +30,7 @@ class MembersFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMembers(Context context) {
+    void testMembers(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         // <Level>.members
         assertAxisReturns(connection, "Sales",
@@ -123,7 +123,7 @@ class MembersFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchyMembers(Context context) {
+    void testHierarchyMembers(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertAxisReturns(connection, "Sales",
             "Head({[Time].[Weekly].Members}, 10)",

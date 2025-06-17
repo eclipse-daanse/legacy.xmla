@@ -84,7 +84,7 @@ class HierarchyBugTest {
      **/
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNoHierarchy(Context foodMartContext) {
+    void testNoHierarchy(Context<?> foodMartContext) {
         String queryString =
             "select NON EMPTY "
             + "Crossjoin(Hierarchize(Union({[Time].[Time].LastSibling}, "
@@ -129,7 +129,7 @@ class HierarchyBugTest {
      */
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-	void testNamesIdentitySsasCompatibleTimeHierarchy(Context foodMartContext) {
+	void testNamesIdentitySsasCompatibleTimeHierarchy(Context<?> foodMartContext) {
 
         String mdxTime = "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
@@ -148,7 +148,7 @@ TestUtil.flushSchemaCache(conn);
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNamesIdentitySsasCompatibleWeeklyHierarchy(Context foodMartContext) {
+    void testNamesIdentitySsasCompatibleWeeklyHierarchy(Context<?> foodMartContext) {
         String mdxWeekly = "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
             + "   [Time].[Weekly].[Year].Members ON ROWS\n"
@@ -171,7 +171,7 @@ TestUtil.flushSchemaCache(conn);
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNamesIdentitySsasInCompatibleTimeHierarchy(Context foodMartContext) {
+    void testNamesIdentitySsasInCompatibleTimeHierarchy(Context<?> foodMartContext) {
         // SsasCompatibleNaming defaults to false
         String mdxTime = "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
@@ -188,7 +188,7 @@ TestUtil.flushSchemaCache(conn);
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNamesIdentitySsasInCompatibleWeeklyHierarchy(Context foodMartContext) {
+    void testNamesIdentitySsasInCompatibleWeeklyHierarchy(Context<?> foodMartContext) {
         String mdxWeekly = "SELECT\n"
             + "   [Measures].[Unit Sales] ON COLUMNS,\n"
             + "   [Time].[Weekly].[Year].Members ON ROWS\n"
@@ -227,11 +227,11 @@ TestUtil.flushSchemaCache(conn);
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNamesIdentitySsasCompatibleOlap4j(Context foodMartContext) throws SQLException {
+    void testNamesIdentitySsasCompatibleOlap4j(Context<?> foodMartContext) throws SQLException {
         verifyLevelMemberNamesIdentityOlap4jTimeHierarchy(foodMartContext, "[Time].[Time]");
     }
 
-    private void verifyLevelMemberNamesIdentityOlap4jTimeHierarchy(Context foodMartContext, String expected)
+    private void verifyLevelMemberNamesIdentityOlap4jTimeHierarchy(Context<?> foodMartContext, String expected)
         throws SQLException
     {
         // essential here, in time hierarchy, is hasAll="false"
@@ -244,7 +244,7 @@ TestUtil.flushSchemaCache(conn);
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNamesIdentitySsasCompatibleOlap4jWeekly(Context foodMartContext)
+    void testNamesIdentitySsasCompatibleOlap4jWeekly(Context<?> foodMartContext)
         throws SQLException
     {
         String mdx = "SELECT\n"
@@ -256,7 +256,7 @@ TestUtil.flushSchemaCache(conn);
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNamesIdentitySsasInCompatibleOlap4jWeekly(Context foodMartContext)
+    void testNamesIdentitySsasInCompatibleOlap4jWeekly(Context<?> foodMartContext)
         throws SQLException
     {
         // SsasCompatibleNaming defaults to false
@@ -269,13 +269,13 @@ TestUtil.flushSchemaCache(conn);
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNamesIdentitySsasCompatibleOlap4jDateDim(Context foodMartContext)
+    void testNamesIdentitySsasCompatibleOlap4jDateDim(Context<?> foodMartContext)
         throws SQLException
     {
         verifyMemberLevelNamesIdentityOlap4jDateDim(foodMartContext, "[Date].[Date]");
     }
 
-    private void verifyMemberLevelNamesIdentityOlap4jDateDim(Context context, String expected)
+    private void verifyMemberLevelNamesIdentityOlap4jDateDim(Context<?> context, String expected)
         throws SQLException
     {
         String mdx =
@@ -353,7 +353,7 @@ TestUtil.flushSchemaCache(conn);
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNamesIdentitySsasCompatibleOlap4jDateWeekly(Context context)
+    void testNamesIdentitySsasCompatibleOlap4jDateWeekly(Context<?> context)
         throws SQLException
     {
         String mdx = "SELECT\n"
@@ -364,7 +364,7 @@ TestUtil.flushSchemaCache(conn);
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNamesIdentitySsasInCompatibleOlap4jDateDim(Context context)
+    void testNamesIdentitySsasInCompatibleOlap4jDateDim(Context<?> context)
         throws SQLException
     {
         // SsasCompatibleNaming defaults to false
@@ -375,7 +375,7 @@ TestUtil.flushSchemaCache(conn);
         verifyMemberLevelNamesIdentityOlap4jWeekly(context,mdx, "[Date].[Weekly]");
     }
 
-    private void verifyMemberLevelNamesIdentityOlap4jWeekly(Context context,
+    private void verifyMemberLevelNamesIdentityOlap4jWeekly(Context<?> context,
         String mdx, String expected) throws SQLException
     {
 
@@ -456,7 +456,7 @@ TestUtil.flushSchemaCache(conn);
     }
 
     private void verifyLevelMemberNamesIdentityOlap4j(
-        String mdx, Context context, String expected)
+        String mdx, Context<?> context, String expected)
     {
     Connection connection =	context.getConnectionWithDefaultRole();
         org.eclipse.daanse.olap.api.result.CellSet result = connection.createStatement().executeQuery(mdx);

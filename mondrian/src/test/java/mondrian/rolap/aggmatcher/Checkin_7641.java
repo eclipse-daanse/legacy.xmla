@@ -54,7 +54,7 @@ public class Checkin_7641 extends CsvDBTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    public void testImplicitMember(Context context) throws Exception {
+    public void testImplicitMember(Context<?> context) throws Exception {
         // explicit use of [Product].[Class1]
         prepareContext(context);
         String mdx =

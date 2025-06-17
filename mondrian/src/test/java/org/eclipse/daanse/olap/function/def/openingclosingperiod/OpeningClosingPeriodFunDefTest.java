@@ -37,7 +37,7 @@ class OpeningClosingPeriodFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testClosingPeriodNoArgs(Context context) {
+    void testClosingPeriodNoArgs(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
             "ClosingPeriod()", "{[Time].[Time]}" );
@@ -49,7 +49,7 @@ class OpeningClosingPeriodFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testClosingPeriodLevel(Context context) {
+    void testClosingPeriodLevel(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
             "ClosingPeriod([Time].[Year])", "{[Time].[Time]}" );
@@ -146,7 +146,7 @@ class OpeningClosingPeriodFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testClosingPeriodLevelNotInTimeFails(Context context) {
+    void testClosingPeriodLevelNotInTimeFails(Context<?> context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "ClosingPeriod([Store].[Store City])",
             "The <level> and <member> arguments to ClosingPeriod must be from "
@@ -156,7 +156,7 @@ class OpeningClosingPeriodFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testClosingPeriodMember(Context context) {
+    void testClosingPeriodMember(Context<?> context) {
         if ( false ) {
             // This test is mistaken. Valid forms are ClosingPeriod(<level>)
             // and ClosingPeriod(<level>, <member>), but not
@@ -168,7 +168,7 @@ class OpeningClosingPeriodFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testClosingPeriodMemberLeaf(Context context) {
+    void testClosingPeriodMemberLeaf(Context<?> context) {
         Member member;
         if ( false ) {
             // This test is mistaken. Valid forms are ClosingPeriod(<level>)
@@ -203,7 +203,7 @@ class OpeningClosingPeriodFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testClosingPeriod(Context context) {
+    void testClosingPeriod(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertMemberExprDependsOn(connection,
             "ClosingPeriod([Time].[Month], [Time].[Time].CurrentMember)",
@@ -282,7 +282,7 @@ class OpeningClosingPeriodFunDefTest {
 
         assertAxisReturns(connection, "Sales", "ClosingPeriod()", "[Time].[Time].[1997].[Q4]" );
 
-        //Context testContext = getContext().withCube( "[Sales Ragged]" );
+        //Context<?> testContext<?> = getContext().withCube( "[Sales Ragged]" );
         assertAxisReturns(connection, "[Sales Ragged]",
             "ClosingPeriod([Store].[Store State], [Store].[All Stores].[Israel])",
             "" );
@@ -296,7 +296,7 @@ class OpeningClosingPeriodFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testClosingPeriodBelow(Context context) {
+    void testClosingPeriodBelow(Context<?> context) {
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
             "ClosingPeriod([Quarter],[1997].[Q3].[8])", "Sales" );
         assertNull( member );
@@ -305,7 +305,7 @@ class OpeningClosingPeriodFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOpeningPeriod(Context context) {
+    void testOpeningPeriod(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "OpeningPeriod([Time].[Month], [Time].[1997].[Q3])",
             "[Time].[Time].[1997].[Q3].[7]" );
@@ -341,7 +341,7 @@ class OpeningClosingPeriodFunDefTest {
 
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "OpeningPeriod()", "[Time].[Time].[1997].[Q1]" );
 
-        //TestContext testContext = getTestContext().withCube( "[Sales Ragged]" );
+        //TestContext<?> testContext<?> = getTestContext().withCube( "[Sales Ragged]" );
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "OpeningPeriod([Time].[Year], [Store].[All Stores].[Israel])",
             "The <level> and <member> arguments to OpeningPeriod must be "
@@ -360,7 +360,7 @@ class OpeningClosingPeriodFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOpeningPeriodNull(Context context) {
+    void testOpeningPeriodNull(Context<?> context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "OpeningPeriod([Time].[Month], NULL)",
             "Function does not support NULL member parameter", "Sales" );

@@ -72,7 +72,7 @@ class AggregationOverAggTableTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testAvgMeasureLowestGranularity(Context context) throws Exception {
+    void testAvgMeasureLowestGranularity(Context<?> context) throws Exception {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);

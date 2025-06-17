@@ -99,7 +99,7 @@ public class RolapNativeFilter extends RolapNativeSet {
       }
     }
 
-    public boolean isSuported( Context context ) {
+    public boolean isSuported( Context<?> context ) {
       RolapEvaluator evaluator = this.getEvaluator();
       SqlQuery testQuery = SqlQuery.newQuery( context, "testQuery" );
       SqlTupleReader sqlTupleReader = new SqlTupleReader( this );
@@ -197,7 +197,7 @@ NativeEvaluator createEvaluator( RolapEvaluator evaluator, FunctionDefinition fu
 
     // extract "order by" expression
     CatalogReader schemaReader = evaluator.getCatalogReader();
-    Context context=schemaReader.getContext();
+    Context<?> context = schemaReader.getContext();
     // generate the WHERE condition
     // Need to generate where condition here to determine whether
     // or not the filter condition can be created. The filter

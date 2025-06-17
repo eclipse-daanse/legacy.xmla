@@ -346,7 +346,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
     }
   }
 
-    private ExecutorService createCacheExecutor(Context context) {
+    private ExecutorService createCacheExecutor(Context<?> context) {
         return Util.getExecutorService(
             // We use the same value for coreSize and maxSize
             // because that's the behavior we want. All extra
@@ -360,7 +360,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
             } );
     }
 
-    private ExecutorService createSqlExecutor(Context context) {
+    private ExecutorService createSqlExecutor(Context<?> context) {
         return Util.getExecutorService(
             // We use the same value for coreSize and maxSize
             // because that's the behavior we want. All extra
@@ -518,7 +518,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
    */
   public void externalSegmentCreated(
     SegmentHeader header,
-    Context context ) {
+    Context<?> context ) {
     if ( context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class) ) {
       // Ignore cache requests.
       return;
@@ -541,7 +541,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
    */
   public void externalSegmentDeleted(
     SegmentHeader header,
-    Context context ) {
+    Context<?> context ) {
     if ( context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class) ) {
       // Ignore cache requests.
       return;
@@ -1757,7 +1757,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
     private static final long serialVersionUID = 1L;
   }
 
-    public Context getContext() {
+    public Context<?> getContext() {
         return context;
     }
 }

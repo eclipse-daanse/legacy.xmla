@@ -1304,7 +1304,7 @@ class ConcurrentMdxTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
     @DisabledIfSystemProperty(named = "test.disable.knownFails", matches = "true")
-    void testFlushingDoesNotCauseDeadlock(Context context) throws Exception {
+    void testFlushingDoesNotCauseDeadlock(Context<?> context) throws Exception {
         // Create a seeded deterministic random generator.
         final long seed = new Random().nextLong();
         LOGGER.debug("Test seed: " + seed);

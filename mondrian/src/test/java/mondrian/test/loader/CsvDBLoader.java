@@ -93,7 +93,7 @@ public class CsvDBLoader extends DBLoader {
     private File[] inputFiles;
     private File inputFile;
 
-    public CsvDBLoader(Context context) {
+    public CsvDBLoader(Context<?> context) {
         super(context);
     }
 

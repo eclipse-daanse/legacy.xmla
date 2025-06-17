@@ -32,7 +32,7 @@ class HierarchizeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchize(Context context) {
+    void testHierarchize(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Hierarchize(\n"
                 + "    {[Product].[All Products], "
@@ -52,7 +52,7 @@ class HierarchizeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchizePost(Context context) {
+    void testHierarchizePost(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Hierarchize(\n"
                 + "    {[Product].[All Products], "
@@ -69,7 +69,7 @@ class HierarchizeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchizePC(Context context) {
+    void testHierarchizePC(Context<?> context) {
         //getTestContext().withCube( "HR" ).
         assertAxisReturns(context.getConnectionWithDefaultRole(), "HR",
             "Hierarchize(\n"
@@ -104,7 +104,7 @@ class HierarchizeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchizeCrossJoinPre(Context context) {
+    void testHierarchizeCrossJoinPre(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Hierarchize(\n"
                 + "  CrossJoin(\n"
@@ -131,7 +131,7 @@ class HierarchizeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchizeCrossJoinPost(Context context) {
+    void testHierarchizeCrossJoinPost(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Hierarchize(\n"
                 + "  CrossJoin(\n"
@@ -166,8 +166,8 @@ class HierarchizeFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchizeOrdinal(Context context) {
-        //TestContext testContext = getTestContext().withCube( "[Sales_Hierarchize]" );
+    void testHierarchizeOrdinal(Context<?> context) {
+        //TestContext<?> testContext<?> = getTestContext().withCube( "[Sales_Hierarchize]" );
     /*
     connection.getSchema().createCube(
       "<Cube name=\"Sales_Hierarchize\">\n"

@@ -31,7 +31,7 @@ class CoalesceEmptyFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCoalesceEmptyDepends(Context context) {
+    void testCoalesceEmptyDepends(Context<?> context) {
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "coalesceempty([Time].[1997], [Gender].[M])",
             allHiers() );
@@ -44,7 +44,7 @@ class CoalesceEmptyFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCoalesceEmpty(Context context) {
+    void testCoalesceEmpty(Context<?> context) {
         // [DF] is all null and [WA] has numbers for 1997 but not for 1998.
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "with\n"
@@ -120,7 +120,7 @@ class CoalesceEmptyFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCoalesceEmpty2(Context context) {
+    void testCoalesceEmpty2(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "with\n"
                 + "    member Measures.[Sales Per Customer] as 'Measures.[Sales Count] / Measures.[Customer Count]'\n"
@@ -146,7 +146,7 @@ class CoalesceEmptyFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBrokenContextBug(Context context) {
+    void testBrokenContextBug(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "with\n"
                 + "    member Measures.[Sales Per Customer] as 'Measures.[Sales Count] / Measures.[Customer Count]'\n"

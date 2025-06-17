@@ -52,7 +52,7 @@ class CacheTest {
      */
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNQueriesWaitingForSameSegmentRepeat(Context foodMartContext)
+    void testNQueriesWaitingForSameSegmentRepeat(Context<?> foodMartContext)
         throws ExecutionException, InterruptedException
     {
 		Connection connection = foodMartContext.getConnectionWithDefaultRole();
@@ -76,7 +76,7 @@ class CacheTest {
         String iteration)
         throws InterruptedException, ExecutionException
     {
-        final Context context =
+        final Context<?> context =
            connection.getContext();
         final CacheControl cacheControl =
         		connection.getCacheControl(null);

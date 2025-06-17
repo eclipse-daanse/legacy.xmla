@@ -30,7 +30,7 @@ class CalculatedChildFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCalculatedChild(Context context) {
+    void testCalculatedChild(Context<?> context) {
         // Construct calculated children with the same name for both [Drink] and
         // [Non-Consumable].  Then, create a metric to select the calculated
         // child based on current product member.
@@ -63,7 +63,7 @@ class CalculatedChildFunDefTest {
     @Disabled //disabled for CI build
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCalculatedChildUsingItem(Context context) {
+    void testCalculatedChildUsingItem(Context<?> context) {
         // Construct calculated children with the same name for both [Drink] and
         // [Non-Consumable].  Then, create a metric to select the first
         // calculated child.
@@ -97,7 +97,7 @@ class CalculatedChildFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCalculatedChildOnMemberWithNoChildren(Context context) {
+    void testCalculatedChildOnMemberWithNoChildren(Context<?> context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(),
                 "[Measures].[Store Sales].CalculatedChild(\"foobar\")", "Sales" );
@@ -106,7 +106,7 @@ class CalculatedChildFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCalculatedChildOnNullMember(Context context) {
+    void testCalculatedChildOnNullMember(Context<?> context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(),
                 "[Measures].[Store Sales].parent.CalculatedChild(\"foobar\")", "Sales" );

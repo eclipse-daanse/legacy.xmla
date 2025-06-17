@@ -31,7 +31,7 @@ class ValidMeasureFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testValidMeasure(Context context) {
+    void testValidMeasure(Context<?> context) {
         TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with\n"
                 + "member measures.[with VM] as 'validmeasure([measures].[unit sales])'\n"
@@ -52,7 +52,7 @@ class ValidMeasureFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void _testValidMeasureNonEmpty(Context context) {
+    void _testValidMeasureNonEmpty(Context<?> context) {
         // Note that [with VM2] is NULL where it needs to be - and therefore
         // does not prevent NON EMPTY from eliminating empty rows.
         TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -101,7 +101,7 @@ class ValidMeasureFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testValidMeasureTupleHasAnotherMember(Context context) {
+    void testValidMeasureTupleHasAnotherMember(Context<?> context) {
         TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with\n"
                 + "member measures.[with VM] as 'validmeasure(([measures].[unit sales],[customers].[all customers]))'\n"
@@ -122,7 +122,7 @@ class ValidMeasureFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testValidMeasureDepends(Context context) {
+    void testValidMeasureDepends(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         String s12 = FunctionTest.allHiersExcept( "[Measures]" );
         TestUtil.assertExprDependsOn(connection,
@@ -141,7 +141,7 @@ class ValidMeasureFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testValidMeasureNonVirtualCube(Context context) {
+    void testValidMeasureNonVirtualCube(Context<?> context) {
         // verify ValidMeasure used outside of a virtual cube
         // is effectively a no-op.
         Connection connection = context.getConnectionWithDefaultRole();
@@ -172,7 +172,7 @@ class ValidMeasureFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testValidMeasureCalculatedMemberMeasure(Context context) {
+    void testValidMeasureCalculatedMemberMeasure(Context<?> context) {
         // Check for failure.
         TestUtil.assertQueryThrows(context,
             "with member measures.calc as 'measures.[Warehouse sales]' \n"

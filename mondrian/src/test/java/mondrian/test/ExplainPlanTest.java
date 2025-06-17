@@ -69,7 +69,7 @@ class ExplainPlanTest {
   @Disabled //TODO need investigate
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testExplain(Context context) throws SQLException {
+  void testExplain(Context<?> context) throws SQLException {
 //    Level originalLevel = RolapUtil.PROFILE_LOGGER.getLevel();
     //Util.setLevel( RolapUtil.PROFILE_LOGGER, Level.OFF ); // Must turn off in case test environment has enabled profiling
     Connection connection = context.getConnectionWithDefaultRole();
@@ -108,7 +108,7 @@ mondrian.olap.fun.FilterFunDef$ImmutableIterCalc(type=SetType<MemberType<hierarc
   @ParameterizedTest
   @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-	void testExplainComplex(Context context) throws SQLException {
+	void testExplainComplex(Context<?> context) throws SQLException {
 //    Level originalLevel = RolapUtil.PROFILE_LOGGER.getLevel();
 		// Util.setLevel( RolapUtil.PROFILE_LOGGER, Level.OFF );; // Must turn off in
 		// case test environment has enabled profiling
@@ -227,7 +227,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testExplainInvalid(Context context) throws SQLException {
+  void testExplainInvalid(Context<?> context) throws SQLException {
     Connection connection = context.getConnectionWithDefaultRole();
     final Statement statement = connection.createStatement();
     try {
@@ -248,7 +248,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testQueryTimingAnalyzer(Context context) throws SQLException {
+  void testQueryTimingAnalyzer(Context<?> context) throws SQLException {
 
     final String mdx =
         "WITH\r\n"
@@ -289,7 +289,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testMutiKeySort(Context context) throws SQLException {
+  void testMutiKeySort(Context<?> context) throws SQLException {
     final String mdx =
         "WITH\r\n"
             + " SET [*NATIVE_CJ_SET] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Gender_],NONEMPTYCROSSJOIN([*BASE_MEMBERS__Education Level_],[*BASE_MEMBERS__Product_]))'\r\n"
@@ -319,7 +319,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testNestedSumFunDef(Context context) throws SQLException {
+  void testNestedSumFunDef(Context<?> context) throws SQLException {
     final String mdx =
         "WITH\r\n"
             + " SET [*NATIVE_CJ_SET] AS 'FILTER([Time].[Time].[Month].MEMBERS, NOT ISEMPTY ([Measures].[Unit Sales]))'\r\n"
@@ -349,7 +349,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testAggAboveSlicerSolveOrder(Context context) throws SQLException {
+  void testAggAboveSlicerSolveOrder(Context<?> context) throws SQLException {
 
     final String mdx =
         "WITH\r\n"
@@ -384,7 +384,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-  void testAggBelowSlicerSolveOrder(Context context) throws SQLException {
+  void testAggBelowSlicerSolveOrder(Context<?> context) throws SQLException {
     ((TestContextImpl)context).setDisableCaching(true);
       ((TestContextImpl)context).setCompoundSlicerMemberSolveOrder(0);
 
@@ -412,7 +412,7 @@ mondrian.olap.fun.CrossJoinFunDef$CrossJoinIterCalc(type=SetType<TupleType<Membe
     assertTrue(strings.get( 19 ).contains( "AggregateFunDef invoked 4 times" ), strings.get( 19 ));
   }
 
-  private ArrayList<String> executeQuery(Context context, String mdx ) throws SQLException {
+  private ArrayList<String> executeQuery(Context<?> context, String mdx ) throws SQLException {
 
     Connection connection = context.getConnectionWithDefaultRole();
     final CacheControl cacheControl = connection.getCacheControl( null );

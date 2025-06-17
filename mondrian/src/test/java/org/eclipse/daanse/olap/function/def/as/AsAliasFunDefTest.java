@@ -44,14 +44,14 @@ public class AsAliasFunDefTest {
 	 */
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAs(Context context) {
+	void testAs(Context<?> context) {
 		assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "Filter([Customers].Children as t,\n" + "t.Current.Name = 'USA')",
 				"[Customers].[Customers].[USA]");
 	}
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAsWithColon(Context context) {
+	void testAsWithColon(Context<?> context) {
 		// 'AS' and the ':' operator have similar precedence, so it's worth
 		// checking that they play nice.
 		assertQueryReturns(context.getConnectionWithDefaultRole(), """
@@ -76,7 +76,7 @@ public class AsAliasFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAsFailsMember(Context context) {
+	void testAsFailsMember(Context<?> context) {
 		// AS member fails on SSAS with "The CHILDREN function expects a member
 		// expression for the 0 argument. A tuple set expression was used."
 		assertQueryThrows(context, """
@@ -89,7 +89,7 @@ public class AsAliasFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAsWithSetOfMembers(Context context) {
+	void testAsWithSetOfMembers(Context<?> context) {
 		// Set of members. OK.
 		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,\s
@@ -139,7 +139,7 @@ public class AsAliasFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAsWithAliasMemberImplicitSet(Context context) {
+	void testAsWithAliasMemberImplicitSet(Context<?> context) {
 		// Alias a member. Implicitly becomes set. OK.
 		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
@@ -183,7 +183,7 @@ public class AsAliasFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAsWithFailOnAliasTuple(Context context) {
+	void testAsWithFailOnAliasTuple(Context<?> context) {
 		// Alias a tuple. Implicitly becomes set. The error confirms that the
 		// named set's type is a set of tuples. SSAS gives error "Descendants
 		// function expects a member or set ..."
@@ -227,7 +227,7 @@ public class AsAliasFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAs2(Context context) {
+	void testAs2(Context<?> context) {
 		// Named set and alias with same name (t) and a second alias (t2).
 		// Reference to t from within descendants resolves to alias, of type
 		// [Time], because it is nearer.
@@ -247,7 +247,7 @@ public class AsAliasFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAsWith2AliasesOfSameName(Context context) {
+	void testAsWith2AliasesOfSameName(Context<?> context) {
 		// Two aliases with same name. OK.
 		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				select
@@ -263,7 +263,7 @@ public class AsAliasFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAsWithAsterics(Context context) {
+	void testAsWithAsterics(Context<?> context) {
 		// Bug MONDRIAN-648 causes 'AS' to have lower precedence than '*'.
 		if (Bug.BugMondrian648Fixed) {
 			// Note that 'as' has higher precedence than '*'.
@@ -277,7 +277,7 @@ public class AsAliasFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAsWithFailingReferenceTiOtherHierarchy(Context context) {
+	void testAsWithFailingReferenceTiOtherHierarchy(Context<?> context) {
 		// Reference to hierarchy on other axis.
 		// On SSAS 2005, finds t, and gives error,
 		// "The Gender hierarchy already appears in the Axis0 axis."
@@ -302,7 +302,7 @@ public class AsAliasFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAsWithCalcSetCurrMember(Context context) {
+	void testAsWithCalcSetCurrMember(Context<?> context) {
 		// Calculated set, CurrentMember
 		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
@@ -361,7 +361,7 @@ public class AsAliasFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAsWithMultiDefOfAliasInSameAxis(Context context) {
+	void testAsWithMultiDefOfAliasInSameAxis(Context<?> context) {
 		// Multiple definitions of alias within same axis
 		assertQueryReturns(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
@@ -452,7 +452,7 @@ public class AsAliasFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAsWithFailingSetAsString(Context context) {
+	void testAsWithFailingSetAsString(Context<?> context) {
 		// 'set AS string' is invalid
 		assertQueryThrows(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
@@ -465,7 +465,7 @@ public class AsAliasFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAsWithFailingSetAsNumeric(Context context) {
+	void testAsWithFailingSetAsNumeric(Context<?> context) {
 		// 'set AS numeric' is invalid
 		assertQueryThrows(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,
@@ -478,7 +478,7 @@ public class AsAliasFunDefTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAsWithFailingNumericAsIdentifier(Context context) {
+	void testAsWithFailingNumericAsIdentifier(Context<?> context) {
 		// 'numeric AS identifier' is invalid
 		assertQueryThrows(context.getConnectionWithDefaultRole(), """
 				select Measures.[Unit Sales] on 0,

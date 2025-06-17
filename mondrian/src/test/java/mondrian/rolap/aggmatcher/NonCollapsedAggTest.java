@@ -280,7 +280,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
 
 
     @Override
-	protected void prepareContext(Context context) {
+	protected void prepareContext(Context<?> context) {
         try {
             super.prepareContext(context);
         }
@@ -293,7 +293,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testSingleJoin(Context context) throws Exception {
+    void testSingleJoin(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
     	super.prepareContext(context);
@@ -322,7 +322,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testComplexJoin(Context context) throws Exception {
+    void testComplexJoin(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
@@ -367,7 +367,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
     @Disabled //TODO need investigate
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testComplexJoinDefaultRecognizer(Context context) throws Exception {
+    void testComplexJoinDefaultRecognizer(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
@@ -408,7 +408,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testSsasCompatNamingInAgg(Context context) throws Exception {
+    void testSsasCompatNamingInAgg(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
@@ -806,7 +806,7 @@ class NonCollapsedAggTest extends AggTableTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testMondrian1325(Context context) {
+    void testMondrian1325(Context<?> context) {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);

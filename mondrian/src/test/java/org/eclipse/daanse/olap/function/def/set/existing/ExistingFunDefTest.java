@@ -25,7 +25,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 class ExistingFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testExisting(Context context) {
+    void testExisting(Context<?> context) {
         // basic test
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
@@ -79,7 +79,7 @@ class ExistingFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testExistingCalculatedMeasure(Context context) {
+    void testExistingCalculatedMeasure(Context<?> context) {
         // sorry about the mess, this came from Analyzer
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH \n"
@@ -116,7 +116,7 @@ class ExistingFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testExistingCalculatedMeasureCompoundSlicer(Context context) {
+    void testExistingCalculatedMeasureCompoundSlicer(Context<?> context) {
         // basic test
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
@@ -148,7 +148,7 @@ class ExistingFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testExistingAggSet(Context context) {
+    void testExistingAggSet(Context<?> context) {
         // aggregate simple set
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Edible Sales] AS \n"
@@ -178,7 +178,7 @@ class ExistingFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testExistingGenerateAgg(Context context) {
+    void testExistingGenerateAgg(Context<?> context) {
         // generate overrides existing context
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET BestOfFamilies AS\n"
@@ -213,7 +213,7 @@ class ExistingFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testExistingGenerateOverrides(Context context) {
+    void testExistingGenerateOverrides(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER Measures.[StaticSumNC] AS\n"
                 + " 'Sum(Generate([Product].[Non-Consumable],"
@@ -256,7 +256,7 @@ class ExistingFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testExistingVirtualCube(Context context) {
+    void testExistingVirtualCube(Context<?> context) {
         // this should ideally return 14 for both,
         // but being coherent with exists is good enough
         assertQueryReturns(context.getConnectionWithDefaultRole(),

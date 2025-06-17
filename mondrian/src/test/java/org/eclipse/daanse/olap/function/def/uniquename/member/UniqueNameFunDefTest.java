@@ -28,7 +28,7 @@ class UniqueNameFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMemberUniqueName(Context context) {
+    void testMemberUniqueName(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Gender].DefaultMember.UniqueName",
             "[Gender].[Gender].[All Gender]" );
@@ -36,7 +36,7 @@ class UniqueNameFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMemberUniqueNameOfNull(Context context) {
+    void testMemberUniqueNameOfNull(Context<?> context) {
         if ( isDefaultNullMemberRepresentation() ) {
             assertExprReturns(context.getConnectionWithDefaultRole(),
                 "[Measures].[Unit Sales].FirstChild.UniqueName",

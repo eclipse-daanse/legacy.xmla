@@ -214,7 +214,7 @@ public class BatchTestCase{
                 @Override
 				public GroupingSet execute() {
                     final RolapCube cube = getCube(connection, cubeName);
-                    AbstractBasicContext abc = (AbstractBasicContext) connection.getContext();
+                    AbstractBasicContext<?> abc = (AbstractBasicContext) connection.getContext();
                     final BatchLoader fbcr =
                         new BatchLoader(
                             LocusImpl.peek(),
@@ -325,7 +325,7 @@ public class BatchTestCase{
                 new ExecutionImpl(
                     ((Connection) connection).getInternalStatement(),
                     Optional.of(Duration.ofMillis(1000)));
-            AbstractBasicContext abc = (AbstractBasicContext) execution.getMondrianStatement()
+            AbstractBasicContext<?> abc = (AbstractBasicContext) execution.getMondrianStatement()
                     .getMondrianConnection()
                     .getContext();
             final AggregationManager aggMgr =
@@ -719,7 +719,7 @@ public class BatchTestCase{
         return request;
     }
 
-    protected void updateSchemaIfNeed(Context context, String currentTestCaseName){
+    protected void updateSchemaIfNeed(Context<?> context, String currentTestCaseName){
         Optional<Function<CatalogMapping, PojoMappingModifier>> oModifier = getModifier(currentTestCaseName);
         if (oModifier.isPresent()) {
             withSchema(context, oModifier.get());
@@ -813,7 +813,7 @@ public class BatchTestCase{
      * @param rowCount number of rows returned
      * @param mdx      query
      */
-    protected void checkNotNative(Context context, int rowCount, String mdx) {
+    protected void checkNotNative(Context<?> context, int rowCount, String mdx) {
         checkNotNative(context, rowCount, mdx, null);
     }
 
@@ -824,7 +824,7 @@ public class BatchTestCase{
      * @param mdx            Query
      * @param expectedResult Expected result string
      */
-    protected void checkNotNative(Context context,
+    protected void checkNotNative(Context<?> context,
         int rowCount,
         String mdx,
         String expectedResult)
@@ -885,7 +885,7 @@ public class BatchTestCase{
      * @param rowCount    Number of rows returned
      * @param mdx         Query
      */
-    protected void checkNative(Context context,
+    protected void checkNative(Context<?> context,
         int resultLimit, int rowCount, String mdx)
     {
         checkNative(context, resultLimit, rowCount, mdx, null, false);
@@ -913,7 +913,7 @@ public class BatchTestCase{
      * @param freshConnection Whether fresh connection is required
      */
     protected void checkNative(
-        Context context,
+        Context<?> context,
         int resultLimit,
         int rowCount,
         String mdx,
@@ -1023,11 +1023,11 @@ public class BatchTestCase{
     /**
      * Convenience method for debugging; please do not delete.
      */
-    public void assertNotNative(Context context, String mdx) {
+    public void assertNotNative(Context<?> context, String mdx) {
         new BatchTestCase().checkNotNative(context, mdx, null);
     }
 
-    public static void checkNotNative(Context context, String mdx, Result expectedResult) {
+    public static void checkNotNative(Context<?> context, String mdx, Result expectedResult) {
         BatchTestCase test = new BatchTestCase();
         test.checkNotNative(context,
                 getRowCount(expectedResult),
@@ -1035,7 +1035,7 @@ public class BatchTestCase{
                 TestUtil.toString(expectedResult));
     }
 
-    public static void checkNative(Context context, String mdx, Result expectedResult) {
+    public static void checkNative(Context<?> context, String mdx, Result expectedResult) {
         BatchTestCase test = new BatchTestCase();
         test.checkNative(context,
                 0,
@@ -1047,7 +1047,7 @@ public class BatchTestCase{
     /**
      * Convenience method for debugging; please do not delete.
      */
-    public void assertNative(Context context, String mdx) {
+    public void assertNative(Context<?> context, String mdx) {
         new BatchTestCase().checkNative(context,0, 0, mdx, null, true);
     }
 

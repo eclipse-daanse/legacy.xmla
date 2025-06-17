@@ -68,7 +68,7 @@ import mondrian.test.SqlPattern;
 
 
     // implement TestCase
-    protected void runTest(Context context) {
+    protected void runTest(Context<?> context) {
             DiffRepository diffRepos = getDiffRepos();
             // add calculated member to a cube if specified in the xml file
             /*

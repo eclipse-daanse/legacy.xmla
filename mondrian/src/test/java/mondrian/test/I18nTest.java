@@ -82,7 +82,7 @@ class I18nTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testAutoFrench(Context context) {
+    void testAutoFrench(Context<?> context) {
         // Create a connection in French.
         String localeName = "fr_FR";
         String resultString = "12" + Nbsp + "345,67";
@@ -91,19 +91,19 @@ class I18nTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testAutoSpanish(Context context) {
+    void testAutoSpanish(Context<?> context) {
         // Format a number in (Peninsular) spanish.
         assertFormatNumber(context, "es", "12.345,67");
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testAutoMexican(Context context) {
+    void testAutoMexican(Context<?> context) {
         // Format a number in Mexican spanish.
         assertFormatNumber(context, "es_MX", "12,345.67");
     }
 
-    private void assertFormatNumber(Context context, String localeName, String resultString) {
+    private void assertFormatNumber(Context<?> context, String localeName, String resultString) {
         //final Util.PropertyList properties =
         //    TestUtil.getConnectionProperties().clone();
         //properties.put(RolapConnectionProperties.Locale.name(), localeName);

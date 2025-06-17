@@ -38,7 +38,7 @@ import org.eclipse.daanse.olap.api.monitor.event.ServertEventCommon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractBasicContext implements Context {
+public abstract class AbstractBasicContext<C extends Connection> implements Context<C> {
 
 	public static final String SERVER_ALREADY_SHUTDOWN = "Server already shutdown.";
 	/**
@@ -61,13 +61,13 @@ public abstract class AbstractBasicContext implements Context {
 
 	protected CatalogCache schemaCache;
 
-	
+
 	private boolean shutdown = false;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBasicContext.class);
 
 	private static final AtomicLong ID_GENERATOR = new AtomicLong();
-	
+
 	protected Map<String, Object> configuration = null;
 
 
@@ -138,7 +138,7 @@ public abstract class AbstractBasicContext implements Context {
 			throw new OlapRuntimeException("Server already shutdown.");
 		}
 		connections.add(connection);
-		
+
 		ConnectionStartEvent connectionStartEvent = new ConnectionStartEvent(new ConnectionEventCommon(
 								new ServertEventCommon(
 				EventCommon.ofNow(), getName()), connection.getId()));
@@ -157,7 +157,7 @@ public abstract class AbstractBasicContext implements Context {
 			throw new OlapRuntimeException("Server already shutdown.");
 		}
 		connections.remove(connection);
-		
+
 		ConnectionEndEvent connectionEndEvent = new ConnectionEndEvent(
 				new ConnectionEventCommon(
 										new ServertEventCommon(
@@ -177,7 +177,7 @@ public abstract class AbstractBasicContext implements Context {
 		}
 		statements.add( statement);
 		final Connection connection = statement.getMondrianConnection();
-		
+
 		MdxStatementStartEvent mdxStatementStartEvent = new MdxStatementStartEvent(new MdxStatementEventCommon(
 				new ConnectionEventCommon(
 						new ServertEventCommon(EventCommon.ofNow(), getName()),
@@ -199,13 +199,13 @@ public abstract class AbstractBasicContext implements Context {
 		}
 		statements.remove(statement);
 		final Connection connection = statement.getMondrianConnection();
-		
-		
+
+
 		MdxStatementEndEvent mdxStatementEndEvent = new MdxStatementEndEvent(
 				new MdxStatementEventCommon(new ConnectionEventCommon(
 						new ServertEventCommon(EventCommon.ofNow(), getName()),
 						connection.getId()), statement.getId()));
-		
+
 		eventBus.accept(mdxStatementEndEvent);
 //				new StatementEndEvent(System.currentTimeMillis(), connection.getContext().getName(),
 //				connection.getId(), statement.getId())
@@ -232,10 +232,10 @@ public abstract class AbstractBasicContext implements Context {
 	public CatalogCache getCatalogCache() {
 		return schemaCache;
 	}
-	
+
 	@Override
 	public <T> T getConfigValue(String key, T dflt, Class<T> clazz) {
-		
+
 		if (configuration == null) {
 			return dflt;
 		} else {

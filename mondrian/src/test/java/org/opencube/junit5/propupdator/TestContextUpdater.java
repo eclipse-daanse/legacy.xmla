@@ -22,7 +22,7 @@ import org.eclipse.daanse.olap.api.Context;
 
 public interface TestContextUpdater {
 
-	default void updateContext(Context context) {
+	default void updateContext(Context<?> context) {
 
 	}
 

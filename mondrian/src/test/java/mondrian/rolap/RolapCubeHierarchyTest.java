@@ -39,7 +39,7 @@ class RolapCubeHierarchyTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMONDRIAN2535(Context context) {
+  void testMONDRIAN2535(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
         "Select\n"
         + "  [Customers].children on rows,\n"
@@ -73,7 +73,7 @@ class RolapCubeHierarchyTest {
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
     CatalogReader schemaReader = mock(CatalogReader.class);
-    Context context = mock(Context.class);
+    Context<?> context = mock(Context.class);
     doReturn(false).when(context).getConfigValue(ConfigConstants.MEMORY_MONITOR, ConfigConstants.MEMORY_MONITOR_DEFAULT_VALUE, Boolean.class);
     doReturn(context).when(schemaReader).getContext();
 
@@ -125,7 +125,7 @@ class RolapCubeHierarchyTest {
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
     CatalogReader schemaReader = mock(CatalogReader.class);
-    Context context = mock(Context.class);
+    Context<?> context = mock(Context.class);
     doReturn(false).when(context).getConfigValue(ConfigConstants.MEMORY_MONITOR, ConfigConstants.MEMORY_MONITOR_DEFAULT_VALUE, Boolean.class);
     doReturn(context).when(schemaReader).getContext();
 
@@ -183,7 +183,7 @@ class RolapCubeHierarchyTest {
     List<? extends Level> rolapHierarchy_levels = new ArrayList<>();
     QueryMapping rolapHierarchy_relation = mock(TableQueryMapping.class);
     CatalogReader schemaReader = mock(CatalogReader.class);
-    Context context = mock(Context.class);
+    Context<?> context = mock(Context.class);
     doReturn(false).when(context).getConfigValue(ConfigConstants.MEMORY_MONITOR, ConfigConstants.MEMORY_MONITOR_DEFAULT_VALUE, Boolean.class);
     doReturn(context).when(schemaReader).getContext();
 
@@ -233,7 +233,7 @@ class RolapCubeHierarchyTest {
         mock(RolapConnection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
     CatalogReader schemaReader = mock(CatalogReader.class);
-    Context context = mock(Context.class);
+    Context<?> context = mock(Context.class);
     doReturn(false).when(context).getConfigValue(ConfigConstants.MEMORY_MONITOR, ConfigConstants.MEMORY_MONITOR_DEFAULT_VALUE, Boolean.class);
     doReturn(context).when(schemaReader).getContext();
 

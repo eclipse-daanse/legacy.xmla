@@ -28,7 +28,7 @@ class DeadlockTest {
 	public static class QueryLimitFoodMart extends AppandFoodMartCatalog{
 
 		@Override
-		public void updateContext(Context context) {
+		public void updateContext(Context<?> context) {
 			super.updateContext(context);
 			Semaphore queryLimimitSemaphore=new Semaphore(20);
             ((TestContext)context).setQueryLimitSemaphore(queryLimimitSemaphore);
@@ -38,7 +38,7 @@ class DeadlockTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = QueryLimitFoodMart.class, dataloader = FastFoodmardDataLoader.class )
-    void testSegmentLoadDeadlock(Context context) {
+    void testSegmentLoadDeadlock(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1726
         // Deadlock can occur if a cardinality query is fired after
         // all available database connections have been consumed and active

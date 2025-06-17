@@ -27,7 +27,7 @@ class UniqueNameFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchyUniqueName(Context context) {
+    void testHierarchyUniqueName(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Gender].DefaultMember.Hierarchy.UniqueName",
             "[Gender].[Gender]" );
@@ -35,29 +35,29 @@ class UniqueNameFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTime(Context context) {
+    void testTime(Context<?> context) {
         TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[1997].[Q1].[1].Hierarchy.UniqueName", "[Time].[Time]" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBasic9(Context context) {
+    void testBasic9(Context<?> context) {
         TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Gender].[All Gender].[F].Hierarchy.UniqueName", "[Gender].[Gender]" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFirstInLevel9(Context context) {
+    void testFirstInLevel9(Context<?> context) {
         TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Education Level].[All Education Levels].[Bachelors Degree].Hierarchy.UniqueName",
             "[Education Level].[Education Level]" );
-    } 
+    }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchyAll(Context context) {
+    void testHierarchyAll(Context<?> context) {
         TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Gender].[All Gender].Hierarchy.UniqueName", "[Gender].[Gender]" );
     }

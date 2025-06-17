@@ -44,7 +44,7 @@ class OrderTest extends ClearViewBase {
     @Override
 	@ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    public void runTest(Context context) {
+    public void runTest(Context<?> context) {
         DiffRepository diffRepos = getDiffRepos();
         for (String name : diffRepos.getTestCaseNames()) {
             setName(name);

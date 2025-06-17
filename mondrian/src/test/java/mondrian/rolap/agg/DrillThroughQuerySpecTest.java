@@ -132,7 +132,7 @@ class DrillThroughQuerySpecTest {
   // test that returns correct number of columns
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMdxQuery(Context foodMartContext) throws Exception {
+  void testMdxQuery(Context<?> foodMartContext) throws Exception {
     String drillThroughMdx = "DRILLTHROUGH WITH "
         + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'NONEMPTYCROSSJOIN([*BASE_MEMBERS__Product_],[*BASE_MEMBERS__Store Type_])' "
         + "SET [*NATIVE_CJ_SET] AS 'GENERATE([*NATIVE_CJ_SET_WITH_SLICER], {([Product].[Product].CURRENTMEMBER)})' "

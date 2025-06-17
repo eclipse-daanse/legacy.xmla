@@ -221,7 +221,7 @@ public class TestUtil {
 	 * @param queryString Query string
 	 * @param pattern     Pattern which exception must match
 	 */
-	public static void assertQueryThrows(Context context, String queryString, String pattern) {
+	public static void assertQueryThrows(Context<?> context, String queryString, String pattern) {
 		Throwable throwable;
 		try {
 			Result result = executeQuery(context.getConnectionWithDefaultRole(), queryString);
@@ -233,7 +233,7 @@ public class TestUtil {
 		checkThrowable(throwable, pattern);
 	}
 
-    public static void assertQueryThrows(Context context, List<String> roles, String queryString, String pattern) {
+    public static void assertQueryThrows(Context<?> context, List<String> roles, String queryString, String pattern) {
         Throwable throwable;
         try {
             Result result = executeQuery(((TestContext)context).getConnection(roles), queryString);
@@ -252,7 +252,7 @@ public class TestUtil {
      * @param queryString Query string
      * @param pattern     Pattern which exception must match
      */
-    public static void assertQueryThrows(Context context, ConnectionProps props, String queryString, String pattern) {
+    public static void assertQueryThrows(Context<?> context, ConnectionProps props, String queryString, String pattern) {
         Throwable throwable;
         try {
             Result result = executeQuery(context.getConnection(props), queryString);
@@ -293,7 +293,7 @@ public class TestUtil {
 	 * particular pattern. The error might occur during parsing, or might be
 	 * contained within the cell value.
 	 */
-	public static void assertExprThrows(Context context, String cubeName, String expression, String pattern) {
+	public static void assertExprThrows(Context<?> context, String cubeName, String expression, String pattern) {
 		Throwable throwable = null;
 		try {
 			if (cubeName.indexOf(' ') >= 0) {
@@ -563,7 +563,7 @@ public class TestUtil {
 	 *
 	 * @return Warnings encountered while loading schema
 	 */
-	public static List<Exception> getSchemaWarnings(Context context) {
+	public static List<Exception> getSchemaWarnings(Context<?> context) {
 		//final Util.PropertyList propertyList =
 		//		getConnectionProperties().clone();
 		//propertyList.put(
@@ -1209,7 +1209,7 @@ public class TestUtil {
 		}
 	}
 
-	public static void withSchema(Context context, Function<CatalogMapping, org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier> f) {
+	public static void withSchema(Context<?> context, Function<CatalogMapping, org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier> f) {
           context.getCatalogCache().clear();
           CatalogMapping catalogMapping = ((RolapContext) context).getCatalogMapping();
           ((TestContext)context).setCatalogMappingSupplier(f.apply(catalogMapping));
@@ -1683,7 +1683,7 @@ public class TestUtil {
 		return genderDimension.getHierarchy().getAllMember();
 	}
 
-	public static CellSet executeOlap4jXmlaQuery(Context context, String queryString )
+	public static CellSet executeOlap4jXmlaQuery(Context<?> context, String queryString )
 			throws SQLException {
 		/*
 		Connection connection = context.getConnection();

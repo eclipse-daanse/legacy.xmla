@@ -44,7 +44,7 @@ class RolapStarTest {
     static class RolapStarForTests extends RolapStar {
         public RolapStarForTests(
             final RolapCatalog schema,
-            final Context context,
+            final Context<?> context,
             final RelationalQueryMapping fact)
         {
             super(schema, context, fact);
@@ -79,7 +79,7 @@ class RolapStarTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCloneRelationWithFilteredTable(Context context) {
+    void testCloneRelationWithFilteredTable(Context<?> context) {
       RolapStarForTests rs = getStar(context.getConnectionWithDefaultRole(), "sales");
       TableQueryMappingImpl original = TableQueryMappingImpl.builder()
     		  .withTable(((PhysicalTableMappingImpl.Builder) PhysicalTableMappingImpl.builder().withName("TestTable")

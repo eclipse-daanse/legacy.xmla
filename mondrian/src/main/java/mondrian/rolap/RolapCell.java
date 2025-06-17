@@ -413,7 +413,7 @@ public class RolapCell implements Cell {
      */
     @Override
 	public boolean canDrillThrough() {
-        if (!result.getExecution().getMondrianStatement().getMondrianConnection().getContext()
+        if (!((Context<?>)(result.getExecution().getMondrianStatement().getMondrianConnection().getContext()))
                 .getConfigValue(ConfigConstants.ENABLE_DRILL_THROUGH, ConfigConstants.ENABLE_DRILL_THROUGH_DEFAULT_VALUE, Boolean.class))
         {
             return false;

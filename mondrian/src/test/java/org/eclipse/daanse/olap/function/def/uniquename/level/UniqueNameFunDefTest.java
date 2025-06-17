@@ -26,7 +26,7 @@ class UniqueNameFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLevelUniqueName(Context context) {
+    void testLevelUniqueName(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "[Gender].DefaultMember.Level.UniqueName",
             "[Gender].[Gender].[(All)]" );

@@ -27,7 +27,7 @@ class AncestorsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAncestors(Context context) {
+    void testAncestors(Context<?> context) {
         // Test that we can execute Ancestors by passing a level as
         // the depth argument (PC hierarchy)
         Connection connection = context.getConnectionWithDefaultRole();

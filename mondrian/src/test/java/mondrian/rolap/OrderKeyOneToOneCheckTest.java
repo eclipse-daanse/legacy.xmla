@@ -52,8 +52,8 @@ class OrderKeyOneToOneCheckTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  public void prepareContext(Context context) {
-    //TestContext testContext = super.getTestContext()
+  public void prepareContext(Context<?> context) {
+    //TestContext<?> testContext<?> = super.getTestContext()
     //        .withFreshConnection();
     flushSchemaCache(context.getConnectionWithDefaultRole());
     /*
@@ -84,7 +84,7 @@ class OrderKeyOneToOneCheckTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMemberSource(Context context) {
+  void testMemberSource(Context<?> context) {
     String mdx =
             "with member [Measures].[Count Month] as 'Count(Descendants(Time.CurrentMember, [Time].[Month]))' \n"
                     + "select [Measures].[Count Month] on 0,\n"
@@ -106,7 +106,7 @@ class OrderKeyOneToOneCheckTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testSqlReader(Context context) {
+  void testSqlReader(Context<?> context) {
     String mdx = ""
             + "select [Time].[Quarter].Members on 0"
             + "from [Sales]";

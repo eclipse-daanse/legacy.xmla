@@ -49,7 +49,7 @@ class FilterFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFilterWithSlicer(Context context) {
+    void testFilterWithSlicer(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
                 + " filter([Customers].[USA].children,\n"
@@ -65,7 +65,7 @@ class FilterFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFilterCompound(Context context) {
+    void testFilterCompound(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
                 + "  Filter(\n"
@@ -89,7 +89,7 @@ class FilterFunDefTest {
     @Disabled //UserDefinedFunction
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFilterWillTimeout(Context context) {
+    void testFilterWillTimeout(Context<?> context) {
         ((TestContextImpl)context).setQueryTimeout(3);
         SystemWideProperties.instance().EnableNativeNonEmpty = false;
         try {
@@ -134,7 +134,7 @@ class FilterFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFilterEmpty(Context context) {
+    void testFilterEmpty(Context<?> context) {
         // Unlike "Descendants(<set>, ...)", we do not need to know the precise
         // type of the set, therefore it is OK if the set is empty.
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -148,7 +148,7 @@ class FilterFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFilterCalcSlicer(Context context) {
+    void testFilterCalcSlicer(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Time].[Time].[Date Range] as \n"
                 + "'Aggregate({[Time].[1997].[Q1]:[Time].[1997].[Q3]})'\n"

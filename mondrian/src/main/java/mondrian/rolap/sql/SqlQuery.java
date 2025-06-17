@@ -743,7 +743,7 @@ public class SqlQuery {
         return dialect;
     }
 
-    public static SqlQuery newQuery(Context context, String err) {
+    public static SqlQuery newQuery(Context<?> context, String err) {
 
         return new SqlQuery(context.getDialect(), context.getConfigValue(ConfigConstants.GENERATE_FORMATTED_SQL, ConfigConstants.GENERATE_FORMATTED_SQL_DEFAULT_VALUE, Boolean.class));
     }

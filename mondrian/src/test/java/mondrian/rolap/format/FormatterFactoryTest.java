@@ -69,7 +69,7 @@ class FormatterFactoryTest {
      * </p>
      */
     @Test
-    @Disabled //has not been fixed during creating Daanse project 
+    @Disabled //has not been fixed during creating Daanse project
     void testShouldCreateFormatterByScript() {
         FormatterCreateContext context =
             new FormatterCreateContext.Builder("name")

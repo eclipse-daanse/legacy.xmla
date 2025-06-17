@@ -46,7 +46,7 @@ class DefaultMemberFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDefaultMember(Context context) {
+    void testDefaultMember(Context<?> context) {
         // [Time] has no default member and no all, so the default member is
         // the first member of the first level.
         Result result =
@@ -191,7 +191,7 @@ class DefaultMemberFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDimensionDefaultMember(Context context) {
+    void testDimensionDefaultMember(Context<?> context) {
       Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "[Measures].DefaultMember", "Sales");
       assertEquals( "Unit Sales", member.getName() );
     }

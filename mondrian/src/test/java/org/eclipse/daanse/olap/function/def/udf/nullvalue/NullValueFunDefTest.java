@@ -29,7 +29,7 @@ class NullValueFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNullValue(Context context) {
+    void testNullValue(Context<?> context) {
         Connection connection=context.getConnectionWithDefaultRole();
         String cubeName="Sales";
         Cell c=  TestUtil.executeExprRaw(connection,cubeName," NullValue()/NullValue() ");

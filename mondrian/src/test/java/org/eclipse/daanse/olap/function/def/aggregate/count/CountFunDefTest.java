@@ -30,7 +30,7 @@ class CountFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCount(Context context) {
+    void testCount(Context<?> context) {
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "count(Crossjoin([Store].[All Stores].[USA].Children, {[Gender].children}), INCLUDEEMPTY)",
             "{[Gender].[Gender]}" );
@@ -50,7 +50,7 @@ class CountFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCountExcludeEmpty(Context context) {
+    void testCountExcludeEmpty(Context<?> context) {
         String s1 = allHiersExcept( "[Store].[Store]" );
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
             "count(Crossjoin([Store].[USA].Children, {[Gender].children}), EXCLUDEEMPTY)",
@@ -98,7 +98,7 @@ class CountFunDefTest {
     // {@link mondrian.xmla.XmlaCognosTest#testCognosMDXSuiteConvertedAdventureWorksToFoodMart_015()}
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCountExcludeEmptyNull(Context context) {
+    void testCountExcludeEmptyNull(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Foo] AS\n"
                 + "    Iif("
@@ -162,7 +162,7 @@ class CountFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCountExcludeEmptyOnCubeWithNoCountFacts(Context context) {
+    void testCountExcludeEmptyOnCubeWithNoCountFacts(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH "
                 + "  MEMBER [Measures].[count] AS '"
@@ -179,7 +179,7 @@ class CountFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCountExcludeEmptyOnVirtualCubeWithNoCountFacts(Context context) {
+    void testCountExcludeEmptyOnVirtualCubeWithNoCountFacts(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH "
                 + "  MEMBER [Measures].[count] AS '"

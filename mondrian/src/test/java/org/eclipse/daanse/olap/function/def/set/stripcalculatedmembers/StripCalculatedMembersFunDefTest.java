@@ -16,7 +16,7 @@ class StripCalculatedMembersFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStripCalculatedMembers(Context context) {
+    void testStripCalculatedMembers(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertAxisReturns(connection, "Sales",
             "StripCalculatedMembers({[Measures].AllMembers})",

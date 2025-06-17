@@ -87,7 +87,7 @@ class RolapResultTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAll(Context context) throws Exception {
+    void testAll(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
@@ -116,7 +116,7 @@ class RolapResultTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testD1(Context context) throws Exception {
+    void testD1(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
@@ -151,7 +151,7 @@ Axis #2:
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testD2(Context context) throws Exception {
+    void testD2(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
@@ -188,7 +188,7 @@ Axis #2:
     @Disabled //disabled for CI build
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    public void _testNullDefaultMeasure(Context context) throws Exception {
+    public void _testNullDefaultMeasure(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
@@ -221,7 +221,7 @@ Axis #2:
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonAllPromotionMembers(Context context) {
+    void testNonAllPromotionMembers(Context<?> context) {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);

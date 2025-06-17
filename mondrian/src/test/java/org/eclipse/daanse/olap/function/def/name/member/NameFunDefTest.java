@@ -28,7 +28,7 @@ class NameFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMemberName(Context context) {
+    void testMemberName(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "[Time].[1997].Name", "1997" );
         // dimension name
         assertExprReturns(context.getConnectionWithDefaultRole(), "[Store].Name", "Store" );

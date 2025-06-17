@@ -26,7 +26,7 @@ class DrilldownLevelFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDrilldownLevel(Context context) {
+    void testDrilldownLevel(Context<?> context) {
         // Expect all children of USA
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevel({[Store].[USA]}, [Store].[Store Country])",

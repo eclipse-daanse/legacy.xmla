@@ -27,7 +27,7 @@ class SiblingsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSiblingsA(Context context) {
+    void testSiblingsA(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Time].[1997].Siblings}",
             "[Time].[Time].[1997]\n"
@@ -36,7 +36,7 @@ class SiblingsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSiblingsB(Context context) {
+    void testSiblingsB(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Store].Siblings}",
             "[Store].[Store].[All Stores]" );
@@ -44,7 +44,7 @@ class SiblingsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSiblingsC(Context context) {
+    void testSiblingsC(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{[Store].[USA].[CA].Siblings}",
             "[Store].[Store].[USA].[CA]\n"
@@ -54,7 +54,7 @@ class SiblingsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSiblingsD(Context context) {
+    void testSiblingsD(Context<?> context) {
         // The null member has no siblings -- not even itself
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "{[Gender].Parent.Siblings}", "" );
 

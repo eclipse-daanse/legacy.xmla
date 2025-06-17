@@ -79,7 +79,7 @@ public class AggTableManager {
         LoggerFactory.getLogger(AggTableManager.class);
 
     private final RolapCatalog schema;
-    private final Context context;
+    private final Context<?> context;
     private final static String aggLoadingError = "Error while loading/reloading aggregates.";
     private final static String aggLoadingExceededErrorCount =
         "Too many errors, ''{0,number}'', while loading/reloading aggregates.";

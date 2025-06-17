@@ -24,7 +24,7 @@ class CaptionFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDimensionCaption(Context context) {
+    void testDimensionCaption(Context<?> context) {
         TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Time].[1997].Dimension.Caption", "Time" );
     }
 }

@@ -240,7 +240,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeTopCountWithAggFlatSet(Context context) {
+  void testNativeTopCountWithAggFlatSet(Context<?> context) {
 	context.getCatalogCache().clear();
     // Note: changed mdx and expected as a part of the fix for MONDRIAN-2202
     // Formerly the aggregate set and measures used a conflicting hierarchy,
@@ -283,7 +283,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeTopCountWithAggMemberNamedSet(Context context) {
+  void testNativeTopCountWithAggMemberNamedSet(Context<?> context) {
 	context.getCatalogCache().clear();
     final boolean useAgg =
       context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
@@ -317,7 +317,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeFilterWithAggDescendants(Context context) {
+  void testNativeFilterWithAggDescendants(Context<?> context) {
 	  context.getCatalogCache().clear();
 	  context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
     final boolean useAgg =
@@ -428,7 +428,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeTopCountWithMemberOnlySlicer(Context context) {
+  void testNativeTopCountWithMemberOnlySlicer(Context<?> context) {
 	context.getCatalogCache().clear();
     ((TestContextImpl)context).setGenerateFormattedSql(true);
     final boolean useAggregates =
@@ -533,7 +533,7 @@ protected void assertQuerySql(Connection connection,
   @Disabled("disabled for CI build") //disabled for CI build
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeTopCountWithParenthesesMemberSlicer(Context context) {
+  void testNativeTopCountWithParenthesesMemberSlicer(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
 
     final boolean useAggregates =
@@ -638,7 +638,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeTopCountWithMemberSumSlicer(Context context) {
+  void testNativeTopCountWithMemberSumSlicer(Context<?> context) {
 	context.getCatalogCache().clear();
     ((TestContextImpl)context).setGenerateFormattedSql(true);
     final boolean useAggregates =
@@ -742,7 +742,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testAggTCNoExplicitMeasure(Context context) {
+  void testAggTCNoExplicitMeasure(Context<?> context) {
     ((TestContextImpl)context).setGenerateFormattedSql(true);
     final String mdx =
       "WITH\n"
@@ -765,7 +765,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testAggTCTwoArg(Context context) {
+  void testAggTCTwoArg(Context<?> context) {
     // will throw an error if native eval is not used
       ((TestContextImpl)context)
           .setAlertNativeEvaluationUnsupported("ERROR");
@@ -797,7 +797,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testAggTCTwoArgWithCrossjoinedSet(Context context) {
+  void testAggTCTwoArgWithCrossjoinedSet(Context<?> context) {
 	context.getCatalogCache().clear();
     if ( !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       return;
@@ -819,7 +819,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testAggTCTwoArgWithCalcMemPresent(Context context) {
+  void testAggTCTwoArgWithCalcMemPresent(Context<?> context) {
 	context.getCatalogCache().clear();
     if ( !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_TOP_COUNT, ConfigConstants.ENABLE_NATIVE_TOP_COUNT_DEFAULT_VALUE, Boolean.class) ) {
       return;
@@ -846,7 +846,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testCJSameDimAsSlicerNamedSet(Context context) {
+  void testCJSameDimAsSlicerNamedSet(Context<?> context) {
     String mdx =
       "WITH\n"
         + "SET ST AS 'TopCount([Store Type].[Store Type].CurrentMember, 5)'\n"
@@ -873,7 +873,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testLoopDetection(Context context) {
+  void testLoopDetection(Context<?> context) {
     // Note that this test will fail if the query below is executed
     // non-natively, or if the level.members expressions are replaced
     // with enumerated sets.
@@ -900,7 +900,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testSlicerTuplesPartialCrossJoin(Context context) {
+  void testSlicerTuplesPartialCrossJoin(Context<?> context) {
     final String mdx =
       "with\n"
         + "set TSET as {NonEmptyCrossJoin({[Time].[1997].[Q1], [Time].[1997].[Q2]}, {[Store Type].[Supermarket]}),\n"
@@ -934,7 +934,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testSlicerTuplesFullCrossJoin(Context context) {
+  void testSlicerTuplesFullCrossJoin(Context<?> context) {
     if ( !context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)
       && !Bug.BugMondrian2452Fixed ) {
       // The NonEmptyCrossJoin in the TSET named set below returns
@@ -976,7 +976,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testTopCountWithAggregatedMemberAggStar(Context context) {
+  void testTopCountWithAggregatedMemberAggStar(Context<?> context) {
 	context.getCatalogCache().clear();
     ((TestContextImpl)context).setUseAggregates(true );
     ((TestContextImpl)context).setReadAggregates(true);
@@ -1055,7 +1055,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMultipleAllWithInExpr(Context context) {
+  void testMultipleAllWithInExpr(Context<?> context) {
     // set up three hierarchies on same dimension
     final String multiHierarchyCube =
       " <Cube name=\"3StoreHCube\">\n"
@@ -1229,7 +1229,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testCompoundSlicerNativeEval(Context context) {
+  void testCompoundSlicerNativeEval(Context<?> context) {
 	context.getCatalogCache().clear();
     // MONDRIAN-1404
       ((TestContextImpl)context).setGenerateFormattedSql(true);
@@ -1314,7 +1314,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testSnowflakeDimInSlicerBug1407(Context context) {
+  void testSnowflakeDimInSlicerBug1407(Context<?> context) {
 	context.getCatalogCache().clear();
     // MONDRIAN-1407
     ((TestContextImpl)context).setGenerateFormattedSql(true);
@@ -1408,7 +1408,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testCompoundSlicerNonUniqueMemberNames1413(Context context) {
+  void testCompoundSlicerNonUniqueMemberNames1413(Context<?> context) {
 	context.getCatalogCache().clear();
     // MONDRIAN-1413
     ((TestContextImpl)context).setGenerateFormattedSql(true);
@@ -1501,7 +1501,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testConstraintCacheIncludesMultiPositionSlicer(Context context) {
+  void testConstraintCacheIncludesMultiPositionSlicer(Context<?> context) {
     // MONDRIAN-2081
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "select non empty [Customers].[USA].[WA].[Spokane].children  on 0, "
@@ -1582,7 +1582,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeVirtualRestrictedSet(Context context) throws Exception {
+  void testNativeVirtualRestrictedSet(Context<?> context) throws Exception {
       class TestNativeVirtualRestrictedSetModifier extends PojoMappingModifier {
 
           public TestNativeVirtualRestrictedSetModifier(CatalogMapping catalogMapping) {
@@ -1676,7 +1676,7 @@ protected void assertQuerySql(Connection connection,
   @Disabled("disabled for CI build") //disabled for CI build
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeHonorsRoleRestrictions(Context context) {
+  void testNativeHonorsRoleRestrictions(Context<?> context) {
     // NativeSetEvaluation pushes role restrictions to the where clause
     // (see SqlConstraintUtils.addRoleAccessConstraints) by
     // generating an IN expression based on accessible members.
@@ -1795,7 +1795,7 @@ protected void assertQuerySql(Connection connection,
     SystemWideProperties.instance().populateInitial();
   }
 
-  private static boolean isUseAgg(Context context) {
+  private static boolean isUseAgg(Context<?> context) {
     return
       context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
         && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class);
@@ -1803,7 +1803,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeFilterWithCompoundSlicer(Context context) {
+  void testNativeFilterWithCompoundSlicer(Context<?> context) {
 	context.getCatalogCache().clear();
     String mdx =
       "WITH MEMBER [Measures].[TotalVal] AS 'Aggregate(Filter({[Store].[Store City].members},[Measures].[Unit Sales] "
@@ -1913,7 +1913,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testOverridingCompoundFilter(Context context) {
+  void testOverridingCompoundFilter(Context<?> context) {
     String mdx =
       "WITH MEMBER [Gender].[All Gender].[NoSlicer] AS '([Product].[All Products], [Time].[1997])', solve_order=1000\n "
         + "MEMBER [Measures].[TotalVal] AS 'Aggregate(Filter({[Store].[Store City].members},[Measures].[Unit Sales] <"
@@ -1922,7 +1922,7 @@ protected void assertQuerySql(Connection connection,
         + "Gender].[NoSlicer]} on 1 from [Sales]\n"
         + "WHERE {([Product].[Non-Consumable], [Time].[1997].[Q1]),([Product].[Drink], [Time].[1997].[Q2])}";
 
-    //TestContext context = getTestContext().withFreshConnection();
+    //TestContext<?> context = getTestContext().withFreshConnection();
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       mdx,
       "Axis #0:\n"
@@ -1966,7 +1966,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeFilterWithCompoundSlicerCJ(Context context) {
+  void testNativeFilterWithCompoundSlicerCJ(Context<?> context) {
     String mdx =
       "WITH MEMBER [Measures].[TotalVal] AS 'Aggregate(Filter( {[Store].[Store City].members},[Measures].[Unit Sales]"
         + " > 1000))'\n"
@@ -1991,7 +1991,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testFilterWithDiffLevelCompoundSlicer(Context context) {
+  void testFilterWithDiffLevelCompoundSlicer(Context<?> context) {
     // not supported in native, but detected
     // and skipped to regular evaluation
     String mdx =
@@ -2014,7 +2014,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeFilterWithCompoundSlicer2049(Context context) {
+  void testNativeFilterWithCompoundSlicer2049(Context<?> context) {
     assertQueryReturns(context.getConnectionWithDefaultRole(),
       "with member measures.avgQtrs as 'avg( filter( time.quarter.members, measures.[unit sales] < 200))' "
         + "select measures.avgQtrs * gender.members on 0 from sales where head( product.[product name].members, 3)",
@@ -2033,7 +2033,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeFilterTupleCompoundSlicer1861(Context context) {
+  void testNativeFilterTupleCompoundSlicer1861(Context<?> context) {
     // Using a slicer list instead of tuples causes slicers with
     // tuples where not all combinations of their members are present to
     // fail when nativized.
@@ -2058,7 +2058,7 @@ protected void assertQuerySql(Connection connection,
    */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeSetsCacheClearing(Context context) {
+  void testNativeSetsCacheClearing(Context<?> context) {
     if ( context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
       && context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class) ) {
       return;
@@ -2113,7 +2113,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeFilterWithLargeAggSetInSlicer(Context context) {
+  void testNativeFilterWithLargeAggSetInSlicer(Context<?> context) {
     final String query = "with member customers.agg as "
       + "'Aggregate(Except(Customers.[Name].members,    "
       + "{[Customers].[USA].[OR].[Corvallis].[Judy Doolittle]}    ))' "
@@ -2127,7 +2127,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeFilterWithLargeAggSetInSlicerTwoAggs(Context context) {
+  void testNativeFilterWithLargeAggSetInSlicerTwoAggs(Context<?> context) {
     String query = "with \n"
       + "member \n"
       + "[Customers].[agg] as 'Aggregate({[Customers].[Country].Members})'\n"
@@ -2144,7 +2144,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNativeFilterWithLargeAggSetInSlicerCompoundAggregate(Context context) {
+  void testNativeFilterWithLargeAggSetInSlicerCompoundAggregate(Context<?> context) {
     final String query = "WITH member store.agg as "
       + "'Aggregate(CrossJoin(Store.[Store Name].members, Gender.Members))' "
       + "SELECT filter(customers.[name].members, measures.[unit sales] > 100) on 0 "
@@ -2159,7 +2159,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDimensionUsageWithDifferentNameExecutedNatively(Context context) {
+  void testDimensionUsageWithDifferentNameExecutedNatively(Context<?> context) {
     /*
     ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
         "Sales",
@@ -2179,7 +2179,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDimensionUsageExecutedNatively(Context context) {
+  void testDimensionUsageExecutedNatively(Context<?> context) {
     String mdx = ""
       + "with member Measures.q1Sales as '([Time].[Time].[1997].[Q1], Measures.[Unit Sales])'\n"
       + "select NonEmptyCrossjoin( [Time].[Time].[1997].[Q1], Gender.Gender.Gender.members) on 0 \n"
@@ -2192,7 +2192,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMondrian2575(Context context) {
+  void testMondrian2575(Context<?> context) {
     assertQueriesReturnSimilarResults(context.getConnectionWithDefaultRole(),
       String.format(
         "WITH member [Customers].[AggregatePageMembers] AS \n'Aggregate({[Customers].[USA].[CA].[Altadena].[Amy "
@@ -2210,7 +2210,7 @@ protected void assertQuerySql(Connection connection,
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testResultLimitInNativeCJ(Context context) {
+  void testResultLimitInNativeCJ(Context<?> context) {
       Connection connection = context.getConnectionWithDefaultRole();
       SystemWideProperties.instance().ResultLimit = 400;
     assertAxisThrows(connection, "NonEmptyCrossjoin({[Product].[All Products].Children}, "

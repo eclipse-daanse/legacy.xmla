@@ -28,7 +28,7 @@ class NextMemberFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBasic2(Context context) {
+    void testBasic2(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Gender].[F].NextMember} ON COLUMNS from Sales" );
@@ -39,7 +39,7 @@ class NextMemberFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFirstInLevel2(Context context) {
+    void testFirstInLevel2(Context<?> context) {
         Result result =
             executeQuery(context.getConnectionWithDefaultRole(),
                 "select {[Gender].[M].NextMember} ON COLUMNS from Sales" );

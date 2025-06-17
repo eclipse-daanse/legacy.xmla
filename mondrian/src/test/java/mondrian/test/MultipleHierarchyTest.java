@@ -41,9 +41,9 @@ class MultipleHierarchyTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testWeekly(Context context) {
+    void testWeekly(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
-        
+
         // [Time.Weekly] has an 'all' member, but [Time] does not.
         assertAxisReturns(connection, "Sales",
             "{[Time].[Time].CurrentMember}",
@@ -55,7 +55,7 @@ class MultipleHierarchyTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testWeekly2(Context context) {
+    void testWeekly2(Context<?> context) {
         // When the context is one hierarchy,
         // the current member of other hierarchy must be its default member.
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -95,7 +95,7 @@ class MultipleHierarchyTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMultipleMembersOfSameDimensionInSlicerFails(Context context) {
+    void testMultipleMembersOfSameDimensionInSlicerFails(Context<?> context) {
         assertQueryThrows(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
             + " {[Store].children} on rows\n"
@@ -106,7 +106,7 @@ class MultipleHierarchyTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMembersOfHierarchiesInSameDimensionInSlicer(Context context) {
+    void testMembersOfHierarchiesInSameDimensionInSlicer(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
             + " {[Store].children} on rows\n"
@@ -129,7 +129,7 @@ class MultipleHierarchyTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCalcMember(Context context) {
+    void testCalcMember(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
             "with member [Measures].[Sales to Date] as \n"
@@ -176,7 +176,7 @@ class MultipleHierarchyTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testProperty(Context context) {
+    void testProperty(Context<?> context) {
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
             "Sales",
@@ -320,7 +320,7 @@ class MultipleHierarchyTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAmbiguousHierarchyInCalcMember(Context context) {
+    void testAmbiguousHierarchyInCalcMember(Context<?> context) {
         final String query =
             "with member [Measures].[Time Child Count] as\n"
             + "  [Time].Children.Count\n"
@@ -350,7 +350,7 @@ class MultipleHierarchyTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDefaultNamedHierarchy(Context context) {
+    void testDefaultNamedHierarchy(Context<?> context) {
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
             "Sales",
@@ -401,7 +401,7 @@ class MultipleHierarchyTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCalcMemOnMultipleHierarchy(Context context) {
+    void testCalcMemOnMultipleHierarchy(Context<?> context) {
         // MONDRIAN-1485
         // Mondrian generates multiple queries during getMemberChildren
         // that references the hierarchy as a value in the where clause.

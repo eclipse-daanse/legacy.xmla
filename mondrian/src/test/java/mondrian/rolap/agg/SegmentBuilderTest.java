@@ -252,7 +252,7 @@ class SegmentBuilderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNullMemberOffset(Context context) {
+    void testNullMemberOffset(Context<?> context) {
         // verifies that presence of a null member does not cause
         // offsets to be incorrect for a Segment rollup.
         // First query loads the cache with a segment that can fulfill the
@@ -293,7 +293,7 @@ class SegmentBuilderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNullMemberOffset2ColRollup(Context context) {
+    void testNullMemberOffset2ColRollup(Context<?> context) {
         // verifies that presence of a null member does not cause
         // offsets to be incorrect for a Segment rollup involving 2
         // columns.  This tests a case where
@@ -368,7 +368,7 @@ class SegmentBuilderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSparseRollup(Context context) {
+    void testSparseRollup(Context<?> context) {
         // functional test for a case that causes OOM if rollup creates
         // a dense segment.
         // This takes several seconds to run
@@ -523,7 +523,7 @@ class SegmentBuilderTest {
     @Disabled //TODO need investigate
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOverlappingSegments(Context context) {
+    void testOverlappingSegments(Context<?> context) {
         // MONDRIAN-2107
         // The segments created by the first 2 queries below overlap on
         //  [1997].[Q1].[1].  The rollup of these two segments should not
@@ -536,7 +536,7 @@ class SegmentBuilderTest {
         // set of values.
         Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
-        //TestContext context = getTestContext().withFreshConnection();
+        //TestContext<?> context = getTestContext().withFreshConnection();
 
         executeQuery(connection,
             "select "
@@ -579,7 +579,7 @@ class SegmentBuilderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonOverlappingRollupWithUnconstrainedColumn(Context context) {
+    void testNonOverlappingRollupWithUnconstrainedColumn(Context<?> context) {
         // MONDRIAN-2107
         // The two segments loaded by the 1st 2 queries will have predicates
         // optimized for Name.  Prior to the fix for 2107 this would
@@ -588,7 +588,7 @@ class SegmentBuilderTest {
         // segments would be loaded into the AxisInfo.
         Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
-        //TestContext context = getTestContext().withFreshConnection();
+        //TestContext<?> context = getTestContext().withFreshConnection();
         final String query = "select customers.[name].members on 0 from sales";
         ((TestContextImpl)context).setEnableInMemoryRollup(false);
         Result result = executeQuery(connection, query);
@@ -622,7 +622,7 @@ class SegmentBuilderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonOverlappingRollupWithUnconstrainedColumnAndHasNull(Context context) {
+    void testNonOverlappingRollupWithUnconstrainedColumnAndHasNull(Context<?> context) {
         // MONDRIAN-2107
         // Creates 10 segments, one for each city, with various sets
         // of [Store Sqft].  Some contain NULL, some do not.
@@ -634,7 +634,7 @@ class SegmentBuilderTest {
             "[Mexico].Zacatecas"};
         Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
-        //TestContext context = getTestContext().withFreshConnection();
+        //TestContext<?> context = getTestContext().withFreshConnection();
         final String query =
             "select [Store Size in SQFT].[Store Sqft].members on 0 from sales";
 
@@ -667,7 +667,7 @@ class SegmentBuilderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBadRollupCausesGreaterThan12Iterations(Context context) {
+    void testBadRollupCausesGreaterThan12Iterations(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1729
         // The first two queries populate the cache with segments
         // capable of being rolled up to fulfill the 3rd query.
@@ -675,7 +675,7 @@ class SegmentBuilderTest {
         // an infinite loop.
         Connection connection = context.getConnectionWithDefaultRole();
         flushSchemaCache(connection);
-        //TestContext context = getTestContext().withFreshConnection();
+        //TestContext<?> context = getTestContext().withFreshConnection();
 
         executeQuery(connection,
             "select "
@@ -697,7 +697,7 @@ class SegmentBuilderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSameRollupRegardlessOfSegmentOrderWithEmptySegmentBody(Context context) {
+    void testSameRollupRegardlessOfSegmentOrderWithEmptySegmentBody(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1729
         // rollup of segments {A, B} should produce the same resulting segment
         // regardless of whether rollup processes them in the order A,B or B,A.
@@ -742,7 +742,7 @@ class SegmentBuilderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSameRollupRegardlessOfSegmentOrderWithData(Context context) {
+    void testSameRollupRegardlessOfSegmentOrderWithData(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1729
         // Tests a wildcarded segment rolled up w/ a seg containing a single
         // val.  Both segments are associated w/ non empty results.
@@ -778,7 +778,7 @@ class SegmentBuilderTest {
     	segmentCache.getSegmentHeaders().stream().forEach(it -> segmentCache.remove(it));
 	}
 
-    void testSameRollupRegardlessOfSegmentOrderNoWildcards(Context context) {
+    void testSameRollupRegardlessOfSegmentOrderNoWildcards(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1729
         // Tests 2 segments, each w/ no wildcarded values.
         runRollupTest(context.getConnectionWithDefaultRole(),
@@ -805,7 +805,7 @@ class SegmentBuilderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSameRollupRegardlessOfSegmentOrderThreeSegs(Context context) {
+    void testSameRollupRegardlessOfSegmentOrderThreeSegs(Context<?> context) {
         // http://jira.pentaho.com/browse/MONDRIAN-1729
         // Tests 3 segments, each w/ no wildcarded values.
     	context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
@@ -835,13 +835,13 @@ class SegmentBuilderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSegmentCreationForBoolean_True(Context context) {
+    void testSegmentCreationForBoolean_True(Context<?> context) {
         doTestSegmentCreationForBoolean(context.getConnectionWithDefaultRole(), true);
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSegmentCreationForBoolean_False(Context context) {
+    void testSegmentCreationForBoolean_False(Context<?> context) {
         doTestSegmentCreationForBoolean(context.getConnectionWithDefaultRole(),false);
     }
 
@@ -932,7 +932,7 @@ class SegmentBuilderTest {
 
     private void loadCacheWithQueries(Connection connection, String [] queries) {
         flushSchemaCache(connection);
-        //TestContext context = getTestContext().withFreshConnection();
+        //TestContext<?> context = getTestContext().withFreshConnection();
         for (String query : queries) {
             executeQuery(connection, query);
         }
@@ -956,7 +956,7 @@ class SegmentBuilderTest {
         ISegmentCacheManager cacheMgr = ((AbstractBasicContext)connection.getContext()).getAggregationManager()
         .getCacheMgr();
         SegmentCache cache = ((SegmentCacheManager)cacheMgr).compositeCache;
-        
+
         List<SegmentHeader> headers = cache.getSegmentHeaders();
         Map<SegmentHeader, SegmentBody> testMap =
             new HashMap<>() {

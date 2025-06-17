@@ -32,14 +32,14 @@ class CousinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCousin1(Context context) {
+    void testCousin1(Context<?> context) {
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(), "Cousin([1997].[Q4],[1998])", "Sales" );
         assertEquals( "[Time].[Time].[1998].[Q4]", member.getUniqueName() );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCousin2(Context context) {
+    void testCousin2(Context<?> context) {
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
             "Cousin([1997].[Q4].[12],[1998].[Q1])", "Sales" );
         assertEquals( "[Time].[Time].[1998].[Q1].[3]", member.getUniqueName() );
@@ -47,7 +47,7 @@ class CousinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCousinOverrun(Context context) {
+    void testCousinOverrun(Context<?> context) {
         Member member = executeSingletonAxis(context.getConnectionWithDefaultRole(),
             "Cousin([Customers].[USA].[CA].[San Jose],"
                 + " [Customers].[USA].[OR])", "Sales" );
@@ -57,7 +57,7 @@ class CousinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCousinThreeDown(Context context) {
+    void testCousinThreeDown(Context<?> context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(),
                 "Cousin([Customers].[USA].[CA].[Berkeley].[Barbara Combs],"
@@ -77,7 +77,7 @@ class CousinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCousinSameLevel(Context context) {
+    void testCousinSameLevel(Context<?> context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(), "Cousin([Gender].[M], [Gender].[F])", "Sales" );
         assertEquals( "F", member.getName() );
@@ -85,7 +85,7 @@ class CousinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCousinHigherLevel(Context context) {
+    void testCousinHigherLevel(Context<?> context) {
         Member member =
             executeSingletonAxis(context.getConnectionWithDefaultRole(), "Cousin([Time].[1997], [Time].[1998].[Q1])", "Sales" );
         assertNull( member );
@@ -93,7 +93,7 @@ class CousinFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCousinWrongHierarchy(Context context) {
+    void testCousinWrongHierarchy(Context<?> context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "Cousin([Time].[1997], [Gender].[M])",
             MessageFormat.format(cousinHierarchyMismatch,

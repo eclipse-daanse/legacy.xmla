@@ -41,7 +41,7 @@ public class SubTotalTest extends ClearViewBase {
     @Override
 	@ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    protected void runTest(Context context) {
+    protected void runTest(Context<?> context) {
         DiffRepository diffRepos = getDiffRepos();
         for (String name : diffRepos.getTestCaseNames()) {
             setName(name);

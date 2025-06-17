@@ -28,7 +28,7 @@ class RangeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRange(Context context) {
+    void testRange(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[1997].[Q1].[2] : [Time].[1997].[Q2].[5]",
             "[Time].[Time].[1997].[Q1].[2]\n"
@@ -59,7 +59,7 @@ class RangeFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNullRange(Context context) {
+    void testNullRange(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[1997].[Q1].[2] : NULL", //[Time].[1997].[Q2].[5]
             "" ); // Empty Set
@@ -70,7 +70,7 @@ class RangeFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTwoNullRange(Context context) {
+    void testTwoNullRange(Context<?> context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "NULL : NULL",
             "Cannot deduce type of call to function ':'" , "Sales");
@@ -81,7 +81,7 @@ class RangeFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRangeLarge(Context context) {
+    void testRangeLarge(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Customers].[USA].[CA].[San Francisco] : [Customers].[USA].[WA].[Bellingham]",
             "[Customers].[Customers].[USA].[CA].[San Francisco]\n"
@@ -111,7 +111,7 @@ class RangeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRangeStartEqualsEnd(Context context) {
+    void testRangeStartEqualsEnd(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[1997].[Q3].[7] : [Time].[1997].[Q3].[7]",
             "[Time].[Time].[1997].[Q3].[7]" );
@@ -119,7 +119,7 @@ class RangeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRangeStartEqualsEndLarge(Context context) {
+    void testRangeStartEqualsEndLarge(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Customers].[USA].[CA] : [Customers].[USA].[CA]",
             "[Customers].[Customers].[USA].[CA]" );
@@ -127,7 +127,7 @@ class RangeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRangeEndBeforeStart(Context context) {
+    void testRangeEndBeforeStart(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Time].[1997].[Q3].[7] : [Time].[1997].[Q2].[5]",
             "[Time].[Time].[1997].[Q2].[5]\n"
@@ -137,7 +137,7 @@ class RangeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRangeEndBeforeStartLarge(Context context) {
+    void testRangeEndBeforeStartLarge(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Customers].[USA].[WA] : [Customers].[USA].[CA]",
             "[Customers].[Customers].[USA].[CA]\n"
@@ -147,7 +147,7 @@ class RangeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRangeBetweenDifferentLevelsIsError(Context context) {
+    void testRangeBetweenDifferentLevelsIsError(Context<?> context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "[Time].[1997].[Q2] : [Time].[1997].[Q2].[5]",
             "Members must belong to the same level", "Sales" );
@@ -155,7 +155,7 @@ class RangeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRangeBoundedByAll(Context context) {
+    void testRangeBoundedByAll(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Gender] : [Gender]",
             "[Gender].[Gender].[All Gender]" );
@@ -163,7 +163,7 @@ class RangeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRangeBoundedByAllLarge(Context context) {
+    void testRangeBoundedByAllLarge(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Customers].DefaultMember : [Customers]",
             "[Customers].[Customers].[All Customers]" );
@@ -171,7 +171,7 @@ class RangeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRangeBoundedByNull(Context context) {
+    void testRangeBoundedByNull(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Gender].[F] : [Gender].[M].NextMember",
             "" );
@@ -179,7 +179,7 @@ class RangeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRangeBoundedByNullLarge(Context context) {
+    void testRangeBoundedByNullLarge(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Customers].PrevMember : [Customers].[USA].[OR]",
             "" );
@@ -187,7 +187,7 @@ class RangeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testComplexSlicerWith_Calc(Context context) {
+    void testComplexSlicerWith_Calc(Context<?> context) {
         String query =
             "with "
                 + "member [Time].[Time].[H1 1997] as 'Aggregate([Time].[Time].[1997].[Q1] : [Time].[Time].[1997].[Q2])', $member_scope = \"CUBE\","
@@ -220,7 +220,7 @@ class RangeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testComplexSlicerWith_CalcBase(Context context) {
+    void testComplexSlicerWith_CalcBase(Context<?> context) {
         String query =
             "with "
                 + "member [Time].[Time].[H1 1997] as 'Aggregate([Time].[Time].[1997].[Q1] : [Time].[Time].[1997].[Q2])', $member_scope = \"CUBE\","
@@ -254,7 +254,7 @@ class RangeFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testComplexSlicerWith_Calc_Calc(Context context) {
+    void testComplexSlicerWith_Calc_Calc(Context<?> context) {
         String query =
             "with "
                 + "member [Time].[Time].[H1 1997] as 'Aggregate([Time].[Time].[1997].[Q1] : [Time].[Time].[1997].[Q2])', $member_scope = \"CUBE\","

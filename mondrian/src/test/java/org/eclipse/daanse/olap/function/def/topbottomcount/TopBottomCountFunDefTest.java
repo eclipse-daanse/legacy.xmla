@@ -37,7 +37,7 @@ class TopBottomCountFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBottomCount(Context context) {
+    void testBottomCount(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "BottomCount({[Promotion Media].[Media Type].members}, 2, [Measures].[Unit Sales])",
             "[Promotion Media].[Promotion Media].[Radio]\n"
@@ -46,7 +46,7 @@ class TopBottomCountFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBottomCountUnordered(Context context) {
+    void testBottomCountUnordered(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "BottomCount({[Promotion Media].[Media Type].members}, 2)",
             "[Promotion Media].[Promotion Media].[Sunday Paper, Radio, TV]\n"
@@ -57,7 +57,7 @@ class TopBottomCountFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopCount(Context context) {
+    void testTopCount(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopCount({[Promotion Media].[Media Type].members}, 2, [Measures].[Unit Sales])",
             "[Promotion Media].[Promotion Media].[No Media]\n"
@@ -66,7 +66,7 @@ class TopBottomCountFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopCountUnordered(Context context) {
+    void testTopCountUnordered(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopCount({[Promotion Media].[Media Type].members}, 2)",
             "[Promotion Media].[Promotion Media].[Bulk Mail]\n"
@@ -75,7 +75,7 @@ class TopBottomCountFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopCountTuple(Context context) {
+    void testTopCountTuple(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopCount([Customers].[Name].members,2,(Time.[1997].[Q1],[Measures].[Store Sales]))",
             "[Customers].[Customers].[USA].[WA].[Spokane].[Grace McLaughlin]\n"
@@ -84,7 +84,7 @@ class TopBottomCountFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopCountEmpty(Context context) {
+    void testTopCountEmpty(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopCount(Filter({[Promotion Media].[Media Type].members}, 1=0), 2, [Measures].[Unit Sales])",
             "" );
@@ -92,7 +92,7 @@ class TopBottomCountFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopCountDepends(Context context) {
+    void testTopCountDepends(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         checkTopBottomCountPercentDepends(connection, "TopCount" );
         checkTopBottomCountPercentDepends(connection, "TopPercent" );
@@ -126,7 +126,7 @@ class TopBottomCountFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopCountHuge(Context context) {
+    void testTopCountHuge(Context<?> context) {
         // TODO convert printfs to trace
         final String query =
             "SELECT [Measures].[Store Sales] ON 0,\n"
@@ -162,7 +162,7 @@ class TopBottomCountFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMondrian_1187(Context context) {
+    void testMondrian_1187(Context<?> context) {
         final String queryWithoutAlias =
             "WITH\n" + "SET [Top Count] AS\n"
                 + "{\n" + "TOPCOUNT(\n" + "DISTINCT([Customers].[Name].Members),\n"

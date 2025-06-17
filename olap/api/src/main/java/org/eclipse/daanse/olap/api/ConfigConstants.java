@@ -93,7 +93,7 @@ public class ConfigConstants {
     public static final boolean ENABLE_IN_MEMORY_ROLLUP_DEFAULT_VALUE = true;
     public static final boolean EXPAND_NON_NATIVE_DEFAULT_VALUE = false;
     public static final boolean GENERATE_AGGREGATE_SQL_DEFAULT_VALUE = false;
-    public static final boolean IGNORE_INVALID_MEMBERS_DURING_QUERY_DEFAULT_VALUE = false;
+    public static final Boolean IGNORE_INVALID_MEMBERS_DURING_QUERY_DEFAULT_VALUE = false;
     public static final boolean IGNORE_MEASURE_FOR_NON_JOINING_DIMENSION_DEFAULT_VALUE = false;
     public static final int ITERATION_LIMIT_DEFAULT_VALUE = 0;
     public static final int LEVEL_PRE_CACHE_THRESHOLD_DEFAULT_VALUE = 300;
@@ -103,7 +103,7 @@ public class ConfigConstants {
     public static final String ALERT_NATIVE_EVALUATION_UNSUPPORTED_DEFAULT_VALUE = "OFF";
     public static final int CROSS_JOIN_OPTIMIZER_SIZE_DEFAULT_VALUE = 0;
     public static final String CURRENT_MEMBER_WITH_COMPOUND_SLICER_ALERT_DEFAULT_VALUE = "ERROR";
-    public static final boolean IGNORE_INVALID_MEMBERS_DEFAULT_VALUE = false;
+    public static final Boolean IGNORE_INVALID_MEMBERS_DEFAULT_VALUE = false;
     public static final int MAX_EVAL_DEPTH_DEFAULT_VALUE = 10;
     public static final int CHECK_CANCEL_OR_TIMEOUT_INTERVAL_DEFAULT_VALUE = 1000;
     public static final boolean MEMORY_MONITOR_DEFAULT_VALUE = false;

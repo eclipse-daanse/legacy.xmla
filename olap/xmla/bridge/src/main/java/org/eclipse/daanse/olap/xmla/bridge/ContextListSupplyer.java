@@ -21,12 +21,12 @@ import org.eclipse.daanse.olap.api.element.Catalog;
 
 public interface ContextListSupplyer {
 
-	List<Context> getContexts();
+	List<Context<?>> getContexts();
 	
 	List<Catalog> get(List<String> roles);
 
 	Optional<Catalog> tryGetFirstByName(String catalogName, List<String> roles);
 
-	Optional<Context> getContext(String name);
+	Optional<Context<?>> getContext(String name);
 
 }

@@ -68,7 +68,7 @@ class TopCountWithTwoParamsVersusHeadTest extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void test_States(Context context) throws Exception {
+    void test_States(Context<?> context) throws Exception {
         assertResultsAreEqual(context.getConnectionWithDefaultRole(),
             "States",
             TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_STATES_QUERY);
@@ -76,7 +76,7 @@ class TopCountWithTwoParamsVersusHeadTest extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void test_Cities(Context context) throws Exception {
+    void test_Cities(Context<?> context) throws Exception {
         assertResultsAreEqual(context.getConnectionWithDefaultRole(),
             "Cities",
             TOPCOUNT_MIMICS_HEAD_WHEN_TWO_PARAMS_CITIES_QUERY);
@@ -84,7 +84,7 @@ class TopCountWithTwoParamsVersusHeadTest extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void test_ShowsNotMoreThanExist(Context context) {
+    void test_ShowsNotMoreThanExist(Context<?> context) {
         assertResultsAreEqual(context.getConnectionWithDefaultRole(),
             "Not more than exists",
             RESULTS_ARE_SHOWN_NOT_MORE_THAN_EXIST_2_PARAMS_QUERY);
@@ -92,7 +92,7 @@ class TopCountWithTwoParamsVersusHeadTest extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void test_DoesNotIgnoreNonEmpty(Context context) {
+    void test_DoesNotIgnoreNonEmpty(Context<?> context) {
         assertResultsAreEqual(context.getConnectionWithDefaultRole(),
             "Does not ignore NON EMPTY",
             NON_EMPTY_IS_NOT_IGNORED_WHEN_TWO_PARAMS_QUERY);

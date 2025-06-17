@@ -29,7 +29,7 @@ class TopBottomPercentSumFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBottomPercent(Context context) {
+    void testBottomPercent(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "BottomPercent(Filter({[Store].[All Stores].[USA].[CA].Children, [Store].[All Stores].[USA].[OR].Children, "
                 + "[Store].[All Stores].[USA].[WA].Children}, ([Measures].[Unit Sales] > 0.0)), 100.0, [Measures].[Store "
@@ -58,7 +58,7 @@ class TopBottomPercentSumFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBottomSum(Context context) {
+    void testBottomSum(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "BottomSum({[Promotion Media].[Media Type].members}, 5000, [Measures].[Unit Sales])",
             "[Promotion Media].[Promotion Media].[Radio]\n"
@@ -71,7 +71,7 @@ class TopBottomPercentSumFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopPercentCrossjoin(Context context) {
+    void testTopPercentCrossjoin(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "{TopPercent(Crossjoin([Product].[Product Department].members,\n"
                 + "[Time].[1997].children),10,[Measures].[Store Sales])}",
@@ -83,7 +83,7 @@ class TopBottomPercentSumFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopPercent(Context context) {
+    void testTopPercent(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopPercent({[Promotion Media].[Media Type].members}, 70, [Measures].[Unit Sales])",
             "[Promotion Media].[Promotion Media].[No Media]" );
@@ -93,7 +93,7 @@ class TopBottomPercentSumFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopSum(Context context) {
+    void testTopSum(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopSum({[Promotion Media].[Media Type].members}, 200000, [Measures].[Unit Sales])",
             "[Promotion Media].[Promotion Media].[No Media]\n"
@@ -102,7 +102,7 @@ class TopBottomPercentSumFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopSumEmpty(Context context) {
+    void testTopSumEmpty(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "TopSum(Filter({[Promotion Media].[Media Type].members}, 1=0), "
                 + "200000, [Measures].[Unit Sales])",
@@ -118,7 +118,7 @@ class TopBottomPercentSumFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTopPercentWithAlias(Context context) {
+    void testTopPercentWithAlias(Context<?> context) {
         final String queryWithoutAlias =
             "select\n"
                 + " {[Measures].[Store Cost]}on rows,\n"

@@ -28,7 +28,7 @@ import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;
 class IsEmptyFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIsEmptyWithAggregate(Context context) {
+    void testIsEmptyWithAggregate(Context<?> context) {
         TestUtil.assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [gender].[foo] AS 'isEmpty(Aggregate({[Gender].m}))' "
                 + "SELECT {Gender.foo} on 0 from sales",
@@ -41,7 +41,7 @@ class IsEmptyFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIsEmpty(Context context) {
+    void testIsEmpty(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertBooleanExprReturns(connection, "Sales", "[Gender].[All Gender].Parent IS NULL", true );
 

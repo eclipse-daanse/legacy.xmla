@@ -27,7 +27,7 @@ class DrilldownLevelTopBottomFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDrilldownLevelTop(Context context) {
+    void testDrilldownLevelTop(Context<?> context) {
         // <set>, <n>, <level>
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevelTop({[Store].[USA]}, 2, [Store].[Store Country])",
@@ -114,7 +114,7 @@ class DrilldownLevelTopBottomFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDrilldownMemberEmptyExpr(Context context) {
+    void testDrilldownMemberEmptyExpr(Context<?> context) {
         // no level, with expression
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownLevelTop({[Store].[USA]}, 2, , [Measures].[Unit Sales])",

@@ -69,7 +69,7 @@ class AggGenTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCallingLoadColumnsInAddCollapsedColumnOrAddzSpecialCollapsedColumn(Context context) throws Exception
+    void testCallingLoadColumnsInAddCollapsedColumnOrAddzSpecialCollapsedColumn(Context<?> context) throws Exception
     {
         Logger logger = LoggerFactory.getLogger(AggGen.class);
         StringWriter writer = new StringWriter();

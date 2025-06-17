@@ -136,7 +136,7 @@ class TestAggregationManager extends BatchTestCase {
         aggMgr = null;
     }
 
-    private void prepareContext(Context context) {
+    private void prepareContext(Context<?> context) {
         final Statement statement =
             ((Connection) context.getConnectionWithDefaultRole())
                 .getInternalStatement();
@@ -151,7 +151,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFemaleUnitSales(Context context) {
+    void testFemaleUnitSales(Context<?> context) {
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
         final FastBatchingCellReader fbcr =
@@ -169,7 +169,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void  testFemaleCustomerCount(Context context) {
+    void  testFemaleCustomerCount(Context<?> context) {
         prepareContext(context);
         final FastBatchingCellReader fbcr =
             new FastBatchingCellReader(execution, getCube(context.getConnectionWithDefaultRole(), "Sales"), aggMgr);
@@ -188,7 +188,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void  testFemaleCustomerCountWithConstraints(Context context) {
+    void  testFemaleCustomerCountWithConstraints(Context<?> context) {
         prepareContext(context);
         List<String[]> Q1M1 = new ArrayList<> ();
         Q1M1.add(new String[] {"1997", "Q1", "1"});
@@ -249,7 +249,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFemaleUnitSalesSql(Context context) {
+    void testFemaleUnitSalesSql(Context<?> context) {
         prepareContext(context);
         if (!(context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
               && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)))
@@ -280,7 +280,7 @@ class TestAggregationManager extends BatchTestCase {
      *
      * TODO: Enable this test.
      */
-    private void _testFemaleUnitSalesSql_withAggs(Context context) {
+    private void _testFemaleUnitSalesSql_withAggs(Context<?> context) {
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest request = createRequest(connection,
@@ -310,7 +310,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMultipleMeasures(Context context) {
+    void testMultipleMeasures(Context<?> context) {
         prepareContext(context);
         if (!(context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
               && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)))
@@ -367,7 +367,7 @@ class TestAggregationManager extends BatchTestCase {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     @SuppressWarnings("java:S5810")
-    private void _testMultipleMeasures_withAgg(Context context) {
+    private void _testMultipleMeasures_withAgg(Context<?> context) {
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
         CellRequest[] requests = new CellRequest[] {
@@ -414,7 +414,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void createMultipleMeasureCellRequest(Context context) {
+    void createMultipleMeasureCellRequest(Context<?> context) {
         prepareContext(context);
         String cube = "Sales";
         String measure = "[Measures].[Unit Sales]";
@@ -454,7 +454,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testUniqueMembers(Context context) {
+    void testUniqueMembers(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareContext(context);
         // [Store].[Store State] is unique, so we don't expect to see any
@@ -549,7 +549,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonEmptyCrossJoinLoneAxis(Context context) {
+    void testNonEmptyCrossJoinLoneAxis(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareContext(context);
         // Not sure what this test is checking.
@@ -614,7 +614,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testHierarchyInFactTable(Context context) {
+    void testHierarchyInFactTable(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -653,7 +653,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCountDistinctAggMiss(Context context) {
+    void testCountDistinctAggMiss(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -721,7 +721,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCountDistinctAggMatch(Context context) {
+    void testCountDistinctAggMatch(Context<?> context) {
         prepareContext(context);
         if (!(context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
               && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)))
@@ -756,7 +756,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCountDistinctCannotRollup(Context context) {
+    void testCountDistinctCannotRollup(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareContext(context);
         // Summary "agg_g_ms_pcat_sales_fact_1997" doesn't match,
@@ -847,7 +847,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCountDistinctRollupAlongDim(Context context) {
+    void testCountDistinctRollupAlongDim(Context<?> context) {
         prepareContext(context);
         if (!(context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
               && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)))
@@ -913,7 +913,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCountDistinctRollup2(Context context) {
+    void testCountDistinctRollup2(Context<?> context) {
         prepareContext(context);
         if (!(context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
               && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)))
@@ -973,7 +973,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCountDistinctBatchLoading(Context context) {
+    void testCountDistinctBatchLoading(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareContext(context);
         List<String[]> compoundMembers = new ArrayList<>();
@@ -1035,7 +1035,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAggMembers(Context context) {
+    void testAggMembers(Context<?> context) {
         prepareContext(context);
         if (context.getConfigValue(ConfigConstants.TEST_EXP_DEPENDENCIES, ConfigConstants.TEST_EXP_DEPENDENCIES_DEFAULT_VALUE, Integer.class) > 0) {
             return;
@@ -1088,7 +1088,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAggChildMembersOfLeaf(Context context) {
+    void testAggChildMembersOfLeaf(Context<?> context) {
     	context.getCatalogCache().clear();
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -1114,7 +1114,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNoNullPtrInCellRequest(Context context) {
+    void testNoNullPtrInCellRequest(Context<?> context) {
         prepareContext(context);
         /*
         ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
@@ -1155,7 +1155,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testColumnCadinalityCache(Context context) {
+    void testColumnCadinalityCache(Context<?> context) {
         prepareContext(context);
         String query1 =
             "select "
@@ -1193,7 +1193,7 @@ class TestAggregationManager extends BatchTestCase {
                     cardinalitySqlMySql)
             };
 
-        //final TestContext context = getTestContext().withFreshConnection();
+        //final TestContext<?> context = getTestContext().withFreshConnection();
         Connection connection = context.getConnectionWithDefaultRole();
         try {
             // This MDX gets the [Product].[Product Family] cardinality
@@ -1211,7 +1211,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testKeyExpressionCardinalityCache(Context context) {
+    void testKeyExpressionCardinalityCache(Context<?> context) {
         prepareContext(context);
         /*
         String storeDim1 =
@@ -1519,7 +1519,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCountDistinctWithConstraintAggMiss(Context context) {
+    void testCountDistinctWithConstraintAggMiss(Context<?> context) {
         prepareContext(context);
         if (!(context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
               && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)))
@@ -1599,7 +1599,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrdinalExprAggTuplesAndChildren(Context context) {
+    void testOrdinalExprAggTuplesAndChildren(Context<?> context) {
         prepareContext(context);
         // this verifies that we can load properties, ordinals, etc out of
         // agg tables in member lookups (tuples and children)
@@ -1851,7 +1851,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAggregatingTuples(Context context) {
+    void testAggregatingTuples(Context<?> context) {
         prepareContext(context);
         ((TestContextImpl)context).setLevelPreCacheThreshold(1);
         if (!(context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
@@ -1967,7 +1967,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCollapsedChildren(Context context) {
+    void testCollapsedChildren(Context<?> context) {
         prepareContext(context);
         if (!(context.getConfigValue(ConfigConstants.USE_AGGREGATES, ConfigConstants.USE_AGGREGATES_DEFAULT_VALUE ,Boolean.class)
                 && context.getConfigValue(ConfigConstants.READ_AGGREGATES, ConfigConstants.READ_AGGREGATES_DEFAULT_VALUE ,Boolean.class)))
@@ -2022,7 +2022,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLevelKeyAsSqlExpWithAgg(Context context) {
+    void testLevelKeyAsSqlExpWithAgg(Context<?> context) {
         prepareContext(context);
         Connection connection = context.getConnectionWithDefaultRole();
         final boolean p;
@@ -2204,7 +2204,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAggNameApproxRowCount(Context context) {
+    void testAggNameApproxRowCount(Context<?> context) {
         prepareContext(context);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -2390,7 +2390,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonCollapsedAggregate(Context context) {
+    void testNonCollapsedAggregate(Context<?> context) {
         prepareContext(context);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -2618,7 +2618,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonCollapsedAggregateAllLevelsPresentInQuerySnowflake(Context context)
+    void testNonCollapsedAggregateAllLevelsPresentInQuerySnowflake(Context<?> context)
         throws Exception
     {
         prepareContext(context);
@@ -2707,7 +2707,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonCollapsedAggregateAllLevelsPresentInQuery(Context context)
+    void testNonCollapsedAggregateAllLevelsPresentInQuery(Context<?> context)
         throws Exception
     {
         prepareContext(context);
@@ -2811,7 +2811,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testTwoNonCollapsedAggregate(Context context) throws Exception {
+    void testTwoNonCollapsedAggregate(Context<?> context) throws Exception {
         prepareContext(context);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -3135,7 +3135,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVirtualCubeAggBugMondrian1221(Context context) {
+    void testVirtualCubeAggBugMondrian1221(Context<?> context) {
         prepareContext(context);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -3325,7 +3325,7 @@ class TestAggregationManager extends BatchTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMondrian1271(Context context) {
+    void testMondrian1271(Context<?> context) {
         prepareContext(context);
         if (!context.getConfigValue(ConfigConstants.ENABLE_NATIVE_CROSS_JOIN, ConfigConstants.ENABLE_NATIVE_CROSS_JOIN_DEFAULT_VALUE, Boolean.class)) {
             return;
@@ -3569,7 +3569,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAggStarWithIgnoredColumnsRequiresRollup(Context context) {
+    void testAggStarWithIgnoredColumnsRequiresRollup(Context<?> context) {
         prepareContext(context);
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -3668,7 +3668,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAggStarWithUnusedColumnsRequiresRollup(Context context) {
+    void testAggStarWithUnusedColumnsRequiresRollup(Context<?> context) {
         prepareContext(context);
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setUseAggregates(true);
@@ -3754,7 +3754,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAggStarWithIgnoredColumnsAndCountDistinct(Context context) {
+    void testAggStarWithIgnoredColumnsAndCountDistinct(Context<?> context) {
         prepareContext(context);
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setUseAggregates(true);
@@ -3860,7 +3860,7 @@ class TestAggregationManager extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDisabledReadAggregatesIgnoresDefaultRules(Context context)
+    void testDisabledReadAggregatesIgnoresDefaultRules(Context<?> context)
         throws Exception
     {
     	context.getCatalogCache().clear();

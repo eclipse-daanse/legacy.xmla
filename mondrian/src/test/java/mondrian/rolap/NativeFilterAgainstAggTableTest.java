@@ -42,7 +42,7 @@ class NativeFilterAgainstAggTableTest extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFilteringOnAggregated_ByCount(Context context) {
+    void testFilteringOnAggregated_ByCount(Context<?> context) {
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setUseAggregates(true);
         // http://jira.pentaho.com/browse/MONDRIAN-2155
@@ -97,7 +97,7 @@ class NativeFilterAgainstAggTableTest extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFilteringOnAggregated_BySum(Context context) {
+    void testFilteringOnAggregated_BySum(Context<?> context) {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         String query = ""
@@ -144,7 +144,7 @@ class NativeFilterAgainstAggTableTest extends BatchTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAggTableWithNotAllMeasures(Context context) {
+    void testAggTableWithNotAllMeasures(Context<?> context) {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         // http://jira.pentaho.com/browse/MONDRIAN-1703

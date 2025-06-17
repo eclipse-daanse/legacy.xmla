@@ -180,17 +180,17 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
     }
 
     @Override
-    public org.eclipse.daanse.olap.api.Connection getConnectionWithDefaultRole() {
+    public RolapConnection getConnectionWithDefaultRole() {
         return getConnection(new RolapConnectionPropsR());
     }
 
     @Override
-    public org.eclipse.daanse.olap.api.Connection getConnection(List<String> roles) {
+    public RolapConnection getConnection(List<String> roles) {
         return getConnection(new RolapConnectionPropsR(roles));
     }
 
     @Override
-    public org.eclipse.daanse.olap.api.Connection getConnection(ConnectionProps props) {
+    public RolapConnection getConnection(ConnectionProps props) {
         return new RolapConnection(this, props);
     }
 

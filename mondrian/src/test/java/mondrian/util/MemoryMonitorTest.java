@@ -229,7 +229,7 @@ Does not work without the notify on add feature.
      */
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    public void _testQuery(Context context) throws Exception {
+    public void _testQuery(Context<?> context) throws Exception {
         if (!enabled) {
             return;
         }

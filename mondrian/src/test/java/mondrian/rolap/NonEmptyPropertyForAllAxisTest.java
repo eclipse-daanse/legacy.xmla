@@ -45,7 +45,7 @@ class NonEmptyPropertyForAllAxisTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonEmptyForAllAxesWithPropertySet(Context context) {
+    void testNonEmptyForAllAxesWithPropertySet(Context<?> context) {
 
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = true;
         final String MDX_QUERY =
@@ -97,7 +97,7 @@ class NonEmptyPropertyForAllAxisTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonEmptyForAllAxesWithOutPropertySet(Context context) {
+    void testNonEmptyForAllAxesWithOutPropertySet(Context<?> context) {
         final String MDX_QUERY =
             "SELECT {customers.USA.CA.[Santa Cruz].[Brian Merlo]} on 0, "
             + "[product].[product category].members on 1 FROM [sales]";
@@ -222,7 +222,7 @@ class NonEmptyPropertyForAllAxisTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSlicerAxisDoesNotGetNonEmptyApplied(Context context) {
+    void testSlicerAxisDoesNotGetNonEmptyApplied(Context<?> context) {
 
         SystemWideProperties.instance().EnableNonEmptyOnAllAxis = true;
         String mdxQuery = "select from [Sales]\n"

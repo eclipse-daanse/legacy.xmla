@@ -59,7 +59,7 @@ class InlineTableTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testInlineTable(Context context) {
+    void testInlineTable(Context<?> context) {
         final String cubeName = "Sales_inline";
         class TestInlineTableModifier extends PojoMappingModifier {
 
@@ -197,7 +197,7 @@ class InlineTableTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testInlineTableInSharedDim(Context context) {
+    void testInlineTableInSharedDim(Context<?> context) {
         final String cubeName = "Sales_inline_shared";
 
         class TestInlineTableInSharedDimModifier extends PojoMappingModifier {
@@ -340,7 +340,7 @@ class InlineTableTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testInlineTableSnowflake(Context context) {
+    void testInlineTableSnowflake(Context<?> context) {
         if (getDatabaseProduct(getDialect(context.getConnectionWithDefaultRole()).getDialectName())
             == DatabaseProduct.INFOBRIGHT)
         {
@@ -526,7 +526,7 @@ class InlineTableTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testInlineTableDate(Context context) {
+    void testInlineTableDate(Context<?> context) {
         final String cubeName = "Sales_Inline_Date";
         class TestInlineTableDateModifier extends PojoMappingModifier {
 

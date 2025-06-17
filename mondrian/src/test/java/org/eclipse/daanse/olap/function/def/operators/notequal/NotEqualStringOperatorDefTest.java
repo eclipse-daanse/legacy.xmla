@@ -27,7 +27,7 @@ class NotEqualStringOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testStringNe(Context context) {
+    void testStringNe(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " \"foo\" <> \"bar\" ", true );
     }
 

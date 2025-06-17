@@ -123,7 +123,7 @@ public class RolapStar {
 
     private final RolapCatalog catalog;
 
-    private final Context context;
+    private final Context<?> context;
 
     private final Table factTable;
 
@@ -709,7 +709,7 @@ public class RolapStar {
      *
      * @return Context
      */
-    public Context getContext() {
+    public Context<?> getContext() {
         return context;
     }
 

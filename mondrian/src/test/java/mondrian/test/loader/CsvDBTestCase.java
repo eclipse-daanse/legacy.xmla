@@ -42,7 +42,7 @@ import mondrian.rolap.BatchTestCase;
  */
 public abstract class CsvDBTestCase extends BatchTestCase {
 
-    protected void prepareContext(Context context) {
+    protected void prepareContext(Context<?> context) {
         try {
             File inputFile = new File(Constants.TESTFILES_DIR + "/mondrian/rolap/agg/" +  getFileName());
 
@@ -82,8 +82,8 @@ public abstract class CsvDBTestCase extends BatchTestCase {
     protected abstract String getFileName();
 
     protected Function<CatalogMapping, PojoMappingModifier>  getModifierFunction(){
-     
-    	//constructor notz longer public. 
+
+    	//constructor notz longer public.
     	return PojoMappingModifier::new;
     }
 

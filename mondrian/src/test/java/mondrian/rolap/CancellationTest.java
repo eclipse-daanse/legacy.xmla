@@ -59,7 +59,7 @@ class CancellationTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonEmptyListCancellation(Context context) throws OlapRuntimeException {
+    void testNonEmptyListCancellation(Context<?> context) throws OlapRuntimeException {
         // tests that cancellation/timeout is checked in
         // CrossJoinFunDef.nonEmptyList
         ((TestContextImpl)context).setCheckCancelOrTimeoutInterval(1);
@@ -82,7 +82,7 @@ class CancellationTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMutableCrossJoinCancellation(Context context) throws OlapRuntimeException {
+    void testMutableCrossJoinCancellation(Context<?> context) throws OlapRuntimeException {
         // tests that cancellation/timeout is checked in
         // CrossJoinFunDef.mutableCrossJoin
         ((TestContextImpl)context).setCheckCancelOrTimeoutInterval(1);

@@ -91,7 +91,7 @@ class IdBatchResolverTest  {
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testSimpleEnum(Context context) {
+    void testSimpleEnum(Context<?> context) {
         assertContains(
             "Resolved map omitted one or more members",
             batchResolve(context,
@@ -137,7 +137,7 @@ class IdBatchResolverTest  {
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCalcMemsNotResolved(Context context) {
+    void testCalcMemsNotResolved(Context<?> context) {
         assertFalse(
             batchResolve(context,
                 "with member time.time.foo as '1' member time.time.bar as '2' "
@@ -153,7 +153,7 @@ class IdBatchResolverTest  {
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testLevelReferenceHandled(Context context) {
+    void testLevelReferenceHandled(Context<?> context) {
         // make sure ["Week", 1997] don't get batched as children of
         // [Time.Weekly].[All]
         batchResolve(context,
@@ -176,7 +176,7 @@ class IdBatchResolverTest  {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testPhysMemsResolvedWhenCalcsMixedIn(Context context) {
+    void testPhysMemsResolvedWhenCalcsMixedIn(Context<?> context) {
         assertContains(
             "Resolved map omitted one or more members",
             batchResolve(context,
@@ -207,7 +207,7 @@ class IdBatchResolverTest  {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testAnalyzerFilterMdx(Context context) {
+    void testAnalyzerFilterMdx(Context<?> context) {
         assertContains(
             "Resolved map omitted one or more members",
             batchResolve(context,
@@ -262,7 +262,7 @@ class IdBatchResolverTest  {
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testSetWithNullMember(Context context) {
+    void testSetWithNullMember(Context<?> context) {
         assertContains(
             "Resolved map omitted one or more members",
             batchResolve(context,
@@ -300,7 +300,7 @@ class IdBatchResolverTest  {
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testMultiHierarchySSAS(Context context) {
+    void testMultiHierarchySSAS(Context<?> context) {
         assertContains(
             "Resolved map omitted one or more members",
             batchResolve(context,
@@ -339,7 +339,7 @@ class IdBatchResolverTest  {
     }
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testParentChild(Context context) {
+    void testParentChild(Context<?> context) {
         // P-C resolution will not result in consolidated SQL, but it should
         // still correctly identify children and attempt to resolve them
         // together.
@@ -386,7 +386,7 @@ class IdBatchResolverTest  {
         }
     }
 
-    public Set<String> batchResolve(Context context,String mdx) {
+    public Set<String> batchResolve(Context<?> context,String mdx) {
         IdBatchResolver batchResolver = makeTestBatchResolver(context,mdx);
         Map<QueryComponent, QueryComponent> resolvedIdents = batchResolver.resolve();
         Set<String> resolvedNames = getResolvedNames(resolvedIdents);
@@ -409,7 +409,7 @@ class IdBatchResolverTest  {
 
     }
 
-    public IdBatchResolver makeTestBatchResolver(Context context,String mdx) {
+    public IdBatchResolver makeTestBatchResolver(Context<?> context,String mdx) {
     	TestUtil.flushSchemaCache(context.getConnectionWithDefaultRole());
 
         RolapConnection conn = (RolapConnection) spy(

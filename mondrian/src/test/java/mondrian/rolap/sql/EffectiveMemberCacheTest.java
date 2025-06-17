@@ -38,7 +38,7 @@ class EffectiveMemberCacheTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCachedLevelMembers(Context context) {
+    void testCachedLevelMembers(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         Connection connection = context.getConnectionWithDefaultRole();
         clearCache(connection);
@@ -77,7 +77,7 @@ class EffectiveMemberCacheTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCachedChildMembers(Context context) {
+    void testCachedChildMembers(Context<?> context) {
     	context.getCatalogCache().clear();
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         Connection connection = context.getConnectionWithDefaultRole();
@@ -118,7 +118,7 @@ class EffectiveMemberCacheTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLevelPreCacheThreshold(Context context) {
+    void testLevelPreCacheThreshold(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         Connection connection = context.getConnectionWithDefaultRole();
         clearCache(connection);
@@ -148,7 +148,7 @@ class EffectiveMemberCacheTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLevelPreCacheThresholdDisabled(Context context) {
+    void testLevelPreCacheThresholdDisabled(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         // with LevelPreCacheThreshold set to 0, we should not load
         // all [store type] members, we should only retrieve the 2
@@ -182,7 +182,7 @@ class EffectiveMemberCacheTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLevelPreCacheThresholdParentDegenerate(Context context) {
+    void testLevelPreCacheThresholdParentDegenerate(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         // we should avoid pulling all deg members, regardless of cardinality.
         // The cost of doing full scans of the fact table is assumed
@@ -238,6 +238,6 @@ class EffectiveMemberCacheTest {
 
     private void clearCache(Connection connection) {
         flushSchemaCache(connection);
-        //testContext = getTestContext().withFreshConnection();
+        //testContext<?> = getTestContext().withFreshConnection();
     }
 }

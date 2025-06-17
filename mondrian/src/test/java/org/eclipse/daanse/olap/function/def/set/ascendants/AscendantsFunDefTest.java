@@ -26,7 +26,7 @@ class AscendantsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAscendants(Context context) {
+    void testAscendants(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Ascendants([Store].[USA].[CA])",
             "[Store].[Store].[USA].[CA]\n"
@@ -36,14 +36,14 @@ class AscendantsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAscendantsAll(Context context) {
+    void testAscendantsAll(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Ascendants([Store].DefaultMember)", "[Store].[Store].[All Stores]" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAscendantsNull(Context context) {
+    void testAscendantsNull(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Ascendants([Gender].[F].PrevMember)", "" );
     }

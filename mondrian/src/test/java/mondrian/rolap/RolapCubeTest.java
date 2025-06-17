@@ -62,7 +62,7 @@ class RolapCubeTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testProcessFormatStringAttributeToIgnoreNullFormatString(Context context) {
+    void testProcessFormatStringAttributeToIgnoreNullFormatString(Context<?> context) {
         RolapCube cube =
             (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales").orElseThrow();
         StringBuilder builder = new StringBuilder();
@@ -73,7 +73,7 @@ class RolapCubeTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testProcessFormatStringAttribute(Context context) {
+    void testProcessFormatStringAttribute(Context<?> context) {
         RolapCube cube =
             (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales").orElseThrow();
         StringBuilder builder = new StringBuilder();
@@ -89,7 +89,7 @@ class RolapCubeTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGetCalculatedMembersWithNoRole(Context context) {
+    void testGetCalculatedMembersWithNoRole(Context<?> context) {
         String[] expectedCalculatedMembers = {
             "[Measures].[Profit]",
             "[Measures].[Average Warehouse Sale]",
@@ -118,7 +118,7 @@ class RolapCubeTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGetCalculatedMembersForCaliforniaManager(Context context) {
+    void testGetCalculatedMembersForCaliforniaManager(Context<?> context) {
     	context.getCatalogCache().clear();
         String[] expectedCalculatedMembers = new String[] {
             "[Measures].[Profit]", "[Measures].[Profit last Period]",
@@ -146,7 +146,7 @@ class RolapCubeTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGetCalculatedMembersReturnsOnlyAccessibleMembers(Context context) {
+    void testGetCalculatedMembersReturnsOnlyAccessibleMembers(Context<?> context) {
         String[] expectedCalculatedMembers = {
             "[Measures].[Profit]",
             "[Measures].[Profit last Period]",
@@ -177,12 +177,12 @@ class RolapCubeTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGetCalculatedMembersReturnsOnlyAccessibleMembersForHierarchy(Context context)
+    void testGetCalculatedMembersReturnsOnlyAccessibleMembersForHierarchy(Context<?> context)
     {
         String[] expectedCalculatedMembersFromProduct = {
             "[Product].[Product].[~Missing]"
         };
-        //TestContext testContext =
+        //TestContext<?> testContext<?> =
         //    createTestContextWithAdditionalMembersAndARole();
         createTestContextWithAdditionalMembersAndARole(context);
         Connection connection = ((TestContext)context).getConnection(List.of("California manager"));
@@ -221,7 +221,7 @@ class RolapCubeTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGetCalculatedMembersReturnsOnlyAccessibleMembersForLevel(Context context) {
+    void testGetCalculatedMembersReturnsOnlyAccessibleMembersForLevel(Context<?> context) {
         String[] expectedCalculatedMembersFromProduct = new String[]{
             "[Product].[Product].[~Missing]"
         };
@@ -265,7 +265,7 @@ class RolapCubeTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNonJoiningDimensions(Context context) {
+    void testNonJoiningDimensions(Context<?> context) {
 
         Connection connection = context.getConnectionWithDefaultRole();
 
@@ -299,7 +299,7 @@ class RolapCubeTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRolapCubeDimensionEquality(Context context) {
+    void testRolapCubeDimensionEquality(Context<?> context) {
 
 
         Connection connection1 = context.getConnectionWithDefaultRole();
@@ -344,7 +344,7 @@ class RolapCubeTest {
         }
     }
 
-    void createTestContextWithAdditionalMembersAndARole(Context context) {
+    void createTestContextWithAdditionalMembersAndARole(Context<?> context) {
     	withSchema(context, SchemaModifiers.RolapCubeTestModifier1::new);
     }
 
@@ -363,7 +363,7 @@ class RolapCubeTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBasedCubesForVirtualCube(Context context) {
+    void testBasedCubesForVirtualCube(Context<?> context) {
       Connection connection = context.getConnectionWithDefaultRole();
       RolapCube cubeSales =
           (RolapCube) connection.getCatalog().lookupCube("Sales").orElseThrow();
@@ -386,7 +386,7 @@ class RolapCubeTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBasedCubesForNotVirtualCubeIsThisCube(Context context) {
+    void testBasedCubesForNotVirtualCubeIsThisCube(Context<?> context) {
       RolapCube cubeSales =
           (RolapCube) context.getConnectionWithDefaultRole().getCatalog().lookupCube("Sales").orElseThrow();
       assertNotNull(cubeSales);

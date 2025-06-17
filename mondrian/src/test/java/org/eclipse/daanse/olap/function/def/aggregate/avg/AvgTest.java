@@ -24,14 +24,14 @@ public class AvgTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAvg(Context context) {
+	void testAvg(Context<?> context) {
 		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
 				"AVG({[Store].[All Stores].[USA].children})", "88,924");
 	}
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-	void testAvgNumeric(Context context) {
+	void testAvgNumeric(Context<?> context) {
 		TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
 				"AVG({[Store].[All Stores].[USA].children},[Measures].[Store Sales])", "188,412.71");
 	}

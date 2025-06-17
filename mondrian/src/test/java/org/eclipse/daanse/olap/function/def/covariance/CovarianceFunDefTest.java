@@ -26,7 +26,7 @@ class CovarianceFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCovariance(Context context) {
+    void testCovariance(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "Covariance({[Store].[All Stores].[USA].children}, [Measures].[Unit Sales], [Measures].[Store Sales])",
             "1,355,761,899" );
@@ -34,7 +34,7 @@ class CovarianceFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCovarianceN(Context context) {
+    void testCovarianceN(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "CovarianceN({[Store].[All Stores].[USA].children}, [Measures].[Unit Sales], [Measures].[Store Sales])",
             "2,033,642,849" );

@@ -29,7 +29,7 @@ class CrossJoinArgFactoryTest {
      */
      @ParameterizedTest
      @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-     void testCrossJoinExample(Context context) {
+     void testCrossJoinExample(Context<?> context) {
         String query =
                 "with "
                 + " member [Measures].[aa] as '([Measures].[Store Cost],[Gender].[Gender].[M])'"

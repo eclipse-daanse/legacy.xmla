@@ -33,7 +33,7 @@ class PropertiesFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPropertiesExpr(Context context) {
+    void testPropertiesExpr(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Store Type\")",
             "Gourmet Supermarket" );
@@ -46,7 +46,7 @@ class PropertiesFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPropertiesOnDimension(Context context) {
+    void testPropertiesOnDimension(Context<?> context) {
         // [Store] is a dimension. When called with a property like FirstChild,
         // it is implicitly converted to a member.
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales", "[Store].FirstChild", "[Store].[Store].[Canada]" );
@@ -69,7 +69,7 @@ class PropertiesFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPropertiesNonExistent(Context context) {
+    void testPropertiesNonExistent(Context<?> context) {
         assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             "[Store].[USA].[CA].[Beverly Hills].[Store 6].Properties(\"Foo\")",
             "Property 'Foo' is not valid for" );
@@ -77,7 +77,7 @@ class PropertiesFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPropertiesFilter(Context context) {
+    void testPropertiesFilter(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "SELECT { [Store Sales] } ON COLUMNS,\n"
                 + " TOPCOUNT(Filter( [Store].[Store Name].Members,\n"
@@ -89,7 +89,7 @@ class PropertiesFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPropertyInCalculatedMember(Context context) {
+    void testPropertyInCalculatedMember(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "WITH MEMBER [Measures].[Store Sales per Sqft]\n"
                 + "AS '[Measures].[Store Sales] / "

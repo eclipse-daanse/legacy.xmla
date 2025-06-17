@@ -27,7 +27,7 @@ class LenFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testLenFunctionWithNullString(Context context) {
+    void testLenFunctionWithNullString(Context<?> context) {
         // SSAS2005 returns 0
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as ' NULL '\n"

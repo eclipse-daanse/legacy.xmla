@@ -62,7 +62,7 @@ class TypeTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testConversions(Context foodMartContext) {
+    void testConversions(Context<?> foodMartContext) {
         final Connection connection = foodMartContext.getConnectionWithDefaultRole();
         Cube salesCube =
             getCubeWithName("Sales", connection.getCatalog().getCubes());
@@ -193,7 +193,7 @@ class TypeTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCommonTypeWhenSetTypeHavingMemberTypeAndTupleType(Context foodMartContext) {
+    void testCommonTypeWhenSetTypeHavingMemberTypeAndTupleType(Context<?> foodMartContext) {
         Connection connection=	foodMartContext.getConnectionWithDefaultRole();
         MemberType measureMemberType =
             getMemberTypeHavingMeasureInIt(getUnitSalesMeasure(connection));
@@ -224,7 +224,7 @@ class TypeTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCommonTypeOfMemberandTupleTypeIsTupleType(Context foodMartContext) {
+    void testCommonTypeOfMemberandTupleTypeIsTupleType(Context<?> foodMartContext) {
         Connection connection=	foodMartContext.getConnectionWithDefaultRole();
         MemberType measureMemberType =
             getMemberTypeHavingMeasureInIt(getUnitSalesMeasure(connection));
@@ -250,7 +250,7 @@ class TypeTest {
 
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCommonTypeBetweenTuplesOfDifferentSizesIsATupleType(Context foodMartContext) {
+    void testCommonTypeBetweenTuplesOfDifferentSizesIsATupleType(Context<?> foodMartContext) {
     Connection connection=	foodMartContext.getConnectionWithDefaultRole();
         MemberType measureMemberType =
             getMemberTypeHavingMeasureInIt(getUnitSalesMeasure(connection));

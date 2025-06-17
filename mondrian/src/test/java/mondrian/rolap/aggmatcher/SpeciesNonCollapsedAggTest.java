@@ -90,7 +90,7 @@ class SpeciesNonCollapsedAggTest extends AggTableTestCase {
 
 
     @Override
-	protected void prepareContext(Context context) {
+	protected void prepareContext(Context<?> context) {
         //((TestContextImpl)context).setDisableCaching(true);
         super.prepareContext(context);
         //TODO
@@ -105,7 +105,7 @@ class SpeciesNonCollapsedAggTest extends AggTableTestCase {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testBugMondrian1105(Context context) {
+    void testBugMondrian1105(Context<?> context) {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);

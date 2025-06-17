@@ -28,14 +28,14 @@ class NotEqualOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNe(Context context) {
+    void testNe(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 2 <> 1.0 + 1.0 ", false );
         checkNullOp(context.getConnectionWithDefaultRole(), "<>" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNeInfinity(Context context) {
+    void testNeInfinity(Context<?> context) {
         // Infinity does not equal itself
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", "(1 / 0) <> (1 / 0)", false );
     }

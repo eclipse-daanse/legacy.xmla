@@ -45,7 +45,7 @@ class DefaultRecognizerTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testDefaultRecognizerWithFactAlias(Context context) {
+    void testDefaultRecognizerWithFactAlias(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -113,7 +113,7 @@ class DefaultRecognizerTest {
     @Disabled //TODO need investigate
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testTupleReaderWithDistinctCountMeasureInContext(Context context) {
+    void testTupleReaderWithDistinctCountMeasureInContext(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);

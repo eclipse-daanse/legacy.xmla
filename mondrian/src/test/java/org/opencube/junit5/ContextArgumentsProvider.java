@@ -85,7 +85,7 @@ public class ContextArgumentsProvider implements ArgumentsProvider, AnnotationCo
 				}
 			}
 		} else {
-			for (Context context : contexts) {
+			for (Context<?> context : contexts) {
 
 				if (xmlTestCases == null || xmlTestCases.isEmpty()) {
 					argumentss.add(Arguments.of(context));

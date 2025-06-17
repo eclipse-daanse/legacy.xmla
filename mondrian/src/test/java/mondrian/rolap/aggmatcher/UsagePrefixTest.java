@@ -37,7 +37,7 @@ class UsagePrefixTest extends AggTableTestCase {
     @Disabled //TODO need investigate
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testUsagePrefix(Context context) throws Exception {
+    void testUsagePrefix(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
@@ -74,7 +74,7 @@ class UsagePrefixTest extends AggTableTestCase {
     @Disabled //TODO need investigate
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testUsagePrefixTwoDims(Context context) throws Exception {
+    void testUsagePrefixTwoDims(Context<?> context) throws Exception {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);

@@ -130,7 +130,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testExplicitAggExtraColsRequiringJoin(Context context) throws SQLException {
+    void testExplicitAggExtraColsRequiringJoin(Context<?> context) throws SQLException {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -237,7 +237,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testExplicitForeignKey(Context context) {
+    void testExplicitForeignKey(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -372,7 +372,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testExplicitAggOrdinalOnAggTable(Context context) throws SQLException {
+    void testExplicitAggOrdinalOnAggTable(Context<?> context) throws SQLException {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -455,7 +455,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testExplicitAggCaptionOnAggTable(Context context) throws SQLException {
+    void testExplicitAggCaptionOnAggTable(Context<?> context) throws SQLException {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -539,7 +539,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
     @Disabled //TODO need investigate
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testExplicitAggNameColumnOnAggTable(Context context) throws SQLException {
+    void testExplicitAggNameColumnOnAggTable(Context<?> context) throws SQLException {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -634,7 +634,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testExplicitAggPropertiesOnAggTable(Context context) throws SQLException {
+    void testExplicitAggPropertiesOnAggTable(Context<?> context) throws SQLException {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -776,7 +776,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCountDistinctAllowableRollup(Context context) throws SQLException {
+    void testCountDistinctAllowableRollup(Context<?> context) throws SQLException {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -903,7 +903,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testCountDisallowedRollup(Context context) throws SQLException {
+    void testCountDisallowedRollup(Context<?> context) throws SQLException {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -1002,7 +1002,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
     }
 
     public static void setupMultiColDimCube(
-        Context context, List<AggregationTableMappingImpl> aggTables, ColumnMapping yearCols, ColumnMapping qtrCols, ColumnMapping monthCols,
+        Context<?> context, List<AggregationTableMappingImpl> aggTables, ColumnMapping yearCols, ColumnMapping qtrCols, ColumnMapping monthCols,
         ColumnMapping monthCaptionCol, ColumnMapping monthOrdinalCol, ColumnMapping monthNameCol, List<MemberPropertyMappingImpl> monthProp, List<TableMapping> tables)
     {
         setupMultiColDimCube(context,
@@ -1010,7 +1010,7 @@ class ExplicitRecognizerTest extends AggTableTestCase {
     }
 
     public static void setupMultiColDimCube(
-        Context context, List<AggregationTableMappingImpl> aggTables, ColumnMapping yearCol, ColumnMapping qtrCol, ColumnMapping monthCol,
+        Context<?> context, List<AggregationTableMappingImpl> aggTables, ColumnMapping yearCol, ColumnMapping qtrCol, ColumnMapping monthCol,
         ColumnMapping monthCaptionCol, ColumnMapping monthOrdinalCol, ColumnMapping monthNameCol,
         List<MemberPropertyMappingImpl> monthProp, List<TableMapping> tables, String defaultMeasure)
     {

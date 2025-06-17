@@ -27,7 +27,7 @@ class IsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIsMember(Context context) {
+    void testIsMember(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             " Store.[USA].parent IS Store.[All Stores]", true );
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -36,7 +36,7 @@ class IsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIsString(Context context) {
+    void testIsString(Context<?> context) {
         assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             " [Store].[USA].Name IS \"USA\" ",
             "No function matches signature '<String> IS <String>'" );
@@ -44,7 +44,7 @@ class IsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIsNumeric(Context context) {
+    void testIsNumeric(Context<?> context) {
         assertExprThrows(context.getConnectionWithDefaultRole(), "Sales",
             " [Store].[USA].Level.Ordinal IS 25 ",
             "No function matches signature '<Numeric Expression> IS <Numeric Expression>'" );
@@ -52,7 +52,7 @@ class IsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIsTuple(Context context) {
+    void testIsTuple(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             " (Store.[USA], Gender.[M]) IS (Store.[USA], Gender.[M])", true );
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -78,7 +78,7 @@ class IsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIsLevel(Context context) {
+    void testIsLevel(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             " Store.[USA].level IS Store.[Store Country] ", true );
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -87,7 +87,7 @@ class IsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIsHierarchy(Context context) {
+    void testIsHierarchy(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             " Store.[USA].hierarchy IS Store.[Mexico].hierarchy ", true );
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales",
@@ -96,7 +96,7 @@ class IsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIsDimension(Context context) {
+    void testIsDimension(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " Store.[USA].dimension IS Store ", true );
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " Gender.[M].dimension IS Store ", false );
     }

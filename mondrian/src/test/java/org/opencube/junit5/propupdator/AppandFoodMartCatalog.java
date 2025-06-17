@@ -25,7 +25,7 @@ import org.opencube.junit5.context.TestContext;
 public class AppandFoodMartCatalog implements TestContextUpdater {
 
 	@Override
-	public void updateContext(Context context) {
+	public void updateContext(Context<?> context) {
         ((TestContext)context).setCatalogMappingSupplier(new FoodmartMappingSupplier());
 	}
 

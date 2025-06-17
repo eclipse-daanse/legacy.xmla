@@ -29,7 +29,7 @@ class NamedSetCurrentOrdinalFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNamedSetCurrentOrdinalWithOrder(Context context) {
+    void testNamedSetCurrentOrdinalWithOrder(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with set [Time Regular] as [Time].[Time].Members\n"
                 + " set [Time Reversed] as"
@@ -114,7 +114,7 @@ class NamedSetCurrentOrdinalFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNamedSetCurrentOrdinalWithGenerate(Context context) {
+    void testNamedSetCurrentOrdinalWithGenerate(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             " with set [Time Regular] as [Time].[Time].Members\n"
                 + "set [Every Other Time] as\n"
@@ -165,7 +165,7 @@ class NamedSetCurrentOrdinalFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNamedSetCurrentOrdinalWithFilter(Context context) {
+    void testNamedSetCurrentOrdinalWithFilter(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with set [Time Regular] as [Time].[Time].Members\n"
                 + " set [Time Subset] as "
@@ -184,13 +184,13 @@ class NamedSetCurrentOrdinalFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNamedSetCurrentOrdinalWithCrossjoin(Context context) {
+    void testNamedSetCurrentOrdinalWithCrossjoin(Context<?> context) {
         // TODO:
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNamedSetCurrentOrdinalWithNonNamedSetFails(Context context) {
+    void testNamedSetCurrentOrdinalWithNonNamedSetFails(Context<?> context) {
         // a named set wrapped in {...} is not a named set, so CurrentOrdinal
         // fails
         assertQueryThrows(context,

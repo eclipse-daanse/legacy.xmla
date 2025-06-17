@@ -41,7 +41,7 @@ class RankFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRank(Context context) {
+    void testRank(Context<?> context) {
         // Member within set
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Rank([Store].[USA].[CA], "
@@ -100,7 +100,7 @@ class RankFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRankWithExpr(Context context) {
+    void testRankWithExpr(Context<?> context) {
         // Note that [Good] and [Top Measure] have the same [Unit Sales]
         // value (5), but [Good] ranks 1 and [Top Measure] ranks 2. Even though
         // they are sorted descending on unit sales, they remain in their
@@ -146,7 +146,7 @@ class RankFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRankMembersWithTiedExpr(Context context) {
+    void testRankMembersWithTiedExpr(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with "
                 + " Set [Beers] as {[Product].[All Products].[Drink].[Alcoholic Beverages].[Beer and Wine].[Beer].children} "
@@ -180,7 +180,7 @@ class RankFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRankTuplesWithTiedExpr(Context context) {
+    void testRankTuplesWithTiedExpr(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with "
                 + " Set [Beers for Store] as 'NonEmptyCrossJoin("
@@ -218,7 +218,7 @@ class RankFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRankWithExpr2(Context context) {
+    void testRankWithExpr2(Context<?> context) {
         // Data: Unit Sales
         // All gender 266,733
         // F          131,558
@@ -285,7 +285,7 @@ class RankFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRankWithNulls(Context context) {
+    void testRankWithNulls(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[X] as "
                 + "'iif([Measures].[Store Sales]=777,"
@@ -306,7 +306,7 @@ class RankFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testRankHuge(Context context) {
+    void testRankHuge(Context<?> context) {
         // If caching is disabled, don't even try -- it will take too long.
         if ( !SystemWideProperties.instance().EnableExpCache ) {
             return;
@@ -339,7 +339,7 @@ class RankFunDefTest {
     @Disabled //disabled for CI build
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void _testRank3Huge(Context context) {
+    void _testRank3Huge(Context<?> context) {
         // If caching is disabled, don't even try -- it will take too long.
         if ( !SystemWideProperties.instance().EnableExpCache ) {
             return;

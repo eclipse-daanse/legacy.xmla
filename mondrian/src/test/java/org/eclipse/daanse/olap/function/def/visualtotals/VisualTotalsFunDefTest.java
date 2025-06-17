@@ -37,7 +37,7 @@ class VisualTotalsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsBasic(Context context) {
+    void testVisualTotalsBasic(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{VisualTotals("
@@ -65,7 +65,7 @@ class VisualTotalsFunDefTest {
     @Disabled //disabled for CI build
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsConsecutively(Context context) {
+    void testVisualTotalsConsecutively(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{VisualTotals("
@@ -105,7 +105,7 @@ class VisualTotalsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsNoPattern(Context context) {
+    void testVisualTotalsNoPattern(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "VisualTotals("
                 + "    {[Product].[All Products].[Food].[Baked Goods].[Bread],"
@@ -120,7 +120,7 @@ class VisualTotalsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsWithFilter(Context context) {
+    void testVisualTotalsWithFilter(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{Filter("
@@ -149,7 +149,7 @@ class VisualTotalsFunDefTest {
     @Disabled //disabled for CI build
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsNested(Context context) {
+    void testVisualTotalsNested(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{VisualTotals("
@@ -178,7 +178,7 @@ class VisualTotalsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsFilterInside(Context context) {
+    void testVisualTotalsFilterInside(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{VisualTotals("
@@ -203,7 +203,7 @@ class VisualTotalsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsOutOfOrder(Context context) {
+    void testVisualTotalsOutOfOrder(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{VisualTotals("
@@ -230,7 +230,7 @@ class VisualTotalsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsGrandparentsAndOutOfOrder(Context context) {
+    void testVisualTotalsGrandparentsAndOutOfOrder(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns, "
                 + "{VisualTotals("
@@ -272,7 +272,7 @@ class VisualTotalsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsCrossjoin(Context context) {
+    void testVisualTotalsCrossjoin(Context<?> context) {
         assertAxisThrows(context.getConnectionWithDefaultRole(),
             "VisualTotals(Crossjoin([Gender].Members, [Store].children))",
             "Argument to 'VisualTotals' function must be a set of members; got set of tuples.", "Sales" );
@@ -285,7 +285,7 @@ class VisualTotalsFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsAll(Context context) {
+    void testVisualTotalsAll(Context<?> context) {
         final String query =
             "SELECT \n"
                 + "  {[Measures].[Unit Sales]} ON 0, \n"
@@ -326,7 +326,7 @@ class VisualTotalsFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsWithNamedSetAndPivot(Context context) {
+    void testVisualTotalsWithNamedSetAndPivot(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET [CA_OR] AS\n"
                 + "    VisualTotals(\n"
@@ -427,7 +427,7 @@ class VisualTotalsFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsIntersect(Context context) {
+    void testVisualTotalsIntersect(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH\n"
                 + "SET [XL_Row_Dim_0] AS 'VisualTotals(Distinct(Hierarchize({Ascendants([Customers].[All Customers].[USA]), "
@@ -455,7 +455,7 @@ class VisualTotalsFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsWithNamedSetAndPivotSameAxis(Context context) {
+    void testVisualTotalsWithNamedSetAndPivotSameAxis(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET [XL_Row_Dim_0] AS\n"
                 + " VisualTotals(\n"
@@ -512,7 +512,7 @@ class VisualTotalsFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsDistinctCountMeasure(Context context) {
+    void testVisualTotalsDistinctCountMeasure(Context<?> context) {
         // distinct measure
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET [XL_Row_Dim_0] AS\n"
@@ -623,7 +623,7 @@ class VisualTotalsFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsClassCast(Context context) {
+    void testVisualTotalsClassCast(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH  SET [XL_Row_Dim_0] AS\n"
                 + " VisualTotals(\n"
@@ -709,7 +709,7 @@ class VisualTotalsFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsWithNamedSetOfTuples(Context context) {
+    void testVisualTotalsWithNamedSetOfTuples(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH SET [XL_Row_Dim_0] AS\n"
                 + " VisualTotals(\n"
@@ -746,7 +746,7 @@ class VisualTotalsFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsLevel(Context context) {
+    void testVisualTotalsLevel(Context<?> context) {
         Result result = executeQuery(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
                 + "{[Product].[All Products],\n"
@@ -785,7 +785,7 @@ class VisualTotalsFunDefTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testVisualTotalsMemberInCalculation(Context context) {
+    void testVisualTotalsMemberInCalculation(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Foo] as\n"
                 + " [Product].CurrentMember.Name || ' : ' || [Product].Level.Name\n"

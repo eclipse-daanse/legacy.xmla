@@ -981,7 +981,7 @@ public TupleList readTuples(
   }
 
   Pair<String, List<BestFitColumnType>> makeLevelMembersSql(
-          Context context, List<TargetBase> targetGroup ) {
+          Context<?> context, List<TargetBase> targetGroup ) {
     // In the case of a virtual cube, if we need to join to the fact
     // table, we do not necessarily have a single underlying fact table,
     // as the underlying base cubes in the virtual cube may all reference
@@ -1227,7 +1227,7 @@ public TupleList readTuples(
    * @return SQL statement string and types
    */
   Pair<String, List<BestFitColumnType>> generateSelectForLevels(
-    Context context,
+    Context<?> context,
     RolapCube baseCube,
     WhichSelect whichSelect, List<TargetBase> targetGroup ) {
     String s =

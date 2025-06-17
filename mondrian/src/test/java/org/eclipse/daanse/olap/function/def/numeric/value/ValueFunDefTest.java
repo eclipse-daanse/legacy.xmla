@@ -30,7 +30,7 @@ class ValueFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testValue(Context context) {
+    void testValue(Context<?> context) {
         // VALUE is usually a cell property, not a member property.
         // We allow it because MS documents it as a function, <Member>.VALUE.
         TestUtil.assertExprReturns(context.getConnectionWithDefaultRole(), "Sales", "[Measures].[Store Sales].VALUE", "565,238.13" );

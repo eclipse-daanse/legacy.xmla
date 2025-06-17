@@ -110,7 +110,7 @@ class VisualTotalsTest {
      */
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testDrillthroughVisualTotal(Context foodMartContext) throws SQLException {
+    void testDrillthroughVisualTotal(Context<?> foodMartContext) throws SQLException {
         Connection conn = foodMartContext.getConnectionWithDefaultRole();
         CellSet cellSet =
     		TestUtil.executeQueryWithCellSetResult(conn,
@@ -149,7 +149,7 @@ class VisualTotalsTest {
      */
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testVisualTotalCaptionBug(Context foodMartContext) throws SQLException {
+    void testVisualTotalCaptionBug(Context<?> foodMartContext) throws SQLException {
         CellSet cellSet =
     		TestUtil.executeQueryWithCellSetResult(foodMartContext.getConnectionWithDefaultRole(),
                 "select {[Measures].[Unit Sales]} on columns, "
@@ -177,7 +177,7 @@ class VisualTotalsTest {
      */
 	@ParameterizedTest
 	@ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testVisualTotalsAggregatedMemberBug(Context foodMartContext) throws SQLException {
+    void testVisualTotalsAggregatedMemberBug(Context<?> foodMartContext) throws SQLException {
         CellSet cellSet =
     		TestUtil.executeQueryWithCellSetResult(foodMartContext.getConnectionWithDefaultRole(),
                 " with  member [Gender].[YTD] as 'AGGREGATE(YTD(),[Gender].[M])'"

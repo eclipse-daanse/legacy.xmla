@@ -27,36 +27,36 @@ class AndOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAnd(Context context) {
+    void testAnd(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=1 AND 2=2 ", true );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAnd2(Context context) {
+    void testAnd2(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=1 AND 2=0 ", false );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOr(Context context) {
+    void testOr(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " 1=0 OR 2=0 ", false );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBool1(Context context) {
+    void testBool1(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND 1=0", "false" );
     }
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBool2(Context context) {
+    void testBool2(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND 1=1", "true" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBool3(Context context) {
+    void testBool3(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "1=1 AND null", "false" );
     }
 

@@ -44,7 +44,7 @@ class OrderFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testBug715177c(Context context) {
+    void testBug715177c(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Order(TopCount({[Store].[USA].[CA].children},"
                 + " [Measures].[Unit Sales], 2), [Measures].[Unit Sales])",
@@ -59,7 +59,7 @@ class OrderFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderDepends(Context context) {
+    void testOrderDepends(Context<?> context) {
         // Order(<Set>, <Value Expression>) depends upon everything
         // <Value Expression> depends upon, except the dimensions of <Set>.
 
@@ -114,7 +114,7 @@ class OrderFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderCalc1(Context context) {
+    void testOrderCalc1(Context<?> context) {
 
         // [Measures].[Unit Sales] is a constant member, so it is evaluated in
         // a ContextCalc.
@@ -134,7 +134,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderCalc2(Context context) {
+    void testOrderCalc2(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
 
         String expr = "order([Product].children, ([Time].[1997], [Product].CurrentMember.Parent))";
@@ -155,7 +155,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderCalc3(Context context) {
+    void testOrderCalc3(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         // No ContextCalc this time. All members are non-variable.
         String expr = "order([Product].children, [Product].CurrentMember.Parent)";
@@ -172,7 +172,7 @@ org.eclipse.daanse.olap.function.def.order.OrderCurrentMemberCalc(type=SetType<M
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderCalc4(Context context) {
+    void testOrderCalc4(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
 
         String expected = """
@@ -200,7 +200,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderWithMember(Context context) {
+    void testOrderWithMember(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Product Name Length] as "
                 + "'LEN([Product].CurrentMember.Name)'\n"
@@ -226,7 +226,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderNonEmpty(Context context) {
+    void testOrderNonEmpty(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select NON EMPTY [Gender].Members ON COLUMNS,\n"
                 + "NON EMPTY Order([Product].[All Products].[Drink].Children,\n"
@@ -254,7 +254,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrder(Context context) {
+    void testOrder(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
                 + " order({\n"
@@ -291,7 +291,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderParentsMissing(Context context) {
+    void testOrderParentsMissing(Context<?> context) {
         // Paradoxically, [Alcoholic Beverages] comes before
         // [Eggs] even though it has a larger value, because
         // its parent [Drink] has a smaller value than [Food].
@@ -316,7 +316,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderCrossJoinBreak(Context context) {
+    void testOrderCrossJoinBreak(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select {[Measures].[Unit Sales]} on columns,\n"
                 + "  Order(\n"
@@ -345,7 +345,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderCrossJoin(Context context) {
+    void testOrderCrossJoin(Context<?> context) {
         // Note:
         // 1. [Alcoholic Beverages] collates before [Eggs] and
         //    [Seafood] because its parent, [Drink], is less
@@ -406,7 +406,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderHierarchicalDesc(Context context) {
+    void testOrderHierarchicalDesc(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Order(\n"
                 + "    {[Product].[All Products], "
@@ -428,7 +428,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderCrossJoinDesc(Context context) {
+    void testOrderCrossJoinDesc(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Order(\n"
                 + "  CrossJoin(\n"
@@ -458,7 +458,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderBug656802(Context context) {
+    void testOrderBug656802(Context<?> context) {
         // Note:
         // 1. [Alcoholic Beverages] collates before [Eggs] and
         //    [Seafood] because its parent, [Drink], is less
@@ -501,7 +501,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderBug712702_Simplified(Context context) {
+    void testOrderBug712702_Simplified(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT Order({[Time].[Year].members}, [Measures].[Unit Sales]) on columns\n"
                 + "from [Sales]",
@@ -516,7 +516,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderBug712702_Original(Context context) {
+    void testOrderBug712702_Original(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member [Measures].[Average Unit Sales] as 'Avg(Descendants([Time].[Time].CurrentMember, [Time].[Month]), \n"
                 + "[Measures].[Unit Sales])' \n"
@@ -610,7 +610,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderEmpty(Context context) {
+    void testOrderEmpty(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select \n"
                 + "  Order("
@@ -624,7 +624,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderOne(Context context) {
+    void testOrderOne(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select \n"
                 + "  Order("
@@ -640,7 +640,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderKeyEmpty(Context context) {
+    void testOrderKeyEmpty(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select \n"
                 + "  Order("
@@ -654,7 +654,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderKeyOne(Context context) {
+    void testOrderKeyOne(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select \n"
                 + "  Order("
@@ -670,7 +670,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderDesc(Context context) {
+    void testOrderDesc(Context<?> context) {
         // based on olap4j's OlapTest.testSortDimension
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT\n"
@@ -698,12 +698,12 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderMemberMemberValueExpNew(Context context) {
+    void testOrderMemberMemberValueExpNew(Context<?> context) {
 
         SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
         // Use a fresh connection to make sure bad member ordinals haven't
         // been assigned by previous tests.
-        //final Context context = getTestContext().withFreshConnection();
+        //final Context<?> context = getTestContext().withFreshConnection();
         Connection connection = context.getConnectionWithDefaultRole();
         try {
             assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -729,7 +729,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderMemberMemberValueExpNew1(Context context) {
+    void testOrderMemberMemberValueExpNew1(Context<?> context) {
         // sort by default measure
 
         SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
@@ -758,7 +758,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderMemberDefaultFlag1(Context context) {
+    void testOrderMemberDefaultFlag1(Context<?> context) {
         // flags not specified default to ASC - sort by default measure
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
@@ -780,7 +780,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderMemberDefaultFlag2(Context context) {
+    void testOrderMemberDefaultFlag2(Context<?> context) {
         // flags not specified default to ASC
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
@@ -802,7 +802,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderMemberMemberValueExpHierarchy(Context context) {
+    void testOrderMemberMemberValueExpHierarchy(Context<?> context) {
         // Santa Monica and Woodland Hills both don't have orderkey
         // members are sorted by the order of their keys
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -823,7 +823,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderMemberMultiKeysMemberValueExp1(Context context) {
+    void testOrderMemberMultiKeysMemberValueExp1(Context<?> context) {
         // sort by unit sales and then customer id (Adeline = 6442, Abe = 570)
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select \n"
@@ -846,7 +846,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderMemberMultiKeysMemberValueExp2(Context context) {
+    void testOrderMemberMultiKeysMemberValueExp2(Context<?> context) {
 
         SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
         // Use a fresh connection to make sure bad member ordinals haven't
@@ -877,7 +877,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderMemberMultiKeysMemberValueExpDepends(Context context) {
+    void testOrderMemberMultiKeysMemberValueExpDepends(Context<?> context) {
         // should preserve order of Abe and Adeline (note second key is [Time])
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select \n"
@@ -900,7 +900,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderTupleSingleKeysNew(Context context) {
+    void testOrderTupleSingleKeysNew(Context<?> context) {
 
         SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
         // Use a fresh connection to make sure bad member ordinals haven't
@@ -936,7 +936,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderTupleSingleKeysNew1(Context context) {
+    void testOrderTupleSingleKeysNew1(Context<?> context) {
 
         SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
         // Use a fresh connection to make sure bad member ordinals haven't
@@ -972,7 +972,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderTupleMultiKeys1(Context context) {
+    void testOrderTupleMultiKeys1(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
                 + "  set [NECJ] as \n"
@@ -998,7 +998,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderTupleMultiKeys2(Context context) {
+    void testOrderTupleMultiKeys2(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with \n"
                 + "  set [NECJ] as \n"
@@ -1025,7 +1025,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderTupleMultiKeys3(Context context) {
+    void testOrderTupleMultiKeys3(Context<?> context) {
         // WA unit sales is greater than CA unit sales
         // Santa Monica unit sales (2660) is greater that Woodland hills (2516)
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1054,7 +1054,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderTupleMultiKeyswithVCube(Context context) {
+    void testOrderTupleMultiKeyswithVCube(Context<?> context) {
         // WA unit sales is greater than CA unit sales
 
         SystemWideProperties.instance().CompareSiblingsByOrderKey = true;
@@ -1148,7 +1148,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderConstant1(Context context) {
+    void testOrderConstant1(Context<?> context) {
         // sort by customerId (Abel = 7851, Adeline = 6442, Abe = 570)
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select \n"
@@ -1171,7 +1171,7 @@ org.eclipse.daanse.olap.function.def.order.OrderContextCalc(type=SetType<MemberT
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testOrderDiffrentDim(Context context) {
+    void testOrderDiffrentDim(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "select \n"
                 + "  Order("

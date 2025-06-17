@@ -100,7 +100,7 @@ public class RolapConnection extends ConnectionBase {
 
   private final ConnectionProps rolapConnectionProps;
 
-  private Context context = null;
+  private RolapContext context = null;
   private final RolapCatalog catalog;
   private CatalogReader schemaReader;
   protected Role role;
@@ -515,7 +515,7 @@ public DataSource getDataSource() {
       return getContext().getDataSource();
     }
   @Override
-public Context getContext() {
+public Context<?> getContext() {
       return context;
     }
 

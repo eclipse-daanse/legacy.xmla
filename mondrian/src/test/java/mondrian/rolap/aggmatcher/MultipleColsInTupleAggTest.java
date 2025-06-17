@@ -71,7 +71,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testTotal(Context context) throws Exception {
+    void testTotal(Context<?> context) throws Exception {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -114,7 +114,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testTupleSelection(Context context) throws Exception {
+    void testTupleSelection(Context<?> context) throws Exception {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -145,7 +145,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNativeFilterWithoutMeasures(Context context) throws Exception {
+    void testNativeFilterWithoutMeasures(Context<?> context) throws Exception {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -201,7 +201,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testNativeFilterWithoutMeasuresAndLevelWithProps(Context context)
+    void testNativeFilterWithoutMeasuresAndLevelWithProps(Context<?> context)
         throws Exception
     {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
@@ -290,7 +290,7 @@ class MultipleColsInTupleAggTest extends AggTableTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testChildSelection(Context context) throws Exception {
+    void testChildSelection(Context<?> context) throws Exception {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);

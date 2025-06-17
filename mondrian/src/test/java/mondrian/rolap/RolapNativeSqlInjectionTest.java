@@ -40,13 +40,13 @@ class RolapNativeSqlInjectionTest {
     @Disabled //TODO need investigate
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMondrian2436(Context context) {
+    void testMondrian2436(Context<?> context) {
         String mdxQuery = ""
             + "select {[Measures].[Store Sales]} on columns, "
             + "filter([Customers].[Name].Members, (([Measures].[Store Sales]) > '(select 1000)')) on rows "
             + "from [Sales]";
 
-        //TestContext context = getTestContext().withFreshConnection();
+        //TestContext<?> context = getTestContext().withFreshConnection();
         Connection connection = context.getConnectionWithDefaultRole();
         try {
             executeQuery(connection, mdxQuery);

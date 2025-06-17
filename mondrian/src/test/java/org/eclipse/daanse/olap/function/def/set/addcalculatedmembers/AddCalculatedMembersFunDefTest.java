@@ -27,7 +27,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 class AddCalculatedMembersFunDefTest {
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAddCalculatedMembers(Context context) {
+    void testAddCalculatedMembers(Context<?> context) {
         //----------------------------------------------------
         // AddCalculatedMembers: Calc member in dimension based on level
         // included

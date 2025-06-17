@@ -246,7 +246,7 @@ class CacheControlTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCreateCellRegion(Context context) {
+    void testCreateCellRegion(Context<?> context) {
         // Execute a query.
         final RolapConnection connection =
             ((RolapConnection) context.getConnectionWithDefaultRole());
@@ -261,7 +261,7 @@ class CacheControlTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNormalize2(Context context) {
+    void testNormalize2(Context<?> context) {
         // Execute a query.
         Connection connection = context.getConnectionWithDefaultRole();
         final CacheControl cacheControl = connection.getCacheControl(null);
@@ -290,7 +290,7 @@ class CacheControlTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFlush(Context context) {
+    void testFlush(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         assertQueryReturns(connection,
             "SELECT {[Product].[Product].[Product Department].MEMBERS} ON AXIS(0),\n"
@@ -441,7 +441,7 @@ class CacheControlTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPartialFlush(Context context) {
+    void testPartialFlush(Context<?> context) {
         if (context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
             return;
         }
@@ -509,7 +509,7 @@ class CacheControlTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPartialFlush_2(Context context) throws Exception {
+    void testPartialFlush_2(Context<?> context) throws Exception {
         if (context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
             return;
         }
@@ -547,7 +547,7 @@ class CacheControlTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPartialFlushRange(Context context) {
+    void testPartialFlushRange(Context<?> context) {
         if (context.getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
             return;
         }
@@ -865,7 +865,7 @@ class CacheControlTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNegative(Context context) {
+    void testNegative(Context<?> context) {
         final Connection connection = context.getConnectionWithDefaultRole();
         final Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
         final CatalogReader schemaReader = salesCube.getCatalogReader(null);
@@ -1011,7 +1011,7 @@ class CacheControlTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testCrossjoin(Context context) {
+    void testCrossjoin(Context<?> context) {
         final Connection connection = context.getConnectionWithDefaultRole();
         final Cube salesCube = connection.getCatalog().lookupCube("Sales").orElseThrow();
         final CacheControl cacheControl = connection.getCacheControl(null);
@@ -1120,7 +1120,7 @@ class CacheControlTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNormalize(Context context) {
+    void testNormalize(Context<?> context) {
         // Create
         // Union(
         //    Crossjoin(
@@ -1193,7 +1193,7 @@ class CacheControlTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testFlushNonPrimedContent(Context context) throws Exception {
+    void testFlushNonPrimedContent(Context<?> context) throws Exception {
         Connection connection = context.getConnectionWithDefaultRole();
         flushCache(connection);
         final CacheControl cacheControl = connection.getCacheControl(null);
@@ -1213,7 +1213,7 @@ class CacheControlTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMondrian1094(Context context) throws Exception {
+    void testMondrian1094(Context<?> context) throws Exception {
         final String query =
             "select NON EMPTY {[Measures].[Unit Sales]} ON COLUMNS, \n"
             + "NON EMPTY {[Store].[All Stores].Children} ON ROWS \n"

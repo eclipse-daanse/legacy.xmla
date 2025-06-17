@@ -27,7 +27,7 @@ class SetToStrFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testSetToStr(Context context) {
+    void testSetToStr(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "Sales",
             "SetToStr([Time].[Time].children)",
             "{[Time].[Time].[1997].[Q1], [Time].[Time].[1997].[Q2], [Time].[Time].[1997].[Q3], [Time].[Time].[1997].[Q4]}" );

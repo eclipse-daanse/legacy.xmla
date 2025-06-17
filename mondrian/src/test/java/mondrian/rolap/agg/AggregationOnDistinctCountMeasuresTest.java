@@ -124,7 +124,7 @@ class AggregationOnDistinctCountMeasuresTest {
         SystemWideProperties.instance().populateInitial();
     }
 
-    private void prepareContext(Context context) {
+    private void prepareContext(Context<?> context) {
         /*
         String baseSchema = TestUtil.getRawSchema(context);
         String schema = SchemaUtil.getSchema(baseSchema,
@@ -169,7 +169,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testTupleWithAllLevelMembersOnly(Context context) {
+  void testTupleWithAllLevelMembersOnly(Context<?> context) {
       prepareContext(context);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER GENDER.X AS 'AGGREGATE({([GENDER].DEFAULTMEMBER,\n"
@@ -186,7 +186,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testCrossJoinOfAllMembers(Context context) {
+  void testCrossJoinOfAllMembers(Context<?> context) {
       prepareContext(context);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER GENDER.X AS 'AGGREGATE({CROSSJOIN({[GENDER].DEFAULTMEMBER},\n"
@@ -203,7 +203,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testCrossJoinMembersWithASingleMember(Context context) {
+  void testCrossJoinMembersWithASingleMember(Context<?> context) {
       prepareContext(context);
         // make sure tuple optimization will be used
       SystemWideProperties.instance().MaxConstraints = 1;
@@ -254,7 +254,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testCrossJoinMembersWithSetOfMembers(Context context) {
+  void testCrossJoinMembersWithSetOfMembers(Context<?> context) {
       prepareContext(context);
         // make sure tuple optimization will be used
       SystemWideProperties.instance().MaxConstraints = 2;
@@ -319,7 +319,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testCrossJoinParticularMembersFromTwoDimensions(Context context) {
+  void testCrossJoinParticularMembersFromTwoDimensions(Context<?> context) {
       prepareContext(context);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER GENDER.X AS 'AGGREGATE({[GENDER].M} * "
@@ -336,7 +336,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDistinctCountOnSetOfMembersFromOneDimension(Context context) {
+  void testDistinctCountOnSetOfMembersFromOneDimension(Context<?> context) {
       prepareContext(context);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER GENDER.X AS 'AGGREGATE({[GENDER].[GENDER].members})'"
@@ -352,7 +352,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDistinctCountWithAMeasureAsPartOfTuple(Context context) {
+  void testDistinctCountWithAMeasureAsPartOfTuple(Context<?> context) {
       prepareContext(context);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
             "SELECT [STORE].[ALL STORES].[USA].[CA] ON 0, "
@@ -368,7 +368,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDistinctCountOnSetOfMembers(Context context) {
+  void testDistinctCountOnSetOfMembers(Context<?> context) {
       prepareContext(context);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER STORE.X as 'Aggregate({[STORE].[ALL STORES].[USA].[CA],"
@@ -387,7 +387,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDistinctCountOnTuplesWithSomeNonJoiningDimensions(Context context) {
+  void testDistinctCountOnTuplesWithSomeNonJoiningDimensions(Context<?> context) {
       prepareContext(context);
       ((TestContextImpl)context).setIgnoreMeasureForNonJoiningDimension(false);
         String mdx =
@@ -411,7 +411,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testAggregationListOptimizationForChildren(Context context) {
+  void testAggregationListOptimizationForChildren(Context<?> context) {
       prepareContext(context);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER GENDER.X AS 'AGGREGATE({[GENDER].[GENDER].members} * "
@@ -429,7 +429,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDistinctCountOnMembersWithNonJoiningDimensionNotAtAllLevel(Context context)
+  void testDistinctCountOnMembersWithNonJoiningDimensionNotAtAllLevel(Context<?> context)
     {
       prepareContext(context);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -449,7 +449,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testNonJoiningDimensionWithAllMember(Context context) {
+  void testNonJoiningDimensionWithAllMember(Context<?> context) {
       prepareContext(context);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER WAREHOUSE.X as 'Aggregate({WAREHOUSE.MEMBERS})'"
@@ -467,7 +467,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testCrossJoinOfJoiningAndNonJoiningDimensionWithAllMember(Context context) {
+  void testCrossJoinOfJoiningAndNonJoiningDimensionWithAllMember(Context<?> context) {
       prepareContext(context);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER WAREHOUSE.X AS "
@@ -500,7 +500,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testCrossJoinOfJoiningAndNonJoiningDimension(Context context) {
+  void testCrossJoinOfJoiningAndNonJoiningDimension(Context<?> context) {
       prepareContext(context);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
             "WITH MEMBER WAREHOUSE.X AS "
@@ -533,7 +533,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testAggregationOverLargeListGeneratesError(Context context) {
+  void testAggregationOverLargeListGeneratesError(Context<?> context) {
       prepareContext(context);
 
       SystemWideProperties.instance().MaxConstraints = 7;
@@ -627,7 +627,7 @@ class AggregationOnDistinctCountMeasuresTest {
      */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testAggregateMaxConstraints(Context context) {
+  void testAggregateMaxConstraints(Context<?> context) {
       prepareContext(context);
         //if (!SystemWideProperties.instance().SsasCompatibleNaming) {
         //    return;
@@ -666,7 +666,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMultiLevelMembersNullParents(Context context) {
+  void testMultiLevelMembersNullParents(Context<?> context) {
       prepareContext(context);
         if (!isDefaultNullMemberRepresentation()) {
             return;
@@ -814,7 +814,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMultiLevelMembersMixedNullNonNullParent(Context context) {
+  void testMultiLevelMembersMixedNullNonNullParent(Context<?> context) {
       prepareContext(context);
         if (!isDefaultNullMemberRepresentation()) {
             return;
@@ -940,7 +940,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMultiLevelsMixedNullNonNullChild(Context context) {
+  void testMultiLevelsMixedNullNonNullChild(Context<?> context) {
       prepareContext(context);
         if (!isDefaultNullMemberRepresentation()) {
             return;
@@ -1065,7 +1065,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testAggregationOnCJofMembersGeneratesOptimalQuery(Context context) {
+  void testAggregationOnCJofMembersGeneratesOptimalQuery(Context<?> context) {
       prepareContext(context);
         // Mondrian does not use GROUPING SETS for distinct-count measures.
         // So, this test should not use GROUPING SETS, even if they are enabled.
@@ -1116,7 +1116,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testCanNotBatchForDifferentCompoundPredicate(Context context) {
+  void testCanNotBatchForDifferentCompoundPredicate(Context<?> context) {
       prepareContext(context);
       ((TestContextImpl)context).setEnableGroupingSets(true);
         String mdxQueryWithFewMembers =
@@ -1195,7 +1195,7 @@ class AggregationOnDistinctCountMeasuresTest {
      */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDistinctCountInNonGroupingSetsQuery(Context context) {
+  void testDistinctCountInNonGroupingSetsQuery(Context<?> context) {
       prepareContext(context);
       ((TestContextImpl)context).setEnableGroupingSets(true);
 
@@ -1274,7 +1274,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testAggregationOfMembersAndDefaultMemberWithoutGroupingSets(Context context) {
+  void testAggregationOfMembersAndDefaultMemberWithoutGroupingSets(Context<?> context) {
       prepareContext(context);
       ((TestContextImpl)context).setEnableGroupingSets(false);
 
@@ -1337,7 +1337,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testOptimizeChildren(Context context) {
+  void testOptimizeChildren(Context<?> context) {
       prepareContext(context);
         String query =
             "with member gender.x as "
@@ -1393,7 +1393,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testOptimizeListWhenTuplesAreFormedWithDifferentLevels(Context context) {
+  void testOptimizeListWhenTuplesAreFormedWithDifferentLevels(Context<?> context) {
       prepareContext(context);
         String query =
             "WITH\n"
@@ -1483,7 +1483,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testOptimizeListWithTuplesOfLength3(Context context) {
+  void testOptimizeListWithTuplesOfLength3(Context<?> context) {
       prepareContext(context);
         String query =
             "WITH\n"
@@ -1522,7 +1522,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testOptimizeChildrenForTuplesWithLength1(Context context) {
+  void testOptimizeChildrenForTuplesWithLength1(Context<?> context) {
       prepareContext(context);
         TupleList memberList =
             productMembersPotScrubbersPotsAndPans(
@@ -1568,7 +1568,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testOptimizeChildrenForTuplesWithLength3(Context context) {
+  void testOptimizeChildrenForTuplesWithLength3(Context<?> context) {
       prepareContext(context);
         TupleList genderMembers =
             genderMembersIncludingAll(false, salesCubeCatalogReader, salesCube);
@@ -1597,7 +1597,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testOptimizeChildrenWhenTuplesAreFormedWithDifferentLevels(Context context) {
+  void testOptimizeChildrenWhenTuplesAreFormedWithDifferentLevels(Context<?> context) {
       prepareContext(context);
         TupleList genderMembers =
             genderMembersIncludingAll(false, salesCubeCatalogReader, salesCube);
@@ -1637,7 +1637,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testWhetherCJOfChildren(Context context) {
+  void testWhetherCJOfChildren(Context<?> context) {
       prepareContext(context);
         TupleList genderMembers =
             genderMembersIncludingAll(false, salesCubeCatalogReader, salesCube);
@@ -1651,7 +1651,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testShouldNotRemoveDuplicateTuples(Context context) {
+  void testShouldNotRemoveDuplicateTuples(Context<?> context) {
       prepareContext(context);
         Member maleChildMember = member(
             IdImpl.toList("Gender", "All Gender", "M"),
@@ -1671,7 +1671,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMemberCountIsSameForAllMembersInTuple(Context context) {
+  void testMemberCountIsSameForAllMembersInTuple(Context<?> context) {
       prepareContext(context);
         TupleList genderMembers =
             genderMembersIncludingAll(false, salesCubeCatalogReader, salesCube);
@@ -1692,7 +1692,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMemberCountIsNotSameForAllMembersInTuple(Context context) {
+  void testMemberCountIsNotSameForAllMembersInTuple(Context<?> context) {
       prepareContext(context);
         Member maleChild =
             member(
@@ -1732,7 +1732,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testAggregatesAtTheSameLevelForNormalAndDistinctCountMeasure(Context context) {
+  void testAggregatesAtTheSameLevelForNormalAndDistinctCountMeasure(Context<?> context) {
       prepareContext(context);
       ((TestContextImpl)context).setEnableGroupingSets(true);
 
@@ -1760,7 +1760,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDistinctCountForAggregatesAtTheSameLevel(Context context) {
+  void testDistinctCountForAggregatesAtTheSameLevel(Context<?> context) {
       prepareContext(context);
       ((TestContextImpl)context).setEnableGroupingSets(true);
       assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1787,7 +1787,7 @@ class AggregationOnDistinctCountMeasuresTest {
      */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testMondrian906(Context context) {
+  void testMondrian906(Context<?> context) {
       //prepareContext(context);
 
       class TestMondrian906Modifier extends PojoMappingModifier {
@@ -1957,7 +1957,7 @@ class AggregationOnDistinctCountMeasuresTest {
      */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testTupleOptimizationBug1225(Context context) {
+  void testTupleOptimizationBug1225(Context<?> context) {
       prepareContext(context);
         Member caMember =
             member(
@@ -2056,7 +2056,7 @@ class AggregationOnDistinctCountMeasuresTest {
      */
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testDistinctCountAggMeasure(Context context) {
+  void testDistinctCountAggMeasure(Context<?> context) {
       prepareContext(context);
       /*
         String dimension =
@@ -2313,7 +2313,7 @@ class AggregationOnDistinctCountMeasuresTest {
    */
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testCachedAggregate(Context context) {
+  void testCachedAggregate(Context<?> context) {
         prepareContext(context);
     Result result =
         executeQuery(context.getConnectionWithDefaultRole(), " WITH\r\n"
@@ -2348,7 +2348,7 @@ class AggregationOnDistinctCountMeasuresTest {
    */
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testCachedCompoundSlicer(Context context) {
+  void testCachedCompoundSlicer(Context<?> context) {
         prepareContext(context);
     Result result =
         executeQuery(context.getConnectionWithDefaultRole(), " WITH\r\n"
@@ -2386,7 +2386,7 @@ class AggregationOnDistinctCountMeasuresTest {
    */
     @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testExpCacheHit(Context context) {
+  void testExpCacheHit(Context<?> context) {
         prepareContext(context);
     Result result =
         executeQuery(context.getConnectionWithDefaultRole(), "WITH\r\n"
@@ -2422,7 +2422,7 @@ class AggregationOnDistinctCountMeasuresTest {
 
 @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-  void testExpCacheHit2(Context context) {
+  void testExpCacheHit2(Context<?> context) {
     prepareContext(context);
     Result result =
         executeQuery(context.getConnectionWithDefaultRole(), "WITH\r\n" +

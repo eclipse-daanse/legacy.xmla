@@ -27,7 +27,7 @@ class IsNullFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIsNull(Context context) {
+    void testIsNull(Context<?> context) {
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " Measures.[Profit] IS NULL ", false );
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " Store.[All Stores] IS NULL ", false );
         assertBooleanExprReturns(context.getConnectionWithDefaultRole(), "Sales", " Store.[All Stores].parent IS NULL ", true );
@@ -35,7 +35,7 @@ class IsNullFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIsNullWithCalcMem(Context context) {
+    void testIsNullWithCalcMem(Context<?> context) {
         assertQueryReturns(context.getConnectionWithDefaultRole(),
             "with member Store.foo as '1010' "
                 + "member measures.bar as 'Store.currentmember IS NULL' "

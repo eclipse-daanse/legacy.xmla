@@ -70,7 +70,7 @@ class DrillThroughExcludeFilterTest {
     // on level not present in report
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testDrillThroughExcludeFilter(Context context) throws Exception    {
+    void testDrillThroughExcludeFilter(Context<?> context) throws Exception    {
         int expectedDrillThroughCountForCell0 = 3773;
         int expectedDrillThroughCountForCell1 = 78120;
 

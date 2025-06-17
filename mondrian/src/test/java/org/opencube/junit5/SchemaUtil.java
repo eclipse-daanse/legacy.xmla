@@ -32,7 +32,7 @@ public class SchemaUtil {
 	   *
 	   * @param cubeName      Name of a cube in the schema (cube must exist)
 	   * @param dimensionDefs String defining dimensions, or null
-	   * @return TestContext with modified cube defn
+	   * @return TestContext<?> with modified cube defn
 	   */
 	  public static final String createSubstitutingCube(
 		final String oldSchema,
@@ -47,7 +47,7 @@ public class SchemaUtil {
 	   * @param cubeName      Name of a cube in the schema (cube must exist)
 	   * @param dimensionDefs String defining dimensions, or null
 	   * @param memberDefs    String defining calculated members, or null
-	   * @return TestContext with modified cube defn
+	   * @return TestContext<?> with modified cube defn
 	   */
 	  public final static String createSubstitutingCube(
 		final String oldSchema,
@@ -67,7 +67,7 @@ public class SchemaUtil {
 	   * @param measureDefs   String defining measures, or null
 	   * @param memberDefs    String defining calculated members, or null
 	   * @param namedSetDefs  String defining named set definitions, or null
-	   * @return TestContext with modified cube defn
+	   * @return TestContext<?> with modified cube defn
 	   */
 	  public final static String createSubstitutingCube(
 		final String oldSchema,

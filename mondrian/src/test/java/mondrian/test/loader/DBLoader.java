@@ -633,14 +633,14 @@ public abstract class DBLoader {
     private Dialect dialect;
     private int batchSize;
     private boolean initialize;
-    protected Context context;
+    protected Context<?> context;
 
     protected DBLoader() {
         this.batchSize = DEFAULT_BATCH_SIZE;
         this.fileWriter = null;
     }
 
-    protected DBLoader(Context context) {
+    protected DBLoader(Context<?> context) {
         this.context = context;
         this.batchSize = DEFAULT_BATCH_SIZE;
         this.fileWriter = null;

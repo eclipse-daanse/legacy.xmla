@@ -30,7 +30,7 @@ class AllMembersFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testAllMembers(Context context) {
+    void testAllMembers(Context<?> context) {
         Connection connection = context.getConnectionWithDefaultRole();
         // <Level>.allmembers
         assertAxisReturns(connection, "Sales",

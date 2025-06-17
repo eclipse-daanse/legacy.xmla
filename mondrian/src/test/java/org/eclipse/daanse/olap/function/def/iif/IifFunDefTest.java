@@ -27,7 +27,7 @@ class IifFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIIfMember(Context context) {
+    void testIIfMember(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "IIf(1 > 2,[Store].[USA],[Store].[Canada].[BC])",
             "[Store].[Store].[Canada].[BC]" );
@@ -35,7 +35,7 @@ class IifFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIIfLevel(Context context) {
+    void testIIfLevel(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "IIf(1 > 2, [Store].[Store Country],[Store].[Store City]).Name",
             "Store City" );
@@ -44,7 +44,7 @@ class IifFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIIfHierarchy(Context context) {
+    void testIIfHierarchy(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "IIf(1 > 2, [Time], [Store]).Name",
             "Store" );
@@ -60,7 +60,7 @@ class IifFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIIfDimension(Context context) {
+    void testIIfDimension(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "IIf(1 > 2, [Store], [Time]).Name",
             "Time" );
@@ -69,7 +69,7 @@ class IifFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIIfSet(Context context) {
+    void testIIfSet(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "IIf(1 > 2, {[Store].[USA], [Store].[USA].[CA]}, {[Store].[Mexico], [Store].[USA].[OR]})",
             "[Store].[Store].[Mexico]\n"
@@ -79,7 +79,7 @@ class IifFunDefTest {
     // MONDRIAN-2408 - Consumer wants ITERABLE or ANY in CrossJoinFunDef.compileCall(ResolvedFunCall, ExpCompiler)
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testIIfSetType_InCrossJoin(Context context) {
+    void testIIfSetType_InCrossJoin(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "CROSSJOIN([Store Type].[Deluxe Supermarket],IIf(1 = 1, {[Store].[USA], [Store].[USA].[CA]}, {[Store].[Mexico],"
                 + " [Store].[USA].[OR]}))",

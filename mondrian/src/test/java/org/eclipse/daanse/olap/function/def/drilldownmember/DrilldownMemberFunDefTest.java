@@ -26,7 +26,7 @@ class DrilldownMemberFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testDrilldownMember(Context context) {
+    void testDrilldownMember(Context<?> context) {
         // Expect all children of USA
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "DrilldownMember({[Store].[USA]}, {[Store].[USA]})",

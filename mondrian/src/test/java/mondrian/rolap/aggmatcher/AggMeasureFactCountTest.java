@@ -73,13 +73,13 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     }
 
     @Override
-    protected void prepareContext(Context context) {
+    protected void prepareContext(Context<?> context) {
         super.prepareContext(context);
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testDefaultRecognition(Context context) {
+    void testDefaultRecognition(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -105,7 +105,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testAggName(Context context) {
+    void testAggName(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setUseAggregates(true);
@@ -190,7 +190,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     @ParameterizedTest
     @DisabledIfSystemProperty(named = "tempIgnoreStrageTests",matches = "true")
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testFactColumnNotExists(Context context) {
+    void testFactColumnNotExists(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -263,7 +263,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testMeasureFactColumnUpperCase(Context context) {
+    void testMeasureFactColumnUpperCase(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -350,7 +350,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testMeasureFactColumnNotExist(Context context) {
+    void testMeasureFactColumnNotExist(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -435,7 +435,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testWithoutMeasureFactColumnElement(Context context) {
+    void testWithoutMeasureFactColumnElement(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -503,7 +503,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testMeasureFactColumnAndAggFactCountNotExist(Context context) {
+    void testMeasureFactColumnAndAggFactCountNotExist(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -580,7 +580,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testAggNameDifferentColumnNames(Context context) {
+    void testAggNameDifferentColumnNames(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -669,7 +669,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testAggDivideByZero(Context context) {
+    void testAggDivideByZero(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -753,7 +753,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
-    void testAggPattern(Context context) {
+    void testAggPattern(Context<?> context) {
         ((TestContextImpl)context).setGenerateFormattedSql(true);
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
@@ -846,7 +846,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
         return AggMeasureFactCountTestModifierInner::new;
     }
 
-    private void verifySameAggAndNot(Context context, String query, Function<CatalogMapping, PojoMappingModifier> mf) {
+    private void verifySameAggAndNot(Context<?> context, String query, Function<CatalogMapping, PojoMappingModifier> mf) {
         withSchema(context, mf);
         Result resultWithAgg =
                 executeQuery(query, context.getConnectionWithDefaultRole());
@@ -863,7 +863,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     }
 
     private void verifySameAggAndNot
-            (Context context, String query, Function<CatalogMapping, PojoMappingModifier> mf, String aggSql) {
+            (Context<?> context, String query, Function<CatalogMapping, PojoMappingModifier> mf, String aggSql) {
         ((TestContextImpl)context).setUseAggregates(true);
         ((TestContextImpl)context).setReadAggregates(true);
         // check that agg tables are used
@@ -873,7 +873,7 @@ class AggMeasureFactCountTest extends CsvDBTestCase {
     }
 
     private void assertQuerySql
-            (Context context, String query, Function<CatalogMapping, PojoMappingModifier> mf, String sql) {
+            (Context<?> context, String query, Function<CatalogMapping, PojoMappingModifier> mf, String sql) {
 
         withSchema(context, mf);
         //withFreshConnection();

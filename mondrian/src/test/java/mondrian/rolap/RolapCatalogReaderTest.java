@@ -60,7 +60,7 @@ class RolapCatalogReaderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGetCubesWithNoHrCubes(Context context) {
+    void testGetCubesWithNoHrCubes(Context<?> context) {
         String[] expectedCubes = new String[] {
                 "Sales", "Warehouse", "Warehouse and Sales", "Store",
                 "Sales Ragged", "Sales 2"
@@ -83,7 +83,7 @@ class RolapCatalogReaderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGetCubesWithNoRole(Context context) {
+    void testGetCubesWithNoRole(Context<?> context) {
         String[] expectedCubes = new String[] {
                 "Sales", "Warehouse", "Warehouse and Sales", "Store",
                 "Sales Ragged", "Sales 2", "HR"
@@ -105,7 +105,7 @@ class RolapCatalogReaderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGetCubesForCaliforniaManager(Context context) {
+    void testGetCubesForCaliforniaManager(Context<?> context) {
         String[] expectedCubes = new String[] {
                 "Sales"
         };
@@ -126,7 +126,7 @@ class RolapCatalogReaderTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testConnectUseContentChecksum(Context context) {
+    void testConnectUseContentChecksum(Context<?> context) {
 //    	context.setProperty(RolapConnectionProperties.UseContentChecksum.name(), "true");
         //Util.PropertyList properties =
         //       TestUtil.getConnectionProperties().clone();
@@ -165,7 +165,7 @@ class RolapCatalogReaderTest {
      */
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testGetCubeDimensions(Context context) {
+    void testGetCubeDimensions(Context<?> context) {
         final String timeWeekly =
             hierarchyName("Time", "Weekly");
         final String timeTime =

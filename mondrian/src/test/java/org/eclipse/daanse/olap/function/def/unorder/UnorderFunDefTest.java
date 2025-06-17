@@ -28,7 +28,7 @@ class UnorderFunDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testUnorder(Context context) {
+    void testUnorder(Context<?> context) {
         assertAxisReturns(context.getConnectionWithDefaultRole(), "Sales",
             "Unorder([Gender].members)",
             "[Gender].[Gender].[All Gender]\n"

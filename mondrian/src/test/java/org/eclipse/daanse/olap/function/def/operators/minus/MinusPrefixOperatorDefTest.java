@@ -26,13 +26,13 @@ class MinusPrefixOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testUnaryMinus(Context context) {
+    void testUnaryMinus(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "-3", "-3" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testUnaryMinusMember(Context context) {
+    void testUnaryMinusMember(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),
             "- ([Measures].[Unit Sales],[Gender].[F])",
             "-131,558" );
@@ -40,37 +40,37 @@ class MinusPrefixOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testUnaryMinusPrecedence(Context context) {
+    void testUnaryMinusPrecedence(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "1 - -10.5 * 2 -3", "19" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNegativeZero(Context context) {
+    void testNegativeZero(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "-0.0", "0" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNegativeZero1(Context context) {
+    void testNegativeZero1(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "-(0.0)", "0" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNegativeZeroSubtract(Context context) {
+    void testNegativeZeroSubtract(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "-0.0 - 0.0", "0" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNegativeZeroMultiply(Context context) {
+    void testNegativeZeroMultiply(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "-1 * 0", "0" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testNegativeZeroDivide(Context context) {
+    void testNegativeZeroDivide(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "-0.0 / 2", "0" );
     }
 

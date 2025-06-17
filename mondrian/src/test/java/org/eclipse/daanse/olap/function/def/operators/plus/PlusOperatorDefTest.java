@@ -29,7 +29,7 @@ class PlusOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPlus(Context context) {
+    void testPlus(Context<?> context) {
         assertExprDependsOn(context.getConnectionWithDefaultRole(), "1 + 2", "{}" );
         String s1 = allHiersExcept( "[Measures]", "[Gender].[Gender]" );
         assertExprDependsOn(context.getConnectionWithDefaultRole(),
@@ -44,24 +44,24 @@ class PlusOperatorDefTest {
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPlus_NULL_plus_1(Context context) {
+    void testPlus_NULL_plus_1(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),  "null + 1", "1" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPlus_NULL_plus_0(Context context) {
+    void testPlus_NULL_plus_0(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),  "null + 0", "0" );
     }
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testPlus_NULL_plus_NULL(Context context) {
+    void testPlus_NULL_plus_NULL(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(),  "null + null", "" );
     }
 
     @ParameterizedTest
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
-    void testMinus(Context context) {
+    void testMinus(Context<?> context) {
         assertExprReturns(context.getConnectionWithDefaultRole(), "1-3", "-2" );
         assertExprReturns(context.getConnectionWithDefaultRole(), "5 - " + NullNumericExpr, "5" ); // 5 - null --> 5
         assertExprReturns(context.getConnectionWithDefaultRole(), NullNumericExpr + " - - 2", "2" );
