@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.NativeEvaluator;
@@ -408,6 +409,12 @@ public abstract class RolapNativeSet extends RolapNative {
         return;
       }
 
+      //check if that is one of parent child levels and use first.
+      Optional<Level> ol = getParentParentChildLevel(level);
+      if (ol.isPresent() && ol.get() instanceof RolapLevel rl) {
+          level = rl;
+      }
+
       RolapHierarchy hierarchy = level.getHierarchy();
       MemberReader mr = schemaReader.getMemberReader( hierarchy );
       MemberBuilder mb = mr.getMemberBuilder();
@@ -423,6 +430,17 @@ public abstract class RolapNativeSet extends RolapNative {
       } else {
         tr.addLevelMembers( level, mb, null );
       }
+    }
+
+    private Optional<Level> getParentParentChildLevel(Level level) {
+        if (level.getParentLevel() != null) {
+            if (level.getParentLevel().isParentChild()) {
+                return Optional.of(level.getParentLevel()); 
+            } else {
+                return getParentParentChildLevel(level.getParentLevel());
+            }
+        }
+        return Optional.empty();
     }
 
     int getMaxRows() {
