@@ -50,6 +50,7 @@ import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.access.AccessMember;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
+import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEvent;
@@ -1025,8 +1026,14 @@ RME is this right
                 pair = makeChildMemberSqlPCRoot(parentMember);
                 parentChild = true;
             } else {
-                pair = makeChildMemberSql(parentMember, context, constraint);
-                parentChild = false;
+                if (this.hasParentChildParent(childLevel)) {
+                    Level pl = getParentChildParent(childLevel);
+                    pair = makeChildMemberSqlPCForLevel(parentMember, pl);
+                    parentChild = true;
+                } else {
+                    pair = makeChildMemberSql(parentMember, context, constraint);
+                    parentChild = false;
+                }
             }
         }
         final String sql = pair.left;
@@ -1106,6 +1113,28 @@ RME is this right
         } finally {
             stmt.close();
         }
+    }
+
+    private Level getParentChildParent(Level childLevel) {
+        if (childLevel != null && childLevel.getParentLevel() != null) {
+            if (childLevel.getParentLevel().isParentChild()) {
+                return childLevel.getParentLevel();
+            } else {
+                return getParentChildParent(childLevel.getParentLevel());
+            }
+        }
+        return null;
+    }
+
+    private boolean hasParentChildParent(Level childLevel) {
+        if (childLevel != null && childLevel.getParentLevel() != null) {
+            if (childLevel.getParentLevel().isParentChild()) {
+                return true;
+            } else {
+                return hasParentChildParent(childLevel.getParentLevel());
+            }
+        }
+        return false;
     }
 
     @Override
@@ -1401,6 +1430,60 @@ RME is this right
         return sqlQuery.toSqlAndTypes();
     }
 
+    private Pair<String, List<BestFitColumnType>> makeChildMemberSqlPCForLevel(
+            RolapMember member, Level parentChildLevel)
+        {
+            SqlQuery sqlQuery =
+                SqlQuery.newQuery(
+                    context,
+                    new StringBuilder("while generating query to retrieve children of ")
+                    .append("parent/child hierarchy member ").append(member).toString());
+            RolapLevel level = member.getLevel();
+
+            Util.assertTrue(!level.isAll(), "all level cannot be parent-child");
+            Util.assertTrue(
+                level.isUnique(),
+                new StringBuilder("parent-child level '").append(level).append("' must be ").append("unique").toString());
+
+            hierarchy.addToFrom(sqlQuery, ((RolapLevel)parentChildLevel).getParentExp());
+            String parentId = getExpression(((RolapLevel)parentChildLevel).getParentExp(), sqlQuery);
+
+            StringBuilder buf = new StringBuilder();
+            sqlQuery.getDialect().quote(buf, member.getKey(), level.getDatatype());
+            sqlQuery.addWhere(parentId, " = ", buf.toString());
+
+            hierarchy.addToFrom(sqlQuery, level.getKeyExp());
+            String childId = getExpression(level.getKeyExp(), sqlQuery);
+            String idAlias =
+                sqlQuery.addSelectGroupBy(childId, level.getInternalType());
+            hierarchy.addToFrom(sqlQuery, level.getOrdinalExp());
+            final String orderBy = getExpression(level.getOrdinalExp(), sqlQuery);
+            if (!orderBy.equals(childId)) {
+                String orderAlias = sqlQuery.addSelectGroupBy(orderBy, null);
+                sqlQuery.addOrderBy(
+                    orderBy, orderAlias, true, false, true, true);
+            } else {
+                sqlQuery.addOrderBy(
+                    childId, idAlias, true, false, true, true);
+            }
+
+            RolapProperty[] properties = level.getProperties();
+            for (RolapProperty property : properties) {
+                final SqlExpression exp = property.getExp();
+                hierarchy.addToFrom(sqlQuery, exp);
+                final String s = getExpression(exp, sqlQuery);
+                String alias = sqlQuery.addSelect(s, null);
+                // Some dialects allow us to eliminate properties from the group by
+                // that are functionally dependent on the level value
+                if (!sqlQuery.getDialect().allowsSelectNotInGroupBy()
+                    || !property.dependsOnLevelValue())
+                {
+                    sqlQuery.addGroupBy(s, alias);
+                }
+            }
+            return sqlQuery.toSqlAndTypes();
+        }
+
     // implement MemberReader
     @Override
 	public RolapMember getLeadMember(RolapMember member, int n) {
@@ -1518,7 +1601,7 @@ RME is this right
         public boolean isCalculated() {
             return false;
         }
-        
+
         @Override
 		public Expression getExpression() {
             return super.getHierarchy().getAggregateChildrenExpression();

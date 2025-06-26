@@ -212,7 +212,7 @@ public class SqlTupleReader implements TupleReader {
           RolapMember parentMember = member;
           final List<SqlStatement.Accessor> accessors =
             stmt.getAccessors();
-          if ( parentChild ) {
+          if ( parentChild || childLevel.isParentChild()) {
             Object parentValue =
               accessors.get( column++ ).get();
             if ( parentValue == null
@@ -292,9 +292,6 @@ public class SqlTupleReader implements TupleReader {
             }
           }
           column += childLevel.getProperties().length;
-          if (childLevel.getParentLevel() != null && childLevel.getParentLevel().isParentChild()) {
-              column += 1;
-          }
 
           // Cache in our intermediate map the key/member pair
           // for later lookups of children.
@@ -303,7 +300,7 @@ public class SqlTupleReader implements TupleReader {
           if ( member != members.get( i ) ) {
             // Flush list we've been building.
             List<RolapMember> children = siblings.get( i + 1 );
-            if ( children != null ) {
+            if ( children != null && children.size() > 0) {
               MemberChildrenConstraint mcc =
                 constraint.getMemberChildrenConstraint(
                   members.get( i ) );
