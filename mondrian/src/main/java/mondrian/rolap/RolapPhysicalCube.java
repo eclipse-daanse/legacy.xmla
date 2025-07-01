@@ -71,6 +71,8 @@ import org.eclipse.daanse.rolap.mapping.api.model.WritebackMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.WritebackTableMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.AnnotationMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CountMeasureMappingImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import mondrian.olap.StandardProperty;
 import mondrian.olap.Util;
@@ -81,6 +83,7 @@ import mondrian.rolap.format.FormatterFactory;
 public class RolapPhysicalCube extends RolapCube implements PhysicalCube {
 
     private final static String measureOrdinalsNotUnique = "Cube ''{0}'': Ordinal {1} is not unique: ''{2}'' and ''{3}''";
+    private static final Logger LOGGER = LoggerFactory.getLogger(RolapPhysicalCube.class);
 
     /**
      * Creates a <code>RolapCube</code> from a regular cube.
@@ -177,7 +180,7 @@ public class RolapPhysicalCube extends RolapCube implements PhysicalCube {
             annotations.add(internalUsage);
             final CountMeasureMappingImpl mappingMeasure = CountMeasureMappingImpl.builder().withName("Fact Count")
                     .withVisible(false).withAnnotations(annotations).build();
-            factCountMeasure = createMeasure(cubeMapping, measuresLevel, measureList.size(), mappingMeasure);
+            factCountMeasure = createMeasure(cubeMapping, measuresLevel, -1, mappingMeasure);
             measureList.add(factCountMeasure);
         }
         setMeasuresHierarchyMemberReader(
@@ -438,7 +441,7 @@ public class RolapPhysicalCube extends RolapCube implements PhysicalCube {
             if (!ordinals.containsKey(ordinal)) {
                 ordinals.put(ordinal, measure.getUniqueName());
             } else {
-                throw new OlapRuntimeException(MessageFormat.format(measureOrdinalsNotUnique, cubeName,
+                LOGGER.warn(MessageFormat.format(measureOrdinalsNotUnique, cubeName,
                         ordinal.toString(), ordinals.get(ordinal), measure.getUniqueName()));
             }
         }
