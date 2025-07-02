@@ -111,7 +111,7 @@ import org.eclipse.daanse.xmla.model.record.discover.mdschema.sets.MdSchemaSetsR
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.Util;
+import mondrian.olap.StandardProperty;
 
 public class Utils {
 
@@ -1680,7 +1680,7 @@ public class Utils {
 
                 } */
             }
-/*        
+/*
         res.add(new MdSchemaLevelsResponseRowR(
                 Optional.ofNullable(catalogName),
                 Optional.ofNullable(schemaName),
@@ -2485,8 +2485,10 @@ List<Cube> cubes = catalog.getCubes() == null ? List.of() : catalog.getCubes();
                     dbType = XmlaConstants.DBType.WSTR;
                 }
             }
-
             String displayFolder = "";
+            if (m.getPropertyValue(StandardProperty.DISPLAY_FOLDER.getName()) != null) {
+                displayFolder = (String) m.getPropertyValue(StandardProperty.DISPLAY_FOLDER.getName());
+            }
             result.add(new MdSchemaMeasuresResponseRowR(
                 Optional.ofNullable(catalogName),
                 Optional.ofNullable(schemaName),
