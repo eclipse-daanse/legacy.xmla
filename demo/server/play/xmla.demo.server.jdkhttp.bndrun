@@ -53,13 +53,13 @@
 	ai.starlake.transpiler;version='[0.7.0,0.7.1)',\
 	ch.qos.logback.classic;version='[1.5.12,1.5.13)',\
 	com.github.ben-manes.caffeine;version='[3.1.2,3.1.3)',\
+	com.github.jsqlparser;version='[5.3.0,5.3.1)',\
 	com.h2database;version='[2.3.230,2.3.231)',\
 	com.sun.xml.messaging.saaj.impl;version='[3.0.3,3.0.4)',\
 	de.siegmar.fastcsv;version='[3.1.0,3.1.1)',\
 	jakarta.activation-api;version='[2.1.2,2.1.3)',\
 	jakarta.xml.soap-api;version='[3.0.1,3.0.2)',\
 	json;version='[20250107.0.0,20250107.0.1)',\
-	net.sf.jsqlparser;version='[5.2.0,5.2.1)',\
 	org.apache.aries.spifly.dynamic.framework.extension;version='[1.3.7,1.3.8)',\
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
 	org.apache.felix.metatype;version='[1.2.4,1.2.5)',\

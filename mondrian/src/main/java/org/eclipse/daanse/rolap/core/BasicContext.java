@@ -35,6 +35,7 @@ import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
+import org.eclipse.daanse.olap.api.aggregator.CustomAggregatorFactory;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.core.LoggingEventBus;
