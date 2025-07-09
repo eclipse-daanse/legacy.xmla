@@ -1035,4 +1035,13 @@ public class RolapMemberBase
         evaluator.setExpanding(this);
     }
 
+    @Override
+    public Member createPseudoLeafMember(Member child, String name) {
+        RolapMember m =
+                new RolapMemberBase(this, (((mondrian.rolap.RolapCubeMember)child).getRolapMember().getLevel()), this.getName(), name, MemberType.REGULAR);
+        return new RolapPseudoLeafMember(
+                (RolapCubeMember) this, m,
+                ((mondrian.rolap.RolapCubeLevel)this.getLevel().getChildLevel()));
+    }
+
 }

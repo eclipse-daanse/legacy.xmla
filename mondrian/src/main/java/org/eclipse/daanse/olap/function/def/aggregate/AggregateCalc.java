@@ -40,9 +40,6 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCa
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
-import org.eclipse.daanse.rolap.aggregator.AbstractAggregator;
-import org.eclipse.daanse.rolap.aggregator.AvgAggregator;
-import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 
 import mondrian.olap.StandardProperty;
 import mondrian.olap.SystemWideProperties;
@@ -117,8 +114,8 @@ public class AggregateCalc  extends AbstractProfilingNestedUnknownCalc {
                     .append("'")
                     .toString());
         }
-        if (aggregator != DistinctCountAggregator.INSTANCE
-            && aggregator != AvgAggregator.INSTANCE)
+        if (!"distinct-count".equals(aggregator.getName())
+            && !"avg".equals(aggregator.getName()))
         {
             final int savepoint = evaluator.savepoint();
             try {
