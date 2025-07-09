@@ -24,10 +24,9 @@ import org.eclipse.daanse.olap.api.query.component.ParameterExpression;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
 import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.expression.AbstractExpression;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
-
-import mondrian.olap.Util;
 
 /**
  * MDX expression which is a usage of a {@link org.eclipse.daanse.olap.api.Parameter}.

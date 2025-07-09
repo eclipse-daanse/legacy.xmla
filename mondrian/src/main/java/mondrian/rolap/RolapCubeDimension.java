@@ -33,10 +33,9 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
+import org.eclipse.daanse.olap.common.HierarchyBase;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
-
-import mondrian.olap.HierarchyBase;
 
 /**
  * RolapCubeDimension wraps a RolapDimension for a specific Cube.

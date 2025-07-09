@@ -15,9 +15,8 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.query.component.CellProperty;
-
-import mondrian.olap.AbstractQueryPart;
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.AbstractQueryPart;
+import org.eclipse.daanse.olap.common.Util;
 
 /**
  * Represents Cell Property.

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
 
 /**
  * Implementation of {@link java.util.SortedSet} based on an array. The array

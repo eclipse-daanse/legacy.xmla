@@ -51,9 +51,8 @@ import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.FunctionCall;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.base.Expressions;
-
-import mondrian.olap.Util;
 
 public class FunctionPrinter {
 

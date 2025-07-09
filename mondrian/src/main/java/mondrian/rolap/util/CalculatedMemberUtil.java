@@ -13,10 +13,9 @@
  */
 package mondrian.rolap.util;
 
+import org.eclipse.daanse.olap.common.StandardProperty;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberPropertyMapping;
-
-import mondrian.olap.StandardProperty;
 
 public class CalculatedMemberUtil {
 

@@ -8,8 +8,7 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedHierarchyCalc;
-
-import mondrian.olap.fun.FunUtil;
+import org.eclipse.daanse.olap.fun.FunUtil;
 
 public class DimensionNumericCalc extends AbstractProfilingNestedHierarchyCalc {
 

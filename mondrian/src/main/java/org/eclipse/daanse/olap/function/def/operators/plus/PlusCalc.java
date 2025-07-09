@@ -17,8 +17,7 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.DoubleCalc;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
-
-import mondrian.olap.fun.FunUtil;
+import org.eclipse.daanse.olap.fun.FunUtil;
 
 public class PlusCalc extends AbstractProfilingNestedDoubleCalc {
 

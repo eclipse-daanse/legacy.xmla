@@ -23,12 +23,11 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.SetType;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFunctionResolver;
 import org.eclipse.daanse.olap.query.base.Expressions;
 import org.osgi.service.component.annotations.Component;
-
-import mondrian.olap.Util;
 
 @Component(service = FunctionResolver.class)
 public class SetItemStringResolver extends NoExpressionRequiredFunctionResolver {

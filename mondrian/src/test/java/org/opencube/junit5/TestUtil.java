@@ -74,6 +74,9 @@ import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.fun.FunUtil;
 import org.eclipse.daanse.olap.impl.CoordinateIterator;
 import org.eclipse.daanse.olap.impl.TraditionalCellSetFormatter;
 import org.eclipse.daanse.olap.query.component.IdImpl;
@@ -84,9 +87,6 @@ import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.context.TestContextImpl;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
-import mondrian.olap.fun.FunUtil;
 import mondrian.rolap.MemberCacheHelper;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapHierarchy;
@@ -985,7 +985,7 @@ public class TestUtil {
 	 *
 	 * @param actual Actual result
 	 * @return Expected result massaged for backwards compatibility
-	 * @see mondrian.olap.SystemWideProperties#SsasCompatibleNaming
+	 * @see org.eclipse.daanse.olap.common.SystemWideProperties#SsasCompatibleNaming
 	 */
 	public static String upgradeActual(String actual) {
 		return actual;

@@ -30,10 +30,9 @@ import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
+import org.eclipse.daanse.olap.fun.FunUtil;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
-
-import mondrian.olap.fun.FunUtil;
 
 public class GenerateFunDef extends AbstractFunctionDefinition {
 

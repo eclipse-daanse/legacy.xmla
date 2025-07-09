@@ -22,8 +22,7 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
-
-import mondrian.olap.fun.FunUtil;
+import org.eclipse.daanse.olap.fun.FunUtil;
 
 public class SetToStrCalc extends AbstractProfilingNestedStringCalc {
 

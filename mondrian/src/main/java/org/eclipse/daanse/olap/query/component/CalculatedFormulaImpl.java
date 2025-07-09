@@ -24,8 +24,7 @@ import java.io.PrintWriter;
 
 import org.eclipse.daanse.olap.api.query.component.CalculatedFormula;
 import org.eclipse.daanse.olap.api.query.component.Formula;
-
-import mondrian.olap.AbstractQueryPart;
+import org.eclipse.daanse.olap.common.AbstractQueryPart;
 
 public class CalculatedFormulaImpl extends AbstractQueryPart implements CalculatedFormula {
     private final String cubeName;

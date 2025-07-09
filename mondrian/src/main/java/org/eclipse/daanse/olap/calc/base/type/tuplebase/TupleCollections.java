@@ -40,8 +40,7 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIterator;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
-
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
 
 /**
  * Utility methods for tuple collections and iterators.

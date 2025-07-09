@@ -20,10 +20,9 @@ import static org.mockito.Mockito.when;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
 import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
+import org.eclipse.daanse.olap.common.StandardProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import mondrian.olap.StandardProperty;
 
 /**
  * Unit Test for {@link RolapMemberBase}.

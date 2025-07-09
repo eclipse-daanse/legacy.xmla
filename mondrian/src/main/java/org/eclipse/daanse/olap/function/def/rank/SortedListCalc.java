@@ -28,9 +28,8 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
-
-import mondrian.olap.Util;
-import mondrian.olap.fun.FunUtil;
+import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.fun.FunUtil;
 
 public class SortedListCalc extends AbstractProfilingNestedCalc {
     private final TupleListCalc tupleListCalc;

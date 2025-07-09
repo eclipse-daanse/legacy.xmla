@@ -20,9 +20,8 @@ import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
 import org.eclipse.daanse.olap.api.type.DimensionType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantDimensionCalc;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.expression.AbstractExpression;
-
-import mondrian.olap.Util;
 
 /**
  * Usage of a {@link org.eclipse.daanse.olap.api.element.Dimension} as an MDX expression.

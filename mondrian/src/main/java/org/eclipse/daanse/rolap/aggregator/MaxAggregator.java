@@ -19,8 +19,7 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-
-import mondrian.olap.fun.FunUtil;
+import org.eclipse.daanse.olap.fun.FunUtil;
 
 public class MaxAggregator extends AbstractAggregator {
 

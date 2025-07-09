@@ -21,8 +21,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
-
-import mondrian.olap.fun.FunUtil;
+import org.eclipse.daanse.olap.fun.FunUtil;
 
 public class ChildrenCalc extends AbstractProfilingNestedTupleListCalc {
 

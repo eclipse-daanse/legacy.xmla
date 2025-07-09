@@ -13,13 +13,13 @@
  */
 package mondrian.rolap.util;
 
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.JoinQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.QueryMappingImpl;
 
-import mondrian.olap.Util;
 import mondrian.rolap.RolapRuntimeException;
 
 public class JoinUtil {

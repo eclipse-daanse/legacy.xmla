@@ -30,13 +30,13 @@ package mondrian.rolap;
 import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.JoinQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 
-import mondrian.olap.Util;
 import mondrian.rolap.agg.CellRequest;
 import mondrian.rolap.agg.MemberColumnPredicate;
 import mondrian.rolap.agg.MemberTuplePredicate;

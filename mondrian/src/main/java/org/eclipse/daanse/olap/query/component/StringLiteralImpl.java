@@ -23,8 +23,7 @@ import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
 import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.constant.ConstantStringCalc;
-
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
 
 public class StringLiteralImpl extends AbstractLiteralImpl<String> implements StringLiteral {
     public static final StringLiteralImpl EMPTY_STRING_LITERAL = new StringLiteralImpl("");

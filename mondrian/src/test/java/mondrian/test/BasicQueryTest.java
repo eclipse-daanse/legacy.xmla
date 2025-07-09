@@ -13,7 +13,7 @@
 package mondrian.test;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static mondrian.olap.Util.assertTrue;
+import static org.eclipse.daanse.olap.common.Util.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
@@ -80,6 +80,10 @@ import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.common.QueryCanceledException;
+import org.eclipse.daanse.olap.common.StandardProperty;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -96,10 +100,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.olap.QueryCanceledException;
-import mondrian.olap.StandardProperty;
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
 import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapUtil;

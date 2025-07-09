@@ -24,9 +24,8 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
 import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
+import org.eclipse.daanse.olap.fun.FunUtil;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
-
-import mondrian.olap.fun.FunUtil;
 
 public class VarPFunDef extends AbstractAggregateFunDef {
 

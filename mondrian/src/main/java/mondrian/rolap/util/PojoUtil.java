@@ -20,6 +20,7 @@ import static mondrian.rolap.util.JoinUtil.right;
 
 import java.util.List;
 
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationExcludeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationMeasureMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationNameMapping;
@@ -56,8 +57,6 @@ import org.eclipse.daanse.rolap.mapping.pojo.RowValueMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.TableQueryOptimizationHintMappingImpl;
-
-import mondrian.olap.Util;
 
 public class PojoUtil {
 	public static final String BAD_RELATION_TYPE = "bad relation type ";

@@ -51,13 +51,13 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.common.ExecuteDurationUtil;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.aggregator.countbased.AbstractFactCountBasedAggregator;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.ExecuteDurationUtil;
-import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.RolapColumn;
 import mondrian.rolap.RolapLevel;

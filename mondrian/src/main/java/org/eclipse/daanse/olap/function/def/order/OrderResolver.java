@@ -21,11 +21,10 @@ import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.fun.sort.Sorter.SorterFlag;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFunctionResolver;
 import org.osgi.service.component.annotations.Component;
-
-import mondrian.olap.fun.sort.Sorter.SorterFlag;
 
 @Component(service = FunctionResolver.class)
 public class OrderResolver  extends NoExpressionRequiredFunctionResolver {

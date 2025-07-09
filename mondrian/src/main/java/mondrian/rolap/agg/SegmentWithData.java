@@ -31,7 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
+
 import mondrian.rolap.BitKey;
 import mondrian.rolap.CellKey;
 import mondrian.rolap.RolapStar;
@@ -158,7 +159,7 @@ public class SegmentWithData extends Segment {
      *
      * <p>Returns<ul>
      *
-     * <li>{@link mondrian.olap.Util#nullValue} if the cell value
+     * <li>{@link org.eclipse.daanse.olap.common.Util#nullValue} if the cell value
      * is null (because no fact table rows met those criteria);</li>
      *
      * <li><code>null</code> if the value is not supposed to be in this segment

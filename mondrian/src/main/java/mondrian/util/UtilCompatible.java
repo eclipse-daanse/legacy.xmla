@@ -11,7 +11,7 @@ package mondrian.util;
 
 import java.sql.Statement;
 
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
 
 
 public interface UtilCompatible {

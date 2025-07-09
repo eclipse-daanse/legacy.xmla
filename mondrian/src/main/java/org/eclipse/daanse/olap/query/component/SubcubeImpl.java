@@ -28,8 +28,7 @@ import java.util.List;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.QueryAxis;
 import org.eclipse.daanse.olap.api.query.component.Subcube;
-
-import mondrian.olap.AbstractQueryPart;
+import org.eclipse.daanse.olap.common.AbstractQueryPart;
 
 public class SubcubeImpl extends AbstractQueryPart implements Subcube {
     private final String cubeName;

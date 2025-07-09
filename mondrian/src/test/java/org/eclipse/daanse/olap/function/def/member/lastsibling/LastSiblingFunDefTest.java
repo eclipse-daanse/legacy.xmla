@@ -13,7 +13,7 @@
  */
 package org.eclipse.daanse.olap.function.def.member.lastsibling;
 
-import static mondrian.olap.Util.assertTrue;
+import static org.eclipse.daanse.olap.common.Util.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.opencube.junit5.TestUtil.executeSingletonAxis;

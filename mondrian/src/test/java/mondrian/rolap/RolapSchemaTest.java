@@ -41,6 +41,10 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.common.RoleImpl;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.exceptions.RoleUnionGrantsException;
+import org.eclipse.daanse.olap.exceptions.UnknownRoleException;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCubeGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessHierarchyGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
@@ -71,10 +75,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import mondrian.olap.RoleImpl;
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.exceptions.RoleUnionGrantsException;
-import mondrian.olap.exceptions.UnknownRoleException;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.agg.SegmentCacheManager;
 
@@ -189,7 +189,7 @@ class RolapCatalogTest {
 
         grant.setCubeGrant(List.of(AccessCubeGrantMappingImpl.builder().build(), AccessCubeGrantMappingImpl.builder().build()));
 
-        mondrian.olap.RoleImpl role = new mondrian.olap.RoleImpl();
+        org.eclipse.daanse.olap.common.RoleImpl role = new org.eclipse.daanse.olap.common.RoleImpl();
 
         schema.handleCatalogGrant(role, grant);
         assertEquals(org.eclipse.daanse.olap.api.access.AccessCatalog.CUSTOM, role.getAccess(schema));
@@ -208,7 +208,7 @@ class RolapCatalogTest {
         grant.setCube(PhysicalCubeMappingImpl.builder().withName("cube").build());
 
         try {
-            schema.handleCubeGrant(new mondrian.olap.RoleImpl(), grant);
+            schema.handleCubeGrant(new org.eclipse.daanse.olap.common.RoleImpl(), grant);
         } catch (OlapRuntimeException e) {
             String message = e.getMessage();
             assertTrue(message.contains(grant.getCube().getName()), message);
@@ -223,7 +223,7 @@ class RolapCatalogTest {
         schema = spy(schema);
         doNothing().when(schema)
             .handleHierarchyGrant(
-                any(mondrian.olap.RoleImpl.class),
+                any(org.eclipse.daanse.olap.common.RoleImpl.class),
                 any(RolapCube.class),
                 any(CatalogReader.class),
                 any(AccessHierarchyGrantMappingImpl.class));
@@ -246,7 +246,7 @@ class RolapCatalogTest {
         grant.getDimensionGrants().addAll(List.of(dimensionGrant));
         grant.getHierarchyGrants().addAll(List.of(AccessHierarchyGrantMappingImpl.builder().build()));
 
-        mondrian.olap.RoleImpl role = new mondrian.olap.RoleImpl();
+        org.eclipse.daanse.olap.common.RoleImpl role = new org.eclipse.daanse.olap.common.RoleImpl();
 
         schema.handleCubeGrant(role, grant);
 
@@ -411,7 +411,7 @@ class RolapCatalogTest {
     {
         RolapCatalog schema = createSchema();
         RolapCube cube = mockCube(schema);
-        mondrian.olap.RoleImpl role = new mondrian.olap.RoleImpl();
+        org.eclipse.daanse.olap.common.RoleImpl role = new org.eclipse.daanse.olap.common.RoleImpl();
 
         AccessMemberGrantMappingImpl memberGrant = AccessMemberGrantMappingImpl.builder().withMember("member").withAccess(AccessMember.ALL).build();
 

@@ -15,8 +15,7 @@ import org.eclipse.daanse.olap.api.query.component.DrillThrough;
 import org.eclipse.daanse.olap.api.query.component.Explain;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.query.component.QueryComponent;
-
-import mondrian.olap.AbstractQueryPart;
+import org.eclipse.daanse.olap.common.AbstractQueryPart;
 
 /**
  * Explain statement.

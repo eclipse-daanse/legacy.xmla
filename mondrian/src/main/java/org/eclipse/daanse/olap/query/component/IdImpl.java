@@ -27,9 +27,8 @@ import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Id;
 import org.eclipse.daanse.olap.api.query.component.visit.QueryComponentVisitor;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.expression.AbstractExpression;
-
-import mondrian.olap.Util;
 
 /**
  * Multi-part identifier.

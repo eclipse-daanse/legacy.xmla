@@ -13,7 +13,7 @@
  */
 package org.eclipse.daanse.olap.function.def.member.cousin;
 
-import static mondrian.olap.exceptions.CousinHierarchyMismatchException.cousinHierarchyMismatch;
+import static org.eclipse.daanse.olap.exceptions.CousinHierarchyMismatchException.cousinHierarchyMismatch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.opencube.junit5.TestUtil.assertAxisThrows;

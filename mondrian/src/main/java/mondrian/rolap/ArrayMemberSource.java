@@ -33,9 +33,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Segment;
-
-import mondrian.olap.Util;
-import mondrian.olap.exceptions.MdxCantFindMemberException;
+import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.exceptions.MdxCantFindMemberException;
 /**
  * <code>ArrayMemberSource</code> implements a flat, static hierarchy. There is
  * no root member, and all members are siblings.

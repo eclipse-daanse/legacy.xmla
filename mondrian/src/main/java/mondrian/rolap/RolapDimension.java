@@ -34,22 +34,22 @@ import org.eclipse.daanse.olap.api.element.DimensionType;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.MetaData;
+import org.eclipse.daanse.olap.common.DimensionBase;
+import org.eclipse.daanse.olap.common.Util;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.eclipse.daanse.olap.element.OlapMetaData;
+import org.eclipse.daanse.olap.exceptions.NonTimeLevelInTimeHierarchyException;
+import org.eclipse.daanse.olap.exceptions.TimeLevelInNonTimeHierarchyException;
 import org.eclipse.daanse.rolap.element.RolapMetaData;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.DimensionBase;
-import mondrian.olap.Util;
-import mondrian.olap.exceptions.NonTimeLevelInTimeHierarchyException;
-import mondrian.olap.exceptions.TimeLevelInNonTimeHierarchyException;
 import mondrian.rolap.util.DimensionTypeUtil;
 
 /**

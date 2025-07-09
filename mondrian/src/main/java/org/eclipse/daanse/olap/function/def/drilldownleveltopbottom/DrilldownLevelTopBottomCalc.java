@@ -34,9 +34,8 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
-
-import mondrian.olap.fun.FunUtil;
-import mondrian.olap.fun.sort.Sorter;
+import org.eclipse.daanse.olap.fun.FunUtil;
+import org.eclipse.daanse.olap.fun.sort.Sorter;
 
 public class DrilldownLevelTopBottomCalc extends AbstractProfilingNestedTupleListCalc {
 

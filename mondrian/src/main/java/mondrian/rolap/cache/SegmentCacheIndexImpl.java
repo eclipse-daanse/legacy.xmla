@@ -46,11 +46,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Future;
 
 import org.eclipse.daanse.olap.api.Execution;
+import org.eclipse.daanse.olap.common.QueryCanceledException;
+import org.eclipse.daanse.olap.common.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.QueryCanceledException;
-import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.RolapUtil;
 import mondrian.rolap.agg.CellRequest;

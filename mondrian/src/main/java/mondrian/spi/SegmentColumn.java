@@ -13,7 +13,8 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.SortedSet;
 
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
+
 import mondrian.util.ArraySortedSet;
 
 

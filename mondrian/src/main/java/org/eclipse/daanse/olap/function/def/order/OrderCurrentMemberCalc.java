@@ -30,12 +30,11 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
+import org.eclipse.daanse.olap.fun.sort.SortKeySpec;
+import org.eclipse.daanse.olap.fun.sort.Sorter;
+import org.eclipse.daanse.olap.fun.sort.Sorter.SorterFlag;
 import org.eclipse.daanse.olap.function.def.member.memberorderkey.MemberOrderKeyCalc;
 import org.eclipse.daanse.olap.function.def.order.OrderFunDef.CalcWithDual;
-
-import mondrian.olap.fun.sort.SortKeySpec;
-import mondrian.olap.fun.sort.Sorter;
-import mondrian.olap.fun.sort.Sorter.SorterFlag;
 
 public class OrderCurrentMemberCalc  extends AbstractProfilingNestedTupleListCalc implements CalcWithDual {
     private final TupleIteratorCalc<?> tupleIteratorCalc;

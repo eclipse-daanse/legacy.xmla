@@ -63,6 +63,7 @@ import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -75,7 +76,6 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 
-import mondrian.olap.SystemWideProperties;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.server.ExecutionImpl;
 import mondrian.server.LocusImpl;

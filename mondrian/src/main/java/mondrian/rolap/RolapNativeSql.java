@@ -45,11 +45,11 @@ import org.eclipse.daanse.olap.api.query.component.Literal;
 import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.type.MemberType;
 import org.eclipse.daanse.olap.api.type.StringType;
+import org.eclipse.daanse.olap.common.ExpCacheDescriptorImpl;
+import org.eclipse.daanse.olap.fun.MondrianEvaluationException;
 import org.eclipse.daanse.olap.query.component.HierarchyExpressionImpl;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 
-import mondrian.olap.ExpCacheDescriptorImpl;
-import mondrian.olap.fun.MondrianEvaluationException;
 import mondrian.rolap.aggmatcher.AggStar;
 import mondrian.rolap.sql.SqlQuery;
 

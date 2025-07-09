@@ -35,8 +35,8 @@ import java.util.Set;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.common.Util;
 
-import mondrian.olap.Util;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.RolapStar.Column;
 import mondrian.rolap.StarColumnPredicate;

@@ -45,11 +45,11 @@ import java.util.TreeSet;
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.impl.UnmodifiableArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.CellKey;
 import mondrian.rolap.EnumConvertor;

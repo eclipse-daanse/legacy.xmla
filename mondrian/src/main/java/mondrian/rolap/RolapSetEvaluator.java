@@ -39,8 +39,7 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
-
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
 
 /**
  * Evaluation context to be able to expand a generic expression that returns a

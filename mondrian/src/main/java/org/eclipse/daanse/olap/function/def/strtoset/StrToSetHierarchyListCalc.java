@@ -21,9 +21,8 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.AbstractProfilingNestedTupleListCalc;
-
-import mondrian.olap.exceptions.EmptyExpressionWasSpecifiedException;
-import mondrian.olap.fun.FunUtil;
+import org.eclipse.daanse.olap.exceptions.EmptyExpressionWasSpecifiedException;
+import org.eclipse.daanse.olap.fun.FunUtil;
 
 public class StrToSetHierarchyListCalc extends AbstractProfilingNestedTupleListCalc {
 

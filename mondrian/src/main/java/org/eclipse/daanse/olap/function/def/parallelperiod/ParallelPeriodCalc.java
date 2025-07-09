@@ -21,9 +21,8 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
-
-import mondrian.olap.exceptions.FunctionMbrAndLevelHierarchyMismatchException;
-import mondrian.olap.fun.FunUtil;
+import org.eclipse.daanse.olap.exceptions.FunctionMbrAndLevelHierarchyMismatchException;
+import org.eclipse.daanse.olap.fun.FunUtil;
 
 public class ParallelPeriodCalc extends AbstractProfilingNestedMemberCalc{
 

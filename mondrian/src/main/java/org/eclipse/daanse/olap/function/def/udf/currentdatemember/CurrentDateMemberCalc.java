@@ -26,8 +26,8 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
+import org.eclipse.daanse.olap.common.Util;
 
-import mondrian.olap.Util;
 import mondrian.util.Format;
 
 public class CurrentDateMemberCalc extends AbstractProfilingNestedCalc<Object> {

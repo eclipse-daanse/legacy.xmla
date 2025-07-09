@@ -44,11 +44,11 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.IAggregationManager;
 import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.CacheControlImpl;
 import mondrian.rolap.GroupingSetsCollector;

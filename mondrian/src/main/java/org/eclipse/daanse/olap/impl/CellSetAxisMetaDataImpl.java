@@ -18,11 +18,10 @@ import org.eclipse.daanse.olap.api.result.CellSetAxisMetaData;
 import org.eclipse.daanse.olap.api.result.CellSetMetaData;
 import org.eclipse.daanse.olap.api.result.IAxis;
 import org.eclipse.daanse.olap.api.result.Property;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
 import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
-
-import mondrian.olap.Util;
 
 public class CellSetAxisMetaDataImpl implements CellSetAxisMetaData {
 

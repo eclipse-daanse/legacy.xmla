@@ -57,10 +57,8 @@ import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.SymbolType;
 import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
-
-//import mondrian.mdx.UnresolvedFunCallImpl;
-import mondrian.olap.Util;
 
 /**
  * Utility methods relating to types.

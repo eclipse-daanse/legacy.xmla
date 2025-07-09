@@ -19,10 +19,9 @@ import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.query.component.DrillThrough;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Query;
+import org.eclipse.daanse.olap.common.AbstractQueryPart;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.base.Expressions;
-
-import mondrian.olap.AbstractQueryPart;
-import mondrian.olap.Util;
 
 /**
  * Drill through statement.

@@ -30,7 +30,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
+
 import mondrian.rolap.BitKey;
 import mondrian.rolap.StarPredicate;
 import mondrian.rolap.sql.SqlQuery;

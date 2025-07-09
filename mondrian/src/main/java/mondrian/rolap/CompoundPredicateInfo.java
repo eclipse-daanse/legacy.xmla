@@ -30,8 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import mondrian.olap.exceptions.UnsupportedCalculatedMemberException;
-
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIterable;
@@ -39,10 +37,11 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.exceptions.UnsupportedCalculatedMemberException;
 import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalMember;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 
-import mondrian.olap.Util;
 import mondrian.rolap.agg.AndPredicate;
 import mondrian.rolap.agg.ListColumnPredicate;
 import mondrian.rolap.agg.OrPredicate;

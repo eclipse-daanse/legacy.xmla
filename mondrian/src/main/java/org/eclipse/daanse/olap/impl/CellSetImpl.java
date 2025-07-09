@@ -28,9 +28,9 @@ import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.result.CellSetAxis;
 import org.eclipse.daanse.olap.api.result.CellSetMetaData;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.ExecuteDurationUtil;
 import org.eclipse.daanse.olap.query.component.QueryAxisImpl;
 
-import mondrian.olap.ExecuteDurationUtil;
 import mondrian.server.ExecutionImpl;
 
 public class CellSetImpl extends ExecutionImpl implements CellSet {

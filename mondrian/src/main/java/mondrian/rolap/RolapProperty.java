@@ -26,7 +26,7 @@
 
 package mondrian.rolap;
 
-import static mondrian.olap.Util.makeFqName;
+import static org.eclipse.daanse.olap.common.Util.makeFqName;
 
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -39,10 +39,9 @@ import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
+import org.eclipse.daanse.olap.common.AbstractProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.olap.AbstractProperty;
 
 /**
  * <code>RolapProperty</code> is the definition of a member property.

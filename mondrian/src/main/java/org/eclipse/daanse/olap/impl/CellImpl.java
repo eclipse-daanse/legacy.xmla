@@ -27,9 +27,8 @@ import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.result.Property;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.api.result.Scenario;
+import org.eclipse.daanse.olap.common.StandardProperty;
 import org.slf4j.Logger;
-
-import mondrian.olap.StandardProperty;
 
 public class CellImpl implements Cell {
     private final int[] coordinates;

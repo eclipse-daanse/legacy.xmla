@@ -23,8 +23,7 @@ package org.eclipse.daanse.olap.query.component;
 import java.io.PrintWriter;
 
 import org.eclipse.daanse.olap.api.query.component.Refresh;
-
-import mondrian.olap.AbstractQueryPart;
+import org.eclipse.daanse.olap.common.AbstractQueryPart;
 
 public class RefreshImpl extends AbstractQueryPart implements Refresh {
     private final String cubeName;

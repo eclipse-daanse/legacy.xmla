@@ -42,17 +42,16 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import mondrian.olap.exceptions.CreateIndexFailedException;
-import mondrian.olap.exceptions.CreateTableFailedException;
-import mondrian.olap.exceptions.InvalidInsertLineException;
-import mondrian.olap.exceptions.MissingArgException;
-
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.exceptions.CreateIndexFailedException;
+import org.eclipse.daanse.olap.exceptions.CreateTableFailedException;
+import org.eclipse.daanse.olap.exceptions.InvalidInsertLineException;
+import org.eclipse.daanse.olap.exceptions.MissingArgException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.olap.Util;
 import mondrian.rolap.RolapUtil;
 
 /**

@@ -11,7 +11,7 @@ package mondrian.util;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
 
 /**
  * A limited Map implementation which supports waiting for a value

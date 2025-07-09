@@ -23,10 +23,10 @@ import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
+import org.eclipse.daanse.olap.common.QueryCanceledException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import mondrian.olap.QueryCanceledException;
 import mondrian.server.ExecutionImpl;
 import mondrian.server.LocusImpl;
 import mondrian.server.StatementImpl;

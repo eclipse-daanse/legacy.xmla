@@ -71,15 +71,15 @@ import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.calc.base.compiler.ElevatorSimplifyer;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
+import org.eclipse.daanse.olap.common.NameResolverImpl;
+import org.eclipse.daanse.olap.common.ParameterImpl;
+import org.eclipse.daanse.olap.common.SystemProperty;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.NullLiteralImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.NameResolverImpl;
-import mondrian.olap.ParameterImpl;
-import mondrian.olap.SystemProperty;
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
 import mondrian.rolap.sql.MemberChildrenConstraint;
 import mondrian.rolap.sql.TupleConstraint;
 

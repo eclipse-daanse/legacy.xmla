@@ -49,8 +49,7 @@ import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleIter
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedTupleListCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
-
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
 
 /**
  * Evaluator which checks dependencies of expressions.

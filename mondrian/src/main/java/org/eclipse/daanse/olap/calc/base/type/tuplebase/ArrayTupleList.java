@@ -30,16 +30,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import mondrian.olap.ResourceLimitExceededException;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.todo.TupleCursor;
 import org.eclipse.daanse.olap.api.calc.todo.TupleIterator;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.ResourceLimitExceededException;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
 /**
  * Implementation of {@link TupleList} that stores tuples end-to-end in an array.
  *

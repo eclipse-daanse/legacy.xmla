@@ -38,11 +38,10 @@ import org.eclipse.daanse.olap.api.type.HierarchyType;
 import org.eclipse.daanse.olap.api.type.MemberType;
 import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.common.AbstractQueryPart;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
-
-import mondrian.olap.AbstractQueryPart;
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
 
 /**
  * An axis in an MDX query. For example, the typical MDX query has two axes,

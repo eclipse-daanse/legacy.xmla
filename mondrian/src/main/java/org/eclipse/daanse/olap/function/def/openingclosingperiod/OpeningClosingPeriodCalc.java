@@ -23,8 +23,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedMemberCalc;
-
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
 
 public class OpeningClosingPeriodCalc extends AbstractProfilingNestedMemberCalc{
 

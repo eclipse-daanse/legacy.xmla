@@ -28,8 +28,7 @@ package mondrian.rolap;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.calc.Calc;
-
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
 
 /**
  * Implementation of {@link mondrian.rolap.RolapCalculation}

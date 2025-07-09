@@ -21,12 +21,12 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.common.AbstractProperty;
+import org.eclipse.daanse.olap.common.StandardProperty;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.MemberExpressionImpl;
 import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
 
-import mondrian.olap.AbstractProperty;
-import mondrian.olap.StandardProperty;
-import mondrian.olap.Util;
 import mondrian.rolap.RolapMemberBase;
 
 /**

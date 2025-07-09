@@ -24,11 +24,10 @@ import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.SetType;
+import org.eclipse.daanse.olap.common.ExpCacheDescriptorImpl;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
-
-import mondrian.olap.ExpCacheDescriptorImpl;
 
 public class CacheFunDef extends AbstractFunctionDefinition {
     public static final String NAME = "Cache";

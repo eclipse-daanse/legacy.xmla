@@ -105,26 +105,26 @@ import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.profile.SimpleCalculationProfileWriter;
+import org.eclipse.daanse.olap.common.AbstractQueryPart;
+import org.eclipse.daanse.olap.common.DelegatingCatalogReader;
+import org.eclipse.daanse.olap.common.ExecuteDurationUtil;
+import org.eclipse.daanse.olap.common.IdBatchResolver;
+import org.eclipse.daanse.olap.common.NameResolverImpl;
+import org.eclipse.daanse.olap.common.ParameterImpl;
+import org.eclipse.daanse.olap.common.ResultStyleException;
+import org.eclipse.daanse.olap.common.StandardProperty;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.common.ValidatorImpl;
+import org.eclipse.daanse.olap.common.Walker;
 import org.eclipse.daanse.olap.element.OlapMetaData;
+import org.eclipse.daanse.olap.exceptions.MdxAxisShowSubtotalsNotSupportedException;
+import org.eclipse.daanse.olap.exceptions.ParameterIsNotModifiableException;
+import org.eclipse.daanse.olap.exceptions.UnknownParameterException;
 import org.eclipse.daanse.olap.function.def.parameter.ParameterFunDef;
 import org.eclipse.daanse.olap.impl.IdentifierParser;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
 
-import mondrian.olap.AbstractQueryPart;
-import mondrian.olap.DelegatingCatalogReader;
-import mondrian.olap.ExecuteDurationUtil;
-import mondrian.olap.IdBatchResolver;
-import mondrian.olap.NameResolverImpl;
-import mondrian.olap.ParameterImpl;
-import mondrian.olap.ResultStyleException;
-import mondrian.olap.StandardProperty;
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
-import mondrian.olap.ValidatorImpl;
-import mondrian.olap.Walker;
-import mondrian.olap.exceptions.MdxAxisShowSubtotalsNotSupportedException;
-import mondrian.olap.exceptions.ParameterIsNotModifiableException;
-import mondrian.olap.exceptions.UnknownParameterException;
 import mondrian.server.ExecutionImpl;
 import mondrian.server.LocusImpl;
 import mondrian.util.ArrayStack;
@@ -2011,7 +2011,7 @@ public class QueryImpl extends AbstractQueryPart implements Query {
      *
      * <p>It's unlikely that we would want a validator that is
      * NOT within a particular query, but by organizing the code this way, with
-     * the majority of the code in {@link mondrian.olap.ValidatorImpl}, the
+     * the majority of the code in {@link org.eclipse.daanse.olap.common.ValidatorImpl}, the
      * dependencies between Validator and Query are explicit.
      */
     private static class QueryValidator extends ValidatorImpl {

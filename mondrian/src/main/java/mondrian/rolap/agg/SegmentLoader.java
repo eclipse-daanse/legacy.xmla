@@ -54,10 +54,10 @@ import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEvent;
+import org.eclipse.daanse.olap.common.ResourceLimitExceededException;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
 
-import mondrian.olap.ResourceLimitExceededException;
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.RolapUtil;

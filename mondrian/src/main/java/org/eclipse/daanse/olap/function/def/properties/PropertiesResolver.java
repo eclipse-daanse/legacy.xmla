@@ -25,10 +25,9 @@ import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Literal;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.osgi.service.component.annotations.Component;
-
-import mondrian.olap.Util;
 
 /**
  * Resolves calls to the <code>PROPERTIES</code> MDX function.

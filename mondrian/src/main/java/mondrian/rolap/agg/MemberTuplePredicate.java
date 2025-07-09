@@ -29,10 +29,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.daanse.olap.common.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapCubeLevel;

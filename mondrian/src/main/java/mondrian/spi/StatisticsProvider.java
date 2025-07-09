@@ -22,7 +22,7 @@ import mondrian.server.ExecutionImpl;
  * current connection. The default implementation of that method looks first at
  * the "mondrian.statistics.providers.DATABASE" property (substituting the
  * current database name, e.g. MYSQL or ORACLE, for <i>DATABASE</i>), then at
- * the {@link mondrian.olap.SystemWideProperties#StatisticsProviders "mondrian.statistics.providers"}
+ * the {@link org.eclipse.daanse.olap.common.SystemWideProperties#StatisticsProviders "mondrian.statistics.providers"}
  * property.</p>
  *
  * @see mondrian.spi.impl.JdbcStatisticsProvider

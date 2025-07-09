@@ -59,11 +59,11 @@ import org.eclipse.daanse.olap.api.monitor.event.EventCommon;
 import org.eclipse.daanse.olap.api.monitor.event.ExecutionEventCommon;
 import org.eclipse.daanse.olap.api.monitor.event.MdxStatementEventCommon;
 import org.eclipse.daanse.olap.api.monitor.event.ServertEventCommon;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.Util;
 import mondrian.rolap.CacheControlImpl;
 import mondrian.rolap.CacheKey;
 import mondrian.rolap.RolapCatalog;

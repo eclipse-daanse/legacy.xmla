@@ -47,12 +47,12 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.DelegatingTupleList;
+import org.eclipse.daanse.olap.common.DelegatingCatalogReader;
+import org.eclipse.daanse.olap.common.ResultStyleException;
+import org.eclipse.daanse.olap.common.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.DelegatingCatalogReader;
-import mondrian.olap.ResultStyleException;
-import mondrian.olap.Util;
 import mondrian.rolap.TupleReader.MemberBuilder;
 import mondrian.rolap.aggmatcher.AggStar;
 import mondrian.rolap.cache.HardSmartCache;

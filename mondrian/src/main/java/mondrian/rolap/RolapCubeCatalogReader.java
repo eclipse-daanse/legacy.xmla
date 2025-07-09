@@ -33,10 +33,9 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.query.component.Formula;
+import org.eclipse.daanse.olap.common.NameResolverImpl;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.impl.IdentifierNode;
-
-import mondrian.olap.NameResolverImpl;
-import mondrian.olap.Util;
 
 /**
  * Schema reader which works from the perspective of a particular cube

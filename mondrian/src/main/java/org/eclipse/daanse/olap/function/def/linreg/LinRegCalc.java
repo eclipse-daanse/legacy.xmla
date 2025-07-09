@@ -22,10 +22,9 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.calc.todo.TupleListCalc;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
-
-import mondrian.olap.Util;
-import mondrian.olap.fun.FunUtil;
-import mondrian.olap.fun.FunUtil.SetWrapper;
+import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.fun.FunUtil;
+import org.eclipse.daanse.olap.fun.FunUtil.SetWrapper;
 
 public class LinRegCalc extends AbstractProfilingNestedDoubleCalc {
 

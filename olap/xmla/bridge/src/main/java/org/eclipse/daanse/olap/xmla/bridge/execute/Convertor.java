@@ -55,6 +55,8 @@ import org.eclipse.daanse.olap.api.result.Datatype;
 import org.eclipse.daanse.olap.api.result.IMondrianOlap4jProperty;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Property;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.xmla.api.RowsetDefinitionType;
 import org.eclipse.daanse.xmla.api.XmlaException;
 import org.eclipse.daanse.xmla.api.XmlaUtil;
@@ -98,9 +100,6 @@ import org.eclipse.daanse.xmla.model.record.mddataset.TuplesTypeR;
 import org.eclipse.daanse.xmla.model.record.mddataset.ValueR;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
 
 public class Convertor {
 
@@ -464,9 +463,9 @@ public class Convertor {
         final Statement statement = cellSet.getStatement();
         for (QueryComponent queryPart : statement.getQuery().getCellProperties()) {
             org.eclipse.daanse.olap.api.query.component.CellProperty cellProperty = (org.eclipse.daanse.olap.api.query.component.CellProperty) queryPart;
-            org.eclipse.daanse.olap.api.element.Property property = mondrian.olap.StandardProperty.lookup(cellProperty.toString(), matchCase);
+            org.eclipse.daanse.olap.api.element.Property property = org.eclipse.daanse.olap.common.StandardProperty.lookup(cellProperty.toString(), matchCase);
             String propertyName = ((NameSegment)
-                mondrian.olap.Util.parseIdentifier(cellProperty.toString()).get(0)).getName();
+                org.eclipse.daanse.olap.common.Util.parseIdentifier(cellProperty.toString()).get(0)).getName();
             queryCellPropertyNames.add(propertyName);
         }
         if (queryCellPropertyNames.isEmpty()) {

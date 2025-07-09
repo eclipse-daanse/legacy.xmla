@@ -45,6 +45,10 @@ import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.ListTupleList;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
+import org.eclipse.daanse.olap.common.ResultStyleException;
+import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.fun.FunUtil;
+import org.eclipse.daanse.olap.fun.MemberExtractingVisitor;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.set.SetListCalc;
 import org.eclipse.daanse.olap.function.def.set.ExprIterCalc;
@@ -52,10 +56,6 @@ import org.eclipse.daanse.olap.function.def.set.ExprIterCalc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.ResultStyleException;
-import mondrian.olap.Util;
-import mondrian.olap.fun.FunUtil;
-import mondrian.olap.fun.MemberExtractingVisitor;
 import mondrian.server.LocusImpl;
 import mondrian.util.CancellationChecker;
 

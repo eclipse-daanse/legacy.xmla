@@ -27,7 +27,8 @@ package mondrian.rolap.agg;
 
 import java.util.Collection;
 
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
+
 import mondrian.rolap.BitKey;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.RolapUtil;

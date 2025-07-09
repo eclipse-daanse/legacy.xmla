@@ -19,14 +19,14 @@ import static org.opencube.junit5.TestUtil.getDialect;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.context.TestContextImpl;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
 import mondrian.rolap.BatchTestCase;
 import mondrian.test.DiffRepository;
 import mondrian.test.SqlPattern;

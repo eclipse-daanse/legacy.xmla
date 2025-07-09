@@ -55,12 +55,12 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEvent;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.common.ResourceLimitExceededException;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.ResourceLimitExceededException;
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
 import mondrian.rolap.TupleReader.MemberBuilder;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.agg.CellRequest;
@@ -1222,7 +1222,7 @@ RME is this right
      * keeping overall memory requirements down.</p>
      *
      * <p>If
-     * {@link mondrian.olap.SystemWideProperties#SqlMemberSourceValuePoolFactoryClass}
+     * {@link org.eclipse.daanse.olap.common.SystemWideProperties#SqlMemberSourceValuePoolFactoryClass}
      * is not set, then valuePool will be null and no attempt to cache the
      * value will be made.  The method will simply return the incoming
      * object reference.</p>

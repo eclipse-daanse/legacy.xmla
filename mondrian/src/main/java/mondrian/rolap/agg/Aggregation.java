@@ -42,8 +42,8 @@ import java.util.concurrent.Future;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
+import org.eclipse.daanse.olap.common.Util;
 
-import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.CellKey;
 import mondrian.rolap.GroupingSetsCollector;

@@ -35,11 +35,11 @@ import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.SqlExpression;
+import org.eclipse.daanse.olap.common.ExecuteDurationUtil;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 
-import mondrian.olap.ExecuteDurationUtil;
 import mondrian.rolap.sql.SqlQuery;
 import mondrian.server.ExecutionImpl;
 import mondrian.spi.impl.SqlStatisticsProviderNew;

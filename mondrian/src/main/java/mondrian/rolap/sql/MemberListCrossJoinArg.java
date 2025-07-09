@@ -30,7 +30,8 @@ package mondrian.rolap.sql;
 import java.util.ArrayList;
 import java.util.List;
 
-import mondrian.olap.SystemWideProperties;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapEvaluator;
 import mondrian.rolap.RolapLevel;

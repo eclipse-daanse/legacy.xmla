@@ -37,12 +37,12 @@ import java.util.stream.Stream;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.common.Util;
 
 import de.siegmar.fastcsv.reader.CloseableIterator;
 import de.siegmar.fastcsv.reader.CsvReader;
 import de.siegmar.fastcsv.reader.NamedCsvRecord;
 import mondrian.enums.DatabaseProduct;
-import mondrian.olap.Util;
 
 public class DataLoaderUtil {
 

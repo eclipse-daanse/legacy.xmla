@@ -10,8 +10,7 @@ import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.result.Datatype;
 import org.eclipse.daanse.olap.api.result.IMondrianOlap4jProperty;
 import org.eclipse.daanse.olap.api.result.Property;
-
-import mondrian.olap.StandardProperty;
+import org.eclipse.daanse.olap.common.StandardProperty;
 
 public class PropertyImpl implements IMondrianOlap4jProperty {
 
@@ -48,7 +47,7 @@ public class PropertyImpl implements IMondrianOlap4jProperty {
             : map.entrySet()
             )
         {
-            mondrian.olap.AbstractProperty o = e.getValue();
+            org.eclipse.daanse.olap.common.AbstractProperty o = e.getValue();
             if (o.isMemberProperty()
                 && !memberNames.contains(o.getName()))
             {

@@ -44,9 +44,8 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Query;
-
-import mondrian.olap.SolveOrderMode;
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.SolveOrderMode;
+import org.eclipse.daanse.olap.common.Util;
 
 /**
  * Context at the root of a tree of evaluators.

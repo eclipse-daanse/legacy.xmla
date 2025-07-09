@@ -34,7 +34,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
+
 import mondrian.rolap.RolapUtil;
 import mondrian.rolap.StarColumnPredicate;
 import mondrian.util.ArraySortedSet;

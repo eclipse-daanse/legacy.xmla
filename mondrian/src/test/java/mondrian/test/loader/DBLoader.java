@@ -37,14 +37,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mondrian.olap.exceptions.CreateTableFailedException;
-
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.exceptions.CreateTableFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.Util;
 import mondrian.rolap.RolapUtil;
 
 /**

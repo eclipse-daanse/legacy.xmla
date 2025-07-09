@@ -21,9 +21,8 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
+import org.eclipse.daanse.olap.fun.FunUtil;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
-
-import mondrian.olap.fun.FunUtil;
 
 public class StdevCalc extends AbstractProfilingNestedDoubleCalc {
 

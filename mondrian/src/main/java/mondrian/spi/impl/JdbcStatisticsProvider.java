@@ -15,10 +15,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.common.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.Util;
 import mondrian.server.ExecutionImpl;
 import mondrian.spi.StatisticsProvider;
 

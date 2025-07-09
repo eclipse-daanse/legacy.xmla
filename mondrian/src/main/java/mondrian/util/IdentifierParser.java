@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import mondrian.olap.exceptions.MdxChildObjectNotFoundException;
 import org.eclipse.daanse.olap.api.DataType;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.ConfigConstants;
@@ -29,10 +28,11 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.ArrayTupleList;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.exceptions.MdxChildObjectNotFoundException;
+import org.eclipse.daanse.olap.fun.FunUtil;
 
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
-import mondrian.olap.fun.FunUtil;
 import mondrian.rolap.RolapCube;
 /**
  * Utilities for parsing fully-qualified member names, tuples, member lists,

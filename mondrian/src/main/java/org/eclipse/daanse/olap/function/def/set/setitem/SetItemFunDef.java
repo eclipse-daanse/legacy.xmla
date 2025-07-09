@@ -33,9 +33,8 @@ import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.fun.FunUtil;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
-
-import mondrian.olap.fun.FunUtil;
 
 public class SetItemFunDef extends AbstractFunctionDefinition {
     

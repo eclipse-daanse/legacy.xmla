@@ -27,8 +27,8 @@
 
 package mondrian.rolap;
 
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
 
 /**
  * The 'All' member of a {@link mondrian.rolap.RolapCubeHierarchy}.

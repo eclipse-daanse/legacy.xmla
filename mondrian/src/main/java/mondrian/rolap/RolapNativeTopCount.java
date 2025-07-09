@@ -38,9 +38,9 @@ import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.NumericLiteral;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
 
-import mondrian.olap.Util;
 import mondrian.rolap.aggmatcher.AggStar;
 import mondrian.rolap.sql.CrossJoinArg;
 import mondrian.rolap.sql.SqlQuery;

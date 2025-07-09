@@ -46,6 +46,7 @@ import org.eclipse.daanse.olap.api.element.StoredMeasure;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.result.Property;
 import org.eclipse.daanse.olap.api.result.Property.TypeFlag;
+import org.eclipse.daanse.olap.common.StandardProperty;
 import org.eclipse.daanse.xmla.api.RequestMetaData;
 import org.eclipse.daanse.xmla.api.UserPrincipal;
 import org.eclipse.daanse.xmla.api.VarType;
@@ -110,8 +111,6 @@ import org.eclipse.daanse.xmla.model.record.discover.mdschema.properties.MdSchem
 import org.eclipse.daanse.xmla.model.record.discover.mdschema.sets.MdSchemaSetsResponseRowR;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.olap.StandardProperty;
 
 public class Utils {
 

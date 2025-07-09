@@ -23,8 +23,7 @@ import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedBooleanCalc;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedIntegerCalc;
-
-import mondrian.olap.InvalidArgumentException;
+import org.eclipse.daanse.olap.common.InvalidArgumentException;
 
 public class IntCalc extends AbstractProfilingNestedIntegerCalc {
 

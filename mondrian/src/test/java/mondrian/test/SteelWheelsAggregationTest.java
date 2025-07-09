@@ -15,6 +15,7 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
@@ -53,8 +54,6 @@ import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.SteelWheelsDataLoader;
 import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
-
-import mondrian.olap.SystemWideProperties;
 
 /**
  * @author Andrey Khayrutdinov

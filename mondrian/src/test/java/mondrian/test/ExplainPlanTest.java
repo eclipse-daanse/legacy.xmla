@@ -34,6 +34,7 @@ import org.eclipse.daanse.olap.api.QueryTiming;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.result.CellSet;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.impl.RectangularCellSetFormatter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,8 +45,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.olap.SystemWideProperties;
 
 /**
  * Tests related to explain plan and QueryTiming

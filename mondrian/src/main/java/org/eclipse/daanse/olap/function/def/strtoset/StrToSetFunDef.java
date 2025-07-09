@@ -32,12 +32,11 @@ import org.eclipse.daanse.olap.api.type.MemberType;
 import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.exceptions.ArgumentFunctionNotHierarchyException;
+import org.eclipse.daanse.olap.exceptions.MdxFuncArgumentsNumException;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.query.component.HierarchyExpressionImpl;
 import org.eclipse.daanse.olap.util.type.TypeUtil;
-
-import mondrian.olap.exceptions.ArgumentFunctionNotHierarchyException;
-import mondrian.olap.exceptions.MdxFuncArgumentsNumException;
 
 public class StrToSetFunDef extends AbstractFunctionDefinition {
 

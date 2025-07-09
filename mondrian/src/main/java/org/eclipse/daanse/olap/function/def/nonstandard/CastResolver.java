@@ -23,12 +23,11 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Literal;
+import org.eclipse.daanse.olap.exceptions.CastInvalidTypeException;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.resolver.NoExpressionRequiredFunctionResolver;
 import org.eclipse.daanse.olap.query.base.Expressions;
 import org.osgi.service.component.annotations.Component;
-
-import mondrian.olap.exceptions.CastInvalidTypeException;
 
 @Component(service = FunctionResolver.class)
 public class CastResolver extends NoExpressionRequiredFunctionResolver {

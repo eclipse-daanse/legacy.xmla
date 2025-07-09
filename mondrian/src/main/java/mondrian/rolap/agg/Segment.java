@@ -36,8 +36,8 @@ import java.util.AbstractList;
 import java.util.List;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
+import org.eclipse.daanse.olap.common.Util;
 
-import mondrian.olap.Util;
 import mondrian.rolap.BitKey;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.StarColumnPredicate;

@@ -24,13 +24,12 @@ import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.TupleType;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.cache.CacheCalc;
+import org.eclipse.daanse.olap.common.ExpCacheDescriptorImpl;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.olap.ExpCacheDescriptorImpl;
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
 
 public class RankFunDef extends AbstractFunctionDefinition {
     static final Logger LOGGER = LoggerFactory.getLogger(RankFunDef.class);

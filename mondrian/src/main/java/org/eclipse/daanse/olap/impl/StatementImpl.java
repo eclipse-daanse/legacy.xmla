@@ -35,10 +35,10 @@ import org.eclipse.daanse.olap.api.query.component.QueryComponent;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.common.ConnectionBase;
+import org.eclipse.daanse.olap.common.QueryCanceledException;
+import org.eclipse.daanse.olap.common.QueryTimeoutException;
 
-import mondrian.olap.ConnectionBase;
-import mondrian.olap.QueryCanceledException;
-import mondrian.olap.QueryTimeoutException;
 import mondrian.server.LocusImpl;
 
 public class StatementImpl extends mondrian.server.StatementImpl implements Statement {

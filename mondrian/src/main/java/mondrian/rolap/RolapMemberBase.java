@@ -45,6 +45,9 @@ import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.element.Property;
 import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.common.MemberBase;
+import org.eclipse.daanse.olap.common.StandardProperty;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateFunDef;
 import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalMember;
@@ -52,9 +55,6 @@ import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.MemberBase;
-import mondrian.olap.StandardProperty;
-import mondrian.olap.Util;
 import mondrian.server.LocusImpl;
 import mondrian.util.Bug;
 
@@ -589,7 +589,7 @@ public class RolapMemberBase
      * <p>This method does not consider {@link #ordinal} field, because
      * ordinal is only unique within a parent. If you want to compare
      * members which may be at any position in the hierarchy, use
-     * {@link mondrian.olap.fun.FunUtil#compareHierarchically}.
+     * {@link org.eclipse.daanse.olap.fun.FunUtil#compareHierarchically}.
      *
      * @return -1 if this is less, 0 if this is the same, 1 if this is greater
      */

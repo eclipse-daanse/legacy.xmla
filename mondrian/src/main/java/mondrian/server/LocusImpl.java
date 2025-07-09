@@ -29,8 +29,8 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.Statement;
+import org.eclipse.daanse.olap.common.ExecuteDurationUtil;
 
-import mondrian.olap.ExecuteDurationUtil;
 import mondrian.rolap.RolapConnection;
 import mondrian.util.ArrayStack;
 

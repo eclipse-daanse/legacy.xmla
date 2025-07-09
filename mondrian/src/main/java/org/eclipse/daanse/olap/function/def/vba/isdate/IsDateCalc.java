@@ -22,8 +22,7 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedBooleanCalc;
-
-import mondrian.olap.InvalidArgumentException;
+import org.eclipse.daanse.olap.common.InvalidArgumentException;
 
 public class IsDateCalc extends AbstractProfilingNestedBooleanCalc {
 

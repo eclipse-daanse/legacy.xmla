@@ -9,8 +9,8 @@
 
 package mondrian.test;
 
-import static mondrian.olap.SolveOrderMode.ABSOLUTE;
-import static mondrian.olap.SolveOrderMode.SCOPED;
+import static org.eclipse.daanse.olap.common.SolveOrderMode.ABSOLUTE;
+import static org.eclipse.daanse.olap.common.SolveOrderMode.SCOPED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
@@ -18,6 +18,8 @@ import static org.opencube.junit5.TestUtil.withSchema;
 
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.common.SolveOrderMode;
+import org.eclipse.daanse.olap.common.Util;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -25,8 +27,6 @@ import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.olap.SolveOrderMode;
-import mondrian.olap.Util;
 import mondrian.rolap.SchemaModifiers;
 
 /**

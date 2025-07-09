@@ -31,11 +31,10 @@ import org.eclipse.daanse.olap.api.element.CalculatedMember;
 import org.eclipse.daanse.olap.api.element.MetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Formula;
+import org.eclipse.daanse.olap.common.StandardProperty;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.element.OlapMetaData;
 import org.eclipse.daanse.olap.query.component.FormulaImpl;
-
-import mondrian.olap.StandardProperty;
-import mondrian.olap.Util;
 
 /**
  * A <code>RolapCalculatedMember</code> is a member based upon a

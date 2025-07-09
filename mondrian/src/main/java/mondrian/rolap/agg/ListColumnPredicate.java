@@ -32,7 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
+
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.RolapUtil;
 import mondrian.rolap.StarColumnPredicate;

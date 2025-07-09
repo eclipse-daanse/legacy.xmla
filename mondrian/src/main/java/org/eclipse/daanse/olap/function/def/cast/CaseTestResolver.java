@@ -21,9 +21,8 @@ import org.eclipse.daanse.olap.api.Validator;
 import org.eclipse.daanse.olap.api.function.FunctionDefinition;
 import org.eclipse.daanse.olap.api.function.FunctionResolver;
 import org.eclipse.daanse.olap.api.query.component.Expression;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.base.Expressions;
-
-import mondrian.olap.Util;
 import org.osgi.service.component.annotations.Component;
 
 @Component(service = FunctionResolver.class)

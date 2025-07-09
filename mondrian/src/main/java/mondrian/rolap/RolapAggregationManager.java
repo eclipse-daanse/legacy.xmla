@@ -40,9 +40,9 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalMember;
 
-import mondrian.olap.Util;
 import mondrian.rolap.agg.CellRequest;
 import mondrian.rolap.agg.DrillThroughCellRequest;
 import mondrian.rolap.agg.ListPredicate;

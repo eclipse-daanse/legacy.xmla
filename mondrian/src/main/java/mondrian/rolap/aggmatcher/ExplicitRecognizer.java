@@ -41,9 +41,9 @@ import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.mapping.api.model.ColumnMapping;
 
-import mondrian.olap.Util;
 import mondrian.recorder.MessageRecorder;
 import mondrian.rolap.HierarchyUsage;
 import mondrian.rolap.RolapCube;

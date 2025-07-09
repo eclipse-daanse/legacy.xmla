@@ -51,11 +51,11 @@ import org.eclipse.daanse.olap.api.monitor.event.EventCommon;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEndEvent;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEvent;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEvent.Purpose;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEventCommon;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementExecuteEvent;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementStartEvent;
 
-import mondrian.olap.Util;
 import mondrian.server.LocusImpl;
 import mondrian.util.Counters;
 import mondrian.util.DelegatingInvocationHandler;

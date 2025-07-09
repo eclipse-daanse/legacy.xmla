@@ -27,8 +27,8 @@
  */
 package mondrian.rolap;
 
-import static mondrian.olap.fun.sort.Sorter.hierarchizeTupleList;
 import static mondrian.rolap.util.ExpressionUtil.getExpression;
+import static org.eclipse.daanse.olap.fun.sort.Sorter.hierarchizeTupleList;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -62,14 +62,14 @@ import org.eclipse.daanse.olap.calc.base.type.tuplebase.ArrayTupleList;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.ListTupleList;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
+import org.eclipse.daanse.olap.common.ExecuteDurationUtil;
+import org.eclipse.daanse.olap.common.ResourceLimitExceededException;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.ExecuteDurationUtil;
-import mondrian.olap.ResourceLimitExceededException;
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.agg.CellRequest;
 import mondrian.rolap.aggmatcher.AggStar;

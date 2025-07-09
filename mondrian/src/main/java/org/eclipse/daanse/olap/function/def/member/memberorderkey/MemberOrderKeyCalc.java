@@ -17,8 +17,7 @@ import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.calc.MemberCalc;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.AbstractProfilingNestedCalc;
-
-import mondrian.olap.fun.sort.OrderKey;
+import org.eclipse.daanse.olap.fun.sort.OrderKey;
 
 public class MemberOrderKeyCalc extends AbstractProfilingNestedCalc<OrderKey> {
     /**

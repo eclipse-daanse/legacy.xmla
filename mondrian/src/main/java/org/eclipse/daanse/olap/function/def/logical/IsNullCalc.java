@@ -19,8 +19,7 @@ import org.eclipse.daanse.olap.api.element.KeyMember;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedBooleanCalc;
-
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
 
 public class IsNullCalc extends AbstractProfilingNestedBooleanCalc {
 

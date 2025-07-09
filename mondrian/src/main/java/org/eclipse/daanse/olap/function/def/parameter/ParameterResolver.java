@@ -17,12 +17,11 @@ import org.eclipse.daanse.olap.api.type.NumericType;
 import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.StringType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.fun.FunUtil;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.core.resolver.AbstractMetaDataMultiResolver;
 import org.osgi.service.component.annotations.Component;
-
-import mondrian.olap.fun.FunUtil;
 
 /**
  * Resolves calls to the <code>Parameter</code> MDX function.

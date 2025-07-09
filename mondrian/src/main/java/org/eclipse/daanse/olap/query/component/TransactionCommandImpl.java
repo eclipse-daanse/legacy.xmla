@@ -24,8 +24,7 @@ import java.io.PrintWriter;
 
 import org.eclipse.daanse.olap.api.Command;
 import org.eclipse.daanse.olap.api.query.component.TransactionCommand;
-
-import mondrian.olap.AbstractQueryPart;
+import org.eclipse.daanse.olap.common.AbstractQueryPart;
 
 public class TransactionCommandImpl extends AbstractQueryPart implements TransactionCommand {
 

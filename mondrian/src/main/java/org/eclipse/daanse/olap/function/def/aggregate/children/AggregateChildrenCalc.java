@@ -26,9 +26,8 @@ import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
-
-import mondrian.olap.StandardProperty;
-import mondrian.olap.fun.FunUtil;
+import org.eclipse.daanse.olap.common.StandardProperty;
+import org.eclipse.daanse.olap.fun.FunUtil;
 
 public class AggregateChildrenCalc extends AbstractProfilingNestedUnknownCalc {
 

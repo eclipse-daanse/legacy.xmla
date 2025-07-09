@@ -16,8 +16,7 @@ package org.eclipse.daanse.olap.function.def.udf.nullvalue;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedDoubleCalc;
-
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
 
 public class NullValueCalc extends AbstractProfilingNestedDoubleCalc {
 

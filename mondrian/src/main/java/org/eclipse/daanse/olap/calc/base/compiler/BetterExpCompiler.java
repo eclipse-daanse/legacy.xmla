@@ -52,8 +52,7 @@ import org.eclipse.daanse.olap.calc.base.type.member.UnknownToMemberCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuple.MemberCalcToTupleCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuple.UnknownToTupleCalc;
 import org.eclipse.daanse.olap.calc.base.type.tuplelist.CopyOfTupleListCalc;
-
-import mondrian.olap.Util;
+import org.eclipse.daanse.olap.common.Util;
 
 /**
  * Enhanced expression compiler. It can generate code to convert between scalar

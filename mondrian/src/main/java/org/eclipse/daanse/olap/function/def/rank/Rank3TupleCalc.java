@@ -23,9 +23,8 @@ import org.eclipse.daanse.olap.api.calc.TupleCalc;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedIntegerCalc;
-
-import mondrian.olap.Util;
-import mondrian.olap.fun.FunUtil;
+import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.fun.FunUtil;
 
 public class Rank3TupleCalc extends AbstractProfilingNestedIntegerCalc {
     private final ExpCacheDescriptor cacheDescriptor;

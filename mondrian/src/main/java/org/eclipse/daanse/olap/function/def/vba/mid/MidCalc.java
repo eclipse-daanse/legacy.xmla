@@ -18,8 +18,7 @@ import org.eclipse.daanse.olap.api.calc.IntegerCalc;
 import org.eclipse.daanse.olap.api.calc.StringCalc;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedStringCalc;
-
-import mondrian.olap.InvalidArgumentException;
+import org.eclipse.daanse.olap.common.InvalidArgumentException;
 
 public class MidCalc extends AbstractProfilingNestedStringCalc {
     private final IntegerCalc lengthCalc;

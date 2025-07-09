@@ -23,9 +23,8 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.calc.base.util.HirarchyDependsChecker;
+import org.eclipse.daanse.olap.fun.FunUtil;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
-
-import mondrian.olap.fun.FunUtil;
 
 public class PercentileFunDef extends AbstractAggregateFunDef {
 

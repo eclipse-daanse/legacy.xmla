@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.SortedSet;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
+import org.eclipse.daanse.olap.common.Util;
 
-import mondrian.olap.Util;
 import mondrian.rolap.CellKey;
 import mondrian.spi.SegmentBody;
 import mondrian.util.Pair;

@@ -58,13 +58,13 @@ import org.eclipse.daanse.olap.api.function.FunctionMetaData;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.DelegatingTupleList;
+import org.eclipse.daanse.olap.common.StandardProperty;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.olap.fun.FunUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.StandardProperty;
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
-import mondrian.olap.fun.FunUtil;
 import mondrian.util.Format;
 
 /**
@@ -886,7 +886,7 @@ public final Object evaluateCurrent() {
    *
    * @param eval
    *          Evaluator
-   * @throws mondrian.olap.fun.MondrianEvaluationException
+   * @throws org.eclipse.daanse.olap.fun.MondrianEvaluationException
    *           if there is a loop
    */
   private static void checkRecursion( RolapEvaluator eval, int c ) {

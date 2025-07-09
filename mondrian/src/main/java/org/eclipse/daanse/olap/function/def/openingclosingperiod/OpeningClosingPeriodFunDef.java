@@ -25,10 +25,9 @@ import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.MemberType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.exceptions.FunctionMbrAndLevelHierarchyMismatchException;
 import org.eclipse.daanse.olap.function.def.AbstractFunctionDefinition;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberFixedCalc;
-
-import mondrian.olap.exceptions.FunctionMbrAndLevelHierarchyMismatchException;
 
 public class OpeningClosingPeriodFunDef extends AbstractFunctionDefinition {
     private final boolean opening;

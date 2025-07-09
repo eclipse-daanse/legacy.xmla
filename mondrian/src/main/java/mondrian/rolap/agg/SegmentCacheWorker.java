@@ -25,14 +25,17 @@
 
 package mondrian.rolap.agg;
 
+import static org.eclipse.daanse.olap.exceptions.SegmentCacheFailedToInstanciateException.segmentCacheFailedToInstanciate;
+import static org.eclipse.daanse.olap.exceptions.SegmentCacheFailedToLoadSegmentException.segmentCacheFailedToLoadSegment;
+import static org.eclipse.daanse.olap.exceptions.SegmentCacheFailedToSaveSegmentException.segmentCacheFailedToSaveSegment;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import mondrian.olap.exceptions.SegmentCacheFailedToInstanciateException;
-import mondrian.olap.exceptions.SegmentCacheFailedToLoadSegmentException;
-import mondrian.olap.exceptions.SegmentCacheFailedToSaveSegmentException;
-
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.exceptions.SegmentCacheFailedToInstanciateException;
+import org.eclipse.daanse.olap.exceptions.SegmentCacheFailedToLoadSegmentException;
+import org.eclipse.daanse.olap.exceptions.SegmentCacheFailedToSaveSegmentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +44,6 @@ import mondrian.spi.SegmentCache;
 import mondrian.spi.SegmentHeader;
 import mondrian.util.ClassResolver;
 import mondrian.util.ServiceDiscovery;
-
-import static mondrian.olap.exceptions.SegmentCacheFailedToInstanciateException.segmentCacheFailedToInstanciate;
-import static mondrian.olap.exceptions.SegmentCacheFailedToLoadSegmentException.segmentCacheFailedToLoadSegment;
-import static mondrian.olap.exceptions.SegmentCacheFailedToSaveSegmentException.segmentCacheFailedToSaveSegment;
 
 /**
  * Utility class to interact with the {@link SegmentCache}.

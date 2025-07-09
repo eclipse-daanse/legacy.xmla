@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
 import mondrian.test.clearview.CVBasicTest;
 import mondrian.test.clearview.ClearViewBase;
 import mondrian.test.clearview.GrandTotalTest;

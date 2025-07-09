@@ -15,8 +15,7 @@
 package org.eclipse.daanse.olap.query.component.expression;
 
 import org.eclipse.daanse.olap.api.query.component.Expression;
-
-import mondrian.olap.AbstractQueryPart;
+import org.eclipse.daanse.olap.common.AbstractQueryPart;
 
 public abstract class AbstractExpression extends AbstractQueryPart implements Expression {
 

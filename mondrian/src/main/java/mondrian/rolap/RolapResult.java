@@ -89,7 +89,17 @@ import org.eclipse.daanse.olap.calc.base.type.tuplebase.DelegatingTupleList;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.ListTupleList;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
 import org.eclipse.daanse.olap.calc.base.value.CurrentValueUnknownCalc;
+import org.eclipse.daanse.olap.common.ExpCacheDescriptorImpl;
+import org.eclipse.daanse.olap.common.MemberBase;
+import org.eclipse.daanse.olap.common.ResourceLimitExceededException;
+import org.eclipse.daanse.olap.common.ResultBase;
+import org.eclipse.daanse.olap.common.ResultLimitExceededException;
+import org.eclipse.daanse.olap.common.StandardProperty;
+import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import org.eclipse.daanse.olap.fun.MondrianEvaluationException;
+import org.eclipse.daanse.olap.fun.sort.Sorter;
 import org.eclipse.daanse.olap.function.core.FunctionMetaDataR;
 import org.eclipse.daanse.olap.function.core.FunctionParameterR;
 import org.eclipse.daanse.olap.function.def.aggregate.AbstractAggregateFunDef;
@@ -102,16 +112,6 @@ import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalMember;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.ExpCacheDescriptorImpl;
-import mondrian.olap.MemberBase;
-import mondrian.olap.ResourceLimitExceededException;
-import mondrian.olap.ResultBase;
-import mondrian.olap.ResultLimitExceededException;
-import mondrian.olap.StandardProperty;
-import mondrian.olap.SystemWideProperties;
-import mondrian.olap.Util;
-import mondrian.olap.fun.MondrianEvaluationException;
-import mondrian.olap.fun.sort.Sorter;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.server.LocusImpl;
 import mondrian.util.CancellationChecker;
@@ -380,7 +380,7 @@ public class RolapResult extends ResultBase {
           // Iterable
           cursor = iterable.tupleCursor();
         }
-        HierarchyAccess hierarchyAccess = mondrian.olap.RoleImpl.createAllAccess(hierarchy);
+        HierarchyAccess hierarchyAccess = org.eclipse.daanse.olap.common.RoleImpl.createAllAccess(hierarchy);
         int currentIteration = 0;
         while ( cursor.forward() ) {
           CancellationChecker.checkCancelOrTimeout( currentIteration++, execution );
@@ -668,7 +668,7 @@ public class RolapResult extends ResultBase {
       QueryComponent[] cellProperties = query.getCellProperties();
       if(!(cellProperties.length == 1
               && ((NameSegment)
-              mondrian.olap.Util.parseIdentifier(cellProperties[0].toString()).get(0)).getName().equalsIgnoreCase(
+              org.eclipse.daanse.olap.common.Util.parseIdentifier(cellProperties[0].toString()).get(0)).getName().equalsIgnoreCase(
             		  StandardProperty.CELL_ORDINAL.getName()    ))) {
         final Locus locus = new LocusImpl( execution, null, "Loading cells" );
         LocusImpl.push( locus );

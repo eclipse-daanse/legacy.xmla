@@ -23,10 +23,10 @@ import javax.script.ScriptEngineFactory;
 import javax.script.ScriptException;
 
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.olap.common.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.olap.Util;
 import mondrian.rolap.RolapUtil;
 
 // Only in Java6 and above
@@ -37,7 +37,7 @@ import mondrian.rolap.RolapUtil;
  *
  * <p>Prior to JDK 1.6, this class should never be loaded. Applications should
  * instantiate this class via {@link Class#forName(String)} or better, use
- * methods in {@link mondrian.olap.Util}, and not instantiate it at all.
+ * methods in {@link org.eclipse.daanse.olap.common.Util}, and not instantiate it at all.
  *
  * @author jhyde
  */

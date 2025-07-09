@@ -23,9 +23,8 @@ import org.eclipse.daanse.olap.api.query.component.MemberExpression;
 import org.eclipse.daanse.olap.api.query.component.ParameterExpression;
 import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.fun.ResolvedFunCallFinder;
 import org.eclipse.daanse.olap.query.component.MdxVisitorImpl;
-
-import mondrian.olap.fun.ResolvedFunCallFinder;
 
 /**
  * Traverses the function call tree of the non empty crossjoin function and populates the queryMeasureSet with base

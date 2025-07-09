@@ -31,9 +31,8 @@ import org.eclipse.daanse.olap.api.result.Scenario;
 import org.eclipse.daanse.olap.api.result.WritebackCell;
 import org.eclipse.daanse.olap.api.type.ScalarType;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedUnknownCalc;
+import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
-
-import mondrian.olap.Util;
 
 public class ScenarioImpl implements Scenario {
 

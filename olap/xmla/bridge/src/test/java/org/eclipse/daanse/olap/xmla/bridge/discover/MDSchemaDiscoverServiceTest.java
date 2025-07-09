@@ -773,8 +773,8 @@ class MDSchemaDiscoverServiceTest {
 
         MdSchemaPropertiesRequest request = mock(MdSchemaPropertiesRequest.class);
         MdSchemaPropertiesRestrictions restrictions = mock(MdSchemaPropertiesRestrictions.class);
-        mondrian.olap.AbstractProperty property1 = mock(mondrian.olap.AbstractProperty.class);
-        mondrian.olap.AbstractProperty property2 = mock(mondrian.olap.AbstractProperty.class);
+        org.eclipse.daanse.olap.common.AbstractProperty property1 = mock(org.eclipse.daanse.olap.common.AbstractProperty.class);
+        org.eclipse.daanse.olap.common.AbstractProperty property2 = mock(org.eclipse.daanse.olap.common.AbstractProperty.class);
 
         when(request.restrictions()).thenReturn(restrictions);
         when(restrictions.catalogName()).thenReturn(Optional.of("foo"));

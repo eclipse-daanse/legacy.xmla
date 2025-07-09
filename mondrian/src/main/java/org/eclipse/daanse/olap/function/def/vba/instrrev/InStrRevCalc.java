@@ -18,8 +18,7 @@ import org.eclipse.daanse.olap.api.calc.IntegerCalc;
 import org.eclipse.daanse.olap.api.calc.StringCalc;
 import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.calc.base.nested.AbstractProfilingNestedIntegerCalc;
-
-import mondrian.olap.InvalidArgumentException;
+import org.eclipse.daanse.olap.common.InvalidArgumentException;
 
 public class InStrRevCalc extends AbstractProfilingNestedIntegerCalc {
     protected InStrRevCalc(Type type, final StringCalc stringCheckCalc, final StringCalc stringMatchCalc, final IntegerCalc startCalc, final IntegerCalc compareCalc) {
@@ -48,7 +47,7 @@ public class InStrRevCalc extends AbstractProfilingNestedIntegerCalc {
             }
             String lwStringCheck = stringCheck;
             String lwStringMatch = stringMatch;
-            if(!mondrian.olap.SystemWideProperties.instance().CaseSensitiveMdxInstr) {
+            if(!org.eclipse.daanse.olap.common.SystemWideProperties.instance().CaseSensitiveMdxInstr) {
                 if(stringCheck != null) {
                     lwStringCheck = stringCheck.toLowerCase();
                 }
