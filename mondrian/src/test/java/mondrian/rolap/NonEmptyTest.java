@@ -81,7 +81,7 @@ import mondrian.rolap.RolapNative.TupleEvent;
 import mondrian.rolap.sql.MemberChildrenConstraint;
 import mondrian.rolap.sql.TupleConstraint;
 import mondrian.test.SqlPattern;
-import mondrian.util.Bug;
+import  org.eclipse.daanse.olap.util.Bug;
 
 /**
  * Tests for NON EMPTY Optimization, includes SqlConstraint type hierarchy and RolapNative classes.

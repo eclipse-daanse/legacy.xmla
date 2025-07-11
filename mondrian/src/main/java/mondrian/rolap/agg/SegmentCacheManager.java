@@ -42,11 +42,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.daanse.olap.api.CacheCommand;
 import org.eclipse.daanse.olap.api.CacheControl.CellRegion;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.Execution;
+import org.eclipse.daanse.olap.api.ISegmentCacheIndex;
 import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.api.Locus;
+import org.eclipse.daanse.olap.api.Message;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
@@ -74,14 +78,14 @@ import mondrian.rolap.RolapUtil;
 import mondrian.rolap.cache.MemorySegmentCache;
 import mondrian.rolap.cache.SegmentCacheIndex;
 import mondrian.rolap.cache.SegmentCacheIndexImpl;
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.spi.SegmentBody;
 import mondrian.spi.SegmentCache;
 import mondrian.spi.SegmentColumn;
 import mondrian.spi.SegmentHeader;
 import mondrian.util.BlockingHashMap;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 @SuppressWarnings( { "JavaDoc", "squid:S1192", "squid:S4274" } )
 // suppressing warnings for asserts, duplicated string constants
@@ -417,11 +421,12 @@ public class SegmentCacheManager implements ISegmentCacheManager {
     return false;
   }
 
-  public <T> T execute( Command<T> command ) {
+  @Override
+  public <T> T execute( CacheCommand<T> command ) {
     return actor.execute( handler, command );
   }
 
-  public SegmentCacheIndexRegistry getIndexRegistry() {
+  public ISegmentCacheIndex getIndexRegistry() {
     return indexRegistry;
   }
 
@@ -432,7 +437,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
    *
    * <p>Does not add the segment to the external cache. That is a potentially
    * long-duration operation, better carried out by a worker.</p>
-   *
+   *C
    * @param header segment header
    * @param body   segment body
    */
@@ -832,7 +837,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
 //          CellCacheEvent.Source.EXTERNAL )
     }
   }
-
+/*
   interface Message {
 
 
@@ -845,11 +850,12 @@ public class SegmentCacheManager implements ISegmentCacheManager {
     public abstract T call() throws Exception;
 
   }
+  */
 
   /**
    * Command to flush a particular region from cache.
    */
-  public static final class FlushCommand extends Command<FlushResult> {
+  public static final class FlushCommand implements CacheCommand<FlushResult> {
     private final CellRegion region;
     private final CacheControlImpl cacheControlImpl;
     private final Locus locus;
@@ -1010,8 +1016,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
     }
   }
 
-  private class PrintCacheStateCommand
-    extends SegmentCacheManager.Command<Void> {
+  private class PrintCacheStateCommand implements CacheCommand<Void> {
     private final PrintWriter pw;
     private final Locus locus;
     private final CellRegion region;
@@ -1063,7 +1068,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
     }
   }
 
-  private static class ShutdownCommand extends Command<String> {
+  private static class ShutdownCommand implements CacheCommand<String> {
 
     @Override
 	public String call() throws Exception {
@@ -1096,7 +1101,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
     private final BlockingQueue<Pair<Handler, Message>> eventQueue =
       new ArrayBlockingQueue<>( 1000 );
 
-    private final BlockingHashMap<Command<?>, Pair<Object, Throwable>>
+    private final BlockingHashMap<CacheCommand<?>, Pair<Object, Throwable>>
       responseMap =
       new BlockingHashMap<>( 1000 );
 
@@ -1113,7 +1118,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
             // A message is either a command or an event.
             // A command returns a value that must be read by
             // the caller.
-            if ( message instanceof Command<?> command ) {
+            if ( message instanceof CacheCommand<?> command ) {
               try {
                 LocusImpl.push( command.getLocus() );
                 Object result = command.call();
@@ -1157,22 +1162,22 @@ public class SegmentCacheManager implements ISegmentCacheManager {
      * <p>
      * This makes sure no threads waiting on a response in the {@link #responseMap} remain blocked.
      */
-    private void shutDownAndDrainQueue( Command<?> command ) {
+    private void shutDownAndDrainQueue( CacheCommand<?> command ) {
       LOGGER.trace( "Shutting down and draining event queue" );
       shuttingDown.set( true );
       responseMap.put( command, Pair.of( null, null ) );
       List<Pair<Handler, Message>> pendingQueue = new ArrayList<>( eventQueue.size() );
       eventQueue.drainTo( pendingQueue );
       for ( Pair<Handler, Message> queueElement : pendingQueue ) {
-        if ( queueElement.getValue() instanceof Command<?> ) {
+        if ( queueElement.getValue() instanceof CacheCommand<?> ) {
           responseMap.put(
-            (Command<?>) queueElement.getValue(),
+            (CacheCommand<?>) queueElement.getValue(),
             Pair.of( null, Util.newError( "Actor queue already shut down" ) ) );
         }
       }
     }
 
-    <T> T execute( Handler handler, Command<T> command ) {
+    <T> T execute( Handler handler, CacheCommand<T> command ) {
       if ( shuttingDown.get() ) {
         throw Util.newError( "Command submitted after shutdown " + command );
       }
@@ -1432,12 +1437,12 @@ public class SegmentCacheManager implements ISegmentCacheManager {
         ExecutionImpl.NONE,
         "AsyncCacheListener.handle",
         () -> {
-          final Command<Void> command;
+          final CacheCommand<Void> command;
           final Locus locus = LocusImpl.peek();
           switch ( e.getEventType() ) {
             case ENTRY_CREATED:
               command =
-                new Command<>() {
+                new CacheCommand<>() {
                   @Override
 				public Void call() {
                     cacheMgr.externalSegmentCreated(
@@ -1454,7 +1459,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
               break;
             case ENTRY_DELETED:
               command =
-                new Command<>() {
+                new CacheCommand<>() {
                   @Override
 				public Void call() {
                     cacheMgr.externalSegmentDeleted(
@@ -1601,8 +1606,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
    * segment header; it is possible that there is no body in the cache. For (b), the client will have to wait for the
    * segment to arrive.</p>
    */
-  private class PeekCommand
-    extends SegmentCacheManager.Command<PeekResponse> {
+  private class PeekCommand implements CacheCommand<PeekResponse> {
     private final CellRequest request;
     private final Locus locus;
 
@@ -1683,7 +1687,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
    * <p>
    * The index is based off the checksum of the schema.
    */
-  public class SegmentCacheIndexRegistry {
+  public class SegmentCacheIndexRegistry implements ISegmentCacheIndex{
     private final Map<CacheKey, SegmentCacheIndex> indexes =
       Collections.synchronizedMap(
         new HashMap<>() );
@@ -1728,7 +1732,7 @@ public class SegmentCacheManager implements ISegmentCacheManager {
       }
     }
 
-    public void cancelExecutionSegments( ExecutionImpl exec ) {
+    public void cancelExecutionSegments( Execution exec ) {
       for ( SegmentCacheIndex index : indexes.values() ) {
         index.cancel( exec );
       }

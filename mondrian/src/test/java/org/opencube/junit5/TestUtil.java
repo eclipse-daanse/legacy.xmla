@@ -92,7 +92,7 @@ import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapHierarchy;
 import mondrian.rolap.RolapUtil;
 import mondrian.rolap.SmartMemberReader;
-import mondrian.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import mondrian.test.SqlPattern;
 import mondrian.util.DelegatingInvocationHandler;
 

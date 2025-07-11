@@ -35,7 +35,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.StarColumnPredicate;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * Contains the information necessary to generate a SQL statement to

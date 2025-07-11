@@ -38,8 +38,8 @@ import org.eclipse.daanse.olap.common.Util;
 
 import mondrian.rolap.RolapUtil;
 import mondrian.rolap.StarColumnPredicate;
-import mondrian.util.ArraySortedSet;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.ArraySortedSet;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * Collection of values of one of the columns that parameterizes a

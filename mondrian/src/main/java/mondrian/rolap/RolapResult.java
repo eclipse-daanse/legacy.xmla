@@ -113,9 +113,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.rolap.agg.AggregationManager;
-import mondrian.server.LocusImpl;
-import mondrian.util.CancellationChecker;
-import mondrian.util.Format;
+import  org.eclipse.daanse.olap.server.LocusImpl;
+import  org.eclipse.daanse.olap.util.CancellationChecker;
+import  org.eclipse.daanse.olap.util.Format;
 import mondrian.util.ObjectPool;
 
 /**

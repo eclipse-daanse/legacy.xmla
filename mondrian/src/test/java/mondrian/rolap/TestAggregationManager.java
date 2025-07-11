@@ -98,8 +98,8 @@ import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.agg.CellRequest;
 import mondrian.rolap.agg.ValueColumnPredicate;
 import mondrian.rolap.aggmatcher.AggStar;
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.test.SqlPattern;
 
 /**

@@ -58,8 +58,8 @@ import mondrian.rolap.RolapStar;
 import mondrian.rolap.StarColumnPredicate;
 import mondrian.rolap.StarPredicate;
 import mondrian.rolap.aggmatcher.AggStar;
-import mondrian.server.LocusImpl;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.server.LocusImpl;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * <code>RolapAggregationManager</code> manages all {@link Aggregation}s

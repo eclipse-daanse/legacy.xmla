@@ -19,7 +19,7 @@ import org.eclipse.daanse.olap.common.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import mondrian.spi.StatisticsProvider;
 
 /**

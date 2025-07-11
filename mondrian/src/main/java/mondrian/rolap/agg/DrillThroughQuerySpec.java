@@ -42,7 +42,7 @@ import mondrian.rolap.RolapStar.Column;
 import mondrian.rolap.StarColumnPredicate;
 import mondrian.rolap.StarPredicate;
 import mondrian.rolap.sql.SqlQuery;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * Provides the information necessary to generate SQL for a drill-through

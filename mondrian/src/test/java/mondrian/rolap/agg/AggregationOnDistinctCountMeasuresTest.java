@@ -101,8 +101,8 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.SchemaModifiers;
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.test.SqlPattern;
 
 /**

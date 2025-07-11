@@ -43,15 +43,15 @@ import java.util.SortedSet;
 import java.util.concurrent.Future;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.CacheCommand;
 import org.eclipse.daanse.olap.api.ConfigConstants;
-import org.eclipse.daanse.olap.api.DataTypeJdbc;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.IAggregationManager;
 import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.exception.CellRequestQuantumExceededException;
 import org.eclipse.daanse.olap.common.Util;
-import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +63,7 @@ import mondrian.rolap.agg.LiteralStarPredicate;
 import mondrian.rolap.agg.Segment;
 import mondrian.rolap.agg.SegmentBuilder;
 import mondrian.rolap.agg.SegmentCacheManager;
+import mondrian.rolap.agg.SegmentCacheManager.SegmentCacheIndexRegistry;
 import mondrian.rolap.agg.SegmentLoader;
 import mondrian.rolap.agg.SegmentWithData;
 import mondrian.rolap.agg.ValueColumnPredicate;
@@ -70,10 +71,9 @@ import mondrian.rolap.aggmatcher.AggGen;
 import mondrian.rolap.aggmatcher.AggStar;
 import mondrian.rolap.cache.SegmentCacheIndex;
 import mondrian.rolap.cache.SegmentCacheIndexImpl;
-import mondrian.server.LocusImpl;
 import mondrian.spi.SegmentBody;
 import mondrian.spi.SegmentHeader;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * A <code>FastBatchingCellReader</code> doesn't really Read cells: when asked
@@ -391,11 +391,11 @@ public class FastBatchingCellReader implements CellReader {
                 if (!cacheMgr.getContext().getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class)) {
                     final Locus locus = LocusImpl.peek();
                     cacheMgr.execute(
-                        new SegmentCacheManager.Command<Void>() {
+                        new CacheCommand<Void>() {
                             @Override
 							public Void call() throws Exception {
                                 SegmentCacheIndex index =
-                                    cacheMgr.getIndexRegistry()
+                                        ((SegmentCacheIndexRegistry)cacheMgr.getIndexRegistry())
                                     .getIndex(segmentWithData.getStar());
                                 index.add(
                                     segmentWithData.getHeader(),
@@ -706,7 +706,7 @@ class BatchLoader {
         final RolapStar star = measure.getStar();
         final RolapCatalog catalog = star.getCatalog();
         final SegmentCacheIndex index =
-            cacheMgr.getIndexRegistry().getIndex(star);
+            ((SegmentCacheIndexRegistry)cacheMgr.getIndexRegistry()).getIndex(star);
         final List<SegmentHeader> headersInCache =
             index.locate(
                 catalog.getName(),
@@ -1047,8 +1047,7 @@ class BatchLoader {
      * Command that loads the segments required for a collection of cell
      * requests. Returns the collection of segments.
      */
-    public static class LoadBatchCommand
-        extends SegmentCacheManager.Command<LoadBatchResponse>
+    public static class LoadBatchCommand implements CacheCommand<LoadBatchResponse>
     {
         private final Locus locus;
         private final SegmentCacheManager cacheMgr;

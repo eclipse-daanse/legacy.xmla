@@ -45,6 +45,7 @@ import java.util.Optional;
 import java.util.concurrent.Future;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.olap.api.CacheCommand;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
@@ -83,10 +84,10 @@ import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.agg.Segment;
 import mondrian.rolap.agg.SegmentCacheManager;
 import mondrian.rolap.agg.SegmentWithData;
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.test.SqlPattern;
-import mondrian.util.Bug;
+import  org.eclipse.daanse.olap.util.Bug;
 import mondrian.util.DelegatingInvocationHandler;
 
 /**
@@ -915,7 +916,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
 
     AbstractBasicContext<?> abc = (AbstractBasicContext) context;
     ((SegmentCacheManager)(abc.getAggregationManager().getCacheMgr())).execute(
-        new SegmentCacheManager.Command<Void>() {
+        new CacheCommand<Void>() {
           private final Locus locus = LocusImpl.peek();
 
           @Override

@@ -18,8 +18,8 @@ import org.eclipse.daanse.olap.api.Context;
 
 import mondrian.rolap.RolapUtil;
 import mondrian.rolap.SqlStatement;
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.spi.StatisticsProvider;
 
 /**

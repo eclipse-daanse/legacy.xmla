@@ -49,6 +49,7 @@ import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
+import org.eclipse.daanse.olap.api.CacheCommand;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.Locus;
@@ -64,13 +65,14 @@ import mondrian.rolap.RolapUtil;
 import mondrian.rolap.SqlStatement;
 import mondrian.rolap.StarPredicate;
 import mondrian.rolap.agg.SegmentCacheManager.AbortException;
+import mondrian.rolap.agg.SegmentCacheManager.SegmentCacheIndexRegistry;
 import mondrian.rolap.cache.SegmentCacheIndex;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.spi.SegmentBody;
 import mondrian.spi.SegmentColumn;
 import mondrian.spi.SegmentHeader;
-import mondrian.util.CancellationChecker;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.CancellationChecker;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * <p>
@@ -144,7 +146,7 @@ public class SegmentLoader {
     if ( !cacheMgr.getContext().getConfigValue(ConfigConstants.DISABLE_CACHING, ConfigConstants.DISABLE_CACHING_DEFAULT_VALUE, Boolean.class) ) {
       for ( GroupingSet groupingSet : groupingSets ) {
         for ( Segment segment : groupingSet.getSegments() ) {
-          final SegmentCacheIndex index = cacheMgr.getIndexRegistry().getIndex( segment.star );
+          final SegmentCacheIndex index = ((SegmentCacheIndexRegistry)cacheMgr.getIndexRegistry()).getIndex( segment.star );
           index.add( segment.getHeader(), new SegmentBuilder.StarSegmentConverter( segment.measure,
               compoundPredicateList ), true );
           // Make sure that we are registered as a client of
@@ -493,12 +495,12 @@ public class SegmentLoader {
     final Consumer<Statement>  callbackWithCaching = new Consumer<> () {
       @Override
 	public void accept( final Statement stmt ) {
-        cacheMgr.execute( new SegmentCacheManager.Command<Void>() {
+        cacheMgr.execute( new CacheCommand<Void>() {
           @Override
 		public Void call() throws Exception {
             boolean atLeastOneActive = false;
             for ( Segment seg : groupingSetsList.getDefaultSegments() ) {
-              final SegmentCacheIndex index = cacheMgr.getIndexRegistry().getIndex( seg.star );
+              final SegmentCacheIndex index = ((SegmentCacheIndexRegistry)cacheMgr.getIndexRegistry()).getIndex( seg.star );
               // Make sure to check if the segment still
               // exists in the index. It could have been
               // removed by a cancellation request since

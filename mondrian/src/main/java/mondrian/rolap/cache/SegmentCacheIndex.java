@@ -35,7 +35,7 @@ import org.eclipse.daanse.olap.api.Execution;
 
 import mondrian.rolap.BitKey;
 import mondrian.rolap.agg.SegmentBuilder;
-import mondrian.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import mondrian.spi.SegmentBody;
 import mondrian.spi.SegmentColumn;
 import mondrian.spi.SegmentHeader;

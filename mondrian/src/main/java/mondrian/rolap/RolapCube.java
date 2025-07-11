@@ -138,7 +138,7 @@ import mondrian.rolap.aggmatcher.ExplicitRules;
 import mondrian.rolap.cache.SoftSmartCache;
 import mondrian.rolap.util.DimensionUtil;
 import mondrian.rolap.util.PojoUtil;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 
 /**
  * <code>RolapCube</code> implements {@link Cube} for a ROLAP database.

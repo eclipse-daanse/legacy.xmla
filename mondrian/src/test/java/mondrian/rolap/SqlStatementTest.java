@@ -27,9 +27,9 @@ import org.eclipse.daanse.olap.common.QueryCanceledException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
-import mondrian.server.StatementImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.StatementImpl;
 
 /**
  * @author Andrey Khayrutdinov

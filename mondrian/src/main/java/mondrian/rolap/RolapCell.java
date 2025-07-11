@@ -84,8 +84,8 @@ import mondrian.rolap.agg.AndPredicate;
 import mondrian.rolap.agg.DrillThroughCellRequest;
 import mondrian.rolap.agg.MemberColumnPredicate;
 import mondrian.rolap.agg.OrPredicate;
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 
 /**
  * <code>RolapCell</code> implements {@link org.eclipse.daanse.olap.api.result.Cell} within a

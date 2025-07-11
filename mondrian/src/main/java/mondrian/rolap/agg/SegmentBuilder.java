@@ -63,8 +63,8 @@ import mondrian.rolap.sql.SqlQuery;
 import mondrian.spi.SegmentBody;
 import mondrian.spi.SegmentColumn;
 import mondrian.spi.SegmentHeader;
-import mondrian.util.ArraySortedSet;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.ArraySortedSet;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * Helper class that contains methods to convert between

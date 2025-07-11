@@ -62,7 +62,7 @@ import mondrian.rolap.RolapStar;
 import mondrian.rolap.RolapUtil;
 import mondrian.rolap.Utils;
 import mondrian.rolap.util.RelationUtil;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * <code>SqlQuery</code> allows us to build a <code>select</code>

@@ -73,8 +73,8 @@ import mondrian.rolap.CellKey;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.SqlStatement;
 import mondrian.rolap.StarPredicate;
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.test.SqlPattern;
 import mondrian.util.DelegatingInvocationHandler;
 

@@ -39,7 +39,7 @@ import mondrian.rolap.RolapStar;
 import mondrian.rolap.StarColumnPredicate;
 import mondrian.rolap.aggmatcher.AggStar;
 import mondrian.rolap.sql.SqlQuery;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * An AggStar's version of the {@link QuerySpec}. <p/>

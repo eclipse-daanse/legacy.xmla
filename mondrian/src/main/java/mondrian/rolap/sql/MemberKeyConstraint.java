@@ -35,7 +35,7 @@ import mondrian.rolap.RolapMember;
 import mondrian.rolap.RolapSqlExpression;
 import mondrian.rolap.SqlConstraintUtils;
 import mondrian.rolap.aggmatcher.AggStar;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * Restricts the SQL result set to members where particular columns have

@@ -42,7 +42,7 @@ import mondrian.rolap.HierarchyUsage;
 import mondrian.rolap.RolapLevel;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.aggmatcher.JdbcSchema.Table.Column;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 
 /**

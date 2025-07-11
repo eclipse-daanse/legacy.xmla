@@ -69,9 +69,9 @@ import mondrian.rolap.sql.MemberChildrenConstraint;
 import mondrian.rolap.sql.MemberKeyConstraint;
 import mondrian.rolap.sql.SqlQuery;
 import mondrian.rolap.sql.TupleConstraint;
-import mondrian.server.LocusImpl;
-import mondrian.util.CancellationChecker;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.server.LocusImpl;
+import  org.eclipse.daanse.olap.util.CancellationChecker;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * A <code>SqlMemberSource</code> reads members from a SQL database.

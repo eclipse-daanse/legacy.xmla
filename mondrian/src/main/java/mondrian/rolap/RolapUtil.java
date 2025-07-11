@@ -73,8 +73,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.rolap.RolapHierarchy.LimitedRollupMember;
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.util.ClassResolver;
 
 /**
@@ -474,7 +474,7 @@ public class RolapUtil {
         InlineTableQueryMapping inlineTable,
         final Dialect dialect)
     {
-                
+
         final int columnCount = inlineTable.getTable().getColumns().size();
         List<String> columnNames = new ArrayList<>();
         List<String> columnTypes = new ArrayList<>();

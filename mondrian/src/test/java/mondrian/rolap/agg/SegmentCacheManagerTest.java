@@ -39,6 +39,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.daanse.olap.api.CacheCommand;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
@@ -49,8 +50,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.opencube.junit5.context.TestContextImpl;
 
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 
 class SegmentCacheManagerTest {
 
@@ -155,7 +156,7 @@ class SegmentCacheManagerTest {
   }
 
 
-  private class MockCommand extends SegmentCacheManager.Command<Object> {
+  private class MockCommand implements CacheCommand<Object> {
     private final Runnable runnable;
 
     MockCommand( Runnable runnable ) {

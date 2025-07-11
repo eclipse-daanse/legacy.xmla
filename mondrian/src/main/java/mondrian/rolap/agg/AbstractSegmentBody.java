@@ -36,7 +36,7 @@ import java.util.SortedSet;
 
 import mondrian.rolap.CellKey;
 import mondrian.spi.SegmentBody;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * Abstract implementation of a SegmentBody.

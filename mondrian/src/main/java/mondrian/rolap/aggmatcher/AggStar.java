@@ -69,8 +69,8 @@ import mondrian.rolap.aggmatcher.JdbcSchema.Table.Column.Usage;
 import mondrian.rolap.aggmatcher.JdbcSchema.UsageType;
 import mondrian.rolap.sql.SqlQuery;
 import mondrian.rolap.util.ExpressionUtil;
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 
 /**
  * Aggregate table version of a RolapStar for a fact table.
@@ -1465,7 +1465,7 @@ public class AggStar {
                         new String[] {
                             getTableAlias(parentLevel.getKeyExp())},
                         new String[] {
-                            parentLevel.getKeyExp() instanceof mondrian.rolap.RolapColumn c ?   
+                            parentLevel.getKeyExp() instanceof mondrian.rolap.RolapColumn c ?
                                 c.getName() : null});
                     final int bitPos = bk.nextSetBit(0);
                     if (bitPos == -1) {

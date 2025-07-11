@@ -86,8 +86,8 @@ import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.util.FauxMemoryMonitor;
 import mondrian.util.MemoryMonitor;
 import mondrian.util.NotificationMemoryMonitor;

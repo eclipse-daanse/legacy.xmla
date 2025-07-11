@@ -30,7 +30,7 @@ package mondrian.rolap;
 import mondrian.rolap.cache.SmartCache;
 import mondrian.rolap.cache.SoftSmartCache;
 import mondrian.rolap.sql.SqlConstraint;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * Uses a {@link mondrian.rolap.cache.SmartCache} to store lists of members,

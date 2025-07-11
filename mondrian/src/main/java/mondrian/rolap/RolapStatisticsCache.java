@@ -41,7 +41,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.TableMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.TableQueryMapping;
 
 import mondrian.rolap.sql.SqlQuery;
-import mondrian.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import mondrian.spi.impl.SqlStatisticsProviderNew;
 
 /**

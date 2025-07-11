@@ -63,10 +63,10 @@ import mondrian.rolap.agg.Segment;
 import mondrian.rolap.agg.SegmentWithData;
 import mondrian.rolap.agg.ValueColumnPredicate;
 import mondrian.rolap.cache.HardSmartCache;
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.test.SqlPattern;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * To support all <code>Batch</code> related tests.

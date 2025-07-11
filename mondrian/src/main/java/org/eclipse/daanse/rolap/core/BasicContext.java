@@ -77,7 +77,7 @@ import mondrian.rolap.RolapResult;
 import mondrian.rolap.RolapResultShepherd;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.aggregator.AggregationFactoryImpl;
-import mondrian.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
 
 @Component(service = Context.class, scope = ServiceScope.SINGLETON)
 public class BasicContext extends AbstractRolapContext implements RolapContext {

@@ -42,7 +42,7 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.rolap.RolapConnection;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 
 /**
  * Unit test for {@link TupleList} and common implementations.

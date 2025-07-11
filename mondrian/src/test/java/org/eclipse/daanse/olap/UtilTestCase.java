@@ -57,11 +57,10 @@ import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import mondrian.rolap.RolapUtil;
-import mondrian.util.ArraySortedSet;
-import mondrian.util.ArrayStack;
+import  org.eclipse.daanse.olap.util.ArraySortedSet;
+import org.eclipse.daanse.olap.util.ArrayStack;
 import mondrian.util.ByteString;
-import mondrian.util.CartesianProductList;
+import org.eclipse.daanse.olap.util.CartesianProductList;
 import mondrian.util.Composite;
 import mondrian.util.ServiceDiscovery;
 

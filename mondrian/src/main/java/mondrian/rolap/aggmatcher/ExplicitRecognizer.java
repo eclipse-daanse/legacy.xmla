@@ -50,7 +50,7 @@ import mondrian.rolap.RolapCube;
 import mondrian.rolap.RolapLevel;
 import mondrian.rolap.RolapStar;
 import mondrian.rolap.aggmatcher.JdbcSchema.Table.Column;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * This is the Recognizer for the aggregate table descriptions that appear in

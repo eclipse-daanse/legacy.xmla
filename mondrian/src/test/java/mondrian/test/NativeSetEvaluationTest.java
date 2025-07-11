@@ -73,7 +73,7 @@ import mondrian.rolap.BatchTestCase;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapCube;
 import mondrian.rolap.SchemaModifiers;
-import mondrian.util.Bug;
+import  org.eclipse.daanse.olap.util.Bug;
 
 /**
  * Test native evaluation of supported set operations.

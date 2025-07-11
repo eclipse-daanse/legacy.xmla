@@ -37,7 +37,7 @@ import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalMember;
 import org.eclipse.daanse.olap.query.component.HierarchyExpressionImpl;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 
-import mondrian.util.Bug;
+import  org.eclipse.daanse.olap.util.Bug;
 
 /**
  * RolapCubeMember wraps RolapMembers and binds them to a specific cube.

@@ -47,7 +47,7 @@ import org.eclipse.daanse.olap.common.QueryTimeoutException;
 import org.eclipse.daanse.olap.common.ResourceLimitExceededException;
 import org.eclipse.daanse.olap.common.Util;
 
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * A utility class for {@link RolapConnection}. It specializes in

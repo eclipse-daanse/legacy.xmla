@@ -15,7 +15,7 @@ import java.util.SortedSet;
 
 import org.eclipse.daanse.olap.common.Util;
 
-import mondrian.util.ArraySortedSet;
+import  org.eclipse.daanse.olap.util.ArraySortedSet;
 
 
 /**

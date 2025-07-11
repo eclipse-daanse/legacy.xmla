@@ -80,10 +80,10 @@ import mondrian.rolap.sql.MemberListCrossJoinArg;
 import mondrian.rolap.sql.SqlQuery;
 import mondrian.rolap.sql.TupleConstraint;
 import mondrian.rolap.util.ExpressionUtil;
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
-import mondrian.util.CancellationChecker;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
+import  org.eclipse.daanse.olap.util.CancellationChecker;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * Reads the members of a single level (level.members) or of multiple levels (crossjoin).

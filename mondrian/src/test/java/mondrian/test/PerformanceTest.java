@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.rolap.SchemaModifiers;
-import mondrian.util.Bug;
+import  org.eclipse.daanse.olap.util.Bug;
 
 /**
  * Various unit tests concerned with performance.

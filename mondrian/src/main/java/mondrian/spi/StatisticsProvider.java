@@ -12,7 +12,7 @@ package mondrian.spi;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 
-import mondrian.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
 
 /**
  * Provides estimates of the number of rows in a database.

@@ -12,7 +12,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonMap;
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static mondrian.util.Pair.of;
+import static org.eclipse.daanse.olap.util.Pair.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -63,7 +63,7 @@ import mondrian.spi.SegmentColumn;
 import mondrian.spi.SegmentHeader;
 import mondrian.test.PerformanceTest;
 import mondrian.util.ByteString;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * <p>Test for <code>SegmentBuilder</code>.</p>

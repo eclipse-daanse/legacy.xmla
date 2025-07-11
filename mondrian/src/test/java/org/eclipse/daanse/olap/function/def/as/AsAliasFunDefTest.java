@@ -35,7 +35,7 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.util.Bug;
+import  org.eclipse.daanse.olap.util.Bug;
 
 public class AsAliasFunDefTest {
 

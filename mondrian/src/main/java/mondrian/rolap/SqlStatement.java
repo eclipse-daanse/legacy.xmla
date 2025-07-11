@@ -56,7 +56,7 @@ import org.eclipse.daanse.olap.api.monitor.event.SqlStatementEventCommon;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementExecuteEvent;
 import org.eclipse.daanse.olap.api.monitor.event.SqlStatementStartEvent;
 
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.util.Counters;
 import mondrian.util.DelegatingInvocationHandler;
 
@@ -665,7 +665,7 @@ public class SqlStatement implements ISqlStatement {
   public Context getContext() {
         return context;
   }
-  
+
   public static long mdxStatementIdOf(LocusImpl locus) {
     if (locus.getExecution() != null) {
       final org.eclipse.daanse.olap.api.Statement statement = locus.getExecution().getMondrianStatement();

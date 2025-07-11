@@ -55,8 +55,8 @@ import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.server.LocusImpl;
-import mondrian.util.Bug;
+import  org.eclipse.daanse.olap.server.LocusImpl;
+import  org.eclipse.daanse.olap.util.Bug;
 
 /**
  * Basic implementation of a member in a {@link RolapHierarchy}.

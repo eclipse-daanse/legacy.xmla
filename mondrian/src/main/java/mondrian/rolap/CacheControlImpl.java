@@ -77,10 +77,10 @@ import org.eclipse.daanse.olap.query.component.IdImpl;
 
 import mondrian.rolap.agg.SegmentCacheManager;
 import mondrian.rolap.sql.MemberChildrenConstraint;
-import mondrian.server.ExecutionImpl;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.spi.SegmentColumn;
-import mondrian.util.ArraySortedSet;
+import org.eclipse.daanse.olap.util.ArraySortedSet;
 
 /**
  * Implementation of {@link CacheControl} API.
@@ -595,7 +595,7 @@ public class CacheControlImpl implements CacheControl {
         for (RolapStar star : starList) {
             star.print(pw, "", false);
         }
-        
+
 		AbstractBasicContext abc = (AbstractBasicContext) connection.getContext();
         final ISegmentCacheManager manager =
                 abc.getAggregationManager().getCacheMgr(this.connection);

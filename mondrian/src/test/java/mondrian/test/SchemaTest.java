@@ -137,7 +137,7 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.aggmatcher.AggTableManager;
-import mondrian.util.Bug;
+import  org.eclipse.daanse.olap.util.Bug;
 
 //import org.apache.logging.log4j.spi.LoggerContext;
 

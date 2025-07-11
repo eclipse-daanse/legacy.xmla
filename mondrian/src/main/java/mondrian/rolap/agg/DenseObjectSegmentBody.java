@@ -27,7 +27,7 @@ package mondrian.rolap.agg;
 import java.util.List;
 import java.util.SortedSet;
 
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * Implementation of a segment body which stores the data inside

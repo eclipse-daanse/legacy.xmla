@@ -104,12 +104,12 @@ import mondrian.rolap.RolapCatalog;
 import mondrian.rolap.RolapConnection;
 import mondrian.rolap.RolapUtil;
 import mondrian.rolap.SchemaModifiers;
-import mondrian.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import mondrian.spi.StatisticsProvider;
 import mondrian.spi.impl.JdbcStatisticsProvider;
 import mondrian.spi.impl.SqlStatisticsProvider;
 import mondrian.spi.impl.SqlStatisticsProviderNew;
-import mondrian.util.Bug;
+import  org.eclipse.daanse.olap.util.Bug;
 
 /**
  * <code>BasicQueryTest</code> is a test case which tests simple queries against the FoodMart database.

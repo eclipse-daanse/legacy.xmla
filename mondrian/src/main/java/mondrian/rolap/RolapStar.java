@@ -105,8 +105,8 @@ import mondrian.rolap.aggmatcher.AggStar;
 import mondrian.rolap.sql.SqlQuery;
 import mondrian.rolap.util.PojoUtil;
 import mondrian.rolap.util.RelationUtil;
-import mondrian.server.LocusImpl;
-import mondrian.util.Bug;
+import  org.eclipse.daanse.olap.server.LocusImpl;
+import org.eclipse.daanse.olap.util.Bug;
 
 /**
  * A <code>RolapStar</code> is a star schema. It is the means to read cell

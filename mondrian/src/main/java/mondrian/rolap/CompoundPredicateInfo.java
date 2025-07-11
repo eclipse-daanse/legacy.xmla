@@ -47,7 +47,7 @@ import mondrian.rolap.agg.ListColumnPredicate;
 import mondrian.rolap.agg.OrPredicate;
 import mondrian.rolap.agg.ValueColumnPredicate;
 import mondrian.rolap.sql.SqlQuery;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * Constructs a Pair<BitKey, StarPredicate> based on an tuple list and measure, along with the string representation of

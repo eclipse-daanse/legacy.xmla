@@ -9,7 +9,7 @@
 package mondrian.rolap.agg;
 
 import static java.util.Arrays.asList;
-import static mondrian.util.Pair.of;
+import static org.eclipse.daanse.olap.util.Pair.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,7 +27,7 @@ import java.util.TreeSet;
 import org.junit.jupiter.api.Test;
 
 import mondrian.rolap.CellKey;
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * This is a base class for two heirs. It provides several template methods

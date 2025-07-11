@@ -87,7 +87,7 @@ import mondrian.olap.fun.CrossJoinTest.NullFunDef;
 import mondrian.olap.fun.TestMember;
 import mondrian.rolap.aggmatcher.AggStar;
 import mondrian.rolap.sql.SqlQuery;
-import mondrian.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
 
 /**
  * <code>SqlConstraintUtilsTest</code> tests the functions defined in

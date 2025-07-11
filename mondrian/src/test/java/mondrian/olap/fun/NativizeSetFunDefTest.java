@@ -32,7 +32,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
 import mondrian.rolap.RolapConnection;
-import mondrian.server.LocusImpl;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.test.SqlPattern;
 
 /**

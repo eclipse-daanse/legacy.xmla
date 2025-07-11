@@ -12,7 +12,7 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.SortedSet;
 
-import mondrian.util.Pair;
+import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * @author Andrey Khayrutdinov

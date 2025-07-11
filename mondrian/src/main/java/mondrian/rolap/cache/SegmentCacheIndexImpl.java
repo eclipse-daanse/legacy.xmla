@@ -59,8 +59,8 @@ import mondrian.spi.SegmentBody;
 import mondrian.spi.SegmentColumn;
 import mondrian.spi.SegmentHeader;
 import mondrian.util.ByteString;
-import mondrian.util.CartesianProductList;
-import mondrian.util.Pair;
+import org.eclipse.daanse.olap.util.CartesianProductList;
+import  org.eclipse.daanse.olap.util.Pair;
 import mondrian.util.PartiallyOrderedSet;
 import mondrian.util.SlotFuture;
 

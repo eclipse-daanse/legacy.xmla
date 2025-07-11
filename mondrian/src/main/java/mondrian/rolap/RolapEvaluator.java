@@ -65,7 +65,7 @@ import org.eclipse.daanse.olap.fun.FunUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.util.Format;
+import  org.eclipse.daanse.olap.util.Format;
 
 /**
  * <code>RolapEvaluator</code> evaluates expressions in a dimensional environment.

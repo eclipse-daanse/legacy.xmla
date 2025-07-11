@@ -339,7 +339,7 @@ import mondrian.rolap.RolapProfilingEvaluator;
 import mondrian.rolap.RolapResult;
 import mondrian.rolap.RolapResultShepherd;
 import mondrian.rolap.agg.AggregationManager;
-import mondrian.server.ExecutionImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
 
 public class TestContextImpl extends AbstractRolapContext implements TestContext {
 
