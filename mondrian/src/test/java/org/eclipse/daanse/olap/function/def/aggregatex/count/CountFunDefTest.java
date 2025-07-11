@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.aggregate.count;
+package org.eclipse.daanse.olap.function.def.aggregatex.count;
 
 import static mondrian.olap.fun.FunctionTest.allHiersExcept;
 import static mondrian.olap.fun.FunctionTest.assertExprReturns;
