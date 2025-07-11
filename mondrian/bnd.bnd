@@ -7,42 +7,4 @@ Import-Package: \
 DynamicImport-Package: *
 
 Export-Package: \
-	mondrian.*,\
-	org.eclipse.daanse.olap.api,\
-org.eclipse.daanse.olap.api.access,\
-org.eclipse.daanse.olap.api.element,\
-org.eclipse.daanse.olap.api.function,\
-org.eclipse.daanse.olap.api.query,\
-org.eclipse.daanse.olap.api.query.component,\
-org.eclipse.daanse.olap.api.query.component.visit,\
-org.eclipse.daanse.olap.api.result,\
-org.eclipse.daanse.olap.api.rolap.agg,\
-org.eclipse.daanse.olap.api.type,\
-org.eclipse.daanse.olap.calc.api,\
-org.eclipse.daanse.olap.calc.api.compiler,\
-org.eclipse.daanse.olap.calc.api.profile,\
-org.eclipse.daanse.olap.calc.api.todo,\
-org.eclipse.daanse.olap.calc.base,\
-org.eclipse.daanse.olap.calc.base.compiler,\
-org.eclipse.daanse.olap.calc.base.constant,\
-org.eclipse.daanse.olap.calc.base.nested,\
-org.eclipse.daanse.olap.calc.base.profile,\
-org.eclipse.daanse.olap.calc.base.type.booleanx,\
-org.eclipse.daanse.olap.calc.base.type.datetime,\
-org.eclipse.daanse.olap.calc.base.type.dimension,\
-org.eclipse.daanse.olap.calc.base.type.doublex,\
-org.eclipse.daanse.olap.calc.base.type.hierarchy,\
-org.eclipse.daanse.olap.calc.base.type.integer,\
-org.eclipse.daanse.olap.calc.base.type.level,\
-org.eclipse.daanse.olap.calc.base.type.member,\
-org.eclipse.daanse.olap.calc.base.type.string,\
-org.eclipse.daanse.olap.calc.base.type.tuple,\
-org.eclipse.daanse.olap.calc.base.type.tuplelist,\
-org.eclipse.daanse.olap.calc.base.util,\
-org.eclipse.daanse.olap.calc.base.value,\
-org.eclipse.daanse.olap.core,\
-org.eclipse.daanse.olap.function,\
-org.eclipse.daanse.olap.function.def*,\
-org.eclipse.daanse.olap.function.resolver,\
-org.eclipse.daanse.olap.query.base,\
-org.eclipse.daanse.olap.udf.impl
+	mondrian.*
