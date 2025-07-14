@@ -33,6 +33,7 @@ import java.util.Locale;
 
 import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.LevelProperty;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author jhyde
  */
-public class RolapProperty extends AbstractProperty implements OlapElement {
+public class RolapProperty extends AbstractProperty implements LevelProperty, OlapElement {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RolapProperty.class);
     private final static String mdxPropertyName = "property ''{0}''";

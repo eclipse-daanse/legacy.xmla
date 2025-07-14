@@ -25,13 +25,11 @@
 
 package mondrian.rolap;
 
-import java.text.MessageFormat;
-
 import org.eclipse.daanse.jdbc.db.dialect.api.Datatype;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.PhisicalCubeMeasure;
 import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.element.MetaData;
-import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.formatter.CellFormatter;
 import org.eclipse.daanse.olap.common.StandardProperty;
 import org.eclipse.daanse.olap.exceptions.CastInvalidTypeException;
@@ -51,7 +49,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
  */
 public class RolapBaseCubeMeasure
     extends RolapMemberBase
-    implements RolapStoredMeasure
+    implements PhisicalCubeMeasure, RolapStoredMeasure
 {
 
     private final static String unknownAggregator = "Unknown aggregator ''{0}''";

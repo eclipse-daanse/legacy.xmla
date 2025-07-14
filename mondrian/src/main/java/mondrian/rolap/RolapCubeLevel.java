@@ -27,6 +27,7 @@
 
 package mondrian.rolap;
 
+import org.eclipse.daanse.olap.api.CubeLevel;
 import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.element.LevelType;
 import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
@@ -50,7 +51,7 @@ import mondrian.rolap.util.RelationUtil;
  *
  * @author Will Gorman, 19 October 2007
  */
-public class RolapCubeLevel extends RolapLevel {
+public class RolapCubeLevel extends RolapLevel implements CubeLevel {
 
     private final RolapLevel rolapLevel;
     private RolapStar.Column starKeyColumn = null;
