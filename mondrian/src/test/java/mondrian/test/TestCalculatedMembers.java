@@ -1702,7 +1702,7 @@ import mondrian.rolap.SchemaModifiers;
             + "{}\n"
             + "Axis #1:\n"
             + "{[Measures].[Foo]}\n"
-            + "Row #0: #ERR: mondrian.olap.fun.MondrianEvaluationException: wrtong typed, was: 123.0\n");
+            + "Row #0: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: wrtong typed, was: 123.0\n");
 
         // unrelated to Mondrian852 we were occasionally seeing differences
         // in number of digits of the casted value based on whether the
@@ -1737,7 +1737,7 @@ import mondrian.rolap.SchemaModifiers;
             + "{[Measures].[Unit Sales]}\n"
             + "{[Measures].[Tom1]}\n"
             + "Row #0: 21628.0, 20957.0, 23706.0, 20179.0\n"
-            + "Row #1: #ERR: mondrian.olap.fun.MondrianEvaluationException: wrtong typed, was: 45539.69, 44058.79, 50029.87, 42878.25\n");
+            + "Row #1: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: wrtong typed, was: 45539.69, 44058.79, 50029.87, 42878.25\n");
 
         // Solve orders to achieve what Tom intended.
         assertQueryReturns(context.getConnectionWithDefaultRole(),

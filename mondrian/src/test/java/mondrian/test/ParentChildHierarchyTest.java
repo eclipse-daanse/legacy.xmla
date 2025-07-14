@@ -879,7 +879,7 @@ class ParentChildHierarchyTest {
         //
         // So encapsulate the error string as a pattern.
         final String expectedPattern =
-            "(?s).*Row #0: #ERR: mondrian.olap.fun.MondrianEvaluationException.*: Infinite loop while evaluating calculated member \\'\\[Measures\\].\\[Foo\\]\\'; context stack is.*";
+            "(?s).*Row #0: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException.*: Infinite loop while evaluating calculated member \\'\\[Measures\\].\\[Foo\\]\\'; context stack is.*";
         if (!resultString.matches(expectedPattern)) {
             System.out.println(resultString);
             assertEquals(expectedPattern, resultString);

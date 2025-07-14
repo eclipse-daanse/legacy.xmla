@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.crossjoin;
+package org.eclipse.daanse.olap.function.def.crossjoinx;
 
 import static mondrian.olap.fun.FunctionTest.assertExprReturns;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;

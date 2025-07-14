@@ -559,7 +559,7 @@ class AggregationOnDistinctCountMeasuresTest {
               + "{[Measures].[Customer Count]}\n"
               + "Axis #2:\n"
               + "{[Product].[Product].[X]}\n"
-              + "Row #0: #ERR: mondrian.olap.fun.MondrianEvaluationException: "
+              + "Row #0: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: "
               + "Aggregation is not supported over a list with more than 7 predicates (see property MaxConstraints)\n");
 
         // aggregation over a non-distinct-count measure is OK

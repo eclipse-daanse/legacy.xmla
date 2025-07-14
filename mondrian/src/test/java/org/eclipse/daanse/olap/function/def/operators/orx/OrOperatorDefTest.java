@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.operators.or;
+package org.eclipse.daanse.olap.function.def.operators.orx;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.opencube.junit5.TestUtil.assertBooleanExprReturns;

@@ -3372,18 +3372,18 @@ public class BasicQueryTest {
                   + "Row #3: 2,015.528\n"
                   + "Row #3: 1,641.615\n"
                   + "Row #3: 1,584.334\n"
-                  + "Row #4: #ERR: mondrian.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q1].[1]'\n"
-                  + "Row #4: #ERR: mondrian.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q1].[2]'\n"
-                  + "Row #4: #ERR: mondrian.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q1].[3]'\n"
-                  + "Row #4: #ERR: mondrian.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q2].[4]'\n"
-                  + "Row #4: #ERR: mondrian.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q2].[5]'\n"
-                  + "Row #4: #ERR: mondrian.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q2].[6]'\n"
-                  + "Row #4: #ERR: mondrian.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q3].[7]'\n"
-                  + "Row #4: #ERR: mondrian.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q3].[8]'\n"
-                  + "Row #4: #ERR: mondrian.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q3].[9]'\n"
-                  + "Row #4: #ERR: mondrian.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q4].[10]'\n"
-                  + "Row #4: #ERR: mondrian.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q4].[11]'\n"
-                  + "Row #4: #ERR: mondrian.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q4].[12]'\n");
+                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q1].[1]'\n"
+                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q1].[2]'\n"
+                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q1].[3]'\n"
+                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q2].[4]'\n"
+                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q2].[5]'\n"
+                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q2].[6]'\n"
+                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q3].[7]'\n"
+                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q3].[8]'\n"
+                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q3].[9]'\n"
+                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q4].[10]'\n"
+                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q4].[11]'\n"
+                  + "Row #4: #ERR: org.eclipse.daanse.olap.fun.MondrianEvaluationException: Property 'Dynamic Forecast Multiplier' is not valid for member '[Time].[Time].[1997].[Q4].[12]'\n");
   }
 
   @ParameterizedTest

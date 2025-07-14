@@ -11,7 +11,7 @@
  *   SmartCity Jena - initial
  *   Stefan Bischof (bipolis.org) - initial
  */
-package org.eclipse.daanse.olap.function.def.set.hierarchy;
+package org.eclipse.daanse.olap.function.def.set.hierarchyx;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
 import static org.opencube.junit5.TestUtil.assertAxisReturns;
