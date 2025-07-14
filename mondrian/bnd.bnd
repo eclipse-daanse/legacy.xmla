@@ -1,10 +1,8 @@
 Import-Package: \
-	com.ms.jdbc.odbc;'resolution:'=optional,\
-	javax.servlet.jsp;'resolution:'=optional,\
-	javax.servlet.jsp.tagext;'resolution:'=optional,\
-	*
+ *
 
 DynamicImport-Package: *
 
 Export-Package: \
 	mondrian.*
+	
