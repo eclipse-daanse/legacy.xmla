@@ -27,14 +27,11 @@ import java.util.UUID;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.jdbc.db.dialect.db.h2.H2Dialect;
 import org.eclipse.daanse.jdbc.db.api.meta.MetaInfo;
 import org.eclipse.daanse.jdbc.db.core.DatabaseServiceImpl;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.db.h2.H2Dialect;
 import org.h2.jdbcx.JdbcDataSource;
-
-import aQute.bnd.annotation.spi.ServiceProvider;
-import mondrian.rolap.RolapCatalogCache;
 
 //@ServiceProvider(value = DatabaseProvider.class)
 public class H2DatabaseProvider implements DatabaseProvider {
@@ -85,9 +82,7 @@ public class H2DatabaseProvider implements DatabaseProvider {
 		cpDataSource.setPassword("sa");
 		try {
 			connection = cpDataSource.getConnection();
-			DatabaseServiceImpl databaseServiceImpl = new DatabaseServiceImpl();
-			MetaInfo metaInfo = databaseServiceImpl.createMetaInfo(connection);
-			Dialect dialect = new H2Dialect(metaInfo);
+			Dialect dialect = new H2Dialect(connection);
 
 			connection.close();
 			return new SimpleEntry<>(cpDataSource, dialect);

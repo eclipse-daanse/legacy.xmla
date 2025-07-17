@@ -13,11 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+
 import org.eclipse.daanse.jdbc.db.dialect.db.postgresql.PostgreSqlDialect;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-import org.eclipse.daanse.jdbc.db.api.meta.DatabaseInfo;
-import org.eclipse.daanse.jdbc.db.api.meta.IdentifierInfo;
-import org.eclipse.daanse.jdbc.db.api.meta.MetaInfo;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -55,7 +56,7 @@ class CodeSetTest {
     throws Exception
     {
     PostgreSqlDialect postgreSqlDialect = new PostgreSqlDialect(
-        mockMetaInfo(
+        mockConnection(
             POSTGRESQL_PRODUCT_NAME,
             POSTGRESQL_PRODUCT_VERSION));
     codeSet = new SqlQuery.CodeSet();
@@ -82,7 +83,7 @@ class CodeSetTest {
     throws Exception
     {
 	    PostgreSqlDialect postgreSqlDialect = new PostgreSqlDialect(
-        mockMetaInfo(
+        mockConnection(
             POSTGRESQL_PRODUCT_NAME,
             POSTGRESQL_PRODUCT_VERSION));
     codeSet = new SqlQuery.CodeSet();
@@ -111,7 +112,7 @@ class CodeSetTest {
       throws Exception
       {
 	    PostgreSqlDialect postgreSqlDialect = new PostgreSqlDialect(
-        mockMetaInfo(
+        mockConnection(
             POSTGRESQL_PRODUCT_NAME,
             POSTGRESQL_PRODUCT_VERSION));
     codeSet = new SqlQuery.CodeSet();
@@ -138,7 +139,7 @@ class CodeSetTest {
     throws Exception
     {
 	    PostgreSqlDialect postgreSqlDialect = new PostgreSqlDialect(
-        mockMetaInfo(
+        mockConnection(
             POSTGRESQL_PRODUCT_NAME,
             POSTGRESQL_PRODUCT_VERSION));
     codeSet = new SqlQuery.CodeSet();
@@ -164,7 +165,7 @@ class CodeSetTest {
     throws Exception
     {
 	    PostgreSqlDialect postgreSqlDialect = new PostgreSqlDialect(
-        mockMetaInfo(
+        mockConnection(
             POSTGRESQL_PRODUCT_NAME,
             POSTGRESQL_PRODUCT_VERSION));
     codeSet = new SqlQuery.CodeSet();
@@ -180,19 +181,17 @@ class CodeSetTest {
     }
   }
 
-  private MetaInfo mockMetaInfo(
+  private Connection mockConnection(
       String dbProductName, String dbProductVersion) throws Exception
       {
-	MetaInfo metaInfoMock = mock(MetaInfo.class);
-	DatabaseInfo databaseInfo = mock(DatabaseInfo.class);
-	IdentifierInfo identifierInfo = mock(IdentifierInfo.class);
-	when(metaInfoMock.databaseInfo()).thenReturn(databaseInfo);
-	when(metaInfoMock.identifierInfo()).thenReturn(identifierInfo);
-    when(databaseInfo.databaseProductName()).thenReturn(
+    Connection connection = mock(Connection.class);
+	DatabaseMetaData metaData = mock(DatabaseMetaData.class);
+	when(connection.getMetaData()).thenReturn(metaData);
+    when(metaData.getDatabaseProductName()).thenReturn(
         dbProductName != null ? dbProductName : EMPTY_NAME);
-    when(databaseInfo.databaseProductVersion()).thenReturn(
+    when(metaData.getDatabaseProductVersion()).thenReturn(
         dbProductVersion != null ? dbProductVersion : EMPTY_NAME);
-    return metaInfoMock;
+    return connection;
   }
 
 }

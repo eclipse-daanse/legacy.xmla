@@ -28,10 +28,8 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
-import org.eclipse.daanse.jdbc.db.dialect.db.mysql.MySqlDialect;
-import org.eclipse.daanse.jdbc.db.api.meta.MetaInfo;
-import org.eclipse.daanse.jdbc.db.core.DatabaseServiceImpl;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.jdbc.db.dialect.db.mysql.MySqlDialect;
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteDataSource;
 
@@ -66,9 +64,7 @@ public class SQLiteDatabaseProvider implements DatabaseProvider {
 		dataSource.setUrl(JDBC_SQLITE_MEMORY);
 		try {
 			Connection connection = dataSource.getConnection();
-			DatabaseServiceImpl databaseServiceImpl = new DatabaseServiceImpl();
-			MetaInfo metaInfo = databaseServiceImpl.createMetaInfo(connection);
-			Dialect dialect = new MySqlDialect(metaInfo);
+			Dialect dialect = new MySqlDialect(connection);
 			connection.close();
 			return new SimpleEntry<>(dataSource, dialect);
 		} catch (SQLException e) {
