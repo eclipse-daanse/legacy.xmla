@@ -18,8 +18,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import aQute.bnd.annotation.spi.ServiceConsumer;
-
 /**
  * Utility functions to discover Java services.
  *
@@ -34,7 +32,6 @@ import aQute.bnd.annotation.spi.ServiceConsumer;
  * @deprecated use ServiceLoader
  */
 @Deprecated()
-@ServiceConsumer(org.eclipse.daanse.jdbc.db.dialect.api.DialectFactory.class)
 public class ServiceDiscovery<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceDiscovery.class);
