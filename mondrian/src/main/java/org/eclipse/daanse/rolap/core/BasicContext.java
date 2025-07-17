@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.jdbc.db.dialect.api.DialectResolver;
+import org.eclipse.daanse.jdbc.db.dialect.api.DialectFactory;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.olap.api.AggregationFactory;
 import org.eclipse.daanse.olap.api.ConfigConstants;
@@ -32,24 +32,14 @@ import org.eclipse.daanse.olap.api.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
-
-import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.aggregator.CustomAggregatorFactory;
+import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.common.ExecuteDurationUtil;
 import org.eclipse.daanse.olap.core.LoggingEventBus;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import org.eclipse.daanse.rolap.api.RolapContext;
-import org.eclipse.daanse.rolap.aggregator.AvgAggregator;
-import org.eclipse.daanse.rolap.aggregator.CountAggregator;
-import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
-import org.eclipse.daanse.rolap.aggregator.MaxAggregator;
-import org.eclipse.daanse.rolap.aggregator.MinAggregator;
-import org.eclipse.daanse.rolap.aggregator.SumAggregator;
-import org.eclipse.daanse.rolap.aggregator.experimental.NoneAggregator;
-import org.eclipse.daanse.rolap.aggregator.experimental.IppAggregator;
-import org.eclipse.daanse.rolap.aggregator.experimental.RndAggregator;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -77,14 +67,13 @@ import mondrian.rolap.RolapResult;
 import mondrian.rolap.RolapResultShepherd;
 import mondrian.rolap.agg.AggregationManager;
 import mondrian.rolap.aggregator.AggregationFactoryImpl;
-import  org.eclipse.daanse.olap.server.ExecutionImpl;
 
 @Component(service = Context.class, scope = ServiceScope.SINGLETON)
 public class BasicContext extends AbstractRolapContext implements RolapContext {
 
     public static final String PID = "org.eclipse.daanse.rolap.core.BasicContext";
 
-    public static final String REF_NAME_DIALECT_RESOLVER = "dialectResolver";
+    public static final String REF_NAME_DIALECT_FACTORY = "dialectFactory";
     public static final String REF_NAME_DATA_SOURCE = "dataSource";
     public static final String REF_NAME_CATALOG_MAPPING_SUPPLIER = "catalogMappingSuppier";
     public static final String REF_NAME_ROLAP_CONTEXT_MAPPING_SUPPLIER = "rolapContextMappingSuppliers";
@@ -99,8 +88,8 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
     @Reference(name = REF_NAME_DATA_SOURCE, target = UnresolvableNamespace.UNRESOLVABLE_FILTER)
     private DataSource dataSource = null;
 
-    @Reference(name = REF_NAME_DIALECT_RESOLVER)
-    private DialectResolver dialectResolver = null;
+    @Reference(name = REF_NAME_DIALECT_FACTORY)
+    private DialectFactory dialectFactory = null;
 
     @Reference(name = REF_NAME_CATALOG_MAPPING_SUPPLIER, target = UnresolvableNamespace.UNRESOLVABLE_FILTER, cardinality = ReferenceCardinality.MANDATORY)
     private CatalogMappingSupplier catalogMappingSupplier;
@@ -148,7 +137,7 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
         queryLimitSemaphore = new Semaphore(getConfigValue(ConfigConstants.QUERY_LIMIT, ConfigConstants.QUERY_LIMIT_DEFAULT_VALUE ,Integer.class));
 
         try (Connection connection = dataSource.getConnection()) {
-            Optional<Dialect> optionalDialect = dialectResolver.resolve(dataSource);
+            Optional<Dialect> optionalDialect = dialectFactory.tryCreateDialect(connection);
             dialect = optionalDialect.orElseThrow(() -> new Exception(ERR_MSG_DIALECT_INIT));
             aggregationFactory = new AggregationFactoryImpl(dialect, this.getCustomAggregators());
         }

@@ -40,7 +40,8 @@
 	bnd.identity;id='org.eclipse.daanse.rolap.mapping.verifyer.basic',\
 	bnd.identity;id='org.eclipse.daanse.sql.guard.api',\
 	bnd.identity;id='org.eclipse.daanse.sql.guard.jsqltranspiler',\
-	bnd.identity;id='org.eclipse.daanse.xmla.server.jdk.httpserver'
+	bnd.identity;id='org.eclipse.daanse.xmla.server.jdk.httpserver',\
+	bnd.identity;id='org.apache.felix.fileinstall'
 
 
 # This will help us keep -runbundles sorted
@@ -62,6 +63,7 @@
 	json;version='[20250107.0.0,20250107.0.1)',\
 	org.apache.aries.spifly.dynamic.framework.extension;version='[1.3.7,1.3.8)',\
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
+	org.apache.felix.fileinstall;version='[3.7.4,3.7.5)',\
 	org.apache.felix.metatype;version='[1.2.4,1.2.5)',\
 	org.apache.felix.scr;version='[2.2.10,2.2.11)',\
 	org.eclipse.daanse.demo.server.play;version='[0.0.1,0.0.2)',\

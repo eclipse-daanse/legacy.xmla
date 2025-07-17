@@ -170,8 +170,10 @@ public class CatalogsFileListener implements FileSystemWatcherListener {
 
 		Dictionary<String, Object> props = new Hashtable<>();
 		props.put(BasicContext.REF_NAME_DATA_SOURCE + TARGET_EXT, filterOfMatcherKey(matcherKey));
-		props.put(BasicContext.REF_NAME_EXPRESSION_COMPILER_FACTORY + TARGET_EXT,
-				"(component.name=" + PID_EXP_COMP_FAC + ")");
+        props.put(BasicContext.REF_NAME_EXPRESSION_COMPILER_FACTORY + TARGET_EXT,
+                "(component.name=" + PID_EXP_COMP_FAC + ")");
+        props.put(BasicContext.REF_NAME_DIALECT_FACTORY + TARGET_EXT,
+                "(org.eclipse.daanse.dialect.name=H2)");
 		props.put(BasicContext.REF_NAME_CATALOG_MAPPING_SUPPLIER + TARGET_EXT, filterOfMatcherKey(matcherKey));
 		props.put(BasicContext.REF_NAME_MDX_PARSER_PROVIDER + TARGET_EXT, "(component.name=" + PID_PARSER + ")");
 
