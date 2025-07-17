@@ -86,7 +86,7 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
 
     public static final String REF_NAME_DIALECT_RESOLVER = "dialectResolver";
     public static final String REF_NAME_DATA_SOURCE = "dataSource";
-    public static final String REF_NAME_DB_MAPPING_CATALOG_SUPPLIER = "databaseMappingCatalogSuppier";
+    public static final String REF_NAME_CATALOG_MAPPING_SUPPLIER = "catalogMappingSuppier";
     public static final String REF_NAME_ROLAP_CONTEXT_MAPPING_SUPPLIER = "rolapContextMappingSuppliers";
     public static final String REF_NAME_MDX_PARSER_PROVIDER = "mdxParserProvider";
     public static final String REF_NAME_EXPRESSION_COMPILER_FACTORY = "expressionCompilerFactory";
@@ -102,7 +102,7 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
     @Reference(name = REF_NAME_DIALECT_RESOLVER)
     private DialectResolver dialectResolver = null;
 
-    @Reference(name = REF_NAME_DB_MAPPING_CATALOG_SUPPLIER, target = UnresolvableNamespace.UNRESOLVABLE_FILTER, cardinality = ReferenceCardinality.MANDATORY)
+    @Reference(name = REF_NAME_CATALOG_MAPPING_SUPPLIER, target = UnresolvableNamespace.UNRESOLVABLE_FILTER, cardinality = ReferenceCardinality.MANDATORY)
     private CatalogMappingSupplier catalogMappingSupplier;
 
     @Reference(name = REF_NAME_EXPRESSION_COMPILER_FACTORY, target = UnresolvableNamespace.UNRESOLVABLE_FILTER)

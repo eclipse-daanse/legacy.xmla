@@ -22,6 +22,7 @@
 					<bndruns>
 						<bndrun>xmla.demo.server.jetty.bndrun</bndrun>
 						<bndrun>xmla.demo.server.jdkhttp.bndrun</bndrun>
+						<bndrun>xmla.demo.server.jdkhttp.fileinstall.bndrun</bndrun>
 
 					</bndruns>
 					<exporter>bnd.executablejar</exporter>
@@ -44,6 +45,13 @@
 		</plugins>
 	</build>
 	<dependencies>
+				<dependency>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>org.apache.felix.fileinstall</artifactId>
+				<version>3.7.4</version>
+				<scope>runtime</scope>
+			</dependency>
+
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
 			<artifactId>org.eclipse.daanse.xmla.api</artifactId>
@@ -133,6 +141,32 @@
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.jdbc.db.dialect.db.oracle</artifactId>
+			<version>${revision}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.jdbc.datasource.metatype.oracle</artifactId>
+			<version>${revision}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.jdbc.db.dialect.db.postgresql</artifactId>
+			<version>${revision}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.jdbc.datasource.metatype.postgresql</artifactId>
+			<version>${revision}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
 			<artifactId>org.eclipse.daanse.jdbc.db.importer.csv</artifactId>

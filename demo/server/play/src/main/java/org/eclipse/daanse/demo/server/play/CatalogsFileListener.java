@@ -172,7 +172,7 @@ public class CatalogsFileListener implements FileSystemWatcherListener {
 		props.put(BasicContext.REF_NAME_DATA_SOURCE + TARGET_EXT, filterOfMatcherKey(matcherKey));
 		props.put(BasicContext.REF_NAME_EXPRESSION_COMPILER_FACTORY + TARGET_EXT,
 				"(component.name=" + PID_EXP_COMP_FAC + ")");
-		props.put(BasicContext.REF_NAME_DB_MAPPING_CATALOG_SUPPLIER + TARGET_EXT, filterOfMatcherKey(matcherKey));
+		props.put(BasicContext.REF_NAME_CATALOG_MAPPING_SUPPLIER + TARGET_EXT, filterOfMatcherKey(matcherKey));
 		props.put(BasicContext.REF_NAME_MDX_PARSER_PROVIDER + TARGET_EXT, "(component.name=" + PID_PARSER + ")");
 
 		String catalog_path = path.toString();
