@@ -38,7 +38,7 @@ import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.common.ExecuteDurationUtil;
 import org.eclipse.daanse.olap.core.LoggingEventBus;
-import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import org.eclipse.daanse.olap.server.ExecutionImpl;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
@@ -140,6 +140,8 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
             Optional<Dialect> optionalDialect = dialectFactory.tryCreateDialect(connection);
             dialect = optionalDialect.orElseThrow(() -> new Exception(ERR_MSG_DIALECT_INIT));
             aggregationFactory = new AggregationFactoryImpl(dialect, this.getCustomAggregators());
+        } catch (Exception e) {
+            LOGGER.error(ERR_MSG_DIALECT_INIT, e);
         }
 
         shepherd = new RolapResultShepherd(getConfigValue(ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL, ConfigConstants.ROLAP_CONNECTION_SHEPHERD_THREAD_POLLING_INTERVAL_DEFAULT_VALUE, Long.class),
@@ -251,8 +253,8 @@ public class BasicContext extends AbstractRolapContext implements RolapContext {
 
     @Override
     public Evaluator createEvaluator(Statement statement) {
-        final RolapEvaluatorRoot root = new RolapEvaluatorRoot( statement );
-        return new RolapEvaluator( root );
+        final RolapEvaluatorRoot root = new RolapEvaluatorRoot(statement);
+        return new RolapEvaluator(root);
     };
 
     @Override
