@@ -185,13 +185,6 @@
 
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.jdbc.db.dialect.resolver.basic</artifactId>
-			<version>${revision}</version>
-			<scope>runtime</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eclipse.daanse</groupId>
 			<version>${revision}</version>
 			<artifactId>org.eclipse.daanse.rolap.mapping.emf</artifactId>
 			<scope>compile</scope>
