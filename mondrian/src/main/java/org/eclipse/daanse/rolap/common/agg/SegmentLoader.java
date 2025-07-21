@@ -60,12 +60,12 @@ import org.eclipse.daanse.olap.common.ResourceLimitExceededException;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import  org.eclipse.daanse.olap.server.LocusImpl;
-import mondrian.spi.SegmentBody;
-import mondrian.spi.SegmentColumn;
-import mondrian.spi.SegmentHeader;
+import org.eclipse.daanse.olap.spi.SegmentBody;
+import org.eclipse.daanse.olap.spi.SegmentColumn;
+import org.eclipse.daanse.olap.spi.SegmentHeader;
 import  org.eclipse.daanse.olap.util.CancellationChecker;
 import  org.eclipse.daanse.olap.util.Pair;
-import org.eclipse.daanse.rolap.common.BitKey;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.rolap.common.RolapStar;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.common.SqlStatement;
@@ -857,7 +857,7 @@ public class SegmentLoader {
 
     abstract Object[] getValuesForColumn( SegmentColumn cc );
 
-    abstract mondrian.spi.SegmentColumn getHeader();
+    abstract org.eclipse.daanse.olap.spi.SegmentColumn getHeader();
 
     @Override
 	public int hashCode() {

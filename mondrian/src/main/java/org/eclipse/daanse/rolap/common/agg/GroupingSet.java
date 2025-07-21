@@ -29,7 +29,7 @@ package org.eclipse.daanse.rolap.common.agg;
 
 import java.util.List;
 
-import org.eclipse.daanse.rolap.common.BitKey;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.rolap.common.RolapStar;
 import org.eclipse.daanse.rolap.common.StarColumnPredicate;
 

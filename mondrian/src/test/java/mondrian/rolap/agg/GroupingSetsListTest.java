@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.daanse.rolap.common.BitKey;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.rolap.common.RolapCatalog;
 import org.eclipse.daanse.rolap.common.RolapStar;
 import org.eclipse.daanse.rolap.common.StarColumnPredicate;
@@ -32,7 +32,7 @@ import org.eclipse.daanse.rolap.common.agg.Segment;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import mondrian.util.ByteString;
+import org.eclipse.daanse.olap.util.ByteString;
 
 class GroupingSetsListTest {
 

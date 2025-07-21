@@ -121,7 +121,7 @@ import org.eclipse.daanse.rolap.mapping.api.model.VirtualCubeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.util.ByteString;
+import org.eclipse.daanse.olap.util.ByteString;
 import mondrian.util.ClassResolver;
 
 /**

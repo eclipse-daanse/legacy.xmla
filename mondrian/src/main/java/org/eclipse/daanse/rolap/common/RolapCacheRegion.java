@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.daanse.olap.key.BitKey;
+
 /**
  * A <code>RolapCacheRegion</code> represents a region of multidimensional space
  * in the cache.

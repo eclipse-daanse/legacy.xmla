@@ -32,9 +32,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import mondrian.spi.SegmentBody;
-import mondrian.spi.SegmentCache;
-import mondrian.spi.SegmentHeader;
+import org.eclipse.daanse.olap.spi.SegmentBody;
+import org.eclipse.daanse.olap.spi.SegmentCache;
+import org.eclipse.daanse.olap.spi.SegmentHeader;
 
 /**
  * Implementation of {@link mondrian.spi.SegmentCache} that stores segments

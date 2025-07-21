@@ -59,7 +59,7 @@ import org.junit.jupiter.api.Test;
 
 import  org.eclipse.daanse.olap.util.ArraySortedSet;
 import org.eclipse.daanse.olap.util.ArrayStack;
-import mondrian.util.ByteString;
+import org.eclipse.daanse.olap.util.ByteString;
 import org.eclipse.daanse.olap.util.CartesianProductList;
 import mondrian.util.Composite;
 import mondrian.util.ServiceDiscovery;

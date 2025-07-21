@@ -67,7 +67,7 @@
     <dependency>       <groupId>org.eclipse.daanse</groupId>       <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.teradata</artifactId>       <version>${revision}</version>       <scope>compile</scope>     </dependency>
     <dependency>       <groupId>org.eclipse.daanse</groupId>       <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.vectorwise</artifactId>       <version>${revision}</version>       <scope>compile</scope>     </dependency>
     <dependency>       <groupId>org.eclipse.daanse</groupId>       <artifactId>org.eclipse.daanse.jdbc.db.dialect.db.vertica</artifactId>       <version>${revision}</version>       <scope>compile</scope>     </dependency>
-    <dependency>       <groupId>org.eclipse.daanse</groupId>       <artifactId>org.eclipse.daanse.jdbc.db.dialect.resolver.basic</artifactId>       <version>${revision}</version>       <scope>compile</scope>     </dependency>
+    <!--dependency>       <groupId>org.eclipse.daanse</groupId>       <artifactId>org.eclipse.daanse.jdbc.db.dialect.resolver.basic</artifactId>       <version>${revision}</version>       <scope>compile</scope>     </dependency-->
     <dependency>       <groupId>org.eclipse.daanse</groupId>       <artifactId>org.eclipse.daanse.db.jdbc.dataloader.api</artifactId>       <version>${revision}</version>       <scope>compile</scope>     </dependency>
     <dependency>       <groupId>org.eclipse.daanse</groupId>       <artifactId>org.eclipse.daanse.db.jdbc.util</artifactId>       <version>${revision}</version>       <scope>compile</scope>     </dependency>
     <!--dependency>       <groupId>org.eclipse.daanse</groupId>       <artifactId>org.eclipse.daanse.db.loader.csv</artifactId>       <version>${revision}</version>       <scope>compile</scope>     </dependency-->

@@ -23,9 +23,9 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import mondrian.spi.SegmentBody;
-import mondrian.spi.SegmentCache;
-import mondrian.spi.SegmentHeader;
+import org.eclipse.daanse.olap.spi.SegmentBody;
+import org.eclipse.daanse.olap.spi.SegmentCache;
+import org.eclipse.daanse.olap.spi.SegmentHeader;
 
 /**
  * Mock implementation of {@link SegmentCache} that is used for automated

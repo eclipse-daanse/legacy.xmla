@@ -46,7 +46,7 @@ import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.api.RolapContext;
-import org.eclipse.daanse.rolap.common.BitKey;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.rolap.common.CacheControlImpl;
 import org.eclipse.daanse.rolap.common.GroupingSetsCollector;
 import org.eclipse.daanse.rolap.common.RolapAggregationManager;

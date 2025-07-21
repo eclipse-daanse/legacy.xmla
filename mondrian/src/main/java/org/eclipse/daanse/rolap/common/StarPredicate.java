@@ -27,6 +27,7 @@ package org.eclipse.daanse.rolap.common;
 
 import java.util.List;
 
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.rolap.common.sql.SqlQuery;
 
 /**

@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eclipse.daanse.rolap.common.BitKey;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.rolap.common.RolapStar;
 import org.eclipse.daanse.rolap.common.StarColumnPredicate;
 

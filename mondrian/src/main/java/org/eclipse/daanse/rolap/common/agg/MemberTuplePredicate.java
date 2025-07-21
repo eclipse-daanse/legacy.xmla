@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.daanse.olap.common.Util;
-import org.eclipse.daanse.rolap.common.BitKey;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.rolap.common.RolapCube;
 import org.eclipse.daanse.rolap.common.RolapCubeLevel;
 import org.eclipse.daanse.rolap.common.RolapCubeMember;

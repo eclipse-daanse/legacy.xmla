@@ -31,7 +31,6 @@ package org.eclipse.daanse.rolap.common;
 
 import static org.eclipse.daanse.rolap.common.util.RelationUtil.getAlias;
 
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -51,16 +50,15 @@ import org.eclipse.daanse.olap.api.MatchType;
 import org.eclipse.daanse.olap.api.NameSegment;
 import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.Segment;
-import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-import org.eclipse.daanse.olap.common.ExecuteDurationUtil;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.olap.common.NativeEvaluationUnsupportedException;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.exceptions.MdxCantFindMemberException;
 import org.eclipse.daanse.olap.fun.FunUtil;
+import  org.eclipse.daanse.olap.server.LocusImpl;
 import org.eclipse.daanse.rolap.common.RolapHierarchy.LimitedRollupMember;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
@@ -72,8 +70,7 @@ import org.eclipse.daanse.rolap.mapping.pojo.SqlStatementMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SqlViewMappingImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import  org.eclipse.daanse.olap.server.ExecutionImpl;
-import  org.eclipse.daanse.olap.server.LocusImpl;
+
 import mondrian.util.ClassResolver;
 
 /**

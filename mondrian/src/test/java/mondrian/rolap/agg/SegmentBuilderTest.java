@@ -40,11 +40,16 @@ import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.api.result.Result;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
-import org.eclipse.daanse.rolap.aggregator.AbstractAggregator;
+import org.eclipse.daanse.olap.spi.SegmentBody;
+import org.eclipse.daanse.olap.spi.SegmentCache;
+import org.eclipse.daanse.olap.spi.SegmentColumn;
+import org.eclipse.daanse.olap.spi.SegmentHeader;
+import org.eclipse.daanse.olap.util.ByteString;
+import  org.eclipse.daanse.olap.util.Pair;
 import org.eclipse.daanse.rolap.aggregator.SumAggregator;
-import org.eclipse.daanse.rolap.common.BitKey;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.common.agg.DenseDoubleSegmentBody;
 import org.eclipse.daanse.rolap.common.agg.DenseIntSegmentBody;
@@ -63,13 +68,7 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.spi.SegmentBody;
-import mondrian.spi.SegmentCache;
-import mondrian.spi.SegmentColumn;
-import mondrian.spi.SegmentHeader;
 import mondrian.test.PerformanceTest;
-import mondrian.util.ByteString;
-import  org.eclipse.daanse.olap.util.Pair;
 
 /**
  * <p>Test for <code>SegmentBuilder</code>.</p>

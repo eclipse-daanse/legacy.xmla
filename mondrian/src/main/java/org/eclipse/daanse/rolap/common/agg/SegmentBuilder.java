@@ -50,13 +50,13 @@ import org.eclipse.daanse.olap.impl.UnmodifiableArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.spi.SegmentBody;
-import mondrian.spi.SegmentColumn;
-import mondrian.spi.SegmentHeader;
+import org.eclipse.daanse.olap.spi.SegmentBody;
+import org.eclipse.daanse.olap.spi.SegmentColumn;
+import org.eclipse.daanse.olap.spi.SegmentHeader;
 import  org.eclipse.daanse.olap.util.ArraySortedSet;
 import  org.eclipse.daanse.olap.util.Pair;
-import org.eclipse.daanse.rolap.common.BitKey;
-import org.eclipse.daanse.rolap.common.CellKey;
+import org.eclipse.daanse.olap.key.BitKey;
+import org.eclipse.daanse.olap.key.CellKey;
 import org.eclipse.daanse.rolap.common.EnumConvertor;
 import org.eclipse.daanse.rolap.common.RolapCatalog;
 import org.eclipse.daanse.rolap.common.RolapStar;

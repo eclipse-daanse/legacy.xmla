@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
-import mondrian.spi.StatisticsProvider;
+import org.eclipse.daanse.olap.spi.StatisticsProvider;
 
 /**
  * Implementation of {@link mondrian.spi.StatisticsProvider} that uses JDBC

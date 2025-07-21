@@ -20,7 +20,7 @@ import  org.eclipse.daanse.olap.server.LocusImpl;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.common.SqlStatement;
 
-import mondrian.spi.StatisticsProvider;
+import org.eclipse.daanse.olap.spi.StatisticsProvider;
 
 /**
  * Implementation of {@link mondrian.spi.StatisticsProvider} that generates

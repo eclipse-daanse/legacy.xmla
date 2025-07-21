@@ -39,9 +39,10 @@ import org.eclipse.daanse.olap.exceptions.SegmentCacheFailedToSaveSegmentExcepti
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.spi.SegmentBody;
-import mondrian.spi.SegmentCache;
-import mondrian.spi.SegmentHeader;
+import org.eclipse.daanse.olap.spi.SegmentBody;
+import org.eclipse.daanse.olap.spi.SegmentCache;
+import org.eclipse.daanse.olap.spi.SegmentHeader;
+
 import mondrian.util.ClassResolver;
 import mondrian.util.ServiceDiscovery;
 

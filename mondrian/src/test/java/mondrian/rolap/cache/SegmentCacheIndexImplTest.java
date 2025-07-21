@@ -14,8 +14,8 @@ import static org.mockito.Mockito.mock;
 import org.eclipse.daanse.rolap.common.cache.SegmentCacheIndexImpl;
 import org.junit.jupiter.api.Test;
 
-import mondrian.spi.SegmentBody;
-import mondrian.spi.SegmentHeader;
+import org.eclipse.daanse.olap.spi.SegmentBody;
+import org.eclipse.daanse.olap.spi.SegmentHeader;
 
 class SegmentCacheIndexImplTest {
 	@Test

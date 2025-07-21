@@ -71,8 +71,8 @@ import mondrian.rolap.BatchTestCase;
 
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
-import org.eclipse.daanse.rolap.common.BitKey;
-import org.eclipse.daanse.rolap.common.CellKey;
+import org.eclipse.daanse.olap.key.BitKey;
+import org.eclipse.daanse.olap.key.CellKey;
 import org.eclipse.daanse.rolap.common.RolapStar;
 import org.eclipse.daanse.rolap.common.SqlStatement;
 import org.eclipse.daanse.rolap.common.StarPredicate;

@@ -31,7 +31,7 @@ package org.eclipse.daanse.rolap.common.agg;
 
 import java.util.BitSet;
 
-import org.eclipse.daanse.rolap.common.CellKey;
+import org.eclipse.daanse.olap.key.CellKey;
 
 /**
  * Implementation of {@link DenseSegmentDataset} that stores

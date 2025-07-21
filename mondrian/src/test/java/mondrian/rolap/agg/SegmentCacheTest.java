@@ -44,8 +44,8 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.spi.SegmentCache;
-import mondrian.spi.SegmentHeader;
+import org.eclipse.daanse.olap.spi.SegmentCache;
+import org.eclipse.daanse.olap.spi.SegmentHeader;
 import mondrian.test.BasicQueryTest;
 
 /**

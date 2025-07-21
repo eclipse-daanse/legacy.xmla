@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.daanse.olap.common.Util;
-import org.eclipse.daanse.rolap.common.BitKey;
-import org.eclipse.daanse.rolap.common.CellKey;
+import org.eclipse.daanse.olap.key.BitKey;
+import org.eclipse.daanse.olap.key.CellKey;
 import org.eclipse.daanse.rolap.common.RolapStar;
 import org.eclipse.daanse.rolap.common.StarColumnPredicate;
 import org.eclipse.daanse.rolap.common.StarPredicate;

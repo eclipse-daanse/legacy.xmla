@@ -37,6 +37,7 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.SetType;
 import org.eclipse.daanse.olap.api.type.Type;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.exceptions.UnsupportedCalculatedMemberException;
 import org.eclipse.daanse.rolap.common.agg.AndPredicate;

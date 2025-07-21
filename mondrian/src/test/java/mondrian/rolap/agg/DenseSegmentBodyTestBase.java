@@ -26,7 +26,7 @@ import java.util.TreeSet;
 
 import org.junit.jupiter.api.Test;
 import  org.eclipse.daanse.olap.util.Pair;
-import org.eclipse.daanse.rolap.common.CellKey;
+import org.eclipse.daanse.olap.key.CellKey;
 import org.eclipse.daanse.rolap.common.agg.AbstractSegmentBody;
 
 /**

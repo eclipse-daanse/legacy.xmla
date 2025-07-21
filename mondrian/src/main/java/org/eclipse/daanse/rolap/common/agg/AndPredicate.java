@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.daanse.olap.common.Util;
-import org.eclipse.daanse.rolap.common.BitKey;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.rolap.common.StarPredicate;
 import org.eclipse.daanse.rolap.common.sql.SqlQuery;
 

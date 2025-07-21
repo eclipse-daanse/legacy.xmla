@@ -33,9 +33,9 @@ import java.util.SortedSet;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
 
-import mondrian.spi.SegmentBody;
+import org.eclipse.daanse.olap.spi.SegmentBody;
 import  org.eclipse.daanse.olap.util.Pair;
-import org.eclipse.daanse.rolap.common.CellKey;
+import org.eclipse.daanse.olap.key.CellKey;
 
 /**
  * A <code>SparseSegmentDataset</code> is a means of storing segment values

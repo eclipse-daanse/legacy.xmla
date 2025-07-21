@@ -56,7 +56,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
@@ -65,7 +64,6 @@ import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.calc.ResultStyle;
 import org.eclipse.daanse.olap.api.element.Dimension;
@@ -78,13 +76,14 @@ import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.CellSet;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.api.type.NumericType;
-import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.common.QueryCanceledException;
 import org.eclipse.daanse.olap.common.StandardProperty;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.IdImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import org.eclipse.daanse.olap.spi.StatisticsProvider;
+import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.RolapCatalog;
 import org.eclipse.daanse.rolap.common.RolapConnection;
@@ -96,20 +95,17 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
-import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.SchemaModifiers;
-import  org.eclipse.daanse.olap.server.ExecutionImpl;
-import mondrian.spi.StatisticsProvider;
 import mondrian.spi.impl.JdbcStatisticsProvider;
 import mondrian.spi.impl.SqlStatisticsProvider;
 import mondrian.spi.impl.SqlStatisticsProviderNew;
-import  org.eclipse.daanse.olap.util.Bug;
 
 /**
  * <code>BasicQueryTest</code> is a test case which tests simple queries against the FoodMart database.

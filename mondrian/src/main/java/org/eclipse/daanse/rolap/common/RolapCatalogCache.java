@@ -42,7 +42,7 @@ import org.eclipse.daanse.util.reference.expiring.ExpiringReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.util.ByteString;
+import org.eclipse.daanse.olap.util.ByteString;
 
 public class RolapCatalogCache implements CatalogCache {
 

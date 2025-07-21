@@ -54,7 +54,7 @@ import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.common.ExecuteDurationUtil;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.aggregator.countbased.AbstractFactCountBasedAggregator;
-import org.eclipse.daanse.rolap.common.BitKey;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.rolap.common.RolapColumn;
 import org.eclipse.daanse.rolap.common.RolapLevel;
 import org.eclipse.daanse.rolap.common.RolapSqlExpression;

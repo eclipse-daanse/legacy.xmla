@@ -33,7 +33,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.eclipse.daanse.rolap.common.CellKey;
+import org.eclipse.daanse.olap.key.CellKey;
 
 /**
  * A <code>DenseSegmentDataset</code> is a means of storing segment values

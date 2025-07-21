@@ -33,13 +33,13 @@ import java.util.concurrent.Future;
 
 import org.eclipse.daanse.olap.api.Execution;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
-import org.eclipse.daanse.rolap.common.BitKey;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.rolap.common.agg.SegmentBuilder;
-
-import mondrian.spi.SegmentBody;
-import mondrian.spi.SegmentColumn;
-import mondrian.spi.SegmentHeader;
-import mondrian.util.ByteString;
+import org.eclipse.daanse.rolap.common.agg.SegmentBuilder.SegmentConverterImpl;
+import org.eclipse.daanse.olap.spi.SegmentBody;
+import org.eclipse.daanse.olap.spi.SegmentColumn;
+import org.eclipse.daanse.olap.spi.SegmentHeader;
+import org.eclipse.daanse.olap.util.ByteString;
 
 /**
  * Data structure that identifies which segments contain cells.

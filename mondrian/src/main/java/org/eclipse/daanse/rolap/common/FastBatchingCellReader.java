@@ -44,6 +44,7 @@ import org.eclipse.daanse.olap.api.Execution;
 import org.eclipse.daanse.olap.api.IAggregationManager;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.exception.CellRequestQuantumExceededException;
+import org.eclipse.daanse.olap.key.BitKey;
 import org.eclipse.daanse.olap.common.Util;
 import  org.eclipse.daanse.olap.server.LocusImpl;
 import  org.eclipse.daanse.olap.util.Pair;
@@ -57,8 +58,8 @@ import org.eclipse.daanse.rolap.common.agg.SegmentWithData;
 import org.eclipse.daanse.rolap.common.cache.SegmentCacheIndex;
 import org.eclipse.daanse.rolap.common.cache.SegmentCacheIndexImpl;
 
-import mondrian.spi.SegmentBody;
-import mondrian.spi.SegmentHeader;
+import org.eclipse.daanse.olap.spi.SegmentBody;
+import org.eclipse.daanse.olap.spi.SegmentHeader;
 
 /**
  * A <code>FastBatchingCellReader</code> doesn't really Read cells: when asked
