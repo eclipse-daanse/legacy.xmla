@@ -41,10 +41,9 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.exceptions.CreateTableFailedException;
+import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.rolap.RolapUtil;
 
 /**
  * This is an abstract base class for the creation and load of one or more

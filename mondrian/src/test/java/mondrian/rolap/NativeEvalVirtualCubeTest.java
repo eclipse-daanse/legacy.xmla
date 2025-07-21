@@ -20,6 +20,7 @@ import java.util.Optional;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;

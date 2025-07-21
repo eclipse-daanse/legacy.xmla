@@ -33,14 +33,13 @@ import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.olap.function.def.crossjoin.ImmutableListCalc;
 import org.eclipse.daanse.olap.function.def.union.UnionCalc;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
+import org.eclipse.daanse.rolap.common.RolapMemberBase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.Mockito;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.rolap.RolapMemberBase;
 
 /**
  * Tests for UnionFunDef

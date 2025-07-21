@@ -19,6 +19,9 @@
 package mondrian.rolap;
 
 import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
+import org.eclipse.daanse.rolap.common.RolapLevel;
+import org.eclipse.daanse.rolap.common.RolapProperty;
+import org.eclipse.daanse.rolap.common.RolapSqlExpression;
 
 public class TestPublicRolapProperty extends RolapProperty {
 

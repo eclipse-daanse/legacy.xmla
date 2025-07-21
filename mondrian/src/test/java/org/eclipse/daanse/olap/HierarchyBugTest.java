@@ -35,6 +35,7 @@ import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
@@ -55,8 +56,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.rolap.RolapConnectionPropsR;
 
 class HierarchyBugTest {
 

@@ -37,6 +37,7 @@ import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rolap.common.aggregator.AggregationFactoryImpl;
 import org.glassfish.jaxb.runtime.v2.JAXBContextFactory;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
@@ -57,7 +58,6 @@ import aQute.bnd.annotation.spi.ServiceConsumer;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
-import mondrian.rolap.aggregator.AggregationFactoryImpl;
 
 @ServiceConsumer(cardinality = Cardinality.MULTIPLE, value = DatabaseProvider.class)
 public class ContextArgumentsProvider implements ArgumentsProvider, AnnotationConsumer<ContextSource> {

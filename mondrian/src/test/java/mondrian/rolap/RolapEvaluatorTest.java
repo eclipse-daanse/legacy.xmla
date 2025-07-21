@@ -14,6 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rolap.common.CompoundPredicateInfo;
+import org.eclipse.daanse.rolap.common.RolapEvaluator;
+import org.eclipse.daanse.rolap.common.RolapResult;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;

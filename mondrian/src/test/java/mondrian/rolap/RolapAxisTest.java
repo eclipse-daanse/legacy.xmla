@@ -18,6 +18,7 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.TupleCollections;
+import org.eclipse.daanse.rolap.common.RolapAxis;
 import org.junit.jupiter.api.Test;
 
 import mondrian.olap.fun.TestMember;

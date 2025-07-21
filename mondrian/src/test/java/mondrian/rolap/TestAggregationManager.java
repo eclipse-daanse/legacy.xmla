@@ -58,6 +58,13 @@ import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.common.FastBatchingCellReader;
+import org.eclipse.daanse.rolap.common.RolapCatalog;
+import org.eclipse.daanse.rolap.common.RolapStar;
+import org.eclipse.daanse.rolap.common.agg.AggregationManager;
+import org.eclipse.daanse.rolap.common.agg.CellRequest;
+import org.eclipse.daanse.rolap.common.agg.ValueColumnPredicate;
+import org.eclipse.daanse.rolap.common.aggmatcher.AggStar;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.ColumnDataType;
@@ -94,10 +101,7 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.rolap.agg.AggregationManager;
-import mondrian.rolap.agg.CellRequest;
-import mondrian.rolap.agg.ValueColumnPredicate;
-import mondrian.rolap.aggmatcher.AggStar;
+
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.test.SqlPattern;

@@ -34,6 +34,8 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.query.component.IdImpl;
+import org.eclipse.daanse.rolap.common.CacheControlImpl;
+import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;

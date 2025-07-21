@@ -19,6 +19,11 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rolap.common.RolapCatalog;
+import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.common.RolapStar;
+import org.eclipse.daanse.rolap.common.RolapStar.Column;
+import org.eclipse.daanse.rolap.common.util.RelationUtil;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
@@ -30,9 +35,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.rolap.RolapStar.Column;
-import mondrian.rolap.util.RelationUtil;
 
 /**
  * Unit test for {@link RolapStar}.

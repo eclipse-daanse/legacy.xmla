@@ -23,6 +23,12 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.element.OlapMetaData;
+import org.eclipse.daanse.rolap.common.RolapCatalog;
+import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.common.RolapCubeDimension;
+import org.eclipse.daanse.rolap.common.RolapDimension;
+import org.eclipse.daanse.rolap.common.RolapHierarchy;
+import org.eclipse.daanse.rolap.common.RolapVirtualCube;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;

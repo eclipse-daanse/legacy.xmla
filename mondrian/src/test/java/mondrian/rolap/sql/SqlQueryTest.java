@@ -32,6 +32,7 @@ import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.rolap.common.sql.SqlQuery;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;

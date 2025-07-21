@@ -25,9 +25,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.junit.jupiter.api.Test;
-
-import mondrian.rolap.CellKey;
 import  org.eclipse.daanse.olap.util.Pair;
+import org.eclipse.daanse.rolap.common.CellKey;
+import org.eclipse.daanse.rolap.common.agg.AbstractSegmentBody;
 
 /**
  * This is a base class for two heirs. It provides several template methods

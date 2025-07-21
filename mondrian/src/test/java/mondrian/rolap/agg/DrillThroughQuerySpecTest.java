@@ -31,16 +31,17 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.OlapElement;
+import org.eclipse.daanse.rolap.common.RolapStar;
+import org.eclipse.daanse.rolap.common.StarPredicate;
+import org.eclipse.daanse.rolap.common.agg.DrillThroughCellRequest;
+import org.eclipse.daanse.rolap.common.agg.DrillThroughQuerySpec;
+import org.eclipse.daanse.rolap.common.sql.SqlQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.rolap.RolapStar;
-import mondrian.rolap.StarPredicate;
-import mondrian.rolap.sql.SqlQuery;
 
 class DrillThroughQuerySpecTest {
 

@@ -60,6 +60,14 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.documentation.api.ConntextDocumentationProvider;
 import org.eclipse.daanse.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.common.RolapColumn;
+import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.common.RolapCubeDimension;
+import org.eclipse.daanse.rolap.common.RolapHierarchy;
+import org.eclipse.daanse.rolap.common.RolapLevel;
+import org.eclipse.daanse.rolap.common.RolapSqlExpression;
+import org.eclipse.daanse.rolap.common.RolapSqlStatement;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationExcludeMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationForeignKeyMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AggregationMeasureFactCountMapping;
@@ -93,15 +101,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.metatype.annotations.Designate;
 import org.osgi.util.converter.Converter;
 import org.osgi.util.converter.Converters;
-
-import mondrian.rolap.RolapColumn;
-import mondrian.rolap.RolapConnection;
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapCubeDimension;
-import mondrian.rolap.RolapHierarchy;
-import mondrian.rolap.RolapLevel;
-import mondrian.rolap.RolapSqlExpression;
-import mondrian.rolap.RolapSqlStatement;
 
 @Designate(ocd = DocumentationProviderConfig.class, factory = true)
 @Component(service = ConntextDocumentationProvider.class, configurationPolicy = ConfigurationPolicy.REQUIRE)

@@ -11,6 +11,7 @@ package mondrian.rolap.format;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.eclipse.daanse.rolap.common.format.FormatterCreateContext;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberFormatterMappingImpl;
 import org.junit.jupiter.api.Test;
 

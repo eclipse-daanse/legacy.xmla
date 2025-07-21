@@ -21,6 +21,12 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
 import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
 import org.eclipse.daanse.olap.common.StandardProperty;
+import org.eclipse.daanse.rolap.common.RolapDimension;
+import org.eclipse.daanse.rolap.common.RolapHierarchy;
+import org.eclipse.daanse.rolap.common.RolapLevel;
+import org.eclipse.daanse.rolap.common.RolapMember;
+import org.eclipse.daanse.rolap.common.RolapMemberBase;
+import org.eclipse.daanse.rolap.common.RolapProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

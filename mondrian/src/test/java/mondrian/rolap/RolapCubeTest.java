@@ -37,6 +37,8 @@ import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.IdImpl;
+import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.common.RolapVirtualCube;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

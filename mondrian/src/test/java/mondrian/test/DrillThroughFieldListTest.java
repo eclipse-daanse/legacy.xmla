@@ -25,14 +25,13 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.rolap.common.RolapCell;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.rolap.RolapCell;
 
 /**
  * Test drillthrought operation with specified field list.

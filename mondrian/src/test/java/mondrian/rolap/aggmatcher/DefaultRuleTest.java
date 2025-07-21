@@ -42,6 +42,7 @@ import org.eclipse.daanse.rolap.aggmatch.jaxb.MeasureMapRef;
 import org.eclipse.daanse.rolap.aggmatch.jaxb.Regex;
 import org.eclipse.daanse.rolap.aggmatch.jaxb.TableMatch;
 import org.eclipse.daanse.rolap.aggmatch.jaxb.TableMatchRef;
+import org.eclipse.daanse.rolap.common.aggmatcher.Recognizer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

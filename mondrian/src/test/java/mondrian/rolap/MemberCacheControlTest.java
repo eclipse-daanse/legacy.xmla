@@ -75,10 +75,19 @@ import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
-
-import mondrian.rolap.agg.AggregationManager;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
+import org.eclipse.daanse.rolap.common.MemberCache;
+import org.eclipse.daanse.rolap.common.MemberReader;
+import org.eclipse.daanse.rolap.common.RolapBaseCubeMeasure;
+import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.RolapCubeMember;
+import org.eclipse.daanse.rolap.common.RolapHierarchy;
+import org.eclipse.daanse.rolap.common.RolapMember;
+import org.eclipse.daanse.rolap.common.RolapUtil;
+import org.eclipse.daanse.rolap.common.SmartMemberReader;
+import org.eclipse.daanse.rolap.common.agg.AggregationManager;
+
 import mondrian.test.DiffRepository;
 
 /**

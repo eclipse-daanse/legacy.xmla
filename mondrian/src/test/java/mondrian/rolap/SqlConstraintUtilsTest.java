@@ -85,9 +85,18 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.olap.fun.CrossJoinTest.NullFunDef;
 import mondrian.olap.fun.TestMember;
-import mondrian.rolap.aggmatcher.AggStar;
-import mondrian.rolap.sql.SqlQuery;
+
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
+import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.common.RolapCubeLevel;
+import org.eclipse.daanse.rolap.common.RolapEvaluator;
+import org.eclipse.daanse.rolap.common.RolapEvaluatorRoot;
+import org.eclipse.daanse.rolap.common.RolapResult;
+import org.eclipse.daanse.rolap.common.RolapStar;
+import org.eclipse.daanse.rolap.common.SqlConstraintUtils;
+import org.eclipse.daanse.rolap.common.TupleConstraintStruct;
+import org.eclipse.daanse.rolap.common.aggmatcher.AggStar;
+import org.eclipse.daanse.rolap.common.sql.SqlQuery;
 
 /**
  * <code>SqlConstraintUtilsTest</code> tests the functions defined in

@@ -14,7 +14,7 @@ import java.util.BitSet;
 import java.util.Map;
 import java.util.SortedSet;
 
-import mondrian.rolap.CellKey;
+import org.eclipse.daanse.rolap.common.CellKey;
 
 /**
  * SegmentBody is the object which contains the cached data of a

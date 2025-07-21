@@ -39,6 +39,8 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import mondrian.olap.fun.CrossJoinTest;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
+import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.common.RolapResult;
 
 import java.util.Optional;
 

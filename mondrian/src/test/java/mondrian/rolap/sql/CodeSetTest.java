@@ -19,6 +19,7 @@ import java.sql.DatabaseMetaData;
 
 import org.eclipse.daanse.jdbc.db.dialect.db.postgresql.PostgreSqlDialect;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.rolap.common.sql.SqlQuery;
 import org.junit.jupiter.api.Test;
 
 /**

@@ -55,9 +55,9 @@ import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.SteelWheelsDataLoader;
 import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
 
-import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 import  org.eclipse.daanse.olap.util.Bug;
+import org.eclipse.daanse.rolap.common.RolapCatalogCache;
 
 class SteelWheelsSchemaTest {
 

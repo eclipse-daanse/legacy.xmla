@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.rolap.common.CellKey;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;

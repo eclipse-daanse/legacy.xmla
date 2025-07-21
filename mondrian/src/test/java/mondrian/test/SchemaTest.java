@@ -56,6 +56,8 @@ import org.eclipse.daanse.olap.common.StandardProperty;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.aggmatcher.AggTableManager;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -134,9 +136,6 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.rolap.RolapConnection;
-import mondrian.rolap.aggmatcher.AggTableManager;
 import  org.eclipse.daanse.olap.util.Bug;
 
 //import org.apache.logging.log4j.spi.LoggerContext;

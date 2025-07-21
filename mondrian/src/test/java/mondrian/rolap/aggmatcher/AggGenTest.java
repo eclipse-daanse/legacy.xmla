@@ -42,6 +42,8 @@ import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.QueryImpl;
 import org.eclipse.daanse.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.aggmatcher.AggGen;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.junit.jupiter.api.AfterEach;
@@ -52,8 +54,6 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.rolap.RolapConnection;
 
 /**
  * Test if lookup columns are there after loading them in

@@ -57,6 +57,14 @@ import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.rolap.aggregator.MaxAggregator;
 import org.eclipse.daanse.rolap.aggregator.MinAggregator;
 import org.eclipse.daanse.rolap.aggregator.SumAggregator;
+import org.eclipse.daanse.rolap.common.BatchLoader;
+import org.eclipse.daanse.rolap.common.FastBatchingCellReader;
+import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.common.agg.AggregationKey;
+import org.eclipse.daanse.rolap.common.agg.AggregationManager;
+import org.eclipse.daanse.rolap.common.agg.Segment;
+import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
+import org.eclipse.daanse.rolap.common.agg.SegmentWithData;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
@@ -79,11 +87,7 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.rolap.agg.AggregationKey;
-import mondrian.rolap.agg.AggregationManager;
-import mondrian.rolap.agg.Segment;
-import mondrian.rolap.agg.SegmentCacheManager;
-import mondrian.rolap.agg.SegmentWithData;
+
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
 import mondrian.test.SqlPattern;
@@ -233,7 +237,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     final Dialect dialect = getDialect(context.getConnectionWithDefaultRole());
     FastBatchingCellReader fbcr = new FastBatchingCellReader( e, salesCube, aggMgr ) {
       @Override
-	Dialect getDialect() {
+	public Dialect getDialect() {
         return dialect;
       }
     };
@@ -304,6 +308,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     BatchLoader.Batch genderBatch =
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F" ) ) {
           @Override
+        public
 		boolean canBatch( BatchLoader.Batch other ) {
             return false;
           }
@@ -312,6 +317,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, new String[0], new String[0],
             new String[0] ) ) {
           @Override
+        public
 		boolean canBatch( BatchLoader.Batch batch ) {
             return true;
           }
@@ -334,6 +340,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     final BatchLoader.Batch group1Agg2 =
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, "customer", "gender", "F" ) ) {
           @Override
+        public
 		boolean canBatch( BatchLoader.Batch batch ) {
             return false;
           }
@@ -341,6 +348,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     final BatchLoader.Batch group1Agg1 =
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, "customer", "country", "F" ) ) {
           @Override
+        public
 		boolean canBatch( BatchLoader.Batch batch ) {
             return batch.equals( group1Agg2 );
           }
@@ -349,6 +357,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, new String[0], new String[0],
             new String[0] ) ) {
           @Override
+        public
 		boolean canBatch( BatchLoader.Batch batch ) {
             return batch.equals( group1Agg1 );
           }
@@ -357,6 +366,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     final BatchLoader.Batch group2Agg1 =
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, "customer", "education", "F" ) ) {
           @Override
+        public
 		boolean canBatch( BatchLoader.Batch batch ) {
             return false;
           }
@@ -364,6 +374,7 @@ class FastBatchingCellReaderTest extends BatchTestCase{
     BatchLoader.Batch group2Detailed =
         fbcr.new Batch( createRequest(connection, cubeNameSales, measureUnitSales, "customer", "yearly_income", "" ) ) {
           @Override
+        public
 		boolean canBatch( BatchLoader.Batch batch ) {
             return batch.equals( group2Agg1 );
           }

@@ -37,6 +37,8 @@ import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.aggmatcher.JdbcSchema;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,8 +47,6 @@ import org.opencube.junit5.ContextArgumentsProvider;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.rolap.RolapConnection;
 
 /**
   * Test if AggSchemaScan and AggCatalogScan properties are used in JdbcSchema loadTablesOfType

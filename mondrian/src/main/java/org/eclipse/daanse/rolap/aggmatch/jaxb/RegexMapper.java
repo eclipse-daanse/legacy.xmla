@@ -16,7 +16,7 @@ package org.eclipse.daanse.rolap.aggmatch.jaxb;
 import java.util.ArrayList;
 import java.util.List;
 
-import mondrian.rolap.aggmatcher.Recognizer;
+import org.eclipse.daanse.rolap.common.aggmatcher.Recognizer;
 
 public abstract class RegexMapper extends Base {
 

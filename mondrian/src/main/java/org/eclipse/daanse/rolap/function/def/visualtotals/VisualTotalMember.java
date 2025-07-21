@@ -26,8 +26,7 @@ import org.eclipse.daanse.olap.common.StandardProperty;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.MemberExpressionImpl;
 import org.eclipse.daanse.olap.query.component.UnresolvedFunCallImpl;
-
-import mondrian.rolap.RolapMemberBase;
+import org.eclipse.daanse.rolap.common.RolapMemberBase;
 
 /**
  * Calculated member for <code>VisualTotals</code> function.

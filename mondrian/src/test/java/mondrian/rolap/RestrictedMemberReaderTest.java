@@ -25,12 +25,15 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
+import org.eclipse.daanse.rolap.common.MemberReader;
+import org.eclipse.daanse.rolap.common.RestrictedMemberReader;
+import org.eclipse.daanse.rolap.common.RolapHierarchy;
+import org.eclipse.daanse.rolap.common.RolapMember;
+import org.eclipse.daanse.rolap.common.RestrictedMemberReader.MultiCardinalityDefaultMember;
+import org.eclipse.daanse.rolap.common.sql.MemberChildrenConstraint;
 import org.eclipse.daanse.olap.api.element.Catalog;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import mondrian.rolap.RestrictedMemberReader.MultiCardinalityDefaultMember;
-import mondrian.rolap.sql.MemberChildrenConstraint;
 
 class RestrictedMemberReaderTest {
 

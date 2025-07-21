@@ -67,6 +67,8 @@ import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
+import org.eclipse.daanse.rolap.common.RolapHierarchy.LimitedRollupMember;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
@@ -80,8 +82,6 @@ import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.RolapConnectionPropsR;
-import mondrian.rolap.RolapHierarchy.LimitedRollupMember;
 import mondrian.rolap.SchemaModifiers;
 
 /**

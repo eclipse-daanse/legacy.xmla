@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.SortedSet;
 
 import  org.eclipse.daanse.olap.util.Pair;
+import org.eclipse.daanse.rolap.common.agg.DenseDoubleSegmentBody;
 
 /**
  * @author Andrey Khayrutdinov

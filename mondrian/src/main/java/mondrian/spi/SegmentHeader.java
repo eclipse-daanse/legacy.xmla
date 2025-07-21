@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.rolap.common.BitKey;
 
-import mondrian.rolap.BitKey;
 import mondrian.util.ByteString;
 
 /**

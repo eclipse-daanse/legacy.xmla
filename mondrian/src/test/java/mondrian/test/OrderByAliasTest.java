@@ -16,6 +16,7 @@ import static org.opencube.junit5.TestUtil.withSchema;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.common.RolapCatalogCache;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +30,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
-import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 
 /**

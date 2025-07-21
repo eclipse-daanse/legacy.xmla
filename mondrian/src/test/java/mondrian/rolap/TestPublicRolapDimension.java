@@ -18,6 +18,9 @@
  */
 package mondrian.rolap;
 
+import org.eclipse.daanse.rolap.common.RolapCatalog;
+import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.common.RolapDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionConnectorMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DimensionMapping;
 

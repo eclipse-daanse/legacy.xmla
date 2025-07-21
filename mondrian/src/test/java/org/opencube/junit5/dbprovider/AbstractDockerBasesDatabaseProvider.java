@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
+import org.eclipse.daanse.rolap.common.RolapCatalogCache;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
@@ -47,8 +48,6 @@ import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.transport.DockerHttpClient;
 import com.github.dockerjava.zerodep.ZerodepDockerHttpClient;
-
-import mondrian.rolap.RolapCatalogCache;
 
 public abstract class AbstractDockerBasesDatabaseProvider implements DatabaseProvider{
 

@@ -13,14 +13,14 @@ package mondrian.rolap.agg;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
+import org.eclipse.daanse.rolap.common.RolapStar;
+import org.eclipse.daanse.rolap.common.aggmatcher.AggStar;
+import org.eclipse.daanse.rolap.common.aggmatcher.JdbcSchema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import mondrian.recorder.MessageRecorder;
-import mondrian.rolap.RolapStar;
-import mondrian.rolap.aggmatcher.AggStar;
-import mondrian.rolap.aggmatcher.JdbcSchema;
 
 class AggStarTest {
 

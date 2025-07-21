@@ -318,6 +318,17 @@ import org.eclipse.daanse.olap.function.def.vba.weekdayname.WeekdayNameResolver;
 import org.eclipse.daanse.olap.function.def.vba.year.YearResolver;
 import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalsResolver;
 import org.eclipse.daanse.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.common.AbstractRolapContext;
+import org.eclipse.daanse.rolap.common.RolapCatalogCache;
+import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
+import org.eclipse.daanse.rolap.common.RolapDependencyTestingEvaluator;
+import org.eclipse.daanse.rolap.common.RolapEvaluator;
+import org.eclipse.daanse.rolap.common.RolapEvaluatorRoot;
+import org.eclipse.daanse.rolap.common.RolapProfilingEvaluator;
+import org.eclipse.daanse.rolap.common.RolapResult;
+import org.eclipse.daanse.rolap.common.RolapResultShepherd;
+import org.eclipse.daanse.rolap.common.agg.AggregationManager;
 import org.eclipse.daanse.rolap.aggregator.AvgAggregator;
 import org.eclipse.daanse.rolap.aggregator.CountAggregator;
 import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
@@ -327,18 +338,6 @@ import org.eclipse.daanse.rolap.aggregator.SumAggregator;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
-
-import mondrian.rolap.AbstractRolapContext;
-import mondrian.rolap.RolapCatalogCache;
-import mondrian.rolap.RolapConnection;
-import mondrian.rolap.RolapConnectionPropsR;
-import mondrian.rolap.RolapDependencyTestingEvaluator;
-import mondrian.rolap.RolapEvaluator;
-import mondrian.rolap.RolapEvaluatorRoot;
-import mondrian.rolap.RolapProfilingEvaluator;
-import mondrian.rolap.RolapResult;
-import mondrian.rolap.RolapResultShepherd;
-import mondrian.rolap.agg.AggregationManager;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 
 public class TestContextImpl extends AbstractRolapContext implements TestContext {

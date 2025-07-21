@@ -68,11 +68,10 @@ import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.rolap.RolapConnection;
-import mondrian.rolap.RolapCube;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
+import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.RolapCube;
 
 
 /**

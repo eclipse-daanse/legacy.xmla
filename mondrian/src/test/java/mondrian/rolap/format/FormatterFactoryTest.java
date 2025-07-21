@@ -16,6 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.eclipse.daanse.olap.api.formatter.CellFormatter;
 import org.eclipse.daanse.olap.api.formatter.MemberFormatter;
 import org.eclipse.daanse.olap.api.formatter.MemberPropertyFormatter;
+import org.eclipse.daanse.rolap.common.format.DefaultRolapMemberFormatter;
+import org.eclipse.daanse.rolap.common.format.FormatterCreateContext;
+import org.eclipse.daanse.rolap.common.format.FormatterFactory;
+import org.eclipse.daanse.rolap.common.format.PropertyFormatterAdapter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

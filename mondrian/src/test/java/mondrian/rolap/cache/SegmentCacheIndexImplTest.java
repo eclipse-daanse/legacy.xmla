@@ -11,6 +11,7 @@ package mondrian.rolap.cache;
 
 import static org.mockito.Mockito.mock;
 
+import org.eclipse.daanse.rolap.common.cache.SegmentCacheIndexImpl;
 import org.junit.jupiter.api.Test;
 
 import mondrian.spi.SegmentBody;

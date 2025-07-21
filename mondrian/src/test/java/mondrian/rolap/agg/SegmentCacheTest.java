@@ -37,12 +37,13 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.ISegmentCacheManager;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.core.AbstractBasicContext;
+import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
+import org.eclipse.daanse.rolap.common.agg.SegmentCacheWorker;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.agg.SegmentCacheManager.CompositeSegmentCache;
 import mondrian.spi.SegmentCache;
 import mondrian.spi.SegmentHeader;
 import mondrian.test.BasicQueryTest;

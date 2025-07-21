@@ -28,7 +28,7 @@
 package mondrian.test;
 
 import static mondrian.enums.DatabaseProduct.getDatabaseProduct;
-import static mondrian.rolap.util.ExpressionUtil.getExpression;
+import static org.eclipse.daanse.rolap.common.util.ExpressionUtil.getExpression;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -67,6 +67,11 @@ import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.query.component.IdImpl;
+import org.eclipse.daanse.rolap.common.RolapCatalogCache;
+import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.common.RolapLevel;
+import org.eclipse.daanse.rolap.common.RolapSqlExpression;
+import org.eclipse.daanse.rolap.common.RolapStar;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -76,11 +81,6 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.rolap.RolapCube;
-import mondrian.rolap.RolapLevel;
-import mondrian.rolap.RolapSqlExpression;
-import mondrian.rolap.RolapCatalogCache;
-import mondrian.rolap.RolapStar;
 import mondrian.rolap.SchemaModifiers;
 
 /**

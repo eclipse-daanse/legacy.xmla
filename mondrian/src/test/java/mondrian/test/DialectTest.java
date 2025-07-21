@@ -41,6 +41,8 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.Util;
+import org.eclipse.daanse.rolap.common.RolapMember;
+import org.eclipse.daanse.rolap.common.sql.SqlQuery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -51,9 +53,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.opentest4j.AssertionFailedError;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.rolap.RolapMember;
 import mondrian.rolap.SchemaModifiers;
-import mondrian.rolap.sql.SqlQuery;
 import mondrian.util.DelegatingInvocationHandler;
 
 /**

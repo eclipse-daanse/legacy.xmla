@@ -26,6 +26,8 @@ import org.eclipse.daanse.olap.api.query.component.Expression;
 import org.eclipse.daanse.olap.api.type.EmptyType;
 import org.eclipse.daanse.olap.query.component.NumericLiteralImpl;
 import org.eclipse.daanse.olap.util.type.TypeWrapperExp;
+import org.eclipse.daanse.rolap.common.RolapEvaluator;
+import org.eclipse.daanse.rolap.common.RolapNativeTopCount;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

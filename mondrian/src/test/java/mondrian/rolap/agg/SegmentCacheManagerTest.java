@@ -44,6 +44,7 @@ import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Locus;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

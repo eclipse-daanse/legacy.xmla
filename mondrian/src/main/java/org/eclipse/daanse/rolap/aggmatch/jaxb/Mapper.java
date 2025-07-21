@@ -15,7 +15,7 @@ package org.eclipse.daanse.rolap.aggmatch.jaxb;
 
 import java.util.Arrays;
 
-import mondrian.rolap.aggmatcher.Recognizer;
+import org.eclipse.daanse.rolap.common.aggmatcher.Recognizer;
 
 /**
  * This allows one to create an element that matches against a

@@ -40,6 +40,18 @@ import org.eclipse.daanse.olap.common.ExecuteDurationUtil;
 import org.eclipse.daanse.olap.core.LoggingEventBus;
 import org.eclipse.daanse.olap.server.ExecutionImpl;
 import org.eclipse.daanse.rolap.api.RolapContext;
+import org.eclipse.daanse.rolap.common.AbstractRolapContext;
+import org.eclipse.daanse.rolap.common.RolapCatalogCache;
+import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
+import org.eclipse.daanse.rolap.common.RolapDependencyTestingEvaluator;
+import org.eclipse.daanse.rolap.common.RolapEvaluator;
+import org.eclipse.daanse.rolap.common.RolapEvaluatorRoot;
+import org.eclipse.daanse.rolap.common.RolapProfilingEvaluator;
+import org.eclipse.daanse.rolap.common.RolapResult;
+import org.eclipse.daanse.rolap.common.RolapResultShepherd;
+import org.eclipse.daanse.rolap.common.agg.AggregationManager;
+import org.eclipse.daanse.rolap.common.aggregator.AggregationFactoryImpl;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -54,19 +66,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ServiceScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.rolap.AbstractRolapContext;
-import mondrian.rolap.RolapCatalogCache;
-import mondrian.rolap.RolapConnection;
-import mondrian.rolap.RolapConnectionPropsR;
-import mondrian.rolap.RolapDependencyTestingEvaluator;
-import mondrian.rolap.RolapEvaluator;
-import mondrian.rolap.RolapEvaluatorRoot;
-import mondrian.rolap.RolapProfilingEvaluator;
-import mondrian.rolap.RolapResult;
-import mondrian.rolap.RolapResultShepherd;
-import mondrian.rolap.agg.AggregationManager;
-import mondrian.rolap.aggregator.AggregationFactoryImpl;
 
 @Component(service = Context.class, scope = ServiceScope.SINGLETON)
 public class BasicContext extends AbstractRolapContext implements RolapContext {

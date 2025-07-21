@@ -30,6 +30,8 @@ import org.junit.jupiter.api.Test;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
 import  org.eclipse.daanse.olap.server.StatementImpl;
+import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.SqlStatement;
 
 /**
  * @author Andrey Khayrutdinov

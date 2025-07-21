@@ -18,6 +18,7 @@ import java.io.StringWriter;
 import org.eclipse.daanse.olap.api.Connection;
 //import org.apache.logging.log4j.ThreadContext;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -25,8 +26,6 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.rolap.RolapUtil;
 
 /**
  * Verifies that MDC context is passed between threads.

@@ -49,6 +49,7 @@ import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateCalc;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.olap.query.component.IdImpl;
+import org.eclipse.daanse.rolap.common.RolapCube;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
@@ -99,7 +100,6 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.rolap.RolapCube;
 import mondrian.rolap.SchemaModifiers;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;

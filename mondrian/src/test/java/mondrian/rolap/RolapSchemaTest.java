@@ -45,6 +45,18 @@ import org.eclipse.daanse.olap.common.RoleImpl;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.exceptions.RoleUnionGrantsException;
 import org.eclipse.daanse.olap.exceptions.UnknownRoleException;
+import org.eclipse.daanse.rolap.common.AbstractRolapContext;
+import org.eclipse.daanse.rolap.common.CacheKey;
+import org.eclipse.daanse.rolap.common.CatalogContentKey;
+import org.eclipse.daanse.rolap.common.ConnectionKey;
+import org.eclipse.daanse.rolap.common.RolapCatalog;
+import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.common.RolapStar;
+import org.eclipse.daanse.rolap.common.RolapStarRegistry;
+import org.eclipse.daanse.rolap.common.RolapUtil;
+import org.eclipse.daanse.rolap.common.agg.AggregationManager;
+import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessCubeGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessHierarchyGrantMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
@@ -74,9 +86,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
-import mondrian.rolap.agg.AggregationManager;
-import mondrian.rolap.agg.SegmentCacheManager;
 
 
 /**

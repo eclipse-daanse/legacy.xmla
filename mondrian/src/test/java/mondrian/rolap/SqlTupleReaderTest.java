@@ -44,17 +44,25 @@ import java.util.Map;
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.SqlExpression;
 import org.eclipse.daanse.olap.api.element.Property;
+import org.eclipse.daanse.rolap.common.RolapColumn;
+import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.common.RolapCubeLevel;
+import org.eclipse.daanse.rolap.common.RolapHierarchy;
+import org.eclipse.daanse.rolap.common.RolapLevel;
+import org.eclipse.daanse.rolap.common.RolapProperty;
+import org.eclipse.daanse.rolap.common.RolapSqlExpression;
+import org.eclipse.daanse.rolap.common.RolapStar;
+import org.eclipse.daanse.rolap.common.SqlTupleReader;
+import org.eclipse.daanse.rolap.common.aggmatcher.AggStar;
+import org.eclipse.daanse.rolap.common.aggmatcher.JdbcSchema;
+import org.eclipse.daanse.rolap.common.sql.SqlQuery;
+import org.eclipse.daanse.rolap.common.sql.TupleConstraint;
 import org.eclipse.daanse.rolap.mapping.api.model.QueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.SqlStatementMapping;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
-import mondrian.rolap.aggmatcher.AggStar;
-import mondrian.rolap.aggmatcher.JdbcSchema;
-import mondrian.rolap.sql.SqlQuery;
-import mondrian.rolap.sql.TupleConstraint;
 
 /**
  * Created by Dmitriy Stepanov on 20.01.18.
@@ -68,7 +76,7 @@ class SqlTupleReaderTest {
     SqlQuery sqlQuery = mock( SqlQuery.class, Answers.RETURNS_MOCKS );
     RolapCube baseCube = mock( RolapCube.class );
     RolapLevel targetLevel = mock( RolapLevel.class );
-    RolapColumn expression =  mock(mondrian.rolap.RolapColumn.class);
+    RolapColumn expression =  mock(org.eclipse.daanse.rolap.common.RolapColumn.class);
     RolapCubeLevel levelIter = mock( RolapCubeLevel.class, Answers.RETURNS_MOCKS );
     RolapProperty rolapProperty = mock( TestPublicRolapProperty.class, Answers.RETURNS_MOCKS );
     QueryMapping queryMapping = mock( QueryMapping.class, Answers.RETURNS_MOCKS );
@@ -109,13 +117,13 @@ class SqlTupleReaderTest {
     doReturn( starColumn ).when( levelIter ).getStarKeyColumn();
     AggStar.FactTable factTable =
       (AggStar.FactTable) createInstance( "mondrian.rolap.aggmatcher.AggStar$FactTable",
-        new Class[] { mondrian.rolap.aggmatcher.AggStar.class, JdbcSchema.Table.class },
+        new Class[] { org.eclipse.daanse.rolap.common.aggmatcher.AggStar.class, JdbcSchema.Table.class },
         new Object[] { aggStar, dbTable }, AggStar.FactTable.class.getClassLoader() );
     factTable = spy( factTable );
     Map<String, RolapSqlExpression> propertiesAgg = new HashMap<>();
     propertiesAgg.put( propertyName, expression );
     Class[] constructorArgsClasses =
-      { mondrian.rolap.aggmatcher.AggStar.Table.class, String.class, SqlExpression.class, int.class,
+      { org.eclipse.daanse.rolap.common.aggmatcher.AggStar.Table.class, String.class, SqlExpression.class, int.class,
         RolapStar.Column.class, boolean.class,
         SqlExpression.class, SqlExpression.class, Map.class };
     Object[] constructorArgs =

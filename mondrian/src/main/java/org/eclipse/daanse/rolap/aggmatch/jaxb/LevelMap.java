@@ -15,7 +15,7 @@ package org.eclipse.daanse.rolap.aggmatch.jaxb;
 
 import java.util.List;
 
-import mondrian.rolap.aggmatcher.Recognizer;
+import org.eclipse.daanse.rolap.common.aggmatcher.Recognizer;
 
 /**
  * This is the template that maps from a combination of level

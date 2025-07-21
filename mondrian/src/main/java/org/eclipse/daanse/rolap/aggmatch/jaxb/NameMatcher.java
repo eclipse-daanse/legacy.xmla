@@ -13,7 +13,7 @@
  */
 package org.eclipse.daanse.rolap.aggmatch.jaxb;
 
-import mondrian.rolap.aggmatcher.Recognizer;
+import org.eclipse.daanse.rolap.common.aggmatcher.Recognizer;
 
 /**
  * A NameMatcher is a CaseMatcher that prepends and appends

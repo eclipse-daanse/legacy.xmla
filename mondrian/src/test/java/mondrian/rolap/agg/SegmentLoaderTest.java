@@ -68,13 +68,22 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
-import mondrian.rolap.BitKey;
-import mondrian.rolap.CellKey;
-import mondrian.rolap.RolapStar;
-import mondrian.rolap.SqlStatement;
-import mondrian.rolap.StarPredicate;
+
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
+import org.eclipse.daanse.rolap.common.BitKey;
+import org.eclipse.daanse.rolap.common.CellKey;
+import org.eclipse.daanse.rolap.common.RolapStar;
+import org.eclipse.daanse.rolap.common.SqlStatement;
+import org.eclipse.daanse.rolap.common.StarPredicate;
+import org.eclipse.daanse.rolap.common.agg.GroupingSet;
+import org.eclipse.daanse.rolap.common.agg.GroupingSetsList;
+import org.eclipse.daanse.rolap.common.agg.Segment;
+import org.eclipse.daanse.rolap.common.agg.SegmentAxis;
+import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
+import org.eclipse.daanse.rolap.common.agg.SegmentLoader;
+import org.eclipse.daanse.rolap.common.agg.SegmentWithData;
+
 import mondrian.test.SqlPattern;
 import mondrian.util.DelegatingInvocationHandler;
 
@@ -183,6 +192,7 @@ class SegmentLoaderTest extends BatchTestCase {
         groupingSets.add(groupableSetsInfo);
         SegmentLoader loader = new SegmentLoader(cacheMgr) {
             @Override
+            public
 			SqlStatement createExecuteSql(
                 int cellRequestCount,
                 final GroupingSetsList groupingSetsList,
@@ -266,6 +276,7 @@ class SegmentLoaderTest extends BatchTestCase {
         groupingSets.add(groupableSetsInfo);
         SegmentLoader loader = new SegmentLoader(cacheMgr) {
             @Override
+            public
 			SqlStatement createExecuteSql(
                 int cellRequestCount,
                 GroupingSetsList groupingSetsList,
@@ -302,6 +313,7 @@ class SegmentLoaderTest extends BatchTestCase {
         groupingSets.add(groupableSetsInfo);
         SegmentLoader loader = new SegmentLoader(cacheMgr) {
             @Override
+            public
 			SqlStatement createExecuteSql(
                 int cellRequestCount,
                 GroupingSetsList groupingSetsList,
@@ -314,7 +326,7 @@ class SegmentLoaderTest extends BatchTestCase {
             }
 
             @Override
-			boolean useSparse(boolean sparse, int n, RowList rows,
+			public boolean useSparse(boolean sparse, int n, RowList rows,
                               int sparseSegmentCountThreshold,
                               double sparseSegmentDensityThreshold) {
                 return true;
@@ -386,6 +398,7 @@ class SegmentLoaderTest extends BatchTestCase {
         groupingSets.add(groupingSetsInfo);
         SegmentLoader loader = new SegmentLoader(cacheMgr) {
             @Override
+            public
 			SqlStatement createExecuteSql(
                 int cellRequestCount,
                 GroupingSetsList groupingSetsList,
@@ -434,6 +447,7 @@ class SegmentLoaderTest extends BatchTestCase {
                 getData(true));
         SegmentLoader loader = new SegmentLoader(cacheMgr) {
             @Override
+            public
             SqlStatement createExecuteSql(
                 int cellRequestCount,
                 GroupingSetsList groupingSetsList,
@@ -512,6 +526,7 @@ class SegmentLoaderTest extends BatchTestCase {
                 trim(5, getDataWithNullInAxisColumn(false)));
         SegmentLoader loader = new SegmentLoader(cacheMgr) {
             @Override
+            public
             SqlStatement createExecuteSql(
                 int cellRequestCount,
                 GroupingSetsList groupingSetsList,
@@ -565,6 +580,7 @@ class SegmentLoaderTest extends BatchTestCase {
                         trim(5, data));
         SegmentLoader loader = new SegmentLoader(cacheMgr) {
             @Override
+            public
             SqlStatement createExecuteSql(
                     int cellRequestCount,
                     GroupingSetsList groupingSetsList,
@@ -612,6 +628,7 @@ class SegmentLoaderTest extends BatchTestCase {
                 data);
         SegmentLoader loader = new SegmentLoader(cacheMgr) {
             @Override
+            public
             SqlStatement createExecuteSql(
                 int cellRequestCount,
                 GroupingSetsList groupingSetsList,

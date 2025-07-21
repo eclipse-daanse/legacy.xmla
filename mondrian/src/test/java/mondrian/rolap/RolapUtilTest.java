@@ -19,6 +19,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import org.eclipse.daanse.rolap.common.RolapStarRegistry;
+import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.mapping.api.model.InlineTableQueryMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.RelationalQueryMapping;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalTableMappingImpl;

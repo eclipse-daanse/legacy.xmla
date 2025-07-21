@@ -21,6 +21,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.rolap.common.RolapAxis;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.junit.jupiter.api.AfterEach;
@@ -34,7 +35,6 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.rolap.RolapAxis;
 import mondrian.test.SqlPattern;
 
 /**

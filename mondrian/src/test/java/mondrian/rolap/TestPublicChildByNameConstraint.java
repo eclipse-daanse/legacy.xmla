@@ -21,6 +21,7 @@ package mondrian.rolap;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.NameSegment;
+import org.eclipse.daanse.rolap.common.ChildByNameConstraint;
 
 public class TestPublicChildByNameConstraint extends ChildByNameConstraint {
 

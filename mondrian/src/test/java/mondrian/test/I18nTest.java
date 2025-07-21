@@ -29,9 +29,8 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-
-import mondrian.rolap.RolapConnectionPropsR;
 import  org.eclipse.daanse.olap.util.Format;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 
 /**
  * Test suite for internalization and localization.

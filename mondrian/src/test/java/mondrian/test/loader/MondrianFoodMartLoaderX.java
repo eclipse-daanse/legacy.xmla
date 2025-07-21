@@ -52,11 +52,11 @@ import org.eclipse.daanse.olap.exceptions.CreateIndexFailedException;
 import org.eclipse.daanse.olap.exceptions.CreateTableFailedException;
 import org.eclipse.daanse.olap.exceptions.InvalidInsertLineException;
 import org.eclipse.daanse.olap.exceptions.MissingArgException;
+import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.enums.DatabaseProduct;
-import mondrian.rolap.RolapUtil;
 
 /**
  * Utility to load the FoodMart dataset into an arbitrary JDBC database.

@@ -18,6 +18,7 @@ import static org.opencube.junit5.TestUtil.withSchema;
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.rolap.common.RolapCatalogCache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,7 +27,6 @@ import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
-import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 
 class DefaultRecognizerTest {

@@ -13,7 +13,7 @@
  */
 package org.eclipse.daanse.rolap.aggmatch.jaxb;
 
-import mondrian.rolap.aggmatcher.Recognizer;
+import org.eclipse.daanse.rolap.common.aggmatcher.Recognizer;
 
 /**
  * This is used to identify the "fact_count" column in an aggregate

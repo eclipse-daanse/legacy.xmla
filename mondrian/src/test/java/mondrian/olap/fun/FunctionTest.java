@@ -60,9 +60,9 @@ import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.rolap.RolapCatalogCache;
 import mondrian.rolap.SchemaModifiers;
 import  org.eclipse.daanse.olap.util.Bug;
+import org.eclipse.daanse.rolap.common.RolapCatalogCache;
 
 //import mondrian.spi.DialectManager;
 

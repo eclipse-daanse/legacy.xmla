@@ -15,11 +15,11 @@ import java.util.Arrays;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
-
-import mondrian.rolap.RolapUtil;
-import mondrian.rolap.SqlStatement;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
+import org.eclipse.daanse.rolap.common.RolapUtil;
+import org.eclipse.daanse.rolap.common.SqlStatement;
+
 import mondrian.spi.StatisticsProvider;
 
 /**

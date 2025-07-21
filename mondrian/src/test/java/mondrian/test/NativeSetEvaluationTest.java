@@ -31,6 +31,8 @@ import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.NativeEvaluationUnsupportedException;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.RolapCube;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
@@ -70,8 +72,6 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
-import mondrian.rolap.RolapConnection;
-import mondrian.rolap.RolapCube;
 import mondrian.rolap.SchemaModifiers;
 import  org.eclipse.daanse.olap.util.Bug;
 
