@@ -21,6 +21,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.eclipse.daanse.rolap.util.PartiallyOrderedSet;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -95,7 +96,7 @@ class PartiallyOrderedSetTest {
                 return (e2 & e1) == e1;
             }
         };
-    
+
     @Test
     void testPoset() {
         String empty = "''";

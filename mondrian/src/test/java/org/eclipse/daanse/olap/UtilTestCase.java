@@ -61,8 +61,8 @@ import  org.eclipse.daanse.olap.util.ArraySortedSet;
 import org.eclipse.daanse.olap.util.ArrayStack;
 import org.eclipse.daanse.olap.util.ByteString;
 import org.eclipse.daanse.olap.util.CartesianProductList;
-import mondrian.util.Composite;
-import mondrian.util.ServiceDiscovery;
+import org.eclipse.daanse.rolap.util.Composite;
+import org.eclipse.daanse.rolap.util.ServiceDiscovery;
 
 /**
  * Tests for methods in {@link org.eclipse.daanse.olap.common.Util} and, sometimes, classes in
@@ -294,7 +294,7 @@ import mondrian.util.ServiceDiscovery;
     }
 
     /**
-     * Tests {@link mondrian.util.ServiceDiscovery}.
+     * Tests {@link org.eclipse.daanse.rolap.util.ServiceDiscovery}.
      */
     @Test
     @Disabled("Use Serviceloader directly - this is pre java 8 and non-osgi")

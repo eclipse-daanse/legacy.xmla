@@ -43,6 +43,7 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.common.RolapMember;
 import org.eclipse.daanse.rolap.common.sql.SqlQuery;
+import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,6 @@ import org.opentest4j.AssertionFailedError;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.SchemaModifiers;
-import mondrian.util.DelegatingInvocationHandler;
 
 /**
  * Unit test which checks that {@link Dialect} accurately represents the capabilities of the underlying

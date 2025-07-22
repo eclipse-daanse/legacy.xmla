@@ -89,6 +89,7 @@ import org.eclipse.daanse.rolap.common.RolapCatalog;
 import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.sql.SqlStatisticsProviderNew;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
@@ -105,7 +106,6 @@ import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.SchemaModifiers;
 import mondrian.spi.impl.JdbcStatisticsProvider;
 import mondrian.spi.impl.SqlStatisticsProvider;
-import mondrian.spi.impl.SqlStatisticsProviderNew;
 
 /**
  * <code>BasicQueryTest</code> is a test case which tests simple queries against the FoodMart database.

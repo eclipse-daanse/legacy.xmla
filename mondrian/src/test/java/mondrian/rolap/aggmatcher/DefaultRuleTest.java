@@ -43,12 +43,11 @@ import org.eclipse.daanse.rolap.aggmatch.jaxb.Regex;
 import org.eclipse.daanse.rolap.aggmatch.jaxb.TableMatch;
 import org.eclipse.daanse.rolap.aggmatch.jaxb.TableMatchRef;
 import org.eclipse.daanse.rolap.common.aggmatcher.Recognizer;
+import org.eclipse.daanse.rolap.recorder.ListRecorder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import mondrian.recorder.ListRecorder;
 
 /**
  * Testing the default aggregate table recognizer.

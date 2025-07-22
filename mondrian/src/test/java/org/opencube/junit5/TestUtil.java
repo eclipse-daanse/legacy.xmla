@@ -87,6 +87,7 @@ import org.eclipse.daanse.rolap.common.RolapHierarchy;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.common.SmartMemberReader;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
 import org.opencube.junit5.context.TestContextImpl;
@@ -95,7 +96,6 @@ import mondrian.enums.DatabaseProduct;
 
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import mondrian.test.SqlPattern;
-import mondrian.util.DelegatingInvocationHandler;
 
 //import mondrian.spi.DialectManager;
 

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.daanse.rolap.util.ConcatenableList;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -67,7 +68,7 @@ class ConcatenableListTest{
         assertEquals(VALUE_5, iterator.next(),"first value should be E");
         assertTrue(iterator.hasNext(), "iterator.hasNext() should be true");
         assertEquals(VALUE_6, iterator.next(),"first value should be F");
-        assertFalse(iterator.hasNext(), 
+        assertFalse(iterator.hasNext(),
             "iterator.hasNext() should be false, since there are no more values");
     }
 

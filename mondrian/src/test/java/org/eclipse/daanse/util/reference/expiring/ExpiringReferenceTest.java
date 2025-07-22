@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.time.Duration;
 
+import org.eclipse.daanse.rolap.util.reference.expiring.ExpiringReference;
 import org.junit.jupiter.api.Test;
 
 class ExpiringReferenceTest {

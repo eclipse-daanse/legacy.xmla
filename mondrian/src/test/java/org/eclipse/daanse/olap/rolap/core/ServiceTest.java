@@ -30,7 +30,7 @@ import java.util.Optional;
 import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.jdbc.db.dialect.api.DialectResolver;
+import org.eclipse.daanse.jdbc.db.dialect.api.DialectFactory;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
@@ -67,7 +67,7 @@ class ServiceTest {
 	Dialect dialect;
 
 	@Mock
-	DialectResolver dialectResolver;
+	DialectFactory dialectFactory;
 
 	@Mock
 	DataSource dataSource;
@@ -103,7 +103,7 @@ class ServiceTest {
             @InjectService(cardinality = 0) ServiceAware<Context> saContext) throws Exception {
 
         when(dataSource.getConnection()).thenReturn(connection);
-        when(dialectResolver.resolve((DataSource)any())).thenReturn(Optional.of(dialect));
+        when(dialectFactory.createDialect(connection)).thenReturn(dialect);
         when(catalogMappingSupplier.get()).thenReturn(catalogMapping);
         when(catalogMapping.getName()).thenReturn("schemaName");
 
@@ -115,7 +115,7 @@ class ServiceTest {
                 .isNull();
 
         bc.registerService(DataSource.class, dataSource, dictionaryOf("ds", "1"));
-        bc.registerService(DialectResolver.class, dialectResolver, dictionaryOf("dr", "2"));
+        bc.registerService(DialectFactory.class, dialectFactory, dictionaryOf("df", "2"));
         bc.registerService(ExpressionCompilerFactory.class, expressionCompilerFactory, dictionaryOf("ecf", "1"));
         bc.registerService(CatalogMappingSupplier.class, catalogMappingSupplier, dictionaryOf("dbmsp", "1"));
         bc.registerService(MdxParserProvider.class, mdxParserProvider, dictionaryOf("parser", "1"));

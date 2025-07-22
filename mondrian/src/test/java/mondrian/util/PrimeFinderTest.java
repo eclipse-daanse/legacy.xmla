@@ -14,11 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.eclipse.daanse.rolap.util.PrimeFinder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testcase for {@link mondrian.util.PrimeFinder}.
+ * Testcase for {@link org.eclipse.daanse.rolap.util.PrimeFinder}.
  *
  * @author jhyde, Stefan Bischof
  * @since Feb 4, 2007

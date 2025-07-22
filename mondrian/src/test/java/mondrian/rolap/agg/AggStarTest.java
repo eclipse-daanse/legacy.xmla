@@ -16,11 +16,10 @@ import static org.mockito.Mockito.mock;
 import org.eclipse.daanse.rolap.common.RolapStar;
 import org.eclipse.daanse.rolap.common.aggmatcher.AggStar;
 import org.eclipse.daanse.rolap.common.aggmatcher.JdbcSchema;
+import org.eclipse.daanse.rolap.recorder.MessageRecorder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import mondrian.recorder.MessageRecorder;
 
 class AggStarTest {
 

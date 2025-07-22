@@ -83,9 +83,9 @@ import org.eclipse.daanse.rolap.common.agg.SegmentAxis;
 import org.eclipse.daanse.rolap.common.agg.SegmentCacheManager;
 import org.eclipse.daanse.rolap.common.agg.SegmentLoader;
 import org.eclipse.daanse.rolap.common.agg.SegmentWithData;
+import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
 
 import mondrian.test.SqlPattern;
-import mondrian.util.DelegatingInvocationHandler;
 
 /**
  * <p>Test for <code>SegmentLoader</code></p>

@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.daanse.rolap.util.BlockingHashMap;
 import org.junit.jupiter.api.Test;
 
 /**
