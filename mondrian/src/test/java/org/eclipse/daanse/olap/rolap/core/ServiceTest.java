@@ -136,7 +136,7 @@ class ServiceTest {
         props.put("name", theName);
         props.put("description", theDescription);
         c.update(props);
-        Context<?> ctx = saContext.waitForService(1000000);
+        Context<?> ctx = saContext.waitForService(10000);
 
         assertThat(saContext).isNotNull()
                 .extracting(ServiceAware::size)
