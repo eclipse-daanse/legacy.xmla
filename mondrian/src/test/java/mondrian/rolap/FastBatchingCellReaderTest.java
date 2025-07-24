@@ -59,7 +59,7 @@ import org.eclipse.daanse.rolap.aggregator.MinAggregator;
 import org.eclipse.daanse.rolap.aggregator.SumAggregator;
 import org.eclipse.daanse.rolap.common.BatchLoader;
 import org.eclipse.daanse.rolap.common.FastBatchingCellReader;
-import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.common.agg.AggregationKey;
 import org.eclipse.daanse.rolap.common.agg.AggregationManager;
 import org.eclipse.daanse.rolap.common.agg.Segment;

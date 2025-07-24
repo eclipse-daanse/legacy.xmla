@@ -85,7 +85,7 @@ import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import org.eclipse.daanse.olap.spi.StatisticsProvider;
 import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.api.RolapContext;
-import org.eclipse.daanse.rolap.common.RolapCatalog;
+import org.eclipse.daanse.rolap.element.RolapCatalog;
 import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;

@@ -33,7 +33,7 @@ import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.olap.function.def.crossjoin.ImmutableListCalc;
 import org.eclipse.daanse.olap.function.def.union.UnionCalc;
 import org.eclipse.daanse.olap.query.component.ResolvedFunCallImpl;
-import org.eclipse.daanse.rolap.common.RolapMemberBase;
+import org.eclipse.daanse.rolap.element.RolapMemberBase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.Mockito;

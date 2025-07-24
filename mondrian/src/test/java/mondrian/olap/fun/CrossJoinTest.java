@@ -71,7 +71,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
 import org.eclipse.daanse.rolap.common.RolapConnection;
-import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.element.RolapCube;
 
 
 /**

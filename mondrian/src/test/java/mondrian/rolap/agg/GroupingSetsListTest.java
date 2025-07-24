@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.daanse.olap.key.BitKey;
-import org.eclipse.daanse.rolap.common.RolapCatalog;
+import org.eclipse.daanse.rolap.element.RolapCatalog;
 import org.eclipse.daanse.rolap.common.RolapStar;
 import org.eclipse.daanse.rolap.common.StarColumnPredicate;
 import org.eclipse.daanse.rolap.common.StarPredicate;

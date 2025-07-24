@@ -87,8 +87,9 @@ import mondrian.olap.fun.CrossJoinTest.NullFunDef;
 import mondrian.olap.fun.TestMember;
 
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
-import org.eclipse.daanse.rolap.common.RolapCube;
-import org.eclipse.daanse.rolap.common.RolapCubeLevel;
+import org.eclipse.daanse.rolap.element.CompoundSlicerRolapMember;
+import org.eclipse.daanse.rolap.element.RolapCube;
+import org.eclipse.daanse.rolap.element.RolapCubeLevel;
 import org.eclipse.daanse.rolap.common.RolapEvaluator;
 import org.eclipse.daanse.rolap.common.RolapEvaluatorRoot;
 import org.eclipse.daanse.rolap.common.RolapResult;
@@ -449,8 +450,8 @@ class SqlConstraintUtilsTest {
         final Member expectedMember = slicerMember;
         setSlicerContext(rolapEvaluator, expectedMember);
 
-        RolapResult.CompoundSlicerRolapMember placeHolderMember =
-            Mockito.mock(RolapResult.CompoundSlicerRolapMember.class);
+        CompoundSlicerRolapMember placeHolderMember =
+            Mockito.mock(CompoundSlicerRolapMember.class);
         Mockito.doReturn(slicerHierarchy)
         .when(placeHolderMember).getHierarchy();
         // tested call
@@ -671,8 +672,8 @@ class SqlConstraintUtilsTest {
       final Member expectedMember = slicerMember;
       setSlicerContext(rolapEvaluator, expectedMember);
 
-      RolapResult.CompoundSlicerRolapMember placeHolderMember =
-          Mockito.mock(RolapResult.CompoundSlicerRolapMember.class);
+      CompoundSlicerRolapMember placeHolderMember =
+          Mockito.mock(CompoundSlicerRolapMember.class);
       Mockito.doReturn(slicerHierarchy)
       .when(placeHolderMember).getHierarchy();
 

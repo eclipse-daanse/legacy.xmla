@@ -82,15 +82,14 @@ import org.eclipse.daanse.olap.impl.TraditionalCellSetFormatter;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.MemberCacheHelper;
-import org.eclipse.daanse.rolap.common.RolapCube;
-import org.eclipse.daanse.rolap.common.RolapHierarchy;
+import org.eclipse.daanse.rolap.element.RolapCube;
+import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.common.SmartMemberReader;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
 import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
-import org.opencube.junit5.context.TestContextImpl;
 
 import mondrian.enums.DatabaseProduct;
 

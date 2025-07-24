@@ -20,7 +20,7 @@
 package mondrian.rolap;
 
 import org.eclipse.daanse.rolap.common.MemberKey;
-import org.eclipse.daanse.rolap.common.RolapMember;
+import org.eclipse.daanse.rolap.element.RolapMember;
 
 public class TestPublicMemberKey extends MemberKey{
 

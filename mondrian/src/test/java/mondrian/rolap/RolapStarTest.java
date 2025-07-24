@@ -19,8 +19,8 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.rolap.common.RolapCatalog;
-import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.element.RolapCatalog;
+import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.common.RolapStar;
 import org.eclipse.daanse.rolap.common.RolapStar.Column;
 import org.eclipse.daanse.rolap.common.util.RelationUtil;

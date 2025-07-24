@@ -22,7 +22,6 @@ import org.eclipse.daanse.olap.api.calc.todo.TupleList;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
 import org.eclipse.daanse.olap.api.function.FunctionMetaData;
-import org.eclipse.daanse.olap.api.query.component.ResolvedFunCall;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
@@ -39,7 +38,7 @@ import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import mondrian.olap.fun.CrossJoinTest;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
-import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.common.RolapResult;
 
 import java.util.Optional;

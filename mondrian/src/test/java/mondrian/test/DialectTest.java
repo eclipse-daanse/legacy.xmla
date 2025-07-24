@@ -41,7 +41,7 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.Util;
-import org.eclipse.daanse.rolap.common.RolapMember;
+import org.eclipse.daanse.rolap.element.RolapMember;
 import org.eclipse.daanse.rolap.common.sql.SqlQuery;
 import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
 import org.junit.jupiter.api.AfterEach;

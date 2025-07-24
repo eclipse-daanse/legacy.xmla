@@ -32,7 +32,7 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.NativeEvaluationUnsupportedException;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.common.RolapConnection;
-import org.eclipse.daanse.rolap.common.RolapCube;
+import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
