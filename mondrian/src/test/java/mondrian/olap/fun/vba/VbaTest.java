@@ -1504,10 +1504,10 @@ class VbaTest   {
 */
     @Test
     void testSpace() {
-        assertEquals("   ", SpaceCalc.space(3));
-        assertEquals("", SpaceCalc.space(0));
+        assertEquals("   ", StringCalc.string(3, ' '));
+        assertEquals("", StringCalc.string(0, ' '));
         try {
-            String s = SpaceCalc.space(-2);
+            String s = StringCalc.string(-2, ' ');
             fail("expected error, got " + s);
         } catch (RuntimeException e) {
             assertMessage(e, "NegativeArraySizeException");
