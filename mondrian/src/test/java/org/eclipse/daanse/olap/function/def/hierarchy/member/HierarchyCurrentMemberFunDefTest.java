@@ -19,7 +19,7 @@ import static org.opencube.junit5.TestUtil.assertExprDependsOn;
 import static org.opencube.junit5.TestUtil.assertMemberExprDependsOn;
 import static org.opencube.junit5.TestUtil.executeQuery;
 
-import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.junit.jupiter.api.Disabled;

@@ -16,7 +16,7 @@ import static org.opencube.junit5.TestUtil.withSchema;
 
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Query;

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.element.RolapCatalog;
 import org.eclipse.daanse.rolap.element.RolapCube;

@@ -11,7 +11,7 @@ package mondrian.rolap;
 
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 
-import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;

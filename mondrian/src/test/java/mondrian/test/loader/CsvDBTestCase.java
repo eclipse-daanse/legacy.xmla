@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.function.Function;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;

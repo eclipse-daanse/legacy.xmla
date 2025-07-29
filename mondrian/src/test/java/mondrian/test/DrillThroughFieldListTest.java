@@ -20,7 +20,7 @@ import static org.opencube.junit5.TestUtil.getDialect;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.OlapElement;
 import org.eclipse.daanse.olap.api.result.Result;

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.CatalogReader;
-import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.DatabaseColumn;
 import org.eclipse.daanse.olap.api.element.DatabaseSchema;

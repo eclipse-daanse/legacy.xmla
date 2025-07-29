@@ -47,7 +47,7 @@ import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.CacheControl.MemberEditCommand;
-import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.IAggregationManager;
 import org.eclipse.daanse.olap.api.Locus;

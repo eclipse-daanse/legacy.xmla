@@ -24,7 +24,7 @@ import static org.opencube.junit5.TestUtil.withSchema;
 
 import java.sql.SQLException;
 
-import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;

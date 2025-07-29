@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import org.apache.commons.lang3.LocaleUtils;
-import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Result;

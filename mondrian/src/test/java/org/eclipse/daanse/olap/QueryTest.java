@@ -21,7 +21,7 @@ import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.query.component.CellProperty;
 import org.eclipse.daanse.olap.api.query.component.Formula;
-import org.eclipse.daanse.olap.common.ConnectionBase;
+import org.eclipse.daanse.olap.connection.ConnectionBase;
 import org.eclipse.daanse.olap.query.component.CellPropertyImpl;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.olap.query.component.QueryAxisImpl;

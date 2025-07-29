@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;

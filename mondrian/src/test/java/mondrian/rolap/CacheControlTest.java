@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.CacheControl.CellRegion;
-import org.eclipse.daanse.olap.api.Connection;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.CatalogReader;
