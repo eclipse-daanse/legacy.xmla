@@ -966,6 +966,7 @@
     <module>demo</module>
     <module>org.eclipse.daanse.repackage.dockerjava</module>
     <module>org.eclipse.daanse.repackage.testcontainers.core</module>
+    <module>check</module>
   </modules>
   <profiles>
     <profile>
