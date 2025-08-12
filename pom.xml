@@ -963,7 +963,6 @@
     <module>olap</module>
     <module>lcid</module>
     <module>odf</module>
-    <module>demo</module>
     <module>org.eclipse.daanse.repackage.dockerjava</module>
     <module>org.eclipse.daanse.repackage.testcontainers.core</module>
   </modules>
