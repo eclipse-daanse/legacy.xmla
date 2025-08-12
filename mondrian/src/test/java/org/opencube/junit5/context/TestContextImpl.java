@@ -28,20 +28,18 @@ import javax.sql.DataSource;
 
 import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.mdx.parser.api.MdxParserProvider;
-import org.eclipse.daanse.mdx.parser.ccc.MdxParserProviderImpl;
+import org.eclipse.daanse.mdx.parser.ccc.CCCMdxParserProvider;
 import org.eclipse.daanse.olap.api.AggregationFactory;
 import org.eclipse.daanse.olap.api.ConfigConstants;
-import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Statement;
-import org.eclipse.daanse.olap.api.aggregator.Aggregator;
 import org.eclipse.daanse.olap.api.aggregator.CustomAggregatorFactory;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
+import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory;
 import org.eclipse.daanse.olap.common.ExecuteDurationUtil;
-import org.eclipse.daanse.olap.core.AbstractBasicContext;
 import org.eclipse.daanse.olap.core.LoggingEventBus;
 import org.eclipse.daanse.olap.function.core.FunctionServiceImpl;
 import org.eclipse.daanse.olap.function.core.resolver.NullReservedWordsResolver;
@@ -102,7 +100,6 @@ import org.eclipse.daanse.olap.function.def.hierarchy.level.LevelHierarchyResolv
 import org.eclipse.daanse.olap.function.def.hierarchy.member.HierarchyCurrentMemberResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.MemberHierarchyResolver;
 import org.eclipse.daanse.olap.function.def.hierarchy.member.NamedSetCurrentResolver;
-import org.eclipse.daanse.rolap.function.def.intersect.IntersectResolver;
 import org.eclipse.daanse.olap.function.def.lastperiods.LastPeriodsResolver;
 import org.eclipse.daanse.olap.function.def.leadlag.LagResolver;
 import org.eclipse.daanse.olap.function.def.leadlag.LeadResolver;
@@ -316,8 +313,7 @@ import org.eclipse.daanse.olap.function.def.vba.typename.TypeNameResolver;
 import org.eclipse.daanse.olap.function.def.vba.weekday.WeekdayResolver;
 import org.eclipse.daanse.olap.function.def.vba.weekdayname.WeekdayNameResolver;
 import org.eclipse.daanse.olap.function.def.vba.year.YearResolver;
-import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalsResolver;
-import org.eclipse.daanse.rolap.api.RolapContext;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import org.eclipse.daanse.rolap.common.AbstractRolapContext;
 import org.eclipse.daanse.rolap.common.RolapCatalogCache;
 import org.eclipse.daanse.rolap.common.RolapConnection;
@@ -329,16 +325,11 @@ import org.eclipse.daanse.rolap.common.RolapProfilingEvaluator;
 import org.eclipse.daanse.rolap.common.RolapResult;
 import org.eclipse.daanse.rolap.common.RolapResultShepherd;
 import org.eclipse.daanse.rolap.common.agg.AggregationManager;
-import org.eclipse.daanse.rolap.aggregator.AvgAggregator;
-import org.eclipse.daanse.rolap.aggregator.CountAggregator;
-import org.eclipse.daanse.rolap.aggregator.DistinctCountAggregator;
-import org.eclipse.daanse.rolap.aggregator.MaxAggregator;
-import org.eclipse.daanse.rolap.aggregator.MinAggregator;
-import org.eclipse.daanse.rolap.aggregator.SumAggregator;
+import org.eclipse.daanse.rolap.function.def.intersect.IntersectResolver;
+import org.eclipse.daanse.rolap.function.def.visualtotals.VisualTotalsResolver;
 import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
-import  org.eclipse.daanse.olap.server.ExecutionImpl;
 
 public class TestContextImpl extends AbstractRolapContext implements TestContext {
 
@@ -784,7 +775,7 @@ public class TestContextImpl extends AbstractRolapContext implements TestContext
 
     @Override
     public MdxParserProvider getMdxParserProvider() {
-        return new MdxParserProviderImpl();
+        return new CCCMdxParserProvider();
     }
 
     public void setFunctionService(FunctionService functionService) {
