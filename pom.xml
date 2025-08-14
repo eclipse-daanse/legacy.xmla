@@ -958,13 +958,10 @@
 
   </dependencies>
   <modules>
-    <module>tooling</module>
     <module>mondrian</module>
     <module>olap</module>
-    <module>lcid</module>
     <module>odf</module>
     <module>org.eclipse.daanse.repackage.dockerjava</module>
-    <module>org.eclipse.daanse.repackage.testcontainers.core</module>
   </modules>
   <profiles>
     <profile>
