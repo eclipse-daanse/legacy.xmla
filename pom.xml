@@ -960,7 +960,6 @@
   <modules>
     <module>mondrian</module>
     <module>olap</module>
-    <module>odf</module>
   </modules>
 
 </project>
