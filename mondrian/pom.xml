@@ -80,12 +80,20 @@
       <artifactId>fastcsv</artifactId>
       <version>3.0.0</version>
     </dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.eclipse.daanse</groupId>-->
+<!--			<artifactId>org.eclipse.daanse.repackage.dockerjava</artifactId>-->
+<!--			<version>${revision}</version>-->
+<!--			<scope>compile</scope>-->
+<!--		</dependency>-->
+
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
-			<artifactId>org.eclipse.daanse.repackage.dockerjava</artifactId>
-			<version>${revision}</version>
+			<artifactId>org.eclipse.daanse.tooling.dockerjava</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
+
 
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>

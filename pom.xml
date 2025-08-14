@@ -961,7 +961,6 @@
     <module>mondrian</module>
     <module>olap</module>
     <module>odf</module>
-    <module>org.eclipse.daanse.repackage.dockerjava</module>
   </modules>
   <profiles>
     <profile>
