@@ -46,8 +46,8 @@ import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.exceptions.RoleUnionGrantsException;
 import org.eclipse.daanse.olap.exceptions.UnknownRoleException;
 import org.eclipse.daanse.rolap.common.AbstractRolapContext;
-import org.eclipse.daanse.rolap.common.CacheKey;
-import org.eclipse.daanse.rolap.common.CatalogContentKey;
+import org.eclipse.daanse.rolap.common.RolapCatalogKey;
+import org.eclipse.daanse.rolap.common.RolapCatalogContentKey;
 import org.eclipse.daanse.rolap.common.ConnectionKey;
 import org.eclipse.daanse.rolap.element.RolapCatalog;
 import org.eclipse.daanse.rolap.common.RolapConnection;
@@ -108,8 +108,8 @@ class RolapCatalogTest {
     }
 
     private RolapCatalog createSchema() {
-        CacheKey key = new CacheKey(
-            new CatalogContentKey("test", 1), new ConnectionKey(1, "1"));
+        RolapCatalogKey key = new RolapCatalogKey(
+            new RolapCatalogContentKey("test", 1), new ConnectionKey(1, "1"));
 
         //noinspection deprecation
         //mock rolap connection to eliminate calls for cache loading
