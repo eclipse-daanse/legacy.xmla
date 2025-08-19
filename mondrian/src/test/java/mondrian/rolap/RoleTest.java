@@ -24,6 +24,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.element.DatabaseColumn;
 import org.eclipse.daanse.olap.api.element.DatabaseSchema;
 import org.eclipse.daanse.olap.api.element.DatabaseTable;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
@@ -61,7 +62,7 @@ public class RoleTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testDatabaseSchemaWithRole(Context<?> context) {
         TestUtil.withSchema(context, RoleTestModifier::new);
-        Connection connection = context.getConnection(List.of("Test"));
+        Connection connection = context.getConnection(new RolapConnectionPropsR(List.of("Test")));
 
         try {
             CatalogReader schemaReader = connection.getCatalogReader();

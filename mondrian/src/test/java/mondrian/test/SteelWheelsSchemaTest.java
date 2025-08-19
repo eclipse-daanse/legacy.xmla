@@ -35,6 +35,7 @@ import static org.opencube.junit5.TestUtil.withSchema;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.connection.Connection;
@@ -58,6 +59,7 @@ import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
 import mondrian.rolap.SchemaModifiers;
 import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.common.RolapCatalogCache;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 
 class SteelWheelsSchemaTest {
 
@@ -94,7 +96,7 @@ class SteelWheelsSchemaTest {
     void testMondrian1273(Context<?> context) {
         //createContext(context, schema);
         withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier1::new);
-        if (!databaseIsValid(((TestContext)context).getConnection(List.of("dev")), "Sales")) {
+        if (!databaseIsValid(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("dev"))), "Sales")) {
             return;
         }
         assertQueryReturns(context.getConnectionWithDefaultRole(),
@@ -1384,7 +1386,7 @@ class SteelWheelsSchemaTest {
     void testMondrian2411_1(Context<?> context) throws Exception {
         // Tests a user query followed by an admin query
         withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier8::new);
-        assertQueryReturns(((TestContext)context).getConnection(List.of("Power User")),
+        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Power User"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -1404,7 +1406,7 @@ class SteelWheelsSchemaTest {
             + "{[Customer_DimUsage].[Customers Hierarchy].[1 rue Alsace-Lorraine].[Roulet]}\n"
             + "Row #0: 1,701.95\n");
 
-        assertQueryReturns(((TestContext)context).getConnection(List.of("Administrator")),
+        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Administrator"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -1624,7 +1626,7 @@ class SteelWheelsSchemaTest {
     void testMondrian2411_2(Context<?> context) throws Exception {
         withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier8::new);
 
-        assertQueryReturns(((TestContext)context).getConnection(List.of("Administrator")),
+        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Administrator"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -1838,7 +1840,7 @@ class SteelWheelsSchemaTest {
             + "Row #96: 2,662.14\n"
             + "Row #97: 4,235.63\n");
 
-        assertQueryReturns(((TestContext)context).getConnection(List.of("Power User")),
+        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Power User"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -1870,7 +1872,7 @@ class SteelWheelsSchemaTest {
             return;
         }
         withSchema(context, SchemaModifiers.SteelWheelsSchemaTestModifier9::new);
-        assertQueryReturns(((TestContext)context).getConnection(List.of("Administrator Union")),
+        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Administrator Union"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -2084,7 +2086,7 @@ class SteelWheelsSchemaTest {
             + "Row #96: 2,662.14\n"
             + "Row #97: 4,235.63\n");
 
-        assertQueryReturns(((TestContext)context).getConnection(List.of("Power User Union")),
+        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Power User Union"))),
             "WITH\n"
             + "SET [*NATIVE_CJ_SET_WITH_SLICER] AS 'FILTER([*BASE_MEMBERS__Customer_DimUsage.Customers Hierarchy_], NOT ISEMPTY ([Measures].[Price Each]))'\n"
             + "SET [*NATIVE_CJ_SET] AS '[*NATIVE_CJ_SET_WITH_SLICER]'\n"
@@ -2137,7 +2139,7 @@ class SteelWheelsSchemaTest {
 
         // Report Author gets an exception since
         // he has no access to [Dimension2].[All Customers].[Alpha Cognac].
-        assertQueryThrows(((TestContext)context).getConnection(List.of("Report Author")),
+        assertQueryThrows(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Report Author"))),
             mdxQuery,
     "MDX object '[Dimension2].[All Customers].[Alpha Cognac]' not found in cube 'rolesTest'");
 
@@ -2147,7 +2149,7 @@ class SteelWheelsSchemaTest {
 
         // Administrator has full access to the data,
         // So he gets the expected result.
-        assertQueryReturns(((TestContext)context).getConnection(List.of("Administrator")),
+        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Administrator"))),
             mdxQuery,
             "Axis #0:\n"
             + "{}\n"

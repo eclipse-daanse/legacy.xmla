@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
@@ -228,7 +229,7 @@ class SteelWheelsAggregationTest {
 
         context.getCatalogCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
-        assertQueryReturns(((TestContext)context).getConnection(List.of("Power User")), QUERY, EXPECTED);
+        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Power User"))), QUERY, EXPECTED);
     }
 
     @ParameterizedTest
@@ -274,7 +275,7 @@ class SteelWheelsAggregationTest {
         	 );
         context.getCatalogCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
-        assertQueryReturns(((TestContext)context).getConnection(List.of("Power User")), QUERY, EXPECTED);
+        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Power User"))), QUERY, EXPECTED);
     }
 
     @Disabled //disabled for CI build
@@ -339,7 +340,7 @@ class SteelWheelsAggregationTest {
            	));
         context.getCatalogCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
-        assertQueryReturns(((TestContext)context).getConnection(List.of("Power User Union")), QUERY, EXPECTED);
+        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Power User Union"))), QUERY, EXPECTED);
     }
 
     @Disabled //disabled for CI build
@@ -430,6 +431,6 @@ class SteelWheelsAggregationTest {
            	));
         context.getCatalogCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
-        assertQueryReturns(((TestContext)context).getConnection(List.of("Power User Union")), QUERY, EXPECTED);
+        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Power User Union"))), QUERY, EXPECTED);
     }
 }

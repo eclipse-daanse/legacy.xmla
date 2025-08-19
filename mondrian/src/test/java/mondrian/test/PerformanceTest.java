@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import mondrian.rolap.SchemaModifiers;
 import  org.eclipse.daanse.olap.util.Bug;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 
 /**
  * Various unit tests concerned with performance.
@@ -580,7 +581,7 @@ public class PerformanceTest {
     // jdk1.7 marmite   main 14770   30,857 ms
     // jdk1.7 marmite   main 14771   29,083 ms
     withSchema(context, SchemaModifiers.PerformanceTestModifier3::new);
-    assertQueryReturns(((TestContext)context).getConnection(List.of("Role1")),
+    assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Role1"))),
       "with member [Measures].[Foo] as\n"
         + "Aggregate([Gender].Members * [Marital Status].Members * [Time].Members)\n"
         + "select from [Sales] where [Measures].[Foo]",

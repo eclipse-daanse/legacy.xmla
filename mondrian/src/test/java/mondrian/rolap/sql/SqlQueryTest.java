@@ -32,6 +32,7 @@ import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.common.sql.SqlQuery;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -1013,7 +1014,7 @@ class SqlQueryTest  extends BatchTestCase {
             + " ISNULL(`store`.`store_state`) ASC, `store`.`store_state` ASC";
         SqlPattern myPattern = new SqlPattern(MYSQL, mySql, mySql.length());
         SqlPattern[] patterns = {pgPattern, myPattern};
-        connection = ((TestContext)context).getConnection(List.of("justCA"));
+        connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("justCA")));
         executeQuery(mdx, connection);
         assertQuerySqlOrNot(connection, mdx, patterns, true, false, false);
     }

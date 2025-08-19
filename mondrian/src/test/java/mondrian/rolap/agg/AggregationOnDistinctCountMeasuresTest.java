@@ -49,6 +49,7 @@ import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.function.def.aggregate.AggregateCalc;
 import org.eclipse.daanse.olap.function.def.crossjoin.CrossJoinFunDef;
 import org.eclipse.daanse.olap.query.component.IdImpl;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -1933,7 +1934,7 @@ class AggregationOnDistinctCountMeasuresTest {
       final String mdx =
             "select {[Customers].[USA], [Customers].[USA].[OR], [Customers].[USA].[WA]} on columns, {[Measures].[Customer Count]} on rows from [Sales]";
 
-      assertQueryReturns(((TestContext)context).getConnection(List.of("Role1")),
+      assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Role1"))),
                     mdx,
                     "Axis #0:\n"
                     + "{}\n"

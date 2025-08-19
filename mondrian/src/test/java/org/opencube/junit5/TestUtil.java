@@ -82,6 +82,7 @@ import org.eclipse.daanse.olap.impl.TraditionalCellSetFormatter;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.MemberCacheHelper;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.rolap.common.RolapUtil;
@@ -236,7 +237,7 @@ public class TestUtil {
     public static void assertQueryThrows(Context<?> context, List<String> roles, String queryString, String pattern) {
         Throwable throwable;
         try {
-            Result result = executeQuery(((TestContext)context).getConnection(roles), queryString);
+            Result result = executeQuery(((TestContext)context).getConnection(new RolapConnectionPropsR(roles)), queryString);
 //            discard(result);
             throwable = null;
         } catch (Throwable e) {

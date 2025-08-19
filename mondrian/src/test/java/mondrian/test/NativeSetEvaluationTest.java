@@ -32,6 +32,7 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.NativeEvaluationUnsupportedException;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -1669,7 +1670,7 @@ protected void assertQuerySql(Connection connection,
         + "Select\n"
         + "[*BASE_MEMBERS_Measures] on columns,\n"
         + "Non Empty [*SORTED_ROW_AXIS] on rows\n"
-        + "From [Warehouse and Sales]\n", ((TestContext)context).getConnection(List.of("F-MIS-BE-CLIENT")));
+        + "From [Warehouse and Sales]\n", ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("F-MIS-BE-CLIENT"))));
     assertNotNull(result);
   }
 
@@ -1781,7 +1782,7 @@ protected void assertQuerySql(Connection connection,
      */
     withSchema(context, TestNativeHonorsRoleRestrictionsModifier::new);
 
-      Connection connection = ((TestContext)context).getConnection(List.of("Test"));
+      Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Test")));
     verifySameNativeAndNot(connection,
       "select non empty crossjoin([Store].[USA],[Product].[Product Name].members) on 0 from sales",
       "Native crossjoin mismatch");

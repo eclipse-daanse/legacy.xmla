@@ -61,6 +61,7 @@ import org.eclipse.daanse.olap.api.element.NamedSet;
 import org.eclipse.daanse.olap.documentation.api.ConntextDocumentationProvider;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.element.RolapColumn;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapCubeDimension;
@@ -154,7 +155,7 @@ public class MarkdownDocumentationProvider extends AbstractContextDocumentationP
     }
 
     private void writeCatalog(RolapContext context, Path catPath, String role) throws Exception {
-        RolapConnection connection = role != null ? (RolapConnection)context.getConnection(List.of(role)) : (RolapConnection)context.getConnectionWithDefaultRole();
+        RolapConnection connection = role != null ? (RolapConnection)context.getConnection(new RolapConnectionPropsR(List.of(role))) : (RolapConnection)context.getConnectionWithDefaultRole();
         CatalogReader catalogReader = connection.getCatalogReader();
         String fileName = "DOCUMENTATION" + (role != null ? ("_" + role) : "") + ".MD";
         Path path = catPath.resolve(fileName);

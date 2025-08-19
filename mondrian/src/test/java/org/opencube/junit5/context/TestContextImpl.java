@@ -727,12 +727,6 @@ public class TestContextImpl extends AbstractRolapContext implements TestContext
     }
 
     @Override
-    public RolapConnection getConnection(List<String> roles) {
-        return getConnection(new RolapConnectionPropsR(roles, true, Locale.getDefault(), Duration.ofSeconds(-1),
-                Optional.empty(), Optional.empty()));
-    }
-
-    @Override
     public String getName() {
         return name;
     }

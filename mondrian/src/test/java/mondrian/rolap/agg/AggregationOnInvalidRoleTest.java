@@ -14,6 +14,7 @@ import java.util.function.Function;
 import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.junit.jupiter.api.AfterEach;
@@ -60,7 +61,7 @@ class AggregationOnInvalidRoleTest extends CsvDBTestCase {
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setIgnoreInvalidMembers(true);
         prepareContext(context);
-        Connection connection = ((TestContext)context).getConnection(List.of("Test"));
+        Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Test")));
         //TestContext<?> context = getTestContext().withFreshConnection();
         try {
             executeAnalyzerQuery(connection);

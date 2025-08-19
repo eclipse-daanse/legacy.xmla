@@ -37,6 +37,7 @@ import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.IdImpl;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapVirtualCube;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
@@ -124,7 +125,7 @@ class RolapCubeTest {
             "[Measures].[Profit]", "[Measures].[Profit last Period]",
             "[Measures].[Profit Growth]"
         };
-        Connection connection = ((TestContext)context).getConnection(List.of("California manager"));
+        Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("California manager")));
 
         try {
             Cube salesCube = cubeByName(connection, "Sales");
@@ -156,7 +157,7 @@ class RolapCubeTest {
 
 
         createTestContextWithAdditionalMembersAndARole(context);
-        Connection connection = ((TestContext)context).getConnection(List.of("California manager"));
+        Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("California manager")));
 
         try {
             Cube salesCube = cubeByName(connection, "Sales");
@@ -185,7 +186,7 @@ class RolapCubeTest {
         //TestContext<?> testContext<?> =
         //    createTestContextWithAdditionalMembersAndARole();
         createTestContextWithAdditionalMembersAndARole(context);
-        Connection connection = ((TestContext)context).getConnection(List.of("California manager"));
+        Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("California manager")));
 
         try {
             Cube salesCube = cubeByName(connection, "Sales");
@@ -228,7 +229,7 @@ class RolapCubeTest {
 
 
         createTestContextWithAdditionalMembersAndARole(context);
-        Connection connection = ((TestContext)context).getConnection(List.of("California manager"));
+        Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("California manager")));
 
         try {
             Cube salesCube = cubeByName(connection, "Sales");

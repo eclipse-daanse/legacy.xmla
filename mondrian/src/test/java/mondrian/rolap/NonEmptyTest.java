@@ -43,6 +43,7 @@ import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.MemberCacheHelper;
 import org.eclipse.daanse.rolap.common.RolapCatalogReader;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapCubeHierarchy;
 import org.eclipse.daanse.rolap.element.RolapCubeMember;
@@ -6415,14 +6416,14 @@ class NonEmptyTest extends BatchTestCase {
 
     // The filter condition does not require a join to the fact table.
     assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
-    assertQuerySql(((TestContext)context).getConnection(List.of("Role1")), query, patterns );
+    assertQuerySql(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Role1"))), query, patterns );
 
     // in a non-empty context where a role is in effect, the query
     // will pessimistically join the fact table and apply the
     // constraint, since the filter condition could be influenced by
     // role limitations.
     assertQuerySql(
-        ((TestContext)context).getConnection(List.of("Role1")), nonEmptyQuery, patternsWithFactJoin );
+        ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Role1"))), nonEmptyQuery, patternsWithFactJoin );
   }
 
   /**
@@ -6601,14 +6602,14 @@ class NonEmptyTest extends BatchTestCase {
 
     // The filter condition does not require a join to the fact table.
     assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
-    assertQuerySql(((TestContext)context).getConnection(List.of("Role1")), query, patterns );
+    assertQuerySql(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Role1"))), query, patterns );
 
     // in a non-empty context where a role is in effect, the query
     // will pessimistically join the fact table and apply the
     // constraint, since the filter condition could be influenced by
     // role limitations.
     assertQuerySql(
-        ((TestContext)context).getConnection(List.of("Role1")), nonEmptyQuery, patternsWithFactJoin );
+        ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Role1"))), nonEmptyQuery, patternsWithFactJoin );
   }
 
 

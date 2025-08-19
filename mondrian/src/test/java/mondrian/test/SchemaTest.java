@@ -57,6 +57,7 @@ import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.common.aggmatcher.AggTableManager;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
@@ -6232,7 +6233,7 @@ class SchemaTest {
         withSchema(context, schema);
          */
         withSchema(context, TestUnionRoleModifier::new);
-        assertQueryReturns(((TestContext)context).getConnection(List.of("Role1Plus2Plus1")),
+        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Role1Plus2Plus1"))),
             "select from [Sales]",
             "Axis #0:\n"
             + "{}\n"
@@ -11740,7 +11741,7 @@ class SchemaTest {
        */
         withSchema(context, TestBugMonrian2528Modifier::new);
 
-      assertQueryReturns(((TestContext)context).getConnection(List.of("dev")),
+      assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("dev"))),
           "SELECT\n"
           + "[Product].[All Products] ON 0,\n"
           + "[Measures].[Store Sales] ON 1\n"

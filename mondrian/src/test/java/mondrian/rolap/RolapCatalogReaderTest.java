@@ -31,6 +31,7 @@ import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
+import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
@@ -67,7 +68,7 @@ class RolapCatalogReaderTest {
         };
 
         Connection connection =
-            ((TestContext)context).getConnection(List.of("No HR Cube"));
+            ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("No HR Cube")));
         try {
             CatalogReader reader = connection.getCatalogReader().withLocus();
 
@@ -110,7 +111,7 @@ class RolapCatalogReaderTest {
                 "Sales"
         };
 
-        Connection connection = ((TestContext)context).getConnection(List.of("California manager"));
+        Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("California manager")));
         try {
             CatalogReader reader = connection.getCatalogReader().withLocus();
 
@@ -233,7 +234,7 @@ class RolapCatalogReaderTest {
         withSchema(context, schema);
          */
         withSchema(context, TestGetCubeDimensionsModifier::new);
-        Connection connection = ((TestContext)context).getConnection(List.of("REG1"));
+        Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("REG1")));
         try {
             CatalogReader reader = connection.getCatalogReader().withLocus();
             final Map<String, Cube> cubes = new HashMap<>();
