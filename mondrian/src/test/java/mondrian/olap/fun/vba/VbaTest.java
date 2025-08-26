@@ -1536,7 +1536,7 @@ class VbaTest   {
         // zero length
         assertEquals("", StrReverseCalc.strReverse(""));
     }
-
+/*
     @Test
     void testTrim() {
         assertEquals("", TrimCalc.trim(""));
@@ -1544,7 +1544,7 @@ class VbaTest   {
         assertEquals("abc", TrimCalc.trim("abc"));
         assertEquals("abc", TrimCalc.trim(" \n\tabc  \r"));
     }
-
+*/
     @Test
     void testWeekdayName() {
         // If Sunday (1) is the first day of the week

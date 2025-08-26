@@ -959,7 +959,6 @@
   </dependencies>
   <modules>
     <module>mondrian</module>
-    <module>olap</module>
   </modules>
 
 </project>
