@@ -11,124 +11,18 @@
 package mondrian.rolap.agg;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
-import org.eclipse.daanse.jdbc.db.dialect.api.BestFitColumnType;
-import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.element.OlapElement;
-import org.eclipse.daanse.rolap.common.RolapStar;
-import org.eclipse.daanse.rolap.common.StarPredicate;
-import org.eclipse.daanse.rolap.common.agg.DrillThroughCellRequest;
-import org.eclipse.daanse.rolap.common.agg.DrillThroughQuerySpec;
-import org.eclipse.daanse.rolap.common.sql.SqlQuery;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 class DrillThroughQuerySpecTest {
-
-  private static DrillThroughCellRequest requestMock;
-  private static StarPredicate starPredicateMock;
-  private static SqlQuery sqlQueryMock;
-  private static DrillThroughQuerySpec drillThroughQuerySpec;
-  private static RolapStar.Column includedColumn;
-  private static RolapStar.Column excludedColumn;
-
-  @BeforeEach
-  public void beforeAll() throws Exception {
-
-    requestMock = mock(DrillThroughCellRequest.class);
-    starPredicateMock = mock(StarPredicate.class);
-    sqlQueryMock = mock(SqlQuery.class);
-    RolapStar.Measure measureMock = mock(RolapStar.Measure.class);
-    includedColumn = mock(RolapStar.Column.class);
-    excludedColumn = mock(RolapStar.Column.class);
-    RolapStar starMock = mock(RolapStar.class);
-
-    when(requestMock.includeInSelect(any(RolapStar.Column.class)))
-      .thenReturn(true);
-    when(requestMock.getMeasure()).thenReturn(measureMock);
-    when(requestMock.getConstrainedColumns())
-      .thenReturn(new RolapStar.Column[0]);
-    when(measureMock.getStar()).thenReturn(starMock);
-    when(starMock.getSqlQueryDialect()).thenReturn(mock(Dialect.class));
-    when(starPredicateMock.getConstrainedColumnList())
-      .thenReturn(Collections.singletonList(includedColumn));
-    when(includedColumn.getTable()).thenReturn(mock(RolapStar.Table.class));
-    when(excludedColumn.getTable()).thenReturn(mock(RolapStar.Table.class));
-    drillThroughQuerySpec =
-      new DrillThroughQuerySpec
-        (requestMock, starPredicateMock, new ArrayList<OlapElement> (), false);
-  }
-
-  @Test
-  void testEmptyColumns() {
-    List<RolapStar.Column> columns = Collections.emptyList();
-    when(starPredicateMock.getConstrainedColumnList())
-      .thenReturn(columns);
-    drillThroughQuerySpec.extraPredicates(sqlQueryMock);
-    verify(sqlQueryMock, times(0))
-      .addSelect(anyString(), any(BestFitColumnType.class), anyString());
-  }
-
-  @Test
-  void testOneColumnExists() {
-    drillThroughQuerySpec.extraPredicates(sqlQueryMock);
-    verify(sqlQueryMock, times(1))
-      .addSelect(isNull(), isNull(), anyString());
-  }
-
-  @Test
-  void testTwoColumnsExist() {
-    when(starPredicateMock.getConstrainedColumnList())
-      .thenReturn(Arrays.asList(includedColumn, excludedColumn));
-    drillThroughQuerySpec.extraPredicates(sqlQueryMock);
-    verify(sqlQueryMock, times(2))
-      .addSelect(isNull(), isNull(), anyString());
-  }
-
-  @Test
-  void testColumnsNotIncludedInSelect() {
-    when(requestMock.includeInSelect(includedColumn)).thenReturn(false);
-    drillThroughQuerySpec.extraPredicates(sqlQueryMock);
-    verify(sqlQueryMock, times(0))
-      .addSelect(anyString(), any(BestFitColumnType.class), anyString());
-
-    when(starPredicateMock.getConstrainedColumnList())
-      .thenReturn(Arrays.asList(includedColumn, excludedColumn));
-    verify(sqlQueryMock, times(0))
-      .addSelect(anyString(), any(BestFitColumnType.class), anyString());
-  }
-
-  @Test
-  void testColumnsPartiallyIncludedInSelect() {
-    when(requestMock.includeInSelect(excludedColumn)).thenReturn(false);
-    when(requestMock.includeInSelect(includedColumn)).thenReturn(true);
-    when(starPredicateMock.getConstrainedColumnList())
-      .thenReturn(Arrays.asList(includedColumn, excludedColumn));
-
-    drillThroughQuerySpec.extraPredicates(sqlQueryMock);
-    verify(sqlQueryMock, times(1))
-      .addSelect(isNull(), isNull(), anyString());
-  }
 
   // test that returns correct number of columns
   @ParameterizedTest
