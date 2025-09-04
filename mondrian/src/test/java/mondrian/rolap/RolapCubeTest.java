@@ -25,11 +25,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
-import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.CatalogReader;
+import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Segment;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Member;
@@ -37,7 +38,6 @@ import org.eclipse.daanse.olap.calc.base.type.tuplebase.UnaryTupleList;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import org.eclipse.daanse.olap.query.component.IdImpl;
-import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapVirtualCube;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
@@ -125,7 +125,7 @@ class RolapCubeTest {
             "[Measures].[Profit]", "[Measures].[Profit last Period]",
             "[Measures].[Profit Growth]"
         };
-        Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("California manager")));
+        Connection connection = ((TestContext)context).getConnection(new ConnectionProps(List.of("California manager")));
 
         try {
             Cube salesCube = cubeByName(connection, "Sales");
@@ -157,7 +157,7 @@ class RolapCubeTest {
 
 
         createTestContextWithAdditionalMembersAndARole(context);
-        Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("California manager")));
+        Connection connection = ((TestContext)context).getConnection(new ConnectionProps(List.of("California manager")));
 
         try {
             Cube salesCube = cubeByName(connection, "Sales");
@@ -186,7 +186,7 @@ class RolapCubeTest {
         //TestContext<?> testContext<?> =
         //    createTestContextWithAdditionalMembersAndARole();
         createTestContextWithAdditionalMembersAndARole(context);
-        Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("California manager")));
+        Connection connection = ((TestContext)context).getConnection(new ConnectionProps(List.of("California manager")));
 
         try {
             Cube salesCube = cubeByName(connection, "Sales");
@@ -229,7 +229,7 @@ class RolapCubeTest {
 
 
         createTestContextWithAdditionalMembersAndARole(context);
-        Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("California manager")));
+        Connection connection = ((TestContext)context).getConnection(new ConnectionProps(List.of("California manager")));
 
         try {
             Cube salesCube = cubeByName(connection, "Sales");

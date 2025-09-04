@@ -48,8 +48,6 @@ import org.eclipse.daanse.jdbc.db.dialect.api.Dialect;
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.ConfigConstants;
-import org.eclipse.daanse.olap.api.connection.Connection;
-import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Quoting;
 import org.eclipse.daanse.olap.api.Segment;
@@ -58,6 +56,8 @@ import org.eclipse.daanse.olap.api.calc.Calc;
 import org.eclipse.daanse.olap.api.calc.ResultStyle;
 import org.eclipse.daanse.olap.api.calc.profile.ProfilingCalc;
 import org.eclipse.daanse.olap.api.calc.todo.TupleList;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
@@ -80,21 +80,19 @@ import org.eclipse.daanse.olap.fun.FunUtil;
 import org.eclipse.daanse.olap.impl.CoordinateIterator;
 import org.eclipse.daanse.olap.impl.TraditionalCellSetFormatter;
 import org.eclipse.daanse.olap.query.component.IdImpl;
+import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.MemberCacheHelper;
-import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
-import org.eclipse.daanse.rolap.element.RolapCube;
-import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.common.SmartMemberReader;
+import org.eclipse.daanse.rolap.element.RolapCube;
+import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.util.DelegatingInvocationHandler;
-import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
+import org.opencube.junit5.context.TestContextImpl;
 
 import mondrian.enums.DatabaseProduct;
-
-import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import mondrian.test.SqlPattern;
 
 //import mondrian.spi.DialectManager;
@@ -237,7 +235,7 @@ public class TestUtil {
     public static void assertQueryThrows(Context<?> context, List<String> roles, String queryString, String pattern) {
         Throwable throwable;
         try {
-            Result result = executeQuery(((TestContext)context).getConnection(new RolapConnectionPropsR(roles)), queryString);
+            Result result = executeQuery(((TestContext)context).getConnection(new ConnectionProps(roles)), queryString);
 //            discard(result);
             throwable = null;
         } catch (Throwable e) {

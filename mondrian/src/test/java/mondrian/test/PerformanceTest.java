@@ -22,20 +22,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.Evaluator;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Axis;
 import org.eclipse.daanse.olap.api.result.Position;
 import org.eclipse.daanse.olap.api.result.Result;
-import org.eclipse.daanse.olap.api.type.NumericType;
-import org.eclipse.daanse.olap.api.type.Type;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.fun.sort.Sorter;
+import  org.eclipse.daanse.olap.util.Bug;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -49,8 +47,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import mondrian.rolap.SchemaModifiers;
-import  org.eclipse.daanse.olap.util.Bug;
-import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 
 /**
  * Various unit tests concerned with performance.
@@ -581,7 +577,7 @@ public class PerformanceTest {
     // jdk1.7 marmite   main 14770   30,857 ms
     // jdk1.7 marmite   main 14771   29,083 ms
     withSchema(context, SchemaModifiers.PerformanceTestModifier3::new);
-    assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Role1"))),
+    assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Role1"))),
       "with member [Measures].[Foo] as\n"
         + "Aggregate([Gender].Members * [Marital Status].Members * [Time].Members)\n"
         + "select from [Sales] where [Measures].[Foo]",

@@ -14,11 +14,9 @@
 package org.opencube.junit5.context;
 
 import java.sql.SQLException;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Semaphore;
@@ -317,7 +315,6 @@ import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import org.eclipse.daanse.rolap.common.AbstractRolapContext;
 import org.eclipse.daanse.rolap.common.RolapCatalogCache;
 import org.eclipse.daanse.rolap.common.RolapConnection;
-import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.common.RolapDependencyTestingEvaluator;
 import org.eclipse.daanse.rolap.common.RolapEvaluator;
 import org.eclipse.daanse.rolap.common.RolapEvaluatorRoot;
@@ -718,7 +715,7 @@ public class TestContextImpl extends AbstractRolapContext implements TestContext
 
     @Override
     public RolapConnection getConnectionWithDefaultRole() {
-        return getConnection(new RolapConnectionPropsR());
+        return getConnection(new ConnectionProps());
     }
 
     @Override

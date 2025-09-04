@@ -15,16 +15,16 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
@@ -62,7 +62,7 @@ class AggregationOnInvalidRoleWhenNotIgnoringTest extends CsvDBTestCase {
         ((TestContextImpl)context).setReadAggregates(true);
         prepareContext(context);
         try {
-            executeAnalyzerQuery(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Test"))));
+            executeAnalyzerQuery(((TestContext)context).getConnection(new ConnectionProps(List.of("Test"))));
         } catch (Exception e) {
             // that's ok, junit's assertion errors are derived from Error,
             // hence they will not be caught here

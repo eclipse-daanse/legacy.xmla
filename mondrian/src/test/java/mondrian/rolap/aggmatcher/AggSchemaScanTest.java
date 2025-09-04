@@ -73,7 +73,7 @@ class AggSchemaScanTest {
       List<? extends DatabaseSchemaMapping> schemas = catalogMapping.getDbschemas();
       DatabaseSchemaMapping databaseSchema = schemas.getFirst();
 
-      //RolapConnectionPropsR rc =  new RolapConnectionPropsR(List.of(), false, Locale.getDefault(), 0l, TimeUnit.SECONDS, Optional.of("bogus"),Optional.of("bogus"));
+      //RolapConnectionPropsR rc = new ConnectionProps(List.of(), false, Locale.getDefault(), 0l, TimeUnit.SECONDS, Optional.of("bogus"),Optional.of("bogus"));
       JdbcSchema jdbcSchema = new JdbcSchema(databaseSchema);
       //jdbcSchema.resetAllTablesLoaded();
       jdbcSchema.getTablesMap().clear();

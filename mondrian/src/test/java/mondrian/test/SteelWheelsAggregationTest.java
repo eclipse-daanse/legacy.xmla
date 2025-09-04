@@ -15,33 +15,32 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessMember;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.LevelType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.RollupPolicyType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.steelwheels.SteelwheelsSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessDimensionGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessMemberGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CatalogMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
@@ -51,8 +50,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.SteelWheelsDataLoader;
 import org.opencube.junit5.propupdator.AppandSteelWheelsCatalog;
 
@@ -229,7 +228,7 @@ class SteelWheelsAggregationTest {
 
         context.getCatalogCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
-        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Power User"))), QUERY, EXPECTED);
+        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Power User"))), QUERY, EXPECTED);
     }
 
     @ParameterizedTest
@@ -275,7 +274,7 @@ class SteelWheelsAggregationTest {
         	 );
         context.getCatalogCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
-        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Power User"))), QUERY, EXPECTED);
+        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Power User"))), QUERY, EXPECTED);
     }
 
     @Disabled //disabled for CI build
@@ -340,7 +339,7 @@ class SteelWheelsAggregationTest {
            	));
         context.getCatalogCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
-        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Power User Union"))), QUERY, EXPECTED);
+        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Power User Union"))), QUERY, EXPECTED);
     }
 
     @Disabled //disabled for CI build
@@ -431,6 +430,6 @@ class SteelWheelsAggregationTest {
            	));
         context.getCatalogCache().clear();
         ((TestContext)context).setCatalogMappingSupplier(new PojoMappingModifier(schema));
-        assertQueryReturns(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Power User Union"))), QUERY, EXPECTED);
+        assertQueryReturns(((TestContext)context).getConnection(new ConnectionProps(List.of("Power User Union"))), QUERY, EXPECTED);
     }
 }

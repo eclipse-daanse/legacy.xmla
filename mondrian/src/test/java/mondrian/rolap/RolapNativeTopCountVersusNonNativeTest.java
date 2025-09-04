@@ -30,10 +30,10 @@ import static org.opencube.junit5.TestUtil.withSchema;
 
 import java.util.List;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -143,7 +143,7 @@ class RolapNativeTopCountVersusNonNativeTest extends BatchTestCase {
         withSchema(context, schema);
          */
         withSchema(context, SchemaModifiers.RoleRestrictionWorksWaRoleDef::new);
-        assertResultsAreEqual(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of(ROLE_RESTRICTION_WORKS_WA_ROLE_NAME))),
+        assertResultsAreEqual(((TestContext)context).getConnection(new ConnectionProps(List.of(ROLE_RESTRICTION_WORKS_WA_ROLE_NAME))),
             "Role restriction works - For WA state",
             ROLE_RESTRICTION_WORKS_WA_QUERY);
     }
@@ -159,7 +159,7 @@ class RolapNativeTopCountVersusNonNativeTest extends BatchTestCase {
         withSchema(context, schema);
          */
         withSchema(context, SchemaModifiers.RoleRestrictionWorksDfRoleDef::new);
-        assertResultsAreEqual(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of(ROLE_RESTRICTION_WORKS_DF_ROLE_NAME))),
+        assertResultsAreEqual(((TestContext)context).getConnection(new ConnectionProps(List.of(ROLE_RESTRICTION_WORKS_DF_ROLE_NAME))),
             "Role restriction works - For DF state",
             ROLE_RESTRICTION_WORKS_DF_QUERY);
     }

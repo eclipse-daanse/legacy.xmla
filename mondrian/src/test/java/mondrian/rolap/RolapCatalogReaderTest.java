@@ -25,26 +25,26 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.daanse.olap.api.CatalogReader;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.element.Cube;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.exception.OlapRuntimeException;
-import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCube;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessDimension;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessHierarchy;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.AccessCatalog;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
+import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessCubeGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessDimensionGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessHierarchyGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.AccessRoleMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.AccessCatalogGrantMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.CubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
@@ -68,7 +68,7 @@ class RolapCatalogReaderTest {
         };
 
         Connection connection =
-            ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("No HR Cube")));
+            ((TestContext)context).getConnection(new ConnectionProps(List.of("No HR Cube")));
         try {
             CatalogReader reader = connection.getCatalogReader().withLocus();
 
@@ -111,7 +111,7 @@ class RolapCatalogReaderTest {
                 "Sales"
         };
 
-        Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("California manager")));
+        Connection connection = ((TestContext)context).getConnection(new ConnectionProps(List.of("California manager")));
         try {
             CatalogReader reader = connection.getCatalogReader().withLocus();
 
@@ -234,7 +234,7 @@ class RolapCatalogReaderTest {
         withSchema(context, schema);
          */
         withSchema(context, TestGetCubeDimensionsModifier::new);
-        Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("REG1")));
+        Connection connection = ((TestContext)context).getConnection(new ConnectionProps(List.of("REG1")));
         try {
             CatalogReader reader = connection.getCatalogReader().withLocus();
             final Map<String, Cube> cubes = new HashMap<>();

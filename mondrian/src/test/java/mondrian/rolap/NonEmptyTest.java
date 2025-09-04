@@ -28,10 +28,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.daanse.olap.api.ConfigConstants;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.Evaluator;
 import org.eclipse.daanse.olap.api.Quoting;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.api.result.Axis;
@@ -40,31 +41,31 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.NativeEvaluationUnsupportedException;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.query.component.IdImpl;
+import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.common.MemberCacheHelper;
 import org.eclipse.daanse.rolap.common.RolapCatalogReader;
-import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
-import org.eclipse.daanse.rolap.element.RolapCube;
-import org.eclipse.daanse.rolap.element.RolapCubeHierarchy;
-import org.eclipse.daanse.rolap.element.RolapCubeMember;
+import org.eclipse.daanse.rolap.common.RolapConnection.NonEmptyResult;
 import org.eclipse.daanse.rolap.common.RolapEvaluator;
-import org.eclipse.daanse.rolap.element.RolapHierarchy;
-import org.eclipse.daanse.rolap.element.RolapLevel;
-import org.eclipse.daanse.rolap.element.RolapMember;
+import org.eclipse.daanse.rolap.common.RolapNative.Listener;
+import org.eclipse.daanse.rolap.common.RolapNative.NativeEvent;
+import org.eclipse.daanse.rolap.common.RolapNative.TupleEvent;
 import org.eclipse.daanse.rolap.common.RolapNativeRegistry;
 import org.eclipse.daanse.rolap.common.RolapResult;
 import org.eclipse.daanse.rolap.common.SmartMemberReader;
 import org.eclipse.daanse.rolap.common.SqlConstraintFactory;
-import org.eclipse.daanse.rolap.common.RolapConnection.NonEmptyResult;
-import org.eclipse.daanse.rolap.common.RolapNative.Listener;
-import org.eclipse.daanse.rolap.common.RolapNative.NativeEvent;
-import org.eclipse.daanse.rolap.common.RolapNative.TupleEvent;
 import org.eclipse.daanse.rolap.common.sql.MemberChildrenConstraint;
 import org.eclipse.daanse.rolap.common.sql.TupleConstraint;
+import org.eclipse.daanse.rolap.element.RolapCube;
+import org.eclipse.daanse.rolap.element.RolapCubeHierarchy;
+import org.eclipse.daanse.rolap.element.RolapCubeMember;
+import org.eclipse.daanse.rolap.element.RolapHierarchy;
+import org.eclipse.daanse.rolap.element.RolapLevel;
+import org.eclipse.daanse.rolap.element.RolapMember;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CubeMapping;
-import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.api.model.enums.HideMemberIfType;
+import org.eclipse.daanse.rolap.mapping.api.model.enums.InternalDataType;
 import org.eclipse.daanse.rolap.mapping.instance.rec.complex.foodmart.FoodmartMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.modifier.pojo.PojoMappingModifier;
 import org.eclipse.daanse.rolap.mapping.pojo.CalculatedMemberMappingImpl;
@@ -73,11 +74,9 @@ import org.eclipse.daanse.rolap.mapping.pojo.DatabaseSchemaMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionConnectorMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.DimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MaxMeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MemberPropertyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
@@ -88,14 +87,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.test.SqlPattern;
-import  org.eclipse.daanse.olap.util.Bug;
 
 /**
  * Tests for NON EMPTY Optimization, includes SqlConstraint type hierarchy and RolapNative classes.
@@ -6416,14 +6414,14 @@ class NonEmptyTest extends BatchTestCase {
 
     // The filter condition does not require a join to the fact table.
     assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
-    assertQuerySql(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Role1"))), query, patterns );
+    assertQuerySql(((TestContext)context).getConnection(new ConnectionProps(List.of("Role1"))), query, patterns );
 
     // in a non-empty context where a role is in effect, the query
     // will pessimistically join the fact table and apply the
     // constraint, since the filter condition could be influenced by
     // role limitations.
     assertQuerySql(
-        ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Role1"))), nonEmptyQuery, patternsWithFactJoin );
+        ((TestContext)context).getConnection(new ConnectionProps(List.of("Role1"))), nonEmptyQuery, patternsWithFactJoin );
   }
 
   /**
@@ -6602,14 +6600,14 @@ class NonEmptyTest extends BatchTestCase {
 
     // The filter condition does not require a join to the fact table.
     assertQuerySql(context.getConnectionWithDefaultRole(), query, patterns );
-    assertQuerySql(((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Role1"))), query, patterns );
+    assertQuerySql(((TestContext)context).getConnection(new ConnectionProps(List.of("Role1"))), query, patterns );
 
     // in a non-empty context where a role is in effect, the query
     // will pessimistically join the fact table and apply the
     // constraint, since the filter condition could be influenced by
     // role limitations.
     assertQuerySql(
-        ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Role1"))), nonEmptyQuery, patternsWithFactJoin );
+        ((TestContext)context).getConnection(new ConnectionProps(List.of("Role1"))), nonEmptyQuery, patternsWithFactJoin );
   }
 
 

@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
-import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -427,8 +427,8 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
         + "crossjoin(gender.gender.gender.members, warehouse.warehouse.[USA].[CA]) on 0, "
         + "measures.vm on 1 from [warehouse and sales]";
     // first MDX with a fresh query should result in gender query.
-    Connection connection = context.getConnection(new RolapConnectionPropsR(
-        List.of(), false, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty()
+    Connection connection = context.getConnection(new ConnectionProps(
+        List.of(), false, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty()
     ));
     assertQuerySqlOrNot(connection,
         mdx, new SqlPattern[]{ mysqlPattern }, false, false, false);

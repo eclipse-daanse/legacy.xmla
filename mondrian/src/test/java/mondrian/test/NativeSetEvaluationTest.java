@@ -25,14 +25,15 @@ import java.util.List;
 
 import org.eclipse.daanse.olap.api.CacheControl;
 import org.eclipse.daanse.olap.api.ConfigConstants;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.NativeEvaluationUnsupportedException;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
+import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.common.RolapConnection;
-import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -55,7 +56,6 @@ import org.eclipse.daanse.rolap.mapping.pojo.ExplicitHierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.HierarchyMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.LevelMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.MeasureGroupMappingImpl;
-import org.eclipse.daanse.rolap.mapping.pojo.MeasureMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.PhysicalCubeMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.StandardDimensionMappingImpl;
 import org.eclipse.daanse.rolap.mapping.pojo.SumMeasureMappingImpl;
@@ -66,15 +66,14 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextArgumentsProvider;
 import org.opencube.junit5.ContextSource;
-import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.context.TestContext;
+import org.opencube.junit5.context.TestContextImpl;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 
 import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
 import mondrian.rolap.SchemaModifiers;
-import  org.eclipse.daanse.olap.util.Bug;
 
 /**
  * Test native evaluation of supported set operations.
@@ -1670,7 +1669,7 @@ protected void assertQuerySql(Connection connection,
         + "Select\n"
         + "[*BASE_MEMBERS_Measures] on columns,\n"
         + "Non Empty [*SORTED_ROW_AXIS] on rows\n"
-        + "From [Warehouse and Sales]\n", ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("F-MIS-BE-CLIENT"))));
+        + "From [Warehouse and Sales]\n", ((TestContext)context).getConnection(new ConnectionProps(List.of("F-MIS-BE-CLIENT"))));
     assertNotNull(result);
   }
 
@@ -1782,7 +1781,7 @@ protected void assertQuerySql(Connection connection,
      */
     withSchema(context, TestNativeHonorsRoleRestrictionsModifier::new);
 
-      Connection connection = ((TestContext)context).getConnection(new RolapConnectionPropsR(List.of("Test")));
+      Connection connection = ((TestContext)context).getConnection(new ConnectionProps(List.of("Test")));
     verifySameNativeAndNot(connection,
       "select non empty crossjoin([Store].[USA],[Product].[Product Name].members) on 0 from sales",
       "Native crossjoin mismatch");

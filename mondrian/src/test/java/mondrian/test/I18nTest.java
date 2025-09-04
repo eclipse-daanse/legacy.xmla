@@ -19,18 +19,18 @@ import java.util.Locale;
 import java.util.Optional;
 
 import org.apache.commons.lang3.LocaleUtils;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
+import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.api.result.Result;
+import  org.eclipse.daanse.olap.util.Format;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
-import  org.eclipse.daanse.olap.util.Format;
-import org.eclipse.daanse.rolap.common.RolapConnectionPropsR;
 
 /**
  * Test suite for internalization and localization.
@@ -107,9 +107,9 @@ class I18nTest {
         //    TestUtil.getConnectionProperties().clone();
         //properties.put(RolapConnectionProperties.Locale.name(), localeName);
         //context.setProperty(RolapConnectionProperties.Locale.name(), localeName);
-        Connection connection = context.getConnection(new RolapConnectionPropsR(
+        Connection connection = context.getConnection(new ConnectionProps(
 		List.of(), true, LocaleUtils.toLocale(localeName),
-		Duration.ofSeconds(-1), Optional.empty(), Optional.empty()));
+		Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty()));
 
         Query query = connection.parseQuery(
             "WITH MEMBER [Measures].[Foo] AS ' 12345.67 ',\n"
