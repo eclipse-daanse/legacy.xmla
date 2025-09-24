@@ -34,6 +34,7 @@ import org.eclipse.daanse.olap.api.Statement;
 import org.eclipse.daanse.olap.api.aggregator.CustomAggregatorFactory;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompiler;
 import org.eclipse.daanse.olap.api.calc.compiler.ExpressionCompilerFactory;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.connection.ConnectionProps;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.calc.base.compiler.BaseExpressionCompilerFactory;
@@ -314,7 +315,9 @@ import org.eclipse.daanse.olap.function.def.vba.year.YearResolver;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import org.eclipse.daanse.rolap.common.AbstractRolapContext;
 import org.eclipse.daanse.rolap.common.RolapCatalogCache;
-import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.connection.ExternalRolapConnection;
+import org.eclipse.daanse.rolap.common.connection.InternalRolapConnection;
+import org.eclipse.daanse.rolap.core.internal.BasicContext;
 import org.eclipse.daanse.rolap.common.RolapDependencyTestingEvaluator;
 import org.eclipse.daanse.rolap.common.RolapEvaluator;
 import org.eclipse.daanse.rolap.common.RolapEvaluatorRoot;
@@ -328,7 +331,7 @@ import org.eclipse.daanse.rolap.mapping.api.CatalogMappingSupplier;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.sql.guard.api.SqlGuardFactory;
 
-public class TestContextImpl extends AbstractRolapContext implements TestContext {
+public class TestContextImpl extends BasicContext implements TestContext {
 
     private Dialect dialect;
     private DataSource dataSource;
@@ -714,13 +717,13 @@ public class TestContextImpl extends AbstractRolapContext implements TestContext
     }
 
     @Override
-    public RolapConnection getConnectionWithDefaultRole() {
-        return getConnection(new ConnectionProps());
+    public Connection getConnectionWithDefaultRole() {
+        return new InternalRolapConnection(this, null, new ConnectionProps());
     }
 
     @Override
-    public RolapConnection getConnection(ConnectionProps props) {
-        return new RolapConnection(this, props);
+    public Connection getConnection(ConnectionProps props) {
+        return new ExternalRolapConnection(this, props);
     }
 
     @Override

@@ -51,7 +51,6 @@ import org.eclipse.daanse.rolap.common.FastBatchingCellReader;
 import org.eclipse.daanse.rolap.common.GroupingSetsCollector;
 import org.eclipse.daanse.rolap.common.MemberCacheHelper;
 import org.eclipse.daanse.rolap.common.RolapCatalogReader;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.rolap.element.RolapLevel;
@@ -225,7 +224,7 @@ public class BatchTestCase{
         final String measure)
     {
         return LocusImpl.execute(
-            ((RolapConnection)connection),
+            connection,
             "BatchTestCase.getGroupingSet",
             new LocusImpl.Action<GroupingSet>() {
                 @Override

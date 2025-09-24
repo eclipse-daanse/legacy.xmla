@@ -63,7 +63,7 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
-import org.eclipse.daanse.rolap.common.RolapConnection;
+import org.eclipse.daanse.rolap.common.connection.InternalRolapConnection;
 
 
 class IdBatchResolverTest  {
@@ -414,7 +414,7 @@ class IdBatchResolverTest  {
     public IdBatchResolver makeTestBatchResolver(Context<?> context,String mdx) {
     	TestUtil.flushSchemaCache(context.getConnectionWithDefaultRole());
 
-        RolapConnection conn = (RolapConnection) spy(
+        InternalRolapConnection conn = (InternalRolapConnection) spy(
         		context.getConnectionWithDefaultRole());
         when(conn.getQueryProvider()).thenReturn(new QueryProviderWrapper());
 

@@ -35,7 +35,6 @@ import org.eclipse.daanse.olap.api.element.Member;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.query.component.IdImpl;
 import org.eclipse.daanse.rolap.common.CacheControlImpl;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
@@ -250,8 +249,8 @@ class CacheControlTest {
     @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
     void testCreateCellRegion(Context<?> context) {
         // Execute a query.
-        final RolapConnection connection =
-            ((RolapConnection) context.getConnectionWithDefaultRole());
+        final Connection connection =
+            ((Connection) context.getConnectionWithDefaultRole());
         final CacheControl cacheControl = new CacheControlImpl(connection);
         final CellRegion region =
             createCellRegion(connection, cacheControl);
@@ -1143,7 +1142,7 @@ class CacheControlTest {
         Connection connection = context.getConnectionWithDefaultRole();
         final CacheControl cacheControl =
             new CacheControlImpl(
-                (RolapConnection) connection);
+                connection);
         final CellRegion region =
             cacheControl.createUnionRegion(
                 cacheControl.createCrossjoinRegion(

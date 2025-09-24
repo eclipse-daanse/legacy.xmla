@@ -33,7 +33,6 @@ import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.NativeEvaluationUnsupportedException;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import  org.eclipse.daanse.olap.util.Bug;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
@@ -2095,7 +2094,7 @@ protected void assertQuerySql(Connection connection,
         null );
     Result rest = executeQuery( mdx, context.getConnectionWithDefaultRole());
     RolapCube cube = (RolapCube) rest.getQuery().getCube();
-    RolapConnection con = (RolapConnection) rest.getQuery().getConnection();
+    Connection con = (Connection) rest.getQuery().getConnection();
     CacheControl cacheControl = con.getCacheControl( null );
 
     for ( Hierarchy hier : cube.getHierarchies() ) {

@@ -70,7 +70,6 @@ import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.eclipse.daanse.rolap.element.RolapCube;
 
 
@@ -135,7 +134,7 @@ public class CrossJoinTest {
   @Test
   void testListTupleListTupleIterCalc() {
         Statement statement = mock(Statement.class);
-        RolapConnection rolapConnection = mock(RolapConnection.class);
+        Connection rolapConnection = mock(Connection.class);
         Context context = mock(Context.class);
         when(context.getConfigValue(ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL, ConfigConstants.CHECK_CANCEL_OR_TIMEOUT_INTERVAL_DEFAULT_VALUE, Integer.class)).thenReturn(0);
         when(rolapConnection.getContext()).thenReturn(context);

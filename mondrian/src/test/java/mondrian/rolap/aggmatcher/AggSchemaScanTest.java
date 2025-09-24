@@ -37,7 +37,6 @@ import javax.sql.DataSource;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.rolap.api.RolapContext;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.eclipse.daanse.rolap.common.aggmatcher.JdbcSchema;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
@@ -63,7 +62,7 @@ class AggSchemaScanTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testAggScanPropertiesEmptySchema(Context<?> context) throws Exception {
-    final RolapConnection rolapConn = (RolapConnection) context.getConnectionWithDefaultRole();
+    final org.eclipse.daanse.olap.api.connection.Connection rolapConn = (org.eclipse.daanse.olap.api.connection.Connection) context.getConnectionWithDefaultRole();
     final DataSource dataSource = rolapConn.getDataSource();
     Connection sqlConnection = null;
     try {
@@ -95,7 +94,7 @@ class AggSchemaScanTest {
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class )
   void testAggScanPropertiesPopulatedSchema(Context<?> context) throws Exception {
-    final RolapConnection rolapConn = (RolapConnection) context.getConnectionWithDefaultRole();
+    final org.eclipse.daanse.olap.api.connection.Connection rolapConn = (org.eclipse.daanse.olap.api.connection.Connection) context.getConnectionWithDefaultRole();
     final DataSource dataSource = rolapConn.getDataSource();
     Connection sqlConnection = null;
     try {

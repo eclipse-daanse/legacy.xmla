@@ -33,7 +33,6 @@ import mondrian.enums.DatabaseProduct;
 import mondrian.rolap.BatchTestCase;
 
 import  org.eclipse.daanse.olap.server.LocusImpl;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 
 import mondrian.test.SqlPattern;
 
@@ -1775,12 +1774,10 @@ class NativizeSetFunDefTest extends BatchTestCase {
 
 
     private void assertQueryIsReWritten(
-        Connection con,
+        Connection connection,
         final String query,
         final String expectedQuery)
     {
-        final RolapConnection connection =
-            (RolapConnection) con;
         String actualOutput =
             LocusImpl.execute(
                 connection,

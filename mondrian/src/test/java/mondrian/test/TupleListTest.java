@@ -41,7 +41,6 @@ import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.dataloader.FastFoodmardDataLoader;
 import org.opencube.junit5.propupdator.AppandFoodMartCatalog;
 import  org.eclipse.daanse.olap.server.LocusImpl;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 
 /**
  * Unit test for {@link TupleList} and common implementations.
@@ -224,7 +223,7 @@ class TupleListTest {
             + "Row #1: \n"
             + "Row #2: 565,238.13\n");
         LocusImpl.execute(
-            (RolapConnection)connection,
+            connection,
             "testDelegatingTupleListSlice",
             new LocusImpl.Action<Void>() {
                 @Override

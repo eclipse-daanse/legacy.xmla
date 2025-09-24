@@ -86,7 +86,6 @@ import org.eclipse.daanse.olap.spi.StatisticsProvider;
 import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.api.RolapContext;
 import org.eclipse.daanse.rolap.element.RolapCatalog;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.eclipse.daanse.rolap.common.RolapUtil;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.sql.SqlStatisticsProviderNew;
@@ -4498,8 +4497,8 @@ public class BasicQueryTest {
     Connection connection = context.getConnectionWithDefaultRole();
     flushSchemaCache(connection);
 
-    RolapConnection conn = (RolapConnection) connection;
-    final Statement stmt = conn.getInternalStatement();
+
+    final Statement stmt = connection.getInternalStatement();
     // use the logger to block and trigger cancelation at the right time
     Logger sqlLog = RolapUtil.SQL_LOGGER;
     //propSaver.set( sqlLog, org.apache.logging.log4j.Level.DEBUG );
@@ -4507,11 +4506,11 @@ public class BasicQueryTest {
     final CountDownLatch okToGo = new CountDownLatch( 1 );
     AtomicLong rows = new AtomicLong();
     //Appender canceler = new SqlCancelingAppender( component, triggerSql, exec, okToGo, rows );
-    stmt.setQuery( conn.parseQuery( query ) );
+    stmt.setQuery( connection.parseQuery( query ) );
     //sqlLog.addAppender( canceler );
     //Util.addAppender(canceler, sqlLog, null);
     try {
-      conn.execute( exec );
+      connection.execute( exec );
       fail( "Query not canceled." );
     } catch ( QueryCanceledException e ) {
       // 5 sec just in case it all goes wrong

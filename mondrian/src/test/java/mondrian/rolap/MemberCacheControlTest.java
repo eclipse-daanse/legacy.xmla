@@ -80,7 +80,6 @@ import  org.eclipse.daanse.olap.server.LocusImpl;
 import org.eclipse.daanse.rolap.common.MemberCache;
 import org.eclipse.daanse.rolap.common.MemberReader;
 import org.eclipse.daanse.rolap.element.RolapBaseCubeMeasure;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.eclipse.daanse.rolap.element.RolapCubeMember;
 import org.eclipse.daanse.rolap.element.RolapHierarchy;
 import org.eclipse.daanse.rolap.element.RolapMember;
@@ -133,7 +132,7 @@ class MemberCacheControlTest {
     }
 
     private void prepareTestContext(Context<?> context) {
-        final RolapConnection conn = (RolapConnection) context.getConnectionWithDefaultRole();
+        final Connection conn = (Connection) context.getConnectionWithDefaultRole();
         final Statement statement = conn.getInternalStatement();
         final ExecutionImpl execution = new ExecutionImpl(statement, Optional.empty());
         //locus = new Locus(execution, getName(), null);
@@ -604,7 +603,7 @@ class MemberCacheControlTest {
         assertEquals(
             Double.valueOf("74748"),
             ((AggregationManager)aggMgr).getCellFromAllCaches(
-                AggregationManager.makeRequest(cacheRegionMembers), (RolapConnection)conn));
+                AggregationManager.makeRequest(cacheRegionMembers), conn));
 
         // Now tell the cache that [CA].[Berkeley] is new
         final MemberEditCommand command =
@@ -614,7 +613,7 @@ class MemberCacheControlTest {
         // test that cells have been removed
         assertNull(
                 ((AggregationManager)aggMgr).getCellFromAllCaches(
-                AggregationManager.makeRequest(cacheRegionMembers), (RolapConnection)conn));
+                AggregationManager.makeRequest(cacheRegionMembers), conn));
 
         assertAxisReturns(conn, "Sales",
             "[Retail].[Retail].[CA].Children",
@@ -764,7 +763,7 @@ class MemberCacheControlTest {
         assertEquals(
             Double.valueOf("2117"),
             ((AggregationManager)aggMgr).getCellFromAllCaches(
-                AggregationManager.makeRequest(cacheRegionMembers), (RolapConnection)conn));
+                AggregationManager.makeRequest(cacheRegionMembers), conn));
 
         // Now tell the cache that [CA].[San Francisco] has been removed.
         final MemberEditCommand command =
@@ -779,7 +778,7 @@ class MemberCacheControlTest {
         // test that cells have been removed
         assertNull(
             ((AggregationManager)aggMgr).getCellFromAllCaches(
-                AggregationManager.makeRequest(cacheRegionMembers), (RolapConnection)conn));
+                AggregationManager.makeRequest(cacheRegionMembers), conn));
 
         // The list of children should be updated.
         assertAxisReturns(conn, "Sales",

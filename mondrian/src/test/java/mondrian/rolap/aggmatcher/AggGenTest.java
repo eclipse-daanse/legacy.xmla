@@ -40,9 +40,7 @@ import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.query.component.Query;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
-import org.eclipse.daanse.olap.query.component.QueryImpl;
 import org.eclipse.daanse.rolap.api.RolapContext;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.eclipse.daanse.rolap.common.aggmatcher.AggGen;
 import org.eclipse.daanse.rolap.mapping.api.model.CatalogMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.DatabaseSchemaMapping;
@@ -86,7 +84,7 @@ class AggGenTest {
         ((TestContextImpl)context).setReadAggregates(true);
         ((TestContextImpl)context).setGenerateAggregateSql(true);
 
-        final RolapConnection rolapConn = (RolapConnection) context.getConnectionWithDefaultRole();
+        final org.eclipse.daanse.olap.api.connection.Connection rolapConn = (org.eclipse.daanse.olap.api.connection.Connection) context.getConnectionWithDefaultRole();
         Query query =
             rolapConn.parseQuery(
                 "select {[Measures].[Count]} on columns from [HR]");

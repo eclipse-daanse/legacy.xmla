@@ -22,6 +22,7 @@ import java.time.Duration;
 import java.util.Optional;
 
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.monitor.EventBus;
 import org.eclipse.daanse.olap.common.QueryCanceledException;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import  org.eclipse.daanse.olap.server.ExecutionImpl;
 import  org.eclipse.daanse.olap.server.LocusImpl;
 import  org.eclipse.daanse.olap.server.StatementImpl;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.eclipse.daanse.rolap.common.SqlStatement;
 
 /**
@@ -40,7 +40,7 @@ class SqlStatementTest {
 
   private EventBus monitor;
   private Context context;
-  private RolapConnection rolapConnection;
+  private Connection rolapConnection;
   private StatementImpl statMock;
   private ExecutionImpl execution;
   private LocusImpl locus;
@@ -53,7 +53,7 @@ class SqlStatementTest {
     context = mock(Context.class);
     when(context.getMonitor()).thenReturn(monitor);
 
-    rolapConnection = mock(RolapConnection.class);
+    rolapConnection = mock(Connection.class);
     when(rolapConnection.getContext()).thenReturn(context);
 
     statMock = mock(StatementImpl.class);

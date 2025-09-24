@@ -23,10 +23,10 @@ import javax.sql.DataSource;
 import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
 import org.eclipse.daanse.rolap.element.RolapCatalog;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.element.RolapCubeDimension;
 import org.eclipse.daanse.rolap.element.RolapCubeHierarchy;
@@ -76,8 +76,8 @@ class RolapCubeHierarchyTest {
     String cubeDimension_uniqueName = "TheDimUniqueName";
     String dimName = "DimName";
     RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
-    RolapConnection cubeDimension_schema_connection =
-        mock(RolapConnection.class);
+    Connection cubeDimension_schema_connection =
+        mock(Connection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
     CatalogReader schemaReader = mock(CatalogReader.class);
     Context<?> context = mock(Context.class);
@@ -128,8 +128,8 @@ class RolapCubeHierarchyTest {
     String cubeDimension_uniqueName = "TheDimUniqueName";
     String dimName = "DimName";
     RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
-    RolapConnection cubeDimension_schema_connection =
-        mock(RolapConnection.class);
+    Connection cubeDimension_schema_connection =
+        mock(Connection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
     CatalogReader schemaReader = mock(CatalogReader.class);
     Context<?> context = mock(Context.class);
@@ -177,8 +177,8 @@ class RolapCubeHierarchyTest {
     RolapCube cubeDimension_cube = mock(RolapVirtualCube.class);
     String cubeDimension_uniqueName = "TheDimUniqueName";
     RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
-    RolapConnection cubeDimension_schema_connection =
-        mock(RolapConnection.class);
+    Connection cubeDimension_schema_connection =
+        mock(Connection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
 
     DimensionConnectorMapping cubeDim = null;
@@ -236,8 +236,8 @@ class RolapCubeHierarchyTest {
     String cubeDimension_uniqueName = "TheDimUniqueName";
     String dimName = "DimName";
     RolapCatalog cubeDimension_schema = mock(RolapCatalog.class);
-    RolapConnection cubeDimension_schema_connection =
-        mock(RolapConnection.class);
+    Connection cubeDimension_schema_connection =
+        mock(Connection.class);
     DataSource cubeDimension_schema_connection_DS = mock(DataSource.class);
     CatalogReader schemaReader = mock(CatalogReader.class);
     Context<?> context = mock(Context.class);

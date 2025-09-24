@@ -57,7 +57,6 @@ import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
 import  org.eclipse.daanse.olap.util.Bug;
 import org.eclipse.daanse.rolap.api.RolapContext;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.eclipse.daanse.rolap.common.aggmatcher.AggTableManager;
 import org.eclipse.daanse.rolap.mapping.api.model.AccessRoleMapping;
 import org.eclipse.daanse.rolap.mapping.api.model.CalculatedMemberMapping;
@@ -11859,7 +11858,7 @@ class SchemaTest {
                                         + "</Schema>\n");
         */
         withSchema(context, TestMondrian1275Modifier::new);
-        final RolapConnection rolapConn = (RolapConnection) context.getConnectionWithDefaultRole();
+        final Connection rolapConn = (Connection) context.getConnectionWithDefaultRole();
         final CatalogReader schemaReader = rolapConn.getCatalogReader();
         final Catalog schema = schemaReader.getCatalog();
         for (Cube cube : schema.getCubes()) {

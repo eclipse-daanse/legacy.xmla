@@ -35,6 +35,7 @@ import org.eclipse.daanse.olap.api.CatalogReader;
 import org.eclipse.daanse.olap.api.ConfigConstants;
 import org.eclipse.daanse.olap.api.Context;
 import org.eclipse.daanse.olap.api.DataType;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.element.Dimension;
 import org.eclipse.daanse.olap.api.element.Hierarchy;
 import org.eclipse.daanse.olap.api.element.Level;
@@ -50,7 +51,6 @@ import org.eclipse.daanse.rolap.common.RolapCatalogKey;
 import org.eclipse.daanse.rolap.common.RolapCatalogContentKey;
 import org.eclipse.daanse.rolap.common.ConnectionKey;
 import org.eclipse.daanse.rolap.element.RolapCatalog;
-import org.eclipse.daanse.rolap.common.RolapConnection;
 import org.eclipse.daanse.rolap.element.RolapCube;
 import org.eclipse.daanse.rolap.common.RolapStar;
 import org.eclipse.daanse.rolap.common.RolapStarRegistry;
@@ -114,7 +114,7 @@ class RolapCatalogTest {
         //noinspection deprecation
         //mock rolap connection to eliminate calls for cache loading
         contextMock = mock(AbstractRolapContext.class);
-        RolapConnection rolapConnectionMock = mock(RolapConnection.class);
+        Connection rolapConnectionMock = mock(Connection.class);
         AggregationManager aggManagerMock = mock(AggregationManager.class);
         SegmentCacheManager scManagerMock = mock(SegmentCacheManager.class);
         Context context = contextMock;
