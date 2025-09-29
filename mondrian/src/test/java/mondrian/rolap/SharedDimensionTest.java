@@ -12,6 +12,7 @@ package mondrian.rolap;
 
 import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import org.eclipse.daanse.olap.api.Context;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
@@ -382,7 +383,7 @@ class SharedDimensionTest  {
                 null);
         withSchema(context, schema);
         */
-        withSchema(context, SchemaModifiers.SharedDimensionTestModifier::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SharedDimensionTestModifier::new);
 
         assertQueryReturns(context.getConnectionWithDefaultRole(), queryVirtualCube, resultVirtualCube);
     }
@@ -476,7 +477,7 @@ class SharedDimensionTest  {
             null,
             null);
         withSchema(context, schema);*/
-        withSchema(context, SchemaModifiers.SharedDimensionTestModifier::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SharedDimensionTestModifier::new);
     }
 
     private void getTestContextForSharedDimCubeAltSales(Context<?> context) {
@@ -491,6 +492,6 @@ class SharedDimensionTest  {
             null);
         withSchema(context, schema);
          */
-        withSchema(context, SchemaModifiers.SharedDimensionTestModifier1::new);
+        withSchemaEmf(context, SchemaModifiersEmf.SharedDimensionTestModifier1::new);
     }
 }

@@ -300,7 +300,21 @@
 
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.rolap.mapping.instance.emf.complex.foodmart</artifactId>
+			<version>${revision}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
 			<artifactId>org.eclipse.daanse.rolap.mapping.instance.rec.complex.steelwheels</artifactId>
+			<version>${revision}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.daanse</groupId>
+			<artifactId>org.eclipse.daanse.rolap.mapping.instance.emf.complex.steelwheels</artifactId>
 			<version>${revision}</version>
 			<scope>test</scope>
 		</dependency>
@@ -325,6 +339,12 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+    <dependency>
+      <groupId>org.eclipse.daanse</groupId>
+      <artifactId>org.eclipse.daanse.rolap.mapping.modifier.emf</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
 		<dependency>
 			<groupId>org.eclipse.daanse</groupId>
 			<artifactId>org.eclipse.daanse.xmla.api</artifactId>
@@ -406,7 +426,7 @@
 			<artifactId>org.eclipse.daanse.rolap.core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>compile</scope>
-		</dependency>		
+		</dependency>
 	</dependencies>
 	<build>
 

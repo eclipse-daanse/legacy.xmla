@@ -27,30 +27,24 @@ import static org.opencube.junit5.TestUtil.compileExpression;
 import static org.opencube.junit5.TestUtil.executeExpr;
 import static org.opencube.junit5.TestUtil.executeExprRaw;
 import static org.opencube.junit5.TestUtil.isDefaultNullMemberRepresentation;
-import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.daanse.olap.api.ConfigConstants;
-import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.Context;
-import org.eclipse.daanse.olap.api.function.FunctionMetaData;
+import org.eclipse.daanse.olap.api.connection.Connection;
 import org.eclipse.daanse.olap.api.function.FunctionService;
 import org.eclipse.daanse.olap.api.result.Cell;
 import org.eclipse.daanse.olap.api.result.Result;
 import org.eclipse.daanse.olap.common.SystemWideProperties;
 import org.eclipse.daanse.olap.common.Util;
-import org.eclipse.daanse.olap.function.core.FunctionPrinter;
+import  org.eclipse.daanse.olap.util.Bug;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.opencube.junit5.ContextSource;
 import org.opencube.junit5.TestUtil;
@@ -60,9 +54,7 @@ import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mondrian.rolap.SchemaModifiers;
-import  org.eclipse.daanse.olap.util.Bug;
-import org.eclipse.daanse.rolap.common.RolapCatalogCache;
+import mondrian.rolap.SchemaModifiersEmf;
 
 //import mondrian.spi.DialectManager;
 
@@ -1764,7 +1756,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
   @ParameterizedTest
   @ContextSource(propertyUpdater = AppandFoodMartCatalog.class, dataloader = FastFoodmardDataLoader.class)
   void testComplexSlicer_Calc(Context<?> context) {
-      withSchema(context, SchemaModifiers.FunctionTestModifier::new);
+      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
       /*
       ((BaseTestContext)context).update(SchemaUpdater.createSubstitutingCube(
       "Sales",
@@ -1813,7 +1805,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
      */
-      withSchema(context, SchemaModifiers.FunctionTestModifier::new);
+      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
 
       String query =
       "SELECT "
@@ -1855,7 +1847,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
     */
-      withSchema(context, SchemaModifiers.FunctionTestModifier::new);
+      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
 
       String query =
       "SELECT "
@@ -1897,7 +1889,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
       */
-      withSchema(context, SchemaModifiers.FunctionTestModifier::new);
+      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
       String query =
       "SELECT "
         + "{[Measures].[Customer Count]} ON 0 "
@@ -1928,7 +1920,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Education Level].[Partial College]:[Education Level].[Partial High School])' "
         + "dimension='Education Level' />"));
        */
-      withSchema(context, SchemaModifiers.FunctionTestModifier2::new);
+      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier2::new);
 
       String query =
       "SELECT "
@@ -1957,7 +1949,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
       */
-      withSchema(context, SchemaModifiers.FunctionTestModifier::new);
+      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
 
       String query =
       "SELECT "
@@ -1985,7 +1977,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
     */
-      withSchema(context, SchemaModifiers.FunctionTestModifier::new);
+      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
 
       String query =
       "SELECT "
@@ -2017,7 +2009,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Education Level].[Partial College]:[Education Level].[Partial High School])' "
         + "dimension='Education Level' />" ));
       */
-      withSchema(context, SchemaModifiers.FunctionTestModifier2::new);
+      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier2::new);
       String query =
       "SELECT "
         + "{[Measures].[Customer Count]} ON 0 "
@@ -2044,7 +2036,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
     */
-      withSchema(context, SchemaModifiers.FunctionTestModifier::new);
+      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
 
       String query =
       "SELECT "
@@ -2096,7 +2088,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
      */
-      withSchema(context, SchemaModifiers.FunctionTestModifier::new);
+      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
 
       String query =
       "SELECT "
@@ -2125,7 +2117,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Time].[1997].[Q1]:[Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
      */
-      withSchema(context, SchemaModifiers.FunctionTestModifier::new);
+      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
       String query =
       "SELECT "
         + "{[Measures].[Customer Count]} ON 0 "
@@ -2160,7 +2152,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='Aggregate([Education Level].[Partial College]:[Education Level].[Partial High School])' "
         + "dimension='Education Level' />" ));
       */
-      withSchema(context, SchemaModifiers.FunctionTestModifier2::new);
+      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier2::new);
 
       String query =
       "SELECT "
@@ -2195,7 +2187,7 @@ org.eclipse.daanse.olap.calc.base.type.tuplebase.MemberArrayValueCalc(type=SCALA
         + "formula='([Time].[1997].[Q1] - [Time].[1997].[Q2])' "
         + "dimension='Time' />" ));
      */
-      withSchema(context, SchemaModifiers.FunctionTestModifier::new);
+      withSchemaEmf(context, SchemaModifiersEmf.FunctionTestModifier::new);
       String query =
       "SELECT "
         + "{[Measures].[Customer Count]} ON 0, "

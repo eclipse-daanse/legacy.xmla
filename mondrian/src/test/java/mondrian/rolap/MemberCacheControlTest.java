@@ -35,6 +35,7 @@ import static org.opencube.junit5.TestUtil.assertQueryReturns;
 import static org.opencube.junit5.TestUtil.executeQuery;
 import static org.opencube.junit5.TestUtil.flushCache;
 import static org.opencube.junit5.TestUtil.withSchema;
+import static org.opencube.junit5.TestUtil.withSchemaEmf;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -162,7 +163,7 @@ class MemberCacheControlTest {
             + "    </Hierarchy>\n"
             + "   </Dimension>"));
          */
-        withSchema(context, SchemaModifiers.MemberCacheControlTestModifier::new);
+        withSchemaEmf(context, SchemaModifiersEmf.MemberCacheControlTestModifier::new);
 
     }
 
