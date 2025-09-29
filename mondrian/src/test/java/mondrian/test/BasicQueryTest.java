@@ -2149,6 +2149,7 @@ public class BasicQueryTest {
     ((TestContextImpl)context).setUseAggregates(false);
     ((TestContextImpl)context).setReadAggregates(false);
     context.getCatalogCache().clear();
+    context.getConnectionWithDefaultRole().getCacheControl(null).flushSchemaCache();
 
     assertQueryReturns(context.getConnectionWithDefaultRole(), mdx, desiredResultWithoutAgg );
   }

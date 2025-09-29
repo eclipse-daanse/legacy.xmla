@@ -108,7 +108,7 @@ class I18nTest {
         //properties.put(RolapConnectionProperties.Locale.name(), localeName);
         //context.setProperty(RolapConnectionProperties.Locale.name(), localeName);
         Connection connection = context.getConnection(new ConnectionProps(
-		List.of(), true, LocaleUtils.toLocale(localeName),
+		List.of("Administrator"), true, LocaleUtils.toLocale(localeName),
 		Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty()));
 
         Query query = connection.parseQuery(

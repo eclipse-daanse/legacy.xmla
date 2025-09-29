@@ -428,7 +428,7 @@ class NativeEvalVirtualCubeTest extends BatchTestCase {
         + "measures.vm on 1 from [warehouse and sales]";
     // first MDX with a fresh query should result in gender query.
     Connection connection = context.getConnection(new ConnectionProps(
-        List.of(), false, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty()
+        List.of("Administrator"), false, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty()
     ));
     assertQuerySqlOrNot(connection,
         mdx, new SqlPattern[]{ mysqlPattern }, false, false, false);

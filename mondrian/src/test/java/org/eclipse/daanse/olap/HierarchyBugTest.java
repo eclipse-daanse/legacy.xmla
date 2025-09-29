@@ -158,7 +158,7 @@ TestUtil.flushSchemaCache(conn);
        //foodMartContext.setProperty(RolapConnectionProperties.UseSchemaPool.name(), Boolean.toString(false));
 
         Connection conn = foodMartContext.getConnection(new ConnectionProps(
-            List.of(), false, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty()
+            List.of("Administrator"), false, Locale.getDefault(), Duration.ofSeconds(-1), Optional.empty(), Optional.empty(), Optional.empty()
         ));
 
         Result resultWeekly =TestUtil.executeQuery(conn, mdxWeekly);
